@@ -1,0 +1,235 @@
+{% extends "layouts/main.html" %}
+
+<!--
+NOTES ON USING THIS TEMPLATE Page
+This will save you time.
+
+1. Type your heading for the page after '% set pageHeadingTextHTML %'
+2. Put your question heading for the page after '% set questionHeadingTextHTML %'
+3. Type/customise the error messages after '% set errorTextHTML %'
+4. Use 'Find and replace' to replace "SECTION" with the name of the section of the service you're working on.
+5. Use 'Find and replace' to replace "PAGENAME_NUMBER_COMPLEX" with whatever you named this page/file.
+6. Go to the javascript file 'templates.js' and copy the section 'COMPLEX PAGE  OF NUMBER ENTRY' into your routes.js file.
+7. Follow instructions at the top of the 'templates.js'.
+-->
+
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+    Number of PLACEHOLDERs
+{% endset %}
+
+<!-- Setting the smaller secondary heading lower down the page -->
+{% set questionHeadingTextHTML %}
+    How many PLACEHOLDER did you have?
+{% endset %}
+
+
+<!-- Set the text for each error type -->
+{% set errorTextHTML %}
+    <!-- Error 1 - If answer is not a number when it should be -->
+    {%  if  data['errortypeone'] == "true"  %}
+        PLACEHOLDER must be a number
+
+    <!-- Error 2 - If answer is not a whole number -->
+    {% elif data['errortypetwo'] == "true"  %}
+        PLACEHOLDER must be a whole number
+
+    <!-- Error 3 - If answer (number) is 0 -->
+    {% elif data['errortypethree'] == "true"  %}
+        PLACEHOLDER must be more than 0
+
+    <!-- Error 4 - If answer (number) is less than 0 (negative) -->
+    {% elif data['errortypefour'] == "true"  %}
+        PLACEHOLDER must not be a negative number
+
+    <!-- Error 5 - If answer (number) is too low -->
+    {% elif data['errortypefive'] == "true"  %}
+        PLACEHOLDER must be LOWEST_NUMBER or more
+
+    <!-- Error 6 - If answer (number) is too high -->
+    {% elif data['errortypesix'] == "true"  %}
+        PLACEHOLDER must be HIGHEST_NUMBER or fewer
+
+    <!-- Error 7 - If answer must be between 2 numbers -->
+    {% elif data['errortypeseven'] == "true"  %}
+        PLACEHOLDER must be between LOWEST_NUMBER and HIGHEST_NUMBER
+
+    {%  endif  %}
+{% endset %}
+
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {% if  data['errorthispage'] == "true"  %}
+        Error:
+    {% endif %}
+
+    {{ pageHeadingTextHTML }}
+{% endblock %}
+
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+
+        <!-- ERROR LOGIC 'error summary' -->
+        {% if data['errorthispage'] == "true" %}
+            {{ govukErrorSummary
+                ({
+                    titleText: "There is a problem",
+                    errorList:
+                    [
+                        {
+                            html: errorTextHTML,
+                            href: "#SECTION-PAGENAME_NUMBER_COMPLEX-number-input"
+                        }
+                    ]
+                })
+            }}
+        {% endif %}
+        <!--  END OF 'error summary' -->
+
+
+        <h1 class="govuk-heading-l">
+            {{ pageHeadingTextHTML }}
+        </h1>
+
+
+        <p>PLACEHOLDER for more than one sentence of guidance.</p>
+
+        <p>A link on <a target="_blank" href="#">PLACEHOLDER about PLACEHOLDER (opens in a new tab)</a>.</p>
+
+
+        <details class="govuk-details" data-module="govuk-details">
+            <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">
+                    Understanding PLACEHOLDER
+                </span>
+            </summary>
+            <div class="govuk-details__text">
+
+                <p>This includes:</p>
+
+                <ul class="govuk-body govuk-list--bullet">
+                    <li>PLACEHOLDER</li>
+                    <li>PLACEHOLDER</li>
+                    <li>PLACEHOLDER</li>
+                    <li>PLACEHOLDER</li>
+                </ul>
+
+            </div>
+        </details>
+
+
+
+        <!-- go to routes.js for routing  -->
+        <form action="PAGENAME_NUMBER_COMPLEX-router" method="post" novalidate>
+
+            {{ govukInput
+                ({
+                    label:
+                    {
+                        html: questionHeadingTextHTML,
+                        classes: "govuk-label--m",
+                        isPageHeading: false
+                    },
+
+                    id: "SECTION-PAGENAME_NUMBER_COMPLEX-number-input",
+
+                    name: "SECTION-PAGENAME_NUMBER_COMPLEX-number-input",
+
+                    hint:
+                    {
+                        text: "PLACEHOLDER hint text if needed."
+                    },
+
+                    errorMessage: null if data['errorthispage'] != "true"
+                                       else { html: errorTextHTML },
+
+                    value: data['SECTION-PAGENAME_NUMBER_COMPLEX-number-input'],
+
+                    classes: "govuk-input--width-2"
+                })
+            }}
+
+
+            {{ govukButton({ text: "Continue" }) }}
+
+
+        </form>
+
+    </div>
+</div>
+
+
+<!-- ERROR LOGIC  drop down to toggle states  -->
+<!-- Best thing to do would be to replace 'errorthispage', 'errortypeone' and 'errortypetwo' with novel name for this page  -->
+<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-225px;  ">
+
+    <select style="height:30px;" onchange="window.location.href='?'+this.value">
+
+        <option value="errorthispage=false&errortypeone=false&errortypetwo=false&errortypethree=false&errortypefour=false&errortypefive=false&errortypesix=false&errortypeseven=false&"
+                {% if  data['errorthispage'] != "true"  %}selected{% endif %}
+        >Errors - Off</option>
+
+        <option value="errorthispage=true&errortypeone=true&errortypetwo=false&errortypethree=false&errortypefour=false&errortypefive=false&errortypesix=false&errortypeseven=false&"
+                {% if  data['errortypeone'] == 'true'  and  data['errortypetwo'] != 'true'  and  data['errortypethree'] != 'true'  and  data['errortypefour'] != 'true'  and data['errortypefive'] != 'true'  and  data['errortypesix'] != 'true'  and  data['errortypeseven'] != 'true'  %}selected{% endif %}
+        >Error 1 - If answer is not a number when it should be</option>
+
+        <option value="errorthispage=true&errortypeone=false&errortypetwo=true&errortypethree=false&errortypefour=false&errortypefive=false&errortypesix=false&errortypeseven=false&"
+                {% if  data['errortypeone'] != 'true'  and  data['errortypetwo'] == 'true'  and  data['errortypethree'] != 'true'  and  data['errortypefour'] != 'true'   and data['errortypefive'] != 'true'  and  data['errortypesix'] != 'true'  and  data['errortypeseven'] != 'true'  %}selected{% endif %}
+        >Error 2 - If answer is not a whole number</option>
+
+        <option value="errorthispage=true&errortypeone=false&errortypetwo=false&errortypethree=true&errortypefour=false&errortypefive=false&errortypesix=false&errortypeseven=false&"
+                {% if  data['errortypeone'] != 'true'  and  data['errortypetwo'] != 'true'  and  data['errortypethree'] == 'true'  and  data['errortypefour'] != 'true'   and data['errortypefive'] != 'true'  and  data['errortypesix'] != 'true'  and  data['errortypeseven'] != 'true'  %}selected{% endif %}
+        >Error 3 - If answer (number) is 0</option>
+
+        <option value="errorthispage=true&errortypeone=false&errortypetwo=false&errortypethree=false&errortypefour=true&errortypefive=false&errortypesix=false&errortypeseven=false&"
+                {% if  data['errortypeone'] != 'true'  and  data['errortypetwo'] != 'true'  and  data['errortypethree'] != 'true'  and  data['errortypefour'] == 'true'  and  data['errortypefive'] != 'true'  and  data['errortypesix'] != 'true'  and  data['errortypeseven'] != 'true'  %}selected{% endif %}
+        >Error 4 - If answer (number) is less than 0 (negative)</option>
+
+        <option value="errorthispage=true&errortypeone=false&errortypetwo=false&errortypethree=false&errortypefour=false&errortypefive=true&errortypesix=false&errortypeseven=false&"
+                {% if  data['errortypeone'] != 'true'  and  data['errortypetwo'] != 'true'  and  data['errortypethree'] != 'true'  and  data['errortypefour'] != 'true'  and  data['errortypefive'] == 'true'  and  data['errortypesix'] != 'true'  and  data['errortypeseven'] != 'true'  %}selected{% endif %}
+        >Error 5 - If answer (number) is too low</option>
+
+        <option value="errorthispage=true&errortypeone=false&errortypetwo=false&errortypethree=false&errortypefour=false&errortypefive=true&errortypesix=false&errortypeseven=false&"
+                {% if  data['errortypeone'] != 'true'  and  data['errortypetwo'] != 'true'  and  data['errortypethree'] != 'true'  and  data['errortypefour'] != 'true'  and  data['errortypefive'] != 'true'  and  data['errortypesix'] == 'true'  and  data['errortypeseven'] != 'true'  %}selected{% endif %}
+        >Error 6 - If answer (number) is too high</option>
+
+        <option value="errorthispage=true&errortypeone=false&errortypetwo=false&errortypethree=false&errortypefour=false&errortypefive=true&errortypesix=false&errortypeseven=true&"
+                {% if  data['errortypeone'] != 'true'  and  data['errortypetwo'] != 'true'  and  data['errortypethree'] != 'true'  and  data['errortypefour'] != 'true'  and  data['errortypefive'] != 'true'  and  data['errortypesix'] != 'true'  and  data['errortypeseven'] == 'true'  %}selected{% endif %}
+        >Error 7 - If answer must be between 2 numbers</option>
+
+    </select>
+
+</form>
+<!--  END OF ERROR LOGIC -->
+
+
+<!-- USER TYPE TOGGLE  -->
+<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-225px;  ">
+
+    <select style="height:30px;" onchange="window.location.href='?'+this.value">
+
+        <option value="user=citizen&"
+                {% if  data['user'] != "agent"  %} selected {% endif %}
+        >User type - Individual</option>
+
+        <option value="user=agent&"
+                {% if  data['user'] == "agent"  %} selected {% endif %}
+        >User type - Agent</option>
+
+    </select>
+
+</form>
+<!--  END USER TYPE TOGGLE -->
+
+
+{% endblock %}
+
+
+
+
+

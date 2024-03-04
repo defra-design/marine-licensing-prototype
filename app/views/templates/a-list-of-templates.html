@@ -1,0 +1,98 @@
+{% extends "layouts/main.html" %}
+
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+
+        <h1 class="govuk-heading-l">Templates for the prototype </h1>
+
+        </br>
+
+        <p class="govuk-heading-m">Pages with validation</p>
+
+        <p>Note: Only one error message shown at a time, toggle in the footer</p>
+
+        {{ govukDetails({
+          summaryText: "How to use these templates",
+          text: "Instructions are at the top of each template file and also at the top of routes/templates.js"
+        }) }}
+
+        <table class="govuk-table">
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th scope="col" class="govuk-table__header">Pattern</th>
+                        <th scope="col" class="govuk-table__header">Simple page</th>
+                        <th scope="col" class="govuk-table__header">Complex page</th>
+                        <th scope="col" class="govuk-table__header">Validation and routing</th>
+                    </tr>
+                </thead>
+            <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">Radio buttons</td>
+                    <td class="govuk-table__cell"><a href="PAGENAME_RADIOS?errorthispage=false&">View page</a></td>
+                    <td class="govuk-table__cell"><a href="PAGENAME_RADIOS_COMPLEX?errorthispage=false&">View page</a></td>
+                    <td class="govuk-table__cell">Yes</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">Yes or No</td>
+                    <td class="govuk-table__cell"><a href="PAGENAME_YES_NO?errorthispage=false&">View page</a></td>
+                    <td class="govuk-table__cell"><a href="PAGENAME_YES_NO_COMPLEX?errorthispage=false&">View page</a></td>
+                    <td class="govuk-table__cell">Yes</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">Checkboxes optional</td>
+                    <td class="govuk-table__cell"><a href="PAGENAME_CHECKBOXES_OPTIONAL?errorthispage=false&">View page</a></td>
+                    <td class="govuk-table__cell"><a href="PAGENAME_CHECKBOXES_OPTIONAL_COMPLEX?errorthispage=false&">View page</a></td>
+                    <td class="govuk-table__cell">No validation needed. Just routing</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">Checkboxes </td>
+                    <td class="govuk-table__cell"><a href="PAGENAME_CHECKBOXES?errorthispage=false&">View page</a></td>
+                    <td class="govuk-table__cell"><a href="PAGENAME_CHECKBOXES_COMPLEX?errorthispage=false&">View page</a></td>
+                    <td class="govuk-table__cell">No</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">Text entry</td>
+                    <td class="govuk-table__cell"><a href="PAGENAME_TEXT?errorthispage=false&">View page</a></td>
+                    <td class="govuk-table__cell"><a href="PAGENAME_TEXT_COMPLEX?errorthispage=false&">View page</a></td>
+                    <td class="govuk-table__cell">Yes</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">Number entry</td>
+                    <td class="govuk-table__cell"><a href="PAGENAME_NUMBER?errorthispage=false&">View page</a></td>
+                    <td class="govuk-table__cell"><a href="PAGENAME_NUMBER_COMPLEX?errorthispage=false&">View page</a></td>
+                    <td class="govuk-table__cell">Yes</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">Money entry</td>
+                    <td class="govuk-table__cell"><a href="PAGENAME_MONEY?errorthispage=false&">View page</a></td>
+                    <td class="govuk-table__cell"><a href="PAGENAME_MONEY_COMPLEX?errorthispage=false&">View page</a></td>
+                    <td class="govuk-table__cell">Yes</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">Date entry</td>
+                    <td class="govuk-table__cell"><a href="PAGENAME_DATE?errorthispage=false&">View page</a></td>
+                    <td class="govuk-table__cell"><a href="PAGENAME_DATE_COMPLEX?errorthispage=false&">View page</a></td>
+                    <td class="govuk-table__cell">Yes</td>
+                </tr>
+                <tr class="govuk-table__row">
+                    <td class="govuk-table__cell">Country entry</td>
+                    <td class="govuk-table__cell"><a href="PAGENAME_COUNTRY?errorthispage=false&">View page</a></td>
+                    <td class="govuk-table__cell"><a href="PAGENAME_COUNTRY_COMPLEX?errorthispage=false&">View page</a></td>
+                    <td class="govuk-table__cell">Yes</td>
+                </tr>
+            </tbody>
+        </table>
+
+
+
+    </div>
+</div>
+
+
+<!-- spacing -->
+</br></br></br></br></br></br><hr></br></br>
+</br></br></br></br></br></br></br>
+
+{% endblock %}

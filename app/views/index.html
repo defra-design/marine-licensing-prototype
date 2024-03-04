@@ -5,16 +5,74 @@
 {% block content %}
 
 <div class="govuk-grid-row">
-  <div class="govuk-grid-column-two-thirds">
 
-    {% include "govuk-prototype-kit/includes/homepage-top.njk" %}
+    <div class="govuk-grid-column-two-thirds">
 
-    <h1 class="govuk-heading-xl">
-      {{ serviceName }}
-    </h1>
+        <h1 class="govuk-heading-l">
+          Prototype for marine licences
+        </h1>
 
-    {% include "govuk-prototype-kit/includes/homepage-bottom.njk" %}
-  </div>
+        <h2 class="govuk-heading-m">Account pages</h2>
+        <p>Start Page
+        </br>Sign in or create an account
+        </br>Email address
+        </br>Password
+        </br>List of licence applications
+        </p>
+
+        <h2 class="govuk-heading-m">Licence pages</h2>
+        <p>Task list</p>
+        <p>Placeholder - About the licence</p>
+        <p>Placeholder - Consent and related projects</p>
+        <p>Placeholder - Impact assessments</p>
+        <p>Placeholder - Consultation</p>
+        <p>Placeholder - Dates</p>
+        <p>Placeholder - Sites
+            <br><span class="govuk-!-margin-left-9">List of sites</span>
+            <br><span class="govuk-!-margin-left-9">Coordinates file yes/no</span>
+            <br><span class="govuk-!-margin-left-9">Holes in the site yes/no</span>
+            <br><span class="govuk-!-margin-left-9">Upload file of site perimeter</span>
+            <br><span class="govuk-!-margin-left-9">Upload file of holes - Conditional</span>
+            <br><span class="govuk-!-margin-left-9">Success page</span>
+        </p>
+        <p>Placeholder - etc</p>
+
+    </div>
+
+
+
+    <!-- Right 3rd of the home screen.   Mostly admin stuff  -->
+    <div class="govuk-grid-column-one-third govuk-!-margin-top-9 govuk-!-padding-left-8">
+        <p class="govuk-!-margin-top-6" style="border-top: 2px solid #1d70b8; margin-bottom: 30px;">
+
+        <!--
+        <div class="govuk-!-margin-bottom-7">
+            <h2 class="govuk-heading-s govuk-!-margin-top-3">Analysis and development</h2>
+            <p><a href="#">Handover links</a></p>
+            <p><a href="prototypetools/sharestate">Share page state</a></p>
+            <p><a href="#">Prototype</a></p>
+        </div>
+        -->
+
+        <div class="govuk-!-margin-bottom-7">
+            <h2 class="govuk-heading-s govuk-!-margin-top-3">User research</h2>
+            <p><a href="user-testing-links.html">User testing links</a></p>
+            <!-- <p><a href="#">Prototype</a></p>  -->
+        </div>
+
+        <div class="govuk-!-margin-bottom-7">
+            <h2 class="govuk-heading-s govuk-!-margin-top-3">Designers</h2>
+            <p><a href="templates/a-list-of-templates">Templates </a></p>
+            <p><a href="templates/a-list-of-helpful-features">Helpful features</a></p>
+            <p><a href="#">Prototype</a></p>
+        </div>
+
+    </div>
+
 </div>
+
+
+
+
 
 {% endblock %}

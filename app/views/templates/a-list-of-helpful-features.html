@@ -1,0 +1,46 @@
+{% extends "layouts/main.html" %}
+
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+
+    <h1 class="govuk-heading-l">Helpful features</h1>
+
+
+    <br>
+
+    <p class="govuk-!-font-weight-bold">View all the session data</p>
+
+    <p>See what data the prototype and user has saved to the session.</p>
+
+    <p>On any page click the &nbsp;&nbsp; <a href="/prototype-admin/view-data" style="color: black; font-size: 16px;">View data</a> &nbsp;&nbsp; link in the footer.</p>
+
+    <br>
+    <br>
+
+    <p class="govuk-!-font-weight-bold">Share a page and it's state</p>
+
+    <p>Sharing prototype a URL with someone else will not save any of the page state or saved data.</p>
+
+    <p>On any page click the &nbsp;&nbsp; <a onclick="reloadpagewithsessionupdate()" style="color: black; font-size: 16px;">Share page</a> &nbsp;&nbsp; link in the footer.</p>
+
+    <p>Optional read of <a href="../prototypetools/sharestate">more details</a>.</p>
+
+
+
+    </br>
+    </br>
+
+    </br>
+    </br>
+
+
+  </div>
+</div>
+
+
+<!-- spacing -->
+</br></br></br></br></br></br><hr></br></br>
+</br></br></br></br></br>
+{% endblock %}
