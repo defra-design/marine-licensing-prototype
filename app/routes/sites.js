@@ -60,7 +60,9 @@ module.exports = function (router)
 
 
 
-    // NOT COMPLEX PAGE
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    // Does the area uploaded have holes in it
+    /////////////////////////////////////////////////////////////////////////////////////////////
     router.post('/' + version + section + '/site-shape-holes-router', function (req, res)
     {
         // Turn errors off by default
@@ -73,7 +75,7 @@ module.exports = function (router)
             // Continue to the next page
 
             // This page name needs to match the page the user was just on
-            res.redirect('THE_NEXT_PAGE_NAME');
+            res.redirect('upload-perimeter');
 
         }
         else if (req.session.data['sites-site-shape-holes-radios-yes-no'] == "No")
@@ -84,12 +86,12 @@ module.exports = function (router)
             if (req.session.data['camefromcheckanswers'] == 'true')
             {
                 req.session.data['camefromcheckanswers'] = false;
-                res.redirect('check-answers');
+                res.redirect('upload-holes');
             }
             else
             {
                 // This page name needs to match the page the user was just on
-                res.redirect('THE_NEXT_PAGE_NAME');
+                res.redirect('upload-perimeter');
             }
         }
         else
@@ -105,6 +107,76 @@ module.exports = function (router)
 
 
 
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    // Upload the perimeter polygon file
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    router.post('/' + version + section + '/upload-perimeter-router', function (req, res)
+    {
+        // Turn errors off by default
+        req.session.data['errorthispage'] = "false";
+        req.session.data['errortypeone'] = "false";
+
+        // If Yes was selected, continue to next page
+        if (req.session.data['sites-upload-perimeter-file-upload'] == undefined || req.session.data['sites-upload-perimeter-file-upload'] == "")
+        {
+            // Trigger validation and reload the page
+            req.session.data['errorthispage'] = "true";
+            req.session.data['errortypeone'] = "true";
+
+            // This page name needs to match the page the user was just on
+            res.redirect('upload-perimeter');
+        }
+        else
+        {
+            // Continue to the next page
+
+            // If the user needs to go back to 'check your answers' then take them directly there
+            if (req.session.data['camefromcheckanswers'] == 'true')
+            {
+                req.session.data['camefromcheckanswers'] = false;
+                res.redirect('check-answers');
+            }
+            else if(req.session.data['sites-site-shape-holes-radios-yes-no'] == "Yes")
+            {
+                // if the user selected yes to uploading holes then go to holes upload
+                res.redirect('upload-holes');
+            }
+            else
+            {
+                // go to the success page
+                res.redirect('check-answers');
+            }
+        }
+    })
+
+
+
+
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    // Upload the holes in the site in a file
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    router.post('/' + version + section + '/upload-holes-router', function (req, res)
+    {
+        // Turn errors off by default
+        req.session.data['errorthispage'] = "false";
+        req.session.data['errortypeone'] = "false";
+
+        // If Yes was selected, continue to next page
+        if (req.session.data['sites-upload-holes-file-upload'] == undefined || req.session.data['sites-upload-holes-file-upload'] == "")
+        {
+            // Trigger validation and reload the page
+            req.session.data['errorthispage'] = "true";
+            req.session.data['errortypeone'] = "true";
+
+            // This page name needs to match the page the user was just on
+            res.redirect('upload-holes');
+        }
+        else
+        {
+            // Continue to the next page
+            res.redirect('check-answers');
+        }
+    })
 
 
 

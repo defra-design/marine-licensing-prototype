@@ -1,21 +1,14 @@
 {% extends "layouts/main.html" %}
 
-<!--
-NOTES ON USING THIS TEMPLATE Page
-This will save you time.
-
-1. Type your heading for the page after '% set pageHeadingTextHTML %'
-2. Type/customise the error message after '% set errorTextHTML %'
-3. Use 'Find and replace' to replace "SECTION" with the name of the section of the service you're working on.
-4. Use 'Find and replace' to replace "PAGENAME_YES_NO" with whatever you named this page/file.
-5. Go to the javascript file 'templates.js' and copy the section 'YES AND NO - RADIO BUTTONS - MANDATORY' into your routes.js file.
-6. Follow instructions at the top of the 'templates.js'
--->
 
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-    Do you also want to upload a separate file showing holes in the site being uploaded?
+    Upload a file
+        {% if data['sites-site-shape-holes-radios-yes-no'] == "Yes" %}
+            of the edges
+        {% endif %}
+    of the site
 {% endset %}
 
 
@@ -23,7 +16,7 @@ This will save you time.
 {% set errorTextHTML %}
     <!-- Nothing was selected -->
     {% if data['errortypeone'] == "true" %}
-        Select yes if you PLACEHOLDER between PLACEHOLDER and PLACEHOLDER
+        Select a mapping file
     {% endif %}
 {% endset %}
 
@@ -52,7 +45,7 @@ This will save you time.
                     [
                         {
                             html: errorTextHTML,
-                            href: "#sites-site-shape-holes-radios-yes-no"
+                            href: "#sites-upload-perimeter-file-upload"
                         }
                     ]
                 })
@@ -61,51 +54,29 @@ This will save you time.
         <!--  END OF 'error summary' -->
 
 
+        <h1 class="govuk-heading-l">
+            {{ pageHeadingTextHTML }}
+        </h1>
+
         <!-- go to routes.js for routing  -->
-        <form action="site-shape-holes-router" method="post" novalidate>
+        <form action="upload-perimeter-router" method="post" novalidate>
 
-            {{ govukRadios
+            {{
+                govukFileUpload
                 ({
-                    classes: "govuk-radios--inline",
+                    id: "sites-upload-perimeter-file-upload",
 
-                    name: "sites-site-shape-holes-radios-yes-no",
+                    name: "sites-upload-perimeter-file-upload",
 
-                    id: "sites-site-shape-holes-radios-yes-no",
-
-                    fieldset:
+                    label:
                     {
-                        legend:
-                        {
-                            html: pageHeadingTextHTML,
-                            isPageHeading: true,
-                            classes: "govuk-fieldset__legend--l"
-                        }
+                        text: "Upload a file"
                     },
-
-                    hint:
-                    {
-                        text: "You only need to do this if your site has holes which are not in the location file."
-                    },
-
-                    items:
-                    [
-                        {
-                            value: "Yes",
-                            text: "Yes",
-                            checked: data['sites-site-shape-holes-radios-yes-no'] == "Yes"
-                        },
-                        {
-                            value: "No",
-                            text: "No",
-                            checked: data['sites-site-shape-holes-radios-yes-no'] == "No"
-                        }
-                    ],
 
                     errorMessage: null if data['errorthispage'] != "true"
                                        else { html: errorTextHTML }
                 })
             }}
-
 
             {{ govukButton({ text: "Continue" }) }}
 
@@ -133,6 +104,7 @@ This will save you time.
 
 </form>
 <!--  END OF ERROR LOGIC -->
+
 
 
 

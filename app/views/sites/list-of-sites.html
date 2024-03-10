@@ -13,7 +13,6 @@
 
 
 
-
 {% block content %}
 
 <div class="govuk-grid-row">
@@ -25,22 +24,56 @@
           {{ pageHeadingTextHTML }}
         </h1>
 
+        {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 
-    <!-- go to routes.js for routing  -->
-    <form action="add-site-router" method="post" novalidate>
 
-        {{ govukButton({ text: "Add site" }) }}
+        {% if data['showsite1'] == "true" %}
 
-    </form>
+            {{
+                govukSummaryList
+                ({
+                    rows:
+                    [
+                        {
+                            key:
+                            {
+                                text: "File uploaded"
+                            },
+                            value:
+                            {
+                                text: "" +  data['sites-upload-perimeter-file-upload']
+                            },
+                            actions:
+                            {
+                                items:
+                                [
+                                    {
+                                        href: "check-answers",
+                                        text: "View",
+                                        visuallyHiddenText: "name"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                })
+            }}
+
+        {% endif %}
+
+
+        <!-- go to routes.js for routing  -->
+        <form action="add-site-router" method="post" novalidate>
+
+            {{ govukButton({ text: "Add site" }) }}
+
+        </form>
 
 
     </div>
 
 
 </div>
-
-
-
 
 
 {% endblock %}
