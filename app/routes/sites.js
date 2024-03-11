@@ -42,7 +42,7 @@ module.exports = function (router)
             // Continue to the next page
 
             // This page name needs to match the page the user was just on
-            res.redirect('THE_NEXT_PAGE_NAME');
+            res.redirect('shape-type');
 
         }
         else
@@ -179,5 +179,187 @@ module.exports = function (router)
     })
 
 
+
+
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    // Select a shape
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    router.post('/' + version + section + '/shape-type-router', function (req, res)
+    {
+        // Turn errors off by default
+        req.session.data['errorthispage'] = "false";
+        req.session.data['errortypeone'] = "false";
+
+        // If Yes was selected, continue to next page
+        if (req.session.data['sites-shape-type-radios'] == "Circle")
+        {
+            // Continue to the next page
+            res.redirect('circle-centre-coordinates');
+        }
+        else if (req.session.data['sites-shape-type-radios'] == "Square")
+        {
+            // Continue to the next page
+            res.redirect('THE_NEXT_PAGE_NAME');
+        }
+        else if (req.session.data['sites-shape-type-radios'] == "Another shape")
+        {
+            // Continue to the next page
+            res.redirect('THE_NEXT_PAGE_NAME');
+        }
+        else
+        {
+            // Trigger validation and reload the page
+            req.session.data['errorthispage'] = "true";
+            req.session.data['errortypeone'] = "true";
+
+            // This page name needs to match the page the user was just on
+            res.redirect('shape-type');
+        }
+    })
+
+
+
+
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    // Circle - Enter centre coordinates
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    router.post('/' + version + section + '/circle-centre-coordinates-router', function (req, res)
+    {
+        req.session.data['errorthispage'] = "false";
+        req.session.data['errortypeone'] = "false";
+        req.session.data['errortypetwo'] = "false";
+        req.session.data['errortypethree'] = "false";
+        req.session.data['errortypefour'] = "false";
+
+        // Validation check if first field is blank
+        if (req.session.data['sites-circle-centre-coordinates-latitude-text-input'] == undefined || req.session.data['sites-circle-centre-coordinates-latitude-text-input'] == "")
+        {
+            // Trigger validation and relaunch the page
+            req.session.data['errorthispage'] = "true";
+            req.session.data['errortypeone'] = "true";
+
+            // This page name needs to match the page the user was just on
+            res.redirect('circle-centre-coordinates');
+        }
+        // Validation check if second field is blank
+        else if (req.session.data['sites-circle-centre-coordinates-longitude-text-input'] == undefined || req.session.data['sites-circle-centre-coordinates-longitude-text-input'] == "")
+        {
+            // Trigger validation and relaunch the page
+            req.session.data['errorthispage'] = "true";
+            req.session.data['errortypetwo'] = "true";
+
+            // This page name needs to match the page the user was just on
+            res.redirect('circle-centre-coordinates');
+        }
+        else
+        {
+            // everything with the input is fine so move on to next page
+
+            // If the user needs to go back to 'check your answers' then take them directly there
+            if (req.session.data['camefromcheckanswers'] == 'true')
+            {
+                req.session.data['camefromcheckanswers'] = false;
+                res.redirect('check-answers');
+            }
+            else
+            {
+                // This page name needs to match the page the user was just on
+                res.redirect('circle-width');
+            }
+        }
+    })
+
+
+
+
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    // Circle - Enter width
+    /////////////////////////////////////////////////////////////////////////////////////////////
+    router.post('/' + version + section + '/circle-width-router', function (req, res)
+    {
+        req.session.data['errorthispage'] = "false";
+        req.session.data['errortypeone'] = "false";
+        req.session.data['errortypetwo'] = "false";
+        req.session.data['errortypethree'] = "false";
+        req.session.data['errortypefour'] = "false";
+        req.session.data['errortypefive'] = "false";
+        req.session.data['errortypesix'] = "false";
+        req.session.data['errortypeseven'] = "false";
+
+
+        // Validation check if field is blank
+        if (req.session.data['sites-circle-width-number-input'] == undefined || req.session.data['sites-circle-width-number-input'] == "")
+        {
+            // Trigger validation and relaunch the page
+            req.session.data['errorthispage'] = "true";
+            req.session.data['errortypeone'] = "true";
+
+            // This page name needs to match the page the user was just on
+            res.redirect('circle-width');
+        }
+        else
+        {
+            // Remove any commas which the user or this routing added
+            let nocommasinput = req.session.data['sites-circle-width-number-input'].replace(/,/g, '');
+
+            // if not a number throw first error
+            if( isNaN(req.session.data['sites-circle-width-number-input']) )
+            {
+                // Trigger validation and relaunch the page
+                req.session.data['errorthispage'] = "true";
+                req.session.data['errortypeone'] = "true";
+
+                // This page name needs to match the page the user was just on
+                res.redirect('circle-width');
+            }
+            else
+            {
+                // convert String input to a number
+                let numberinputfloat =  parseFloat( nocommasinput );
+
+
+                if ( numberinputfloat == 0 )
+                {
+                    // Trigger validation and relaunch the page for number lower than 4
+                    req.session.data['errorthispage'] = "true";
+                    req.session.data['errortypethree'] = "true";
+
+                    // This page name needs to match the page the user was just on
+                    res.redirect('circle-width');
+                }
+
+                else if ( numberinputfloat < 0 )
+                {
+                    // Trigger validation and relaunch the page for number lower than 4
+                    req.session.data['errorthispage'] = "true";
+                    req.session.data['errortypefour'] = "true";
+
+                    // This page name needs to match the page the user was just on
+                    res.redirect('circle-width');
+                }
+
+                // everything with the input is fine so move on to next page
+                else
+                {
+                    // Format the number with commas
+                    req.session.data['sites-circle-width-number-input'] = numberinputfloat.toLocaleString();
+
+                    // If the user needs to go back to 'check your answers' then take them directly there
+                    if (req.session.data['camefromcheckanswers'] == 'true')
+                    {
+                        req.session.data['camefromcheckanswers'] = false;
+                        res.redirect('check-answers');
+                    }
+                    else
+                    {
+                        // This page name needs to match the page the user was just on
+                        res.redirect('check-answers');
+                    }
+                }
+            }
+
+        }
+
+    })
 
 }

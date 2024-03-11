@@ -58,6 +58,39 @@
                     ]
                 })
             }}
+        {% endif %}
+
+        {% if data['showsite2'] == "true" %}
+
+            {{
+                govukSummaryList
+                ({
+                    rows:
+                    [
+                        {
+                            key:
+                            {
+                                text: "Circle"
+                            },
+                            value:
+                            {
+                                text:  data['sites-circle-width-number-input'] + " meters wide"
+                            },
+                            actions:
+                            {
+                                items:
+                                [
+                                    {
+                                        href: "check-answers",
+                                        text: "View",
+                                        visuallyHiddenText: "name"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                })
+            }}
 
         {% endif %}
 
