@@ -141,6 +141,44 @@
                     </div>
 
 
+                {% elif data['sites-shape-type-radios'] == "Square" %}
+                    <!-- CIRLCE -->
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Square Latitude or Easting
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ data['sites-square-centre-coordinates-latitude-text-input'] }}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a class="govuk-link" href="square-centre-coordinates?camefromcheckanswers=true&">Change<span class="govuk-visually-hidden"> date of birth</span></a>
+                        </dd>
+                    </div>
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Square Longitude or Northing
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ data['sites-square-centre-coordinates-longitude-text-input'] }}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a class="govuk-link" href="square-centre-coordinates?camefromcheckanswers=true&">Change<span class="govuk-visually-hidden"> date of birth</span></a>
+                        </dd>
+                    </div>
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Square width
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ data['sites-square-width-number-input'] }}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a class="govuk-link" href="square-width?camefromcheckanswers=true&">Change<span class="govuk-visually-hidden"> date of birth</span></a>
+                        </dd>
+                    </div>
+
                 {% endif %}
 
 

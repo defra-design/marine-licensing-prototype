@@ -95,6 +95,41 @@
         {% endif %}
 
 
+        {% if data['showsite3'] == "true" %}
+
+            {{
+                govukSummaryList
+                ({
+                    rows:
+                    [
+                        {
+                            key:
+                            {
+                                text: "Square"
+                            },
+                            value:
+                            {
+                                text:  data['sites-square-width-number-input'] + " meters wide"
+                            },
+                            actions:
+                            {
+                                items:
+                                [
+                                    {
+                                        href: "check-answers",
+                                        text: "View",
+                                        visuallyHiddenText: "name"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                })
+            }}
+
+        {% endif %}
+
+
         <!-- go to routes.js for routing  -->
         <form action="add-site-router" method="post" novalidate>
 

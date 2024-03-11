@@ -15,7 +15,7 @@ This will save you time.
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-    What is the width/diameter of the circle in metres?
+    What is the width of the square in metres?
 {% endset %}
 
 
@@ -62,7 +62,7 @@ This will save you time.
                     [
                         {
                             html: errorTextHTML,
-                            href: "#sites-circle-width-number-input"
+                            href: "#sites-square-width-number-input"
                         }
                     ]
                 })
@@ -72,7 +72,7 @@ This will save you time.
 
 
         <!-- go to routes.js for routing  -->
-        <form action="circle-width-router" method="post" novalidate>
+        <form action="square-width-router" method="post" novalidate>
 
             {{ govukInput
                 ({
@@ -83,14 +83,14 @@ This will save you time.
                         isPageHeading: true
                     },
 
-                    id: "sites-circle-width-number-input",
+                    id: "sites-square-width-number-input",
 
-                    name: "sites-circle-width-number-input",
+                    name: "sites-square-width-number-input",
 
                     errorMessage: null if data['errorthispage'] != "true"
                                        else { html: errorTextHTML },
 
-                    value: data['sites-circle-width-number-input'],
+                    value: data['sites-square-width-number-input'],
 
                     classes: "govuk-input--width-2"
                 })
