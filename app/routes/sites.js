@@ -13,6 +13,8 @@ module.exports = function (router)
         // Turn errors off by default
         req.session.data['errorthispage'] = "false";
 
+        req.session.data['sites-coordinates-file-or-not-radios-yes-no'] = "";
+
         // This takes the user to the first page of the add journey
         res.redirect('coordinates-file-or-not');
     })
@@ -74,9 +76,17 @@ module.exports = function (router)
         {
             // Continue to the next page
 
-            // This page name needs to match the page the user was just on
-            res.redirect('upload-perimeter');
-
+            // If the user needs to go back to 'check your answers' then take them directly there
+            if (req.session.data['camefromcheckanswers'] == 'true')
+            {
+                req.session.data['camefromcheckanswers'] = false;
+                res.redirect('upload-holes');
+            }
+            else
+            {
+                // This page name needs to match the page the user was just on
+                res.redirect('upload-perimeter');
+            }
         }
         else if (req.session.data['sites-site-shape-holes-radios-yes-no'] == "No")
         {
@@ -86,7 +96,7 @@ module.exports = function (router)
             if (req.session.data['camefromcheckanswers'] == 'true')
             {
                 req.session.data['camefromcheckanswers'] = false;
-                res.redirect('upload-holes');
+                res.redirect('check-answers');
             }
             else
             {
@@ -193,11 +203,19 @@ module.exports = function (router)
         // If Yes was selected, continue to next page
         if (req.session.data['sites-shape-type-radios'] == "Circle")
         {
+            req.session.data['sites-circle-centre-coordinates-latitude-text-input'] = "";
+            req.session.data['sites-circle-centre-coordinates-longitude-text-input'] = "";
+            req.session.data['sites-circle-width-number-input'] = "";
+
             // Continue to the next page
             res.redirect('circle-centre-coordinates');
         }
         else if (req.session.data['sites-shape-type-radios'] == "Square")
         {
+            req.session.data['sites-square-centre-coordinates-latitude-text-input'] = "";
+            req.session.data['sites-square-centre-coordinates-longitude-text-input'] = "";
+            req.session.data['sites-square-width-number-input'] = "";
+
             // Continue to the next page
             res.redirect('square-centre-coordinates');
         }

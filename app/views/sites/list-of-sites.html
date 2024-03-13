@@ -48,9 +48,9 @@
                                 items:
                                 [
                                     {
-                                        href: "check-answers",
+                                        href: "check-answers?sites-coordinates-file-or-not-radios-yes-no=Yes&",
                                         text: "View",
-                                        visuallyHiddenText: "name"
+                                        visuallyHiddenText: "View"
                                     }
                                 ]
                             }
@@ -81,9 +81,9 @@
                                 items:
                                 [
                                     {
-                                        href: "check-answers",
+                                        href: "check-answers?sites-coordinates-file-or-not-radios-yes-no=No&sites-shape-type-radios=Circle&",
                                         text: "View",
-                                        visuallyHiddenText: "name"
+                                        visuallyHiddenText: "View"
                                     }
                                 ]
                             }
@@ -116,9 +116,9 @@
                                 items:
                                 [
                                     {
-                                        href: "check-answers",
+                                        href: "check-answers?sites-coordinates-file-or-not-radios-yes-no=No&sites-shape-type-radios=Square&",
                                         text: "View",
-                                        visuallyHiddenText: "name"
+                                        visuallyHiddenText: "View"
                                     }
                                 ]
                             }
@@ -131,11 +131,44 @@
 
 
         <!-- go to routes.js for routing  -->
-        <form action="add-site-router" method="post" novalidate>
+        {% if  data['showsite1'] == "true"  or  data['showsite2'] == "true"  or  data['showsite3'] == "true"  %}
 
-            {{ govukButton({ text: "Add site" }) }}
 
-        </form>
+            <form action="add-site-router" method="post" novalidate>
+                {{
+                    govukButton
+                    ({
+                        text: "Add site",
+                        classes: "govuk-button--secondary"
+                    })
+                }}
+            </form>
+
+            {{
+                govukButton
+                ({
+                    text: "Continue",
+                    href: "../tasklist"
+                })
+            }}
+
+        {% else %}
+            <form action="add-site-router" method="post" novalidate>
+                {{ govukButton({ text: "Add site" }) }}
+            </form>
+
+            {{
+                govukButton
+                ({
+                    text: "Continue",
+                    classes: "govuk-button--secondary",
+                    href: "../tasklist"
+                })
+            }}
+
+        {% endif %}
+
+
 
 
     </div>

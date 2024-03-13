@@ -50,6 +50,7 @@ module.exports = function (router)
         req.session.data['errortypethree'] = "false";
         req.session.data['errortypefour'] = "false";
 
+        /*
         // Validation check if field is blank
         if (req.session.data['account-sign-in-email-address-text-input'] == undefined || req.session.data['account-sign-in-email-address-text-input'] == "")
         {
@@ -86,6 +87,9 @@ module.exports = function (router)
             // everything with the input is fine so move on to next page
             res.redirect('sign-in-password');
         }
+        */
+
+        res.redirect('sign-in-password');
 
     })
 
@@ -101,6 +105,8 @@ module.exports = function (router)
         req.session.data['errortypethree'] = "false";
         req.session.data['errortypefour'] = "false";
 
+
+        /*
         // Validation check if field is blank
         if (req.session.data['account-sign-in-password-text-input'] == undefined || req.session.data['account-sign-in-password-text-input'] == "")
         {
@@ -112,12 +118,15 @@ module.exports = function (router)
             res.redirect('sign-in-password');
         }
 
-
         else
         {
             // everything with the input is fine so move on to next page
             res.redirect('THE_NEXT_PAGE_NAME');
         }
+
+         */
+
+        res.redirect('THE_NEXT_PAGE_NAME');
     })
 
 
