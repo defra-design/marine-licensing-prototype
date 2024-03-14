@@ -23,7 +23,7 @@ module.exports = function (router)
         else if (req.session.data['account-sign-in-or-create-account-radios-yes-no'] == "No, I need to create an account")
         {
             // This page name needs to match the page the user was just on
-            res.redirect('THE_NEXT_PAGE_NAME');
+            res.redirect('sign-in-or-create-account');
         }
         else
         {
@@ -126,7 +126,7 @@ module.exports = function (router)
 
          */
 
-        res.redirect('THE_NEXT_PAGE_NAME');
+        res.redirect('list-of-licence-applications');
     })
 
 

@@ -222,7 +222,7 @@ module.exports = function (router)
         else if (req.session.data['sites-shape-type-radios'] == "Another shape")
         {
             // Continue to the next page
-            res.redirect('THE_NEXT_PAGE_NAME');
+            res.redirect('draw-a-shape');
         }
         else
         {

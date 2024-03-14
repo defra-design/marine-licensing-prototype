@@ -1,0 +1,64 @@
+{% extends "layouts/main.html" %}
+
+<!--
+NOTES ON USING THIS TEMPLATE Page
+This will save you time.
+
+1. Type your heading for the page after '% set pageHeadingTextHTML %'
+2. Type/customise the error message after '% set errorTextHTML %'
+3. Use 'Find and replace' to replace "SECTION" with the name of the section of the service you're working on.
+4. Use 'Find and replace' to replace "PAGENAME_RADIOS" with whatever you named this page/file.
+5. Use 'Find and replace' to replace each of the radio button values. Starting with 'PLACEHOLDER_ANSWER_1'
+6. Go to the javascript file 'templates.js' and copy the section 'RADIO BUTTONS - MANDATORY' into your routes.js file.
+7. Follow instructions at the top of the 'templates.js'
+-->
+
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+        Draw the shape
+{% endset %}
+
+
+<!-- Set the text for the error type -->
+{% set errorTextHTML %}
+    <!-- Nothing was selected -->
+    {% if data['errortypeone'] == "true" %}
+        Select the shape type for the site
+    {% endif %}
+{% endset %}
+
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {% if  data['errorthispage'] == "true"  %}
+        Error:
+    {% endif %}
+
+    {{ pageHeadingTextHTML }}
+{% endblock %}
+
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+
+        <h1 class="govuk-heading-l">
+            {{ pageHeadingTextHTML }}
+        </h1>
+
+        <p>You'll need to draw the shape on an interactive map.</p>
+
+        <p>Try using this <a target="_blank" href="https://explore-marine-plans.marineservices.org.uk/">similar service</a> (opens in a new tab) .</p>
+
+        <p>Note: Select the 'Marine plan policies' tab.</p>
+
+
+    </div>
+</div>
+
+
+{% endblock %}
+
+
