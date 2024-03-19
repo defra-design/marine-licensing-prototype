@@ -1,14 +1,14 @@
 const {log} = require("govuk-prototype-kit/migrator/logger");
 module.exports = function (router)
 {
-    let version = "";
-    let section = "account";
+    let version = "versions/2024-03-18/";
+    let section = "account/";
 
 
     /////////////////////////////////////////////////////////////////////////////////////////////
     // Sign in or create an account
     /////////////////////////////////////////////////////////////////////////////////////////////
-    router.post('/' + version + section + '/sign-in-or-create-account-router', function (req, res)
+    router.post('/' + version + section + 'sign-in-or-create-account-router', function (req, res)
     {
         // Turn errors off by default
         req.session.data['errorthispage'] = "false";
@@ -42,7 +42,7 @@ module.exports = function (router)
     /////////////////////////////////////////////////////////////////////////////////////////////
     // Enter your account email address - SIGN IN
     /////////////////////////////////////////////////////////////////////////////////////////////
-    router.post('/' + version + section + '/sign-in-email-address-router', function (req, res)
+    router.post('/' + version + section + 'sign-in-email-address-router', function (req, res)
     {
         req.session.data['errorthispage'] = "false";
         req.session.data['errortypeone'] = "false";
@@ -97,7 +97,7 @@ module.exports = function (router)
 
 
 
-    router.post('/' + version + section + '/sign-in-password-router', function (req, res)
+    router.post('/' + version + section + 'sign-in-password-router', function (req, res)
     {
         req.session.data['errorthispage'] = "false";
         req.session.data['errortypeone'] = "false";

@@ -1,0 +1,59 @@
+<html>
+
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+        <title>ArcGIS Maps SDK for JavaScript Tutorials: Display a map</title>
+
+        <style>
+            html,
+            body,
+            #viewDiv {
+                padding: 0;
+                margin: 0;
+                height: 100%;
+                width: 100%;
+            }
+        </style>
+
+        <link rel="stylesheet" href="https://js.arcgis.com/4.29/esri/themes/light/main.css">
+        <script src="https://js.arcgis.com/4.29/"></script>
+
+
+        <script>
+            require(
+                ["esri/config", "esri/Map", "esri/views/MapView"],
+                function(esriConfig, Map, MapView)
+                {
+                    esriConfig.apiKey = "AAPKc9a29a2e038e4e6a8083e71935672b6fqFWqxlmDlSJ02j13Zia-Wro8TEwr_6VN8GjaWTk4QDq5RYnPJfev7ax649n4kEB9";
+
+                    const map =
+                    new Map(
+                        {
+                          basemap: "arcgis/light-gray" // arcgis/light-gray/labels   // arcgis/human-geography   // arcgis/imagery
+                        }
+                    );
+
+                    const view =
+                    new MapView(
+                        {
+                            map: map,
+                            center: [-0.4, 53.2], // Longitude, latitude
+                            zoom: 7, // Zoom level
+                            container: "viewDiv" // Div element
+                        }
+                    );
+
+                }
+            );
+        </script>
+
+    </head>
+
+    <body>
+        <p>test</p>
+
+        <div id="viewDiv"></div>
+    </body>
+
+</html>

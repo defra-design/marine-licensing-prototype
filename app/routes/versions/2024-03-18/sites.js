@@ -1,14 +1,14 @@
 const {log} = require("govuk-prototype-kit/migrator/logger");
 module.exports = function (router)
 {
-    let version = "";
-    let section = "sites";
+    let version = "versions/2024-03-18/";
+    let section = "sites/";
 
 
     /////////////////////////////////////////////////////////////////////////////////////////////
     // 'Add site' button has been pressed
     /////////////////////////////////////////////////////////////////////////////////////////////
-    router.post('/' + version + section + '/add-site-router', function (req, res)
+    router.post('/' + version + section + 'add-site-router', function (req, res)
     {
         // Turn errors off by default
         req.session.data['errorthispage'] = "false";
@@ -24,7 +24,7 @@ module.exports = function (router)
     /////////////////////////////////////////////////////////////////////////////////////////////
     // 'File to upload' yes or no
     /////////////////////////////////////////////////////////////////////////////////////////////
-    router.post('/' + version + section + '/coordinates-file-or-not-router', function (req, res)
+    router.post('/' + version + section + 'coordinates-file-or-not-router', function (req, res)
     {
         // Turn errors off by default
         req.session.data['errorthispage'] = "false";
@@ -65,7 +65,7 @@ module.exports = function (router)
     /////////////////////////////////////////////////////////////////////////////////////////////
     // Does the area uploaded have holes in it
     /////////////////////////////////////////////////////////////////////////////////////////////
-    router.post('/' + version + section + '/site-shape-holes-router', function (req, res)
+    router.post('/' + version + section + 'site-shape-holes-router', function (req, res)
     {
         // Turn errors off by default
         req.session.data['errorthispage'] = "false";
@@ -120,7 +120,7 @@ module.exports = function (router)
     /////////////////////////////////////////////////////////////////////////////////////////////
     // Upload the perimeter polygon file
     /////////////////////////////////////////////////////////////////////////////////////////////
-    router.post('/' + version + section + '/upload-perimeter-router', function (req, res)
+    router.post('/' + version + section + 'upload-perimeter-router', function (req, res)
     {
         // Turn errors off by default
         req.session.data['errorthispage'] = "false";
@@ -165,7 +165,7 @@ module.exports = function (router)
     /////////////////////////////////////////////////////////////////////////////////////////////
     // Upload the holes in the site in a file
     /////////////////////////////////////////////////////////////////////////////////////////////
-    router.post('/' + version + section + '/upload-holes-router', function (req, res)
+    router.post('/' + version + section + 'upload-holes-router', function (req, res)
     {
         // Turn errors off by default
         req.session.data['errorthispage'] = "false";
@@ -194,7 +194,7 @@ module.exports = function (router)
     /////////////////////////////////////////////////////////////////////////////////////////////
     // Select a shape
     /////////////////////////////////////////////////////////////////////////////////////////////
-    router.post('/' + version + section + '/shape-type-router', function (req, res)
+    router.post('/' + version + section + 'shape-type-router', function (req, res)
     {
         // Turn errors off by default
         req.session.data['errorthispage'] = "false";
@@ -241,7 +241,7 @@ module.exports = function (router)
     /////////////////////////////////////////////////////////////////////////////////////////////
     // Circle - Enter centre coordinates
     /////////////////////////////////////////////////////////////////////////////////////////////
-    router.post('/' + version + section + '/circle-centre-coordinates-router', function (req, res)
+    router.post('/' + version + section + 'circle-centre-coordinates-router', function (req, res)
     {
         req.session.data['errorthispage'] = "false";
         req.session.data['errortypeone'] = "false";
@@ -293,7 +293,7 @@ module.exports = function (router)
     /////////////////////////////////////////////////////////////////////////////////////////////
     // Circle - Enter width
     /////////////////////////////////////////////////////////////////////////////////////////////
-    router.post('/' + version + section + '/circle-width-router', function (req, res)
+    router.post('/' + version + section + 'circle-width-router', function (req, res)
     {
         req.session.data['errorthispage'] = "false";
         req.session.data['errortypeone'] = "false";
@@ -383,7 +383,7 @@ module.exports = function (router)
     /////////////////////////////////////////////////////////////////////////////////////////////
     // Square - Enter centre coordinates
     /////////////////////////////////////////////////////////////////////////////////////////////
-    router.post('/' + version + section + '/square-centre-coordinates-router', function (req, res)
+    router.post('/' + version + section + 'square-centre-coordinates-router', function (req, res)
     {
         req.session.data['errorthispage'] = "false";
         req.session.data['errortypeone'] = "false";
@@ -435,7 +435,7 @@ module.exports = function (router)
     /////////////////////////////////////////////////////////////////////////////////////////////
     // Square - Enter width
     /////////////////////////////////////////////////////////////////////////////////////////////
-    router.post('/' + version + section + '/square-width-router', function (req, res)
+    router.post('/' + version + section + 'square-width-router', function (req, res)
     {
         req.session.data['errorthispage'] = "false";
         req.session.data['errortypeone'] = "false";

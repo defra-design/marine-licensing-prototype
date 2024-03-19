@@ -1,0 +1,290 @@
+{% extends "layouts/main.html" %}
+
+
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+    Review your site
+{% endset %}
+
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {% if  data['errorthispage'] == "true"  %}
+    Error:
+    {% endif %}
+
+    {{ pageHeadingTextHTML }}
+{% endblock %}
+
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds ">
+
+        <h1 class="govuk-heading-l">
+            {{ pageHeadingTextHTML }}
+        </h1>
+
+
+
+        <dl class="govuk-summary-list">
+
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key govuk-!-width-one-half">
+                    Do you have the coordinates in a file you can upload?
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {{ data['sites-coordinates-file-or-not-radios-yes-no'] }}
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                    <a class="govuk-link" href="coordinates-file-or-not?">Change<span class="govuk-visually-hidden"> name</span></a>
+                </dd>
+            </div>
+
+            {% if data['sites-coordinates-file-or-not-radios-yes-no'] == "Yes" %}
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Do you also want to upload a separate file showing holes in the site being uploaded?
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        {{ data['sites-site-shape-holes-radios-yes-no'] }}
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link" href="site-shape-holes?camefromcheckanswers=true&">Change<span class="govuk-visually-hidden"> date of birth</span></a>
+                    </dd>
+                </div>
+
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        Upload a file
+                            {% if data['sites-site-shape-holes-radios-yes-no'] == "Yes" %}
+                                of the edges
+                            {% endif %}
+                        of the site
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        {{ data['sites-upload-perimeter-file-upload'] }}
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link" href="upload-perimeter?camefromcheckanswers=true&">Change<span class="govuk-visually-hidden"> address</span></a>
+                    </dd>
+                </div>
+
+                {% if data['sites-site-shape-holes-radios-yes-no'] == "Yes" %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Upload a file of the holes in the site
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ data['sites-upload-holes-file-upload'] }}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a class="govuk-link" href="upload-holes.html">Change<span class="govuk-visually-hidden"> address</span></a>
+                        </dd>
+                    </div>
+                {% endif %}
+
+
+            {% elif data['sites-coordinates-file-or-not-radios-yes-no'] == "No" %}
+
+                <!-- WHAT SHAPE -->
+                <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                        What shape is the site?
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                        {{ data['sites-shape-type-radios'] }}
+                    </dd>
+                    <dd class="govuk-summary-list__actions">
+                        <a class="govuk-link" href="shape-type">Change<span class="govuk-visually-hidden"> date of birth</span></a>
+                    </dd>
+                </div>
+
+
+                {% if data['sites-shape-type-radios'] == "Circle" %}
+                    <!-- CIRLCE -->
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Circle Latitude or Easting
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ data['sites-circle-centre-coordinates-latitude-text-input'] }}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a class="govuk-link" href="circle-centre-coordinates?camefromcheckanswers=true&">Change<span class="govuk-visually-hidden"> date of birth</span></a>
+                        </dd>
+                    </div>
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Circle Longitude or Northing
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ data['sites-circle-centre-coordinates-longitude-text-input'] }}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a class="govuk-link" href="circle-centre-coordinates?camefromcheckanswers=true&">Change<span class="govuk-visually-hidden"> date of birth</span></a>
+                        </dd>
+                    </div>
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Circle width/diameter
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ data['sites-circle-width-number-input'] }}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a class="govuk-link" href="circle-width?camefromcheckanswers=true&">Change<span class="govuk-visually-hidden"> date of birth</span></a>
+                        </dd>
+                    </div>
+
+
+                {% elif data['sites-shape-type-radios'] == "Square" %}
+                    <!-- CIRLCE -->
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Square Latitude or Easting
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ data['sites-square-centre-coordinates-latitude-text-input'] }}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a class="govuk-link" href="square-centre-coordinates?camefromcheckanswers=true&">Change<span class="govuk-visually-hidden"> date of birth</span></a>
+                        </dd>
+                    </div>
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Square Longitude or Northing
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ data['sites-square-centre-coordinates-longitude-text-input'] }}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a class="govuk-link" href="square-centre-coordinates?camefromcheckanswers=true&">Change<span class="govuk-visually-hidden"> date of birth</span></a>
+                        </dd>
+                    </div>
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Square width
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ data['sites-square-width-number-input'] }}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a class="govuk-link" href="square-width?camefromcheckanswers=true&">Change<span class="govuk-visually-hidden"> date of birth</span></a>
+                        </dd>
+                    </div>
+
+                {% endif %}
+
+
+            {% endif %}
+
+        </dl>
+
+
+        <details class="govuk-details ">
+            <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">
+                    View site on a map
+                </span>
+            </summary>
+            <div class="govuk-details__text" >
+                {% if data['sites-coordinates-file-or-not-radios-yes-no'] == "Yes" %}
+                    <img src="/public/images/cya-file-map.png" >
+                {% else %}
+                    {% if data['sites-shape-type-radios'] == "Circle" %}
+                        <img src="/public/images/cya-file-map-circle.png" >
+                    {% elif data['sites-shape-type-radios'] == "Square" %}
+                        <img src="/public/images/cya-file-map-square.png" >
+                    {% endif %}
+                {% endif %}
+            </div>
+        </details>
+
+        <details class="govuk-details">
+            <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">
+                    View site on a sataite view
+                </span>
+            </summary>
+            <div class="govuk-details__text">
+
+                {% if data['sites-coordinates-file-or-not-radios-yes-no'] == "Yes" %}
+                    <img src="/public/images/cya-file-satellite.png" >
+                {% else %}
+                    {% if data['sites-shape-type-radios'] == "Circle" %}
+                        <img src="/public/images/cya-file-satellite-circle.png" >
+                    {% elif data['sites-shape-type-radios'] == "Square" %}
+                        <img src="/public/images/cya-file-satellite-square.png" >
+                    {% endif %}
+                {% endif %}
+            </div>
+        </details>
+
+
+
+        <!-- go to routes.js for routing  -->
+        <form action="upload-holes-router" method="post" novalidate>
+
+            {% if data['sites-coordinates-file-or-not-radios-yes-no'] == "Yes" %}
+                {{ govukButton
+                    ({
+                        text: "Save location",
+                        href: "list-of-sites?showsite1=true&"
+                    })
+                }}
+            {% else %}
+                {% if data['sites-shape-type-radios'] == "Circle" %}
+                    {{ govukButton
+                        ({
+                            text: "Save location",
+                            href: "list-of-sites?showsite2=true&"
+                        })
+                    }}
+                {% elif data['sites-shape-type-radios'] == "Square" %}
+                    {{ govukButton
+                        ({
+                            text: "Save location",
+                            href: "list-of-sites?showsite3=true&"
+                        })
+                    }}
+                {% endif %}
+            {% endif %}
+
+        </form>
+
+    </div>
+</div>
+
+
+
+<!-- ERROR LOGIC  drop down to toggle states  -->
+<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-225px;  ">
+
+    <select style="height:30px;" onchange="window.location.href='?'+this.value">
+
+        <option value="errorthispage=false&errortypeone=false"
+                {% if  data['errorthispage'] != "true"  %}selected{% endif %}
+        >Errors - Off</option>
+
+        <option value="errorthispage=true&errortypeone=true"
+                {% if  data['errortypeone'] == 'true'  %}selected{% endif %}
+        >Error 1 - Not selected</option>
+
+    </select>
+
+</form>
+<!--  END OF ERROR LOGIC -->
+
+
+
+
+
+{% endblock %}
+
+
