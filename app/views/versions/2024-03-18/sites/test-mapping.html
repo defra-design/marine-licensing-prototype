@@ -1,59 +1,251 @@
-<html>
+{% extends "../layouts/main.html" %}
 
-    <head>
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+    Draw site area
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }}
+{% endblock %}
+
+
+
+{% block head %}
+
+    {% block meta %}
         <meta charset="utf-8" />
         <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
-        <title>ArcGIS Maps SDK for JavaScript Tutorials: Display a map</title>
+    {% endblock %}
+
+    {% block stylesheets %}
+        {% include "govuk-prototype-kit/includes/stylesheets.njk" %}
+        <link rel="stylesheet" href="https://js.arcgis.com/4.29/esri/themes/light/main.css">
 
         <style>
-            html,
-            body,
-            #viewDiv {
-                padding: 0;
-                margin: 0;
-                height: 100%;
+              .geometry-options {
+                display: flex;
+                flex-direction: row;
+              }
+
+              .geometry-button {
+                flex: 1;
+                border-style: solid;
+                border-width: 1px;
+                border-image: none;
+              }
+
+              .geometry-button-selected {
+                background: #4c4c4c;
+                color: #fff;
+              }
+
+              .options {
+                max-width: 260px;
                 width: 100%;
-            }
+                height: 25px;
+              }
+
+
         </style>
+    {% endblock %}
 
-        <link rel="stylesheet" href="https://js.arcgis.com/4.29/esri/themes/light/main.css">
-        <script src="https://js.arcgis.com/4.29/"></script>
+{% endblock %}
 
 
-        <script>
-            require(
-                ["esri/config", "esri/Map", "esri/views/MapView"],
-                function(esriConfig, Map, MapView)
-                {
-                    esriConfig.apiKey = "AAPKc9a29a2e038e4e6a8083e71935672b6fqFWqxlmDlSJ02j13Zia-Wro8TEwr_6VN8GjaWTk4QDq5RYnPJfev7ax649n4kEB9";
+{% block bodyStart  %}
+    <script src="https://js.arcgis.com/4.29/"></script>
 
-                    const map =
+    <script>
+        require(
+            [
+                "esri/config",
+                "esri/Map",
+                "esri/views/MapView",
+
+                "esri/layers/GraphicsLayer",
+                "esri/widgets/Sketch/SketchViewModel"
+            ],
+            function(esriConfig, Map, MapView, GraphicsLayer, SketchViewModel)
+            {
+                esriConfig.apiKey = "AAPKc9a29a2e038e4e6a8083e71935672b6fqFWqxlmDlSJ02j13Zia-Wro8TEwr_6VN8GjaWTk4QDq5RYnPJfev7ax649n4kEB9";
+
+                const map =
                     new Map(
                         {
-                          basemap: "arcgis/light-gray" // arcgis/light-gray/labels   // arcgis/human-geography   // arcgis/imagery
+                            {% if data['satelitemap'] == "true" %}
+                                basemap: "arcgis/imagery" // arcgis/light-gray/labels   // arcgis/human-geography   // arcgis/imagery
+                            {% else %}
+                                basemap: "arcgis/light-gray" // arcgis/light-gray/labels   // arcgis/human-geography   // arcgis/imagery
+                            {% endif %}
                         }
                     );
 
-                    const view =
+                const view =
                     new MapView(
                         {
                             map: map,
-                            center: [-0.4, 53.2], // Longitude, latitude
-                            zoom: 7, // Zoom level
-                            container: "viewDiv" // Div element
+                            {% if data['satelitemap'] == "true" %}
+                                center: [-2, 52.8], // Longitude, latitude
+                                zoom: 6, // Zoom level
+                            {% else %}
+                                 center: [-1.5, 52.8], // Longitude, latitude
+                                 zoom: 5, // Zoom level
+                            {% endif %}
+
+
+                            container: "viewDiv", // Div element
+                            constraints:
+                                {
+                                    rotationEnabled: false
+                                }
                         }
                     );
 
+                // add a GraphicsLayer for the sketches and the buffer
+                const sketchLayer = new GraphicsLayer();
+                //const bufferLayer = new GraphicsLayer();
+                view.map.add(sketchLayer);
+
+                // use SketchViewModel to draw polygons that are used as a filter
+                let sketchGeometry = null;
+                const sketchViewModel = new SketchViewModel({
+                    layer: sketchLayer,
+                    view: view,
+                    polylineSymbol: {
+                        type: "simple-line",
+                        color: 	"#d4351c",
+                        width: 6
+                    },
+                    polygonSymbol: {
+                        type: "simple-fill",
+                        color: [212, 53, 28, 0.3],
+                        outline:
+                        {
+                            color: 	"#d4351c",
+                            width: 6
+                        }
+                    },
+                    defaultCreateOptions: { hasZ: false }
+                });
+
+                sketchViewModel.on(["create"], (event) => {
+                    // update the filter every time the user finishes drawing the filtergeometry
+                    if (event.state == "complete") {
+                        sketchGeometry = event.graphic.geometry;
+                        //updateFilter();
+                    }
+                });
+
+                sketchViewModel.on(["update"], (event) => {
+                    const eventInfo = event.toolEventInfo;
+                    // update the filter every time the user moves the filtergeometry
+                    if (event.toolEventInfo && event.toolEventInfo.type.includes("stop")) {
+                        sketchGeometry = event.graphics[0].geometry;
+                        //updateFilter();
+                    }
+                });
+
+
+
+                // draw geometry buttons - use the selected geometry to sktech
+                document.getElementById("line-geometry-button").onclick = geometryButtonsClickHandler;
+                document.getElementById("polygon-geometry-button").onclick = geometryButtonsClickHandler;
+                function geometryButtonsClickHandler(event) {
+                    const geometryType = event.target.value;
+
+                    clearFilter();
+
+                    sketchViewModel.create(geometryType);
                 }
-            );
-        </script>
 
-    </head>
 
-    <body>
-        <p>test</p>
+                // remove the filter
+                document.getElementById("clearFilter").addEventListener("click", clearFilter);
 
-        <div id="viewDiv"></div>
-    </body>
 
-</html>
+                function clearFilter() {
+                    sketchGeometry = null;
+                    sketchLayer.removeAll();
+
+                    //filterGeometry = null;
+                    //bufferLayer.removeAll();
+                    //sceneLayerView.filter = null;
+                    //featureLayerView.filter = null;
+                }
+
+
+
+
+            }
+        );
+    </script>
+{% endblock %}
+
+
+{% block content %}
+
+    <div class="govuk-grid-row">
+
+        <div class="govuk-grid-column-two-thirds">
+
+            <h1 class="govuk-heading-l">
+                {{ pageHeadingTextHTML }}
+            </h1>
+
+
+                <div class="govuk-radios govuk-!-margin-bottom-6" data-module="govuk-radios">
+                    <div class="govuk-radios__item">
+                        <input class="govuk-radios__input" id="line-geometry-button" name="radio-shape-type" type="radio" value="polyline">
+                        <label class="govuk-label govuk-radios__label" for="line-geometry-button">
+                            Line
+                        </label>
+                    </div>
+                    <div class="govuk-radios__item">
+                        <input class="govuk-radios__input" id="polygon-geometry-button" name="radio-shape-type" type="radio" value="polygon">
+                        <label class="govuk-label govuk-radios__label" for="polygon-geometry-button">
+                            Shape/Polygon
+                        </label>
+                    </div>
+
+                </div>
+
+                <!--
+                <br />Draw a geometry to filter by:
+                <div class="geometry-options">
+                    <button
+                            class="esri-widget--button esri-icon-polyline geometry-button"
+                            id="line-geometry-button"
+                            value="polyline"
+                            title="Filter by line"
+                    ></button>
+                    <button
+                            class="esri-widget--button esri-icon-polygon geometry-button"
+                            id="polygon-geometry-button"
+                            value="polygon"
+                            title="Filter by polygon"
+                    ></button>
+                </div>
+                -->
+
+            <button type="submit"
+                    class="govuk-button govuk-button--secondary"
+                    data-module="govuk-button"
+                    id="clearFilter">
+                Start again
+            </button>
+
+            <div class="govuk-!-margin-bottom-9" id="viewDiv" style="width: 100%; height: 500px;"></div>
+
+
+            {{ govukButton({ text: "Continue" }) }}
+
+        </div>
+
+    </div>
+
+
+{% endblock %}
+
+
