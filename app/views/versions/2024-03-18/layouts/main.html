@@ -19,12 +19,11 @@ https://prototype-kit.service.gov.uk/docs/how-to-use-layouts
         })
     }}
 
-    {{ govukBackLink
-        ({
-            href: "#",
-            text: "Back"
-        })
-    }}
+    <a
+       class="govuk-back-link"
+       onclick="history.back()"
+    >Back
+    </a>
 
 {% endblock %}
 

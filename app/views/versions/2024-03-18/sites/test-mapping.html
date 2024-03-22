@@ -48,6 +48,7 @@
               }
 
 
+
         </style>
     {% endblock %}
 
@@ -65,9 +66,12 @@
                 "esri/views/MapView",
 
                 "esri/layers/GraphicsLayer",
-                "esri/widgets/Sketch/SketchViewModel"
+                "esri/widgets/Sketch/SketchViewModel",
+
+                "esri/widgets/Zoom"
             ],
-            function(esriConfig, Map, MapView, GraphicsLayer, SketchViewModel)
+
+            function(esriConfig, Map, MapView, GraphicsLayer, SketchViewModel, Zoom)
             {
                 esriConfig.apiKey = "AAPKc9a29a2e038e4e6a8083e71935672b6fqFWqxlmDlSJ02j13Zia-Wro8TEwr_6VN8GjaWTk4QDq5RYnPJfev7ax649n4kEB9";
 
@@ -86,6 +90,10 @@
                     new MapView(
                         {
                             map: map,
+                            ui: {
+                                components: ["attribution"]
+                            },
+
                             {% if data['satelitemap'] == "true" %}
                                 center: [-2, 52.8], // Longitude, latitude
                                 zoom: 6, // Zoom level
@@ -103,10 +111,22 @@
                         }
                     );
 
+                let zoom =
+                    new Zoom(
+                    {
+                        view: view
+                    }
+                );
+
+
+
                 // add a GraphicsLayer for the sketches and the buffer
                 const sketchLayer = new GraphicsLayer();
                 //const bufferLayer = new GraphicsLayer();
                 view.map.add(sketchLayer);
+
+                // The variable for the type of drawing
+                var geometryType = null;
 
                 // use SketchViewModel to draw polygons that are used as a filter
                 let sketchGeometry = null;
@@ -124,8 +144,23 @@
                         outline:
                         {
                             color: 	"#d4351c",
-                            width: 6
-                        }
+                            width: 8
+                        },
+                        symbolLayers:
+                        [
+                            {
+                                size: 1000,        // Height of the extrusion in meters
+                                material: {color: "blue"}
+                            }
+                        ]
+                    },
+                    defaultUpdateOptions:
+                    {
+                        "enableRotation": false,
+                        "enableScaling": false,
+                        "enableZ": false,
+                        "multipleSelectionEnabled": false,
+                        "toggleToolOnClick": false
                     },
                     defaultCreateOptions: { hasZ: false }
                 });
@@ -145,15 +180,18 @@
                         sketchGeometry = event.graphics[0].geometry;
                         //updateFilter();
                     }
+                    else if (eventInfo && eventInfo.type.includes("move"))
+                    {
+                        sketchViewModel.cancel();
+                    }
                 });
-
 
 
                 // draw geometry buttons - use the selected geometry to sktech
                 document.getElementById("line-geometry-button").onclick = geometryButtonsClickHandler;
                 document.getElementById("polygon-geometry-button").onclick = geometryButtonsClickHandler;
                 function geometryButtonsClickHandler(event) {
-                    const geometryType = event.target.value;
+                    geometryType = event.target.value;
 
                     clearFilter();
 
@@ -165,18 +203,37 @@
                 document.getElementById("clearFilter").addEventListener("click", clearFilter);
 
 
-                function clearFilter() {
+                function clearFilter()
+                {
                     sketchGeometry = null;
                     sketchLayer.removeAll();
 
-                    //filterGeometry = null;
-                    //bufferLayer.removeAll();
-                    //sceneLayerView.filter = null;
-                    //featureLayerView.filter = null;
+                    // Start a new model with the same geometry type
+                    sketchViewModel.create(geometryType);
                 }
 
 
+                // Removed the most recent point clicked
+                document.getElementById("undoLastPoint").onclick = undolastpoint;
+                function undolastpoint()
+                {
+                    sketchViewModel.undo();
+                }
 
+
+                // Zoom in
+                document.getElementById("zoomIn").onclick = zoominmap;
+                function zoominmap()
+                {
+                    zoom.zoomIn();
+                }
+
+                // Zoom out
+                document.getElementById("zoomOut").onclick = zoomoutmap;
+                function zoomoutmap()
+                {
+                    zoom.zoomOut();
+                }
 
             }
         );
@@ -193,6 +250,12 @@
             <h1 class="govuk-heading-l">
                 {{ pageHeadingTextHTML }}
             </h1>
+
+               <p>
+                   <a href="test-mapping?satelitemap=false&">Map</a>
+                    or
+                   <a href="test-mapping?satelitemap=true&">satellite</a>
+               </p>
 
 
                 <div class="govuk-radios govuk-!-margin-bottom-6" data-module="govuk-radios">
@@ -229,12 +292,36 @@
                 </div>
                 -->
 
-            <button type="submit"
+            <button type=""
                     class="govuk-button govuk-button--secondary"
                     data-module="govuk-button"
                     id="clearFilter">
-                Start again
+                Start over
             </button>
+
+            <button type=""
+                    class="govuk-button govuk-button--secondary govuk-!-margin-left-3"
+                    data-module="govuk-button"
+                    id="undoLastPoint">
+                Undo last point
+            </button>
+
+
+            <button type=""
+                    class="govuk-button govuk-button--secondary  govuk-!-margin-left-9"
+                    data-module="govuk-button"
+                    id="zoomIn">
+                Zoom in
+            </button>
+
+
+            <button type=""
+                    class="govuk-button govuk-button--secondary  govuk-!-margin-left-3"
+                    data-module="govuk-button"
+                    id="zoomOut">
+                Zoom out
+            </button>
+
 
             <div class="govuk-!-margin-bottom-9" id="viewDiv" style="width: 100%; height: 500px;"></div>
 
