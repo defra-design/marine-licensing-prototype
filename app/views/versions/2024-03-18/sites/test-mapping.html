@@ -138,32 +138,6 @@
 
 
 
-                // TOOLTIP TEXT
-                view.on("pointer-move", function(event)
-                {
-                    var customText = document.getElementById("customText");
-                    customText.style.display = "block";
-
-                    const myDiv = document.getElementById("viewDiv")
-
-
-                    var rect = myDiv.getBoundingClientRect();
-                    var topleftofmapx = rect.left;
-                    var topleftofmapy = rect.top;
-
-                    var x = event.x + topleftofmapx;
-                    var y = event.y + topleftofmapy + window.scrollY;
-
-                    customText.style.left = (x - 100) + "px";
-                    customText.style.top = (y - 80) + "px";
-                });
-
-                view.on("pointer-leave", function(event)
-                {
-                    var customText = document.getElementById("customText");
-                    customText.style.display = "none";
-                });
-
 
 
                 // add a GraphicsLayer for the sketches and the buffer
@@ -186,11 +160,12 @@
                     },
                     polygonSymbol: {
                         type: "simple-fill",
-                        color: [212, 53, 28, 0.3],
+                        color: [255, 255, 255, 0.2],
                         outline:
                         {
-                            color: 	"#d4351c",
-                            width: 8
+                            color: 	"white",
+                            width: 8,
+                            style: "solid"
                         },
                         symbolLayers:
                         [
@@ -212,32 +187,85 @@
                 });
 
 
+
+
+                let drawingCompleted = false;
+
+                let widthOfTooltipDiv = 180;
+
+
+
+                // TOOLTIP TEXT
+                view.on("pointer-move", function(event)
+                {
+                    if(drawingCompleted == true)
+                    {
+                        // don't show the hint text
+                    }
+                    else
+                    {
+                        var customText = document.getElementById("customText");
+                        customText.style.display = "block";
+
+                        const myDiv = document.getElementById("viewDiv")
+
+                        var rect = myDiv.getBoundingClientRect();
+                        var topleftofmapx = rect.left;
+                        var topleftofmapy = rect.top;
+
+                        var x = event.x + topleftofmapx;
+                        var y = event.y + topleftofmapy + window.scrollY;
+
+                        customText.style.left = (x - (widthOfTooltipDiv/2 + 10) ) + "px";
+                        customText.style.top = (y - 80) + "px";
+                    }
+
+                });
+
+
+                view.on("pointer-leave", function(event)
+                {
+                    var customText = document.getElementById("customText");
+                    customText.style.display = "none";
+                });
+
+
+
                 sketchViewModel.on(["create"], (event) =>
                 {
                     const eventInfo = event.toolEventInfo;
+                    var customText = document.getElementById("customText");
 
                     // update the filter every time the user finishes drawing the filtergeometry
                     if (event.state == "complete")
                     {
-                        var customText = document.getElementById("customText");
                         customText.style.display = "none";
+                        drawingCompleted = true;
                     }
                     else if (event.state == "start")
                     {
                         // update the tooltip text
-                        var customText = document.getElementById("customText");
+                        widthOfTooltipDiv = 240;
+                        customText.style.width = widthOfTooltipDiv + 'px';
                         customText.innerText = "Click to continue drawing";
                         //alert("drawn polygon:");
                     }
 
-                    if (eventInfo && eventInfo.type === "vertex-add")
+                    if (eventInfo && eventInfo.type === "vertex-add" && event.state != "complete")
                     {
                         //alert("drawn polygon: point");
                         const addedPoint = eventInfo.added[0];
                         // alert("points " + eventInfo.type + " " +  addedPoint[0] + " " +  addedPoint[1]);
 
-                        var vertices = eventInfo.vertices[0].vertexIndex ;
-                        alert("Number of vertices in the drawn polygon:" +  vertices);
+                        var verticescount = eventInfo.vertices[0].vertexIndex ;
+                        //alert("Number of vertices in the drawn polygon:" +  verticescount);
+
+                        if(verticescount > 2)
+                        {
+                            widthOfTooltipDiv = 340;
+                            customText.style.width = widthOfTooltipDiv + 'px';
+                            customText.innerText = "Click again or double click to complete ";
+                        }
                     }
 
                 });
@@ -246,9 +274,9 @@
 
                 sketchViewModel.on(["update"], (event) =>
                 {
-                    //const eventInfo = event.toolEventInfo;
+                    const eventInfo = event.toolEventInfo;
 
-                    if (event.state == "move")
+                    if (eventInfo && eventInfo.type.includes("move"))
                     {
                         sketchViewModel.cancel();
                     }
@@ -275,11 +303,14 @@
                 {
                     sketchGeometry = null;
                     sketchLayer.removeAll();
+                    drawingCompleted = false;
 
                     // Start a new model with the same geometry type
                     sketchViewModel.create(geometryType);
 
                     var customText = document.getElementById("customText");
+                    widthOfTooltipDiv = 180;
+                    customText.style.width = widthOfTooltipDiv + 'px';
                     customText.innerText = "Click to start drawing";
                 }
 
