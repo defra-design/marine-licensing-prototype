@@ -47,7 +47,21 @@
                 height: 25px;
               }
 
-
+            #customText
+            {
+                position: absolute;
+                pointer-events: none;
+                width: 180px;
+                height: 28px;
+                font-size: 18px;
+                text-align: center;
+                color: white;
+                background-color: rgba(0, 0, 0);
+                padding: 5px;
+                border: 2px solid #000;
+                border-radius: 5px;
+                display: none;
+            }
 
         </style>
     {% endblock %}
@@ -66,12 +80,16 @@
                 "esri/views/MapView",
 
                 "esri/layers/GraphicsLayer",
+
+                "esri/widgets/Sketch",
                 "esri/widgets/Sketch/SketchViewModel",
 
-                "esri/widgets/Zoom"
+                "esri/widgets/Zoom",
+
+                "esri/views/interactive/sketch/SketchTooltipOptions"
             ],
 
-            function(esriConfig, Map, MapView, GraphicsLayer, SketchViewModel, Zoom)
+            function(esriConfig, Map, MapView, GraphicsLayer, Sketch, SketchViewModel, Zoom)
             {
                 esriConfig.apiKey = "AAPKc9a29a2e038e4e6a8083e71935672b6fqFWqxlmDlSJ02j13Zia-Wro8TEwr_6VN8GjaWTk4QDq5RYnPJfev7ax649n4kEB9";
 
@@ -105,9 +123,9 @@
 
                             container: "viewDiv", // Div element
                             constraints:
-                                {
-                                    rotationEnabled: false
-                                }
+                            {
+                                rotationEnabled: false
+                            }
                         }
                     );
 
@@ -117,6 +135,34 @@
                         view: view
                     }
                 );
+
+
+
+                // TOOLTIP TEXT
+                view.on("pointer-move", function(event)
+                {
+                    var customText = document.getElementById("customText");
+                    customText.style.display = "block";
+
+                    const myDiv = document.getElementById("viewDiv")
+
+
+                    var rect = myDiv.getBoundingClientRect();
+                    var topleftofmapx = rect.left;
+                    var topleftofmapy = rect.top;
+
+                    var x = event.x + topleftofmapx;
+                    var y = event.y + topleftofmapy + window.scrollY;
+
+                    customText.style.left = (x - 100) + "px";
+                    customText.style.top = (y - 80) + "px";
+                });
+
+                view.on("pointer-leave", function(event)
+                {
+                    var customText = document.getElementById("customText");
+                    customText.style.display = "none";
+                });
 
 
 
@@ -165,22 +211,44 @@
                     defaultCreateOptions: { hasZ: false }
                 });
 
-                sketchViewModel.on(["create"], (event) => {
+
+                sketchViewModel.on(["create"], (event) =>
+                {
+                    const eventInfo = event.toolEventInfo;
+
                     // update the filter every time the user finishes drawing the filtergeometry
-                    if (event.state == "complete") {
-                        sketchGeometry = event.graphic.geometry;
-                        //updateFilter();
+                    if (event.state == "complete")
+                    {
+                        var customText = document.getElementById("customText");
+                        customText.style.display = "none";
                     }
+                    else if (event.state == "start")
+                    {
+                        // update the tooltip text
+                        var customText = document.getElementById("customText");
+                        customText.innerText = "Click to continue drawing";
+                        //alert("drawn polygon:");
+                    }
+
+                    if (eventInfo && eventInfo.type === "vertex-add")
+                    {
+                        //alert("drawn polygon: point");
+                        const addedPoint = eventInfo.added[0];
+                        // alert("points " + eventInfo.type + " " +  addedPoint[0] + " " +  addedPoint[1]);
+
+                        var vertices = eventInfo.vertices[0].vertexIndex ;
+                        alert("Number of vertices in the drawn polygon:" +  vertices);
+                    }
+
                 });
 
-                sketchViewModel.on(["update"], (event) => {
-                    const eventInfo = event.toolEventInfo;
-                    // update the filter every time the user moves the filtergeometry
-                    if (event.toolEventInfo && event.toolEventInfo.type.includes("stop")) {
-                        sketchGeometry = event.graphics[0].geometry;
-                        //updateFilter();
-                    }
-                    else if (eventInfo && eventInfo.type.includes("move"))
+
+
+                sketchViewModel.on(["update"], (event) =>
+                {
+                    //const eventInfo = event.toolEventInfo;
+
+                    if (event.state == "move")
                     {
                         sketchViewModel.cancel();
                     }
@@ -190,7 +258,8 @@
                 // draw geometry buttons - use the selected geometry to sktech
                 document.getElementById("line-geometry-button").onclick = geometryButtonsClickHandler;
                 document.getElementById("polygon-geometry-button").onclick = geometryButtonsClickHandler;
-                function geometryButtonsClickHandler(event) {
+                function geometryButtonsClickHandler(event)
+                {
                     geometryType = event.target.value;
 
                     clearFilter();
@@ -199,9 +268,8 @@
                 }
 
 
-                // remove the filter
+                // remove the drawing
                 document.getElementById("clearFilter").addEventListener("click", clearFilter);
-
 
                 function clearFilter()
                 {
@@ -210,6 +278,9 @@
 
                     // Start a new model with the same geometry type
                     sketchViewModel.create(geometryType);
+
+                    var customText = document.getElementById("customText");
+                    customText.innerText = "Click to start drawing";
                 }
 
 
@@ -234,6 +305,8 @@
                 {
                     zoom.zoomOut();
                 }
+
+
 
             }
         );
@@ -324,6 +397,8 @@
 
 
             <div class="govuk-!-margin-bottom-9" id="viewDiv" style="width: 100%; height: 500px;"></div>
+
+            <div id="customText">Click to start drawing</div>
 
 
             {{ govukButton({ text: "Continue" }) }}
