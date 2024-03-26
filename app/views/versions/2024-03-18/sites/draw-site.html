@@ -96,7 +96,7 @@
                 const map =
                     new Map(
                         {
-                            {% if data['satelitemap'] == "true" %}
+                            {% if data['satellitemap'] == "true" %}
                                 basemap: "arcgis/imagery" // arcgis/light-gray/labels   // arcgis/human-geography   // arcgis/imagery
                             {% else %}
                                 basemap: "arcgis/light-gray" // arcgis/light-gray/labels   // arcgis/human-geography   // arcgis/imagery
@@ -112,7 +112,7 @@
                                 components: ["attribution"]
                             },
 
-                            {% if data['satelitemap'] == "true" %}
+                            {% if data['satellitemap'] == "true" %}
                                 center: [-2, 52.8], // Longitude, latitude
                                 zoom: 6, // Zoom level
                             {% else %}
@@ -145,8 +145,10 @@
                 //const bufferLayer = new GraphicsLayer();
                 view.map.add(sketchLayer);
 
-                // The variable for the type of drawing
-                var geometryType = null;
+
+
+
+
 
                 // use SketchViewModel to draw polygons that are used as a filter
                 let sketchGeometry = null;
@@ -155,7 +157,13 @@
                     view: view,
                     polylineSymbol: {
                         type: "simple-line",
-                        color: 	"#d4351c",
+                        {% if data['satellitemap'] == "true" %}
+                            // White line for satellite
+                            color: 	"white",
+                        {% else %}
+                            // black line for map
+                            color: 	"black",
+                        {% endif %}
                         width: 6
                     },
                     polygonSymbol: {
@@ -163,7 +171,14 @@
                         color: [255, 255, 255, 0.2],
                         outline:
                         {
-                            color: 	"white",
+                            {% if data['satellitemap'] == "true" %}
+                                // White line for satellite
+                                color: 	"white",
+                            {% else %}
+                                // black line for map
+                                color: 	"black",
+                            {% endif %}
+
                             width: 8,
                             style: "solid"
                         },
@@ -186,11 +201,24 @@
                     defaultCreateOptions: { hasZ: false }
                 });
 
+                // set up the type of shape being drawn
+                var geometryType = null;
+
+                // The variable for the type of drawing
+                {% if data['sites-line-or-polygon-radios'] == "Line" %}
+                    geometryType = "polyline";
+                {% else %}
+                    geometryType = "polygon";
+                {% endif %}
+
+                // Start a new model with the same geometry type
+                sketchViewModel.create(geometryType);
 
 
-
+                // Knowing if the drawing has been completed
                 let drawingCompleted = false;
 
+                // Tooltip width
                 let widthOfTooltipDiv = 180;
 
 
@@ -260,7 +288,7 @@
                         var verticescount = eventInfo.vertices[0].vertexIndex ;
                         //alert("Number of vertices in the drawn polygon:" +  verticescount);
 
-                        if(verticescount > 2)
+                        if(verticescount > 1)
                         {
                             widthOfTooltipDiv = 340;
                             customText.style.width = widthOfTooltipDiv + 'px';
@@ -283,7 +311,9 @@
                 });
 
 
+
                 // draw geometry buttons - use the selected geometry to sktech
+                /*
                 document.getElementById("line-geometry-button").onclick = geometryButtonsClickHandler;
                 document.getElementById("polygon-geometry-button").onclick = geometryButtonsClickHandler;
                 function geometryButtonsClickHandler(event)
@@ -294,6 +324,8 @@
 
                     sketchViewModel.create(geometryType);
                 }
+                */
+
 
 
                 // remove the drawing
@@ -355,10 +387,11 @@
                 {{ pageHeadingTextHTML }}
             </h1>
 
+                <!--
                <p>
-                   <a href="test-mapping?satelitemap=false&">Map</a>
+                   <a href="test-mapping?satellitemap=false&">Map</a>
                     or
-                   <a href="test-mapping?satelitemap=true&">satellite</a>
+                   <a href="test-mapping?satellitemap=true&">satellite</a>
                </p>
 
 
@@ -377,7 +410,7 @@
                     </div>
 
                 </div>
-
+            -->
                 <!--
                 <br />Draw a geometry to filter by:
                 <div class="geometry-options">

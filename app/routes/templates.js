@@ -15,7 +15,7 @@ module.exports = function (router) {
         e.g  registration.js   and   search.js
         This avoids having one huge hard to manage routes.js
      */
-    let section = "templates";
+    let section = "templates/";
 
 
     /*
@@ -51,7 +51,7 @@ module.exports = function (router) {
 
 
     // NOT COMPLEX PAGE
-    router.post('/' + version + section + '/PAGENAME_RADIOS-router', function (req, res)
+    router.post('/' + version + section + 'PAGENAME_RADIOS-router', function (req, res)
     {
         // Turn errors off by default
         req.session.data['errorthispage'] = "false";
@@ -140,7 +140,7 @@ module.exports = function (router) {
     /////////////////////////////////////////////////////////////////////////////////////////////
     // COMPLEX PAGE OF RADIO BUTTONS
     /////////////////////////////////////////////////////////////////////////////////////////////
-    router.post('/' + version + section + '/PAGENAME_RADIOS_COMPLEX-router', function (req, res)
+    router.post('/' + version + section + 'PAGENAME_RADIOS_COMPLEX-router', function (req, res)
     {
         // Turn errors off by default
         req.session.data['errorthispage'] = "false";
@@ -259,7 +259,7 @@ module.exports = function (router) {
 
 
     // NOT COMPLEX PAGE
-    router.post('/' + version + section + '/PAGENAME_YES_NO-router', function (req, res)
+    router.post('/' + version + section + 'PAGENAME_YES_NO-router', function (req, res)
     {
         // Turn errors off by default
         req.session.data['errorthispage'] = "false";
@@ -316,7 +316,7 @@ module.exports = function (router) {
     /////////////////////////////////////////////////////////////////////////////////////////////
     // COMPLEX PAGE  OF YES AND NO
     /////////////////////////////////////////////////////////////////////////////////////////////
-    router.post('/' + version + section + '/PAGENAME_YES_NO_COMPLEX-router', function (req, res)
+    router.post('/' + version + section + 'PAGENAME_YES_NO_COMPLEX-router', function (req, res)
     {
         // Turn errors off by default
         req.session.data['errorthispage'] = "false";
@@ -392,7 +392,7 @@ module.exports = function (router) {
     ////////////////////////////////////////////////////////////////////////////////////
 
     // NOT COMPLEX PAGE
-    router.post('/' + version + section + '/PAGENAME_CHECKBOXES_OPTIONAL-router', function (req, res)
+    router.post('/' + version + section + 'PAGENAME_CHECKBOXES_OPTIONAL-router', function (req, res)
     {
         // Continue to the next page
 
@@ -413,7 +413,7 @@ module.exports = function (router) {
     ////////////////////////////////////////////////////////////////////////////////////
     //  COMPLEX PAGE  FOR CHECKBOXES - OPTIONAL
     ////////////////////////////////////////////////////////////////////////////////////
-    router.post('/' + version + section + '/PAGENAME_CHECKBOXES_OPTIONAL_COMPLEX-router', function (req, res)
+    router.post('/' + version + section + 'PAGENAME_CHECKBOXES_OPTIONAL_COMPLEX-router', function (req, res)
     {
         // Continue to the next page
 
@@ -457,7 +457,7 @@ module.exports = function (router) {
     ////////////////////////////////////////////////////////////////////////////////////
 
     // NOT COMPLEX PAGE
-    router.post('/' + version + section + '/PAGENAME_CHECKBOXES-router', function (req, res)
+    router.post('/' + version + section + 'PAGENAME_CHECKBOXES-router', function (req, res)
     {
         // Turn errors off by default
         req.session.data['errorthispage'] = "false";
@@ -498,7 +498,7 @@ module.exports = function (router) {
     /////////////////////////////////////////////////////////////////////////////////////////////
     // COMPLEX PAGE  OF  CHECKBOXES
     /////////////////////////////////////////////////////////////////////////////////////////////
-    router.post('/' + version + section + '/PAGENAME_CHECKBOXES_COMPLEX-router', function (req, res)
+    router.post('/' + version + section + 'PAGENAME_CHECKBOXES_COMPLEX-router', function (req, res)
     {
         // Turn errors off by default
         req.session.data['errorthispage'] = "false";
@@ -573,7 +573,7 @@ module.exports = function (router) {
 
 
     // NOT COMPLEX PAGE
-    router.post('/' + version + section + '/PAGENAME_TEXT-router', function (req, res)
+    router.post('/' + version + section + 'PAGENAME_TEXT-router', function (req, res)
     {
         req.session.data['errorthispage'] = "false";
         req.session.data['errortypeone'] = "false";
@@ -676,7 +676,7 @@ module.exports = function (router) {
     /////////////////////////////////////////////////////////////////////////////////////////////
     // COMPLEX PAGE  OF TEXT ENTRY
     /////////////////////////////////////////////////////////////////////////////////////////////
-    router.post('/' + version + section + '/PAGENAME_TEXT_COMPLEX-router', function (req, res)
+    router.post('/' + version + section + 'PAGENAME_TEXT_COMPLEX-router', function (req, res)
     {
         req.session.data['errorthispage'] = "false";
         req.session.data['errortypeone'] = "false";
@@ -803,7 +803,7 @@ module.exports = function (router) {
     ////////////////////////////////////////////////////////////////////////////////////
 
 
-    router.post('/' + version + section + '/PAGENAME_NUMBER-router', function (req, res)
+    router.post('/' + version + section + 'PAGENAME_NUMBER-router', function (req, res)
     {
         req.session.data['errorthispage'] = "false";
         req.session.data['errortypeone'] = "false";
@@ -942,7 +942,7 @@ module.exports = function (router) {
     /////////////////////////////////////////////////////////////////////////////////////////////
     // COMPLEX PAGE  OF NUMBER ENTRY
     /////////////////////////////////////////////////////////////////////////////////////////////
-    router.post('/' + version + section + '/PAGENAME_NUMBER_COMPLEX-router', function (req, res)
+    router.post('/' + version + section + 'PAGENAME_NUMBER_COMPLEX-router', function (req, res)
     {
         req.session.data['errorthispage'] = "false";
         req.session.data['errortypeone'] = "false";
@@ -1101,7 +1101,7 @@ module.exports = function (router) {
     ////////////////////////////////////////////////////////////////////////////////////
 
     // MONEY ENTRY  - NOT complex page
-    router.post('/' + version + section + '/PAGENAME_MONEY-router', function (req, res)
+    router.post('/' + version + section + 'PAGENAME_MONEY-router', function (req, res)
     {
         req.session.data['errorthispage'] = "false";
         req.session.data['errortypeone'] = "false";
@@ -1222,7 +1222,7 @@ module.exports = function (router) {
     /////////////////////////////////////////////////////////////////////////////////////////////
     // COMPLEX PAGE FOR MONEY INPUT
     /////////////////////////////////////////////////////////////////////////////////////////////
-    router.post('/' + version + section + '/PAGENAME_MONEY_COMPLEX-router', function (req, res)
+    router.post('/' + version + section + 'PAGENAME_MONEY_COMPLEX-router', function (req, res)
     {
         req.session.data['errorthispage'] = "false";
         req.session.data['errortypeone'] = "false";
@@ -1374,7 +1374,7 @@ module.exports = function (router) {
 
 
     // DATE ENTRY  - NOT COMPLEX PAGE TYPE
-    router.post('/' + version + section + '/PAGENAME_DATE-router', function (req, res)
+    router.post('/' + version + section + 'PAGENAME_DATE-router', function (req, res)
     {
         ////////////////////////////////////////////////////////////////////////////////////
         ////////////////           Resetting all errors to off              ////////////////
@@ -1785,7 +1785,7 @@ module.exports = function (router) {
     //////////////        DATE ENTRY    COMPLEX PAGE TYPE                ///////////////
     ////////////////////////////////////////////////////////////////////////////////////
 
-    router.post('/' + version + section + '/PAGENAME_DATE_COMPLEX-router', function (req, res)
+    router.post('/' + version + section + 'PAGENAME_DATE_COMPLEX-router', function (req, res)
     {
         ////////////////////////////////////////////////////////////////////////////////////
         ////////////////           Resetting all errors to off              ////////////////
@@ -2214,7 +2214,7 @@ module.exports = function (router) {
 
 
     // COUNTRY ENTRY - NOT COMPLEX PAGE
-    router.post('/' + version + section + '/PAGENAME_COUNTRY-router', function (req, res)
+    router.post('/' + version + section + 'PAGENAME_COUNTRY-router', function (req, res)
     {
         req.session.data['errorthispage'] = "false";
         req.session.data['errortypeone'] = "false";
@@ -2267,7 +2267,7 @@ module.exports = function (router) {
     /////////////////////////////////////////////////////////////////////////////////////////////
     // COMPLEX PAGE  OF TEXT ENTRY
     /////////////////////////////////////////////////////////////////////////////////////////////
-    router.post('/' + version + section + '/PAGENAME_COUNTRY_COMPLEX-router', function (req, res)
+    router.post('/' + version + section + 'PAGENAME_COUNTRY_COMPLEX-router', function (req, res)
     {
         req.session.data['errorthispage'] = "false";
         req.session.data['errortypeone'] = "false";
