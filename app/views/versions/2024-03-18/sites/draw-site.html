@@ -429,38 +429,61 @@
                 </div>
                 -->
 
-            <button type=""
-                    class="govuk-button govuk-button--secondary"
-                    data-module="govuk-button"
-                    id="clearFilter">
-                Start over
-            </button>
+            {% if data['sites-line-or-polygon-radios'] == "Line" %}
+                <!--  Don't show any text about drawing a line  -->
+            {% else %}
+                <p>You must draw 4 or more points.</p>
+            {% endif %}
 
-            <button type=""
-                    class="govuk-button govuk-button--secondary govuk-!-margin-left-3"
-                    data-module="govuk-button"
-                    id="undoLastPoint">
-                Undo last point
-            </button>
+            <div class="button-container" style="display: flex; justify-content: space-between;  align-items: center;">
+
+                <div class="left-buttons"
+                     style="text-align: left;">
+
+                    <button type=""
+                            class="govuk-button govuk-button--secondary"
+                            data-module="govuk-button"
+                            id="clearFilter">
+                        Start over
+                    </button>
+
+                    <button type=""
+                            class="govuk-button govuk-button--secondary govuk-!-margin-left-3"
+                            data-module="govuk-button"
+                            id="undoLastPoint">
+                        Undo last point
+                    </button>
+
+                </div>
+
+                <div class="right-buttons"
+                     style="text-align: right;">
+
+                    <button type=""
+                            class="govuk-button govuk-button--secondary "
+                            data-module="govuk-button"
+                            id="zoomIn">
+                        Zoom in
+                    </button>
 
 
-            <button type=""
-                    class="govuk-button govuk-button--secondary  govuk-!-margin-left-9"
-                    data-module="govuk-button"
-                    id="zoomIn">
-                Zoom in
-            </button>
+                    <button type=""
+                            class="govuk-button govuk-button--secondary  govuk-!-margin-left-3"
+                            data-module="govuk-button"
+                            id="zoomOut">
+                        Zoom out
+                    </button>
+                </div>
+
+            </div>
 
 
-            <button type=""
-                    class="govuk-button govuk-button--secondary  govuk-!-margin-left-3"
-                    data-module="govuk-button"
-                    id="zoomOut">
-                Zoom out
-            </button>
 
 
-            <div class="govuk-!-margin-bottom-9" id="viewDiv" style="width: 100%; height: 500px;"></div>
+
+
+
+            <div class="govuk-!-margin-bottom-7" id="viewDiv" style="width: 100%; height: 500px;"></div>
 
             <div id="customText">Click to start drawing</div>
 
