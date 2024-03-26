@@ -226,36 +226,40 @@
             </div>
         </details>
 
-        <p><a href="#">Download PDF of this page</a></p>
-
+        <div class="govuk-form-group">
+            <p><a href="#">Download PDF of this page</a></p>
+        </div>
 
         <!-- go to routes.js for routing  -->
         <form action="upload-holes-router" method="post" novalidate>
 
-            {% if data['sites-coordinates-file-or-not-radios-yes-no'] == "Yes" %}
-                {{ govukButton
-                    ({
-                        text: "Save location",
-                        href: "list-of-sites?showsite1=true&"
-                    })
-                }}
-            {% else %}
-                {% if data['sites-shape-type-radios'] == "Circle" %}
+            <div class="govuk-form-group">
+                {% if data['sites-coordinates-file-or-not-radios-yes-no'] == "Yes" %}
                     {{ govukButton
                         ({
                             text: "Save location",
-                            href: "list-of-sites?showsite2=true&"
+                            href: "list-of-sites?showsite1=true&"
                         })
                     }}
-                {% elif data['sites-shape-type-radios'] == "Square" %}
-                    {{ govukButton
-                        ({
-                            text: "Save location",
-                            href: "list-of-sites?showsite3=true&"
-                        })
-                    }}
+                {% else %}
+                    {% if data['sites-shape-type-radios'] == "Circle" %}
+                        {{ govukButton
+                            ({
+                                text: "Save location",
+                                href: "list-of-sites?showsite2=true&"
+                            })
+                        }}
+                    {% elif data['sites-shape-type-radios'] == "Square" %}
+                        {{ govukButton
+                            ({
+                                text: "Save location",
+                                href: "list-of-sites?showsite3=true&"
+                            })
+                        }}
+                    {% endif %}
                 {% endif %}
-            {% endif %}
+            </div>
+
 
         </form>
 

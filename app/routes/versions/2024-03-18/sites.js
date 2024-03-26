@@ -547,7 +547,7 @@ module.exports = function (router)
             else
             {
                 // This page name needs to match the page the user was just on
-                res.redirect('THE_NEXT_PAGE_NAME');
+                res.redirect('another-shape-enter-coordinates');
             }
         }
         else if (req.session.data['sites-type-or-draw-radios'] == "Draw the site")
