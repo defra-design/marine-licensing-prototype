@@ -86,10 +86,10 @@
 
                 "esri/widgets/Zoom",
 
-                "esri/views/interactive/sketch/SketchTooltipOptions"
+                "esri/geometry/support/webMercatorUtils"
             ],
 
-            function(esriConfig, Map, MapView, GraphicsLayer, Sketch, SketchViewModel, Zoom)
+            function(esriConfig, Map, MapView, GraphicsLayer, Sketch, SketchViewModel, Zoom, webMercatorUtils)
             {
                 esriConfig.apiKey = "AAPKc9a29a2e038e4e6a8083e71935672b6fqFWqxlmDlSJ02j13Zia-Wro8TEwr_6VN8GjaWTk4QDq5RYnPJfev7ax649n4kEB9";
 
@@ -218,6 +218,8 @@
                 // Knowing if the drawing has been completed
                 let drawingCompleted = false;
 
+                let stringofcoordinates = [];
+
                 // Tooltip width
                 let widthOfTooltipDiv = 180;
 
@@ -269,6 +271,16 @@
                     {
                         customText.style.display = "none";
                         drawingCompleted = true;
+
+                        let textofcoordinates = "";
+
+                        for (i=0; i<stringofcoordinates.length; i++)
+                        {
+                            textofcoordinates = textofcoordinates + stringofcoordinates[i] + "\n";
+                        }
+
+                        // Save the coordinates to the input field
+                        document.getElementById("sites-drawn-coordinates").value = textofcoordinates;
                     }
                     else if (event.state == "start")
                     {
@@ -282,12 +294,21 @@
                     if (eventInfo && eventInfo.type === "vertex-add" && event.state != "complete")
                     {
                         //alert("drawn polygon: point");
-                        const addedPoint = eventInfo.added[0];
+                        //const addedPoint = eventInfo.added[0];
                         // alert("points " + eventInfo.type + " " +  addedPoint[0] + " " +  addedPoint[1]);
 
-                        var verticescount = eventInfo.vertices[0].vertexIndex ;
-                        //alert("Number of vertices in the drawn polygon:" +  verticescount);
 
+
+                        var coordinatex = eventInfo.vertices[0].coordinates[0];
+                        var coordinatey = eventInfo.vertices[0].coordinates[1];
+
+                        var lngLat = webMercatorUtils.xyToLngLat(coordinatex, coordinatey);
+
+                        stringofcoordinates.push( lngLat[1] + ", " + lngLat[0] + "\n" );
+                        //alert("Coordinates: " +  lngLat[1] + "," + lngLat[0] + "           " + coordinatex + " " + coordinatey);
+
+                        // Keep a count of the points
+                        var verticescount = eventInfo.vertices[0].vertexIndex ;
                         if(verticescount > 1)
                         {
                             widthOfTooltipDiv = 340;
@@ -344,6 +365,9 @@
                     widthOfTooltipDiv = 180;
                     customText.style.width = widthOfTooltipDiv + 'px';
                     customText.innerText = "Click to start drawing";
+
+                    // Wipe the record of added points
+                    stringofcoordinates = [];
                 }
 
 
@@ -351,6 +375,7 @@
                 document.getElementById("undoLastPoint").onclick = undolastpoint;
                 function undolastpoint()
                 {
+                    stringofcoordinates.pop();
                     sketchViewModel.undo();
                 }
 
@@ -487,8 +512,14 @@
 
             <div id="customText">Click to start drawing</div>
 
+            <form action="check-answers" method="post" novalidate>
 
-            {{ govukButton({ text: "Continue" }) }}
+                <textarea id="sites-drawn-coordinates" name="sites-drawn-coordinates" style="display: none"></textarea>
+
+                {{ govukButton({ text: "Continue" }) }}
+
+            </form>
+
 
         </div>
 

@@ -31,7 +31,7 @@
         <dl class="govuk-summary-list">
 
             <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key govuk-!-width-one-half">
+                <dt class="govuk-summary-list__key govuk-!-width-one-third">
                     Do you have the coordinates in a file you can upload?
                 </dt>
                 <dd class="govuk-summary-list__value">
@@ -184,7 +184,25 @@
 
             {% endif %}
 
+
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Latitude and longitude of drawn points
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {{ data['sites-drawn-coordinates'] }}
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                    <a class="govuk-link" href="#">Change<span class="govuk-visually-hidden"> h</span></a>
+                </dd>
+            </div>
+
+
         </dl>
+
+
+
+
 
 
         <details class="govuk-details ">
@@ -225,6 +243,7 @@
                 {% endif %}
             </div>
         </details>
+
 
         <div class="govuk-form-group">
             <p><a href="#">Download PDF of this page</a></p>
