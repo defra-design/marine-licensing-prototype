@@ -42,6 +42,7 @@
                 </dd>
             </div>
 
+
             {% if data['sites-coordinates-file-or-not-radios-yes-no'] == "Yes" %}
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
@@ -51,7 +52,7 @@
                         {{ data['sites-site-shape-holes-radios-yes-no'] }}
                     </dd>
                     <dd class="govuk-summary-list__actions">
-                        <a class="govuk-link" href="site-shape-holes?camefromcheckanswers=true&">Change<span class="govuk-visually-hidden"> date of birth</span></a>
+                        <a class="govuk-link" href="site-shape-holes?camefromcheckanswers=true&">Change<span class="govuk-visually-hidden"> </span></a>
                     </dd>
                 </div>
 
@@ -86,6 +87,7 @@
                 {% endif %}
 
 
+
             {% elif data['sites-coordinates-file-or-not-radios-yes-no'] == "No" %}
 
                 <!-- WHAT SHAPE -->
@@ -97,9 +99,10 @@
                         {{ data['sites-shape-type-radios'] }}
                     </dd>
                     <dd class="govuk-summary-list__actions">
-                        <a class="govuk-link" href="shape-type">Change<span class="govuk-visually-hidden"> date of birth</span></a>
+                        <a class="govuk-link" href="shape-type">Change<span class="govuk-visually-hidden"> </span></a>
                     </dd>
                 </div>
+
 
 
                 {% if data['sites-shape-type-radios'] == "Circle" %}
@@ -112,7 +115,7 @@
                             {{ data['sites-circle-centre-coordinates-latitude-text-input'] }}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a class="govuk-link" href="circle-centre-coordinates?camefromcheckanswers=true&">Change<span class="govuk-visually-hidden"> date of birth</span></a>
+                            <a class="govuk-link" href="circle-centre-coordinates?camefromcheckanswers=true&">Change<span class="govuk-visually-hidden"> </span></a>
                         </dd>
                     </div>
 
@@ -124,7 +127,7 @@
                             {{ data['sites-circle-centre-coordinates-longitude-text-input'] }}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a class="govuk-link" href="circle-centre-coordinates?camefromcheckanswers=true&">Change<span class="govuk-visually-hidden"> date of birth</span></a>
+                            <a class="govuk-link" href="circle-centre-coordinates?camefromcheckanswers=true&">Change<span class="govuk-visually-hidden"> </span></a>
                         </dd>
                     </div>
 
@@ -136,9 +139,10 @@
                             {{ data['sites-circle-width-number-input'] }}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a class="govuk-link" href="circle-width?camefromcheckanswers=true&">Change<span class="govuk-visually-hidden"> date of birth</span></a>
+                            <a class="govuk-link" href="circle-width?camefromcheckanswers=true&">Change<span class="govuk-visually-hidden"> </span></a>
                         </dd>
                     </div>
+
 
 
                 {% elif data['sites-shape-type-radios'] == "Square" %}
@@ -151,7 +155,7 @@
                             {{ data['sites-square-centre-coordinates-latitude-text-input'] }}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a class="govuk-link" href="square-centre-coordinates?camefromcheckanswers=true&">Change<span class="govuk-visually-hidden"> date of birth</span></a>
+                            <a class="govuk-link" href="square-centre-coordinates?camefromcheckanswers=true&">Change<span class="govuk-visually-hidden"> </span></a>
                         </dd>
                     </div>
 
@@ -163,7 +167,7 @@
                             {{ data['sites-square-centre-coordinates-longitude-text-input'] }}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a class="govuk-link" href="square-centre-coordinates?camefromcheckanswers=true&">Change<span class="govuk-visually-hidden"> date of birth</span></a>
+                            <a class="govuk-link" href="square-centre-coordinates?camefromcheckanswers=true&">Change<span class="govuk-visually-hidden"> </span></a>
                         </dd>
                     </div>
 
@@ -175,33 +179,87 @@
                             {{ data['sites-square-width-number-input'] }}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a class="govuk-link" href="square-width?camefromcheckanswers=true&">Change<span class="govuk-visually-hidden"> date of birth</span></a>
+                            <a class="govuk-link" href="square-width?camefromcheckanswers=true&">Change<span class="govuk-visually-hidden"> </span></a>
                         </dd>
                     </div>
 
+
+                {% elif data['sites-shape-type-radios'] == "Another shape" %}
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            How would you like to add the site?
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ data['sites-type-or-draw-radios'] }}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a class="govuk-link" href="type-or-draw?camefromcheckanswers=true&">Change<span class="govuk-visually-hidden"> </span></a>
+                        </dd>
+                    </div>
+
+
+                    {% if data['sites-type-or-draw-radios'] == "Type or paste coordinates" %}
+
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Enter the coordinates
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                {{ data['coordinates-point-start-latitude'] }}<br>
+                                {{ data['coordinates-point-start-longitude'] }}<br>
+                                {{ data['coordinates-point-2-latitude'] }}<br>
+                                {{ data['coordinates-point-2-longitude'] }}<br>
+                                {{ data['coordinates-point-3-latitude'] }}<br>
+                                {{ data['coordinates-point-3-longitude'] }}<br>
+                                {{ data['coordinates-point-4-latitude'] }}<br>
+                                {{ data['coordinates-point-4-longitude'] }}<br>
+                            </dd>
+                            <dd class="govuk-summary-list__actions">
+                                <a class="govuk-link" href="another-shape-enter-coordinates?camefromcheckanswers=true&">Change<span class="govuk-visually-hidden"> </span></a>
+                            </dd>
+                        </div>
+
+
+                    {% elif data['sites-type-or-draw-radios'] == "Draw the site" %}
+
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                What background would you like to draw on?
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                {{ data['sites-map-or-satellite-radios'] }}
+                            </dd>
+                            <dd class="govuk-summary-list__actions">
+                                <a class="govuk-link" href="map-or-satellite?camefromcheckanswers=true&">Change<span class="govuk-visually-hidden"> </span></a>
+                            </dd>
+                        </div>
+
+                    {% endif %}
+
+
+
                 {% endif %}
+
 
 
             {% endif %}
 
 
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    Latitude and longitude of drawn points
-                </dt>
-                <dd class="govuk-summary-list__value">
-                    {{ data['sites-drawn-coordinates'] }}
-                </dd>
-                <dd class="govuk-summary-list__actions">
-                    <a class="govuk-link" href="#">Change<span class="govuk-visually-hidden"> h</span></a>
-                </dd>
-            </div>
+
 
 
         </dl>
 
 
-
+        <details class="govuk-details ">
+            <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">
+                    View coordinates
+                </span>
+            </summary>
+            <div class="govuk-details__text"  style="white-space: pre-wrap;" >{{ data['sites-drawn-coordinates'] }}</div>
+        </details>
 
 
 

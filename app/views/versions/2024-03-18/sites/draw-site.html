@@ -276,7 +276,7 @@
 
                         for (i=0; i<stringofcoordinates.length; i++)
                         {
-                            textofcoordinates = textofcoordinates + stringofcoordinates[i] + "\n";
+                            textofcoordinates = textofcoordinates + stringofcoordinates[i] + "\n\n";
                         }
 
                         // Save the coordinates to the input field
@@ -304,7 +304,7 @@
 
                         var lngLat = webMercatorUtils.xyToLngLat(coordinatex, coordinatey);
 
-                        stringofcoordinates.push( lngLat[1] + ", " + lngLat[0] + "\n" );
+                        stringofcoordinates.push( lngLat[1] + ", " + lngLat[0]);
                         //alert("Coordinates: " +  lngLat[1] + "," + lngLat[0] + "           " + coordinatex + " " + coordinatey);
 
                         // Keep a count of the points
