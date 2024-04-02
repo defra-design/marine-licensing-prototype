@@ -63,6 +63,22 @@
                 display: none;
             }
 
+
+            .esri-scale-bar__line--top
+            {
+                border-bottom: 2px solid #000;
+                bottom: -1px;
+            }
+
+            .esri-scale-bar__line
+            {
+                z-index: 1;
+                background-color: #fff;
+                height: 1.5em;
+                position: relative;
+                left: 0;
+            }
+
         </style>
     {% endblock %}
 
@@ -86,12 +102,39 @@
 
                 "esri/widgets/Zoom",
 
-                "esri/geometry/support/webMercatorUtils"
+                "esri/geometry/support/webMercatorUtils",
+
+                "esri/widgets/ScaleBar"
             ],
 
-            function(esriConfig, Map, MapView, GraphicsLayer, Sketch, SketchViewModel, Zoom, webMercatorUtils)
+            function(esriConfig, Map, MapView, GraphicsLayer, Sketch, SketchViewModel, Zoom, webMercatorUtils, ScaleBar)
             {
                 esriConfig.apiKey = "AAPKc9a29a2e038e4e6a8083e71935672b6fqFWqxlmDlSJ02j13Zia-Wro8TEwr_6VN8GjaWTk4QDq5RYnPJfev7ax649n4kEB9";
+
+            /*
+                "osm-light-gray": {
+                title: "OpenStreetMap (Light Gray Canvas)",
+                    baseMapLayers: [{
+                    layerType: "VectorTileLayer",
+                    styleUrl: "https://basemaps-api.arcgis.com/arcgis/rest/services/styles/OSM:LightGray:Base",
+                    title: "OSM (Light Gray Base)"
+                }, {
+                    layerType: "VectorTileLayer",
+                    styleUrl: "https://basemaps-api.arcgis.com/arcgis/rest/services/styles/OSM:LightGray:Labels",
+                    title: "OSM (Light Gray Reference)",
+                    isReference: !0
+                }]
+            },
+
+             const webmap = new WebMap({
+                    portalItem: { // autocasts as new PortalItem()
+                        id: "https://basemapstyles-api.arcgis.com/arcgis/rest/services/styles/v2/webmaps/osm/light-gray/base"
+                    }
+                });
+            */
+
+
+
 
                 const map =
                     new Map(
@@ -99,10 +142,11 @@
                             {% if data['satellitemap'] == "true" %}
                                 basemap: "arcgis/imagery" // arcgis/light-gray/labels   // arcgis/human-geography   // arcgis/imagery
                             {% else %}
-                                basemap: "arcgis/light-gray" // arcgis/light-gray/labels   // arcgis/human-geography   // arcgis/imagery
+                                basemap: "osm" // arcgis/light-gray/labels   // arcgis/human-geography   // arcgis/imagery
                             {% endif %}
                         }
                     );
+
 
                 const view =
                     new MapView(
@@ -136,8 +180,19 @@
                     }
                 );
 
+                // SScale bar at the bottom
+                const scaleBar = new ScaleBar
+                (
+                    {
+                        view: view,
+                        unit: "dual", // The scale bar displays both metric and non-metric units.
+                    }
+                );
 
-
+                // Add the widget to the bottom left corner of the view
+                view.ui.add(scaleBar, {
+                    position: "bottom-left"
+                });
 
 
                 // add a GraphicsLayer for the sketches and the buffer
@@ -234,6 +289,7 @@
                     }
                     else
                     {
+                        // Move the hint tex div around with the mouse
                         var customText = document.getElementById("customText");
                         customText.style.display = "block";
 
@@ -248,6 +304,20 @@
 
                         customText.style.left = (x - (widthOfTooltipDiv/2 + 10) ) + "px";
                         customText.style.top = (y - 80) + "px";
+
+
+                        // Update the coordinates show below the map
+                        var point = view.toMap(event);
+                        var thelngLat = webMercatorUtils.xyToLngLat(point.x, point.y);
+
+                        var latitudeText = document.getElementById("latitudeupdate");
+                        var longitudeText = document.getElementById("longitudupdate");
+
+                        var reduceddigitslatitude = thelngLat[1].toString().slice(0, 9);
+                        var reduceddigitslongitude= thelngLat[0].toString().slice(0, 8);
+
+                        latitudeText.textContent = reduceddigitslatitude;
+                        longitudeText.textContent = reduceddigitslongitude;
                     }
 
                 });
@@ -506,13 +576,16 @@
 
 
 
+            <div class="govuk-!-margin-bottom-3" id="viewDiv" style="width: 100%; height: 350px;"></div>
 
 
-            <div class="govuk-!-margin-bottom-7" id="viewDiv" style="width: 100%; height: 500px;"></div>
 
             <div id="customText">Click to start drawing</div>
 
-            <form action="check-answers" method="post" novalidate>
+            <p>Latitude: <span id="latitudeupdate"></span>
+            <br>Longitude: <span id="longitudupdate"></span></p>
+
+            <form action="check-answers" method="post" novalidate >
 
                 <textarea id="sites-drawn-coordinates" name="sites-drawn-coordinates" style="display: none"></textarea>
 
