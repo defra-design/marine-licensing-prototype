@@ -235,6 +235,47 @@
                             </dd>
                         </div>
 
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                What type of drawing do you want?
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                {{ data['sites-line-or-polygon-radios'] }}
+                            </dd>
+                            <dd class="govuk-summary-list__actions">
+                                <a class="govuk-link" href="line-or-polygon?camefromcheckanswers=true&">Change<span class="govuk-visually-hidden"> </span></a>
+                            </dd>
+                        </div>
+
+                        {% if data['sites-line-or-polygon-radios'] == "Line" %}
+
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    How many metres wide is the line?
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    {{ data['sites-line-width-number-input'] }}
+                                </dd>
+                                <dd class="govuk-summary-list__actions">
+                                    <a class="govuk-link" href="line-width?camefromcheckanswers=true&">Change<span class="govuk-visually-hidden"> </span></a>
+                                </dd>
+                            </div>
+
+                        {% endif %}
+
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Draw site area
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                Drawing completed
+                            </dd>
+                            <dd class="govuk-summary-list__actions">
+                                <a class="govuk-link" href="draw-site?camefromcheckanswers=true&">Change<span class="govuk-visually-hidden"> </span></a>
+                            </dd>
+                        </div>
+
+
                     {% endif %}
 
 
@@ -242,11 +283,7 @@
                 {% endif %}
 
 
-
             {% endif %}
-
-
-
 
 
         </dl>
@@ -308,60 +345,52 @@
         </div>
 
         <!-- go to routes.js for routing  -->
-        <form action="upload-holes-router" method="post" novalidate>
 
-            <div class="govuk-form-group">
-                {% if data['sites-coordinates-file-or-not-radios-yes-no'] == "Yes" %}
+
+        <div class="govuk-form-group">
+            {% if data['sites-coordinates-file-or-not-radios-yes-no'] == "Yes" %}
+                {{ govukButton
+                    ({
+                        text: "Save location",
+                        href: "list-of-sites?showsite1=true&"
+                    })
+                }}
+            {% else %}
+                {% if data['sites-shape-type-radios'] == "Circle" %}
                     {{ govukButton
                         ({
-                            text: "Save location",
-                            href: "list-of-sites?showsite1=true&"
+                            text: "Save site",
+                            href: "list-of-sites?showsite2=true&"
                         })
                     }}
-                {% else %}
-                    {% if data['sites-shape-type-radios'] == "Circle" %}
-                        {{ govukButton
-                            ({
-                                text: "Save location",
-                                href: "list-of-sites?showsite2=true&"
-                            })
-                        }}
-                    {% elif data['sites-shape-type-radios'] == "Square" %}
-                        {{ govukButton
-                            ({
-                                text: "Save location",
-                                href: "list-of-sites?showsite3=true&"
-                            })
-                        }}
-                    {% endif %}
+                {% elif data['sites-shape-type-radios'] == "Square" %}
+                    {{ govukButton
+                        ({
+                            text: "Save site",
+                            href: "list-of-sites?showsite3=true&"
+                        })
+                    }}
+
+                {% elif data['sites-shape-type-radios'] == "Another shape" %}
+                    {{ govukButton
+                        ({
+                            text: "Save site",
+                            href: "list-of-sites?showsite4=true&"
+                        })
+                    }}
                 {% endif %}
-            </div>
+            {% endif %}
+        </div>
 
 
-        </form>
+
 
     </div>
 </div>
 
 
 
-<!-- ERROR LOGIC  drop down to toggle states  -->
-<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-225px;  ">
 
-    <select style="height:30px;" onchange="window.location.href='?'+this.value">
-
-        <option value="errorthispage=false&errortypeone=false"
-                {% if  data['errorthispage'] != "true"  %}selected{% endif %}
-        >Errors - Off</option>
-
-        <option value="errorthispage=true&errortypeone=true"
-                {% if  data['errortypeone'] == 'true'  %}selected{% endif %}
-        >Error 1 - Not selected</option>
-
-    </select>
-
-</form>
-<!--  END OF ERROR LOGIC -->
 
 
 

@@ -210,7 +210,8 @@
                 const sketchViewModel = new SketchViewModel({
                     layer: sketchLayer,
                     view: view,
-                    polylineSymbol: {
+                    polylineSymbol:
+                    {
                         type: "simple-line",
                         {% if data['satellitemap'] == "true" %}
                             // White line for satellite
@@ -221,7 +222,10 @@
                         {% endif %}
                         width: 6
                     },
-                    polygonSymbol: {
+
+
+                    polygonSymbol:
+                    {
                         type: "simple-fill",
                         color: [255, 255, 255, 0.2],
                         outline:
@@ -327,6 +331,13 @@
                 {
                     var customText = document.getElementById("customText");
                     customText.style.display = "none";
+
+                    // Don't show katitude and longitude if the mouse is off the map
+                    var latitudeText = document.getElementById("latitudeupdate");
+                    var longitudeText = document.getElementById("longitudupdate");
+
+                    latitudeText.textContent = "";
+                    longitudeText.textContent = "";
                 });
 
 
@@ -585,7 +596,7 @@
             <p>Latitude: <span id="latitudeupdate"></span>
             <br>Longitude: <span id="longitudupdate"></span></p>
 
-            <form action="check-answers" method="post" novalidate >
+            <form action="check-answers?camefromcheckanswers=false&" method="post" novalidate >
 
                 <textarea id="sites-drawn-coordinates" name="sites-drawn-coordinates" style="display: none"></textarea>
 

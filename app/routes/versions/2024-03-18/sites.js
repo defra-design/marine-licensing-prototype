@@ -622,7 +622,7 @@ module.exports = function (router)
             // Continue to the next page
 
             // If the user needs to go back to 'check your answers' then take them directly there
-            if (req.session.data['camefromcheckanswers'] == 'true')
+            if (false)
             {
                 req.session.data['camefromcheckanswers'] = false;
                 res.redirect('check-answers');
@@ -640,7 +640,7 @@ module.exports = function (router)
             // Continue to the next page
 
             // If the user needs to go back to 'check your answers' then take them directly there
-            if (req.session.data['camefromcheckanswers'] == 'true')
+            if (false)
             {
                 req.session.data['camefromcheckanswers'] = false;
                 res.redirect('check-answers');
@@ -682,7 +682,7 @@ module.exports = function (router)
             // Continue to the next page
 
             // If the user needs to go back to 'check your answers' then take them directly there
-            if (req.session.data['camefromcheckanswers'] == 'true')
+            if (false)
             {
                 req.session.data['camefromcheckanswers'] = false;
                 res.redirect('check-answers');
@@ -698,7 +698,7 @@ module.exports = function (router)
             // Continue to the next page
 
             // If the user needs to go back to 'check your answers' then take them directly there
-            if (req.session.data['camefromcheckanswers'] == 'true')
+            if (false)
             {
                 req.session.data['camefromcheckanswers'] = false;
                 res.redirect('check-answers');

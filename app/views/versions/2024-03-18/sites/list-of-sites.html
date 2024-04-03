@@ -127,8 +127,43 @@
         {% endif %}
 
 
+        {% if data['showsite4'] == "true" %}
+
+            {{
+                govukSummaryList
+                ({
+                    rows:
+                    [
+                        {
+                            key:
+                            {
+                                text: "Drawing"
+                            },
+                            value:
+                            {
+                                text:  data['sites-line-or-polygon-radios']
+                            },
+                            actions:
+                            {
+                                items:
+                                [
+                                    {
+                                        href: "check-answers?sites-coordinates-file-or-not-radios-yes-no=No&sites-shape-type-radios=Another shape&",
+                                        text: "View",
+                                        visuallyHiddenText: "View"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                })
+            }}
+
+        {% endif %}
+
+
         <!-- go to routes.js for routing  -->
-        {% if  data['showsite1'] == "true"  or  data['showsite2'] == "true"  or  data['showsite3'] == "true"  %}
+        {% if  data['showsite1'] == "true"  or  data['showsite2'] == "true"  or  data['showsite3'] == "true"  or  data['showsite4'] == "true"   %}
 
 
             <form action="add-site-router" method="post" novalidate>
