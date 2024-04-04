@@ -24,28 +24,32 @@
         <link rel="stylesheet" href="https://js.arcgis.com/4.29/esri/themes/light/main.css">
 
         <style>
-              .geometry-options {
+            .geometry-options
+            {
                 display: flex;
                 flex-direction: row;
-              }
+            }
 
-              .geometry-button {
+            .geometry-button
+            {
                 flex: 1;
                 border-style: solid;
                 border-width: 1px;
                 border-image: none;
-              }
+            }
 
-              .geometry-button-selected {
+            .geometry-button-selected
+            {
                 background: #4c4c4c;
                 color: #fff;
-              }
+            }
 
-              .options {
+            .options
+            {
                 max-width: 260px;
                 width: 100%;
                 height: 25px;
-              }
+            }
 
             #customText
             {
@@ -62,7 +66,6 @@
                 border-radius: 5px;
                 display: none;
             }
-
 
             .esri-scale-bar__line--top
             {
@@ -111,30 +114,6 @@
             {
                 esriConfig.apiKey = "AAPKc9a29a2e038e4e6a8083e71935672b6fqFWqxlmDlSJ02j13Zia-Wro8TEwr_6VN8GjaWTk4QDq5RYnPJfev7ax649n4kEB9";
 
-            /*
-                "osm-light-gray": {
-                title: "OpenStreetMap (Light Gray Canvas)",
-                    baseMapLayers: [{
-                    layerType: "VectorTileLayer",
-                    styleUrl: "https://basemaps-api.arcgis.com/arcgis/rest/services/styles/OSM:LightGray:Base",
-                    title: "OSM (Light Gray Base)"
-                }, {
-                    layerType: "VectorTileLayer",
-                    styleUrl: "https://basemaps-api.arcgis.com/arcgis/rest/services/styles/OSM:LightGray:Labels",
-                    title: "OSM (Light Gray Reference)",
-                    isReference: !0
-                }]
-            },
-
-             const webmap = new WebMap({
-                    portalItem: { // autocasts as new PortalItem()
-                        id: "https://basemapstyles-api.arcgis.com/arcgis/rest/services/styles/v2/webmaps/osm/light-gray/base"
-                    }
-                });
-            */
-
-
-
 
                 const map =
                     new Map(
@@ -152,7 +131,8 @@
                     new MapView(
                         {
                             map: map,
-                            ui: {
+                            ui:
+                            {
                                 components: ["attribution"]
                             },
 
@@ -190,7 +170,8 @@
                 );
 
                 // Add the widget to the bottom left corner of the view
-                view.ui.add(scaleBar, {
+                view.ui.add(scaleBar,
+                {
                     position: "bottom-left"
                 });
 
@@ -204,12 +185,13 @@
 
 
 
-
                 // use SketchViewModel to draw polygons that are used as a filter
                 let sketchGeometry = null;
                 const sketchViewModel = new SketchViewModel({
                     layer: sketchLayer,
                     view: view,
+
+                    // style of the line drawing, not the points though
                     polylineSymbol:
                     {
                         type: "simple-line",
@@ -223,7 +205,7 @@
                         width: 6
                     },
 
-
+                    // style of the shape/polygon drawing, not the points though
                     polygonSymbol:
                     {
                         type: "simple-fill",
@@ -240,15 +222,10 @@
 
                             width: 8,
                             style: "solid"
-                        },
-                        symbolLayers:
-                        [
-                            {
-                                size: 1000,        // Height of the extrusion in meters
-                                material: {color: "blue"}
-                            }
-                        ]
+                        }
                     },
+
+                    // Stopping the shape being modified after the user has created it
                     defaultUpdateOptions:
                     {
                         "enableRotation": false,
@@ -257,7 +234,11 @@
                         "multipleSelectionEnabled": false,
                         "toggleToolOnClick": false
                     },
-                    defaultCreateOptions: { hasZ: false }
+
+                    defaultCreateOptions:
+                    {
+                        hasZ: false
+                    }
                 });
 
                 // set up the type of shape being drawn
@@ -277,6 +258,7 @@
                 // Knowing if the drawing has been completed
                 let drawingCompleted = false;
 
+                // creating this aray for saving each of the clicked coordinate pairs
                 let stringofcoordinates = [];
 
                 // Tooltip width
@@ -374,22 +356,20 @@
 
                     if (eventInfo && eventInfo.type === "vertex-add" && event.state != "complete")
                     {
-                        //alert("drawn polygon: point");
-                        //const addedPoint = eventInfo.added[0];
-                        // alert("points " + eventInfo.type + " " +  addedPoint[0] + " " +  addedPoint[1]);
-
-
-
+                        // Getting the mercator coordinates
                         var coordinatex = eventInfo.vertices[0].coordinates[0];
                         var coordinatey = eventInfo.vertices[0].coordinates[1];
 
+                        // Comverting them to latitude and longitude
                         var lngLat = webMercatorUtils.xyToLngLat(coordinatex, coordinatey);
 
+                        // Saving the saltitude and longitude for check answers
                         stringofcoordinates.push( lngLat[1] + ", " + lngLat[0]);
-                        //alert("Coordinates: " +  lngLat[1] + "," + lngLat[0] + "           " + coordinatex + " " + coordinatey);
 
                         // Keep a count of the points
                         var verticescount = eventInfo.vertices[0].vertexIndex ;
+
+                        // Updating the hint text if there are 3 or more points
                         if(verticescount > 1)
                         {
                             widthOfTooltipDiv = 340;
@@ -406,6 +386,7 @@
                 {
                     const eventInfo = event.toolEventInfo;
 
+                    // Stop the user from e able to move the drawing
                     if (eventInfo && eventInfo.type.includes("move"))
                     {
                         sketchViewModel.cancel();
@@ -433,6 +414,7 @@
                 // remove the drawing
                 document.getElementById("clearFilter").addEventListener("click", clearFilter);
 
+                // Remove the drawing and reset the interface
                 function clearFilter()
                 {
                     sketchGeometry = null;
@@ -442,6 +424,7 @@
                     // Start a new model with the same geometry type
                     sketchViewModel.create(geometryType);
 
+                    // Reset the hint text which follows the mouse
                     var customText = document.getElementById("customText");
                     widthOfTooltipDiv = 180;
                     customText.style.width = widthOfTooltipDiv + 'px';
@@ -493,47 +476,6 @@
                 {{ pageHeadingTextHTML }}
             </h1>
 
-                <!--
-               <p>
-                   <a href="test-mapping?satellitemap=false&">Map</a>
-                    or
-                   <a href="test-mapping?satellitemap=true&">satellite</a>
-               </p>
-
-
-                <div class="govuk-radios govuk-!-margin-bottom-6" data-module="govuk-radios">
-                    <div class="govuk-radios__item">
-                        <input class="govuk-radios__input" id="line-geometry-button" name="radio-shape-type" type="radio" value="polyline">
-                        <label class="govuk-label govuk-radios__label" for="line-geometry-button">
-                            Line
-                        </label>
-                    </div>
-                    <div class="govuk-radios__item">
-                        <input class="govuk-radios__input" id="polygon-geometry-button" name="radio-shape-type" type="radio" value="polygon">
-                        <label class="govuk-label govuk-radios__label" for="polygon-geometry-button">
-                            Shape/Polygon
-                        </label>
-                    </div>
-
-                </div>
-            -->
-                <!--
-                <br />Draw a geometry to filter by:
-                <div class="geometry-options">
-                    <button
-                            class="esri-widget--button esri-icon-polyline geometry-button"
-                            id="line-geometry-button"
-                            value="polyline"
-                            title="Filter by line"
-                    ></button>
-                    <button
-                            class="esri-widget--button esri-icon-polygon geometry-button"
-                            id="polygon-geometry-button"
-                            value="polygon"
-                            title="Filter by polygon"
-                    ></button>
-                </div>
-                -->
 
             {% if data['sites-line-or-polygon-radios'] == "Line" %}
                 <!--  Don't show any text about drawing a line  -->
@@ -543,18 +485,19 @@
 
             <div class="button-container" style="display: flex; justify-content: space-between;  align-items: center;">
 
-                <div class="left-buttons"
+                <div id="left-buttons"
+                     class="govuk-button-group"
                      style="text-align: left;">
 
                     <button type=""
-                            class="govuk-button govuk-button--secondary"
+                            class="govuk-button govuk-button--secondary "
                             data-module="govuk-button"
                             id="clearFilter">
                         Start over
                     </button>
 
                     <button type=""
-                            class="govuk-button govuk-button--secondary govuk-!-margin-left-3"
+                            class="govuk-button govuk-button--secondary"
                             data-module="govuk-button"
                             id="undoLastPoint">
                         Undo last point
@@ -562,21 +505,24 @@
 
                 </div>
 
-                <div class="right-buttons"
-                     style="text-align: right;">
+                <div id="right-buttons"
+                     class="govuk-button-group govuk-!-margin-left-3"
+                     >
 
                     <button type=""
                             class="govuk-button govuk-button--secondary "
                             data-module="govuk-button"
-                            id="zoomIn">
+                            id="zoomIn"
+                            style="margin-left: auto;">
                         Zoom in
                     </button>
 
 
                     <button type=""
-                            class="govuk-button govuk-button--secondary  govuk-!-margin-left-3"
+                            class="govuk-button govuk-button--secondary  govuk-!-padding-left-3 "
                             data-module="govuk-button"
-                            id="zoomOut">
+                            id="zoomOut"
+                            style="margin-left: auto;">
                         Zoom out
                     </button>
                 </div>
@@ -584,20 +530,22 @@
             </div>
 
 
-
-
-
+            <!--  The div which holds the map  -->
             <div class="govuk-!-margin-bottom-3" id="viewDiv" style="width: 100%; height: 350px;"></div>
 
 
-
+            <!-- Shows the latitude and logitude of the mouse -->
             <div id="customText">Click to start drawing</div>
 
+
+            <!-- Shows the latitude and logitude of the mouse -->
             <p>Latitude: <span id="latitudeupdate"></span>
             <br>Longitude: <span id="longitudupdate"></span></p>
 
+
             <form action="check-answers?camefromcheckanswers=false&" method="post" novalidate >
 
+                <!-- Invisible text area for scoring the coordinates which are saved on 'Continue' -->
                 <textarea id="sites-drawn-coordinates" name="sites-drawn-coordinates" style="display: none"></textarea>
 
                 {{ govukButton({ text: "Continue" }) }}
