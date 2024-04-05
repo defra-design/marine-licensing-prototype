@@ -264,6 +264,7 @@
                 // Tooltip width
                 let widthOfTooltipDiv = 180;
 
+                var verticescount = 0;
 
 
                 // TOOLTIP TEXT
@@ -367,7 +368,7 @@
                         stringofcoordinates.push( lngLat[1] + ", " + lngLat[0]);
 
                         // Keep a count of the points
-                        var verticescount = eventInfo.vertices[0].vertexIndex ;
+                        verticescount = eventInfo.vertices[0].vertexIndex ;
 
                         // Updating the hint text if there are 3 or more points
                         if(verticescount > 1)
@@ -441,6 +442,32 @@
                 {
                     stringofcoordinates.pop();
                     sketchViewModel.undo();
+
+                    // Update the floating hin text if needed
+                    var customText = document.getElementById("customText");
+
+                    // Reduce the quantity of points
+                    verticescount = verticescount - 1;
+
+                    if (verticescount < 0)
+                    {
+                        customText.innerText = "Click to start drawing";
+                        widthOfTooltipDiv = 180;
+                        customText.style.width = widthOfTooltipDiv + 'px';
+                    }
+                    else if (verticescount < 2)
+                    {
+                        customText.innerText = "Click to continue drawing";
+                        widthOfTooltipDiv = 240;
+                        customText.style.width = widthOfTooltipDiv + 'px';
+                    }
+                    else
+                    {
+                        customText.innerText = "Click again or double click to complete ";
+                        widthOfTooltipDiv = 340;
+                        customText.style.width = widthOfTooltipDiv + 'px';
+                    }
+
                 }
 
 
