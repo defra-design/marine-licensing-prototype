@@ -16,8 +16,15 @@ const router = govukPrototypeKit.requests.setupRouter()
 // Including other routing javascript
 // This single line tells this 'routes.js' file to include the routing from the 'templates.js' and other js files
 require('./routes/templates.js')(router);
-require('./routes/account.js')(router);
-require('./routes/sites.js')(router);
+
+// 26 february 2024
+require('./routes/versions/2024-02-26/account.js')(router);
+require('./routes/versions/2024-02-26/sites.js')(router);
+
+// 18 March 2024
+require('./routes/versions/2024-03-18/account.js')(router);
+require('./routes/versions/2024-03-18/sites.js')(router);
+
 
 
 
