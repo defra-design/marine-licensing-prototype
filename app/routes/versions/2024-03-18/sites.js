@@ -127,7 +127,8 @@ module.exports = function (router)
         req.session.data['errortypeone'] = "false";
 
         // If Yes was selected, continue to next page
-        if (req.session.data['sites-upload-perimeter-file-upload'] == undefined || req.session.data['sites-upload-perimeter-file-upload'] == "")
+        //if (req.session.data['sites-upload-perimeter-file-upload'] == undefined || req.session.data['sites-upload-perimeter-file-upload'] == "")
+        if(false)
         {
             // Trigger validation and reload the page
             req.session.data['errorthispage'] = "true";
@@ -172,7 +173,8 @@ module.exports = function (router)
         req.session.data['errortypeone'] = "false";
 
         // If Yes was selected, continue to next page
-        if (req.session.data['sites-upload-holes-file-upload'] == undefined || req.session.data['sites-upload-holes-file-upload'] == "")
+        //if (req.session.data['sites-upload-holes-file-upload'] == undefined || req.session.data['sites-upload-holes-file-upload'] == "")
+        if (false)
         {
             // Trigger validation and reload the page
             req.session.data['errorthispage'] = "true";
