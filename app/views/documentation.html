@@ -1,0 +1,52 @@
+{% extends "layouts/main.html" %}
+
+{% set pageName="Home" %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+
+    <div class="govuk-grid-column-two-thirds">
+
+        <h1 class="govuk-heading-l">
+            Documentation
+        </h1>
+
+
+        <h2 class="govuk-heading-m">Heroku and github</h2>
+        <p>There are 2 heroku URLs for the project.
+            <br>   <a href="https://marine-licensing-prototype-5b7b33ca29e1.herokuapp.com/">This one</a> for the team only</p>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>Auto deployed from main <a href="https://github.com/defra-design/marine-licensing-prototype">github branch</a></li>
+
+                </ul>
+            <p>   <a href="https://marine-licensing-internal-6c7d4952cc3d.herokuapp.com/">The other</a> is for user testing only</p>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>Auto deployed from 'internal' <a href="https://github.com/defra-design/marine-licensing-prototype/tree/internal">github branch</a></li>
+
+                </ul>
+        <p>Get support on &nbsp; 'defra-digital' &nbsp;  Slack in the &nbsp;  'prototype-kit-support'  &nbsp;  channel. </p>
+
+
+        <h2 class="govuk-heading-m govuk-!-margin-top-9">Prototype versioning</h2>
+
+        <p>A new version is made for each round of user testing.
+            <br>To make a new version</p>
+            <ul class="govuk-list govuk-list--bullet">
+                <li>Copy and paste the most recent folder in 'views/versions' and name it with today's date.</li>
+                <li>Do the same for 'routes/versions' </li>
+                <li>Update the version number at the top of each new routes file </li>
+                <li>Add the new routes files to the list in the main routes.js file</li>
+                <li>Update the prototype index page so the old links are in the end accordion </li>
+            </ul>
+
+
+    </div>
+
+</div>
+
+
+
+
+
+{% endblock %}
