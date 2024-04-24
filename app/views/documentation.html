@@ -41,6 +41,70 @@
             </ul>
 
 
+
+        <h2 class="govuk-heading-m govuk-!-margin-top-9">Validation</h2>
+
+        <p>Most pages have working validation.
+            <br>The logic is all in the routes files for each section of the application.</p>
+
+        <p>Some pages like emaill address and password have validation turned off for now.</p>
+
+        <p>Validation can be turned on by using the drop down in the footer of each page.
+            <br>This can be useful for content reviews.</p>
+
+
+
+        <h2 class="govuk-heading-m govuk-!-margin-top-9">Mapping software and licences</h2>
+
+        <p>All the maps are from Esri who provide ARCgis maps.</p>
+
+        <p>Their benefits over other mapping solutions:</p>
+        <ul class="govuk-list govuk-list--bullet">
+            <li>MMO already has a licence with Esri being used on '<a href="https://explore-marine-plans.marineservices.org.uk/marine-plans-explorer">Explore marine plans'</a></li>
+            <li>Maps have enough coastal detail for users</li>
+            <li>Drawing on the maps is a standard feature</li>
+            <li>Customising the styling is flexible to meet GDS guidelines</li>
+            <li>Buttons can be text labels off the map instead of cryptic icons</li>
+            <li>Extracting precise drawn coordinates is possible.</li>
+        </ul>
+
+
+
+        <h2 class="govuk-heading-m govuk-!-margin-top-9">Mapping page</h2>
+
+        <p>All the mapping service code is on the 'draw-site' page.</p>
+
+        <p>Some details about the page:</p>
+
+        <ul class="govuk-list govuk-list--bullet">
+            <li>The API version is 4.29 which is a big change from 3.x versions</li>
+            <li>Most but not all styling gets set in CSS at the top</li>
+            <li>The other styling is done in the constructors of 'SktechViewModel'</li>
+            <li>Map and satalite view require differen zoom levels to match</li>
+            <li>The hint text/tooltips change based on number of points drawn.</li>
+            <li>The hint text/tooltips are just a repositioning 'div'</li>
+            <li>Map rotation is turned off as there is no user need.</li>
+            <li>Drawn coordinates are saved into the session via a hidden TextArea</li>
+        </ul>
+
+
+
+
+        <h2 class="govuk-heading-m govuk-!-margin-top-9">Further mapping work to be done</h2>
+
+        <ul class="govuk-list govuk-list--bullet">
+            <li>Latitude and Longitude to be rounded to 5 decimal places everywhere</li>
+            <li>'Undo last point' button needs to be active only when drawing</li>
+            <li>'Edit drawing' needs to be an option once drawing has finished</li>
+            <li>Add north pointer to the map as it's unclear when zoomed in</li>
+            <li>Latitude and logitude need to show even when not activly drawing.</li>
+            <li>Validation needed for when user draws fewer than 4 points</li>
+            <li>Drawing a 'multipoint line' needs to factor in the width the user typed</li>
+            <li>Maps needs displaying on check your answers page</li>
+            <li>The drawing needs saving to the session and reloading as needed</li>
+        </ul>
+
+
     </div>
 
 </div>
