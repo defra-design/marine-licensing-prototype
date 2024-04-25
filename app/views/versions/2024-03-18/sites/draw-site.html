@@ -21,36 +21,12 @@
 
     {% block stylesheets %}
         {% include "govuk-prototype-kit/includes/stylesheets.njk" %}
+        <!-- Note the API is 4.29.  Not the older 3.x versions -->
         <link rel="stylesheet" href="https://js.arcgis.com/4.29/esri/themes/light/main.css">
 
         <style>
-            .geometry-options
-            {
-                display: flex;
-                flex-direction: row;
-            }
 
-            .geometry-button
-            {
-                flex: 1;
-                border-style: solid;
-                border-width: 1px;
-                border-image: none;
-            }
-
-            .geometry-button-selected
-            {
-                background: #4c4c4c;
-                color: #fff;
-            }
-
-            .options
-            {
-                max-width: 260px;
-                width: 100%;
-                height: 25px;
-            }
-
+            /* floating tooltip/Hint text styling */
             #customText
             {
                 position: absolute;
@@ -67,6 +43,8 @@
                 display: none;
             }
 
+            /* Styling for the scale in the bottom left */
+            /* High contrast for accessibility and for any background map or image. */
             .esri-scale-bar__line--top
             {
                 border-bottom: 2px solid #000;
@@ -89,9 +67,11 @@
 
 
 {% block bodyStart  %}
+    <!-- Note the API is 4.29.  Not the older 3.x versions -->
     <script src="https://js.arcgis.com/4.29/"></script>
 
     <script>
+        /*  Importing only the libraries needed  */
         require(
             [
                 "esri/config",
@@ -115,6 +95,9 @@
                 esriConfig.apiKey = "AAPKedc23daa59aa4eeab0f7386312c93126RlZvJKZdkWMlQEKnl8gAyqZrxlr3Ume2Uu-kErVgL8wpHBP7GpUHr8MdjHRYY_il";
 
 
+                /*  Selecting the two types of maps for users  */
+                /*  IF users seelect satalite the they get that map loaded */
+                /*  IF users select map we show them the full colour detailed Open Street Map */
                 const map =
                     new Map(
                         {
@@ -136,6 +119,8 @@
                                 components: ["attribution"]
                             },
 
+                            /*  Different maps reuqie a different center point and zoom level to be the same  */
+                            /*  Map starts off showing the entire English marine area */
                             {% if data['satellitemap'] == "true" %}
                                 center: [-2, 52.8], // Longitude, latitude
                                 zoom: 6, // Zoom level
@@ -145,9 +130,11 @@
                             {% endif %}
 
 
-                            container: "viewDiv", // Div element
+                            container: "viewDiv", // Div element of the map
                             constraints:
                             {
+                                /*  There isn't a need to rotate the maps  */
+                                /*  Users could otherwise do this by mistake due to shortcut keys, etc.  */
                                 rotationEnabled: false
                             }
                         }
@@ -160,7 +147,9 @@
                     }
                 );
 
-                // SScale bar at the bottom
+
+
+                // Scale bar at the bottom
                 const scaleBar = new ScaleBar
                 (
                     {
@@ -169,6 +158,8 @@
                     }
                 );
 
+
+
                 // Add the widget to the bottom left corner of the view
                 view.ui.add(scaleBar,
                 {
@@ -176,12 +167,10 @@
                 });
 
 
-                // add a GraphicsLayer for the sketches and the buffer
+
+                // add a GraphicsLayer for the user's sketches
                 const sketchLayer = new GraphicsLayer();
-                //const bufferLayer = new GraphicsLayer();
                 view.map.add(sketchLayer);
-
-
 
 
 
@@ -191,7 +180,7 @@
                     layer: sketchLayer,
                     view: view,
 
-                    // style of the line drawing, not the points though
+                    // Style of the line drawing, not the points though
                     polylineSymbol:
                     {
                         type: "simple-line",
@@ -209,7 +198,7 @@
                     polygonSymbol:
                     {
                         type: "simple-fill",
-                        color: [255, 255, 255, 0.2],
+                        color: [255, 255, 255, 0.0],  // Not filling the shape with any colour
                         outline:
                         {
                             {% if data['satellitemap'] == "true" %}
@@ -220,10 +209,11 @@
                                 color: 	"black",
                             {% endif %}
 
-                            width: 8,
+                            width: 8,  // Made the line wide so it is more visible for all users to see
                             style: "solid"
                         }
                     },
+
 
                     // Stopping the shape being modified after the user has created it
                     defaultUpdateOptions:
@@ -235,21 +225,26 @@
                         "toggleToolOnClick": false
                     },
 
+
+                    // Setting the interactions to 2D.  ARCgis allows 3D but we have no need for that.
                     defaultCreateOptions:
                     {
                         hasZ: false
                     }
                 });
 
+
                 // set up the type of shape being drawn
                 var geometryType = null;
 
-                // The variable for the type of drawing
+
+                // Set the type of shape based on what the user selected
                 {% if data['sites-line-or-polygon-radios'] == "Line" %}
                     geometryType = "polyline";
                 {% else %}
                     geometryType = "polygon";
                 {% endif %}
+
 
                 // Start a new model with the same geometry type
                 sketchViewModel.create(geometryType);
@@ -258,21 +253,25 @@
                 // Knowing if the drawing has been completed
                 let drawingCompleted = false;
 
-                // creating this aray for saving each of the clicked coordinate pairs
+
+                // Creating this array for saving each of the clicked coordinate pairs
                 let stringofcoordinates = [];
 
-                // Tooltip width
+
+                // Tooltip black background width set to 180 based on initial text width needed
                 let widthOfTooltipDiv = 180;
 
+                // A variable to count the number of point the user has clicked
                 var verticescount = 0;
 
 
-                // TOOLTIP TEXT
+                // Run whenever the mouse moves on the map
                 view.on("pointer-move", function(event)
                 {
                     if(drawingCompleted == true)
                     {
                         // don't show the hint text
+                        // don't update the coordinates
                     }
                     else
                     {
@@ -280,29 +279,35 @@
                         var customText = document.getElementById("customText");
                         customText.style.display = "block";
 
+                        // Get the position of the map div on the page
+                        // This is needed because the map isn't top left of the page
                         const myDiv = document.getElementById("viewDiv")
-
                         var rect = myDiv.getBoundingClientRect();
                         var topleftofmapx = rect.left;
                         var topleftofmapy = rect.top;
-
                         var x = event.x + topleftofmapx;
                         var y = event.y + topleftofmapy + window.scrollY;
 
+                        // Adjust the floating hint text based on the map location on the page
                         customText.style.left = (x - (widthOfTooltipDiv/2 + 10) ) + "px";
                         customText.style.top = (y - 80) + "px";
 
 
                         // Update the coordinates show below the map
                         var point = view.toMap(event);
+                        // map needs adjustment from mercator projection to get lat and long
                         var thelngLat = webMercatorUtils.xyToLngLat(point.x, point.y);
 
                         var latitudeText = document.getElementById("latitudeupdate");
                         var longitudeText = document.getElementById("longitudupdate");
 
+                        // Get the coordinates out of the arrays
+                        //  Only extract a limited number of decimal places as excess accuracy is visual noise.
+                        // Note the Latitude is to more characters since the figure is 2 digits before the decimal place
                         var reduceddigitslatitude = thelngLat[1].toString().slice(0, 9);
                         var reduceddigitslongitude= thelngLat[0].toString().slice(0, 8);
 
+                        // Update the lat and long text showing below the map
                         latitudeText.textContent = reduceddigitslatitude;
                         longitudeText.textContent = reduceddigitslongitude;
                     }
@@ -310,21 +315,26 @@
                 });
 
 
+
+                // When the user moves their cursor/mouse off the map
                 view.on("pointer-leave", function(event)
                 {
+                    // get the hint text div element and hide it
                     var customText = document.getElementById("customText");
                     customText.style.display = "none";
 
-                    // Don't show katitude and longitude if the mouse is off the map
+                    // Don't show latitude and longitude if the mouse is off the map
                     var latitudeText = document.getElementById("latitudeupdate");
                     var longitudeText = document.getElementById("longitudupdate");
 
+                    // Set the latitude and longitude text shown to the user to be blank
                     latitudeText.textContent = "";
                     longitudeText.textContent = "";
                 });
 
 
 
+                // Run whenever a new point is drawn by the user
                 sketchViewModel.on(["create"], (event) =>
                 {
                     const eventInfo = event.toolEventInfo;
@@ -333,9 +343,11 @@
                     // update the filter every time the user finishes drawing the filtergeometry
                     if (event.state == "complete")
                     {
+                        // Hide the hint text for the user
                         customText.style.display = "none";
                         drawingCompleted = true;
 
+                        // Get all the input coordinates and combine them into one string
                         let textofcoordinates = "";
 
                         for (i=0; i<stringofcoordinates.length; i++)
@@ -346,22 +358,23 @@
                         // Save the coordinates to the input field
                         document.getElementById("sites-drawn-coordinates").value = textofcoordinates;
                     }
+
                     else if (event.state == "start")
                     {
-                        // update the tooltip text
+                        // update the tooltip text and show it when the user starts drawing
                         widthOfTooltipDiv = 240;
                         customText.style.width = widthOfTooltipDiv + 'px';
                         customText.innerText = "Click to continue drawing";
-                        //alert("drawn polygon:");
                     }
 
+                    // Whenever the user has added a new point but not the final point
                     if (eventInfo && eventInfo.type === "vertex-add" && event.state != "complete")
                     {
                         // Getting the mercator coordinates
                         var coordinatex = eventInfo.vertices[0].coordinates[0];
                         var coordinatey = eventInfo.vertices[0].coordinates[1];
 
-                        // Comverting them to latitude and longitude
+                        // Converting them to latitude and longitude
                         var lngLat = webMercatorUtils.xyToLngLat(coordinatex, coordinatey);
 
                         // Saving the saltitude and longitude for check answers
@@ -383,11 +396,12 @@
 
 
 
+                // Don't allow the user to update the drawing after they've finished drawing it
                 sketchViewModel.on(["update"], (event) =>
                 {
                     const eventInfo = event.toolEventInfo;
 
-                    // Stop the user from e able to move the drawing
+                    // Stop the user from being able to move the drawing
                     if (eventInfo && eventInfo.type.includes("move"))
                     {
                         sketchViewModel.cancel();
@@ -396,28 +410,14 @@
 
 
 
-                // draw geometry buttons - use the selected geometry to sktech
-                /*
-                document.getElementById("line-geometry-button").onclick = geometryButtonsClickHandler;
-                document.getElementById("polygon-geometry-button").onclick = geometryButtonsClickHandler;
-                function geometryButtonsClickHandler(event)
-                {
-                    geometryType = event.target.value;
-
-                    clearFilter();
-
-                    sketchViewModel.create(geometryType);
-                }
-                */
-
-
-
-                // remove the drawing
+                // Connect the start over again button to the remove functionality
                 document.getElementById("clearFilter").addEventListener("click", clearFilter);
 
                 // Remove the drawing and reset the interface
+                // This allows users to start over again
                 function clearFilter()
                 {
+                    //Delete the exsiting drawing stuff
                     sketchGeometry = null;
                     sketchLayer.removeAll();
                     drawingCompleted = false;
@@ -436,19 +436,25 @@
                 }
 
 
+
                 // Removed the most recent point clicked
+                // Undo button
                 document.getElementById("undoLastPoint").onclick = undolastpoint;
                 function undolastpoint()
                 {
+                    // remove the most recent coordinates from the array of coordinates
                     stringofcoordinates.pop();
                     sketchViewModel.undo();
 
-                    // Update the floating hin text if needed
+                    // Update the floating hint text if needed
                     var customText = document.getElementById("customText");
 
                     // Reduce the quantity of points
                     verticescount = verticescount - 1;
 
+                    // Depending on the amount of points the hint text and div size need adjusting
+                    // This current shows for lines
+                    // This shoult' be adjusted for lines as we need only 2 points
                     if (verticescount < 0)
                     {
                         customText.innerText = "Click to start drawing";
@@ -471,14 +477,17 @@
                 }
 
 
-                // Zoom in
+
+                // Zoom in connected to the grey gov button
                 document.getElementById("zoomIn").onclick = zoominmap;
                 function zoominmap()
                 {
                     zoom.zoomIn();
                 }
 
-                // Zoom out
+
+
+                // Zoom out connected to the grey gov button
                 document.getElementById("zoomOut").onclick = zoomoutmap;
                 function zoomoutmap()
                 {
@@ -486,11 +495,12 @@
                 }
 
 
-
             }
         );
     </script>
 {% endblock %}
+
+
 
 
 {% block content %}
@@ -507,9 +517,12 @@
             {% if data['sites-line-or-polygon-radios'] == "Line" %}
                 <!--  Don't show any text about drawing a line  -->
             {% else %}
+                <!-- this should probably be replaced with validation  -->
+                <!-- we probably don't need to tell everyone up front -->
                 <p>You must draw 4 or more points.</p>
             {% endif %}
 
+            <!--  The 4 buttons above the map  -->
             <div class="button-container" style="display: flex; justify-content: space-between;  align-items: center;">
 
                 <div id="left-buttons"
@@ -532,6 +545,7 @@
 
                 </div>
 
+                <!-- Zoom buttons -->
                 <div id="right-buttons"
                      class="govuk-button-group govuk-!-margin-left-3"
                      >
@@ -561,11 +575,13 @@
             <div class="govuk-!-margin-bottom-3" id="viewDiv" style="width: 100%; height: 350px;"></div>
 
 
-            <!-- Shows the latitude and logitude of the mouse -->
+            <!-- The floating tooltip/hint text  -->
+            <!-- This does NOT factor in the needs of mobile users  -->
             <div id="customText">Click to start drawing</div>
 
 
-            <!-- Shows the latitude and logitude of the mouse -->
+            <!-- Shows the latitude and longitude of the mouse while drawing -->
+            <!--  Javascript needs updating so it also shows these after drawing -->
             <p>Latitude: <span id="latitudeupdate"></span>
             <br>Longitude: <span id="longitudupdate"></span></p>
 
