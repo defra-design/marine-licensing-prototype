@@ -6,7 +6,7 @@ This will save you time.
 
 1. Type your heading for the page after '% set pageHeadingTextHTML %'
 2. Type/customise the error message after '% set errorTextHTML %'
-3. Use 'Find and replace' to replace "check" with the name of the section of the service you're working on.
+3. Use 'Find and replace' to replace "SECTION" with the name of the section of the service you're working on.
 4. Use 'Find and replace' to replace "PAGENAME_RADIOS" with whatever you named this page/file.
 5. Use 'Find and replace' to replace each of the radio button values. Starting with 'PLACEHOLDER_ANSWER_1'
 6. Go to the javascript file 'templates.js' and copy the section 'RADIO BUTTONS - MANDATORY' into your routes.js file.
@@ -16,7 +16,7 @@ This will save you time.
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-Will the activity take place in or over the sea, or on or under the seabed?
+What does the removal activity relate to?
 {% endset %}
 
 <!-- Setting the heading caption -->
@@ -28,7 +28,7 @@ Will the activity take place in or over the sea, or on or under the seabed?
 {% set errorTextHTML %}
     <!-- Nothing was selected -->
     {% if data['errortypeone'] == "true" %}
-        Select where you did PLACEHOLDER
+        Select what the removal activity relates to
     {% endif %}
 {% endset %}
 
@@ -57,7 +57,7 @@ Will the activity take place in or over the sea, or on or under the seabed?
                     [
                         {
                             html: errorTextHTML,
-                            href: "#check-will-the-activity-take-place-in-or-over-the-sea-radios"
+                            href: "#check-what-does-the-removal-activity-relate-to-radios"
                         }
                     ]
                 })
@@ -67,56 +67,47 @@ Will the activity take place in or over the sea, or on or under the seabed?
 
 
         <!-- go to routes.js for routing  -->
-        <form action="will-the-activity-take-place-in-or-over-the-sea-router" method="post" novalidate>
+        <form action="what-does-the-removal-activity-relate-to-router" method="post" novalidate>
 
             {{ govukRadios
                 ({
-                    name: "check-will-the-activity-take-place-in-or-over-the-sea-radios",
+                    name: "check-what-does-the-removal-activity-relate-to-radios",
 
-                    id: "check-will-the-activity-take-place-in-or-over-the-sea-radios",
+                    id: "check-what-does-the-removal-activity-relate-to-radios",
 
-                    fieldset:
-                    {
-                        legend:
-                        {
-                            html: pageHeadingTextHTML,
-                            isPageHeading: true,
-                            classes: "govuk-fieldset__legend--l"
-                        }
-                    },
-
-                    hint:
-                    {
-                        text: "The sea includes any area which is submerged at Mean High Water Springs."
-                    },
+                    fieldset: {
+						legend: {
+							html: '<span class="govuk-caption-l">' + captionTextHTML + '</span> ' + pageHeadingTextHTML,
+							isPageHeading: true,
+							classes: "govuk-fieldset__legend--l"
+						}
+					},
 
                     errorMessage: null if data['errorthispage'] != "true"
-                                       else { html: errorTextHTML },
+                        else { html: errorTextHTML },
 
-                    items:
-                    [
-                        {
-                            value: "Yes",
-                            text: "Yes",
-                            checked: data['check-will-the-activity-take-place-in-or-over-the-sea-radios'] == "Yes"
-                        },
-                        {
-                            value: "No",
-                            text: "No",
-                            checked: data['check-will-the-activity-take-place-in-or-over-the-sea-radios'] == "No"
-                        }
+                        items:
+                        [
+                            {
+                                value: "Scientific instruments and associated equipment",
+                                text: "Scientific instruments and associated equipment",
+                                checked: data['check-what-does-the-removal-activity-relate-to-radio'] == "Scientific instruments and associated equipment"
+                            },
+                            {
+                                value: "Samples for testing and analysis",
+                                text: "Samples for testing and analysis",
+                                checked: data['check-what-does-the-removal-activity-relate-to-radio'] == "Samples for testing and analysis"
+                            },
+                            {
+                                value: "Other",
+                                text: "Other",
+                                checked: data['check-what-does-the-removal-activity-relate-to-radio'] == "Other"
+                            }
                     ]
                 })
             }}
 
-            <p><a href="https://www.gov.uk/guidance/marine-licensing-definitions#mean-high-water-springs" target="_blank">Find out more about Mean High Water Springs (opens in new tab)</a></p>
-
-            {{ govukButton
-                ({ 
-                    text: "Continue",
-                    classes: "govuk-!-margin-top-2"
-                }) 
-            }}
+            {{ govukButton({ text: "Continue" }) }}
 
         </form>
 

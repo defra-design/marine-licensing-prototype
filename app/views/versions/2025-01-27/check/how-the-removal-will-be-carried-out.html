@@ -1,24 +1,22 @@
 {% extends "../layouts/main.html" %}
 
-
 <!--
 NOTES ON USING THIS TEMPLATE Page
 This will save you time.
 
-1. Type your heading for the page after '% set pageHeadingTextHTML %'
+1. Put your heading for the page after '% set pageHeadingTextHTML %'
 2. Put your question heading for the page after '% set questionHeadingTextHTML %'
 3. Type/customise the error message after '% set errorTextHTML %'
 4. Use 'Find and replace' to replace "SECTION" with the name of the section of the service you're working on.
-5. Use 'Find and replace' to replace "PAGENAME_CHECKBOXES" with whatever you named this page/file.
-6. Use 'Find and replace' to replace each of the checkbox values. Starting with 'Construction'
-7. Go to the javascript file 'templates.js' and copy the section 'radios' into your routes.js file.
+5. Use 'Find and replace' to replace "PAGENAME_RADIOS_COMPLEX" with whatever you named this page/file.
+6. Use 'Find and replace' to replace each of the radio button values. Starting with 'PLACEHOLDER_ANSWER_1'
+7. Go to the javascript file 'templates.js' and copy the section 'COMPLEX PAGE OF RADIO BUTTONS' into your routes.js file.
 8. Follow instructions at the top of the 'templates.js'.
 -->
 
-
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-How the substance or object will be deposited 
+How the removal will be carried out
 {% endset %}
 
 <!-- Setting the heading caption -->
@@ -28,15 +26,15 @@ How the substance or object will be deposited 
 
 <!-- Setting the smaller secondary heading lower down the page -->
 {% set questionHeadingTextHTML %}
-Will the substance or object be deposited from anything in this list? 
+Will the removal be carried out from anything in this list?
 {% endset %}
 
 
 <!-- Set the text for the error type -->
 {% set errorTextHTML %}
     <!-- Nothing was selected -->
-    {%  if  data['errortypeone'] == "true"  %}
-         Select an activity
+    {% if data['errortypeone'] == "true" %}
+        Select will the removal be carried out from anything in this list?
     {% endif %}
 {% endset %}
 
@@ -55,7 +53,6 @@ Will the substance or object be deposited from anything in this list? 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
-
         <!-- ERROR LOGIC 'error summary' -->
         {% if data['errorthispage'] == "true" %}
             {{ govukErrorSummary
@@ -65,7 +62,7 @@ Will the substance or object be deposited from anything in this list? 
                     [
                         {
                             html: errorTextHTML,
-                            href: "#check-how-the-substance-or-object-will-be-deposited-radios"
+                            href: "#check-how-the-removal-will-be-carried-out-radios"
                         }
                     ]
                 })
@@ -74,8 +71,8 @@ Will the substance or object be deposited from anything in this list? 
         <!--  END OF 'error summary' -->
 
 
-        <!-- form URL below turns off errors on the next page  -->
-        <form action="how-the-substance-or-object-will-be-deposited-router" method="post" novalidate>
+        <!-- go to routes.js for routing  -->
+        <form action="how-the-removal-will-be-carried-out-router" method="post" novalidate>
 
             <span class="govuk-caption-l">{{ captionTextHTML }}</span>
             <h1 class="govuk-heading-l">
@@ -83,33 +80,26 @@ Will the substance or object be deposited from anything in this list? 
             </h1>
 
 
-            <p>A marine licence may be required to deposit any substance or object from:</p>
+            <p>A marine licence is required to remove any substance or object from the seabed when using: </p>
 
-            <ul class="govuk-list govuk-list--bullet">
-
-                
-                <li>a vehicle </li>
-                <li>a vessel, such as a hovercraft or any other craft capable of travelling on, in or under water</li>
-                <li>an aircraft</li>
-                <li>a marine structure, such as a platform or any other artificial structure at sea, other than a pipeline</li>
-                <li>a floating container in the sea </li>
-                <li>a structure for the purposes of depositing solids in the sea</li>
-
-            </ul>
-
-
+			<ul class="govuk-list govuk-list--bullet">
+				<li>a vehicle or vessel</li>
+				<li>an aircraft</li>
+				<li>a marine structure</li>
+				<li>a floating container</li>
+			</ul>
 
             {{ govukRadios
                 ({
-                    name: "check-how-the-substance-or-object-will-be-deposited-radios",
+                    name: "check-how-the-removal-will-be-carried-out-radios",
 
-                    id: "check-how-the-substance-or-object-will-be-deposited-radios",
+                    id: "check-how-the-removal-will-be-carried-out-radios",
 
                     fieldset:
                     {
                         legend:
                         {
-                            text: questionHeadingTextHTML,
+                            html: questionHeadingTextHTML,
                             isPageHeading: false,
                             classes: "govuk-fieldset__legend--m"
                         }
@@ -120,22 +110,22 @@ Will the substance or object be deposited from anything in this list? 
 
                     items:
                     [
-                        {
+{
                             value: "Yes",
-                            text: "Yes"
+                            text: "Yes",
+                            checked: data['how-the-removal-will-be-carried-out-radios'] == "Yes"
                         },
                         {
                             value: "No",
-                            text: "No"
+                            text: "No",
+                            checked: data['how-the-removal-will-be-carried-out-radios'] == "No"
                         }
                     ]
                 })
             }}
 
 
-
             {{ govukButton({ text: "Continue" }) }}
-
 
         </form>
 
@@ -154,7 +144,6 @@ Will the substance or object be deposited from anything in this list? 
                 {% if (data['errorthispage'] != "true") %}selected{% endif %}
         >Errors - Off</option>
 
-        <!-- Nothing was selected -->
         <option value="errorthispage=true&errortypeone=true&errortypetwo=false&"
                 {% if (data['errortypeone'] == 'true' and data['errortypetwo'] != 'true')  %}selected{% endif %}
         >Error 1 - Must select at least one</option>
@@ -187,7 +176,7 @@ Will the substance or object be deposited from anything in this list? 
 
 
 
-{% endblock %}
 
+{% endblock %}
 
 

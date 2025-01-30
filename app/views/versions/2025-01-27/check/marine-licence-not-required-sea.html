@@ -4,11 +4,17 @@
 
 {% block content %}
 
+<!-- Setting the heading caption -->
+{% set captionTextHTML %}
+	Check if you need a marine licence
+{% endset %}
+
 <div class="govuk-grid-row">
 
     <div class="govuk-grid-column-two-thirds">
 
-		<h1 class="gem-c-title__text govuk-heading-xl">
+		<span class="govuk-caption-l">{{ captionTextHTML }}</span>
+		<h1 class="govuk-heading-l">
 		Marine licence not required
 		</h1>
 

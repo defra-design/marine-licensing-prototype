@@ -83,36 +83,41 @@ router.post('/' + version + section + 'in-which-waters-router', function (req, r
 // what-type-of-activity-will-take-place
 // COMPLEX PAGE OF RADIO BUTTONS
 /////////////////////////////////////////////////////////////////////////////////////////////
-router.post('/' + version + section + 'what-type-of-activity-will-take-place-router', function (req, res)
-{
+router.post('/' + version + section + 'what-type-of-activity-will-take-place-router', function (req, res) {
     // Turn errors off by default
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
 
-    // If Construction was selected, continue to next page
     if (
         req.session.data['check-what-type-of-activity-will-take-place-radios'] == "Construction" ||
         req.session.data['check-what-type-of-activity-will-take-place-radios'] == "Dredging"
     ) {
-        // Redirect to What does the deposit activity relate to
         res.redirect('stop');
     }
+    else if (req.session.data['check-what-type-of-activity-will-take-place-radios'] == "Incineration of a substance or object") {
+        res.redirect('stop');
+    }
+    else if (req.session.data['check-what-type-of-activity-will-take-place-radios'] == "Removal of a substance or object") {
+        res.redirect('how-the-removal-will-be-carried-out');
+    }
     else if (
-        req.session.data['check-what-type-of-activity-will-take-place-radios'] == "Deposit of a substance or object" ||
-        req.session.data['check-what-type-of-activity-will-take-place-radios'] == "Removal of a substance or object" ||
-        req.session.data['check-what-type-of-activity-will-take-place-radios'] == "Incineration of a substance or object"
+        req.session.data['check-what-type-of-activity-will-take-place-radios'] == "Deposit of a substance or object"
     ) {
-        // Redirect to How the substance or object will be deposited 
         res.redirect('how-the-substance-or-object-will-be-deposited');
     }
     else if (
         req.session.data['check-what-type-of-activity-will-take-place-radios'] == "Use of an explosive substance" ||
         req.session.data['check-what-type-of-activity-will-take-place-radios'] == "Sinking of a vessel or floating container (also known as scuttling)"
     ) {
-        // Redirect to Marine licence is required 
         res.redirect('stop');
     }
-})
+    else {
+        // If no valid selection is made, show validation error
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        res.redirect('what-type-of-activity-will-take-place');
+    }
+});
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // How the substance or object will be deposited 
@@ -157,5 +162,95 @@ router.post('/' + version + section + 'what-type-of-activity-will-take-place-rou
             res.redirect('what-does-the-deposit-activity-relate-to');
         }
     });
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// How the removal will be carried out
+// PAGE OF RADIO BUTTONS
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+router.post('/' + version + section + 'how-the-removal-will-be-carried-out-router', function (req, res) {
+    // Turn errors off by default
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    if (req.session.data['check-how-the-removal-will-be-carried-out-radios'] == "Yes") {
+        res.redirect('will-substance-object-be-removed-from-seabed');
+    } else if (req.session.data['check-how-the-removal-will-be-carried-out-radios'] == "No") {
+        res.redirect('stop');
+    } else {
+        // If no selection is made, trigger validation and reload the page
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        res.redirect('how-the-removal-will-be-carried-out');
+    }
+});
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// What does the removal activity relate to?
+// PAGE OF RADIO BUTTONS
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+router.post('/' + version + section + 'what-does-the-removal-activity-relate-to-router', function (req, res) {
+    // Turn errors off by default
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    if (req.session.data['check-what-does-the-removal-activity-relate-to-radios'] == "Scientific instruments and associated equipment") {
+        res.redirect('stop');
+    } else if (req.session.data['check-what-does-the-removal-activity-relate-to-radios'] == "Samples for testing and analysis") {
+        res.redirect('purpose-of-the-activity');
+    } else if (req.session.data['check-what-does-the-removal-activity-relate-to-radios'] == "Other") {
+        res.redirect('stop'); // Future-proofed
+    } else {
+        // If no selection is made, show validation error and reload the page
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        res.redirect('what-does-the-removal-activity-relate-to');
+    }
+});
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Is the purpose of the activity to take a sample of material for testing or analysis?
+// PAGE OF RADIO BUTTONS
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+router.post('/' + version + section + 'purpose-of-the-activity-router', function (req, res) {
+    // Turn errors off by default
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    if (req.session.data['check-purpose-of-the-activity-radios'] == "Yes") {
+        res.redirect('sample-to-be-collected');
+    } else if (req.session.data['check-purpose-of-the-activity-radios'] == "No") {
+        res.redirect('stop');
+    } else {
+        // If no selection is made, show validation error and reload the page
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        res.redirect('purpose-of-the-activity');
+    }
+});
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Will the substance or object to be removed, be removed from the 'Seabed'?
+// PAGE OF RADIO BUTTONS
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+router.post('/' + version + section + 'will-substance-object-be-removed-from-seabed-router', function (req, res) {
+    // Turn errors off by default
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    if (req.session.data['check-will-substance-object-be-removed-from-seabed-radios'] == "Yes") {
+        res.redirect('stop'); // Future-proofed for separate routing later
+    } else if (req.session.data['check-will-substance-object-be-removed-from-seabed-radios'] == "No") {
+        res.redirect('stop'); // Future-proofed for separate routing later
+    } else {
+        // If no selection is made, show validation error and reload the page
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        res.redirect('will-substance-object-be-removed-from-seabed');
+    }
+});
 
 }

@@ -16,9 +16,13 @@ This will save you time.
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-What does the deposit activity relate to? 
+What does the deposit activity relate to?
 {% endset %}
 
+<!-- Setting the heading caption -->
+{% set captionTextHTML %}
+	Check if you need a marine licence
+{% endset %}
 
 <!-- Set the text for the error type -->
 {% set errorTextHTML %}
@@ -71,15 +75,13 @@ What does the deposit activity relate to? 
 
                     id: "check-what-does-the-deposit-activity-relate-to-radios",
 
-                    fieldset:
-                    {
-                        legend:
-                        {
-                            html: pageHeadingTextHTML,
-                            isPageHeading: true,
-                            classes: "govuk-fieldset__legend--l"
-                        }
-                    },
+                    fieldset: {
+						legend: {
+							html: '<span class="govuk-caption-l">' + captionTextHTML + '</span> ' + pageHeadingTextHTML,
+							isPageHeading: true,
+							classes: "govuk-fieldset__legend--l"
+						}
+					},
 
                     errorMessage: null if data['errorthispage'] != "true"
                                        else { html: errorTextHTML },
