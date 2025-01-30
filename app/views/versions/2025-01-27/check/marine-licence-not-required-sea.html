@@ -1,0 +1,41 @@
+{% extends "../layouts/main.html" %}
+
+{% set pageName="Marine licence not required" %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+
+    <div class="govuk-grid-column-two-thirds">
+
+		<h1 class="gem-c-title__text govuk-heading-xl">
+		Marine licence not required
+		</h1>
+
+		<p>You have indicated the activity will not take place in the sea, over the sea, or on or under the seabed.</p>
+		
+		<p>Based on the information you have provided a marine licence is not required from the Marine Management Organisation (MMO).</p>
+		
+		<p>If you are unsure whether the information you provided is correct, <a href="https://www.gov.uk/guidance/marine-licensing-definitions">review the guidance on MMO's jurisdiction and check again</a>.</p>
+		
+		{{ govukButton
+			({ 
+				text: "Download a PDF record of my answers",
+				classes: "govuk-button--secondary" 
+			}) }}
+
+
+
+
+
+
+    </div>
+
+
+</div>
+
+
+
+
+
+{% endblock %}

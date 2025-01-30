@@ -3,18 +3,26 @@ For guidance on how to use layouts see:
 https://prototype-kit.service.gov.uk/docs/how-to-use-layouts
 #}
 
-
-
 {% extends "govuk-prototype-kit/layouts/govuk-branded.njk" %}
+
+{% block header %}
+{{ govukHeader({
+    homepageUrl: "/",
+    serviceName: serviceName,
+    serviceUrl: "/versions/2025-01-27/check/start"
+  }) }}
+{% endblock %}
 
 {% block beforeContent %}
 
-    <a
-       href="#"
-       class="govuk-back-link"
-       onclick="history.back()"
-    >Back
-    </a>
+{{ govukPhaseBanner({
+    tag: {
+      text: "Alpha"
+    },
+    html: 'This is a new service. Help us improve it and <a class="govuk-link" href="#">give your feedback by email</a>.'
+  }) }}
+
+    <a class="govuk-back-link" href="javascript:window.history.back()">Back</a>
 
 {% endblock %}
 

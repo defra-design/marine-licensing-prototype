@@ -25,6 +25,10 @@ require('./routes/versions/2024-02-26/sites.js')(router);
 require('./routes/versions/2024-03-18/account.js')(router);
 require('./routes/versions/2024-03-18/sites.js')(router);
 
+// 27 Jan 2024
+require('./routes/versions/2025-01-27/account.js')(router);
+require('./routes/versions/2025-01-27/sites.js')(router);
+require('./routes/versions/2025-01-27/check.js')(router);
 
 
 
