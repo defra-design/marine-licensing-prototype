@@ -126,13 +126,35 @@ router.post('/' + version + section + 'what-type-of-activity-will-take-place-rou
         req.session.data['errortypeone'] = "false";
     
         if (req.session.data['check-how-the-substance-or-object-will-be-deposited-radios'] == "Yes") {
-            res.redirect('start');
+            res.redirect('what-does-the-deposit-activity-relate-to');
         } else if (req.session.data['check-how-the-substance-or-object-will-be-deposited-radios'] == "No") {
             res.redirect('stop');
         } else {
             req.session.data['errorthispage'] = "true";
             req.session.data['errortypeone'] = "true";
             res.redirect('how-the-substance-or-object-will-be-deposited');
+        }
+    });
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// What does the deposit activity relate to?
+// PAGE OF RADIO BUTTONS
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+    router.post('/' + version + section + 'what-does-the-deposit-activity-relate-to-router', function (req, res) {
+        // Turn errors off by default
+        req.session.data['errorthispage'] = "false";
+        req.session.data['errortypeone'] = "false";
+    
+        if (req.session.data['check-what-does-the-deposit-activity-relate-to-radios'] == "Scientific investigation or research") {
+            res.redirect('stop');
+        } else if (req.session.data['check-what-does-the-deposit-activity-relate-to-radios']) {
+            res.redirect('stop');
+        } else {
+            // Trigger validation if no option is selected
+            req.session.data['errorthispage'] = "true";
+            req.session.data['errortypeone'] = "true";
+            res.redirect('what-does-the-deposit-activity-relate-to');
         }
     });
 
