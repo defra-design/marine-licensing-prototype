@@ -62,7 +62,7 @@ Will the activity take place within 200 metres of an MPA?
                     [
                         {
                             html: errorTextHTML,
-                            href: "#check-how-the-removal-will-be-carried-out-radios"
+                            href: "#check-marine-protected-areas-radios"
                         }
                     ]
                 })
@@ -72,7 +72,7 @@ Will the activity take place within 200 metres of an MPA?
 
 
         <!-- go to routes.js for routing  -->
-        <form action="how-the-removal-will-be-carried-out-router" method="post" novalidate>
+        <form action="marine-protected-areas-router" method="post" novalidate>
 
             <span class="govuk-caption-l">{{ captionTextHTML }}</span>
             <h1 class="govuk-heading-l">
@@ -97,9 +97,9 @@ Will the activity take place within 200 metres of an MPA?
 
             {{ govukRadios
                 ({
-                    name: "check-how-the-removal-will-be-carried-out-radios",
+                    name: "check-marine-protected-areas-radios",
 
-                    id: "check-how-the-removal-will-be-carried-out-radios",
+                    id: "check-marine-protected-areas-radios",
 
                     fieldset:
                     {
@@ -119,12 +119,12 @@ Will the activity take place within 200 metres of an MPA?
 {
                             value: "Yes",
                             text: "Yes",
-                            checked: data['how-the-removal-will-be-carried-out-radios'] == "Yes"
+                            checked: data['marine-protected-areas-radios'] == "Yes"
                         },
                         {
                             value: "No",
                             text: "No",
-                            checked: data['how-the-removal-will-be-carried-out-radios'] == "No"
+                            checked: data['marine-protected-areas-radios'] == "No"
                         }
                     ]
                 })

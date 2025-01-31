@@ -331,4 +331,27 @@ router.post('/' + version + section + 'is-the-activity-likely-to-cause-obstructi
         res.redirect('is-the-activity-likely-to-cause-obstruction');
     }
 });
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Marine Protected Areas (MPAs)
+// PAGE OF RADIO BUTTONS
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+router.post('/' + version + section + 'marine-protected-areas-router', function (req, res) {
+    // Turn errors off by default
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    if (req.session.data['check-marine-protected-areas-radios'] == "Yes") {
+        res.redirect('stop');
+    } else if (req.session.data['check-marine-protected-areas-radios'] == "No") {
+        res.redirect('stop');
+    } else {
+        // If no selection is made, show validation error and reload the page
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        res.redirect('marine-protected-areas');
+    }
+});
+
 }
