@@ -16,7 +16,7 @@ This will save you time.
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-	Where will the activity take place?
+Where the activity will take place
 {% endset %}
 
 <!-- Setting the heading caption -->
@@ -26,7 +26,7 @@ This will save you time.
 
 <!-- Setting the smaller secondary heading lower down the page -->
 {% set questionHeadingTextHTML %}
-    Where will the activity take place?
+Will the activity take place in the sea or on or under the seabed? 
 {% endset %}
 
 
@@ -79,30 +79,11 @@ This will save you time.
                 {{ pageHeadingTextHTML }}
             </h1>
 
-            <p>Any activity that takes place in or over the sea, or on or under the seabed, may need a marine licence. </p>
+            <p>Any activity that takes place in the sea, or on or under the seabed, may need a marine licence.</p>
 
-			<p><a href="https://www.gov.uk/guidance/marine-licensing-definitions#mean-high-water-springs" target="_blank">Find out more about what we mean by 'the sea' (opens in new tab)</a></p>
+            <p>'The sea' includes any area which is submerged at Mean High Water Springs. It also includes the waters of every estuary, river or channel where the tide flows at Mean High Water Springs up to the Normal Tidal Limit.</p>
 
-            <!--<details class="govuk-details" data-module="govuk-details">
-                <summary class="govuk-details__summary">
-                    <span class="govuk-details__summary-text">
-                        Understanding PLACEHOLDER
-                    </span>
-                </summary>
-                <div class="govuk-details__text">
-
-                    <p>This includes:</p>
-
-                    <ul class="govuk-body govuk-list--bullet">
-                        <li>PLACEHOLDER</li>
-                        <li>PLACEHOLDER</li>
-                        <li>PLACEHOLDER</li>
-                        <li>PLACEHOLDER</li>
-                    </ul>
-
-                </div>
-            </details>-->
-
+			<p><a href="https://www.gov.uk/guidance/marine-licensing-definitions#mean-high-water-springs" target="_blank">Find out more about Mean High Water Springs and Normal Tide Limit (opens in new tab)</a></p>
 
             {{ govukRadios
                 ({
@@ -116,7 +97,7 @@ This will save you time.
                         {
                             html: questionHeadingTextHTML,
                             isPageHeading: false,
-                            classes: "govuk-fieldset__legend--m govuk-visually-hidden"
+                            classes: "govuk-fieldset__legend--m"
                         }
                     },
 
@@ -126,14 +107,14 @@ This will save you time.
                     items:
                     [
                         {
-                            value: "In the sea, over the sea, or on or under the seabed",
-                            text: "In the sea, over the sea, or on or under the seabed",
-                            checked: data['where-will-the-activity-take-place-radios'] == "In the sea, over the sea, or on or under the seabed"
+                            value: "Yes",
+                            text: "Yes",
+                            checked: data['where-will-the-activity-take-place-radios'] == "Yes"
                         },
                         {
-                            value: "Somewhere else",
-                            text: "Somewhere else",
-                            checked: data['where-will-the-activity-take-place-radios'] == "Somewhere else"
+                            value: "No",
+                            text: "No",
+                            checked: data['where-will-the-activity-take-place-radios'] == "No"
                         }
                     ]
                 })

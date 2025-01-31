@@ -15,14 +15,14 @@ router.post('/' + version + section + 'where-will-the-activity-take-place-router
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
 
-    // If In the sea, over the sea, or on or under the seabedd was selected, continue to next page
-    if (req.session.data['check-where-will-the-activity-take-place-radios'] == "In the sea, over the sea, or on or under the seabed")
+    // If Yes was selected, continue to next page
+    if (req.session.data['check-where-will-the-activity-take-place-radios'] == "Yes")
     {
         // This page name needs to match the page the user was just on
         res.redirect('in-which-waters');    
     }
     else if (req.session.data
-    ['check-where-will-the-activity-take-place-radios'] == "Somewhere else")
+    ['check-where-will-the-activity-take-place-radios'] == "No")
     {
         // This page name needs to match the page the user was just on
         res.redirect('marine-licence-not-required-sea');
@@ -195,17 +195,53 @@ router.post('/' + version + section + 'what-does-the-removal-activity-relate-to-
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
 
-    if (req.session.data['check-what-does-the-removal-activity-relate-to-radios'] == "Scientific instruments and associated equipment") {
+    if (req.session.data['check-what-does-the-removal-activity-relate-to-radios'] == "Fishing or shellfish propagation and cultivation") {
         res.redirect('stop');
-    } else if (req.session.data['check-what-does-the-removal-activity-relate-to-radios'] == "Samples for testing and analysis") {
-        res.redirect('purpose-of-the-activity');
-    } else if (req.session.data['check-what-does-the-removal-activity-relate-to-radios'] == "Other") {
-        res.redirect('stop'); // Future-proofed
+    } else if (req.session.data['check-what-does-the-removal-activity-relate-to-radios'] == "Markers, moorings or aids to navigation") {
+        res.redirect('stop');
+    } else if (req.session.data['check-what-does-the-removal-activity-relate-to-radios'] == "Pontoons") {
+        res.redirect('stop');
+    } else if (req.session.data['check-what-does-the-removal-activity-relate-to-radios'] == "Scientific research") {
+        res.redirect('what-does-the-scientific-activity-relate-to');
+    } else if (req.session.data['check-what-does-the-removal-activity-relate-to-radios'] == "Maintenance of existing structures or assets") {
+        res.redirect('stop');
+    } else if (req.session.data['check-what-does-the-removal-activity-relate-to-radios'] == "Litter or dead animals") {
+        res.redirect('stop');
+    } else if (req.session.data['check-what-does-the-removal-activity-relate-to-radios'] == "Obstructions, danger to navigation, or accidental deposits") {
+        res.redirect('stop');
+    } else if (req.session.data['check-what-does-the-removal-activity-relate-to-radios'] == "Emergency or safety and training") {
+        res.redirect('stop');
+    } else if (req.session.data['check-what-does-the-removal-activity-relate-to-radios'] == "Other removal activity") {
+        res.redirect('stop');
     } else {
         // If no selection is made, show validation error and reload the page
         req.session.data['errorthispage'] = "true";
         req.session.data['errortypeone'] = "true";
         res.redirect('what-does-the-removal-activity-relate-to');
+    }
+});
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// What does the scientific research activity relate to?
+// PAGE OF RADIO BUTTONS
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+router.post('/' + version + section + 'what-does-the-scientific-activity-relate-to-router', function (req, res) {
+    // Turn errors off by default
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    if (req.session.data['check-what-does-the-scientific-activity-relate-to-radios'] == "Scientific instruments and associated equipment") {
+        res.redirect('stop');
+    } else if (req.session.data['check-what-does-the-scientific-activity-relate-to-radios'] == "Samples for testing and analysis") {
+        res.redirect('purpose-of-the-activity');
+    } else if (req.session.data['check-what-does-the-scientific-activity-relate-to-radios'] == "Other") {
+        res.redirect('stop'); // Future-proofed
+    } else {
+        // If no selection is made, show validation error and reload the page
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        res.redirect('what-does-the-scientific-activity-relate-to');
     }
 });
 
@@ -220,7 +256,7 @@ router.post('/' + version + section + 'purpose-of-the-activity-router', function
     req.session.data['errortypeone'] = "false";
 
     if (req.session.data['check-purpose-of-the-activity-radios'] == "Yes") {
-        res.redirect('sample-to-be-collected');
+        res.redirect('will-the-volume');
     } else if (req.session.data['check-purpose-of-the-activity-radios'] == "No") {
         res.redirect('stop');
     } else {
@@ -242,9 +278,9 @@ router.post('/' + version + section + 'will-substance-object-be-removed-from-sea
     req.session.data['errortypeone'] = "false";
 
     if (req.session.data['check-will-substance-object-be-removed-from-seabed-radios'] == "Yes") {
-        res.redirect('stop'); // Future-proofed for separate routing later
+        res.redirect('what-does-the-removal-activity-relate-to'); 
     } else if (req.session.data['check-will-substance-object-be-removed-from-seabed-radios'] == "No") {
-        res.redirect('stop'); // Future-proofed for separate routing later
+        res.redirect('stop'); 
     } else {
         // If no selection is made, show validation error and reload the page
         req.session.data['errorthispage'] = "true";
@@ -253,4 +289,46 @@ router.post('/' + version + section + 'will-substance-object-be-removed-from-sea
     }
 });
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Will the sample to be removed have a volume of 1 cubic metre or less?
+// PAGE OF RADIO BUTTONS
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+router.post('/' + version + section + 'will-the-volume-router', function (req, res) {
+    // Turn errors off by default
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    if (req.session.data['will-the-volume-radios'] == "Yes") {
+        res.redirect('is-the-activity-likely-to-cause-obstruction');
+    } else if (req.session.data['will-the-volume-radios'] == "No") {
+        res.redirect('stop');
+    } else {
+        // If no selection is made, show validation error and reload the page
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        res.redirect('will-the-volume');
+    }
+});
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Is the activity likely to cause an obstruction or danger to navigation?
+// PAGE OF RADIO BUTTONS
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+router.post('/' + version + section + 'is-the-activity-likely-to-cause-obstruction-router', function (req, res) {
+    // Turn errors off by default
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    if (req.session.data['is-the-activity-likely-to-cause-obstruction-radios'] == "Yes") {
+        res.redirect('stop');
+    } else if (req.session.data['is-the-activity-likely-to-cause-obstruction-radios'] == "No") {
+        res.redirect('marine-protected-areas');
+    } else {
+        // If no selection is made, show validation error and reload the page
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        res.redirect('is-the-activity-likely-to-cause-obstruction');
+    }
+});
 }

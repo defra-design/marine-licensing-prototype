@@ -4,19 +4,19 @@
 NOTES ON USING THIS TEMPLATE Page
 This will save you time.
 
-1. Put your heading for the page after '% set pageHeadingTextHTML %'
-2. Put your question heading for the page after '% set questionHeadingTextHTML %'
-3. Type/customise the error message after '% set errorTextHTML %'
-4. Use 'Find and replace' to replace "SECTION" with the name of the section of the service you're working on.
-5. Use 'Find and replace' to replace "PAGENAME_RADIOS_COMPLEX" with whatever you named this page/file.
-6. Use 'Find and replace' to replace each of the radio button values. Starting with 'PLACEHOLDER_ANSWER_1'
-7. Go to the javascript file 'templates.js' and copy the section 'COMPLEX PAGE OF RADIO BUTTONS' into your routes.js file.
-8. Follow instructions at the top of the 'templates.js'.
+1. Type your heading for the page after '% set pageHeadingTextHTML %'
+2. Type/customise the error message after '% set errorTextHTML %'
+3. Use 'Find and replace' to replace "SECTION" with the name of the section of the service you're working on.
+4. Use 'Find and replace' to replace "PAGENAME_RADIOS" with whatever you named this page/file.
+5. Use 'Find and replace' to replace each of the radio button values. Starting with 'PLACEHOLDER_ANSWER_1'
+6. Go to the javascript file 'templates.js' and copy the section 'RADIO BUTTONS - MANDATORY' into your routes.js file.
+7. Follow instructions at the top of the 'templates.js'
 -->
+
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-Will the substance or object be removed from the seabed?
+What does the scientific research activity relate to?
 {% endset %}
 
 <!-- Setting the heading caption -->
@@ -24,17 +24,11 @@ Will the substance or object be removed from the seabed?
 	Check if you need a marine licence
 {% endset %}
 
-<!-- Setting the smaller secondary heading lower down the page -->
-{% set questionHeadingTextHTML %}
-PLACEHOLDER: Will the substance or object to be removed, be removed from the 'Seabed'?
-{% endset %}
-
-
 <!-- Set the text for the error type -->
 {% set errorTextHTML %}
     <!-- Nothing was selected -->
     {% if data['errortypeone'] == "true" %}
-        Select whether the substance or object be removed from the seabed
+        Select what the removal activity relates to
     {% endif %}
 {% endset %}
 
@@ -53,6 +47,7 @@ PLACEHOLDER: Will the substance or object to be removed, be removed from the 'Se
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
+
         <!-- ERROR LOGIC 'error summary' -->
         {% if data['errorthispage'] == "true" %}
             {{ govukErrorSummary
@@ -62,7 +57,7 @@ PLACEHOLDER: Will the substance or object to be removed, be removed from the 'Se
                     [
                         {
                             html: errorTextHTML,
-                            href: "#check-will-substance-object-be-removed-from-seabed-radios"
+                            href: "#check-what-does-the-scientific-activity-relate-to-radios"
                         }
                     ]
                 })
@@ -72,13 +67,13 @@ PLACEHOLDER: Will the substance or object to be removed, be removed from the 'Se
 
 
         <!-- go to routes.js for routing  -->
-        <form action="will-substance-object-be-removed-from-seabed-router" method="post" novalidate>
+        <form action="what-does-the-scientific-activity-relate-to-router" method="post" novalidate>
 
             {{ govukRadios
                 ({
-                    name: "check-will-substance-object-be-removed-from-seabed-radios",
+                    name: "check-what-does-the-scientific-activity-relate-to-radios",
 
-                    id: "check-will-substance-object-be-removed-from-seabed-radios",
+                    id: "check-what-does-the-scientific-activity-relate-to-radios",
 
                     fieldset: {
 						legend: {
@@ -89,24 +84,28 @@ PLACEHOLDER: Will the substance or object to be removed, be removed from the 'Se
 					},
 
                     errorMessage: null if data['errorthispage'] != "true"
-                                       else { html: errorTextHTML },
+                        else { html: errorTextHTML },
 
-                    items:
-                    [
-{
-                            value: "Yes",
-                            text: "Yes",
-                            checked: data['will-substance-object-be-removed-from-seabed-radios'] == "Yes"
-                        },
-                        {
-                            value: "No",
-                            text: "No",
-                            checked: data['will-substance-object-be-removed-from-seabed-radios'] == "No"
-                        }
+                        items:
+                        [
+                            {
+                                value: "Scientific instruments and associated equipment",
+                                text: "Scientific instruments and associated equipment",
+                                checked: data['check-what-does-the-scientific-activity-relate-to-radio'] == "Scientific instruments and associated equipment"
+                            },
+                            {
+                                value: "Samples for testing and analysis",
+                                text: "Samples for testing and analysis",
+                                checked: data['check-what-does-the-scientific-activity-relate-to-radio'] == "Samples for testing and analysis"
+                            },
+                            {
+                                value: "Other",
+                                text: "Other",
+                                checked: data['check-what-does-the-scientific-activity-relate-to-radio'] == "Other"
+                            }
                     ]
                 })
             }}
-
 
             {{ govukButton({ text: "Continue" }) }}
 
@@ -114,8 +113,6 @@ PLACEHOLDER: Will the substance or object to be removed, be removed from the 'Se
 
     </div>
 </div>
-
-
 
 
 <!-- ERROR LOGIC  drop down to toggle states  -->
@@ -155,8 +152,6 @@ PLACEHOLDER: Will the substance or object to be removed, be removed from the 'Se
 
 </form>
 <!--  END USER TYPE TOGGLE -->
-
-
 
 
 

@@ -9,14 +9,14 @@ This will save you time.
 3. Type/customise the error message after '% set errorTextHTML %'
 4. Use 'Find and replace' to replace "SECTION" with the name of the section of the service you're working on.
 5. Use 'Find and replace' to replace "PAGENAME_RADIOS_COMPLEX" with whatever you named this page/file.
-6. Use 'Find and replace' to replace each of the radio button values. Starting with 'xxxx'
+6. Use 'Find and replace' to replace each of the radio button values. Starting with 'PLACEHOLDER_ANSWER_1'
 7. Go to the javascript file 'templates.js' and copy the section 'COMPLEX PAGE OF RADIO BUTTONS' into your routes.js file.
 8. Follow instructions at the top of the 'templates.js'.
 -->
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-	The waters in which the activity will take place	
+Marine Protected Areas (MPAs)
 {% endset %}
 
 <!-- Setting the heading caption -->
@@ -26,7 +26,7 @@ This will save you time.
 
 <!-- Setting the smaller secondary heading lower down the page -->
 {% set questionHeadingTextHTML %}
-	In which waters will the activity take place?
+Will the activity take place within 200 metres of an MPA?
 {% endset %}
 
 
@@ -34,7 +34,7 @@ This will save you time.
 {% set errorTextHTML %}
     <!-- Nothing was selected -->
     {% if data['errortypeone'] == "true" %}
-        Select in which waters will the activity take place
+        Select will the removal be carried out from anything in this list?
     {% endif %}
 {% endset %}
 
@@ -62,7 +62,7 @@ This will save you time.
                     [
                         {
                             html: errorTextHTML,
-                            href: "#check-in-which-waters-radios"
+                            href: "#check-how-the-removal-will-be-carried-out-radios"
                         }
                     ]
                 })
@@ -72,43 +72,34 @@ This will save you time.
 
 
         <!-- go to routes.js for routing  -->
-        <form action="in-which-waters-router" method="post" novalidate>
+        <form action="how-the-removal-will-be-carried-out-router" method="post" novalidate>
 
-			<span class="govuk-caption-l">{{ captionTextHTML }}</span>
+            <span class="govuk-caption-l">{{ captionTextHTML }}</span>
             <h1 class="govuk-heading-l">
                 {{ pageHeadingTextHTML }}
             </h1>
 
-            <p>The Marine Management Organisation (MMO) is responsible for marine licensing in English inshore and offshore waters and for Northern Ireland offshore waters.</p>
 
-			<p><a href="https://www.gov.uk/guidance/marine-licensing-definitions#jurisdiction" target="_blank">Find out more about the Marine Management Organisation’s juristiction (opens in new tab)</a></p>
+            <p>MPAs are an important part of the marine environment. Any activity within 200 metres of an MPA may need a marine licence.</p>
 
-            <!--<details class="govuk-details" data-module="govuk-details">
-                <summary class="govuk-details__summary">
-                    <span class="govuk-details__summary-text">
-                        Understanding PLACEHOLDER
-                    </span>
-                </summary>
-                <div class="govuk-details__text">
+			<p>MPAs include:</p>
 
-                    <p>This includes:</p>
+			<ul class="govuk-list govuk-list--bullet">
+				<li>Highly Protected Marine Areas (HPMA)</li>
+				<li>Marine Conservation Zones (MCZs)</li>
+				<li>Special Areas of Conservation (SACs)</li>
+				<li>Special Protection Areas (SPAs)</li>
+				<li>Ramsar sites - a wetland designated as being of international importance</li>
+				<li>Sites of Special Scientific Interest (SSSIs)</li>
+			</ul>
 
-                    <ul class="govuk-body govuk-list--bullet">
-                        <li>PLACEHOLDER</li>
-                        <li>PLACEHOLDER</li>
-                        <li>PLACEHOLDER</li>
-                        <li>PLACEHOLDER</li>
-                    </ul>
-
-                </div>
-            </details>-->
-
+			<p>You can check whether the activity falls within 200 metres of an MPA using the <a href="https://defra.maps.arcgis.com/apps/webappviewer/index.html?id=28f91021979447d3b43dc83e6e93094c" target="_blank">GIS tool</a>.</p>
 
             {{ govukRadios
                 ({
-                    name: "check-in-which-waters-radios",
+                    name: "check-how-the-removal-will-be-carried-out-radios",
 
-                    id: "check-in-which-waters-radios",
+                    id: "check-how-the-removal-will-be-carried-out-radios",
 
                     fieldset:
                     {
@@ -125,20 +116,15 @@ This will save you time.
 
                     items:
                     [
-                        {
-                            value: "English waters or Northern Ireland offshore waters",
-                            text: "English waters or Northern Ireland offshore waters",
-                            checked: data['in-which-waters-radios'] == "English waters or Northern Ireland offshore waters"
+{
+                            value: "Yes",
+                            text: "Yes",
+                            checked: data['how-the-removal-will-be-carried-out-radios'] == "Yes"
                         },
                         {
-                            value: "Other UK waters - Wales, Scotland or Northern Ireland (excluding Northern Ireland offshore waters)",
-                            text: "Other UK waters - Wales, Scotland or Northern Ireland (excluding Northern Ireland offshore waters)",
-                            checked: data['in-which-waters-radios'] == "Other UK waters - Wales, Scotland or Northern Ireland (excluding Northern Ireland offshore waters)"
-                        },
-                        {
-                            value: "Somewhere else in the world",
-                            text: "Somewhere else in the world",
-                            checked: data['in-which-waters-radios'] == "Somewhere else in the world"
+                            value: "No",
+                            text: "No",
+                            checked: data['how-the-removal-will-be-carried-out-radios'] == "No"
                         }
                     ]
                 })
