@@ -1,0 +1,47 @@
+{% extends "../layouts/main.html" %}
+
+{% set pageName="You do not need a marine licence, but you need to give us more information" %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+
+    <div class="govuk-grid-column-two-thirds">
+
+              <h1 class="gem-c-title__text govuk-heading-xl">
+                You do not need a marine licence, but you need to give us more information
+              </h1>
+
+		<p>Based on your answers, your activity is exempt under the <a href="https://www.legislation.gov.uk/uksi/2011/409/article/17A">The Marine Licensing (Exempted Activities) Order 2011</a> and you do not need a marine licence.</p>
+
+		<p>You do need to provide the Marine Management Organisation with further information before you start your activity.</p>
+
+		<h2 class="govuk-heading-m">What you'll need</h2>
+		<p>Before you continue, make sure you have:</p>
+		<ul class="govuk-list govuk-list--bullet">
+			<li>specific details of the activity</li>
+			<li>the coordinates of the area the activity will take place</li>
+			<li>contact details</li>
+		</ul>
+
+		<div class="govuk-button-group govuk-!-margin-top-6">
+			{{ govukButton({
+			  text: "Continue"
+			}) }}
+		  
+			{{ govukButton({
+			  text: "Download a PDF of your answers",
+			  classes: "govuk-button--secondary"
+			}) }}
+		  </div>
+		
+    </div>
+
+
+</div>
+
+
+
+
+
+{% endblock %}

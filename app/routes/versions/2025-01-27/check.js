@@ -345,7 +345,7 @@ router.post('/' + version + section + 'marine-protected-areas-router', function 
     if (req.session.data['check-marine-protected-areas-radios'] == "Yes") {
         res.redirect('stop');
     } else if (req.session.data['check-marine-protected-areas-radios'] == "No") {
-        res.redirect('stop');
+        res.redirect('exemption');
     } else {
         // If no selection is made, show validation error and reload the page
         req.session.data['errorthispage'] = "true";
