@@ -1,5 +1,19 @@
 {% extends "../layouts/main.html" %}
 
+{% block beforeContent %}
+{{ govukPhaseBanner({
+        tag: {
+          text: "Prototype"
+        },
+        html: ''
+      }) }}
+      <a
+       href="#"
+       class="govuk-back-link"
+       onclick="history.back()"
+    >Back
+    </a>
+{% endblock %}
 
 {% block content %}
 <div class="govuk-grid-row">
@@ -7,16 +21,13 @@
 
         <h1 class="govuk-heading-l">Templates for the prototype </h1>
 
-        </br>
+        <p>Instructions are at the top of each template file and also at the top of routes/templates.js</p>
 
         <p class="govuk-heading-m">Pages with validation</p>
 
         <p>Note: Only one error message shown at a time, toggle in the footer</p>
 
-        {{ govukDetails({
-          summaryText: "How to use these templates",
-          text: "Instructions are at the top of each template file and also at the top of routes/templates.js"
-        }) }}
+        
 
         <table class="govuk-table">
                 <thead class="govuk-table__head">

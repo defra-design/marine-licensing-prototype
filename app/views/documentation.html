@@ -2,6 +2,21 @@
 
 {% set pageName="Home" %}
 
+{% block beforeContent %}
+{{ govukPhaseBanner({
+        tag: {
+          text: "Prototype"
+        },
+        html: ''
+      }) }}
+      <a
+       href="#"
+       class="govuk-back-link"
+       onclick="history.back()"
+    >Back
+    </a>
+{% endblock %}
+
 {% block content %}
 
 <div class="govuk-grid-row">

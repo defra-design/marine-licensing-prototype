@@ -1,0 +1,207 @@
+{% extends "layouts/main.html" %}
+
+{% set pageName="2024 alpha prototype" %}
+
+{% block beforeContent %}
+{{ govukPhaseBanner({
+        tag: {
+          text: "Prototype"
+        },
+        html: ''
+      }) }}
+      <a
+       href="#"
+       class="govuk-back-link"
+       onclick="history.back()"
+    >Back
+    </a>
+{% endblock %}
+
+
+{% block content %}
+
+<style>
+.govuk-accordion__controls {
+    display: none;
+}
+.govuk-accordion__section-button {
+        font-size: 2.25rem;
+}
+</style>
+
+<div class="govuk-grid-row">
+
+    <div class="govuk-grid-column-two-thirds">
+
+        <h1 class="govuk-heading-xl">
+            2024 alpha prototype
+        </h1>
+        <span class="govuk-caption-m">18 March 2024 to 24 April 2024</span>
+        <h2 class="govuk-heading-l">Iteration 2</h2>
+        <!-- start most recent -->
+        
+        <h3 class="govuk-heading-m">Account pages</h3>
+        <p><a href="versions/2024-03-18/account/start">Start Page</a>
+            </br><a href="versions/2024-03-18/account/sign-in-or-create-account">Sign in or create an account</a>
+            </br><a href="versions/2024-03-18/account/sign-in-email-address">Sign in email address</a>
+            </br><a href="versions/2024-03-18/account/sign-in-password">Password</a>
+            </br><a href="versions/2024-03-18/account/list-of-licence-applications">List of licence applications</a>
+        </p>
+
+        <h3 class="govuk-heading-m">Licence pages</h3>
+        <p><a href="versions/2024-03-18/tasklist">Task list</a></p>
+
+        <p>Sites
+            <br><span class="govuk-!-margin-left-5"><a href="versions/2024-03-18/sites/list-of-sites">List of
+                    sites</a></span>
+            <br>
+            <br><span class="govuk-!-margin-left-5"><a
+                    href="versions/2024-03-18/sites/coordinates-file-or-not">Coordinates file yes/no</a></span>
+            <br>
+            <br><span class="govuk-!-margin-left-5">File upload journey</span>
+            <br><span class="govuk-!-margin-left-9"><a href="versions/2024-03-18/sites/site-shape-holes">Holes in the
+                    site yes/no</a></span>
+            <br><span class="govuk-!-margin-left-9"><a href="versions/2024-03-18/sites/upload-perimeter">Upload file of
+                    site perimeter</a></span>
+            <br><span class="govuk-!-margin-left-9"><a href="versions/2024-03-18/sites/upload-holes">Upload file of
+                    holes - Conditional</a></span>
+            <br><span class="govuk-!-margin-left-9"><a href="versions/2024-03-18/sites/check-answers">Check your
+                    answers</a></span>
+
+            <br><br><span class="govuk-!-margin-left-5">Not file upload journey</span>
+            <br><span class="govuk-!-margin-left-9"><a href="versions/2024-03-18/sites/shape-type">Select
+                    shape</a></span>
+            <br><span class="govuk-!-margin-left-9"><a href="versions/2024-03-18/sites/circle-centre-coordinates">Circle
+                    - Centre point</a></span>
+            <br><span class="govuk-!-margin-left-9"><a href="versions/2024-03-18/sites/circle-width">Circle -
+                    Diameter</a></span>
+            <br><span class="govuk-!-margin-left-9"><a href="versions/2024-03-18/sites/square-centre-coordinates">Square
+                    - Centre point</a></span>
+            <br><span class="govuk-!-margin-left-9"><a href="versions/2024-03-18/sites/square-width">Square -
+                    Width</a></span>
+            <br><span class="govuk-!-margin-left-9"><a href="versions/2024-03-18/sites/type-or-draw">Type coordinates or
+                    draw shape</a></span>
+            <br><span class="govuk-!-margin-left-9"><a href="versions/2024-03-18/sites/map-or-satellite">Draw - Map or
+                    Satellite</a></span>
+            <br><span class="govuk-!-margin-left-9"><a href="versions/2024-03-18/sites/type-or-draw">Draw - Line or
+                    Polygon</a></span>
+            <br><span class="govuk-!-margin-left-9"><a href="versions/2024-03-18/sites/type-or-draw">Draw - Line
+                    width</a></span>
+            <br><span class="govuk-!-margin-left-9"><a href="versions/2024-03-18/sites/draw-site">Draw </a></span>
+            <br><span class="govuk-!-margin-left-9"><a href="versions/2024-03-18/sites/check-answers">Check your
+                    answers</a></span>
+        </p>
+
+        <!-- end most recent -->
+
+        {{ govukAccordion ({
+        id: "accordion-versions",
+        items: [
+        {
+        heading: {
+        text: "Iteration 1"
+        },
+        content: {
+        html:
+        '
+        <!-- start older -->
+        <span class="govuk-caption-m">26 February 2024 to 18 March 2024</span>
+        <h2 class="govuk-heading-l">Iteration 1</h2>
+        <h3 class="govuk-heading-m">Account pages</h3>
+        <p><a href="versions/2024-02-26/account/start">Start Page</a>
+            </br><a href="versions/2024-02-26/account/sign-in-or-create-account">Sign in or create an account</a>
+            </br><a href="versions/2024-02-26/account/sign-in-email-address">Sign in email address</a>
+            </br>Create account email address
+            </br><a href="versions/2024-02-26/account/sign-in-password">Password</a>
+            </br><a href="versions/2024-02-26/account/list-of-licence-applications">List of licence applications</a>
+        </p>
+
+        <h3 class="govuk-heading-m">Licence pages</h3>
+        <p><a href="versions/2024-02-26/tasklist">Task list</a></p>
+        <p>Placeholder - About the licence
+            <br>Placeholder - Consent and related projects
+            <br>Placeholder - Impact assessments
+            <br>Placeholder - Consultation
+            <br>Placeholder - Dates
+        </p>
+
+        <p>Sites
+            <br><span class="govuk-!-margin-left-5"><a href="versions/2024-02-26/sites/list-of-sites">List of
+                    sites</a></span>
+            <br>
+            <br><span class="govuk-!-margin-left-5"><a
+                    href="versions/2024-02-26/sites/coordinates-file-or-not">Coordinates file yes/no</a></span>
+            <br>
+            <br><span class="govuk-!-margin-left-5">File upload journey</span>
+            <br><span class="govuk-!-margin-left-9"><a href="versions/2024-02-26/sites/site-shape-holes">Holes in the
+                    site yes/no</a></span>
+            <br><span class="govuk-!-margin-left-9"><a href="versions/2024-02-26/sites/upload-perimeter">Upload file of
+                    site perimeter</a></span>
+            <br><span class="govuk-!-margin-left-9"><a href="versions/2024-02-26/sites/upload-holes">Upload file of
+                    holes - Conditional</a></span>
+            <br><span class="govuk-!-margin-left-9"><a href="versions/2024-02-26/sites/check-answers">Check your
+                    answers</a></span>
+
+            <br><br><span class="govuk-!-margin-left-5">Not file upload journey</span>
+            <br><span class="govuk-!-margin-left-9"><a href="versions/2024-02-26/sites/shape-type">Select
+                    shape</a></span>
+            <br><span class="govuk-!-margin-left-9"><a href="versions/2024-02-26/sites/circle-centre-coordinates">Circle
+                    - Centre point</a></span>
+            <br><span class="govuk-!-margin-left-9"><a href="versions/2024-02-26/sites/circle-width">Circle -
+                    Diameter</a></span>
+            <br><span class="govuk-!-margin-left-9"><a href="versions/2024-02-26/sites/square-centre-coordinates">Square
+                    - Centre point</a></span>
+            <br><span class="govuk-!-margin-left-9"><a href="versions/2024-02-26/sites/square-width">Square -
+                    Width</a></span>
+            <br><span class="govuk-!-margin-left-9">Square facing north</span>
+            <br><span class="govuk-!-margin-left-9"><a href="versions/2024-02-26/sites/draw-a-shape">Draw a
+                    shape</a></span>
+            <br><span class="govuk-!-margin-left-9">Any holes in the site?</span>
+            <br><span class="govuk-!-margin-left-9"><a href="versions/2024-02-26/sites/check-answers">Check your
+                    answers</a></span>
+        </p>
+        <!-- end older -->
+        '
+        }
+        }
+        ]
+        })
+        }}
+
+
+
+    </div>
+
+
+
+    <!-- Right 3rd of the home screen.   Mostly admin stuff  -->
+    <div class="govuk-grid-column-one-third govuk-!-margin-top-9 govuk-!-padding-left-8">
+        <p class="govuk-!-margin-top-6" style="border-top: 2px solid #1d70b8; margin-bottom: 30px;">
+			<div class="govuk-!-margin-bottom-7">
+                <h3 class="govuk-heading-s govuk-!-margin-top-3">New alpha</h3> 
+                <p><a href="/">2025 prototype</a></p>   
+        </div>
+
+        <div class="govuk-!-margin-bottom-7">
+            <h3 class="govuk-heading-s govuk-!-margin-top-3">For user research</h3>
+            <p><a href="user-testing-links.html">User testing links</a></p>
+            <p><a href="https://marine-licensing-prototype-5b7b33ca29e1.herokuapp.com/">Prototype for testing</a></p>
+        </div>
+
+        <div class="govuk-!-margin-bottom-7">
+            <h3 class="govuk-heading-s govuk-!-margin-top-3">For designers</h3>
+            <p><a href="templates/a-list-of-templates">Templates </a></p>
+            <p><a href="templates/a-list-of-helpful-features">Helpful features</a></p>
+            <p><a href="https://marine-licensing-internal-6c7d4952cc3d.herokuapp.com/">Prototype for team</a></p>
+            <p><a href="documentation">Documentation</a></p>
+        </div>
+
+    </div>
+
+</div>
+
+
+
+
+
+{% endblock %}
