@@ -2,6 +2,17 @@
 
 {% set pageName="Start" %}
 
+{% block beforeContent %}
+
+{{ govukPhaseBanner({
+    tag: {
+      text: "Prototype"
+    },
+    html: ''
+  }) }}
+
+{% endblock %}
+
 {% block content %}
 
 <div class="govuk-grid-row">
