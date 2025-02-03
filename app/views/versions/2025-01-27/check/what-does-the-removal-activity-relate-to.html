@@ -16,7 +16,7 @@ This will save you time.
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-What does the removal activity relate to?
+What does the removal activity involve?
 {% endset %}
 
 <!-- Setting the heading caption -->
@@ -28,7 +28,7 @@ What does the removal activity relate to?
 {% set errorTextHTML %}
     <!-- Nothing was selected -->
     {% if data['errortypeone'] == "true" %}
-        Select what the removal activity relates to
+        Select what the removal activity involves
     {% endif %}
 {% endset %}
 
@@ -129,9 +129,9 @@ What does the removal activity relate to?
                                 checked: data['check-what-does-the-removal-activity-relate-to-radio'] == "Emergency or safety and training"
                             },
                             {
-                                value: "Other removal activity",
-                                text: "Other removal activity",
-                                checked: data['check-what-does-the-removal-activity-relate-to-radio'] == "Other removal activity"
+                                value: "Something else",
+                                text: "Something else",
+                                checked: data['check-what-does-the-removal-activity-relate-to-radio'] == "Something else"
                             }
                         ]
                 })

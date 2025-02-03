@@ -26,7 +26,7 @@ Marine Protected Areas (MPAs)
 
 <!-- Setting the smaller secondary heading lower down the page -->
 {% set questionHeadingTextHTML %}
-Will the activity take place within 200 metres of an MPA?
+Will the removal activity take place within 200 metres of an MPA?
 {% endset %}
 
 
@@ -34,7 +34,7 @@ Will the activity take place within 200 metres of an MPA?
 {% set errorTextHTML %}
     <!-- Nothing was selected -->
     {% if data['errortypeone'] == "true" %}
-        Select will the removal be carried out from anything in this list?
+    Select whether the removal activity will take place within 200 metres of an MPA 
     {% endif %}
 {% endset %}
 
@@ -93,7 +93,7 @@ Will the activity take place within 200 metres of an MPA?
 				<li>Sites of Special Scientific Interest (SSSIs)</li>
 			</ul>
 
-			<p>You can check whether the activity falls within 200 metres of an MPA using the <a href="https://defra.maps.arcgis.com/apps/webappviewer/index.html?id=28f91021979447d3b43dc83e6e93094c" target="_blank">GIS tool</a>.</p>
+			<p>You can check whether the activity falls within 200 metres of an MPA using the <a href="https://defra.maps.arcgis.com/apps/webappviewer/index.html?id=28f91021979447d3b43dc83e6e93094c&showLayers=Marine%20Protected%20Areas" target="_blank">GIS tool</a>.</p>
 
             {{ govukRadios
                 ({

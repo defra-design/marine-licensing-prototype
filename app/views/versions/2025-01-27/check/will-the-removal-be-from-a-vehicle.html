@@ -4,19 +4,19 @@
 NOTES ON USING THIS TEMPLATE Page
 This will save you time.
 
-1. Put your heading for the page after '% set pageHeadingTextHTML %'
-2. Put your question heading for the page after '% set questionHeadingTextHTML %'
-3. Type/customise the error message after '% set errorTextHTML %'
-4. Use 'Find and replace' to replace "SECTION" with the name of the section of the service you're working on.
-5. Use 'Find and replace' to replace "PAGENAME_RADIOS_COMPLEX" with whatever you named this page/file.
-6. Use 'Find and replace' to replace each of the radio button values. Starting with 'xxxx'
-7. Go to the javascript file 'templates.js' and copy the section 'COMPLEX PAGE OF RADIO BUTTONS' into your routes.js file.
-8. Follow instructions at the top of the 'templates.js'.
+1. Type your heading for the page after '% set pageHeadingTextHTML %'
+2. Type/customise the error message after '% set errorTextHTML %'
+3. Use 'Find and replace' to replace "SECTION" with the name of the section of the service you're working on.
+4. Use 'Find and replace' to replace "PAGENAME_RADIOS" with whatever you named this page/file.
+5. Use 'Find and replace' to replace each of the radio button values. Starting with 'PLACEHOLDER_ANSWER_1'
+6. Go to the javascript file 'templates.js' and copy the section 'RADIO BUTTONS - MANDATORY' into your routes.js file.
+7. Follow instructions at the top of the 'templates.js'
 -->
+
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-Where the activity will take place
+Will the removal be from a vehicle, vessel, aircraft, marine structure, or floating container?
 {% endset %}
 
 <!-- Setting the heading caption -->
@@ -24,17 +24,11 @@ Where the activity will take place
 	Check if you need a marine licence
 {% endset %}
 
-<!-- Setting the smaller secondary heading lower down the page -->
-{% set questionHeadingTextHTML %}
-Will the activity take place in the sea, over the sea, or on or under the seabed?
-{% endset %}
-
-
 <!-- Set the text for the error type -->
 {% set errorTextHTML %}
     <!-- Nothing was selected -->
     {% if data['errortypeone'] == "true" %}
-    Select whether the activity will take place in the sea, over the sea, or on or under the seabed?
+    Select whether the removal will be from a vehicle, vessel, aircraft, marine structure, or floating container 
     {% endif %}
 {% endset %}
 
@@ -53,6 +47,7 @@ Will the activity take place in the sea, over the sea, or on or under the seabed
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
+
         <!-- ERROR LOGIC 'error summary' -->
         {% if data['errorthispage'] == "true" %}
             {{ govukErrorSummary
@@ -62,7 +57,7 @@ Will the activity take place in the sea, over the sea, or on or under the seabed
                     [
                         {
                             html: errorTextHTML,
-                            href: "#check-where-will-the-activity-take-place-radios"
+                            href: "#check-will-the-removal-be-from-a-vehicle-radios"
                         }
                     ]
                 })
@@ -72,34 +67,21 @@ Will the activity take place in the sea, over the sea, or on or under the seabed
 
 
         <!-- go to routes.js for routing  -->
-        <form action="where-will-the-activity-take-place-router" method="post" novalidate>
-
-			<span class="govuk-caption-l">{{ captionTextHTML }}</span>
-            <h1 class="govuk-heading-l">
-                {{ pageHeadingTextHTML }}
-            </h1>
-
-            <p>Any activity that takes place in the sea, over the sea, or on or under the seabed, may need a marine licence.</p>
-
-            <p>'The sea' includes any area which is submerged at Mean High Water Springs. It also includes the waters of every estuary, river or channel where the tide flows at Mean High Water Springs up to the Normal Tidal Limit.</p>
-
-			<p><a href="https://www.gov.uk/guidance/marine-licensing-definitions#mean-high-water-springs" target="_blank">Find out more about Mean High Water Springs and Normal Tide Limit (opens in new tab)</a></p>
+        <form action="will-the-removal-be-from-a-vehicle-router" method="post" novalidate>
 
             {{ govukRadios
                 ({
-                    name: "check-where-will-the-activity-take-place-radios",
+                    name: "check-will-the-removal-be-from-a-vehicle-radios",
 
-                    id: "check-where-will-the-activity-take-place-radios",
+                    id: "check-will-the-removal-be-from-a-vehicle-radios",
 
-                    fieldset:
-                    {
-                        legend:
-                        {
-                            html: questionHeadingTextHTML,
-                            isPageHeading: false,
-                            classes: "govuk-fieldset__legend--m"
-                        }
-                    },
+                    fieldset: {
+						legend: {
+							html: '<span class="govuk-caption-l">' + captionTextHTML + '</span> ' + pageHeadingTextHTML,
+							isPageHeading: true,
+							classes: "govuk-fieldset__legend--l"
+						}
+					},
 
                     errorMessage: null if data['errorthispage'] != "true"
                                        else { html: errorTextHTML },
@@ -109,12 +91,12 @@ Will the activity take place in the sea, over the sea, or on or under the seabed
                         {
                             value: "Yes",
                             text: "Yes",
-                            checked: data['where-will-the-activity-take-place-radios'] == "Yes"
+                            checked: data['check-will-the-removal-be-from-a-vehicle-radios'] == "Yes"
                         },
                         {
                             value: "No",
                             text: "No",
-                            checked: data['where-will-the-activity-take-place-radios'] == "No"
+                            checked: data['check-will-the-removal-be-from-a-vehicle-radios'] == "No"
                         }
                     ]
                 })
@@ -127,8 +109,6 @@ Will the activity take place in the sea, over the sea, or on or under the seabed
 
     </div>
 </div>
-
-
 
 
 <!-- ERROR LOGIC  drop down to toggle states  -->
@@ -168,8 +148,6 @@ Will the activity take place in the sea, over the sea, or on or under the seabed
 
 </form>
 <!--  END USER TYPE TOGGLE -->
-
-
 
 
 

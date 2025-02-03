@@ -16,7 +16,7 @@ This will save you time.
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-What does the scientific research activity relate to?
+What will be removed?
 {% endset %}
 
 <!-- Setting the heading caption -->
@@ -28,7 +28,7 @@ What does the scientific research activity relate to?
 {% set errorTextHTML %}
     <!-- Nothing was selected -->
     {% if data['errortypeone'] == "true" %}
-        Select what the removal activity relates to
+        Select what will be removed
     {% endif %}
 {% endset %}
 
@@ -99,9 +99,9 @@ What does the scientific research activity relate to?
                                 checked: data['check-what-does-the-scientific-activity-relate-to-radio'] == "Samples for testing and analysis"
                             },
                             {
-                                value: "Other",
-                                text: "Other",
-                                checked: data['check-what-does-the-scientific-activity-relate-to-radio'] == "Other"
+                                value: "Something else",
+                                text: "Something else",
+                                checked: data['check-what-does-the-scientific-activity-relate-to-radio'] == "Something else"
                             }
                     ]
                 })
