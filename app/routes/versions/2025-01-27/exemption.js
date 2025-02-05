@@ -66,24 +66,32 @@ router.post('/' + version + section + 'what-is-your-email-address-router', funct
 //////////////////////////////////////////////////////////////////////////////////////////////
 // About your project
 // TEXT ENTRY
-/////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
 
 router.post('/' + version + section + 'about-your-project-router', function (req, res) {
     // Turn off errors by default
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
+    req.session.data['errortypetwo'] = "false";
 
-    // Validation: Check if the text input is blank
-    if (
-        req.session.data['exemption-about-your-project-text-input'] == undefined ||
-        req.session.data['exemption-about-your-project-text-input'].trim() == ""
-    ) {
-        // Trigger error and reload page
+    // Check if the text input (Project Title) is blank
+    const projectTitle = req.session.data['exemption-about-your-project-text-input'];
+    if (!projectTitle || projectTitle.trim() === "") {
         req.session.data['errorthispage'] = "true";
         req.session.data['errortypeone'] = "true";
+    }
+
+    // Check if the text area (Project Background) is blank
+    const projectBackground = req.session.data['exemption-about-your-project-text-area'];
+    if (!projectBackground || projectBackground.trim() === "") {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypetwo'] = "true";
+    }
+
+    // Redirect based on errors
+    if (req.session.data['errorthispage'] === "true") {
         res.redirect('about-your-project');
     } else {
-        // No error: continue to next page
         res.redirect('about-the-location-of-the-activity');
     }
 });
@@ -214,67 +222,27 @@ router.post('/' + version + section + 'about-your-activity-router', function (re
     }
 });
 
-//////////////////////////////////////////////////////////////////////////////////////////////
+///////////////////////////////////////////////////////////////////////////////////////////////
 // Start Date
 // DATE ENTRY
 //////////////////////////////////////////////////////////////////////////////////////////////
 
 router.post('/' + version + section + 'start-date-router', function (req, res) {
-    // Reset all error flags
+    // Reset error flags
     req.session.data['errorthispage'] = "false";
-    req.session.data['errortypeone'] = "false"; // All fields empty
-    req.session.data['errortypetwo'] = "false"; // Day missing
-    req.session.data['errortypethree'] = "false"; // Month missing
-    req.session.data['errortypefour'] = "false"; // Year missing
-    req.session.data['errortypefive'] = "false"; // Day + Month missing
-    req.session.data['errortypesix'] = "false"; // Day + Year missing
-    req.session.data['errortypeseven'] = "false"; // Month + Year missing
 
-    // Retrieve input values
+    // Retrieve the values for day, month, and year
     const day = req.session.data['exemption-start-date-date-input-day'];
     const month = req.session.data['exemption-start-date-date-input-month'];
     const year = req.session.data['exemption-start-date-date-input-year'];
 
-    // Detect missing values
-    const dayEmpty = !day || day.trim() === "";
-    const monthEmpty = !month || month.trim() === "";
-    const yearEmpty = !year || year.trim() === "";
-
-    // Set error flags based on missing values
-    if (dayEmpty && monthEmpty && yearEmpty) {
+    // Validation: Check if any field is missing
+    if (!day || !month || !year) {
+        // Trigger error and redirect back
         req.session.data['errorthispage'] = "true";
-        req.session.data['errortypeone'] = "true"; // All fields missing
-    } else {
-        if (dayEmpty && monthEmpty) {
-            req.session.data['errorthispage'] = "true";
-            req.session.data['errortypefive'] = "true"; // Day and Month missing
-        }
-        if (dayEmpty && yearEmpty) {
-            req.session.data['errorthispage'] = "true";
-            req.session.data['errortypesix'] = "true"; // Day and Year missing
-        }
-        if (monthEmpty && yearEmpty) {
-            req.session.data['errorthispage'] = "true";
-            req.session.data['errortypeseven'] = "true"; // Month and Year missing
-        }
-        if (dayEmpty) {
-            req.session.data['errorthispage'] = "true";
-            req.session.data['errortypetwo'] = "true"; // Day missing
-        }
-        if (monthEmpty) {
-            req.session.data['errorthispage'] = "true";
-            req.session.data['errortypethree'] = "true"; // Month missing
-        }
-        if (yearEmpty) {
-            req.session.data['errorthispage'] = "true";
-            req.session.data['errortypefour'] = "true"; // Year missing
-        }
-    }
-
-    // Redirect based on errors
-    if (req.session.data['errorthispage'] === "true") {
         res.redirect('start-date');
     } else {
+        // No errors: Proceed to the next page
         res.redirect('next-page');
     }
 });

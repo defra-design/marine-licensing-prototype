@@ -26,10 +26,14 @@ About your project
 
 
 <!-- Set the text for each error type -->
+<!-- Set the text for each error type -->
 {% set errorTextHTML %}
-    <!-- Error 1 - No answer selected -->
-    {% if data['errortypeone'] == "true" %}
+    {% if data['errortypeone'] == "true" and data['errortypetwo'] == "true" %}
+        Enter both the project title and project background
+    {% elif data['errortypeone'] == "true" %}
         Enter a project title
+    {% elif data['errortypetwo'] == "true" %}
+        Enter the project background
     {% endif %}
 {% endset %}
 
@@ -48,22 +52,24 @@ About your project
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-
-        <!-- ERROR LOGIC 'error summary' -->
         {% if data['errorthispage'] == "true" %}
-            {{ govukErrorSummary
-                ({
-                    titleText: "There is a problem",
-                    errorList:
-                    [
-                        {
-                            html: errorTextHTML,
-                            href: "#exemption-about-your-project-text-input"
-                        }
-                    ]
-                })
-            }}
+        <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+            <h2 class="govuk-error-summary__title" id="error-summary-title">
+                There is a problem
+            </h2>
+            <div class="govuk-error-summary__body">
+                <ul class="govuk-list govuk-error-summary__list">
+                    {% if data['errortypeone'] == "true" %}
+                        <li><a href="#exemption-about-your-project-text-input">Enter a project title</a></li>
+                    {% endif %}
+                    {% if data['errortypetwo'] == "true" %}
+                        <li><a href="#exemption-about-your-project-text-area">Enter the project background</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
         {% endif %}
+        
         <!--  END OF 'error summary' -->
 
 
@@ -72,59 +78,42 @@ About your project
             {{ pageHeadingTextHTML }}
         </h1>
 
+<form action="about-your-project-router" method="post" novalidate>
 
-        <!-- go to routes.js for routing  -->
-        <form action="about-your-project-router" method="post" novalidate>
+    {{ govukInput({
+        label: {
+            text: "Project title",
+            classes: "govuk-label",
+            isPageHeading: false
+        },
+        id: "exemption-about-your-project-text-input",
+        name: "exemption-about-your-project-text-input",
+        errorMessage: null if data['errortypeone'] != "true"
+                       else { text: "Enter a project title" },
+        value: data['exemption-about-your-project-text-input'],
+        classes: "govuk-input--full-width"
+    }) }}
 
-            {{ govukInput
-                ({
-                    label:
-                    {
-                        html: questionHeadingTextHTML,
-                        classes: "govuk-label ",
-                        isPageHeading: false
-                    },
+    {{ govukCharacterCount({
+        id: "exemption-about-your-project-text-area",
+        name: "exemption-about-your-project-text-area",
+        value: data['exemption-about-your-project-text-area'],
+        errorMessage: null if data['errortypetwo'] != "true"
+                       else { text: "Enter the project background" },
+        maxlength: 2000,
+        label: {
+            text: "Project background",
+            classes: "govuk-label",
+            isPageHeading: false
+        },
+        hint: {
+            text: "Provide details of your project, such as the aims, whether it is part of a larger project, and any other relevant information"
+        }
+    }) }}
 
-                    autocomplete: "off",
+    {{ govukButton({ text: "Continue" }) }}
 
-                    id: "exemption-about-your-project-text-input",
-
-                    name: "exemption-about-your-project-text-input",
-
-                    errorMessage: null if data['errorthispage'] != "true"
-                                       else { html: errorTextHTML },
-
-                    value: data['exemption-about-your-project-text-input'],
-
-                    classes: "govuk-input--full-width"
-                })
-            }}
-
-            {{ govukCharacterCount({
-                name: "withHint",
-                
-                id: "exemption-about-your-project-text-area",
-
-                name: "exemption-about-your-project-text-area",
-
-                value: data['exemption-about-your-project-text-area'],
-
-                maxlength: 2000,
-                label: {
-                  text: "Project background",
-                  classes: "govuk-label",
-                  isPageHeading: false
-                },
-                hint: {
-                  text: "Provide details of your project, such as the aims, whether it is part of a larger project, and any other relevant information"
-                }
-              }) }}
-
-
-            {{ govukButton({ text: "Continue" }) }}
-
-
-        </form>
+</form>
 
     </div>
 </div>
