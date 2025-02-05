@@ -1,0 +1,97 @@
+{% extends "../layouts/main.html" %}
+
+{% set pageName="Review your location" %}
+
+{% block beforeContent %}
+
+{{ govukPhaseBanner({
+tag: {
+text: "Prototype"
+},
+html: ''
+}) }}
+
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+
+  <div class="govuk-grid-column-two-thirds">
+
+    <h1 class="govuk-heading-l">
+      Review your location
+    </h1>
+
+    <dl class="govuk-summary-list govuk-!-margin-bottom-2">
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          How do you want to provide the location?
+        </dt>
+        <dd class="govuk-summary-list__value">
+          {{ data['exemption-about-the-location-of-the-activity-radios'] }}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link" href="about-the-location-of-the-activity.html">Change<span class="govuk-visually-hidden"> name</span></a>
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          How do you want to enter the coordinates?
+        </dt>
+        <dd class="govuk-summary-list__value">
+          {{ data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] }}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link" href="how-do-you-want-to-enter-the-coordinates">Change<span class="govuk-visually-hidden"> How do you want to enter the coordinates?</span></a>
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Latitude
+        </dt>
+        <dd class="govuk-summary-list__value">
+         {{ data['exemption-what-are-the-coordinates-of-the-square-latitude-text-input'] }}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link" href="what-are-the-coordinates-of-the-square">Change<span class="govuk-visually-hidden"> Latitude</span></a>
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Longitude
+        </dt>
+        <dd class="govuk-summary-list__value">
+         {{ data['exemption-what-are-the-coordinates-of-the-square-longitiude-text-input'] }}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link" href="what-are-the-coordinates-of-the-square">Change<span class="govuk-visually-hidden"> Longitude</span></a>
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Width of square
+        </dt>
+        <dd class="govuk-summary-list__value">
+          {{ data['exemption-width-of-square-number-input'] }}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link" href="width-of-square">Change<span class="govuk-visually-hidden"> Width of square</span></a>
+        </dd>
+      </div>
+    </dl>
+
+    <h2 class="govuk-heading-s">Map view</h2>
+    <img src="/public/images/cya-file-map-square.png" alt="Map view" class="govuk-!-margin-bottom-2">
+
+    <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible  govuk-!-margin-bottom-5">
+    
+    <a href="about-your-activity.html" class="govuk-button" role="button">Continue</a>
+
+
+  </div>
+
+
+</div>
+
+{% endblock %}

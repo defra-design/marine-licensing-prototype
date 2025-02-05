@@ -9,24 +9,16 @@ This will save you time.
 3. Type/customise the error message after '% set errorTextHTML %'
 4. Use 'Find and replace' to replace "SECTION" with the name of the section of the service you're working on.
 5. Use 'Find and replace' to replace "PAGENAME_RADIOS_COMPLEX" with whatever you named this page/file.
-6. Use 'Find and replace' to replace each of the radio button values. Starting with 'PLACEHOLDER_ANSWER_1'
+6. Use 'Find and replace' to replace each of the radio button values. Starting with 'xxxx'
 7. Go to the javascript file 'templates.js' and copy the section 'COMPLEX PAGE OF RADIO BUTTONS' into your routes.js file.
 8. Follow instructions at the top of the 'templates.js'.
 -->
 
-<!-- Setting the big main heading at the top of the page -->
-{% set pageHeadingTextHTML %}
-Marine Protected Areas (MPAs)
-{% endset %}
 
-<!-- Setting the heading caption -->
-{% set captionTextHTML %}
-	Check if you need a marine licence
-{% endset %}
 
 <!-- Setting the smaller secondary heading lower down the page -->
-{% set questionHeadingTextHTML %}
-Will the removal activity take place within 200 metres of an MPA?
+{% set pageHeadingTextHTML %}
+How do you want to enter the coordinates?
 {% endset %}
 
 
@@ -34,7 +26,7 @@ Will the removal activity take place within 200 metres of an MPA?
 {% set errorTextHTML %}
     <!-- Nothing was selected -->
     {% if data['errortypeone'] == "true" %}
-    Select whether the removal activity will take place within 200 metres of an MPA 
+    Select how you want to enter the coordinates
     {% endif %}
 {% endset %}
 
@@ -62,7 +54,7 @@ Will the removal activity take place within 200 metres of an MPA?
                     [
                         {
                             html: errorTextHTML,
-                            href: "#check-marine-protected-areas-radios"
+                            href: "#exemption-how-do-you-want-to-enter-the-coordinates-radios"
                         }
                     ]
                 })
@@ -72,42 +64,21 @@ Will the removal activity take place within 200 metres of an MPA?
 
 
         <!-- go to routes.js for routing  -->
-        <form action="marine-protected-areas-router" method="post" novalidate>
-
-            <span class="govuk-caption-l">{{ captionTextHTML }}</span>
-            <h1 class="govuk-heading-l">
-                {{ pageHeadingTextHTML }}
-            </h1>
-
-
-            <p>MPAs are an important part of the marine environment. Any activity within 200 metres of an MPA may need a marine licence.</p>
-
-			<p>MPAs include:</p>
-
-			<ul class="govuk-list govuk-list--bullet">
-				<li>Highly Protected Marine Areas (HPMAs)</li>
-				<li>Marine Conservation Zones (MCZs)</li>
-				<li>Special Areas of Conservation (SACs)</li>
-				<li>Special Protection Areas (SPAs)</li>
-				<li>Ramsar sites - a wetland designated as being of international importance</li>
-				<li>Sites of Special Scientific Interest (SSSIs)</li>
-			</ul>
-
-            <p>To find out if the activity falls within 200 metres of an MPA, you can use the <a href="https://defra.maps.arcgis.com/apps/webappviewer/index.html?id=28f91021979447d3b43dc83e6e93094c&showLayers=Marine%20Protected%20Areas" target="_blank">marine licensing interactive map (opens in new tab).</a></p>
+        <form action="how-do-you-want-to-enter-the-coordinates-router" method="post" novalidate>
 
             {{ govukRadios
                 ({
-                    name: "check-marine-protected-areas-radios",
+                    name: "exemption-how-do-you-want-to-enter-the-coordinates-radios",
 
-                    id: "check-marine-protected-areas-radios",
+                    id: "exemption-how-do-you-want-to-enter-the-coordinates-radios",
 
                     fieldset:
                     {
                         legend:
                         {
-                            html: questionHeadingTextHTML,
-                            isPageHeading: false,
-                            classes: "govuk-fieldset__legend--m"
+                            html: pageHeadingTextHTML,
+                            isPageHeading: true,
+                            classes: "govuk-fieldset__legend--l"
                         }
                     },
 
@@ -116,15 +87,20 @@ Will the removal activity take place within 200 metres of an MPA?
 
                     items:
                     [
-{
-                            value: "Yes",
-                            text: "Yes",
-                            checked: data['marine-protected-areas-radios'] == "Yes"
+                        {
+                            value: "Enter the centre of a circular area and it's width",
+                            text: "Enter the centre of a circular area and it's width",
+                            checked: data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter the centre of a circular area and it's width"
                         },
                         {
-                            value: "No",
-                            text: "No",
-                            checked: data['marine-protected-areas-radios'] == "No"
+                            value: "Enter the centre of a square and it's width",
+                            text: "Enter the centre of a square and it's width",
+                            checked: data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter the centre of a square and it's width"
+                        },
+                        {
+                            value: "Enter multiple coordinates of the area",
+                            text: "Enter multiple coordinates of the area",
+                            checked: data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter multiple coordinates of the area"
                         }
                     ]
                 })

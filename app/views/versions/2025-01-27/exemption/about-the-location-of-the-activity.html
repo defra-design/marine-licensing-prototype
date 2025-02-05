@@ -4,19 +4,19 @@
 NOTES ON USING THIS TEMPLATE Page
 This will save you time.
 
-1. Type your heading for the page after '% set pageHeadingTextHTML %'
-2. Type/customise the error message after '% set errorTextHTML %'
-3. Use 'Find and replace' to replace "SECTION" with the name of the section of the service you're working on.
-4. Use 'Find and replace' to replace "PAGENAME_RADIOS" with whatever you named this page/file.
-5. Use 'Find and replace' to replace each of the radio button values. Starting with 'PLACEHOLDER_ANSWER_1'
-6. Go to the javascript file 'templates.js' and copy the section 'RADIO BUTTONS - MANDATORY' into your routes.js file.
-7. Follow instructions at the top of the 'templates.js'
+1. Put your heading for the page after '% set pageHeadingTextHTML %'
+2. Put your question heading for the page after '% set questionHeadingTextHTML %'
+3. Type/customise the error message after '% set errorTextHTML %'
+4. Use 'Find and replace' to replace "SECTION" with the name of the section of the service you're working on.
+5. Use 'Find and replace' to replace "PAGENAME_RADIOS_COMPLEX" with whatever you named this page/file.
+6. Use 'Find and replace' to replace each of the radio button values. Starting with 'xxxx'
+7. Go to the javascript file 'templates.js' and copy the section 'COMPLEX PAGE OF RADIO BUTTONS' into your routes.js file.
+8. Follow instructions at the top of the 'templates.js'.
 -->
-
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-Will each sample have a volume of 1 cubic metre or less?
+About the location of the activity
 {% endset %}
 
 <!-- Setting the heading caption -->
@@ -24,11 +24,17 @@ Will each sample have a volume of 1 cubic metre or less?
 	Check if you need a marine licence
 {% endset %}
 
+<!-- Setting the smaller secondary heading lower down the page -->
+{% set questionHeadingTextHTML %}
+How do you want to provide the location?
+{% endset %}
+
+
 <!-- Set the text for the error type -->
 {% set errorTextHTML %}
     <!-- Nothing was selected -->
     {% if data['errortypeone'] == "true" %}
-    Select whether each sample will have a volume of 1 cubic metre or less
+    Select how you want to provide the location
     {% endif %}
 {% endset %}
 
@@ -47,7 +53,6 @@ Will each sample have a volume of 1 cubic metre or less?
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
-
         <!-- ERROR LOGIC 'error summary' -->
         {% if data['errorthispage'] == "true" %}
             {{ govukErrorSummary
@@ -57,7 +62,7 @@ Will each sample have a volume of 1 cubic metre or less?
                     [
                         {
                             html: errorTextHTML,
-                            href: "#will-the-volume-radios"
+                            href: "#exemption-about-the-location-of-the-activity-radios"
                         }
                     ]
                 })
@@ -67,40 +72,54 @@ Will each sample have a volume of 1 cubic metre or less?
 
 
         <!-- go to routes.js for routing  -->
-        <form action="will-the-volume-router" method="post" novalidate>
+        <form action="about-the-location-of-the-activity-router" method="post" novalidate>
+
+            <h1 class="govuk-heading-l">
+                {{ pageHeadingTextHTML }}
+            </h1>
+
+            <p>Tell us the exact location of the area your activity will take place.</p>
 
             {{ govukRadios
                 ({
-                    name: "will-the-volume-radios",
+                    name: "exemption-about-the-location-of-the-activity-radios",
 
-                    id: "will-the-volume-radios",
+                    id: "exemption-about-the-location-of-the-activity-radios",
 
-                    fieldset: {
-						legend: {
-							html: '<span class="govuk-caption-l">' + captionTextHTML + '</span> ' + pageHeadingTextHTML,
-							isPageHeading: true,
-							classes: "govuk-fieldset__legend--l"
-						}
-					},
+                    fieldset:
+                    {
+                        legend:
+                        {
+                            html: questionHeadingTextHTML,
+                            isPageHeading: false,
+                            classes: "govuk-fieldset__legend--m"
+                        }
+                    },
 
                     errorMessage: null if data['errorthispage'] != "true"
-                        else { html: errorTextHTML },
+                                       else { html: errorTextHTML },
 
-                        items:
-                        [
-                            {
-                                value: "Yes",
-                                text: "Yes",
-                                checked: data['will-the-volume-radio'] == "Yes"
-                            },
-                            {
-                                value: "No",
-                                text: "No",
-                                checked: data['will-the-volume-radio'] == "No"
-                            }
+                    items:
+                    [
+                        {
+                            value: "Upload a file with coordinates of the area",
+                            text: "Upload a file with coordinates of the area",
+                            checked: data['exemption-about-the-location-of-the-activity-radios'] == "Upload a file with coordinates of the area"
+                        },
+                        {
+                            value: "Enter the coordinates of the area",
+                            text: "Enter the coordinates of the area",
+                            checked: data['exemption-about-the-location-of-the-activity-radios'] == "Enter the coordinates of the area"
+                        },
+                        {
+                            value: "Draw the area on a map",
+                            text: "Draw the area on a map",
+                            checked: data['exemption-about-the-location-of-the-activity-radios'] == "Draw the area on a map"
+                        }
                     ]
                 })
             }}
+
 
             {{ govukButton({ text: "Continue" }) }}
 
@@ -108,6 +127,8 @@ Will each sample have a volume of 1 cubic metre or less?
 
     </div>
 </div>
+
+
 
 
 <!-- ERROR LOGIC  drop down to toggle states  -->
@@ -147,6 +168,8 @@ Will each sample have a volume of 1 cubic metre or less?
 
 </form>
 <!--  END USER TYPE TOGGLE -->
+
+
 
 
 
