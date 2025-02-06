@@ -12,7 +12,7 @@
       Check your answers before sending your information
     </h1>
 
-    <h2 class="govuk-heading-m">
+    <h2 class="govuk-heading-m" id="personal-details">
       Personal details
     </h2>
 
@@ -25,7 +25,7 @@
           {{ data['exemption-what-is-your-name-text-input'] }}
         </dd>
         <dd class="govuk-summary-list__actions">
-          <a class="govuk-link" href="what-is-your-name.html">Change<span class="govuk-visually-hidden"> Full
+          <a class="govuk-link" href="what-is-your-name?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Full
               name</span></a>
         </dd>
       </div>
@@ -37,13 +37,13 @@
           {{ data['exemption-what-is-your-email-address-text-input'] }}
         </dd>
         <dd class="govuk-summary-list__actions">
-          <a class="govuk-link" href="what-is-your-email-address.html">Change<span class="govuk-visually-hidden"> Email
+          <a class="govuk-link" href="what-is-your-email-address?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Email
               address</span></a>
         </dd>
       </div>
     </dl>
 
-    <h2 class="govuk-heading-m">
+    <h2 class="govuk-heading-m" id="about-your-project">
       Project details
     </h2>
 
@@ -56,7 +56,7 @@
           {{ data['exemption-about-your-project-text-input'] }}
         </dd>
         <dd class="govuk-summary-list__actions">
-          <a class="govuk-link" href="about-your-project.html">Change<span class="govuk-visually-hidden"> Project
+          <a class="govuk-link" href="about-your-project?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Project
               name</span></a>
         </dd>
       </div>
@@ -68,7 +68,7 @@
           {{ data['exemption-about-your-project-text-area'] }}
         </dd>
         <dd class="govuk-summary-list__actions">
-          <a class="govuk-link" href="about-your-project.html">Change<span class="govuk-visually-hidden"> Project
+          <a class="govuk-link" href="about-your-project?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Project
               background</span></a>
         </dd>
       </div>
@@ -142,8 +142,8 @@
 
     <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible  govuk-!-margin-bottom-8">
 
-    <h2 class="govuk-heading-m">
-      About the activity
+    <h2 class="govuk-heading-m" id="about-your-activity">
+      About your activity
     </h2>
 
     <dl class="govuk-summary-list govuk-!-margin-bottom-8">
@@ -155,8 +155,7 @@
           {{ data['exemption-about-your-activity-text-area'] }}
         </dd>
         <dd class="govuk-summary-list__actions">
-          <a class="govuk-link" href="about-your-activity.html">Change<span class="govuk-visually-hidden"> Activity
-              description</span></a>
+          <a class="govuk-link" href="about-your-activity?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Activity description</span></a>
         </dd>
       </div>
       <div class="govuk-summary-list__row">
@@ -178,7 +177,7 @@
           {{ formattedDate | govukDate }}
         </dd>
         <dd class="govuk-summary-list__actions">
-          <a class="govuk-link" href="start-date.html">Change<span class="govuk-visually-hidden"> Start date</span></a>
+          <a class="govuk-link" href="start-date?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Start date</span></a>
         </dd>
       </div>
       <div class="govuk-summary-list__row">
@@ -200,12 +199,12 @@
           {{ formattedDate | govukDate }}
         </dd>
         <dd class="govuk-summary-list__actions">
-          <a class="govuk-link" href="end-date.html">Change<span class="govuk-visually-hidden"> Start date</span></a>
+          <a class="govuk-link" href="end-date?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> End date</span></a>
         </dd>
       </div>
     </dl>
 
-  <h2 class="govuk-heading-m">
+  <h2 class="govuk-heading-m" id="public-register">
     Public register
   </h2>
 

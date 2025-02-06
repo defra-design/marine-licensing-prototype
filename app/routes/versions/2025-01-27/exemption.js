@@ -27,15 +27,17 @@ router.post('/' + version + section + 'what-is-your-name-router', function (req,
 
     // Validation: Check if the text input is blank
     if (req.session.data['exemption-what-is-your-name-text-input'] == undefined || req.session.data['exemption-what-is-your-name-text-input'].trim() == "") {
-        // Trigger validation and reload the page
         req.session.data['errorthispage'] = "true";
         req.session.data['errortypeone'] = "true";
-
-        // Redirect back to the current page
         res.redirect('what-is-your-name');
     } else {
-        // No errors: Continue to the next page
-        res.redirect('what-is-your-email-address');
+        // Check if we need to return to check answers
+        if (req.session.data['camefromcheckanswers'] === 'true') {
+            req.session.data['camefromcheckanswers'] = false;
+            res.redirect('check-answers#personal-details');
+        } else {
+            res.redirect('what-is-your-email-address');
+        }
     }
 });
 
@@ -58,8 +60,13 @@ router.post('/' + version + section + 'what-is-your-email-address-router', funct
         // Redirect back to the current page
         res.redirect('what-is-your-email-address');
     } else {
-        // No errors: Continue to the next page
-        res.redirect('about-your-project');
+        // Check if we need to return to check answers
+        if (req.session.data['camefromcheckanswers'] === 'true') {
+            req.session.data['camefromcheckanswers'] = false;
+            res.redirect('check-answers#personal-details');
+        } else {
+            res.redirect('about-your-project');
+        }
     }
 });
 
@@ -92,7 +99,13 @@ router.post('/' + version + section + 'about-your-project-router', function (req
     if (req.session.data['errorthispage'] === "true") {
         res.redirect('about-your-project');
     } else {
-        res.redirect('about-the-location-of-the-activity');
+        // Check if we need to return to check answers
+        if (req.session.data['camefromcheckanswers'] === 'true') {
+            req.session.data['camefromcheckanswers'] = false;
+            res.redirect('check-answers#about-your-project');
+        } else {
+            res.redirect('about-the-location-of-the-activity');
+        }
     }
 });
 
@@ -215,10 +228,15 @@ router.post('/' + version + section + 'about-your-activity-router', function (re
         // Trigger validation for empty input
         req.session.data['errorthispage'] = "true";
         req.session.data['errortypeone'] = "true";
-        res.redirect('about-your-activity');
+        res.redirect('about-your-activity#about-your-activity');
     } else {
-        // No errors: Continue to the next page
-        res.redirect('start-date');
+        // If the user came from check answers, return there
+        if (req.session.data['camefromcheckanswers'] === 'true') {
+            req.session.data['camefromcheckanswers'] = false;
+            res.redirect('check-answers#about-your-activity');
+        } else {
+            res.redirect('start-date');
+        }
     }
 });
 
@@ -242,8 +260,13 @@ router.post('/' + version + section + 'start-date-router', function (req, res) {
         req.session.data['errorthispage'] = "true";
         res.redirect('start-date');
     } else {
-        // No errors: Proceed to the next page
-        res.redirect('end-date');
+        // Check if we need to return to check answers
+        if (req.session.data['camefromcheckanswers'] === 'true') {
+            req.session.data['camefromcheckanswers'] = false;
+            res.redirect('check-answers#about-your-activity');
+        } else {
+            res.redirect('end-date');
+        }
     }
 });
 
@@ -267,10 +290,16 @@ router.post('/' + version + section + 'end-date-router', function (req, res) {
         req.session.data['errorthispage'] = "true";
         res.redirect('end-date');
     } else {
-        // No errors: Proceed to the next page
-        res.redirect('public-register');
+        // Check if we need to return to check answers
+        if (req.session.data['camefromcheckanswers'] === 'true') {
+            req.session.data['camefromcheckanswers'] = false;
+            res.redirect('check-answers#about-your-activity');
+        } else {
+            res.redirect('public-register');
+        }
     }
 });
+
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Public Register
 // RADIO BUTTONS WITH CONDITIONAL TEXTAREA
@@ -302,7 +331,7 @@ router.post('/' + version + section + 'public-register-router', function (req, r
         res.redirect('public-register');
     } else {
         // No errors, redirect to the next page
-        res.redirect('check-answers');
+        res.redirect('check-answers#public-register');
     }
 });
 
