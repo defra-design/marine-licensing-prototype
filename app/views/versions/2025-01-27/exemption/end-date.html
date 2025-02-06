@@ -13,11 +13,11 @@ This will save you time.
 -->
 <!-- Set the heading for the page -->
 {% set pageHeadingTextHTML %}
-What is the start date of your activity?
+What is the end date of your activity?
 {% endset %}
 
 {% set errorTextHTML %}
-    Enter the start date of your activity
+    Enter the end date of your activity
 {% endset %}
 
 
@@ -44,7 +44,7 @@ What is the start date of your activity?
     </h2>
     <div class="govuk-error-summary__body">
         <ul class="govuk-list govuk-error-summary__list">
-            <li><a href="#exemption-start-date-date-input-day">Enter the start date of your activity</a></li>
+            <li><a href="#exemption-end-date-date-input-day">Enter the end date of your activity</a></li>
         </ul>
     </div>
 </div>
@@ -52,27 +52,27 @@ What is the start date of your activity?
         <!--  END OF 'error summary' -->
 
 
-        <form action="start-date-router" method="post" novalidate>
+        <form action="end-date-router" method="post" novalidate>
 
             {{ govukDateInput({
-                idPrefix: "exemption-start-date-date-input",
-                namePrefix: "exemption-start-date-date-input",
+                idPrefix: "exemption-end-date-date-input",
+                namePrefix: "exemption-end-date-date-input",
                 fieldset: {
                     legend: {
-                        text: "What is the start date of your activity?",
+                        text: "What is the end date of your activity?",
                         isPageHeading: true,
                         classes: "govuk-fieldset__legend--l"
                     }
                 },
                 hint: {
-                    text: "For example, 27 3 2026"
+                    text: "For example, 27 4 2026"
                 },
                 errorMessage: null if data['errorthispage'] != "true"
                                else { text: errorTextHTML },
                 items: [
-                    { name: "day", classes: "govuk-input--width-2", value: data['exemption-start-date-date-input-day'], attributes: { autocomplete: "off" } },
-                    { name: "month", classes: "govuk-input--width-2", value: data['exemption-start-date-date-input-month'], attributes: { autocomplete: "off" } },
-                    { name: "year", classes: "govuk-input--width-4", value: data['exemption-start-date-date-input-year'], attributes: { autocomplete: "off" } }
+                    { name: "day", classes: "govuk-input--width-2", value: data['exemption-end-date-date-input-day'], attributes: { autocomplete: "off" } },
+                    { name: "month", classes: "govuk-input--width-2", value: data['exemption-end-date-date-input-month'], attributes: { autocomplete: "off" } },
+                    { name: "year", classes: "govuk-input--width-4", value: data['exemption-end-date-date-input-year'], attributes: { autocomplete: "off" } }
                 ]
             }) }}
 

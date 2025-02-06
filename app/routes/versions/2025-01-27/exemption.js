@@ -130,9 +130,9 @@ router.post('/' + version + section + 'how-do-you-want-to-enter-the-coordinates-
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
 
-    if (req.session.data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter the centre of a circular area and it's width") {
+    if (req.session.data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter the centre point of a circle and its width") {
         res.redirect('stop');
-    } else if (req.session.data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter the centre of a square and it's width") {
+    } else if (req.session.data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter the centre point of a square and its width") {
         res.redirect('what-are-the-coordinates-of-the-square');
     } else if (req.session.data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter multiple coordinates of the area") {
         res.redirect('stop');
@@ -243,7 +243,66 @@ router.post('/' + version + section + 'start-date-router', function (req, res) {
         res.redirect('start-date');
     } else {
         // No errors: Proceed to the next page
-        res.redirect('next-page');
+        res.redirect('end-date');
+    }
+});
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+// End Date
+// DATE ENTRY
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+router.post('/' + version + section + 'end-date-router', function (req, res) {
+    // Reset error flags
+    req.session.data['errorthispage'] = "false";
+
+    // Retrieve the values for day, month, and year
+    const day = req.session.data['exemption-end-date-date-input-day'];
+    const month = req.session.data['exemption-end-date-date-input-month'];
+    const year = req.session.data['exemption-end-date-date-input-year'];
+
+    // Validation: Check if any field is missing
+    if (!day || !month || !year) {
+        // Trigger error and redirect back
+        req.session.data['errorthispage'] = "true";
+        res.redirect('end-date');
+    } else {
+        // No errors: Proceed to the next page
+        res.redirect('public-register');
+    }
+});
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Public Register
+// RADIO BUTTONS WITH CONDITIONAL TEXTAREA
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+router.post('/' + version + section + 'public-register-router', function (req, res) {
+    // Reset error states
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errortypetwo'] = "false";
+
+    // Check if the radio option is selected
+    if (
+        req.session.data['exemption-public-register-radios'] == undefined ||
+        req.session.data['exemption-public-register-radios'].trim() == ""
+    ) {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        res.redirect('public-register');
+    } 
+    // If "Yes" is selected, ensure the textarea is not empty
+    else if (
+        req.session.data['exemption-public-register-radios'] == "Yes" &&
+        (req.session.data['exemption-public-register-text-area'] == undefined ||
+         req.session.data['exemption-public-register-text-area'].trim() == "")
+    ) {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypetwo'] = "true";
+        res.redirect('public-register');
+    } else {
+        // No errors, redirect to the next page
+        res.redirect('check-answers');
     }
 });
 

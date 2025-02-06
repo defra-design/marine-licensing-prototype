@@ -71,7 +71,7 @@ About your activity
         <form action="about-your-activity-router" method="post" novalidate>
 
 
-            {{ govukCharacterCount({
+            {{ govukTextarea({
                 
                 id: "exemption-about-your-activity-text-area",
 
@@ -82,7 +82,7 @@ About your activity
 				errorMessage: null if data['errorthispage'] != "true"
                                        else { html: errorTextHTML },
 									   
-                maxlength: 2000,
+
                 label: {
                   text: "Activity description",
                   classes: "govuk-label",
