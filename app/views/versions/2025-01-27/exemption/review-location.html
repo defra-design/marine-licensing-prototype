@@ -22,7 +22,7 @@
           {{ data['exemption-about-the-location-of-the-activity-radios'] }}
         </dd>
         <dd class="govuk-summary-list__actions">
-          <a class="govuk-link" href="about-the-location-of-the-activity.html">Change<span class="govuk-visually-hidden"> name</span></a>
+          <a class="govuk-link" href="about-the-location-of-the-activity?camefromcheckanswers=review">Change<span class="govuk-visually-hidden"> name</span></a>
         </dd>
       </div>
       <div class="govuk-summary-list__row">
@@ -33,7 +33,7 @@
           {{ data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] }}
         </dd>
         <dd class="govuk-summary-list__actions">
-          <a class="govuk-link" href="how-do-you-want-to-enter-the-coordinates">Change<span class="govuk-visually-hidden"> How do you want to enter the coordinates?</span></a>
+          <a class="govuk-link" href="how-do-you-want-to-enter-the-coordinates?camefromcheckanswers=review">Change<span class="govuk-visually-hidden"> How do you want to enter the coordinates?</span></a>
         </dd>
       </div>
       <div class="govuk-summary-list__row">
@@ -76,8 +76,9 @@
 
     <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible  govuk-!-margin-bottom-5">
     
-    <a href="about-your-activity.html" class="govuk-button" role="button">Continue</a>
-
+    <form action="review-location-router" method="post" novalidate>
+        {{ govukButton({ text: "Continue" }) }}
+    </form>
 
   </div>
 
