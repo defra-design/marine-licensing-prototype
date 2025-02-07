@@ -96,21 +96,21 @@ Error:
             classes: "govuk-input--full-width"
             }) }}
 
-            {{ govukCharacterCount({
+            {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+
+            {{ govukTextarea({
             id: "exemption-about-your-project-text-area",
             name: "exemption-about-your-project-text-area",
             value: data['exemption-about-your-project-text-area'],
             errorMessage: null if data['errortypetwo'] != "true"
             else { text: "Enter the project background" },
-            maxlength: 4000,
             label: {
             text: "Project background",
             classes: "govuk-label",
             isPageHeading: false
             },
             hint: {
-            text: "Provide details of your project, such as the aims, whether it is part of a larger project, and any
-            other relevant information"
+            text: "Provide a summary of your  project, such as the aims, whether it is part of a larger project, and any other relevant information"
             }
             }) }}
 

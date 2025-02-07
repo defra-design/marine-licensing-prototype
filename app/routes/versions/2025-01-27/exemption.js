@@ -228,7 +228,7 @@ router.post('/' + version + section + 'about-your-activity-router', function (re
         // Trigger validation for empty input
         req.session.data['errorthispage'] = "true";
         req.session.data['errortypeone'] = "true";
-        res.redirect('about-your-activity#about-your-activity');
+        res.redirect('about-your-activity');
     } else {
         // If the user came from check answers, return there
         if (req.session.data['camefromcheckanswers'] === 'true') {
@@ -330,8 +330,13 @@ router.post('/' + version + section + 'public-register-router', function (req, r
         req.session.data['errortypetwo'] = "true";
         res.redirect('public-register');
     } else {
-        // No errors, redirect to the next page
+       // Check if we need to return to check answers
+       if (req.session.data['camefromcheckanswers'] === 'true') {
+        req.session.data['camefromcheckanswers'] = false;
         res.redirect('check-answers#public-register');
+    } else {
+        res.redirect('check-answers');
+    }
     }
 });
 

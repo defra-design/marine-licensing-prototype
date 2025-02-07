@@ -73,20 +73,14 @@ What are the coordinates of the centre of the square?
 </div>
 {% endif %}
 
-
-
-        <h1 class="govuk-heading-l">
-            {{ pageHeadingTextHTML }}
-        </h1>
-
         <!-- go to routes.js for routing  -->
         <form action="what-are-the-coordinates-of-the-square-router" method="post" novalidate>
 
             {% call govukFieldset({
                 legend: {
-                  text: "Enter the coordinates",
-                  classes: "govuk-fieldset__legend--m govuk-visually-hidden",
-                  isPageHeading: false
+                  html: pageHeadingTextHTML,
+                  classes: "govuk-fieldset__legend--l",
+                  isPageHeading: true
                 }
               }) %}
               
