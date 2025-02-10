@@ -122,17 +122,9 @@ router.post('/' + version + section + 'about-the-location-of-the-activity-router
     if (req.session.data['exemption-about-the-location-of-the-activity-radios'] == "Upload a file with coordinates of the area") {
         res.redirect('stop');
     } else if (req.session.data['exemption-about-the-location-of-the-activity-radios'] == "Enter the coordinates of the area") {
-        if (req.session.data['camefromcheckanswers'] === 'review') {
-            // Set flag for review journey
-            req.session.data['needsFullReviewJourney'] = true;
-            res.redirect('how-do-you-want-to-enter-the-coordinates');
-        } else if (req.session.data['camefromcheckanswers'] === 'true') {
-            // Set flag for check answers journey
-            req.session.data['needsFullCheckAnswersJourney'] = true;
-            res.redirect('how-do-you-want-to-enter-the-coordinates');
-        } else {
-            res.redirect('how-do-you-want-to-enter-the-coordinates');
-        }
+        // Always need to go through all steps when changing location method
+        req.session.data['isMultiStepChange'] = true;
+        res.redirect('how-do-you-want-to-enter-the-coordinates');
     } else if (req.session.data['exemption-about-the-location-of-the-activity-radios'] == "Draw the area on a map") {
         res.redirect('stop');
     } else {
@@ -156,17 +148,9 @@ router.post('/' + version + section + 'how-do-you-want-to-enter-the-coordinates-
     if (req.session.data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter the centre point of a circle and its width") {
         res.redirect('stop');
     } else if (req.session.data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter the centre point of a square and its width") {
-        if (req.session.data['camefromcheckanswers'] === 'review' || req.session.data['needsFullReviewJourney']) {
-            // Continue review journey
-            req.session.data['needsReviewAfterWidth'] = true;
-            res.redirect('what-are-the-coordinates-of-the-square');
-        } else if (req.session.data['camefromcheckanswers'] === 'true' || req.session.data['needsFullCheckAnswersJourney']) {
-            // Continue check answers journey
-            req.session.data['needsReviewAfterWidth'] = true;
-            res.redirect('what-are-the-coordinates-of-the-square');
-        } else {
-            res.redirect('what-are-the-coordinates-of-the-square');
-        }
+        // Always need to go through all steps when changing coordinate entry method
+        req.session.data['isMultiStepChange'] = true;
+        res.redirect('what-are-the-coordinates-of-the-square');
     } else if (req.session.data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter multiple coordinates of the area") {
         res.redirect('stop');
     } else {
@@ -202,8 +186,22 @@ router.post('/' + version + section + 'what-are-the-coordinates-of-the-square-ro
 
     if (req.session.data['errorthispage'] == "true") {
         res.redirect('what-are-the-coordinates-of-the-square');
+        return;
+    }
+
+    if (req.session.data['isMultiStepChange']) {
+        // Part of multi-step change, continue to width
+        res.redirect('width-of-square');
+    } else if (req.session.data['camefromcheckanswers'] === 'review') {
+        // Direct change from review
+        req.session.data['camefromcheckanswers'] = false;
+        res.redirect('review-location');
+    } else if (req.session.data['camefromcheckanswers'] === 'true') {
+        // Direct change from check answers
+        req.session.data['camefromcheckanswers'] = false;
+        res.redirect('check-answers#location-details');
     } else {
-        // Always go to width-of-square, flags will determine next step
+        // Normal flow
         res.redirect('width-of-square');
     }
 });
@@ -226,20 +224,23 @@ router.post('/' + version + section + 'width-of-square-router', function (req, r
         req.session.data['errorthispage'] = "true";
         req.session.data['errortypeone'] = "true";
         res.redirect('width-of-square');
-        return; // Add return to prevent further execution
+        return;
     }
 
     // Validation passed, handle the routing
-    if (req.session.data['needsFullCheckAnswersJourney']) {
-        req.session.data['fromCheckAnswers'] = true;
+    if (req.session.data['isMultiStepChange']) {
+        // Part of multi-step change, go to review
         res.redirect('review-location');
-    } else if (req.session.data['camefromcheckanswers'] === 'review') {
+    } else if (req.session.data['camefromcheckanswers'] === 'true' && !req.session.data['startedFromCheckAnswers']) {
+        // Direct change from check answers
+        req.session.data['camefromcheckanswers'] = false;
+        res.redirect('check-answers#location-details');
+    } else if (req.session.data['camefromcheckanswers'] === 'review' && !req.session.data['startedFromReview']) {
+        // Direct change from review
         req.session.data['camefromcheckanswers'] = false;
         res.redirect('review-location');
-    } else if (req.session.data['camefromcheckanswers'] === 'true' || req.session.data['needsReviewAfterWidth']) {
-        req.session.data['fromCheckAnswers'] = true;
-        res.redirect('review-location');
     } else {
+        // Part of longer journey or normal flow
         res.redirect('review-location');
     }
 });
@@ -250,14 +251,14 @@ router.post('/' + version + section + 'width-of-square-router', function (req, r
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 router.post('/' + version + section + 'review-location-router', function (req, res) {
-    if (req.session.data['fromCheckAnswers'] || req.session.data['needsFullCheckAnswersJourney']) {
-        // Clear all journey flags
-        req.session.data['fromCheckAnswers'] = false;
-        req.session.data['needsReviewAfterWidth'] = false;
-        req.session.data['needsFullCheckAnswersJourney'] = false;
-        req.session.data['needsFullReviewJourney'] = false;
+    if (req.session.data['isMultiStepChange'] && req.session.data['camefromcheckanswers'] === 'true') {
+        // Clear flags and return to check answers
+        req.session.data['isMultiStepChange'] = false;
+        req.session.data['camefromcheckanswers'] = false;
         res.redirect('check-answers');
     } else {
+        // Clear flag and continue normal flow
+        req.session.data['isMultiStepChange'] = false;
         res.redirect('about-your-activity');
     }
 });
