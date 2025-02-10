@@ -16,14 +16,14 @@ This will save you time.
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-About your activity
+Activity details
 {% endset %}
 
 <!-- Set the text for each error type -->
 {% set errorTextHTML %}
     <!-- Error 1 - No answer selected -->
     {% if data['errortypeone'] == "true" %}
-        Enter an activity description
+        Enter the activity details
     {% endif %}
 {% endset %}
 
@@ -60,10 +60,6 @@ About your activity
         {% endif %}
         <!--  END OF 'error summary' -->
 
-        <h1 class="govuk-heading-l">
-            {{ pageHeadingTextHTML }}
-        </h1>
-
         <!-- go to routes.js for routing  -->
         <form action="about-your-activity-router" method="post" novalidate>
 
@@ -80,12 +76,12 @@ About your activity
 									   
 
                 label: {
-                  text: "Activity description",
-                  classes: "govuk-label",
-                  isPageHeading: false
+                  html: pageHeadingTextHTML,
+                  classes: "govuk-label--l",
+                  isPageHeading: true
                 },
                 hint: {
-                  text: "Provide details about what you plan to do in this location "
+                  text: "Provide details about what you plan to do in this location"
                 }
               }) }}
 

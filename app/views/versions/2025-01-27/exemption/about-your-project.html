@@ -16,7 +16,7 @@ This will save you time.
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-About your project
+Project details
 {% endset %}
 
 <!-- Setting the smaller secondary heading lower down the page -->
@@ -83,7 +83,7 @@ Error:
 
             {{ govukInput({
             label: {
-            text: "Project title",
+            text: "Project name",
             classes: "govuk-label",
             isPageHeading: false
             },
@@ -91,7 +91,7 @@ Error:
             id: "exemption-about-your-project-text-input",
             name: "exemption-about-your-project-text-input",
             errorMessage: null if data['errortypeone'] != "true"
-            else { text: "Enter a project title" },
+            else { text: "Enter a project name" },
             value: data['exemption-about-your-project-text-input'],
             classes: "govuk-input--full-width"
             }) }}
