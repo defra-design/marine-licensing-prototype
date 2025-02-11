@@ -122,11 +122,13 @@ Will the substance or object be deposited from anything in this list? 
                     [
                         {
                             value: "Yes",
-                            text: "Yes"
+                            text: "Yes",
+                            checked: data['check-how-the-substance-or-object-will-be-deposited-radios'] == "Yes"
                         },
                         {
                             value: "No",
-                            text: "No"
+                            text: "No",
+                            checked: data['check-how-the-substance-or-object-will-be-deposited-radios'] == "No"
                         }
                     ]
                 })

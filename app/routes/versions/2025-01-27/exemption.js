@@ -126,7 +126,10 @@ router.post('/' + version + section + 'about-the-location-of-the-activity-router
         req.session.data['isMultiStepChange'] = true;
         res.redirect('how-do-you-want-to-enter-the-coordinates');
     } else if (req.session.data['exemption-about-the-location-of-the-activity-radios'] == "Draw the area on a map") {
-        res.redirect('stop');
+        if (req.session.data['camefromcheckanswers'] === 'true') {
+            req.session.data['startedFromCheckAnswers'] = true;
+        }
+        res.redirect('map');
     } else {
         // If no selection is made, show validation error and reload the page
         req.session.data['errorthispage'] = "true";
@@ -251,18 +254,33 @@ router.post('/' + version + section + 'width-of-square-router', function (req, r
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 router.post('/' + version + section + 'review-location-router', function (req, res) {
-    if (req.session.data['isMultiStepChange'] && req.session.data['camefromcheckanswers'] === 'true') {
-        // Clear flags and return to check answers
+    if (req.session.data['startedFromCheckAnswers'] || (req.session.data['isMultiStepChange'] && req.session.data['camefromcheckanswers'] === 'true')) {
+        // Clear all journey flags
+        req.session.data['startedFromCheckAnswers'] = false;
         req.session.data['isMultiStepChange'] = false;
         req.session.data['camefromcheckanswers'] = false;
         res.redirect('check-answers');
     } else {
-        // Clear flag and continue normal flow
-        req.session.data['isMultiStepChange'] = false;
         res.redirect('about-your-activity');
     }
 });
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Review Map
+// REVIEW PAGE
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+router.post('/' + version + section + 'review-map-router', function (req, res) {
+    if (req.session.data['startedFromCheckAnswers'] || (req.session.data['isMultiStepChange'] && req.session.data['camefromcheckanswers'] === 'true')) {
+        // Clear all journey flags
+        req.session.data['startedFromCheckAnswers'] = false;
+        req.session.data['isMultiStepChange'] = false;
+        req.session.data['camefromcheckanswers'] = false;
+        res.redirect('check-answers');
+    } else {
+        res.redirect('about-your-activity');
+    }
+});
 //////////////////////////////////////////////////////////////////////////////////////////////
 // About your activity
 // TEXT ENTRY - TEXTAREA
@@ -363,6 +381,11 @@ router.post('/' + version + section + 'public-register-router', function (req, r
     req.session.data['errortypeone'] = "false";
     req.session.data['errortypetwo'] = "false";
 
+    // Clear text area if user changes from Yes to No
+    if (req.session.data['exemption-public-register-radios'] === 'No') {
+        delete req.session.data['exemption-public-register-text-area'];
+    }
+
     // Check if the radio option is selected
     if (
         req.session.data['exemption-public-register-radios'] == undefined ||
@@ -384,11 +407,11 @@ router.post('/' + version + section + 'public-register-router', function (req, r
     } else {
        // Check if we need to return to check answers
        if (req.session.data['camefromcheckanswers'] === 'true') {
-        req.session.data['camefromcheckanswers'] = false;
-        res.redirect('check-answers#public-register');
-    } else {
-        res.redirect('check-answers');
-    }
+            req.session.data['camefromcheckanswers'] = false;
+            res.redirect('check-answers#public-register');
+        } else {
+            res.redirect('check-answers');
+        }
     }
 });
 

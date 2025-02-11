@@ -83,27 +83,6 @@ This will save you time.
 
 			<p><a href="https://www.gov.uk/guidance/marine-licensing-definitions" rel="noreferrer noopener" rel="noreferrer noopener" target="_blank">Find out more about the Marine Management Organisation’s jurisdiction (opens in new tab)</a></p>
 
-            <!--<details class="govuk-details" data-module="govuk-details">
-                <summary class="govuk-details__summary">
-                    <span class="govuk-details__summary-text">
-                        Understanding PLACEHOLDER
-                    </span>
-                </summary>
-                <div class="govuk-details__text">
-
-                    <p>This includes:</p>
-
-                    <ul class="govuk-body govuk-list--bullet">
-                        <li>PLACEHOLDER</li>
-                        <li>PLACEHOLDER</li>
-                        <li>PLACEHOLDER</li>
-                        <li>PLACEHOLDER</li>
-                    </ul>
-
-                </div>
-            </details>-->
-
-
             {{ govukRadios
                 ({
                     name: "check-in-which-waters-radios",
@@ -128,17 +107,17 @@ This will save you time.
                         {
                             value: "English waters or Northern Ireland offshore waters",
                             text: "English waters or Northern Ireland offshore waters",
-                            checked: data['in-which-waters-radios'] == "English waters or Northern Ireland offshore waters"
+                            checked: data['check-in-which-waters-radios'] == "English waters or Northern Ireland offshore waters"
                         },
                         {
                             value: "Other UK waters - Wales, Scotland or Northern Ireland (excluding Northern Ireland offshore waters)",
                             text: "Other UK waters - Wales, Scotland or Northern Ireland (excluding Northern Ireland offshore waters)",
-                            checked: data['in-which-waters-radios'] == "Other UK waters - Wales, Scotland or Northern Ireland (excluding Northern Ireland offshore waters)"
+                            checked: data['check-in-which-waters-radios'] == "Other UK waters - Wales, Scotland or Northern Ireland (excluding Northern Ireland offshore waters)"
                         },
                         {
                             value: "Somewhere else in the world",
                             text: "Somewhere else in the world",
-                            checked: data['in-which-waters-radios'] == "Somewhere else in the world"
+                            checked: data['check-in-which-waters-radios'] == "Somewhere else in the world"
                         }
                     ]
                 })

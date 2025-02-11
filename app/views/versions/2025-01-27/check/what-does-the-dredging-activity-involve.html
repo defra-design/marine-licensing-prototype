@@ -16,7 +16,7 @@ This will save you time.
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-What does the removal activity involve?
+What does the dredging activity involve?
 {% endset %}
 
 <!-- Setting the heading caption -->
@@ -28,7 +28,7 @@ What does the removal activity involve?
 {% set errorTextHTML %}
     <!-- Nothing was selected -->
     {% if data['errortypeone'] == "true" %}
-        Select what the removal activity involves
+        Select what the dredging activity involves
     {% endif %}
 {% endset %}
 
@@ -57,7 +57,7 @@ What does the removal activity involve?
                     [
                         {
                             html: errorTextHTML,
-                            href: "#check-what-does-the-removal-activity-relate-to-radios"
+                            href: "#check-what-does-the-dredging-activity-involve-radios"
                         }
                     ]
                 })
@@ -67,13 +67,13 @@ What does the removal activity involve?
 
 
         <!-- go to routes.js for routing  -->
-        <form action="what-does-the-removal-activity-relate-to-router" method="post" novalidate>
+        <form action="what-does-the-dredging-activity-involve-router" method="post" novalidate>
 
             {{ govukRadios
                 ({
-                    name: "check-what-does-the-removal-activity-relate-to-radios",
+                    name: "check-what-does-the-dredging-activity-involve-radios",
 
-                    id: "check-what-does-the-removal-activity-relate-to-radios",
+                    id: "check-what-does-the-dredging-activity-involve-radios",
 
                     fieldset: {
 						legend: {
@@ -89,49 +89,42 @@ What does the removal activity involve?
                         items:
                         [
                             {
-                                value: "Fishing or shellfish propagation and cultivation",
-                                text: "Fishing or shellfish propagation and cultivation",
-                                checked: data['check-what-does-the-removal-activity-relate-to-radios'] == "Fishing or shellfish propagation and cultivation"
+                                value: "Navigational dredging",
+                                text: "Navigational dredging",
+                                checked: data['check-what-does-the-dredging-activity-involve-radio'] == "Navigational dredging",
+                                hint: {
+                                    text: "To deepen berths and channels for the purpose of navigation"
+                                  }
                             },
                             {
-                                value: "Markers, moorings or aids to navigation",
-                                text: "Markers, moorings or aids to navigation", 
-                                checked: data['check-what-does-the-removal-activity-relate-to-radios'] == "Markers, moorings or aids to navigation"
+                                value: "Shellfish propagation and cultivation",
+                                text: "Shellfish propagation and cultivation", 
+                                checked: data['check-what-does-the-dredging-activity-involve-radio'] == "Shellfish propagation and cultivation"
                             },
                             {
-                                value: "Pontoons",
-                                text: "Pontoons",
-                                checked: data['check-what-does-the-removal-activity-relate-to-radios'] == "Pontoons"
+                                value: "Coastal protection, drainage, or flood defence",
+                                text: "Coastal protection, drainage, or flood defence",
+                                checked: data['check-what-does-the-dredging-activity-involve-radio'] == "Coastal protection, drainage, or flood defence"
                             },
                             {
-                                value: "Scientific research",
-                                text: "Scientific research",
-                                checked: data['check-what-does-the-removal-activity-relate-to-radios'] == "Scientific research"
+                                value: "Emergency work or safety and training",
+                                text: "Emergency work or safety and training",
+                                checked: data['check-what-does-the-dredging-activity-involve-radio'] == "Emergency work or safety and training"
                             },
                             {
-                                value: "Maintenance of existing structures or assets",
-                                text: "Maintenance of existing structures or assets",
-                                checked: data['check-what-does-the-removal-activity-relate-to-radios'] == "Maintenance of existing structures or assets"
+                                value: "Licensed deep-sea mining",
+                                text: "Licensed deep-sea mining",
+                                checked: data['check-what-does-the-dredging-activity-involve-radio'] == "Licensed deep-sea mining"
                             },
                             {
-                                value: "Litter or dead animals",
-                                text: "Litter or dead animals",
-                                checked: data['check-what-does-the-removal-activity-relate-to-radios'] == "Litter or dead animals"
-                            },
-                            {
-                                value: "Obstructions, danger to navigation, or accidental deposits",
-                                text: "Obstructions, danger to navigation, or accidental deposits",
-                                checked: data['check-what-does-the-removal-activity-relate-to-radios'] == "Obstructions, danger to navigation, or accidental deposits"
-                            },
-                            {
-                                value: "Emergency or safety and training",
-                                text: "Emergency or safety and training",
-                                checked: data['check-what-does-the-removal-activity-relate-to-radios'] == "Emergency or safety and training"
+                                value: "Scheduled works authorised under the Crossrail Act 2008",
+                                text: "Scheduled works authorised under the Crossrail Act 2008",
+                                checked: data['check-what-does-the-dredging-activity-involve-radio'] == "Scheduled works authorised under the Crossrail Act 2008"
                             },
                             {
                                 value: "Something else",
                                 text: "Something else",
-                                checked: data['check-what-does-the-removal-activity-relate-to-radios'] == "Something else"
+                                checked: data['check-what-does-the-dredging-activity-involve-radio'] == "Something else"
                             }
                         ]
                 })

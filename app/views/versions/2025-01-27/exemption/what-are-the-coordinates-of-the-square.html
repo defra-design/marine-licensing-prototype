@@ -32,9 +32,9 @@ What are the coordinates of the centre of the square?
     {% if data['errortypeone'] == "true" and data['errortypetwo'] == "true" %}
         Enter both the latitude and longitude
     {% elif data['errortypeone'] == "true" %}
-        Enter the latitude
+        Enter the latitude coordinate
     {% elif data['errortypetwo'] == "true" %}
-        Enter the longitude
+        Enter the longitude coordinate
     {% endif %}
 {% endset %}
 
@@ -102,7 +102,7 @@ What are the coordinates of the centre of the square?
                     name: "exemption-what-are-the-coordinates-of-the-square-latitude-text-input",
             
                     errorMessage: null if data['errortypeone'] != "true"
-                                   else { html: "Enter the latitude" },
+                                   else { html: "Enter the latitude coordinate" },
             
                     value: data['exemption-what-are-the-coordinates-of-the-square-latitude-text-input'],
             
@@ -126,7 +126,7 @@ What are the coordinates of the centre of the square?
                     name: "exemption-what-are-the-coordinates-of-the-square-longitiude-text-input",
             
                     errorMessage: null if data['errortypetwo'] != "true"
-                                   else { html: "Enter the longitude" },
+                                   else { html: "Enter the longitude coordinate" },
             
                     value: data['exemption-what-are-the-coordinates-of-the-square-longitiude-text-input'],
             
@@ -160,15 +160,8 @@ What are the coordinates of the centre of the square?
 
         <option value="errorthispage=true&errortypeone=false&errortypetwo=true&errortypethree=false&errortypefour=false&errortypefive=false&errortypesix=false&"
                 {% if  data['errortypeone'] != 'true'  and  data['errortypetwo'] == 'true'  and  data['errortypethree'] != 'true'  and  data['errortypefour'] != 'true'   and data['errortypefive'] != 'true'  and  data['errortypesix'] != 'true'  %}selected{% endif %}
-        >Error 2 - If answer is too long</option>
+        >Error 2 - No answer entered</option>
 
-        <option value="errorthispage=true&errortypeone=false&errortypetwo=false&errortypethree=true&errortypefour=false&errortypefive=false&errortypesix=false&"
-                {% if  data['errortypeone'] != 'true'  and  data['errortypetwo'] != 'true'  and  data['errortypethree'] == 'true'  and  data['errortypefour'] != 'true'   and data['errortypefive'] != 'true'  and  data['errortypesix'] != 'true'  %}selected{% endif %}
-        >Error 3 - If answer is too short</option>
-
-        <option value="errorthispage=true&errortypeone=false&errortypetwo=false&errortypethree=false&errortypefour=true&errortypefive=false&errortypesix=false&"
-                {% if  data['errortypeone'] != 'true'  and  data['errortypetwo'] != 'true'  and  data['errortypethree'] != 'true'  and  data['errortypefour'] == 'true'  and  data['errortypefive'] != 'true'  and  data['errortypesix'] != 'true'  %}selected{% endif %}
-        >Error 4 - If answer has characters that aren't allowed and you know what the characters are</option>
 
     </select>
 

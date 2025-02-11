@@ -59,7 +59,7 @@ router.post('/' + version + section + 'in-which-waters-router', function (req, r
      else if (req.session.data['check-in-which-waters-radios'] == "Other UK waters - Wales, Scotland or Northern Ireland (excluding Northern Ireland offshore waters)")
         {
             // This page name needs to match the page the user was just on
-            res.redirect('marine-licence-not-required-sea');    
+            res.redirect('stop');    
         }
         
     else if (req.session.data
@@ -89,10 +89,11 @@ router.post('/' + version + section + 'what-type-of-activity-will-take-place-rou
     req.session.data['errortypeone'] = "false";
 
     if (
-        req.session.data['check-what-type-of-activity-will-take-place-radios'] == "Construction" ||
-        req.session.data['check-what-type-of-activity-will-take-place-radios'] == "Dredging"
-    ) {
+        req.session.data['check-what-type-of-activity-will-take-place-radios'] == "Construction") {
         res.redirect('stop');
+    }
+    else if (req.session.data['check-what-type-of-activity-will-take-place-radios'] == "Dredging") {
+        res.redirect('what-does-the-dredging-activity-involve');
     }
     else if (req.session.data['check-what-type-of-activity-will-take-place-radios'] == "Incineration of a substance or object") {
         res.redirect('stop');
@@ -116,6 +117,40 @@ router.post('/' + version + section + 'what-type-of-activity-will-take-place-rou
         req.session.data['errorthispage'] = "true";
         req.session.data['errortypeone'] = "true";
         res.redirect('what-type-of-activity-will-take-place');
+    }
+});
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// What does the dredging activity involve?
+// PAGE OF RADIO BUTTONS
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+router.post('/' + version + section + 'what-does-the-dredging-activity-involve-router', function (req, res) {
+    // Turn errors off by default
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    let userSelection = req.session.data['check-what-does-the-dredging-activity-involve-radios'];
+
+    if (!userSelection) {
+        // Trigger validation and reload the page
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        res.redirect('what-does-the-dredging-activity-involve');
+    } else if (userSelection == "Navigational dredging") {
+        res.redirect('stop');
+    } else if (userSelection == "Shellfish propagation and cultivation") {
+        res.redirect('stop');
+    } else if (userSelection == "Coastal protection, drainage, or flood defence") {
+        res.redirect('stop');
+    } else if (userSelection == "Emergency work or safety and training") {
+        res.redirect('stop');
+    } else if (userSelection == "Licensed deep-sea mining") {
+        res.redirect('stop');
+    } else if (userSelection == "Scheduled works authorised under the Crossrail Act 2008") {
+        res.redirect('stop');
+    } else if (userSelection == "Something else") {
+        res.redirect('stop');
     }
 });
 
@@ -234,12 +269,46 @@ router.post('/' + version + section + 'what-does-the-removal-activity-relate-to-
     } else if (req.session.data['check-what-does-the-removal-activity-relate-to-radios'] == "Emergency or safety and training") {
         res.redirect('stop');
     } else if (req.session.data['check-what-does-the-removal-activity-relate-to-radios'] == "Something else") {
-        res.redirect('stop');
+        res.redirect('what-does-the-something-else-removal-activity-relate-to');
     } else {
         // If no selection is made, show validation error and reload the page
         req.session.data['errorthispage'] = "true";
         req.session.data['errortypeone'] = "true";
         res.redirect('what-does-the-removal-activity-relate-to');
+    }
+});
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// What does the something else removal activity relate to?
+// PAGE OF RADIO BUTTONS
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+router.post('/' + version + section + 'what-does-the-something-else-removal-activity-relate-to-router', function (req, res) {
+    // Turn errors off by default
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    let userSelection = req.session.data['check-what-does-the-something-else-removal-activity-relate-to-radios'];
+
+    if (!userSelection) {
+        // Trigger validation and reload the page
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        res.redirect('what-does-the-something-else-removal-activity-relate-to');
+    } else if (userSelection == "Defence activities") {
+        res.redirect('stop');
+    } else if (userSelection == "Licensed deep-sea diving") {
+        res.redirect('stop');
+    } else if (userSelection == "Scheduled works authorised under the Crossrail Act 2008") {
+        res.redirect('stop');
+    } else if (userSelection == "Dismantling ships") {
+        res.redirect('stop');
+    } else if (userSelection == "Exercising rights of foreign vessels") {
+        res.redirect('stop');
+    } else if (userSelection == "Air accident investigation") {
+        res.redirect('stop');
+    } else if (userSelection == "Something else") {
+        res.redirect('stop');
     }
 });
 

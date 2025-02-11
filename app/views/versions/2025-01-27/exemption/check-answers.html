@@ -78,6 +78,8 @@
       Location details
     </h2>
 
+    {% if data['exemption-about-the-location-of-the-activity-radios'] == "Enter the coordinates of the area"  %}
+
     <dl class="govuk-summary-list govuk-!-margin-bottom-2">
       <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">
@@ -90,6 +92,7 @@
           <a class="govuk-link" href="about-the-location-of-the-activity?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> name</span></a>
         </dd>
       </div>
+
       <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">
           How do you want to enter the coordinates?
@@ -141,6 +144,56 @@
     <img src="/public/images/worthing-map.png" alt="Map view" class="govuk-!-margin-bottom-2" style="width: 100%;">
 
     <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible  govuk-!-margin-bottom-8">
+
+    {% endif %}
+
+    {% if data['exemption-about-the-location-of-the-activity-radios'] == "Draw the area on a map"  %}
+
+    <dl class="govuk-summary-list govuk-!-margin-bottom-1">
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          How do you want to provide the location?
+        </dt>
+        <dd class="govuk-summary-list__value">
+          {{ data['exemption-about-the-location-of-the-activity-radios'] }}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link" href="about-the-location-of-the-activity?camefromcheckanswers=true&exemption-how-do-you-want-to-enter-the-coordinates-radios=&exemption-what-are-the-coordinates-of-the-square-latitude-text-input=&exemption-what-are-the-coordinates-of-the-square-longitiude-text-input=&exemption-width-of-square-number-input=">Change<span class="govuk-visually-hidden"> How do you want to provide the location?</span></a>
+        </dd>
+      </div>
+
+      <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+        <dt class="govuk-summary-list__key">
+          Map drawing
+        </dt>
+        <dd class="govuk-summary-list__value">
+          
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link" href="map?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> name</span></a>
+        </dd>
+      </div>
+
+    </dl>
+
+    <img src="/public/images/worthing-map2.png" alt="Map view" class="govuk-!-margin-bottom-2" style="width: 100%;">
+
+    <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
+
+    <dl class="govuk-summary-list govuk-!-margin-bottom-6">
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Coordinates
+        </dt>
+        <dd class="govuk-summary-list__value">
+          <span  style="white-space: pre-wrap;" >{{ data['sites-drawn-coordinates'] }}</span>
+        </dd>
+      </div>
+    </dl>
+
+    {% endif %}
+
+    
 
     <h2 class="govuk-heading-m" id="about-your-activity">
       Activity details
