@@ -1,5 +1,13 @@
 {% extends "layouts/main.html" %}
 
+{% block header %}
+{{ govukHeader({
+    homepageUrl: "/",
+    serviceName: "Marine Planning & Licensing Programme",
+    serviceUrl: ""
+  }) }}
+{% endblock %}
+
 {% set pageName="2024 alpha prototype" %}
 
 {% block beforeContent %}
@@ -32,7 +40,6 @@
 <div class="govuk-grid-row">
 
     <div class="govuk-grid-column-two-thirds">
-
         <h1 class="govuk-heading-xl">
             2024 alpha prototype
         </h1>
@@ -105,7 +112,7 @@
         html:
         '
         <!-- start older -->
-        <span class="govuk-caption-m">26 February 2024 to 18 March 2024</span>
+        <!--<span class="govuk-caption-m">26 February 2024 to 18 March 2024</span>--
         <h2 class="govuk-heading-l">Iteration 1</h2>
         <h3 class="govuk-heading-m">Account pages</h3>
         <p><a href="versions/2024-02-26/account/start">Start Page</a>
