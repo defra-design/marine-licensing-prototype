@@ -70,9 +70,9 @@ What is the start date of your activity?
                 errorMessage: null if data['errorthispage'] != "true"
                                else { text: errorTextHTML },
                 items: [
-                    { name: "day", classes: "govuk-input--width-2", value: data['exemption-start-date-date-input-day'], attributes: { autocomplete: "off" } },
-                    { name: "month", classes: "govuk-input--width-2", value: data['exemption-start-date-date-input-month'], attributes: { autocomplete: "off" } },
-                    { name: "year", classes: "govuk-input--width-4", value: data['exemption-start-date-date-input-year'], attributes: { autocomplete: "off" } }
+                    { name: "day", classes: "govuk-input--width-2", value: data['exemption-start-date-date-input-day'], attributes: { autocomplete: "off", inputmode: "numeric" } },
+                    { name: "month", classes: "govuk-input--width-2", value: data['exemption-start-date-date-input-month'], attributes: { autocomplete: "off", inputmode: "numeric" } },
+                    { name: "year", classes: "govuk-input--width-4", value: data['exemption-start-date-date-input-year'], attributes: { autocomplete: "off", inputmode: "numeric" } }
                 ]
             }) }}
 

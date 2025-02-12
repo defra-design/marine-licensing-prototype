@@ -1,5 +1,13 @@
 {% extends "layouts/main.html" %}
 
+{% block header %}
+{{ govukHeader({
+    homepageUrl: "/",
+    serviceName: "Check if I need a marine licence",
+    serviceUrl: "/"
+  }) }}
+{% endblock %}
+
 {% block beforeContent %}
 {{ govukPhaseBanner({
         tag: {
@@ -17,21 +25,64 @@
         <h1 class="govuk-heading-xl">
             2025 alpha prototype
         </h1>
+        
+        {{ govukButton({
+          text: "Go to start",
+          href: "versions/2025-01-27/check/start",
+          isStartButton: true
+        }) }}
 
-        <div class="govuk-warning-text">
-            <span class="govuk-warning-text__icon info" aria-hidden="true">!</span>
-            <strong class="govuk-warning-text__text">
-              <span class="govuk-visually-hidden">Warning</span>
-              Remember to <a href="/manage-prototype/clear-data" class=" govuk-link--no-visited-state">clear session data</a> if you've used the prototype before
-            </strong>
-          </div>
+        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
 
         <h2 class="govuk-heading-m">Sprint 1</h2>
-        <ul class="govuk-list govuk-list--spaced">
-            <li><a href="versions/2025-01-27/check/start" class="govuk-link--no-visited-state">Check if you need a marine licence</a></li>
+        
+        <p><a href="versions/2025-01-27/check/start" class="govuk-link--no-visited-state">Exemption notification journey</a></p>
+        
+        <details class="govuk-details govuk-!-margin-bottom-2">
+          <summary class="govuk-details__summary">
+            <span class="govuk-details__summary-text">
+              The scenario for this iteration
+            </span>
+          </summary>
+          <div class="govuk-details__text">
+           
+            <p>You're a university student looking to carry out some research involving analysis of sediments from just off the coast of Worthing, by the pier.</p>
+            <p>You need to carry out a survey taking 1 sample within a 100m of the pier.</p>
+            <p>You'll travel to the sample sites by boat and lower a grab overboard. The grab will be used to extract 0.3m<sup>3</sup> of material from the surface of the sea floor.</p>
+            <p>The material removed will be returned to the vessel and taken anyway for testing and analysis.</p>
+            <p>A fellow student advised that you might need to get permission from the Marine management organisation before you carry out this activity.</p>
+            <p>What would you do next?</p>
+          </div>
+        </details>
+        
+        <details class="govuk-details">
+          <summary class="govuk-details__summary">
+            <span class="govuk-details__summary-text">
+              Internal shortcuts
+            </span>
+          </summary>
+          <div class="govuk-details__text">
+            <ul class="govuk-list govuk-list--spaced">
+              <li><a href="versions/2025-01-27/check/exemption" class="govuk-link--no-visited-state">Exemption required page</a></li>
+              <li><a href="versions/2025-01-27/exemption/what-is-your-name.html" class="govuk-link--no-visited-state">Start of exemption form</a></li>
+          </ul>
+          </div>
+        </details>
+
+        
+
+        <!--<ul class="govuk-list govuk-list--spaced">
             <li><a href="versions/2025-01-27/check/exemption" class="govuk-link--no-visited-state">Shortcut to exemption required page</a></li>
             <li><a href="versions/2025-01-27/exemption/what-is-your-name.html" class="govuk-link--no-visited-state">Shortcut to start of exemption form</a></li>
-        </ul>
+        </ul>-->
+
+        <div class="govuk-warning-text">
+          <span class="govuk-warning-text__icon info" aria-hidden="true">!</span>
+          <strong class="govuk-warning-text__text">
+            <span class="govuk-visually-hidden">Warning</span>
+            Remember to <a href="/manage-prototype/clear-data" class=" govuk-link--no-visited-state">clear session data</a> if you've used the prototype before
+          </strong>
+        </div>
 
     </div>
 
