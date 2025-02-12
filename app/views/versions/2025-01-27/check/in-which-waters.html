@@ -45,7 +45,7 @@ This will save you time.
         Error:
     {% endif %}
 
-    {{ pageHeadingTextHTML }}
+    {{ pageHeadingTextHTML }} - {{ data['headerName'] }}
 {% endblock %}
 
 
@@ -114,6 +114,9 @@ This will save you time.
                             text: "Other UK waters - Wales, Scotland or Northern Ireland (excluding Northern Ireland offshore waters)",
                             checked: data['check-in-which-waters-radios'] == "Other UK waters - Wales, Scotland or Northern Ireland (excluding Northern Ireland offshore waters)"
                         },
+                        {
+                            divider: "or"
+                          },
                         {
                             value: "Somewhere else in the world",
                             text: "Somewhere else in the world",

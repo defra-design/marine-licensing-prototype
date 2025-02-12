@@ -21,9 +21,12 @@ Check if you need a marine licence
 
 		<p>Based on your answers, your activity is exempt under the <a
 				href="https://www.legislation.gov.uk/uksi/2011/409/article/17A">The Marine Licensing (Exempted
-				Activities) Order 2011</a> and you do not need a marine licence.</p>
+				Activities) Order 2011</a>.</p>
 
-		<p>You must provide the Marine Management Organisation with further information before you start your activity.</p>
+				{{ govukWarningText({
+					text: "You must provide further information before you start your activity.",
+					iconFallbackText: "Warning"
+				  }) }}	
 
 		<h2 class="govuk-heading-m">What you'll need</h2>
 		<p>Before you continue, make sure you have:</p>

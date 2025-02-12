@@ -13,11 +13,11 @@ This will save you time.
 -->
 <!-- Set the heading for the page -->
 {% set pageHeadingTextHTML %}
-What is the end date of your activity?
+What is the estimated end date of your activity?
 {% endset %}
 
 {% set errorTextHTML %}
-    Enter the end date of your activity
+    Enter the estimated end date of your activity
 {% endset %}
 
 
@@ -27,7 +27,7 @@ What is the end date of your activity?
         Error:
     {% endif %}
 
-    {{ pageHeadingTextHTML }}
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
 {% endblock %}
 
 
@@ -44,7 +44,7 @@ What is the end date of your activity?
     </h2>
     <div class="govuk-error-summary__body">
         <ul class="govuk-list govuk-error-summary__list">
-            <li><a href="#exemption-end-date-date-input-day">Enter the end date of your activity</a></li>
+            <li><a href="#exemption-end-date-date-input-day">{{ errorTextHTML }}</a></li>
         </ul>
     </div>
 </div>
@@ -59,7 +59,7 @@ What is the end date of your activity?
                 namePrefix: "exemption-end-date-date-input",
                 fieldset: {
                     legend: {
-                        text: "What is the end date of your activity?",
+                        html: pageHeadingTextHTML,
                         isPageHeading: true,
                         classes: "govuk-fieldset__legend--l"
                     }

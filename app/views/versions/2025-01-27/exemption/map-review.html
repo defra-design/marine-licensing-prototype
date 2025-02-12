@@ -1,7 +1,17 @@
 {% extends "../layouts/main.html" %}
 
-{% set pageName="Review your location" %}
+{% set pageHeadingTextHTML %}
+Review your location
+{% endset %}
 
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {% if  data['errorthispage'] == "true"  %}
+        Error:
+    {% endif %}
+
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
 
 {% block content %}
 
@@ -10,7 +20,7 @@
   <div class="govuk-grid-column-two-thirds">
 
     <h1 class="govuk-heading-l">
-      Review your location
+      {{ pageHeadingTextHTML }}
     </h1>
 
     <dl class="govuk-summary-list govuk-!-margin-bottom-1">
@@ -22,7 +32,7 @@
           {{ data['exemption-about-the-location-of-the-activity-radios'] }}
         </dd>
         <dd class="govuk-summary-list__actions">
-          <a class="govuk-link" href="about-the-location-of-the-activity?camefromcheckanswers=review">Change<span class="govuk-visually-hidden"> How do you want to provide the location?</span></a>
+          <a class="govuk-link" href="about-the-location-of-the-activity?camefromcheckanswers=review&exemption-how-do-you-want-to-enter-the-coordinates-radios=&exemption-what-are-the-coordinates-of-the-square-latitude-text-input=&exemption-what-are-the-coordinates-of-the-square-longitiude-text-input=&exemption-width-of-square-number-input=">Change<span class="govuk-visually-hidden"> How do you want to provide the location?</span></a>
         </dd>
       </div>
 

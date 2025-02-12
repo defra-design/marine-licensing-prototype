@@ -39,7 +39,7 @@ What does the dredging activity involve?
         Error:
     {% endif %}
 
-    {{ pageHeadingTextHTML }}
+    {{ pageHeadingTextHTML }} - {{ data['headerName'] }}
 {% endblock %}
 
 
@@ -121,6 +121,9 @@ What does the dredging activity involve?
                                 text: "Scheduled works authorised under the Crossrail Act 2008",
                                 checked: data['check-what-does-the-dredging-activity-involve-radio'] == "Scheduled works authorised under the Crossrail Act 2008"
                             },
+                            {
+                                divider: "or"
+                              },
                             {
                                 value: "Something else",
                                 text: "Something else",

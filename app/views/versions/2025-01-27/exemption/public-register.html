@@ -26,7 +26,7 @@ Public register
 
 <!-- Setting the smaller secondary heading lower down the page -->
 {% set questionHeadingTextHTML %}
-Is there any information you have provided, that you believe should be withheld from the public register?
+Do you believe the information you have provided should be withheld from the public register?
 {% endset %}
 
 
@@ -35,7 +35,7 @@ Is there any information you have provided, that you believe should be withheld 
 {% if data['errortypeone'] == "true" %}
 Select whether there is any information you believe should be withheld from the public register
 {% elif data['errortypetwo'] == "true" %}
-Provide details of the information that should be withheld, and why
+Provide details of the information that should be withheld
 {% endif %}
 {% endset %}
 
@@ -46,7 +46,7 @@ Provide details of the information that should be withheld, and why
 Error:
 {% endif %}
 
-{{ pageHeadingTextHTML }}
+{{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
 {% endblock %}
 
 {% set detailsHtml %}
@@ -62,7 +62,7 @@ name: "exemption-public-register-text-area",
 value: data['exemption-public-register-text-area'],
 
 label: {
-text: "Provide details of the information that should be withheld, and why",
+text: "Provide details of why the information should be withheld",
 classes: "govuk-label",
 isPageHeading: false
 }
@@ -74,18 +74,18 @@ isPageHeading: false
 	<div class="govuk-grid-column-two-thirds">
 
 		<!-- ERROR LOGIC 'error summary' -->
-{% if data['errorthispage'] == "true" %}
-{{ govukErrorSummary({
-    titleText: "There is a problem",
-    errorList: [
-        {
-            text: "Select whether there is any information you believe should be withheld from the public register",
-            href: "#exemption-public-register-radios"
-        }
-    ]
-}) }}
-{% endif %}
-<!-- END OF 'error summary' -->
+		{% if data['errorthispage'] == "true" %}
+		{{ govukErrorSummary({
+		titleText: "There is a problem",
+		errorList: [
+		{
+		text: "Select whether you believe the information you have provided should be withheld from the public register",
+		href: "#exemption-public-register-radios"
+		}
+		]
+		}) }}
+		{% endif %}
+		<!-- END OF 'error summary' -->
 
 
 		<!-- go to routes.js for routing  -->

@@ -35,7 +35,7 @@ This will save you time.
         Error:
     {% endif %}
 
-    {{ pageHeadingTextHTML }}
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
 {% endblock %}
 
 
@@ -73,6 +73,10 @@ This will save you time.
                         html: pageHeadingTextHTML,
                         classes: "govuk-label--l",
                         isPageHeading: true
+                    },
+                    hint: 
+                    {
+                        text: "We'll use this to send a confirmation email"
                     },
 
                     autocomplete: "off",

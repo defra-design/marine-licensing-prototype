@@ -39,7 +39,7 @@ What does the deposit activity relate to?
         Error:
     {% endif %}
 
-    {{ pageHeadingTextHTML }}
+    {{ pageHeadingTextHTML }} - {{ data['headerName'] }}
 {% endblock %}
 
 
@@ -134,9 +134,12 @@ What does the deposit activity relate to?
                             checked: data['check-what-does-the-deposit-activity-relate-to-radios'] == "Pollution prevention and discharge of chemicals"
                         },
                         {
-                            value: "Other deposit activity",
-                            text: "Other deposit activity",
-                            checked: data['check-what-does-the-deposit-activity-relate-to-radios'] == "Other deposit activity"
+                            divider: "or"
+                        },
+                        {
+                            value: "Something else",
+                            text: "Something else",
+                            checked: data['check-what-does-the-deposit-activity-relate-to-radios'] == "Something else"
                         }
                     ]
                 })

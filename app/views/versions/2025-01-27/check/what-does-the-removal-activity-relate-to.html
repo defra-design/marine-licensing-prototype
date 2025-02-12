@@ -39,7 +39,7 @@ What does the removal activity involve?
         Error:
     {% endif %}
 
-    {{ pageHeadingTextHTML }}
+    {{ pageHeadingTextHTML }} - {{ data['headerName'] }}
 {% endblock %}
 
 
@@ -127,6 +127,9 @@ What does the removal activity involve?
                                 value: "Emergency or safety and training",
                                 text: "Emergency or safety and training",
                                 checked: data['check-what-does-the-removal-activity-relate-to-radios'] == "Emergency or safety and training"
+                            },
+                            {
+                                divider: "or"
                             },
                             {
                                 value: "Something else",

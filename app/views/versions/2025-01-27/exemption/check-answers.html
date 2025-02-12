@@ -1,6 +1,17 @@
 {% extends "../layouts/main.html" %}
 
-{% set pageName="Check your answers before sending your information" %}
+{% set pageHeadingTextHTML %}
+Check your answers before sending your information
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {% if  data['errorthispage'] == "true"  %}
+        Error:
+    {% endif %}
+
+    {{ pageHeadingTextHTML }} - {{ data['headerName'] }}
+{% endblock %}
 
 {% block content %}
 
@@ -9,7 +20,7 @@
   <div class="govuk-grid-column-full">
 
     <h1 class="govuk-heading-l">
-      Check your answers before sending your information
+      {{ pageHeadingTextHTML }}
     </h1>
 
     <h2 class="govuk-heading-m" id="personal-details">
@@ -213,7 +224,7 @@
       </div>
       <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">
-          Start date
+          Estimated start date
         </dt>
         <dd class="govuk-summary-list__value">
           {% set paddedDay = data['exemption-start-date-date-input-day'] %}
@@ -230,7 +241,7 @@
           {{ formattedDate | govukDate }}
         </dd>
         <dd class="govuk-summary-list__actions">
-          <a class="govuk-link" href="start-date?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Start date</span></a>
+          <a class="govuk-link" href="start-date?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Estimated start date</span></a>
         </dd>
       </div>
       <div class="govuk-summary-list__row">
@@ -264,26 +275,26 @@
   <dl class="govuk-summary-list govuk-!-margin-bottom-8">
     <div class="govuk-summary-list__row">
       <dt class="govuk-summary-list__key">
-        Is there any information you have provided, that you believe should be withheld from the public register?
+        Do you believe the information you have provided should be withheld from the public register?
       </dt>
       <dd class="govuk-summary-list__value">
         {{ data['exemption-public-register-radios'] }}
       </dd>
       <dd class="govuk-summary-list__actions">
-        <a class="govuk-link" href="public-register?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Is there any information you have provided, that you believe should be withheld from the public register?/span></a>
+        <a class="govuk-link" href="public-register?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Do you believe the information you have provided should be withheld from the public register?/span></a>
       </dd>
     </div>
 
     {% if data['exemption-public-register-radios'] == "Yes" %}
     <div class="govuk-summary-list__row">
       <dt class="govuk-summary-list__key">
-      Provide details of the information you believe should be withheld, and why 
+        Provide details of why the information should be withheld 
       </dt>
       <dd class="govuk-summary-list__value">
       {{ data['exemption-public-register-text-area'] }}
       </dd>
       <dd class="govuk-summary-list__actions">
-      <a class="govuk-link" href="public-register?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Provide details of the information you believe should be withheld, and why </span></a>
+      <a class="govuk-link" href="public-register?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Provide details of why the information should be withheld</span></a>
       </dd>
     </div>
     {% endif %}

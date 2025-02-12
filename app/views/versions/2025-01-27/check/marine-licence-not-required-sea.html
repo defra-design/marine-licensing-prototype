@@ -2,6 +2,19 @@
 
 {% set pageName="Marine licence not required" %}
 
+{% set pageHeadingTextHTML %}
+Based on your answers, you do not need a marine licence
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {% if  data['errorthispage'] == "true"  %}
+        Error:
+    {% endif %}
+
+    {{ pageHeadingTextHTML }} - {{ data['headerName'] }}
+{% endblock %}
+
 {% block content %}
 
 <!-- Setting the heading caption -->

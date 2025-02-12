@@ -39,7 +39,7 @@ What will be removed?
         Error:
     {% endif %}
 
-    {{ pageHeadingTextHTML }}
+    {{ pageHeadingTextHTML }} - {{ data['headerName'] }}
 {% endblock %}
 
 
@@ -91,17 +91,20 @@ What will be removed?
                             {
                                 value: "Scientific instruments and associated equipment",
                                 text: "Scientific instruments and associated equipment",
-                                checked: data['check-what-does-the-scientific-activity-relate-to-radio'] == "Scientific instruments and associated equipment"
+                                checked: data['check-what-does-the-scientific-activity-relate-to-radios'] == "Scientific instruments and associated equipment"
                             },
                             {
                                 value: "Samples for testing and analysis",
                                 text: "Samples for testing and analysis",
-                                checked: data['check-what-does-the-scientific-activity-relate-to-radio'] == "Samples for testing and analysis"
+                                checked: data['check-what-does-the-scientific-activity-relate-to-radios'] == "Samples for testing and analysis"
+                            },
+                            {
+                                divider: "or"
                             },
                             {
                                 value: "Something else",
                                 text: "Something else",
-                                checked: data['check-what-does-the-scientific-activity-relate-to-radio'] == "Something else"
+                                checked: data['check-what-does-the-scientific-activity-relate-to-radios'] == "Something else"
                             }
                     ]
                 })

@@ -39,7 +39,7 @@ Is the removal activity likely to cause an obstruction or danger to navigation?
         Error:
     {% endif %}
 
-    {{ pageHeadingTextHTML }}
+    {{ pageHeadingTextHTML }} - {{ data['headerName'] }}
 {% endblock %}
 
 
@@ -91,12 +91,12 @@ Is the removal activity likely to cause an obstruction or danger to navigation?
                             {
                                 value: "Yes",
                                 text: "Yes",
-                                checked: data['is-the-activity-likely-to-cause-obstruction-radio'] == "Yes"
+                                checked: data['is-the-activity-likely-to-cause-obstruction-radios'] == "Yes"
                             },
                             {
                                 value: "No",
                                 text: "No",
-                                checked: data['is-the-activity-likely-to-cause-obstruction-radio'] == "No"
+                                checked: data['is-the-activity-likely-to-cause-obstruction-radios'] == "No"
                             }
                     ]
                 })

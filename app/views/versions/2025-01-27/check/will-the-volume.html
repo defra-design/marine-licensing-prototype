@@ -39,7 +39,7 @@ Will each sample have a volume of 1{{ "&nbsp;" | safe }}cubic metre or less?
         Error:
     {% endif %}
 
-    {{ pageHeadingTextHTML }}
+    {{ pageHeadingTextHTML }} - {{ data['headerName'] }}
 {% endblock %}
 
 
@@ -91,12 +91,12 @@ Will each sample have a volume of 1{{ "&nbsp;" | safe }}cubic metre or less?
                             {
                                 value: "Yes",
                                 text: "Yes",
-                                checked: data['will-the-volume-radio'] == "Yes"
+                                checked: data['will-the-volume-radios'] == "Yes"
                             },
                             {
                                 value: "No",
                                 text: "No",
-                                checked: data['will-the-volume-radio'] == "No"
+                                checked: data['will-the-volume-radios'] == "No"
                             }
                     ]
                 })

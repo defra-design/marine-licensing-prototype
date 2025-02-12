@@ -45,7 +45,7 @@ Will the removal activity take place within 200 metres of an MPA?
         Error:
     {% endif %}
 
-    {{ pageHeadingTextHTML }}
+    {{ pageHeadingTextHTML }} - {{ data['headerName'] }}
 {% endblock %}
 
 
@@ -119,12 +119,12 @@ Will the removal activity take place within 200 metres of an MPA?
 {
                             value: "Yes",
                             text: "Yes",
-                            checked: data['marine-protected-areas-radios'] == "Yes"
+                            checked: data['check-marine-protected-areas-radios'] == "Yes"
                         },
                         {
                             value: "No",
                             text: "No",
-                            checked: data['marine-protected-areas-radios'] == "No"
+                            checked: data['check-marine-protected-areas-radios'] == "No"
                         }
                     ]
                 })
