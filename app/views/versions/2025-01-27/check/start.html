@@ -1,6 +1,14 @@
 {% extends "../layouts/main.html" %}
 
-{% set pageName="Check if you need a marine licence" %}
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+Check if you need a marine licence
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - {{ data['headerName'] }}
+{% endblock %}
 
 {% block beforeContent %}
 
@@ -20,7 +28,7 @@
     <div class="govuk-grid-column-two-thirds">
 
               <h1 class="gem-c-title__text govuk-heading-xl">
-                Check if you need a marine licence
+                {{ pageHeadingTextHTML }}
               </h1>
 
 		<p>Use this tool to find out if your activity:</p>

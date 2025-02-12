@@ -3,12 +3,20 @@
 {% block header %}
 {{ govukHeader({
     homepageUrl: "/",
-    serviceName: "Marine Planning & Licensing Programme",
+    serviceName: "Marine Management Organisation",
     serviceUrl: ""
   }) }}
 {% endblock %}
 
-{% set pageName="2024 alpha prototype" %}
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+2024 alpha prototype
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - Marine Management Organisation
+{% endblock %}
 
 {% block beforeContent %}
 {{ govukPhaseBanner({
@@ -41,7 +49,7 @@
 
     <div class="govuk-grid-column-two-thirds">
         <h1 class="govuk-heading-xl">
-            2024 alpha prototype
+                {{ pageHeadingTextHTML }}
         </h1>
         <span class="govuk-caption-m">18 March 2024 to 24 April 2024</span>
         <h2 class="govuk-heading-l">Iteration 2</h2>

@@ -1,11 +1,14 @@
 {% extends "../layouts/main.html" %}
 
-{% set pageName="You do not need a marine licence, but you need to give us more information" %}
-
-<!-- Setting the heading caption -->
-{% set captionTextHTML %}
-Check if you need a marine licence
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+You do not need a marine licence, but you need to give us more information
 {% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - {{ data['headerName'] }}
+{% endblock %}
 
 {% block content %}
 
@@ -16,7 +19,7 @@ Check if you need a marine licence
 
 		
 		<h1 class="govuk-heading-l">
-			You do not need a marine licence, but you need to give us more information
+			{{ pageHeadingTextHTML }}
 		</h1>
 
 		<p>Based on your answers, your activity is exempt under the <a
@@ -24,17 +27,17 @@ Check if you need a marine licence
 				Activities) Order 2011</a>.</p>
 
 				{{ govukWarningText({
-					text: "You must provide further information before you start your activity.",
+					text: "Your activity is only exempt on the condition that you provide further information before starting.",
 					iconFallbackText: "Warning"
 				  }) }}	
 
-		<h2 class="govuk-heading-m">What you'll need</h2>
-		<p>Before you continue, make sure you have:</p>
+		<h2 class="govuk-heading-m">What you'll need to provide</h2>
+
 		<ul class="govuk-list govuk-list--bullet">
 			<li>a contact name and email address</li>
 			<li>background information about your project</li>
 			<li>specific location details</li>
-			<li>details of the activity, including when it will start and end</li>
+			<li>details of the activity, including estimated start and end dates</li>
 		</ul>
 
 		<a href="../exemption/what-is-your-name.html" class="govuk-button" role="button">Continue</a>

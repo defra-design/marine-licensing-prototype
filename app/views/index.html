@@ -3,12 +3,20 @@
 {% block header %}
 {{ govukHeader({
     homepageUrl: "/",
-    serviceName: "Marine Planning & Licensing Programme",
+    serviceName: "Marine Management Organisation",
     serviceUrl: ""
   }) }}
 {% endblock %}
 
-{% set pageName="Marine Planning & Licensing Programme" %}
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+2025 alpha prototype
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - Marine Management Organisation
+{% endblock %}
 
 {% block beforeContent %}
 {{ govukPhaseBanner({
@@ -25,7 +33,7 @@
 
     <div class="govuk-grid-column-two-thirds">
         <h1 class="govuk-heading-xl">
-            2025 alpha prototype
+          {{ pageHeadingTextHTML }}
         </h1>
         
         {{ govukButton({
@@ -48,12 +56,13 @@
           </summary>
           <div class="govuk-details__text">
            
-            <p>You're a university student looking to carry out some research involving analysis of sediments from just off the coast of Worthing, by the pier.</p>
-            <p>You need to carry out a survey taking 1 sample within a 100m of the pier.</p>
-            <p>You'll travel to the sample sites by boat and lower a grab overboard. The grab will be used to extract 0.3m<sup>3</sup> of material from the surface of the sea floor.</p>
-            <p>The material removed will be returned to the vessel and taken anyway for testing and analysis.</p>
-            <p>A fellow student advised that you might need to get permission from the Marine management organisation before you carry out this activity.</p>
-            <p>What would you do next?</p>
+            <p>You're looking to carry out some research involving analysis of sediments from just off the coast of Worthing, by the pier.</p>
+            <p>You need to carry out a survey taking 1 sample within 100m of the pier.</p>
+            <p>You'll travel to the sample sites by boat and lower a grab overboard.</p>
+            <p>The grab will be used to extract 0.3m<sup>3</sup> of material from the surface of the sea floor.</p>
+            <p>The material removed will be returned to the vessel and taken anyway for testing and analysis..</p>
+            <p>The material will be disposed to land once testing and analysis is complete.</p>
+            <p>A colleague advised that you might need to get permission from the Marine management organisation before you carry out this activity.</p>
           </div>
         </details>
         
