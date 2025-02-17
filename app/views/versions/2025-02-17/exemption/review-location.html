@@ -18,13 +18,21 @@ Review your location
 
 <div class="govuk-grid-row">
 
-  <div class="govuk-grid-column-two-thirds">
+  <div class="govuk-grid-column-full">
 
     <h1 class="govuk-heading-l">
       {{ pageHeadingTextHTML }}
     </h1>
 
-    <dl class="govuk-summary-list govuk-!-margin-bottom-2">
+    <div class="govuk-summary-card">
+      <div class="govuk-summary-card__title-wrapper">
+        <h2 class="govuk-summary-card__title">
+          Location details
+        </h2>
+      </div>
+      <div class="govuk-summary-card__content">
+
+    <dl class="govuk-summary-list">
       <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">
           How do you want to provide the location?
@@ -33,9 +41,13 @@ Review your location
           {{ data['exemption-about-the-location-of-the-activity-radios'] }}
         </dd>
         <dd class="govuk-summary-list__actions">
-          <a class="govuk-link" href="about-the-location-of-the-activity?camefromcheckanswers=review">Change<span class="govuk-visually-hidden"> How do you want to provide the location?</span></a>
+          <a class="govuk-link" href="about-the-location-of-the-activity">Change<span class="govuk-visually-hidden"> How do you want to provide the location?</span></a>
         </dd>
       </div>
+
+
+      <!-- Start of entering square or circle coordinates -->
+       {% if data['exemption-about-the-location-of-the-activity-radios'] == "Enter the coordinates of the area"  %}
       <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">
           How do you want to enter the coordinates?
@@ -44,9 +56,64 @@ Review your location
           {{ data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] }}
         </dd>
         <dd class="govuk-summary-list__actions">
-          <a class="govuk-link" href="how-do-you-want-to-enter-the-coordinates?camefromcheckanswers=review">Change<span class="govuk-visually-hidden"> How do you want to enter the coordinates?</span></a>
+          <a class="govuk-link" href="how-do-you-want-to-enter-the-coordinates">Change<span class="govuk-visually-hidden"> How do you want to enter the coordinates?</span></a>
         </dd>
       </div>
+
+      <!-- Start of it's a circle -->
+      {% if data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter the centre point of a circle and its width" %}
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Latitude
+        </dt>
+        <dd class="govuk-summary-list__value">
+         {{ data['exemption-what-are-the-coordinates-of-the-circle-latitude-text-input'] }}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link" href="what-are-the-coordinates-of-the-circle?fromreview=true" onclick="document.cookie='fromreview=true';">Change<span class="govuk-visually-hidden"> Latitude</span></a>
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Longitude
+        </dt>
+        <dd class="govuk-summary-list__value">
+         {{ data['exemption-what-are-the-coordinates-of-the-circle-longitude-text-input'] }}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link" href="what-are-the-coordinates-of-the-circle?fromreview=true" onclick="document.cookie='fromreview=true';">Change<span class="govuk-visually-hidden"> Longitude</span></a>
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Width of circle
+        </dt>
+        <dd class="govuk-summary-list__value">
+          {{ data['exemption-width-of-circle-number-input'] }}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link" href="width-of-circle?fromreview=true" onclick="document.cookie='fromreview=true';">Change<span class="govuk-visually-hidden"> Width of circle</span></a>
+        </dd>
+      </div>
+    </dl>
+    <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
+    
+    <dl class="govuk-summary-list">
+
+      <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+        <dt class="govuk-summary-list__key">
+          Map view
+        </dt>
+        <dd class="govuk-summary-list__value">
+          
+        </dd>
+      </div>
+    </dl>   
+    <img src="/public/images/worthing-map-circle.jpg" alt="Map view" style="width: 100%;">
+    <!-- End of it's a circle -->
+
+      <!-- Start of it's a square -->
+      {% elif data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter the centre point of a square and its width" %}
       <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">
           Latitude
@@ -55,7 +122,7 @@ Review your location
          {{ data['exemption-what-are-the-coordinates-of-the-square-latitude-text-input'] }}
         </dd>
         <dd class="govuk-summary-list__actions">
-          <a class="govuk-link" href="what-are-the-coordinates-of-the-square?camefromcheckanswers=review">Change<span class="govuk-visually-hidden"> Latitude</span></a>
+          <a class="govuk-link" href="what-are-the-coordinates-of-the-square?fromreview=true" onclick="document.cookie='fromreview=true';">Change<span class="govuk-visually-hidden"> Latitude</span></a>
         </dd>
       </div>
       <div class="govuk-summary-list__row">
@@ -63,10 +130,10 @@ Review your location
           Longitude
         </dt>
         <dd class="govuk-summary-list__value">
-         {{ data['exemption-what-are-the-coordinates-of-the-square-longitiude-text-input'] }}
+         {{ data['exemption-what-are-the-coordinates-of-the-square-longitude-text-input'] }}
         </dd>
         <dd class="govuk-summary-list__actions">
-          <a class="govuk-link" href="what-are-the-coordinates-of-the-square?camefromcheckanswers=review">Change<span class="govuk-visually-hidden"> Longitude</span></a>
+          <a class="govuk-link" href="what-are-the-coordinates-of-the-square?fromreview=true" onclick="document.cookie='fromreview=true';">Change<span class="govuk-visually-hidden"> Longitude</span></a>
         </dd>
       </div>
       <div class="govuk-summary-list__row">
@@ -77,15 +144,73 @@ Review your location
           {{ data['exemption-width-of-square-number-input'] }}
         </dd>
         <dd class="govuk-summary-list__actions">
-          <a class="govuk-link" href="width-of-square?camefromcheckanswers=review">Change<span class="govuk-visually-hidden"> Width of square</span></a>
+          <a class="govuk-link" href="width-of-square?fromreview=true" onclick="document.cookie='fromreview=true';">Change<span class="govuk-visually-hidden"> Width of square</span></a>
         </dd>
       </div>
     </dl>
 
-    <h2 class="govuk-heading-s">Map view</h2>
-    <img src="/public/images/worthing-map.png" alt="Map view" class="govuk-!-margin-bottom-2" style="width: 100%;">
+    <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
+    
+    <dl class="govuk-summary-list">
 
-    <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible  govuk-!-margin-bottom-5">
+      <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+        <dt class="govuk-summary-list__key">
+          Map view
+        </dt>
+        <dd class="govuk-summary-list__value">
+          
+        </dd>
+      </div>
+    </dl>   
+    <img src="/public/images/worthing-map-square.jpg" alt="Map view" style="width: 100%;">
+    {% endif %}
+    <!-- End of square -->
+    
+    </div>
+    </div>
+    <!-- End of entering square or circle coordinates -->
+  {% endif %}    
+
+
+    <!-- Start of map drawing -->
+    {% if data['exemption-about-the-location-of-the-activity-radios'] == "Draw the area on a map"  %}
+
+    <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+      <dt class="govuk-summary-list__key">
+        Map drawing
+      </dt>
+      <dd class="govuk-summary-list__value">
+        
+      </dd>
+      <dd class="govuk-summary-list__actions">
+        <a class="govuk-link" href="map">Change<span class="govuk-visually-hidden"> name</span></a>
+      </dd>
+    </div>
+
+  </dl>
+
+  <img src="/public/images/worthing-map2.png" alt="Map view" class="govuk-!-margin-bottom-2" style="width: 100%;">
+
+  <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
+
+  <dl class="govuk-summary-list">
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">
+        Coordinates
+      </dt>
+      <dd class="govuk-summary-list__value">
+        <span  style="white-space: pre-wrap;" >{{ data['sites-drawn-coordinates'] }}</span>
+      </dd>
+    </div>
+  </dl>
+    </div>
+  </div>
+
+    {% endif %}
+
+
+
+
     
     <form action="review-location-router" method="post" novalidate>
         {{ govukButton({ text: "Continue" }) }}

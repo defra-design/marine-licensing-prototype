@@ -1,8 +1,7 @@
 const { log } = require("govuk-prototype-kit/migrator/logger");
 module.exports = function (router) {
-	let version = "versions/2025-02-17/";
-	let section = "exemption/";
-
+    let version = "versions/2025-02-17/";
+    let section = "exemption/";
 
 //// logging	
 	router.use((req, res, next) => {
@@ -15,6 +14,22 @@ module.exports = function (router) {
 	  next()
 	 })
 
+// Functions for clearing location data
+function clearMapData(session) {
+delete session.data['sites-drawn-coordinates'];
+}
+
+function clearCoordinateData(session) {
+// Clear circle data
+delete session.data['exemption-what-are-the-coordinates-of-the-circle-latitude-text-input'];
+delete session.data['exemption-what-are-the-coordinates-of-the-circle-longitude-text-input'];
+delete session.data['exemption-width-of-circle-number-input'];
+
+// Clear square data
+delete session.data['exemption-what-are-the-coordinates-of-the-square-latitude-text-input'];
+delete session.data['exemption-what-are-the-coordinates-of-the-square-longitude-text-input'];
+delete session.data['exemption-width-of-square-number-input'];
+}
 //////////////////////////////////////////////////////////////////////////////////////////////
 // What is your full name
 // TEXT ENTRY
@@ -115,26 +130,39 @@ router.post('/' + version + section + 'about-your-project-router', function (req
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 router.post('/' + version + section + 'about-the-location-of-the-activity-router', function (req, res) {
-    // Turn errors off by default
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
 
-    if (req.session.data['exemption-about-the-location-of-the-activity-radios'] == "Upload a file with coordinates of the area") {
-        res.redirect('stop');
-    } else if (req.session.data['exemption-about-the-location-of-the-activity-radios'] == "Enter the coordinates of the area") {
-        // Always need to go through all steps when changing location method
-        req.session.data['isMultiStepChange'] = true;
-        res.redirect('how-do-you-want-to-enter-the-coordinates');
-    } else if (req.session.data['exemption-about-the-location-of-the-activity-radios'] == "Draw the area on a map") {
-        if (req.session.data['camefromcheckanswers'] === 'true') {
-            req.session.data['startedFromCheckAnswers'] = true;
-        }
-        res.redirect('map');
-    } else {
-        // If no selection is made, show validation error and reload the page
+    const selection = req.session.data['exemption-about-the-location-of-the-activity-radios'];
+
+    if (!selection) {
         req.session.data['errorthispage'] = "true";
         req.session.data['errortypeone'] = "true";
         res.redirect('about-the-location-of-the-activity');
+        return;
+    }
+
+    // Clear appropriate data when changing methods
+    if (selection === "Draw the area on a map") {
+        clearCoordinateData(req.session);
+        delete req.session.data['exemption-how-do-you-want-to-enter-the-coordinates-radios'];
+    } else if (selection === "Enter the coordinates of the area") {
+        clearMapData(req.session);
+    }
+
+    // Route based on selection
+    switch(selection) {
+        case "Upload a file with coordinates of the area":
+            res.redirect('stop');
+            break;
+        case "Enter the coordinates of the area":
+            res.redirect('how-do-you-want-to-enter-the-coordinates');
+            break;
+        case "Draw the area on a map":
+            res.redirect('map');
+            break;
+        default:
+            res.redirect('about-the-location-of-the-activity');
     }
 });
 
@@ -144,23 +172,108 @@ router.post('/' + version + section + 'about-the-location-of-the-activity-router
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 router.post('/' + version + section + 'how-do-you-want-to-enter-the-coordinates-router', function (req, res) {
-    // Turn errors off by default
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
 
-    if (req.session.data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter the centre point of a circle and its width") {
-        res.redirect('stop');
-    } else if (req.session.data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter the centre point of a square and its width") {
-        // Always need to go through all steps when changing coordinate entry method
-        req.session.data['isMultiStepChange'] = true;
-        res.redirect('what-are-the-coordinates-of-the-square');
-    } else if (req.session.data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter multiple coordinates of the area") {
-        res.redirect('stop');
-    } else {
-        // If no selection is made, show validation error and reload the page
+    const selection = req.session.data['exemption-how-do-you-want-to-enter-the-coordinates-radios'];
+
+    if (!selection) {
         req.session.data['errorthispage'] = "true";
         req.session.data['errortypeone'] = "true";
         res.redirect('how-do-you-want-to-enter-the-coordinates');
+        return;
+    }
+
+    // Clear previous coordinate data when changing methods
+    if (selection.includes('circle')) {
+        delete req.session.data['exemption-what-are-the-coordinates-of-the-square-latitude-text-input'];
+        delete req.session.data['exemption-what-are-the-coordinates-of-the-square-longitude-text-input'];
+        delete req.session.data['exemption-width-of-square-number-input'];
+    } else if (selection.includes('square')) {
+        delete req.session.data['exemption-what-are-the-coordinates-of-the-circle-latitude-text-input'];
+        delete req.session.data['exemption-what-are-the-coordinates-of-the-circle-longitude-text-input'];
+        delete req.session.data['exemption-width-of-circle-number-input'];
+    }
+
+    switch(selection) {
+        case "Enter the centre point of a circle and its width":
+            res.redirect('what-are-the-coordinates-of-the-circle');
+            break;
+        case "Enter the centre point of a square and its width":
+            res.redirect('what-are-the-coordinates-of-the-square');
+            break;
+        case "Enter multiple coordinates of the area":
+            res.redirect('stop');
+            break;
+        default:
+            res.redirect('how-do-you-want-to-enter-the-coordinates');
+    }
+});
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// What are the coordinates of the centre of the circle?
+// TEXT ENTRY - LATITUDE & LONGITUDE
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+router.post('/' + version + section + 'what-are-the-coordinates-of-the-circle-router', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errortypetwo'] = "false";
+
+    const latitude = req.session.data['exemption-what-are-the-coordinates-of-the-circle-latitude-text-input'];
+    const longitude = req.session.data['exemption-what-are-the-coordinates-of-the-circle-longitude-text-input'];
+
+    if (!latitude || latitude.trim() === "") {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+    }
+
+    if (!longitude || longitude.trim() === "") {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypetwo'] = "true";
+    }
+
+    if (req.session.data['errorthispage'] === "true") {
+        res.redirect('what-are-the-coordinates-of-the-circle');
+        return;
+    }
+
+    // Check if we're coming from review page
+    if (req.url.includes('fromreview=true')) {
+        res.redirect('review-location');
+    } else {
+        res.redirect('width-of-circle');
+    }
+});
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// What is the width of the circle in metres?
+// TEXT ENTRY
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+function validateWidth(req, shapeType) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    const width = req.session.data[`exemption-width-of-${shapeType}-number-input`];
+    if (!width || width.trim() === "") {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        return false;
+    }
+    return true;
+}
+
+router.post('/' + version + section + 'width-of-circle-router', function (req, res) {
+    if (!validateWidth(req, 'circle')) {
+        res.redirect('width-of-circle');
+        return;
+    }
+    // If coming from review page, go back to review
+    if (req.query.fromreview) {
+        res.redirect('review-location');
+    } else {
+        res.redirect('review-location');
     }
 });
 
@@ -174,37 +287,28 @@ router.post('/' + version + section + 'what-are-the-coordinates-of-the-square-ro
     req.session.data['errortypeone'] = "false";
     req.session.data['errortypetwo'] = "false";
 
-    let latitude = req.session.data['exemption-what-are-the-coordinates-of-the-square-latitude-text-input'];
-    let longitude = req.session.data['exemption-what-are-the-coordinates-of-the-square-longitiude-text-input'];
+    const latitude = req.session.data['exemption-what-are-the-coordinates-of-the-square-latitude-text-input'];
+    const longitude = req.session.data['exemption-what-are-the-coordinates-of-the-square-longitude-text-input'];
 
-    if (latitude == undefined || latitude.trim() == "") {
+    if (!latitude || latitude.trim() === "") {
         req.session.data['errorthispage'] = "true";
         req.session.data['errortypeone'] = "true";
     }
 
-    if (longitude == undefined || longitude.trim() == "") {
+    if (!longitude || longitude.trim() === "") {
         req.session.data['errorthispage'] = "true";
         req.session.data['errortypetwo'] = "true";
     }
 
-    if (req.session.data['errorthispage'] == "true") {
+    if (req.session.data['errorthispage'] === "true") {
         res.redirect('what-are-the-coordinates-of-the-square');
         return;
     }
 
-    if (req.session.data['isMultiStepChange']) {
-        // Part of multi-step change, continue to width
-        res.redirect('width-of-square');
-    } else if (req.session.data['camefromcheckanswers'] === 'review') {
-        // Direct change from review
-        req.session.data['camefromcheckanswers'] = false;
+    // Check if we're coming from review page
+    if (req.url.includes('fromreview=true')) {
         res.redirect('review-location');
-    } else if (req.session.data['camefromcheckanswers'] === 'true') {
-        // Direct change from check answers
-        req.session.data['camefromcheckanswers'] = false;
-        res.redirect('check-answers#location-details');
     } else {
-        // Normal flow
         res.redirect('width-of-square');
     }
 });
@@ -215,35 +319,14 @@ router.post('/' + version + section + 'what-are-the-coordinates-of-the-square-ro
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 router.post('/' + version + section + 'width-of-square-router', function (req, res) {
-    // Turn off errors by default
-    req.session.data['errorthispage'] = "false";
-    req.session.data['errortypeone'] = "false";
-
-    // Validation: Check if the text input is blank or not a number
-    let squareWidth = req.session.data['exemption-width-of-square-number-input'];
-
-    if (squareWidth == undefined || squareWidth.trim() == "") {
-        // Trigger validation for empty input
-        req.session.data['errorthispage'] = "true";
-        req.session.data['errortypeone'] = "true";
+    if (!validateWidth(req, 'square')) {
         res.redirect('width-of-square');
         return;
     }
-
-    // Validation passed, handle the routing
-    if (req.session.data['isMultiStepChange']) {
-        // Part of multi-step change, go to review
-        res.redirect('review-location');
-    } else if (req.session.data['camefromcheckanswers'] === 'true' && !req.session.data['startedFromCheckAnswers']) {
-        // Direct change from check answers
-        req.session.data['camefromcheckanswers'] = false;
-        res.redirect('check-answers#location-details');
-    } else if (req.session.data['camefromcheckanswers'] === 'review' && !req.session.data['startedFromReview']) {
-        // Direct change from review
-        req.session.data['camefromcheckanswers'] = false;
+    // If coming from review page, go back to review
+    if (req.query.fromreview) {
         res.redirect('review-location');
     } else {
-        // Part of longer journey or normal flow
         res.redirect('review-location');
     }
 });
@@ -254,33 +337,13 @@ router.post('/' + version + section + 'width-of-square-router', function (req, r
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 router.post('/' + version + section + 'review-location-router', function (req, res) {
-    if (req.session.data['startedFromCheckAnswers'] || (req.session.data['isMultiStepChange'] && req.session.data['camefromcheckanswers'] === 'true')) {
-        // Clear all journey flags
-        req.session.data['startedFromCheckAnswers'] = false;
-        req.session.data['isMultiStepChange'] = false;
-        req.session.data['camefromcheckanswers'] = false;
+    if (req.session.data['camefromcheckanswers'] === 'true') {
         res.redirect('check-answers');
     } else {
         res.redirect('about-your-activity');
     }
 });
 
-//////////////////////////////////////////////////////////////////////////////////////////////
-// Review Map
-// REVIEW PAGE
-/////////////////////////////////////////////////////////////////////////////////////////////
-
-router.post('/' + version + section + 'review-map-router', function (req, res) {
-    if (req.session.data['startedFromCheckAnswers'] || (req.session.data['isMultiStepChange'] && req.session.data['camefromcheckanswers'] === 'true')) {
-        // Clear all journey flags
-        req.session.data['startedFromCheckAnswers'] = false;
-        req.session.data['isMultiStepChange'] = false;
-        req.session.data['camefromcheckanswers'] = false;
-        res.redirect('check-answers');
-    } else {
-        res.redirect('about-your-activity');
-    }
-});
 //////////////////////////////////////////////////////////////////////////////////////////////
 // About your activity
 // TEXT ENTRY - TEXTAREA

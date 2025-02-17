@@ -16,7 +16,7 @@ This will save you time.
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-What are the coordinates of the centre of the square?
+What are the coordinates of the centre of the circle?
 {% endset %}
 
 <!-- Setting the smaller secondary headings lower down the page -->
@@ -63,10 +63,10 @@ What are the coordinates of the centre of the square?
     <div class="govuk-error-summary__body">
         <ul class="govuk-list govuk-error-summary__list">
             {% if data['errortypeone'] == "true" %}
-                <li><a href="#exemption-what-are-the-coordinates-of-the-square-latitude-text-input">Enter the latitude coordinate</a></li>
+                <li><a href="#exemption-what-are-the-coordinates-of-the-circle-latitude-text-input">Enter the latitude coordinate</a></li>
             {% endif %}
             {% if data['errortypetwo'] == "true" %}
-                <li><a href="#exemption-what-are-the-coordinates-of-the-square-longitude-text-input">Enter the longitude coordinate</a></li>
+                <li><a href="#exemption-what-are-the-coordinates-of-the-circle-longitude-text-input">Enter the longitude coordinate</a></li>
             {% endif %}
         </ul>
     </div>
@@ -74,7 +74,7 @@ What are the coordinates of the centre of the square?
 {% endif %}
 
         <!-- go to routes.js for routing  -->
-        <form action="what-are-the-coordinates-of-the-square-router{% if query.fromreview %}?fromreview=true{% endif %}" method="post" novalidate>
+        <form action="what-are-the-coordinates-of-the-circle-router{% if query.fromreview %}?fromreview=true{% endif %}" method="post" novalidate>
 
             {% call govukFieldset({
                 legend: {
@@ -97,14 +97,14 @@ What are the coordinates of the centre of the square?
             
                     autocomplete: "off",
 
-                    id: "exemption-what-are-the-coordinates-of-the-square-latitude-text-input",
+                    id: "exemption-what-are-the-coordinates-of-the-circle-latitude-text-input",
             
-                    name: "exemption-what-are-the-coordinates-of-the-square-latitude-text-input",
+                    name: "exemption-what-are-the-coordinates-of-the-circle-latitude-text-input",
             
                     errorMessage: null if data['errortypeone'] != "true"
                                    else { html: "Enter the latitude coordinate" },
             
-                    value: data['exemption-what-are-the-coordinates-of-the-square-latitude-text-input'],
+                    value: data['exemption-what-are-the-coordinates-of-the-circle-latitude-text-input'],
             
                     classes: "govuk-input govuk-!-width-one-half"
                 })
@@ -121,14 +121,14 @@ What are the coordinates of the centre of the square?
             
                     autocomplete: "off",
 
-                    id: "exemption-what-are-the-coordinates-of-the-square-longitude-text-input",
+                    id: "exemption-what-are-the-coordinates-of-the-circle-longitude-text-input",
             
-                    name: "exemption-what-are-the-coordinates-of-the-square-longitude-text-input",
+                    name: "exemption-what-are-the-coordinates-of-the-circle-longitude-text-input",
             
                     errorMessage: null if data['errortypetwo'] != "true"
                                    else { html: "Enter the longitude coordinate" },
             
-                    value: data['exemption-what-are-the-coordinates-of-the-square-longitude-text-input'],
+                    value: data['exemption-what-are-the-coordinates-of-the-circle-longitude-text-input'],
             
                     classes: "govuk-input govuk-!-width-one-half"
                 })
