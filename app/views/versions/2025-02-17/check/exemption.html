@@ -1,0 +1,49 @@
+{% extends "../layouts/main.html" %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+You do not need a marine licence, but you need to give us more information
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - {{ data['headerName'] }}
+{% endblock %}
+
+{% block content %}
+
+
+<div class="govuk-grid-row">
+
+	<div class="govuk-grid-column-two-thirds">
+
+		
+		<h1 class="govuk-heading-l">
+			{{ pageHeadingTextHTML }}
+		</h1>
+
+		<p>Based on your answers, your activity is exempt under the <a
+				href="https://www.legislation.gov.uk/uksi/2011/409/article/17A">The Marine Licensing (Exempted
+				Activities) Order 2011</a>.</p>
+
+				{{ govukWarningText({
+					text: "Your activity is only exempt on the condition that you provide further information before starting.",
+					iconFallbackText: "Warning"
+				  }) }}	
+
+		<h2 class="govuk-heading-m">What you'll need to provide</h2>
+
+		<ul class="govuk-list govuk-list--bullet">
+			<li>a contact name and email address</li>
+			<li>background information about your project</li>
+			<li>specific location details</li>
+			<li>details of the activity, including estimated start and end dates</li>
+		</ul>
+
+		<a href="../exemption/what-is-your-name.html" class="govuk-button" role="button">Continue</a>
+
+		<p><a href="/public/downloads/exemption-journey-answers.pdf" rel="noreferrer noopener" rel="noreferrer noopener" rel="noreferrer noopener" target="_blank">Download a PDF of your answers</a></p>
+
+	</div>
+</div>
+{% endblock %}

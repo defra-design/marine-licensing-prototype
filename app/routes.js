@@ -8,11 +8,6 @@ const router = govukPrototypeKit.requests.setupRouter()
 
 // Add your routes here
 
-
-
-
-
-
 // Including other routing javascript
 // This single line tells this 'routes.js' file to include the routing from the 'templates.js' and other js files
 require('./routes/templates.js')(router);
@@ -30,6 +25,12 @@ require('./routes/versions/2025-01-27/account.js')(router);
 require('./routes/versions/2025-01-27/sites.js')(router);
 require('./routes/versions/2025-01-27/check.js')(router);
 require('./routes/versions/2025-01-27/exemption.js')(router);
+
+// 17 Feb 2025
+require('./routes/versions/2025-02-17/account.js')(router);
+require('./routes/versions/2025-02-17/sites.js')(router);
+require('./routes/versions/2025-02-17/check.js')(router);
+require('./routes/versions/2025-02-17/exemption.js')(router);
 
 
 

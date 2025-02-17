@@ -1,7 +1,19 @@
 const { log } = require("govuk-prototype-kit/migrator/logger");
 module.exports = function (router) {
-	let version = "versions/2025-01-27/";
+	let version = "versions/2025-02-17/";
 	let section = "exemption/";
+
+
+//// logging	
+	router.use((req, res, next) => {
+		const log = {
+		  method: req.method,
+		  url: req.originalUrl,
+		  data: req.session.data
+		}
+		console.log(JSON.stringify(log, null, 2))
+	  next()
+	 })
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // What is your full name

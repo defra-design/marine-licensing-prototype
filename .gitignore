@@ -1,1 +1,3 @@
 node_modules/
+app/views/versions/.DS_Store
+app/routes/versions/.DS_Store
