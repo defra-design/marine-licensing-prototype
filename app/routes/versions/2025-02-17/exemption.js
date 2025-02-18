@@ -20,15 +20,21 @@ delete session.data['sites-drawn-coordinates'];
 }
 
 function clearCoordinateData(session) {
-// Clear circle data
-delete session.data['exemption-what-are-the-coordinates-of-the-circle-latitude-text-input'];
-delete session.data['exemption-what-are-the-coordinates-of-the-circle-longitude-text-input'];
-delete session.data['exemption-width-of-circle-number-input'];
+    // Clear circle data
+    delete session.data['exemption-what-are-the-coordinates-of-the-circle-latitude-text-input'];
+    delete session.data['exemption-what-are-the-coordinates-of-the-circle-longitude-text-input'];
+    delete session.data['exemption-width-of-circle-number-input'];
+    
+    // Clear square data
+    delete session.data['exemption-what-are-the-coordinates-of-the-square-latitude-text-input'];
+    delete session.data['exemption-what-are-the-coordinates-of-the-square-longitude-text-input'];
+    delete session.data['exemption-width-of-square-number-input'];
 
-// Clear square data
-delete session.data['exemption-what-are-the-coordinates-of-the-square-latitude-text-input'];
-delete session.data['exemption-what-are-the-coordinates-of-the-square-longitude-text-input'];
-delete session.data['exemption-width-of-square-number-input'];
+    // Clear multiple coordinates data
+    for (let i = 1; i <= 5; i++) {
+        delete session.data[`coordinates-point-${i}-latitude`];
+        delete session.data[`coordinates-point-${i}-longitude`];
+    }
 }
 //////////////////////////////////////////////////////////////////////////////////////////////
 // What is your full name
@@ -186,13 +192,37 @@ router.post('/' + version + section + 'how-do-you-want-to-enter-the-coordinates-
 
     // Clear previous coordinate data when changing methods
     if (selection.includes('circle')) {
+        // Clear square data
         delete req.session.data['exemption-what-are-the-coordinates-of-the-square-latitude-text-input'];
         delete req.session.data['exemption-what-are-the-coordinates-of-the-square-longitude-text-input'];
         delete req.session.data['exemption-width-of-square-number-input'];
+        
+        // Clear multiple coordinates data
+        for (let i = 1; i <= 5; i++) {
+            delete req.session.data[`coordinates-point-${i}-latitude`];
+            delete req.session.data[`coordinates-point-${i}-longitude`];
+        }
     } else if (selection.includes('square')) {
+        // Clear circle data
         delete req.session.data['exemption-what-are-the-coordinates-of-the-circle-latitude-text-input'];
         delete req.session.data['exemption-what-are-the-coordinates-of-the-circle-longitude-text-input'];
         delete req.session.data['exemption-width-of-circle-number-input'];
+        
+        // Clear multiple coordinates data
+        for (let i = 1; i <= 5; i++) {
+            delete req.session.data[`coordinates-point-${i}-latitude`];
+            delete req.session.data[`coordinates-point-${i}-longitude`];
+        }
+    } else if (selection.includes('multiple')) {
+        // Clear circle data
+        delete req.session.data['exemption-what-are-the-coordinates-of-the-circle-latitude-text-input'];
+        delete req.session.data['exemption-what-are-the-coordinates-of-the-circle-longitude-text-input'];
+        delete req.session.data['exemption-width-of-circle-number-input'];
+        
+        // Clear square data
+        delete req.session.data['exemption-what-are-the-coordinates-of-the-square-latitude-text-input'];
+        delete req.session.data['exemption-what-are-the-coordinates-of-the-square-longitude-text-input'];
+        delete req.session.data['exemption-width-of-square-number-input'];
     }
 
     switch(selection) {
@@ -203,7 +233,7 @@ router.post('/' + version + section + 'how-do-you-want-to-enter-the-coordinates-
             res.redirect('what-are-the-coordinates-of-the-square');
             break;
         case "Enter multiple coordinates of the area":
-            res.redirect('stop');
+            res.redirect('enter-multiple-coordinates');
             break;
         default:
             res.redirect('how-do-you-want-to-enter-the-coordinates');
@@ -330,6 +360,22 @@ router.post('/' + version + section + 'width-of-square-router', function (req, r
         res.redirect('review-location');
     }
 });
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Enter multiple coordinates of the area
+// TEXT ENTRY
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+router.post('/' + version + section + 'enter-multiple-coordinates-router', function (req, res) {
+    // If coming from review page, go back to review
+    if (req.query.fromreview) {
+        res.redirect('review-location');
+    } else {
+        res.redirect('review-location');
+    }
+});
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Review Location

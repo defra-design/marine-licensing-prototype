@@ -163,8 +163,105 @@ Review your location
       </div>
     </dl>   
     <img src="/public/images/worthing-map-square.jpg" alt="Map view" style="width: 100%;">
-    {% endif %}
     <!-- End of square -->
+
+    <!-- Start of enter multiple coords -->
+    {% elif data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter multiple coordinates of the area" %}
+    <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+      <dt class="govuk-summary-list__key">
+        Start and end points
+      </dt>
+      <dd class="govuk-summary-list__value">
+        {{ data['coordinates-point-1-latitude'] }}, {{ data['coordinates-point-1-longitude'] }}
+      </dd>
+      <dd class="govuk-summary-list__actions">
+        <a class="govuk-link" href="enter-multiple-coordinates?fromreview=true" onclick="document.cookie='fromreview=true';">Change<span class="govuk-visually-hidden"> coordinates</span></a>
+      </dd>
+    </div>
+
+    <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+      <dt class="govuk-summary-list__key">
+        Point 2
+      </dt>
+      <dd class="govuk-summary-list__value">
+        {{ data['coordinates-point-2-latitude'] }}, {{ data['coordinates-point-2-longitude'] }}
+      </dd>
+      <dd class="govuk-summary-list__actions">
+
+      </dd>
+    </div>
+
+    <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+      <dt class="govuk-summary-list__key">
+        Point 3
+      </dt>
+      <dd class="govuk-summary-list__value">
+        {{ data['coordinates-point-3-latitude'] }}, {{ data['coordinates-point-3-longitude'] }}
+      </dd>
+      <dd class="govuk-summary-list__actions">
+
+      </dd>
+    </div>
+
+    <!-- Only display Point 4 if data was entered -->
+    {% if data['coordinates-point-4-latitude'] and data['coordinates-point-4-longitude'] %}
+    <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+      <dt class="govuk-summary-list__key">
+        Point 4
+      </dt>
+      <dd class="govuk-summary-list__value">
+        {{ data['coordinates-point-4-latitude'] }}, {{ data['coordinates-point-4-longitude'] }}
+      </dd>
+      <dd class="govuk-summary-list__actions">
+
+      </dd>
+    </div>
+    {% endif %}
+
+    <!-- Only display Point 5 if data was entered -->
+    {% if data['coordinates-point-5-latitude'] and data['coordinates-point-5-longitude'] %}
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">
+        Point 5
+      </dt>
+      <dd class="govuk-summary-list__value">
+        {{ data['coordinates-point-5-latitude'] }}, {{ data['coordinates-point-5-longitude'] }}
+      </dd>
+      <dd class="govuk-summary-list__actions">
+      
+      </dd>
+    </div>
+    {% endif %}
+  </dl>
+
+  <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
+  
+  <dl class="govuk-summary-list">
+
+    <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+      <dt class="govuk-summary-list__key">
+        Map view
+      </dt>
+      <dd class="govuk-summary-list__value">
+        
+      </dd>
+    </div>
+  </dl>  
+  
+  <!-- Display the correct map depending on how many points are shown -->
+  {% if data['coordinates-point-4-latitude'] and data['coordinates-point-4-longitude'] %}
+  {% if data['coordinates-point-5-latitude'] and data['coordinates-point-5-longitude'] %}
+      <img src="/public/images/worthing-map-5-points.jpg" alt="Map view" style="width: 100%;">
+  {% else %}
+      <img src="/public/images/worthing-map-4-points.jpg" alt="Map view" style="width: 100%;">
+  {% endif %}
+  {% else %}
+  <img src="/public/images/worthing-map-3-points.jpg" alt="Map view" style="width: 100%;">
+  {% endif %}
+
+
+  {% endif %}
+  <!-- End of enter multiple coords -->
     
     </div>
     </div>
