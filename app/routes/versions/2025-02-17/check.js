@@ -90,7 +90,7 @@ router.post('/' + version + section + 'what-type-of-activity-will-take-place-rou
 
     if (
         req.session.data['check-what-type-of-activity-will-take-place-radios'] == "Construction") {
-        res.redirect('stop');
+        res.redirect('purpose-of-construction');
     }
     else if (req.session.data['check-what-type-of-activity-will-take-place-radios'] == "Dredging") {
         res.redirect('what-does-the-dredging-activity-involve');
@@ -425,6 +425,247 @@ router.post('/' + version + section + 'marine-protected-areas-router', function 
         req.session.data['errortypeone'] = "true";
         res.redirect('marine-protected-areas');
     }
+});
+
+
+/////////////////////////////////////////////////////////////////////////////////////////////
+// PONTOON CONSTRUCTION JOURNEY
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// What is the purpose of your construction activity? 
+// PAGE OF RADIO BUTTONS
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+router.post('/' + version + section + 'purpose-of-construction-router', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    const selection = req.session.data['check-purpose-of-construction-radios'];
+
+    if (!selection) {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        res.redirect('purpose-of-construction');
+        return;
+    }
+
+    // Route based on selection
+    switch(selection) {
+        case "To build or make something new":
+            res.redirect('what-does-construction-activity-involve');
+            break;
+        case "Maintenance of existing structures and assets":
+            res.redirect('stop');
+            break;
+        default:
+            res.redirect('purpose-of-construction');
+    }
+});
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// What does the construction activity involve?
+// PAGE OF RADIO BUTTONS
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+router.post('/' + version + section + 'what-does-construction-activity-involve-router', function (req, res) {
+    // Turn errors off by default
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    const selection = req.session.data['check-what-does-construction-activity-involve-radios'];
+
+    if (!selection) {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        res.redirect('what-does-construction-activity-involve');
+        return;
+    }
+
+    // Route based on selection
+    switch(selection) {
+        case "Moorings or aids to navigation":
+            res.redirect('stop');
+            break;
+        case "Pontoons":
+            res.redirect('who-will-carry-out-activity');
+            break;
+        case "Flood or flood risk":
+            res.redirect('stop');
+            break;
+        case "Cables":
+            res.redirect('stop');
+            break;
+        case "Pipelines":
+            res.redirect('stop');
+            break;
+        case "Something else":
+            res.redirect('stop');
+            break;
+        default:
+            res.redirect('what-does-construction-activity-involve');
+    }
+});
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Who will carry out the activity?
+// PAGE OF RADIO BUTTONS
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+router.post('/' + version + section + 'who-will-carry-out-activity-router', function (req, res) {
+    // Turn errors off by default
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    const selection = req.session.data['check-who-will-carry-out-activity-radios'];
+
+    if (!selection) {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        res.redirect('who-will-carry-out-activity');
+        return;
+    }
+
+    // Route based on selection
+    switch(selection) {
+        case "A harbour authority or its representative":
+            res.redirect('stop');
+            break;
+        case "Someone else":
+            res.redirect('will-activity-take-place-harbour-authority-area');
+            break;
+        default:
+            res.redirect('who-will-carry-out-activity');
+    }
+});
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Will the activity take place in a harbour authority area?
+// PAGE OF RADIO BUTTONS
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+router.post('/' + version + section + 'will-activity-take-place-harbour-authority-area-router', function (req, res) {
+    // Turn errors off by default
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    const selection = req.session.data['check-will-activity-take-place-harbour-authority-area'];
+
+    if (!selection) {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        res.redirect('will-activity-take-place-harbour-authority-area');
+        return;
+    }
+
+    // Route based on selection
+    switch(selection) {
+        case "Yes":
+            res.redirect('do-you-have-harbour-authority-consent');
+            break;
+        case "No":
+            res.redirect('stop');
+            break;
+        default:
+            res.redirect('will-activity-take-place-harbour-authority-area');
+    }
+});
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Do you have harbour authority consent to build a pontoon?
+// PAGE OF RADIO BUTTONS
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+router.post('/' + version + section + 'do-you-have-harbour-authority-consent-router', function (req, res) {
+    // Turn errors off by default
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    const selection = req.session.data['check-do-you-have-harbour-authority-consent'];
+
+    if (!selection) {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        res.redirect('do-you-have-harbour-authority-consent');
+        return;
+    }
+
+    // Route based on selection
+    switch(selection) {
+        case "Yes":
+            res.redirect('pontoon-deck-larger-than-30');
+            break;
+        case "No":
+            res.redirect('stop');
+            break;
+        default:
+            res.redirect('do-you-have-harbour-authority-consent');
+    }
+});
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Will the pontoon deck be larger than 30 square metres when finished?
+// PAGE OF RADIO BUTTONS
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+router.post('/' + version + section + 'pontoon-deck-larger-than-30-router', function (req, res) {
+    // Turn errors off by default
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    const selection = req.session.data['check-pontoon-deck-larger-than-30-radios'];
+
+    if (!selection) {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        res.redirect('pontoon-deck-larger-than-30');
+        return;
+    }
+
+    // Route based on selection
+    switch(selection) {
+        case "Yes":
+            res.redirect('stop');
+            break;
+        case "No":
+            res.redirect('10-pontoons-or-more');
+            break;
+        default:
+            res.redirect('pontoon-deck-larger-than-30');
+    }
+});
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Will 10 or more pontoons be built or deposited at the location in the 6 months before the activity begins?
+// PAGE OF RADIO BUTTONS
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+router.post('/' + version + section + '10-pontoons-or-more-router', function (req, res) {
+    // Turn errors off by default
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    const selection = req.session.data['check-10-pontoons-or-more'];
+
+    if (!selection) {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        res.redirect('10-pontoons-or-more');
+        return;
+    }
+
+    // Set exemption value based on selection
+    if (selection === "Yes") {
+        req.session.data['exemption'] = "approval";
+    } else if (selection === "No") {
+        req.session.data['exemption'] = "notification";
+    }
+
+    // Redirect to exemption page
+    res.redirect('exemption');
 });
 
 }

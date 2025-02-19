@@ -3,17 +3,7 @@
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-Marine Protected Areas (MPAs)
-{% endset %}
-
-<!-- Setting the heading caption -->
-{% set captionTextHTML %}
-	Check if you need a marine licence
-{% endset %}
-
-<!-- Setting the smaller secondary heading lower down the page -->
-{% set questionHeadingTextHTML %}
-Will the removal activity take place within 200 metres of an MPA?
+Who will carry out the activity?
 {% endset %}
 
 
@@ -21,7 +11,7 @@ Will the removal activity take place within 200 metres of an MPA?
 {% set errorTextHTML %}
     <!-- Nothing was selected -->
     {% if data['errortypeone'] == "true" %}
-    Select whether the removal activity will take place within 200 metres of an MPA 
+        Select who will carry out the activity
     {% endif %}
 {% endset %}
 
@@ -49,7 +39,7 @@ Will the removal activity take place within 200 metres of an MPA?
                     [
                         {
                             html: errorTextHTML,
-                            href: "#check-marine-protected-areas-radios"
+                            href: "#check-who-will-carry-out-activity-radios"
                         }
                     ]
                 })
@@ -59,26 +49,17 @@ Will the removal activity take place within 200 metres of an MPA?
 
 
         <!-- go to routes.js for routing  -->
-        <form action="marine-protected-areas-router" method="post" novalidate>
+        <form action="who-will-carry-out-activity-router" method="post" novalidate>
 
             
             <h1 class="govuk-heading-l">
                 {{ pageHeadingTextHTML }}
             </h1>
 
-
-            <p>MPAs are designated areas of the sea protected from harmful human activity.</p>
-
-			<p>Any activity within 200 metres of an MPA may need a marine licence.</p>
-
-			
-            <p>To find out if the activity falls within 200 metres of an MPA, you can use the <a href="https://defra.maps.arcgis.com/apps/webappviewer/index.html?id=28f91021979447d3b43dc83e6e93094c&showLayers=Marine%20Protected%20Areas" rel="noreferrer noopener" target="_blank">marine licensing interactive map (opens in new tab)</a>.</p>
-
             {{ govukRadios
                 ({
-                    name: "check-marine-protected-areas-radios",
-
-                    id: "check-marine-protected-areas-radios",
+                    name: "check-who-will-carry-out-activity-radios",
+                    id: "check-who-will-carry-out-activity-radios",
 
                     fieldset:
                     {
@@ -96,14 +77,14 @@ Will the removal activity take place within 200 metres of an MPA?
                     items:
                     [
 {
-                            value: "Yes",
-                            text: "Yes",
-                            checked: data['check-marine-protected-areas-radios'] == "Yes"
+                            value: "A harbour authority or its representative",
+                            text: "A harbour authority or its representative",
+                            checked: data['check-who-will-carry-out-activity-radios'] == "A harbour authority or its representative"
                         },
                         {
-                            value: "No",
-                            text: "No",
-                            checked: data['check-marine-protected-areas-radios'] == "No"
+                            value: "Someone else",
+                            text: "Someone else",
+                            checked: data['check-who-will-carry-out-activity-radios'] == "Someone else"
                         }
                     ]
                 })

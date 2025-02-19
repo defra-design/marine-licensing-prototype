@@ -26,11 +26,20 @@ You do not need a marine licence, but you need to give us more information
 				href="https://www.legislation.gov.uk/uksi/2011/409/article/17A">The Marine Licensing (Exempted
 				Activities) Order 2011</a>.</p>
 
-				{{ govukWarningText({
-					text: "Your activity is only exempt on the condition that you provide further information before starting.",
-					iconFallbackText: "Warning"
-				  }) }}	
+{% if data['exemption'] == "approval" %}
+	{{ govukWarningText({
+		text: "Your activity is only exempt on the condition that you provide further information and wait for approval before starting.",
+		iconFallbackText: "Warning"
+	}) }}	
 
+	{% else %}
+				
+	{{ govukWarningText({
+		text: "Your activity is only exempt on the condition that you provide further information before starting.",
+		iconFallbackText: "Warning"
+		}) }}	
+
+ 	{% endif %}
 		<h2 class="govuk-heading-m">What you'll need to provide</h2>
 
 		<ul class="govuk-list govuk-list--bullet">
