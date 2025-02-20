@@ -418,6 +418,7 @@ router.post('/' + version + section + 'marine-protected-areas-router', function 
     if (req.session.data['check-marine-protected-areas-radios'] == "Yes") {
         res.redirect('stop');
     } else if (req.session.data['check-marine-protected-areas-radios'] == "No") {
+        req.session.data['exemption'] = "sample-notification";
         res.redirect('exemption');
     } else {
         // If no selection is made, show validation error and reload the page
@@ -659,9 +660,9 @@ router.post('/' + version + section + '10-pontoons-or-more-router', function (re
 
     // Set exemption value based on selection
     if (selection === "Yes") {
-        req.session.data['exemption'] = "approval";
+        req.session.data['exemption'] = "pontoon-approval";
     } else if (selection === "No") {
-        req.session.data['exemption'] = "notification";
+        req.session.data['exemption'] = "pontoon-notification";
     }
 
     // Redirect to exemption page
