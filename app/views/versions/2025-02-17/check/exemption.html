@@ -24,7 +24,7 @@ You do not need a marine licence, but you need to give us more information
 
 
 
-		{% if data['exemption'] == "pontoon-approval" or data['exemption'] == "pontoon-notification" %}
+		{% if (data['exemption'] == "pontoon-approval" or data['exemption'] == "pontoon-notification") %}
     <p>
         Based on your answers, your activity is exempt under the 
         <a href="http://www.legislation.gov.uk/uksi/2011/409/article/25A" rel="noreferrer noopener" target="_blank">
@@ -45,7 +45,7 @@ You do not need a marine licence, but you need to give us more information
         text: "Your activity is only exempt on the condition that you provide further information and wait for approval before starting.",
         iconFallbackText: "Warning"
     }) }}
-{% elif data['exemption'] == "pontoon-notification" or data['exemption'] == "sample-notification" %}
+{% elif (data['exemption'] == "pontoon-notification" or data['exemption'] == "sample-notification") %}
     {{ govukWarningText({
         text: "Your activity is only exempt on the condition that you provide further information before starting.",
         iconFallbackText: "Warning"
@@ -62,7 +62,16 @@ You do not need a marine licence, but you need to give us more information
 
 		<a href="../exemption/what-is-your-name.html" class="govuk-button" role="button">Continue</a>
 
-		<p><a href="/public/downloads/exemption-journey-answers.pdf" rel="noreferrer noopener" rel="noreferrer noopener" rel="noreferrer noopener" target="_blank">Download a PDF of your answers</a></p>
+		<p>
+			{% if data['exemption'] == "pontoon-approval" %}
+			<a href="/public/downloads/approval-pontoon-answers.pdf" rel="noreferrer noopener" target="_blank">
+			{% elif data['exemption'] == "pontoon-notification" %}
+			<a href="/public/downloads/notification-pontoon-answers.pdf" rel="noreferrer noopener" target="_blank">
+			{% elif data['exemption'] == "sample-notification" %}
+			<a href="/public/downloads/notification-sample-answers.pdf" rel="noreferrer noopener" target="_blank">
+			{% endif %}
+			Download a PDF of your answers</a>
+		</p>
 
 	</div>
 </div>
