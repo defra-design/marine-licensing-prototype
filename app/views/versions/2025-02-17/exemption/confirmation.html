@@ -28,10 +28,16 @@
 
       <h2 class="govuk-heading-m">What happens next</h2>
 
+      {% if data['exemption'] == "pontoon-approval" %}
       <p class="govuk-body">
-        You can complete your removal activity within the dates you provided.
+        [Content around having to wait for approval before starting the activity]
       </p>
-      
+
+      {% elif (data['exemption'] == "pontoon-notification" or data['exemption'] == "sample-notification") %}
+      <p class="govuk-body">
+        You can complete your activity within the dates you provided.
+      </p>
+      {% endif %}
 
 	  <p class="govuk-body">
         <a href="#" class="govuk-link">Download a PDF of your answers</a>
