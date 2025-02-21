@@ -45,6 +45,56 @@ Review your location
         </dd>
       </div>
 
+      <!-- Start of upload file -->
+      {% if data['exemption-about-the-location-of-the-activity-radios'] == "Upload a file with coordinates of the area"  %}
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Which type of file do you want to upload?
+        </dt>
+        <dd class="govuk-summary-list__value">
+          {{ data['exemption-which-type-of-file-radios'] }}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link" href="which-type-of-file">Change<span class="govuk-visually-hidden"> How do you want to enter the coordinates?</span></a>
+        </dd>
+      </div>
+
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          File uploaded
+        </dt>
+        <dd class="govuk-summary-list__value">
+          coordinates.kml
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link" href="upload-kml-file">Change<span class="govuk-visually-hidden"> How do you want to enter the coordinates?</span></a>
+        </dd>
+      </div>
+      
+    </dl>
+
+    <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
+    
+    <dl class="govuk-summary-list">
+  
+      <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+        <dt class="govuk-summary-list__key">
+          Map view
+        </dt>
+        <dd class="govuk-summary-list__value">
+          
+        </dd>
+      </div>
+    </dl>  
+    
+        <img src="/public/images/worthing-map-5-points.jpg" alt="Map view" style="width: 100%;">
+
+      </div>
+    </div>
+
+      {% endif %}
+      <!-- End of upload file -->
+
 
       <!-- Start of entering square or circle coordinates -->
        {% if data['exemption-about-the-location-of-the-activity-radios'] == "Enter the coordinates of the area"  %}

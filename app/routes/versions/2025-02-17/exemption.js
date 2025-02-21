@@ -120,6 +120,8 @@ router.post('/' + version + section + 'about-your-project-router', function (req
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////
+// Location details
+// How do you want to provide the location?
 // About the location of the activity
 // PAGE OF RADIO BUTTONS
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -147,6 +149,7 @@ router.post('/' + version + section + 'about-the-location-of-the-activity-router
 
     // Route based on selection
     switch(selection) {
+        // which-type-of-file
         case "Upload a file with coordinates of the area":
             res.redirect('stop');
             break;
@@ -160,6 +163,51 @@ router.post('/' + version + section + 'about-the-location-of-the-activity-router
             res.redirect('about-the-location-of-the-activity');
     }
 });
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Which type of file do you want to upload?
+// PAGE OF RADIO BUTTONS
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+router.post('/' + version + section + 'which-type-of-file-router', function (req, res) {
+    // Turn errors off by default
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    const selection = req.session.data['exemption-which-type-of-file-radios'];
+
+    if (!selection) {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        res.redirect('which-type-of-file');
+        return;
+    }
+
+    // Route based on selection
+    switch(selection) {
+        case "KML file":
+            res.redirect('upload-kml-file');
+            break;
+        case "Shapefile or MapInfo TAB file":
+            res.redirect('stop');
+            break;
+        default:
+            res.redirect('which-type-of-file');
+    }
+});
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Upload KML File
+// FILE UPLOAD PAGE
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+router.post('/' + version + section + 'upload-kml-file-router', function (req, res) {
+    // Redirect to review location page
+    res.redirect('review-location');
+});
+
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // How do you want to enter the coordinates of the area?

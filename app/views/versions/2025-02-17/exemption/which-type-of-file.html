@@ -1,0 +1,144 @@
+{% extends "../layouts/main.html" %}
+
+
+<!-- Setting the smaller secondary heading lower down the page -->
+{% set pageHeadingTextHTML %}
+Which type of file do you want to upload?
+{% endset %}
+
+
+<!-- Set the text for the error type -->
+{% set errorTextHTML %}
+    <!-- Nothing was selected -->
+    {% if data['errortypeone'] == "true" %}
+    Select which type of file you want to upload
+    {% endif %}
+{% endset %}
+
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {% if  data['errorthispage'] == "true"  %}
+        Error:
+    {% endif %}
+
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <!-- ERROR LOGIC 'error summary' -->
+        {% if data['errorthispage'] == "true" %}
+            {{ govukErrorSummary
+                ({
+                    titleText: "There is a problem",
+                    errorList:
+                    [
+                        {
+                            html: errorTextHTML,
+                            href: "#exemption-which-type-of-file-radios"
+                        }
+                    ]
+                })
+            }}
+        {% endif %}
+        <!--  END OF 'error summary' -->
+
+
+        <!-- go to routes.js for routing  -->
+        <form action="which-type-of-file-router" method="post" novalidate>
+
+            {{ govukRadios
+                ({
+                    name: "exemption-which-type-of-file-radios",
+
+                    id: "exemption-which-type-of-file-radios",
+
+                    fieldset:
+                    {
+                        legend:
+                        {
+                            html: pageHeadingTextHTML,
+                            isPageHeading: true,
+                            classes: "govuk-fieldset__legend--l"
+                        }
+                    },
+
+                    errorMessage: null if data['errorthispage'] != "true"
+                                       else { html: errorTextHTML },
+
+                    items:
+                    [
+                        {
+                            value: "KML file",
+                            text: "KML file",
+                            checked: data['exemption-which-type-of-file-radios'] == "KML file"
+                        },
+                        {
+                            value: "Shapefile or MapInfo TAB file",
+                            text: "Shapefile or MapInfo TAB file",
+                            checked: data['exemption-which-type-of-file-radios'] == "Shapefile or MapInfo TAB file"
+                        }
+                    ]
+                })
+            }}
+
+
+            {{ govukButton({ text: "Continue" }) }}
+
+        </form>
+
+    </div>
+</div>
+
+
+
+
+<!-- ERROR LOGIC  drop down to toggle states  -->
+<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-225px;  ">
+
+    <select style="height:30px;" onchange="window.location.href='?'+this.value">
+
+        <option value="errorthispage=false&errortypeone=false&errortypetwo=false&"
+                {% if (data['errorthispage'] != "true") %}selected{% endif %}
+        >Errors - Off</option>
+
+        <option value="errorthispage=true&errortypeone=true&errortypetwo=false&"
+                {% if (data['errortypeone'] == 'true' and data['errortypetwo'] != 'true')  %}selected{% endif %}
+        >Error 1 - Must select at least one</option>
+
+    </select>
+
+</form>
+<!--  END OF ERROR LOGIC -->
+
+
+
+<!-- USER TYPE TOGGLE  -->
+<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-225px;  ">
+
+    <select style="height:30px;" onchange="window.location.href='?'+this.value">
+
+        <option value="user=citizen&"
+                {% if  data['user'] != "agent"  %} selected {% endif %}
+        >User type - Individual</option>
+
+        <option value="user=agent&"
+                {% if  data['user'] == "agent"  %} selected {% endif %}
+        >User type - Agent</option>
+
+    </select>
+
+</form>
+<!--  END USER TYPE TOGGLE -->
+
+
+
+
+
+{% endblock %}
+
+
