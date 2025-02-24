@@ -36,14 +36,72 @@
           {{ pageHeadingTextHTML }}
         </h1>
         
+        {{ govukButton({
+          text: "Go to start",
+          href: "versions/2025-02-17/check/start",
+          isStartButton: true
+        }) }}
+
+
 
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
 
+        <!-- Start of iteration 2 -->
+        <strong class="govuk-tag govuk-tag--yellow" style="float:right">In progress</strong>
+        <h2 class="govuk-heading-m">Iteration 2</h2>
+        
+
+        <p><a href="versions/2025-02-17/check/start" class="govuk-link--no-visited-state">Exemption notification journey, as well as approval journey</a></p>
+  
+        <p>When entering the location details all options are now available apart from file upload.</p>
+
+        <details class="govuk-details govuk-!-margin-bottom-2">
+          <summary class="govuk-details__summary">
+            <span class="govuk-details__summary-text">
+             The scenarios to follow for this iteration
+            </span>
+          </summary>
+          <div class="govuk-details__text">
+           
+            <p>The scenario from iteration 1 still works, but we have now added a pontoon construction scenario more appropriate for a novice user. Full scenario details will be added here, but in summary:</p>
+
+          <ul class="govuk-list govuk-list--bullet">
+            <li>Pontoon construction at a private residence</li>
+            <li>In a harbour authority area, with consent</li>
+            <li>Smaller than 30 sq metres</li>
+            <li>No to the 10 or more pontoons question results in exemption with notification</li>
+            <li>Yes to 10 or more pontoons question results in exemption with approval</li>
+          </ul>
+          </div>
+        </details>
+        
+        <details class="govuk-details">
+          <summary class="govuk-details__summary">
+            <span class="govuk-details__summary-text">
+              Internal shortcuts
+            </span>
+          </summary>
+          <div class="govuk-details__text">
+            <ul class="govuk-list govuk-list--spaced">
+              <li><a href="versions/2025-02-17/check/10-pontoons-or-more" class="govuk-link--no-visited-state">10 or more pontoons page (pontoon scenario 2)</a><br>The answer to this sets you up for either a notification ('No') or approval ('Yes') on the next page</li>
+              <!--<li><a href="versions/2025-02-17/check/exemption" class="govuk-link--no-visited-state">Exemption required page</a></li>
+              <li><a href="versions/2025-02-17/exemption/what-is-your-name.html" class="govuk-link--no-visited-state">Exemption form start</a></li>-->
+              <li><a href="versions/2025-02-17/exemption/about-the-location-of-the-activity.html" class="govuk-link--no-visited-state">Location details start</a><br>Defaults to scenario 2 if no data is saved</li>
+              
+              <li><a href="versions/2025-01-27/check/marine-protected-areas.html" class="govuk-link--no-visited-state">Marine protected area page (scientific sample scenario 1)</a></li>
+              
+          </ul>
+          </div>
+        </details>
+
+        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+
+        <!-- End of iteration 2 -->
+
+        <!-- Start of iteration 1 -->
         <strong class="govuk-tag govuk-tag--green" style="float:right">Finished</strong>
         <h2 class="govuk-heading-m">Iteration 1</h2>
 
-        
-        
         <p><a href="versions/2025-01-27/check/start" class="govuk-link--no-visited-state">Exemption notification journey</a></p>
         
         <p>When entering the location details the options available are draw on a map and specify the centre of a square and its width.</p>
@@ -82,57 +140,9 @@
 
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
 
-        <strong class="govuk-tag govuk-tag--yellow" style="float:right">In progress</strong>
-        <h2 class="govuk-heading-m">Iteration 2</h2>
-        
+        <!-- End of iteration 1 -->
 
-        <p><a href="versions/2025-02-17/check/start" class="govuk-link--no-visited-state">Exemption approval journey, as well as notification journey</a></p>
-  
-        <p>When entering the location details all options are now available apart from file upload.</p>
-
-        <details class="govuk-details govuk-!-margin-bottom-2">
-          <summary class="govuk-details__summary">
-            <span class="govuk-details__summary-text">
-             The scenarios to follow for this iteration
-            </span>
-          </summary>
-          <div class="govuk-details__text">
-           
-            <p>The scenario from iteration 1 still works, but we have now added a pontoon construction scenario more appropriate for a novice user. Full scenario details will be added here, but in summary:</p>
-
-          <ul class="govuk-list govuk-list--bullet">
-            <li>Pontoon construction at a private residence</li>
-            <li>In a harbour authority area, with consent</li>
-            <li>Smaller than 30 sq metres</li>
-            <li>No to the 10 or more pontoons question results in exemption with notification</li>
-            <li>Yes to 10 or more pontoons question results in exemption with approval</li>
-          </ul>
-          </div>
-        </details>
-        
-        
-        
-
-
-        <details class="govuk-details">
-          <summary class="govuk-details__summary">
-            <span class="govuk-details__summary-text">
-              Internal shortcuts
-            </span>
-          </summary>
-          <div class="govuk-details__text">
-            <ul class="govuk-list govuk-list--spaced">
-              <li><a href="versions/2025-02-17/check/exemption" class="govuk-link--no-visited-state">Exemption required page</a></li>
-              <li><a href="versions/2025-02-17/exemption/what-is-your-name.html" class="govuk-link--no-visited-state">Exemption form start</a></li>
-              <li><a href="versions/2025-02-17/exemption/about-the-location-of-the-activity.html" class="govuk-link--no-visited-state">Location start</a></li>
-
-              
-          </ul>
-          </div>
-        </details>
-
-        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-
+        <!-- Start of session warning text -->
         <div class="govuk-warning-text">
           <span class="govuk-warning-text__icon info" aria-hidden="true">!</span>
           <strong class="govuk-warning-text__text">
@@ -140,7 +150,8 @@
             Remember to <a href="/manage-prototype/clear-data" class=" govuk-link--no-visited-state">clear session data</a> if you've used the prototype before
           </strong>
         </div>
-
+        <!-- End of session warning text -->
+         
     </div>
 
     <!-- Right 3rd of the home screen.   Mostly admin stuff  -->

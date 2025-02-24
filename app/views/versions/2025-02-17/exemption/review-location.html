@@ -55,7 +55,7 @@ Review your location
           {{ data['exemption-which-type-of-file-radios'] }}
         </dd>
         <dd class="govuk-summary-list__actions">
-          <a class="govuk-link" href="which-type-of-file">Change<span class="govuk-visually-hidden"> How do you want to enter the coordinates?</span></a>
+          <a class="govuk-link" href="which-type-of-file?fromreview=true">Change<span class="govuk-visually-hidden"> Which type of file do you want to upload?</span></a>
         </dd>
       </div>
 
@@ -67,7 +67,7 @@ Review your location
           coordinates.kml
         </dd>
         <dd class="govuk-summary-list__actions">
-          <a class="govuk-link" href="upload-kml-file">Change<span class="govuk-visually-hidden"> How do you want to enter the coordinates?</span></a>
+          <a class="govuk-link" href="upload-kml-file?fromreview=true">Change<span class="govuk-visually-hidden"> File uploaded</span></a>
         </dd>
       </div>
       
@@ -86,8 +86,17 @@ Review your location
         </dd>
       </div>
     </dl>  
-    
-        <img src="/public/images/worthing-map-5-points.jpg" alt="Map view" style="width: 100%;">
+
+    <!-- Display the correct map depending on the scenario - will default to the pontoon if no data available -->
+    {% if (data['exemption'] == "pontoon-approval" or data['exemption'] == "pontoon-notification" or data['exemption'] == "") %}
+    <img src="/public/images/pontoon-map-4-points.jpg" alt="Map view" style="width: 100%;">
+
+    {% elif data['exemption'] == "sample-notification" %}
+    <img src="/public/images/worthing-map-5-points.jpg" alt="Map view" style="width: 100%;">
+    {% endif %}
+
+
+        
 
       </div>
     </div>
@@ -159,7 +168,15 @@ Review your location
         </dd>
       </div>
     </dl>   
+
+    <!-- Display the correct map depending on the scenario - will default to the pontoon if no data available -->
+    {% if (data['exemption'] == "pontoon-approval" or data['exemption'] == "pontoon-notification" or data['exemption'] == "") %}
+    <img src="/public/images/pontoon-map-circle.jpg" alt="Map view" style="width: 100%;">
+
+    {% elif data['exemption'] == "sample-notification" %}
     <img src="/public/images/worthing-map-circle.jpg" alt="Map view" style="width: 100%;">
+    {% endif %}
+    
     <!-- End of it's a circle -->
 
       <!-- Start of it's a square -->
@@ -212,7 +229,17 @@ Review your location
         </dd>
       </div>
     </dl>   
+
+
+    <!-- Display the correct map depending on the scenario - will default to the pontoon if no data available -->
+    {% if (data['exemption'] == "pontoon-approval" or data['exemption'] == "pontoon-notification" or data['exemption'] == "") %}
+    <img src="/public/images/pontoon-map-square.jpg" alt="Map view" style="width: 100%;">
+
+    {% elif data['exemption'] == "sample-notification" %}
     <img src="/public/images/worthing-map-square.jpg" alt="Map view" style="width: 100%;">
+    {% endif %}
+
+    
     <!-- End of square -->
 
     <!-- Start of enter multiple coords -->
@@ -298,17 +325,31 @@ Review your location
     </div>
   </dl>  
   
-  <!-- Display the correct map depending on how many points are shown -->
-  {% if data['coordinates-point-4-latitude'] and data['coordinates-point-4-longitude'] %}
-  {% if data['coordinates-point-5-latitude'] and data['coordinates-point-5-longitude'] %}
-      <img src="/public/images/worthing-map-5-points.jpg" alt="Map view" style="width: 100%;">
-  {% else %}
-      <img src="/public/images/worthing-map-4-points.jpg" alt="Map view" style="width: 100%;">
-  {% endif %}
-  {% else %}
-  <img src="/public/images/worthing-map-3-points.jpg" alt="Map view" style="width: 100%;">
-  {% endif %}
+  <!-- Display the correct map depending on the scenario - will default to the pontoon if no data available -->
+  {% if (data['exemption'] == "pontoon-approval" or data['exemption'] == "pontoon-notification" or data['exemption'] == "") %}
+    <!-- Display the correct map depending on how many points are shown -->
+    {% if data['coordinates-point-4-latitude'] and data['coordinates-point-4-longitude'] %}
+    {% if data['coordinates-point-5-latitude'] and data['coordinates-point-5-longitude'] %}
+        <img src="/public/images/pontoon-map-5-points.jpg" alt="Map view" style="width: 100%;">
+    {% else %}
+        <img src="/public/images/pontoon-map-4-points.jpg" alt="Map view" style="width: 100%;">
+    {% endif %}
+    {% else %}
+    <img src="/public/images/pontoon-map-3-points.jpg" alt="Map view" style="width: 100%;">
+    {% endif %}
 
+  {% elif data['exemption'] == "sample-notification" %}
+    <!-- Display the correct map depending on how many points are shown -->
+    {% if data['coordinates-point-4-latitude'] and data['coordinates-point-4-longitude'] %}
+    {% if data['coordinates-point-5-latitude'] and data['coordinates-point-5-longitude'] %}
+        <img src="/public/images/worthing-map-5-points.jpg" alt="Map view" style="width: 100%;">
+    {% else %}
+        <img src="/public/images/worthing-map-4-points.jpg" alt="Map view" style="width: 100%;">
+    {% endif %}
+    {% else %}
+    <img src="/public/images/worthing-map-3-points.jpg" alt="Map view" style="width: 100%;">
+    {% endif %}
+  {% endif %}
 
   {% endif %}
   <!-- End of enter multiple coords -->
@@ -336,8 +377,15 @@ Review your location
 
   </dl>
 
-  <img src="/public/images/worthing-map2.png" alt="Map view" class="govuk-!-margin-bottom-2" style="width: 100%;">
+  <!-- Display the correct map depending on the scenario - will default to the pontoon if no data available -->
+  {% if (data['exemption'] == "pontoon-approval" or data['exemption'] == "pontoon-notification" or data['exemption'] == "") %}
+  <img src="/public/images/pontoon-map-drawn.jpg" alt="Map view" class="govuk-!-margin-bottom-2" style="width: 100%;">
 
+  {% elif data['exemption'] == "sample-notification" %}
+  <img src="/public/images/worthing-map-drawn.jpg" alt="Map view" class="govuk-!-margin-bottom-2" style="width: 100%;">
+  {% endif %}
+
+  <!--
   <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
 
   <dl class="govuk-summary-list">
@@ -349,7 +397,7 @@ Review your location
         <span  style="white-space: pre-wrap;" >{{ data['sites-drawn-coordinates'] }}</span>
       </dd>
     </div>
-  </dl>
+  </dl>-->
     </div>
   </div>
 

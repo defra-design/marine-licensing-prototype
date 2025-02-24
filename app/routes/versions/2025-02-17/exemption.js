@@ -149,9 +149,9 @@ router.post('/' + version + section + 'about-the-location-of-the-activity-router
 
     // Route based on selection
     switch(selection) {
-        // which-type-of-file
+        // change to which-type-of-file to allow it, or stop to not
         case "Upload a file with coordinates of the area":
-            res.redirect('stop');
+            res.redirect('which-type-of-file');
             break;
         case "Enter the coordinates of the area":
             res.redirect('how-do-you-want-to-enter-the-coordinates');
@@ -185,10 +185,13 @@ router.post('/' + version + section + 'which-type-of-file-router', function (req
 
     // Route based on selection
     switch(selection) {
-        case "KML file":
+        case "KML":
             res.redirect('upload-kml-file');
             break;
-        case "Shapefile or MapInfo TAB file":
+        case "Shapefile":
+            res.redirect('stop');
+            break;
+        case "MapInfo TAB":
             res.redirect('stop');
             break;
         default:
