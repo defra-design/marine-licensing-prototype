@@ -56,7 +56,7 @@ Do you have harbour authority consent to build a pontoon? 
                 {{ pageHeadingTextHTML }}
             </h1>
 
-			<p>[CONTENT]</p>
+			<p>Check with the harbour authority if you need consent, for example, a river works licence.</p>
 
             {{ govukRadios
                 ({
@@ -84,9 +84,14 @@ Do you have harbour authority consent to build a pontoon? 
                             checked: data['check-do-you-have-harbour-authority-consent'] == "Yes"
                         },
                         {
-                            value: "No",
-                            text: "No",
-                            checked: data['check-do-you-have-harbour-authority-consent'] == "No"
+                            value: "Not yet, but I will have it before starting",
+                            text: "Not yet, but I will have it before starting",
+                            checked: data['check-do-you-have-harbour-authority-consent'] == "Not yet, but I will have it before starting"
+                        },
+                        {
+                            value: "No, I've checked, and it's not required",
+                            text: "No, I've checked, and it's not required",
+                            checked: data['check-do-you-have-harbour-authority-consent'] == "No, I've checked, and it's not required"
                         }
                     ]
                 })

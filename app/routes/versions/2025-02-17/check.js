@@ -99,7 +99,7 @@ router.post('/' + version + section + 'what-type-of-activity-will-take-place-rou
         res.redirect('stop');
     }
     else if (req.session.data['check-what-type-of-activity-will-take-place-radios'] == "Removal of a substance or object") {
-        res.redirect('will-the-removal-be-from-a-vehicle');
+        res.redirect('how-you-will-carry-out-the-removal');
     }
     else if (
         req.session.data['check-what-type-of-activity-will-take-place-radios'] == "Deposit of a substance or object"
@@ -198,7 +198,8 @@ router.post('/' + version + section + 'what-does-the-dredging-activity-involve-r
         }
     });
 
-    //////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Not used - page has been changed to the one below
 // Will the removal be from a vehicle, vessel, aircraft, marine structure, or floating container?
 // PAGE OF RADIO BUTTONS
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -219,6 +220,40 @@ router.post('/' + version + section + 'will-the-removal-be-from-a-vehicle-router
         res.redirect('will-the-removal-be-from-a-vehicle');
     }
 });
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// How you will carry out the removal?
+// PAGE OF RADIO BUTTONS
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+router.post('/' + version + section + 'how-you-will-carry-out-the-removal-router', function (req, res) {
+    // Turn errors off by default
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    const selection = req.session.data['check-how-you-will-carry-out-the-removal-radios'];
+
+    if (!selection) {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        res.redirect('how-you-will-carry-out-the-removal');
+        return;
+    }
+
+    // Route based on selection
+    switch(selection) {
+        case "Yes":
+            res.redirect('will-substance-object-be-removed-from-seabed');
+            break;
+        case "No":
+            res.redirect('stop');
+            break;
+        default:
+            res.redirect('how-you-will-carry-out-the-removal');
+    }
+});
+
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Will the substance or object to be removed, be removed from the 'Seabed'?
@@ -596,9 +631,12 @@ router.post('/' + version + section + 'do-you-have-harbour-authority-consent-rou
         case "Yes":
             res.redirect('pontoon-deck-larger-than-30');
             break;
-        case "No":
-            res.redirect('stop');
+        case "Not yet, but I will have it before starting":
+            res.redirect('pontoon-deck-larger-than-30');
             break;
+            case "No, I've checked, and it's not required":
+                res.redirect('stop');
+                break;
         default:
             res.redirect('do-you-have-harbour-authority-consent');
     }

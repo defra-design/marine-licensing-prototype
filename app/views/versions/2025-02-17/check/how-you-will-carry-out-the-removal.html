@@ -3,17 +3,13 @@
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-How the removal will be carried out
+How you will carry out the removal
 {% endset %}
 
-<!-- Setting the heading caption -->
-{% set captionTextHTML %}
-	Check if you need a marine licence
-{% endset %}
 
 <!-- Setting the smaller secondary heading lower down the page -->
 {% set questionHeadingTextHTML %}
-Will the removal be carried out from anything in this list?
+Will you use any of these for the removal?
 {% endset %}
 
 
@@ -49,7 +45,7 @@ Will the removal be carried out from anything in this list?
                     [
                         {
                             html: errorTextHTML,
-                            href: "#check-how-the-removal-will-be-carried-out-radios"
+                            href: "#check-how-you-will-carry-out-the-removal-radios"
                         }
                     ]
                 })
@@ -59,7 +55,7 @@ Will the removal be carried out from anything in this list?
 
 
         <!-- go to routes.js for routing  -->
-        <form action="how-the-removal-will-be-carried-out-router" method="post" novalidate>
+        <form action="how-you-will-carry-out-the-removal-router" method="post" novalidate>
 
             
             <h1 class="govuk-heading-l">
@@ -78,9 +74,9 @@ Will the removal be carried out from anything in this list?
 
             {{ govukRadios
                 ({
-                    name: "check-how-the-removal-will-be-carried-out-radios",
+                    name: "check-how-you-will-carry-out-the-removal-radios",
 
-                    id: "check-how-the-removal-will-be-carried-out-radios",
+                    id: "check-how-you-will-carry-out-the-removal-radios",
 
                     fieldset:
                     {
@@ -100,12 +96,12 @@ Will the removal be carried out from anything in this list?
 {
                             value: "Yes",
                             text: "Yes",
-                            checked: data['how-the-removal-will-be-carried-out-radios'] == "Yes"
+                            checked: data['how-you-will-carry-out-the-removal-radios'] == "Yes"
                         },
                         {
                             value: "No",
                             text: "No",
-                            checked: data['how-the-removal-will-be-carried-out-radios'] == "No"
+                            checked: data['how-you-will-carry-out-the-removal-radios'] == "No"
                         }
                     ]
                 })

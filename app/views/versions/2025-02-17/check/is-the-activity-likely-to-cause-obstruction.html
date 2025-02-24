@@ -28,7 +28,7 @@ Is the removal activity likely to cause an obstruction or danger to navigation?
 {% set errorTextHTML %}
     <!-- Nothing was selected -->
     {% if data['errortypeone'] == "true" %}
-    Select whether the removal is likely to cause an obstruction or danger to navigation
+    Select whether the removal activity is likely to cause an obstruction or danger to navigation
     {% endif %}
 {% endset %}
 
@@ -64,7 +64,12 @@ Is the removal activity likely to cause an obstruction or danger to navigation?
             }}
         {% endif %}
         <!--  END OF 'error summary' -->
+        
+        <h1 class="govuk-heading-l">
+            {{ pageHeadingTextHTML }}
+        </h1>
 
+        <p>If you're unsure, you can check with the relevant harbour authority. If outside their jurisdiction, check with the <a href="https://www.gov.uk/government/organisations/maritime-and-coastguard-agency" target="_blank" rel="noreferrer noopener">Maritime and Coastguard Agency (opens in new tab)</a> or <a href="https://www.trinityhouse.co.uk/" target="_blank" rel="noreferrer noopener">Trinity House (opens in new tab)</a>. </p>
 
         <!-- go to routes.js for routing  -->
         <form action="is-the-activity-likely-to-cause-obstruction-router" method="post" novalidate>
@@ -78,8 +83,8 @@ Is the removal activity likely to cause an obstruction or danger to navigation?
                     fieldset: {
 						legend: {
 							text: pageHeadingTextHTML,
-							isPageHeading: true,
-							classes: "govuk-fieldset__legend--l"
+							isPageHeading: false,
+							classes: "govuk-fieldset__legend--l govuk-visually-hidden"
 						}
 					},
 
