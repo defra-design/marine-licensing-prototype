@@ -65,7 +65,7 @@ You do not need a marine licence, but you need to give us more information
 			<a href="/public/downloads/approval-pontoon-answers.pdf" rel="noreferrer noopener" target="_blank">
 			{% elif data['exemption'] == "pontoon-notification" %}
 			<a href="/public/downloads/notification-pontoon-answers.pdf" rel="noreferrer noopener" target="_blank">
-			{% elif data['exemption'] == "sample-notification" %}
+			{% elif data['exemption'] == "sample-notification" or data['exemption'] == "" %}
 			<a href="/public/downloads/notification-sample-answers.pdf" rel="noreferrer noopener" target="_blank">
 			{% endif %}
 			Download a PDF of your answers</a>

@@ -33,7 +33,7 @@
         [Content around having to wait for approval before starting the activity]
       </p>
 
-      {% elif (data['exemption'] == "pontoon-notification" or data['exemption'] == "sample-notification") %}
+      {% elif (data['exemption'] == "pontoon-notification" or data['exemption'] == "sample-notification") or not data['exemption'] %}
       <p class="govuk-body">
         You can complete your activity within the dates you provided.
       </p>
