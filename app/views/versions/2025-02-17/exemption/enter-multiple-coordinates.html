@@ -80,7 +80,16 @@ This will save you time.
             {{ pageHeadingTextHTML }}
         </h1>
 
+        {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" %}
+                        
         <p class="govuk-hint">Enter in the decimal degree format. For example, 55.019889 or -1.399500</p>
+
+        {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+
+        <p class="govuk-hint">[Eastings and Northings hint text]</p>
+
+        {% endif %}
+        
 
         <!-- go to routes.js for routing  -->
         <form action="enter-multiple-coordinates-router" method="post" novalidate>
@@ -92,10 +101,26 @@ This will save you time.
 
                     </dt>
                     <dd class="govuk-summary-list__value">
+                        {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" %}
+                        
                         Latitude
+
+                        {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+
+                        Eastings
+
+                        {% endif %}
                     </dd>
                     <dd class="govuk-summary-list__value">
+                        {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" %}
+                        
                         Longitude
+
+                        {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+
+                        Northings
+
+                        {% endif %}
                     </dd>
                 </div>
 
@@ -105,13 +130,30 @@ This will save you time.
                     </dt>
                     <dd class="govuk-summary-list__value">
 						<label class="govuk-label govuk-visually-hidden" for="coordinates-point-1-latitude">
-							Latitude of start and end point
+                            {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" %}
+                        
+                            Latitude of start and end point
+
+                            {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+
+                            Eastings of start and end point
+
+                            {% endif %}
 						  </label>
                         <input class="govuk-input" id="coordinates-point-1-latitude" name="coordinates-point-1-latitude" type="text" value="{{ data['coordinates-point-1-latitude'] }}">
                     </dd>
                     <dd class="govuk-summary-list__value">
 						<label class="govuk-label govuk-visually-hidden" for="coordinates-point-1-longitude">
-							Longitude of start and end point
+							
+                            {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" %}
+                        
+                            Longitude of start and end point
+
+                            {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+
+                            Northings of start and end point
+
+                            {% endif %}
 						  </label>
                         <input class="govuk-input" id="coordinates-point-1-longitude" name="coordinates-point-1-longitude" type="text" value="{{ data['coordinates-point-1-longitude'] }}">
                     </dd>
@@ -127,14 +169,30 @@ This will save you time.
                     <dd class="govuk-summary-list__value">
 
                         <label class="govuk-label govuk-visually-hidden" for="coordinates-point-2-latitude">
-							Latitude of point 2
+							{% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" %}
+                        
+                            Latitude of point 2
+
+                            {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+
+                            Eastings of point 2
+
+                            {% endif %}
 						  </label>
 
                         <input class="govuk-input" id="coordinates-point-2-latitude" name="coordinates-point-2-latitude" type="text" value="{{ data['coordinates-point-2-latitude'] }}">
                     </dd>
                     <dd class="govuk-summary-list__value">
                         <label class="govuk-label govuk-visually-hidden" for="coordinates-point-2-longitude">
-							Longitude of point 2
+                            {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" %}
+                        
+                            Longitude of point 2
+
+                            {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+
+                            Northings of point 2
+
+                            {% endif %}
 						  </label>
                         <input class="govuk-input" id="coordinates-point-2-longitude" name="coordinates-point-2-longitude" type="text" value="{{ data['coordinates-point-2-longitude'] }}">
                     </dd>
@@ -149,13 +207,29 @@ This will save you time.
                     </dt>
                     <dd class="govuk-summary-list__value">
                         <label class="govuk-label govuk-visually-hidden" for="coordinates-point-3-latitude">
-							Latitude of point 3
+							{% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" %}
+                        
+                            Latitude of point 3
+
+                            {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+
+                            Eastings of point 3
+
+                            {% endif %}
 						  </label>
                         <input class="govuk-input" id="coordinates-point-3-latitude" name="coordinates-point-3-latitude" type="text" value="{{ data['coordinates-point-3-latitude'] }}">
                     </dd>
                     <dd class="govuk-summary-list__value">
                         <label class="govuk-label govuk-visually-hidden" for="coordinates-point-3-longitude">
-							Longitude of point 3
+							{% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" %}
+                        
+                            Longitude of point 3
+
+                            {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+
+                            Northings of point 3
+
+                            {% endif %}
 						  </label>
                         <input class="govuk-input" id="coordinates-point-3-longitude" name="coordinates-point-3-longitude" type="text" value="{{ data['coordinates-point-3-longitude'] }}">
                     </dd>
@@ -171,13 +245,29 @@ This will save you time.
                     </dt>
                     <dd class="govuk-summary-list__value">
                         <label class="govuk-label govuk-visually-hidden" for="coordinates-point-4-latitude">
-							Latitude of point 4
+							{% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" %}
+                        
+                            Latitude of point 4
+
+                            {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+
+                            Eastings of point 4
+
+                            {% endif %}
 						  </label>
                         <input class="govuk-input" id="coordinates-point-4-latitude" name="coordinates-point-4-latitude" type="text" value="{{ data['coordinates-point-4-latitude'] }}">
                     </dd>
                     <dd class="govuk-summary-list__value">
                         <label class="govuk-label govuk-visually-hidden" for="coordinates-point-4-longitude">
-							Longitude of point 4
+							{% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" %}
+                        
+                            Longitude of point 4
+
+                            {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+
+                            Northings of point 4
+
+                            {% endif %}
 						  </label>
                         <input class="govuk-input" id="coordinates-point-4-longitude" name="coordinates-point-4-longitude" type="text" value="{{ data['coordinates-point-4-longitude'] }}">
                     </dd>
@@ -193,13 +283,29 @@ This will save you time.
                     </dt>
                     <dd class="govuk-summary-list__value">
                         <label class="govuk-label govuk-visually-hidden" for="coordinates-point-5-latitude">
-							Latitude of point 5
+							{% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" %}
+                        
+                            Latitude of point 5
+
+                            {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+
+                            Eastings of point 5
+
+                            {% endif %}
 						  </label>
                         <input class="govuk-input" id="coordinates-point-5-latitude" name="coordinates-point-5-latitude" type="text" value="{{ data['coordinates-point-5-latitude'] }}">
                     </dd>
                     <dd class="govuk-summary-list__value">
                         <label class="govuk-label govuk-visually-hidden" for="coordinates-point-5-longitude">
-							Longitude of point 5
+							{% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" %}
+                        
+                            Longitude of point 5
+
+                            {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+
+                            Northings of point 5
+
+                            {% endif %}
 						  </label>
                         <input class="govuk-input" id="coordinates-point-5-longitude" name="coordinates-point-5-longitude" type="text" value="{{ data['coordinates-point-5-longitude'] }}">
                     </dd>

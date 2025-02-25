@@ -21,21 +21,33 @@ What are the coordinates of the centre of the square?
 
 <!-- Setting the smaller secondary headings lower down the page -->
 {% set questionHeadingTextOneHTML %}
+    {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['exemption-what-coordinate-system-radios'] %}
+                            
     Latitude
+
+    {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+
+    Eastings
+
+    {% endif %}
 {% endset %}
 
 {% set questionHeadingTextTwoHTML %}
+    {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['exemption-what-coordinate-system-radios'] %}
+                            
     Longitude
+
+    {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+
+    Northings
+
+    {% endif %}
 {% endset %}
+
+
 <!-- Set the text for each error type -->
 {% set errorTextHTML %}
-    {% if data['errortypeone'] == "true" and data['errortypetwo'] == "true" %}
-        Enter both the latitude and longitude
-    {% elif data['errortypeone'] == "true" %}
-        Enter the latitude coordinate
-    {% elif data['errortypetwo'] == "true" %}
-        Enter the longitude coordinate
-    {% endif %}
+
 {% endset %}
 
 
@@ -63,10 +75,8 @@ What are the coordinates of the centre of the square?
     <div class="govuk-error-summary__body">
         <ul class="govuk-list govuk-error-summary__list">
             {% if data['errortypeone'] == "true" %}
-                <li><a href="#exemption-what-are-the-coordinates-of-the-square-latitude-text-input">Enter the latitude coordinate</a></li>
-            {% endif %}
-            {% if data['errortypetwo'] == "true" %}
-                <li><a href="#exemption-what-are-the-coordinates-of-the-square-longitude-text-input">Enter the longitude coordinate</a></li>
+                
+            
             {% endif %}
         </ul>
     </div>
@@ -84,7 +94,15 @@ What are the coordinates of the centre of the square?
                 }
               }) %}
               
-            <p class="govuk-hint">Enter in the decimal degree format. For example, 55.019889 or -1.399500</p>
+              {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['exemption-what-coordinate-system-radios'] %}
+                        
+              <p class="govuk-hint">Enter in the decimal degree format. For example, 55.019889 or -1.399500</p>
+      
+              {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+      
+              <p class="govuk-hint">For example, 438493 or 569647</p>
+      
+              {% endif %}
 
             {{ govukInput
                 ({
@@ -102,7 +120,7 @@ What are the coordinates of the centre of the square?
                     name: "exemption-what-are-the-coordinates-of-the-square-latitude-text-input",
             
                     errorMessage: null if data['errortypeone'] != "true"
-                                   else { html: "Enter the latitude coordinate" },
+                                   else { html: errorTextHTML },
             
                     value: data['exemption-what-are-the-coordinates-of-the-square-latitude-text-input'],
             
@@ -126,7 +144,7 @@ What are the coordinates of the centre of the square?
                     name: "exemption-what-are-the-coordinates-of-the-square-longitude-text-input",
             
                     errorMessage: null if data['errortypetwo'] != "true"
-                                   else { html: "Enter the longitude coordinate" },
+                    else { html: errorTextHTML },
             
                     value: data['exemption-what-are-the-coordinates-of-the-square-longitude-text-input'],
             

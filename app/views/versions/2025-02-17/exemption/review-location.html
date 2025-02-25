@@ -119,28 +119,71 @@ Review your location
         </dd>
       </div>
 
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">What coordinate system do you want to use?
+        </dt>
+        <dd class="govuk-summary-list__value">
+          {{ data['exemption-what-coordinate-system-radios'] }}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link" href="what-coordinate-system.html">Change<span class="govuk-visually-hidden"> What coordinate system do you want to use?</span></a>
+        </dd>
+      </div>
+
       <!-- Start of it's a circle -->
       {% if data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter the centre point of a circle and its width" %}
       <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">
+          {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['exemption-what-coordinate-system-radios'] %}
+                        
           Latitude
+
+          {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+
+          Eastings
+
+          {% endif %}
         </dt>
         <dd class="govuk-summary-list__value">
          {{ data['exemption-what-are-the-coordinates-of-the-circle-latitude-text-input'] }}
         </dd>
         <dd class="govuk-summary-list__actions">
-          <a class="govuk-link" href="what-are-the-coordinates-of-the-circle?fromreview=true" onclick="document.cookie='fromreview=true';">Change<span class="govuk-visually-hidden"> Latitude</span></a>
+          <a class="govuk-link" href="what-are-the-coordinates-of-the-circle?fromreview=true">Change<span class="govuk-visually-hidden"> {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['exemption-what-coordinate-system-radios'] %}
+                        
+            Latitude
+  
+            {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+  
+            Eastings
+  
+            {% endif %}</span></a>
         </dd>
       </div>
       <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">
+          {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['exemption-what-coordinate-system-radios'] %}
+                        
           Longitude
+
+          {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+
+          Northings
+
+          {% endif %}
         </dt>
         <dd class="govuk-summary-list__value">
          {{ data['exemption-what-are-the-coordinates-of-the-circle-longitude-text-input'] }}
         </dd>
         <dd class="govuk-summary-list__actions">
-          <a class="govuk-link" href="what-are-the-coordinates-of-the-circle?fromreview=true" onclick="document.cookie='fromreview=true';">Change<span class="govuk-visually-hidden"> Longitude</span></a>
+          <a class="govuk-link" href="what-are-the-coordinates-of-the-circle?fromreview=true">Change<span class="govuk-visually-hidden"> {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['exemption-what-coordinate-system-radios'] %}
+                        
+            Longitude
+  
+            {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+  
+            Northings
+  
+            {% endif %}</span></a>
         </dd>
       </div>
       <div class="govuk-summary-list__row">
@@ -151,7 +194,7 @@ Review your location
           {{ data['exemption-width-of-circle-number-input'] }}
         </dd>
         <dd class="govuk-summary-list__actions">
-          <a class="govuk-link" href="width-of-circle?fromreview=true" onclick="document.cookie='fromreview=true';">Change<span class="govuk-visually-hidden"> Width of circle</span></a>
+          <a class="govuk-link" href="width-of-circle?fromreview=true">Change<span class="govuk-visually-hidden"> Width of circle</span></a>
         </dd>
       </div>
     </dl>
@@ -183,24 +226,60 @@ Review your location
       {% elif data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter the centre point of a square and its width" %}
       <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">
+          {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['exemption-what-coordinate-system-radios'] %}
+                        
           Latitude
+
+          {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+
+          Eastings
+
+          {% endif %}
         </dt>
         <dd class="govuk-summary-list__value">
          {{ data['exemption-what-are-the-coordinates-of-the-square-latitude-text-input'] }}
         </dd>
         <dd class="govuk-summary-list__actions">
-          <a class="govuk-link" href="what-are-the-coordinates-of-the-square?fromreview=true" onclick="document.cookie='fromreview=true';">Change<span class="govuk-visually-hidden"> Latitude</span></a>
+          <a class="govuk-link" href="what-are-the-coordinates-of-the-square?fromreview=true">Change<span class="govuk-visually-hidden"> 
+            {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['exemption-what-coordinate-system-radios'] %}
+                        
+            Latitude
+
+            {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+
+            Eastings
+
+            {% endif %}
+          </span></a>
         </dd>
       </div>
       <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">
+          {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['exemption-what-coordinate-system-radios'] %}
+                        
           Longitude
+
+          {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+
+          Northings
+
+          {% endif %}
         </dt>
         <dd class="govuk-summary-list__value">
          {{ data['exemption-what-are-the-coordinates-of-the-square-longitude-text-input'] }}
         </dd>
         <dd class="govuk-summary-list__actions">
-          <a class="govuk-link" href="what-are-the-coordinates-of-the-square?fromreview=true" onclick="document.cookie='fromreview=true';">Change<span class="govuk-visually-hidden"> Longitude</span></a>
+          <a class="govuk-link" href="what-are-the-coordinates-of-the-square?fromreview=true">Change<span class="govuk-visually-hidden"> 
+            {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['exemption-what-coordinate-system-radios'] %}
+                        
+          Longitude
+
+          {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+
+          Northings
+
+          {% endif %}
+          </span></a>
         </dd>
       </div>
       <div class="govuk-summary-list__row">
@@ -211,7 +290,7 @@ Review your location
           {{ data['exemption-width-of-square-number-input'] }}
         </dd>
         <dd class="govuk-summary-list__actions">
-          <a class="govuk-link" href="width-of-square?fromreview=true" onclick="document.cookie='fromreview=true';">Change<span class="govuk-visually-hidden"> Width of square</span></a>
+          <a class="govuk-link" href="width-of-square?fromreview=true">Change<span class="govuk-visually-hidden"> Width of square</span></a>
         </dd>
       </div>
     </dl>
@@ -252,7 +331,7 @@ Review your location
         {{ data['coordinates-point-1-latitude'] }}, {{ data['coordinates-point-1-longitude'] }}
       </dd>
       <dd class="govuk-summary-list__actions">
-        <a class="govuk-link" href="enter-multiple-coordinates?fromreview=true" onclick="document.cookie='fromreview=true';">Change<span class="govuk-visually-hidden"> coordinates</span></a>
+        <a class="govuk-link" href="enter-multiple-coordinates?fromreview=true">Change<span class="govuk-visually-hidden"> coordinates</span></a>
       </dd>
     </div>
 

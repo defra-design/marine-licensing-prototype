@@ -25,6 +25,41 @@ function clearCoordinateData(session) {
         delete session.data[`coordinates-point-${i}-longitude`];
     }
 }
+
+// Add these new clearing functions
+function clearAllLocationData(session) {
+    clearCoordinateData(session);
+    clearCoordinateSystem(session);
+    clearCoordinateType(session);
+}
+
+function clearCoordinateSystem(session) {
+    delete session.data['exemption-what-coordinate-system-radios'];
+    clearCoordinateValues(session);
+}
+
+function clearCoordinateType(session) {
+    delete session.data['coords-type'];
+    clearCoordinateValues(session);
+}
+
+function clearCoordinateValues(session) {
+    // Clear circle data
+    delete session.data['exemption-what-are-the-coordinates-of-the-circle-latitude-text-input'];
+    delete session.data['exemption-what-are-the-coordinates-of-the-circle-longitude-text-input'];
+    delete session.data['exemption-width-of-circle-number-input'];
+    
+    // Clear square data
+    delete session.data['exemption-what-are-the-coordinates-of-the-square-latitude-text-input'];
+    delete session.data['exemption-what-are-the-coordinates-of-the-square-longitude-text-input'];
+    delete session.data['exemption-width-of-square-number-input'];
+
+    // Clear multiple coordinates data
+    for (let i = 1; i <= 5; i++) {
+        delete session.data[`coordinates-point-${i}-latitude`];
+        delete session.data[`coordinates-point-${i}-longitude`];
+    }
+}
 //////////////////////////////////////////////////////////////////////////////////////////////
 // What is your full name
 // TEXT ENTRY
@@ -126,6 +161,7 @@ router.post('/' + version + section + 'about-your-project-router', function (req
 // PAGE OF RADIO BUTTONS
 /////////////////////////////////////////////////////////////////////////////////////////////
 
+// About location router - clear everything when changing method
 router.post('/' + version + section + 'about-the-location-of-the-activity-router', function (req, res) {
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
@@ -140,12 +176,7 @@ router.post('/' + version + section + 'about-the-location-of-the-activity-router
     }
 
     // Clear appropriate data when changing methods
-    if (selection === "Draw the area on a map") {
-        clearCoordinateData(req.session);
-        delete req.session.data['exemption-how-do-you-want-to-enter-the-coordinates-radios'];
-    } else if (selection === "Enter the coordinates of the area") {
-        clearMapData(req.session);
-    }
+    clearAllLocationData(req.session);
 
     // Route based on selection
     switch(selection) {
@@ -217,7 +248,9 @@ router.post('/' + version + section + 'upload-kml-file-router', function (req, r
 // PAGE OF RADIO BUTTONS
 /////////////////////////////////////////////////////////////////////////////////////////////
 
+// How to enter coordinates router - clear coordinate system and values
 router.post('/' + version + section + 'how-do-you-want-to-enter-the-coordinates-router', function (req, res) {
+    
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
 
@@ -230,52 +263,65 @@ router.post('/' + version + section + 'how-do-you-want-to-enter-the-coordinates-
         return;
     }
 
-    // Clear previous coordinate data when changing methods
-    if (selection.includes('circle')) {
-        // Clear square data
-        delete req.session.data['exemption-what-are-the-coordinates-of-the-square-latitude-text-input'];
-        delete req.session.data['exemption-what-are-the-coordinates-of-the-square-longitude-text-input'];
-        delete req.session.data['exemption-width-of-square-number-input'];
-        
-        // Clear multiple coordinates data
-        for (let i = 1; i <= 5; i++) {
-            delete req.session.data[`coordinates-point-${i}-latitude`];
-            delete req.session.data[`coordinates-point-${i}-longitude`];
-        }
-    } else if (selection.includes('square')) {
-        // Clear circle data
-        delete req.session.data['exemption-what-are-the-coordinates-of-the-circle-latitude-text-input'];
-        delete req.session.data['exemption-what-are-the-coordinates-of-the-circle-longitude-text-input'];
-        delete req.session.data['exemption-width-of-circle-number-input'];
-        
-        // Clear multiple coordinates data
-        for (let i = 1; i <= 5; i++) {
-            delete req.session.data[`coordinates-point-${i}-latitude`];
-            delete req.session.data[`coordinates-point-${i}-longitude`];
-        }
-    } else if (selection.includes('multiple')) {
-        // Clear circle data
-        delete req.session.data['exemption-what-are-the-coordinates-of-the-circle-latitude-text-input'];
-        delete req.session.data['exemption-what-are-the-coordinates-of-the-circle-longitude-text-input'];
-        delete req.session.data['exemption-width-of-circle-number-input'];
-        
-        // Clear square data
-        delete req.session.data['exemption-what-are-the-coordinates-of-the-square-latitude-text-input'];
-        delete req.session.data['exemption-what-are-the-coordinates-of-the-square-longitude-text-input'];
-        delete req.session.data['exemption-width-of-square-number-input'];
-    }
-
+    // Set coords-type based on selection
     switch(selection) {
         case "Enter the centre point of a circle and its width":
-            res.redirect('what-are-the-coordinates-of-the-circle');
+            req.session.data['coords-type'] = 'coords-circle';
             break;
         case "Enter the centre point of a square and its width":
-            res.redirect('what-are-the-coordinates-of-the-square');
+            req.session.data['coords-type'] = 'coords-square';
             break;
         case "Enter multiple coordinates of the area":
+            req.session.data['coords-type'] = 'coords-multiple';
+            break;
+    }
+
+    clearCoordinateSystem(req.session);
+    
+    // Always redirect to what-coordinate-system
+    res.redirect('what-coordinate-system');
+});
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// What coordinate system do you want to use?
+// PAGE OF RADIO BUTTONS
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+// What coordinate system router - clear only coordinate values
+router.post('/' + version + section + 'what-coordinate-system-router', function (req, res) {
+    
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    const selection = req.session.data['exemption-what-coordinate-system-radios'];
+
+    if (!selection) {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        res.redirect('what-coordinate-system');
+        return;
+    }
+
+    // Save the selection
+    req.session.data['coordinate-system'] = selection;
+
+    clearCoordinateValues(req.session);
+
+    // Redirect based on coords-type
+    const coordsType = req.session.data['coords-type'];
+    
+    switch(coordsType) {
+        case 'coords-circle':
+            res.redirect('what-are-the-coordinates-of-the-circle');
+            break;
+        case 'coords-square':
+            res.redirect('what-are-the-coordinates-of-the-square');
+            break;
+        case 'coords-multiple':
             res.redirect('enter-multiple-coordinates');
             break;
         default:
+            // Fallback if coords-type is not set
             res.redirect('how-do-you-want-to-enter-the-coordinates');
     }
 });
