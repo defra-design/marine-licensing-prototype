@@ -1,0 +1,63 @@
+{% extends "../layouts/email.html" %}
+
+{% block pageTitle %}
+  Email - Confirmation of your marine licence exemption
+{% endblock %}
+
+{% block content %}
+
+
+<style>
+
+.govuk-main-wrapper {
+    padding-top: 10px;
+    padding-bottom: 40px;
+}
+h1 {
+	font-size: 36px;
+	font-family: Arial,Helvetica;
+	color: #000;
+}
+p {
+	font-size: 21px;
+	font-family: Arial,Helvetica;
+	color: #000;
+}
+h2 {
+	font-size: 30px;
+	font-family: Arial,Helvetica;
+	color: #000;
+}
+.govuk-template {
+    background-color: #fff;
+}
+</style>
+
+<p style="font-size:21px; font-family:Arial,Helvetica; padding-bottom: 10px; border-bottom:solid #005ea5 1px; line-height: 23px;">
+	<span style="color: #00a33b;">|</span> <img src="/public/images/mmo-crest.png" style="width: 28px; vertical-align: middle; margin-right: 4px;">
+	<span style="vertical-align: middle;">Marine Management Organisation</span>
+</p>
+
+<h1>Confirmation of your marine licence exemption</h1>
+
+<p>Dear {{ data['exemption-what-is-your-name-text-input'] }}</p>
+
+<p>Thank you for providing details of your activity. This email confirms we’ve received your information.</p>
+
+<p>Based on what you've told us, your activity is exempt under The Marine Licensing (Exempted Activities) Order 2011.  A copy of your answers is attached for reference.</p>
+
+<p>You must make sure your activity meets the exemption terms. If you’re unsure, contact us at <a href="#" class="govuk-link--no-visited-state">marine.consents@marinemanagement.org.uk</a>.</p>
+
+<p>If we later find the activity did not follow the exemption terms, we may take enforcement action.</p>
+
+<p>If any details of the activity change, check if you still qualify for an exemption. You may need to send us your information again.</p>
+
+<p>Yours sincerely,<br>
+	Pete Smith<br>
+	Marine Environment Team<br>
+	<a href="#" class="govuk-link--no-visited-state">petes@marinemanagement.org.uk</a> | 0191 376 2791
+</p>
+
+
+
+{% endblock %}

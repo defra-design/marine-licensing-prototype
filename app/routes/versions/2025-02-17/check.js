@@ -696,15 +696,13 @@ router.post('/' + version + section + '10-pontoons-or-more-router', function (re
         return;
     }
 
-    // Set exemption value based on selection
+    // Set exemption value and redirect based on selection
     if (selection === "Yes") {
         req.session.data['exemption'] = "pontoon-approval";
+        res.redirect('stop');
     } else if (selection === "No") {
         req.session.data['exemption'] = "pontoon-notification";
+        res.redirect('exemption');
     }
-
-    // Redirect to exemption page
-    res.redirect('exemption');
 });
-
 }
