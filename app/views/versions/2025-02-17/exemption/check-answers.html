@@ -221,7 +221,15 @@ Check your answers before sending your information
       {% if data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter the centre point of a circle and its width" %}
       <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">
-          Latitude
+          {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['exemption-what-coordinate-system-radios'] %}
+                        
+            Latitude
+
+            {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+
+            Eastings
+
+            {% endif %}
         </dt>
         <dd class="govuk-summary-list__value">
          {{ data['exemption-what-are-the-coordinates-of-the-circle-latitude-text-input'] }}
@@ -230,7 +238,15 @@ Check your answers before sending your information
       </div>
       <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">
+          {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['exemption-what-coordinate-system-radios'] %}
+                        
           Longitude
+
+          {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+
+          Northings
+
+          {% endif %}
         </dt>
         <dd class="govuk-summary-list__value">
          {{ data['exemption-what-are-the-coordinates-of-the-circle-longitude-text-input'] }}
