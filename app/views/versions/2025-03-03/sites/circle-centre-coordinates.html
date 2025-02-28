@@ -1,0 +1,193 @@
+{% extends "../layouts/main.html" %}
+
+<!--
+NOTES ON USING THIS TEMPLATE Page
+This will save you time.
+
+1. Type your heading for the page after '% set pageHeadingTextHTML %'
+2. Type/customise the error messages after '% set errorTextHTML %'
+3. Use 'Find and replace' to replace "SECTION" with the name of the section of the service you're working on.
+4. Use 'Find and replace' to replace "PAGENAME_TEXT" with whatever you named this page/file.
+5. Go to the javascript file 'templates.js' and copy the section 'TEXT ENTRY - MANDATORY' into your routes.js file.
+6. Follow instructions at the top of the 'templates.js'.
+-->
+
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+    What are the coordinates of the centre of the circle?
+{% endset %}
+
+<!-- Setting the smaller secondary headings lower down the page -->
+{% set questionHeadingTextOneHTML %}
+    Latitude or Easting
+{% endset %}
+
+{% set questionHeadingTextTwoHTML %}
+    Longitude or Northing
+{% endset %}
+
+
+<!-- Set the text for each error type -->
+{% set errorTextHTML %}
+    <!-- Error 1 - No answer selected -->
+    {% if data['errortypeone'] == "true" %}
+        Enter your Latitude or Easting
+
+    <!-- Error 2 - If answer is too long -->
+    {% elif data['errortypetwo'] == "true" %}
+        Enter your Longitude or Northing
+
+<!-- Error 3 - If answer is too short -->
+    {% elif data['errortypethree'] == "true" %}
+        Enter a valid Latitude or Easting
+
+    <!-- Error 4 - If answer has characters that aren't allowed and you know what the characters are -->
+    {% elif data['errortypefour'] == "true" %}
+        Enter a valid Longitude or Northing
+
+    {% endif %}
+{% endset %}
+
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {% if  data['errorthispage'] == "true"  %}
+        Error:
+    {% endif %}
+
+    {{ pageHeadingTextHTML }}
+{% endblock %}
+
+
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+
+        <!-- ERROR LOGIC 'error summary' -->
+        {% if data['errorthispage'] == "true" %}
+            {{ govukErrorSummary
+                ({
+                    titleText: "There is a problem",
+                    errorList:
+                    [
+                        {
+                            html: errorTextHTML,
+                            href: "#sites-circle-centre-coordinates-text-input"  if data['errorthispage'] != "true" or  data['errortypeone'] == 'true' or  data['errortypethree'] == 'true'
+                                    else "#sites-circle-centre-coordinates-longitude-text-input"
+                        }
+                    ]
+                })
+            }}
+        {% endif %}
+        <!--  END OF 'error summary' -->
+
+
+        <h1 class="govuk-heading-l">
+            {{ pageHeadingTextHTML }}
+        </h1>
+
+
+        <!-- go to routes.js for routing  -->
+        <form action="circle-centre-coordinates-router" method="post" novalidate>
+
+            {{ govukInput
+                ({
+                    label:
+                    {
+                        html: questionHeadingTextOneHTML,
+                        classes: "govuk-label--m",
+                        isPageHeading: false
+                    },
+
+                    id: "sites-circle-centre-coordinates-latitude-text-input",
+
+                    name: "sites-circle-centre-coordinates-latitude-text-input",
+
+                    errorMessage: null if data['errorthispage'] != "true" or  data['errortypetwo'] == 'true' or  data['errortypefour'] == 'true'
+                                       else { html: errorTextHTML },
+
+                    value: data['sites-circle-centre-coordinates-latitude-text-input'],
+
+                    classes: "govuk-input--width-10"
+                })
+            }}
+
+
+
+
+            {{ govukInput
+                ({
+                    label:
+                    {
+                        html: questionHeadingTextTwoHTML,
+                        classes: "govuk-label--m",
+                        isPageHeading: false
+                    },
+
+                    id: "sites-circle-centre-coordinates-longitude-text-input",
+
+                    name: "sites-circle-centre-coordinates-longitude-text-input",
+
+                    errorMessage: null if data['errorthispage'] != "true" or  data['errortypeone'] == 'true' or  data['errortypethree'] == 'true'
+                                       else { html: errorTextHTML },
+
+                    value: data['sites-circle-centre-coordinates-longitude-text-input'],
+
+                    classes: "govuk-input--width-10"
+                })
+            }}
+
+
+            {{ govukButton({ text: "Continue" }) }}
+
+        </form>
+
+    </div>
+</div>
+
+
+<!-- ERROR LOGIC  drop down to toggle states  -->
+<!-- Best thing to do would be to replace 'errorthispage', 'errortypeone' and 'errortypetwo' with novel name for this page  -->
+<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-225px;  ">
+
+    <select style="height:30px;" onchange="window.location.href='?'+this.value">
+
+        <option value="errorthispage=false&errortypeone=false&errortypetwo=false&errortypethree=false&errortypefour=false&errortypefive=false&errortypesix=false&"
+                {% if  data['errorthispage'] != "true"  %}selected{% endif %}
+        >Errors - Off</option>
+
+        <option value="errorthispage=true&errortypeone=true&errortypetwo=false&errortypethree=false&errortypefour=false&errortypefive=false&errortypesix=false&"
+                {% if  data['errortypeone'] == 'true'  and  data['errortypetwo'] != 'true'  and  data['errortypethree'] != 'true'  and  data['errortypefour'] != 'true'  and data['errortypefive'] != 'true'  and  data['errortypesix'] != 'true'  %}selected{% endif %}
+        >Error 1 - Missing - Latitude or Easting</option>
+
+        <option value="errorthispage=true&errortypeone=false&errortypetwo=true&errortypethree=false&errortypefour=false&errortypefive=false&errortypesix=false&"
+                {% if  data['errortypeone'] != 'true'  and  data['errortypetwo'] == 'true'  and  data['errortypethree'] != 'true'  and  data['errortypefour'] != 'true'   and data['errortypefive'] != 'true'  and  data['errortypesix'] != 'true'  %}selected{% endif %}
+        >Error 2 - Missing - Longitude or Northing</option>
+
+        <option value="errorthispage=true&errortypeone=false&errortypetwo=false&errortypethree=true&errortypefour=false&errortypefive=false&errortypesix=false&"
+                {% if  data['errortypeone'] != 'true'  and  data['errortypetwo'] != 'true'  and  data['errortypethree'] == 'true'  and  data['errortypefour'] != 'true'   and data['errortypefive'] != 'true'  and  data['errortypesix'] != 'true'  %}selected{% endif %}
+        >Error 3 - Invalid - Latitude or Easting</option>
+
+        <option value="errorthispage=true&errortypeone=false&errortypetwo=false&errortypethree=false&errortypefour=true&errortypefive=false&errortypesix=false&"
+                {% if  data['errortypeone'] != 'true'  and  data['errortypetwo'] != 'true'  and  data['errortypethree'] != 'true'  and  data['errortypefour'] == 'true'  and  data['errortypefive'] != 'true'  and  data['errortypesix'] != 'true'  %}selected{% endif %}
+        >Error 4 - Invalid - Longitude or Northing</option>
+
+    </select>
+
+</form>
+<!--  END OF ERROR LOGIC -->
+
+
+
+
+
+
+{% endblock %}
+
+
+
+
+

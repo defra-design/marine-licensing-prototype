@@ -32,6 +32,12 @@ require('./routes/versions/2025-02-17/sites.js')(router);
 require('./routes/versions/2025-02-17/check.js')(router);
 require('./routes/versions/2025-02-17/exemption.js')(router);
 
+// 03 Mar 2025
+require('./routes/versions/2025-03-03/account.js')(router);
+require('./routes/versions/2025-03-03/sites.js')(router);
+require('./routes/versions/2025-03-03/check.js')(router);
+require('./routes/versions/2025-03-03/exemption.js')(router);
+
 // logging
 
 router.use((req, res, next) => {

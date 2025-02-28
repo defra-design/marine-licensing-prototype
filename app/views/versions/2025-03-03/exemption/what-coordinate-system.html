@@ -1,0 +1,183 @@
+{% extends "../layouts/main.html" %}
+
+<!--
+NOTES ON USING THIS TEMPLATE Page
+This will save you time.
+
+1. Put your heading for the page after '% set pageHeadingTextHTML %'
+2. Put your question heading for the page after '% set questionHeadingTextHTML %'
+3. Type/customise the error message after '% set errorTextHTML %'
+4. Use 'Find and replace' to replace "SECTION" with the name of the section of the service you're working on.
+5. Use 'Find and replace' to replace "PAGENAME_RADIOS_COMPLEX" with whatever you named this page/file.
+6. Use 'Find and replace' to replace each of the radio button values. Starting with 'xxxx'
+7. Go to the javascript file 'templates.js' and copy the section 'COMPLEX PAGE OF RADIO BUTTONS' into your routes.js file.
+8. Follow instructions at the top of the 'templates.js'.
+-->
+
+
+
+<!-- Setting the smaller secondary heading lower down the page -->
+{% set pageHeadingTextHTML %}
+Which coordinate system do you want to use?
+{% endset %}
+
+
+<!-- Set the text for the error type -->
+{% set errorTextHTML %}
+    <!-- Nothing was selected -->
+    {% if data['errortypeone'] == "true" %}
+    Select which coordinate system you want to use
+    {% endif %}
+{% endset %}
+
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {% if  data['errorthispage'] == "true"  %}
+        Error:
+    {% endif %}
+
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <!-- ERROR LOGIC 'error summary' -->
+        {% if data['errorthispage'] == "true" %}
+            {{ govukErrorSummary
+                ({
+                    titleText: "There is a problem",
+                    errorList:
+                    [
+                        {
+                            html: errorTextHTML,
+                            href: "#exemption-what-coordinate-system-radios"
+                        }
+                    ]
+                })
+            }}
+        {% endif %}
+        <!--  END OF 'error summary' -->
+
+		<h1 class="govuk-heading-l">
+			{{ pageHeadingTextHTML }}
+		</h1>
+
+		<details class="govuk-details">
+			<summary class="govuk-details__summary">
+			  <span class="govuk-details__summary-text">
+				Help with the coordinate systems
+			  </span>
+			</summary>
+			<div class="govuk-details__text">
+			 <h2 class="govuk-heading-s">WGS84 (World Geodetic System 1984)</h2>
+			  <p>WGS84 is a global system that pinpoints locations using latitude and longitude. Latitude shows how far north or south a place is, and longitude shows how far east or west it is. WGS84 is widely used in GPS and mapping tools like Google Maps.</p>
+				
+			  <h2 class="govuk-heading-s">OSGB36 (National Grid)</h2>
+			  <p>Also known as the British National Grid (BNG), OSGB36 is a system used to map Great Britain. It divides the country into squares using numerical east and north positions, known as eastings and northings.</p>
+			</div>
+		  </details>
+
+        <!-- go to routes.js for routing  -->
+        <form action="what-coordinate-system-router" method="post" novalidate>
+
+            {{ govukRadios
+                ({
+                    name: "exemption-what-coordinate-system-radios",
+
+                    id: "exemption-what-coordinate-system-radios",
+
+                    fieldset:
+                    {
+                        legend:
+                        {
+                            html: pageHeadingTextHTML,
+                            isPageHeading: false,
+                            classes: "govuk-fieldset__legend--l govuk-visually-hidden"
+                        }
+                    },
+
+                    errorMessage: null if data['errorthispage'] != "true"
+                                       else { html: errorTextHTML },
+
+                    items:
+                    [
+                        {
+                            value: "WGS84 (World Geodetic System 1984)",
+                            text: "WGS84 (World Geodetic System 1984)",
+                            checked: data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)",
+							hint: {
+							  text: "Uses latitude and longitude"
+							}
+                        },
+                        {
+                            value: "OSGB36 (National Grid)",
+                            text: "OSGB36 (National Grid)",
+                            checked: data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)",
+							hint: {
+							  text: "Uses eastings and northings"
+							}
+                        }
+                    ]
+                })
+            }}
+
+
+            {{ govukButton({ text: "Continue" }) }}
+
+        </form>
+
+    </div>
+</div>
+
+
+
+
+<!-- ERROR LOGIC  drop down to toggle states  -->
+<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-225px;  ">
+
+    <select style="height:30px;" onchange="window.location.href='?'+this.value">
+
+        <option value="errorthispage=false&errortypeone=false&errortypetwo=false&"
+                {% if (data['errorthispage'] != "true") %}selected{% endif %}
+        >Errors - Off</option>
+
+        <option value="errorthispage=true&errortypeone=true&errortypetwo=false&"
+                {% if (data['errortypeone'] == 'true' and data['errortypetwo'] != 'true')  %}selected{% endif %}
+        >Error 1 - Must select at least one</option>
+
+    </select>
+
+</form>
+<!--  END OF ERROR LOGIC -->
+
+
+
+<!-- USER TYPE TOGGLE  -->
+<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-225px;  ">
+
+    <select style="height:30px;" onchange="window.location.href='?'+this.value">
+
+        <option value="user=citizen&"
+                {% if  data['user'] != "agent"  %} selected {% endif %}
+        >User type - Individual</option>
+
+        <option value="user=agent&"
+                {% if  data['user'] == "agent"  %} selected {% endif %}
+        >User type - Agent</option>
+
+    </select>
+
+</form>
+<!--  END USER TYPE TOGGLE -->
+
+
+
+
+
+{% endblock %}
+
+

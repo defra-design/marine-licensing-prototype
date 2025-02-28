@@ -1,0 +1,77 @@
+{% extends "../layouts/main.html" %}
+
+{% set pageHeadingTextHTML %}
+Review your location
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {% if  data['errorthispage'] == "true"  %}
+        Error:
+    {% endif %}
+
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+
+  <div class="govuk-grid-column-two-thirds">
+
+    <h1 class="govuk-heading-l">
+      {{ pageHeadingTextHTML }}
+    </h1>
+
+    <dl class="govuk-summary-list govuk-!-margin-bottom-1">
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          How do you want to provide the location?
+        </dt>
+        <dd class="govuk-summary-list__value">
+          {{ data['exemption-about-the-location-of-the-activity-radios'] }}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link" href="about-the-location-of-the-activity?camefromcheckanswers=review&exemption-how-do-you-want-to-enter-the-coordinates-radios=&exemption-what-are-the-coordinates-of-the-square-latitude-text-input=&exemption-what-are-the-coordinates-of-the-square-longitude-text-input=&exemption-width-of-square-number-input=">Change<span class="govuk-visually-hidden"> How do you want to provide the location?</span></a>
+        </dd>
+      </div>
+
+      <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+        <dt class="govuk-summary-list__key">
+          Map drawing
+        </dt>
+        <dd class="govuk-summary-list__value">
+          
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link" href="map?camefromcheckanswers=review">Change<span class="govuk-visually-hidden"> name</span></a>
+        </dd>
+      </div>
+
+    </dl>
+
+    <img src="/public/images/worthing-map-drawn.png" alt="Map view" class="govuk-!-margin-bottom-2" style="width: 100%;">
+
+    <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
+
+    <dl class="govuk-summary-list govuk-!-margin-bottom-6">
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Coordinates
+        </dt>
+        <dd class="govuk-summary-list__value">
+          <span  style="white-space: pre-wrap;" >{{ data['sites-drawn-coordinates'] }}</span>
+        </dd>
+      </div>
+    </dl>
+    
+    <form action="review-map-router" method="post" novalidate>
+        {{ govukButton({ text: "Continue" }) }}
+    </form>
+
+  </div>
+
+
+</div>
+
+{% endblock %}
