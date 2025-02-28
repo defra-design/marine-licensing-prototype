@@ -16,22 +16,15 @@ This will save you time.
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-Project details
+Project name
 {% endset %}
 
-<!-- Setting the smaller secondary heading lower down the page -->
-{% set questionHeadingTextHTML %}
-Project title
-{% endset %}
-
-
-<!-- Set the text for each error type -->
 <!-- Set the text for each error type -->
 {% set errorTextHTML %}
 {% if data['errortypeone'] == "true" and data['errortypetwo'] == "true" %}
 Enter both the project title and project background
 {% elif data['errortypeone'] == "true" %}
-Enter a project title
+Enter a project name
 {% elif data['errortypetwo'] == "true" %}
 Enter the project background
 {% endif %}
@@ -47,8 +40,6 @@ Error:
 {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
 {% endblock %}
 
-
-
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
@@ -61,10 +52,7 @@ Error:
             <div class="govuk-error-summary__body">
                 <ul class="govuk-list govuk-error-summary__list">
                     {% if data['errortypeone'] == "true" %}
-                    <li><a href="#exemption-about-your-project-text-input">Enter a project title</a></li>
-                    {% endif %}
-                    {% if data['errortypetwo'] == "true" %}
-                    <li><a href="#exemption-about-your-project-text-area">Enter the project background</a></li>
+                    <li><a href="#exemption-project-name-text-input">Enter a project name</a></li>
                     {% endif %}
                 </ul>
             </div>
@@ -73,46 +61,28 @@ Error:
 
         <!--  END OF 'error summary' -->
 
-
-
-        <h1 class="govuk-heading-l">
-            {{ pageHeadingTextHTML }}
-        </h1>
-
-        <form action="about-your-project-router" method="post" novalidate>
+        <form action="project-name-router" method="post" novalidate>
 
             {{ govukInput({
-            label: {
-            text: "Project name",
-            classes: "govuk-label",
-            isPageHeading: false
+            label: 
+            {
+                text: pageHeadingTextHTML,
+                classes: "govuk-label--l",
+                isPageHeading: true
             },
-            autocomplete: "off",
-            id: "exemption-about-your-project-text-input",
-            name: "exemption-about-your-project-text-input",
-            errorMessage: null if data['errortypeone'] != "true"
-            else { text: "Enter a project name" },
-            value: data['exemption-about-your-project-text-input'],
-            classes: "govuk-input--full-width"
+            hint: 
+            {
+                text: "[Hint text]"
+            },
+                autocomplete: "off",
+                id: "exemption-project-name-text-input",
+                name: "exemption-project-name-text-input",
+                errorMessage: null if data['errortypeone'] != "true"
+                else { text: "Enter a project name" },
+                value: data['exemption-project-name-text-input'],
+                classes: "govuk-input--full-width"
             }) }}
 
-            {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
-
-            {{ govukTextarea({
-            id: "exemption-about-your-project-text-area",
-            name: "exemption-about-your-project-text-area",
-            value: data['exemption-about-your-project-text-area'],
-            errorMessage: null if data['errortypetwo'] != "true"
-            else { text: "Enter the project background" },
-            label: {
-            text: "Project background",
-            classes: "govuk-label",
-            isPageHeading: false
-            },
-            hint: {
-            text: "Provide a summary of your  project, such as the aims, whether it is part of a larger project, and any other relevant information"
-            }
-            }) }}
 
             {{ govukButton({ text: "Continue" }) }}
 

@@ -519,7 +519,18 @@
             {% else %}
                 <!-- this should probably be replaced with validation  -->
                 <!-- we probably don't need to tell everyone up front -->
-                <p>You must draw 4 or more points. <br>To move the map click and drag or use the arrow keys on your keyboard.</p>
+                <details class="govuk-details">
+                    <summary class="govuk-details__summary">
+                      <span class="govuk-details__summary-text">
+                        Help with using the map and drawing the area 
+                      </span>
+                    </summary>
+                    <div class="govuk-details__text">
+                        <p>You must draw 4 or more points. <br>To move the map click and drag or use the arrow keys on your keyboard.</p>
+                    </div>
+                  </details>
+                
+                
             {% endif %}
 
             <!--  The 4 buttons above the map  -->
@@ -533,7 +544,7 @@
                             class="govuk-button govuk-button--secondary "
                             data-module="govuk-button"
                             id="clearFilter">
-                        Start over
+                        Start again
                     </button>
 
                     <button type=""
@@ -595,7 +606,15 @@
 
             </form>
 
-
+            <h2 class="govuk-heading-m">Get help with drawing the area</h2>
+            <ul class="govuk-list">
+              <li>Phone: 0300 123 1032</li>
+              <li>Monday to Friday, 9am to 5pm (except public holidays)</li>
+            </ul>
+            <p class="govuk-body">
+              <a class="govuk-link" href="#">Find out about call charges</a>
+            </p>
+            
         </div>
 
     </div>

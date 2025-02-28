@@ -110,44 +110,96 @@ router.post('/' + version + section + 'what-is-your-email-address-router', funct
             req.session.data['camefromcheckanswers'] = false;
             res.redirect('check-answers#personal-details');
         } else {
-            res.redirect('about-your-project');
+            res.redirect('project-name');
         }
     }
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////
-// About your project
+// Project name
 // TEXT ENTRY
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-router.post('/' + version + section + 'about-your-project-router', function (req, res) {
+router.post('/' + version + section + 'project-name-router', function (req, res) {
     // Turn off errors by default
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
-    req.session.data['errortypetwo'] = "false";
 
-    // Check if the text input (Project Title) is blank
-    const projectTitle = req.session.data['exemption-about-your-project-text-input'];
+    // Check if the text input (Project name) is blank
+    const projectTitle = req.session.data['exemption-project-name-text-input'];
     if (!projectTitle || projectTitle.trim() === "") {
         req.session.data['errorthispage'] = "true";
         req.session.data['errortypeone'] = "true";
     }
 
-    // Check if the text area (Project Background) is blank
-    const projectBackground = req.session.data['exemption-about-your-project-text-area'];
-    if (!projectBackground || projectBackground.trim() === "") {
-        req.session.data['errorthispage'] = "true";
-        req.session.data['errortypetwo'] = "true";
-    }
-
     // Redirect based on errors
     if (req.session.data['errorthispage'] === "true") {
-        res.redirect('about-your-project');
+        res.redirect('project-name');
     } else {
         // Check if we need to return to check answers
         if (req.session.data['camefromcheckanswers'] === 'true') {
             req.session.data['camefromcheckanswers'] = false;
-            res.redirect('check-answers#about-your-project');
+            res.redirect('check-answers#project-name');
+        } else {
+            res.redirect('start-date');
+        }
+    }
+});
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+// Start Date
+// DATE ENTRY
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+router.post('/' + version + section + 'start-date-router', function (req, res) {
+    // Reset error flags
+    req.session.data['errorthispage'] = "false";
+
+    // Retrieve the values for day, month, and year
+    const day = req.session.data['exemption-start-date-date-input-day'];
+    const month = req.session.data['exemption-start-date-date-input-month'];
+    const year = req.session.data['exemption-start-date-date-input-year'];
+
+    // Validation: Check if any field is missing
+    if (!day || !month || !year) {
+        // Trigger error and redirect back
+        req.session.data['errorthispage'] = "true";
+        res.redirect('start-date');
+    } else {
+        // Check if we need to return to check answers
+        if (req.session.data['camefromcheckanswers'] === 'true') {
+            req.session.data['camefromcheckanswers'] = false;
+            res.redirect('check-answers#about-your-activity');
+        } else {
+            res.redirect('end-date');
+        }
+    }
+});
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+// End Date
+// DATE ENTRY
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+router.post('/' + version + section + 'end-date-router', function (req, res) {
+    // Reset error flags
+    req.session.data['errorthispage'] = "false";
+
+    // Retrieve the values for day, month, and year
+    const day = req.session.data['exemption-end-date-date-input-day'];
+    const month = req.session.data['exemption-end-date-date-input-month'];
+    const year = req.session.data['exemption-end-date-date-input-year'];
+
+    // Validation: Check if any field is missing
+    if (!day || !month || !year) {
+        // Trigger error and redirect back
+        req.session.data['errorthispage'] = "true";
+        res.redirect('end-date');
+    } else {
+        // Check if we need to return to check answers
+        if (req.session.data['camefromcheckanswers'] === 'true') {
+            req.session.data['camefromcheckanswers'] = false;
+            res.redirect('check-answers#about-your-activity');
         } else {
             res.redirect('about-the-location-of-the-activity');
         }
@@ -472,7 +524,7 @@ router.post('/' + version + section + 'review-location-router', function (req, r
     if (req.session.data['camefromcheckanswers'] === 'true') {
         res.redirect('check-answers');
     } else {
-        res.redirect('about-your-activity');
+        res.redirect('public-register');
     }
 });
 
@@ -505,65 +557,6 @@ router.post('/' + version + section + 'about-your-activity-router', function (re
     }
 });
 
-///////////////////////////////////////////////////////////////////////////////////////////////
-// Start Date
-// DATE ENTRY
-//////////////////////////////////////////////////////////////////////////////////////////////
-
-router.post('/' + version + section + 'start-date-router', function (req, res) {
-    // Reset error flags
-    req.session.data['errorthispage'] = "false";
-
-    // Retrieve the values for day, month, and year
-    const day = req.session.data['exemption-start-date-date-input-day'];
-    const month = req.session.data['exemption-start-date-date-input-month'];
-    const year = req.session.data['exemption-start-date-date-input-year'];
-
-    // Validation: Check if any field is missing
-    if (!day || !month || !year) {
-        // Trigger error and redirect back
-        req.session.data['errorthispage'] = "true";
-        res.redirect('start-date');
-    } else {
-        // Check if we need to return to check answers
-        if (req.session.data['camefromcheckanswers'] === 'true') {
-            req.session.data['camefromcheckanswers'] = false;
-            res.redirect('check-answers#about-your-activity');
-        } else {
-            res.redirect('end-date');
-        }
-    }
-});
-
-///////////////////////////////////////////////////////////////////////////////////////////////
-// End Date
-// DATE ENTRY
-//////////////////////////////////////////////////////////////////////////////////////////////
-
-router.post('/' + version + section + 'end-date-router', function (req, res) {
-    // Reset error flags
-    req.session.data['errorthispage'] = "false";
-
-    // Retrieve the values for day, month, and year
-    const day = req.session.data['exemption-end-date-date-input-day'];
-    const month = req.session.data['exemption-end-date-date-input-month'];
-    const year = req.session.data['exemption-end-date-date-input-year'];
-
-    // Validation: Check if any field is missing
-    if (!day || !month || !year) {
-        // Trigger error and redirect back
-        req.session.data['errorthispage'] = "true";
-        res.redirect('end-date');
-    } else {
-        // Check if we need to return to check answers
-        if (req.session.data['camefromcheckanswers'] === 'true') {
-            req.session.data['camefromcheckanswers'] = false;
-            res.redirect('check-answers#about-your-activity');
-        } else {
-            res.redirect('public-register');
-        }
-    }
-});
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Public Register

@@ -74,23 +74,56 @@ Check your answers before sending your information
           Project name
         </dt>
         <dd class="govuk-summary-list__value">
-          {{ data['exemption-about-your-project-text-input'] }}
+          {{ data['exemption-project-name-text-input'] }}
         </dd>
         <dd class="govuk-summary-list__actions">
-          <a class="govuk-link" href="about-your-project?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Project
+          <a class="govuk-link" href="project-name?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Project
               name</span></a>
+        </dd>
+      </div>
+
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Estimated start date
+        </dt>
+        <dd class="govuk-summary-list__value">
+          {% set paddedDay = data['exemption-start-date-date-input-day'] %}
+          {% if paddedDay | length == 1 %}
+          {% set paddedDay = '0' + paddedDay %}
+          {% endif %}
+
+          {% set paddedMonth = data['exemption-start-date-date-input-month'] %}
+          {% if paddedMonth | length == 1 %}
+          {% set paddedMonth = '0' + paddedMonth %}
+          {% endif %}
+
+          {% set formattedDate = data['exemption-start-date-date-input-year'] + '-' + paddedMonth + '-' + paddedDay %}
+          {{ formattedDate | govukDate }}
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          <a class="govuk-link" href="start-date?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Estimated start date</span></a>
         </dd>
       </div>
       <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">
-          Project background
+          Estimated end date
         </dt>
         <dd class="govuk-summary-list__value">
-          {{ data['exemption-about-your-project-text-area'] }}
+          {% set paddedDay = data['exemption-end-date-date-input-day'] %}
+          {% if paddedDay | length == 1 %}
+          {% set paddedDay = '0' + paddedDay %}
+          {% endif %}
+
+          {% set paddedMonth = data['exemption-end-date-date-input-month'] %}
+          {% if paddedMonth | length == 1 %}
+          {% set paddedMonth = '0' + paddedMonth %}
+          {% endif %}
+
+          {% set formattedDate = data['exemption-end-date-date-input-year'] + '-' + paddedMonth + '-' + paddedDay %}
+          {{ formattedDate | govukDate }}
         </dd>
         <dd class="govuk-summary-list__actions">
-          <a class="govuk-link" href="about-your-project?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Project
-              background</span></a>
+          <a class="govuk-link" href="end-date?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> End date</span></a>
         </dd>
       </div>
     </dl>
@@ -532,74 +565,6 @@ Check your answers before sending your information
 
     {% endif %}
   <!-- End of draw on a map -->
-
-    <div class="govuk-summary-card">
-      <div class="govuk-summary-card__title-wrapper">
-        <h2 class="govuk-summary-card__title">
-          Activity details
-        </h2>
-      </div>
-      <div class="govuk-summary-card__content">
-
-    <dl class="govuk-summary-list">
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-          Activity description
-        </dt>
-        <dd class="govuk-summary-list__value">
-          {{ data['exemption-about-your-activity-text-area'] }}
-        </dd>
-        <dd class="govuk-summary-list__actions">
-          <a class="govuk-link" href="about-your-activity?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Activity description</span></a>
-        </dd>
-      </div>
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-          Estimated start date
-        </dt>
-        <dd class="govuk-summary-list__value">
-          {% set paddedDay = data['exemption-start-date-date-input-day'] %}
-          {% if paddedDay | length == 1 %}
-          {% set paddedDay = '0' + paddedDay %}
-          {% endif %}
-
-          {% set paddedMonth = data['exemption-start-date-date-input-month'] %}
-          {% if paddedMonth | length == 1 %}
-          {% set paddedMonth = '0' + paddedMonth %}
-          {% endif %}
-
-          {% set formattedDate = data['exemption-start-date-date-input-year'] + '-' + paddedMonth + '-' + paddedDay %}
-          {{ formattedDate | govukDate }}
-        </dd>
-        <dd class="govuk-summary-list__actions">
-          <a class="govuk-link" href="start-date?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Estimated start date</span></a>
-        </dd>
-      </div>
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-          Estimated end date
-        </dt>
-        <dd class="govuk-summary-list__value">
-          {% set paddedDay = data['exemption-end-date-date-input-day'] %}
-          {% if paddedDay | length == 1 %}
-          {% set paddedDay = '0' + paddedDay %}
-          {% endif %}
-
-          {% set paddedMonth = data['exemption-end-date-date-input-month'] %}
-          {% if paddedMonth | length == 1 %}
-          {% set paddedMonth = '0' + paddedMonth %}
-          {% endif %}
-
-          {% set formattedDate = data['exemption-end-date-date-input-year'] + '-' + paddedMonth + '-' + paddedDay %}
-          {{ formattedDate | govukDate }}
-        </dd>
-        <dd class="govuk-summary-list__actions">
-          <a class="govuk-link" href="end-date?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> End date</span></a>
-        </dd>
-      </div>
-    </dl>
-    </div>
-    </div>
 
   <div class="govuk-summary-card">
     <div class="govuk-summary-card__title-wrapper">
