@@ -16,7 +16,7 @@ This will save you time.
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-	The waters where the activity will take place	
+Which waters will the activity take place in?	
 {% endset %}
 
 <!-- Setting the heading caption -->
@@ -79,9 +79,9 @@ This will save you time.
                 {{ pageHeadingTextHTML }}
             </h1>
 
-            <p>The Marine Management Organisation (MMO) is responsible for marine licensing in English inshore and offshore waters, and Northern Ireland offshore waters.</p>
+            <p>The Marine Management Organisation (MMO) manages marine licensing in English and Northern Ireland offshore waters. It also licenses certain activities in other parts of the world.</p>
 
-			<p><a href="https://www.gov.uk/guidance/marine-licensing-definitions" rel="noreferrer noopener" rel="noreferrer noopener" target="_blank">Find out more about the Marine Management Organisation’s jurisdiction (opens in new tab)</a></p>
+			<p>Find out more about the <a href="https://www.gov.uk/guidance/marine-licensing-definitions" rel="noreferrer noopener" rel="noreferrer noopener" target="_blank">MMO's jurisdiction (opens in new tab)</a></p>
 
             {{ govukRadios
                 ({
@@ -95,7 +95,7 @@ This will save you time.
                         {
                             html: questionHeadingTextHTML,
                             isPageHeading: false,
-                            classes: "govuk-fieldset__legend--m"
+                            classes: "govuk-fieldset__legend--m govuk-visually-hidden"
                         }
                     },
 

@@ -16,7 +16,7 @@ This will save you time.
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-Where the activity will take place
+Will the activity take place in or over the sea? 
 {% endset %}
 
 <!-- Setting the heading caption -->
@@ -79,11 +79,15 @@ Will the activity take place in the sea, over the sea, or on or under the seabed
                 {{ pageHeadingTextHTML }}
             </h1>
 
-            <p>Any activity that takes place in the sea, over the sea, or on or under the seabed, may need a marine licence.</p>
+            <p>The sea includes:</p>
+            <ul class="govuk-list govuk-list--bullet">
+                <li>any area submerged at mean high water spring tide</li>
+                <li>estuaries, rivers, or channels, as far as the tide flows at mean high water spring tide</li>
+                <li>waters in generally closed areas, such as docks, where seawater can flow in or out</li>
+                <li>the seabed and subsoil</li>
+            </ul>
 
-            <p>'The sea' includes any area which is submerged at Mean High Water Springs. It also includes the waters of every estuary, river or channel where the tide flows at Mean High Water Springs up to the Normal Tidal Limit.</p>
-
-			<p><a href="https://www.gov.uk/guidance/marine-licensing-definitions" rel="noreferrer noopener">Find out more about Mean High Water Springs and Normal Tide Limit (opens in new tab)</a></p>
+			<p>Find out more about <a href="https://www.gov.uk/guidance/marine-licensing-definitions" rel="noreferrer noopener">Mean High Water Springs and Normal Tide Limit (opens in new tab)</a></p>
 
             {{ govukRadios
                 ({
@@ -97,7 +101,7 @@ Will the activity take place in the sea, over the sea, or on or under the seabed
                         {
                             html: questionHeadingTextHTML,
                             isPageHeading: false,
-                            classes: "govuk-fieldset__legend--m"
+                            classes: "govuk-fieldset__legend--m govuk-visually-hidden"
                         }
                     },
 
