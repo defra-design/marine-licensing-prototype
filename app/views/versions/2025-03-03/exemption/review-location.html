@@ -1,4 +1,12 @@
-{% extends "../layouts/main.html" %}
+{% extends "../layouts/exemption.html" %}
+
+{% block beforeContent %}
+
+{% include "../includes/phase-banner.html" %}
+
+{% include "../includes/back-link.html" %}
+
+{% endblock %}
 
 {% set pageHeadingTextHTML %}
 Review your location
@@ -487,7 +495,13 @@ Review your location
 
     
     <form action="review-location-router" method="post" novalidate>
-        {{ govukButton({ text: "Continue" }) }}
+      <div class="govuk-button-group">
+        {{ govukButton({
+          text: "Save and continue"
+        }) }}
+      
+        <a class="govuk-link govuk-link--no-visited-state" href="task-list.html">Cancel</a>
+    </div>
     </form>
 
   </div>

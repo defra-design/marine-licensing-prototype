@@ -5,3 +5,16 @@
 
 // Add extra styles here
 
+.hmrc-account-menu {
+    border-bottom: 4px solid #1D70B8;
+
+}
+
+@media (max-width: 40.0525em) {
+	.is-smaller.hmrc-account-menu {
+		border-bottom: 4px solid #1D70B8;
+	
+	}
+  }
+
+  

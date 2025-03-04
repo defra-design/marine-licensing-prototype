@@ -1,4 +1,12 @@
-{% extends "../layouts/main.html" %}
+{% extends "../layouts/exemption.html" %}
+
+{% block beforeContent %}
+
+{% include "../includes/phase-banner.html" %}
+
+{% include "../includes/back-link.html" %}
+
+{% endblock %}
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
@@ -602,9 +610,17 @@
                 <!-- Invisible text area for scoring the coordinates which are saved on 'Continue' -->
                 <textarea id="sites-drawn-coordinates" name="sites-drawn-coordinates" style="display: none"></textarea>
 
-                {{ govukButton({ text: "Continue" }) }}
+                <div class="govuk-button-group">
+                    {{ govukButton({
+                      text: "Continue"
+                    }) }}
+                  
+                    <a class="govuk-link govuk-link--no-visited-state" href="task-list.html">Cancel</a>
+                </div>
 
             </form>
+
+            <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
 
             <h2 class="govuk-heading-m">Get help with drawing the area</h2>
             <ul class="govuk-list">

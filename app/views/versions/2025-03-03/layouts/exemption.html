@@ -6,24 +6,11 @@ https://prototype-kit.service.gov.uk/docs/how-to-use-layouts
 {% extends "govuk-prototype-kit/layouts/govuk-branded.njk" %}
 
 {% block header %}
-{{ govukHeader({
-    homepageUrl: "/",
-    serviceName: "Check if you need a marine licence",
-    serviceUrl: "/versions/2025-02-17/check/start"
-  }) }}
-{% endblock %}
-
-{% block beforeContent %}
-
-{{ govukPhaseBanner({
-    tag: {
-      text: "Prototype"
-    },
-    html: ''
-  }) }}
-
-    <a class="govuk-back-link" href="javascript:window.history.back()">Back</a>
-
+	{{ govukHeader({
+		homepageUrl: "/",
+		serviceName: "[Service name]",
+		serviceUrl: "/versions/2025-03-03/check/start"
+	}) }}
 {% endblock %}
 
 

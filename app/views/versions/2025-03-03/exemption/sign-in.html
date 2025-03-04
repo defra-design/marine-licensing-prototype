@@ -1,0 +1,39 @@
+{% extends "../layouts/exemption.html" %}
+
+{% block beforeContent %}
+
+{% include "../includes/phase-banner.html" %}
+
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+Sign in to [Service name]
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - {{ data['headerName'] }}
+{% endblock %}
+
+{% block content %}
+
+
+<div class="govuk-grid-row">
+
+	<div class="govuk-grid-column-two-thirds">
+
+		
+		<h1 class="govuk-heading-l">
+			{{ pageHeadingTextHTML }}
+		</h1>
+
+		
+
+		<a href="task-list.html" class="govuk-button" role="button">Continue</a>
+
+		
+
+	</div>
+</div>
+{% endblock %}

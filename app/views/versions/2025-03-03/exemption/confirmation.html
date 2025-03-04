@@ -1,15 +1,12 @@
-{% extends "../layouts/main.html" %}
-
-{% set pageName="Your information has been sent" %}
+{% extends "../layouts/exemption.html" %}
 
 {% block beforeContent %}
 
-{{ govukPhaseBanner({
-    tag: {
-      text: "Prototype"
-    },
-    html: ''
-  }) }}
+{% include "../includes/phase-banner.html" %}
+
+{% include "../includes/account-bar.html" %}
+
+{% include "../includes/dashboard-link.html" %}
 
 {% endblock %}
 

@@ -1,4 +1,12 @@
-{% extends "../layouts/main.html" %}
+{% extends "../layouts/exemption.html" %}
+
+{% block beforeContent %}
+
+{% include "../includes/phase-banner.html" %}
+
+<a class="govuk-back-link" href="task-list.html" style="margin-bottom: 0;">Go back to tasklist</a>
+
+{% endblock %}
 
 {% set pageHeadingTextHTML %}
 Check your answers before sending your information
@@ -23,43 +31,7 @@ Check your answers before sending your information
       {{ pageHeadingTextHTML }}
     </h1>
 
-    <div class="govuk-summary-card">
-      <div class="govuk-summary-card__title-wrapper">
-        <h2 class="govuk-summary-card__title">
-          Personal details
-        </h2>
-      </div>
-      <div class="govuk-summary-card__content">
-
-    <dl class="govuk-summary-list">
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-          Full name
-        </dt>
-        <dd class="govuk-summary-list__value">
-          {{ data['exemption-what-is-your-name-text-input'] }}
-        </dd>
-        <dd class="govuk-summary-list__actions">
-          <a class="govuk-link" href="what-is-your-name?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Full
-              name</span></a>
-        </dd>
-      </div>
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-          Email address
-        </dt>
-        <dd class="govuk-summary-list__value">
-          {{ data['exemption-what-is-your-email-address-text-input'] }}
-        </dd>
-        <dd class="govuk-summary-list__actions">
-          <a class="govuk-link" href="what-is-your-email-address?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Email
-              address</span></a>
-        </dd>
-      </div>
-    </dl>
-  </div>
-</div>
-
+    <!--Start of Project details-->
     <div class="govuk-summary-card">
       <div class="govuk-summary-card__title-wrapper">
         <h2 class="govuk-summary-card__title">
@@ -82,6 +54,23 @@ Check your answers before sending your information
         </dd>
       </div>
 
+      
+      
+    </dl>
+      </div>
+    </div>
+    <!-- End of project details -->
+
+    <!-- Start of dates -->
+    <div class="govuk-summary-card">
+      <div class="govuk-summary-card__title-wrapper">
+        <h2 class="govuk-summary-card__title">
+          Dates of the activity
+        </h2>
+      </div>
+      <div class="govuk-summary-card__content">
+
+    <dl class="govuk-summary-list">
       <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">
           Estimated start date
@@ -129,8 +118,6 @@ Check your answers before sending your information
     </dl>
       </div>
     </div>
-
-
     
     <!-- Start of upload file -->
     {% if data['exemption-about-the-location-of-the-activity-radios'] == "Upload a file with coordinates of the area"  %}

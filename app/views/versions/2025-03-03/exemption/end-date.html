@@ -1,16 +1,15 @@
-{% extends "../layouts/main.html" %}
+{% extends "../layouts/exemption.html" %}
 
-<!--
-NOTES ON USING THIS TEMPLATE Page
-This will save you time.
+{% block beforeContent %}
 
-1. Type your heading for the page after '% set pageHeadingTextHTML %'
-2. Type/customise the error messages after '% set errorTextHTML %'
-3. Use 'Find and replace' to replace "SECTION" with the name of the section of the service you're working on.
-4. Use 'Find and replace' to replace "PAGENAME_DATE" with whatever you named this page/file.
-5. Go to the javascript file 'templates.js' and copy the section 'DATE ENTRY  - NOT COMPLEX PAGE TYPE' into your routes.js file.
-6. Follow instructions at the top of the 'templates.js'.
--->
+{% include "../includes/phase-banner.html" %}
+
+{% include "../includes/back-link.html" %}
+
+{% endblock %}
+
+
+
 <!-- Set the heading for the page -->
 {% set pageHeadingTextHTML %}
 What is the estimated end date of your activity?
@@ -77,7 +76,13 @@ What is the estimated end date of your activity?
             }) }}
 
 
-            {{ govukButton({ text: "Continue" }) }}
+            <div class="govuk-button-group">
+                {{ govukButton({
+                  text: "Save and continue"
+                }) }}
+              
+                <a class="govuk-link govuk-link--no-visited-state" href="task-list.html">Cancel</a>
+            </div>
 
         </form>
 

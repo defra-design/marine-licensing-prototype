@@ -60,60 +60,6 @@ function clearCoordinateValues(session) {
         delete session.data[`coordinates-point-${i}-longitude`];
     }
 }
-//////////////////////////////////////////////////////////////////////////////////////////////
-// What is your full name
-// TEXT ENTRY
-/////////////////////////////////////////////////////////////////////////////////////////////
-
-router.post('/' + version + section + 'what-is-your-name-router', function (req, res) {
-    // Turn off errors by default
-    req.session.data['errorthispage'] = "false";
-    req.session.data['errortypeone'] = "false";
-
-    // Validation: Check if the text input is blank
-    if (req.session.data['exemption-what-is-your-name-text-input'] == undefined || req.session.data['exemption-what-is-your-name-text-input'].trim() == "") {
-        req.session.data['errorthispage'] = "true";
-        req.session.data['errortypeone'] = "true";
-        res.redirect('what-is-your-name');
-    } else {
-        // Check if we need to return to check answers
-        if (req.session.data['camefromcheckanswers'] === 'true') {
-            req.session.data['camefromcheckanswers'] = false;
-            res.redirect('check-answers#personal-details');
-        } else {
-            res.redirect('what-is-your-email-address');
-        }
-    }
-});
-
-//////////////////////////////////////////////////////////////////////////////////////////////
-// What is your email address
-// TEXT ENTRY
-/////////////////////////////////////////////////////////////////////////////////////////////
-
-router.post('/' + version + section + 'what-is-your-email-address-router', function (req, res) {
-    // Turn off errors by default
-    req.session.data['errorthispage'] = "false";
-    req.session.data['errortypeone'] = "false";
-
-    // Validation: Check if the text input is blank
-    if (req.session.data['exemption-what-is-your-email-address-text-input'] == undefined || req.session.data['exemption-what-is-your-email-address-text-input'].trim() == "") {
-        // Trigger validation and reload the page
-        req.session.data['errorthispage'] = "true";
-        req.session.data['errortypeone'] = "true";
-
-        // Redirect back to the current page
-        res.redirect('what-is-your-email-address');
-    } else {
-        // Check if we need to return to check answers
-        if (req.session.data['camefromcheckanswers'] === 'true') {
-            req.session.data['camefromcheckanswers'] = false;
-            res.redirect('check-answers#personal-details');
-        } else {
-            res.redirect('project-name');
-        }
-    }
-});
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Project name
@@ -136,12 +82,15 @@ router.post('/' + version + section + 'project-name-router', function (req, res)
     if (req.session.data['errorthispage'] === "true") {
         res.redirect('project-name');
     } else {
+        // Set the status to completed
+        req.session.data['exempt-information-1-status'] = 'completed';
+        
         // Check if we need to return to check answers
         if (req.session.data['camefromcheckanswers'] === 'true') {
             req.session.data['camefromcheckanswers'] = false;
             res.redirect('check-answers#project-name');
         } else {
-            res.redirect('start-date');
+            res.redirect('task-list');
         }
     }
 });
@@ -196,12 +145,15 @@ router.post('/' + version + section + 'end-date-router', function (req, res) {
         req.session.data['errorthispage'] = "true";
         res.redirect('end-date');
     } else {
+        // Set the status to completed
+        req.session.data['exempt-information-2-status'] = 'completed';
+
         // Check if we need to return to check answers
         if (req.session.data['camefromcheckanswers'] === 'true') {
             req.session.data['camefromcheckanswers'] = false;
             res.redirect('check-answers#about-your-activity');
         } else {
-            res.redirect('about-the-location-of-the-activity');
+            res.redirect('task-list');
         }
     }
 });
@@ -521,10 +473,13 @@ router.post('/' + version + section + 'enter-multiple-coordinates-router', funct
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 router.post('/' + version + section + 'review-location-router', function (req, res) {
+    // Set the status to completed
+    req.session.data['exempt-information-3-status'] = 'completed';
+    
     if (req.session.data['camefromcheckanswers'] === 'true') {
         res.redirect('check-answers');
     } else {
-        res.redirect('public-register');
+        res.redirect('task-list');
     }
 });
 
@@ -593,12 +548,15 @@ router.post('/' + version + section + 'public-register-router', function (req, r
         req.session.data['errortypetwo'] = "true";
         res.redirect('public-register');
     } else {
+       // Set the status to completed
+       req.session.data['exempt-information-4-status'] = 'completed';
+       
        // Check if we need to return to check answers
        if (req.session.data['camefromcheckanswers'] === 'true') {
             req.session.data['camefromcheckanswers'] = false;
             res.redirect('check-answers#public-register');
         } else {
-            res.redirect('check-answers');
+            res.redirect('task-list');
         }
     }
 });

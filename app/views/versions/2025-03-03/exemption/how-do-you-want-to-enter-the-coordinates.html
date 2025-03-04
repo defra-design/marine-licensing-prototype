@@ -1,4 +1,12 @@
-{% extends "../layouts/main.html" %}
+{% extends "../layouts/exemption.html" %}
+
+{% block beforeContent %}
+
+{% include "../includes/phase-banner.html" %}
+
+{% include "../includes/back-link.html" %}
+
+{% endblock %}
 
 <!--
 NOTES ON USING THIS TEMPLATE Page
@@ -107,7 +115,13 @@ How do you want to enter the coordinates?
             }}
 
 
-            {{ govukButton({ text: "Continue" }) }}
+            <div class="govuk-button-group">
+                {{ govukButton({
+                  text: "Continue"
+                }) }}
+              
+                <a class="govuk-link govuk-link--no-visited-state" href="task-list.html?exemption-how-do-you-want-to-enter-the-coordinates-radios=">Cancel</a>
+            </div>
 
         </form>
 
