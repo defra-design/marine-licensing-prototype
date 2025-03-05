@@ -10,11 +10,78 @@
 
 }
 
-@media (max-width: 40.0525em) {
+.hmrc-account-menu__link {
+    text-decoration: underline;
+	color: #1D70B8;
+	padding:12px 6px 8px}
+
+  .hmrc-account-menu__link:hover {
+    border-bottom: none;
+	color: #1D70B8;
+}
+
+@media (max-width: 50.0525em) {
 	.is-smaller.hmrc-account-menu {
 		border-bottom: 4px solid #1D70B8;
+		text-decoration: underline;
+		color: #1D70B8;
+	}
+	.hmrc-account-menu__link {
+		text-decoration: underline;
+		color: #1D70B8;
+		padding:8px 16px}
+}
+
+
+@media (max-width: 40.0525em) {
+  
+  .multiple-coordinates .govuk-label.govuk-visually-hidden {
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+    margin: 0 0 5px 0 !important;
+    overflow: visible !important;
+    clip: auto !important;
+    -webkit-clip-path: none !important;
+    clip-path: none !important;
+    white-space: normal !important;
+    border: 0 !important;
+    font-size: 16px !important;
+    font-weight: normal !important;
+    display: block !important;
+  }
+  
+
+}
+
+
+@media (max-width: 40.0525em) {
+	/* Existing styles for labels remain */
 	
+	/* Hide the summary headers on mobile */
+	.multiple-coordinates .summary-header {
+	  display: none;
+	}
+	
+	/* Hide the first row completely on mobile as it only contains headers */
+	.multiple-coordinates .govuk-summary-list__row:first-child {
+	  display: none;
+	}
+	
+	/* Make the point name more prominent on mobile */
+	.multiple-coordinates .govuk-summary-list__key {
+	  font-weight: bold !important;
+	  margin-bottom: 15px;
+	  padding-top: 15px;
 	}
   }
 
-  
+  @media (max-width: 50em) {
+	.multiple-coordinates-column.govuk-grid-column-three-quarters {
+	  width: 100% !important;
+	}
+  }
+
+
+
+

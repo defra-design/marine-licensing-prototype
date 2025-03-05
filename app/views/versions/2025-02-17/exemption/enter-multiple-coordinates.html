@@ -54,7 +54,7 @@ This will save you time.
 
 {% block content %}
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-three-quarters">
+    <div class="multiple-coordinates-column govuk-grid-column-three-quarters">
 
 
         <!-- ERROR LOGIC 'error summary' -->
@@ -94,31 +94,22 @@ This will save you time.
         <!-- go to routes.js for routing  -->
         <form action="enter-multiple-coordinates-router" method="post" novalidate>
 
-            <dl class="govuk-summary-list govuk-!-margin-bottom-3">
+            <dl class="govuk-summary-list govuk-!-margin-bottom-3 multiple-coordinates">
 
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
 
                     </dt>
-                    <dd class="govuk-summary-list__value">
-                        {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" %}
-                        
-                        Latitude
-
-                        {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
-
-                        Eastings
+                    <dd class="govuk-summary-list__value summary-header">
+                        {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" %}Latitude
+                        {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}Eastings
 
                         {% endif %}
                     </dd>
-                    <dd class="govuk-summary-list__value">
-                        {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" %}
-                        
-                        Longitude
+                    <dd class="govuk-summary-list__value summary-header">
+                        {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" %}Longitude
 
-                        {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
-
-                        Northings
+                        {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}Northings
 
                         {% endif %}
                     </dd>
@@ -411,6 +402,12 @@ document.addEventListener('DOMContentLoaded', function() {
             // Hide the row
             row.style.display = 'none';
         });
+    });
+
+    // Fix whitespace in labels
+    document.querySelectorAll('.govuk-label.govuk-visually-hidden').forEach(label => {
+        // Normalize whitespace in label text
+        label.innerHTML = label.innerHTML.trim().replace(/\s+/g, ' ');
     });
 });
 </script>

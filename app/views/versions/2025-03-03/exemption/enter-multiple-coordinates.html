@@ -54,7 +54,7 @@ This will save you time.
 
 {% block content %}
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-three-quarters">
+    <div class="multiple-coordinates-column govuk-grid-column-three-quarters">
 
 
         <!-- ERROR LOGIC 'error summary' -->
@@ -100,25 +100,16 @@ This will save you time.
                     <dt class="govuk-summary-list__key">
 
                     </dt>
-                    <dd class="govuk-summary-list__value">
-                        {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" %}
-                        
-                        Latitude
-
-                        {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
-
-                        Eastings
+                    <dd class="govuk-summary-list__value summary-header">
+                        {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" %}Latitude
+                        {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}Eastings
 
                         {% endif %}
                     </dd>
-                    <dd class="govuk-summary-list__value">
-                        {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" %}
-                        
-                        Longitude
+                    <dd class="govuk-summary-list__value summary-header">
+                        {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" %}Longitude
 
-                        {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
-
-                        Northings
+                        {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}Northings
 
                         {% endif %}
                     </dd>
@@ -130,13 +121,9 @@ This will save you time.
                     </dt>
                     <dd class="govuk-summary-list__value">
 						<label class="govuk-label govuk-visually-hidden" for="coordinates-point-1-latitude">
-                            {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" %}
-                        
-                            Latitude of start and end point
+                            {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" %}Latitude of start and end point
 
-                            {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
-
-                            Eastings of start and end point
+                            {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}Eastings of start and end point
 
                             {% endif %}
 						  </label>
@@ -145,9 +132,7 @@ This will save you time.
                     <dd class="govuk-summary-list__value">
 						<label class="govuk-label govuk-visually-hidden" for="coordinates-point-1-longitude">
 							
-                            {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" %}
-                        
-                            Longitude of start and end point
+                            {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" %}Longitude of start and end point
 
                             {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
 
@@ -411,6 +396,12 @@ document.addEventListener('DOMContentLoaded', function() {
             // Hide the row
             row.style.display = 'none';
         });
+    });
+
+    // Fix whitespace in labels
+    document.querySelectorAll('.govuk-label.govuk-visually-hidden').forEach(label => {
+        // Normalize whitespace in label text
+        label.innerHTML = label.innerHTML.trim().replace(/\s+/g, ' ');
     });
 });
 </script>
