@@ -1,28 +1,9 @@
 {% extends "../layouts/exemption.html" %}
 
 {% block beforeContent %}
-
-{% include "../includes/phase-banner.html" %}
-
-{% include "../includes/back-link.html" %}
-
+    {% include "../includes/phase-banner.html" %}
+    {% include "../includes/back-link.html" %}
 {% endblock %}
-
-<!--
-NOTES ON USING THIS TEMPLATE Page
-This will save you time.
-
-1. Put your heading for the page after '% set pageHeadingTextHTML %'
-2. Put your question heading for the page after '% set questionHeadingTextHTML %'
-3. Type/customise the error message after '% set errorTextHTML %'
-4. Use 'Find and replace' to replace "SECTION" with the name of the section of the service you're working on.
-5. Use 'Find and replace' to replace "PAGENAME_RADIOS_COMPLEX" with whatever you named this page/file.
-6. Use 'Find and replace' to replace each of the radio button values. Starting with 'xxxx'
-7. Go to the javascript file 'templates.js' and copy the section 'COMPLEX PAGE OF RADIO BUTTONS' into your routes.js file.
-8. Follow instructions at the top of the 'templates.js'.
--->
-
-
 
 <!-- Setting the smaller secondary heading lower down the page -->
 {% set pageHeadingTextHTML %}
@@ -115,13 +96,9 @@ How do you want to enter the coordinates?
             }}
 
 
-            <div class="govuk-button-group">
-                {{ govukButton({
-                  text: "Continue"
-                }) }}
-              
-                <a class="govuk-link govuk-link--no-visited-state" href="task-list.html?exemption-how-do-you-want-to-enter-the-coordinates-radios=">Cancel</a>
-            </div>
+            {{ govukButton({
+text: "Save and continue"
+ }) }}
 
         </form>
 

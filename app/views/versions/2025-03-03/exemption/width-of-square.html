@@ -1,16 +1,9 @@
-{% extends "../layouts/main.html" %}
+{% extends "../layouts/exemption.html" %}
 
-<!--
-NOTES ON USING THIS TEMPLATE Page
-This will save you time.
-
-1. Type your heading for the page after '% set pageHeadingTextHTML %'
-2. Type/customise the error messages after '% set errorTextHTML %'
-3. Use 'Find and replace' to replace "SECTION" with the name of the section of the service you're working on.
-4. Use 'Find and replace' to replace "PAGENAME_NUMBER" with whatever you named this page/file.
-5. Go to the javascript file 'templates.js' and copy the section 'NUMBER ENTRY' into your routes.js file.
-6. Follow instructions at the top of the 'templates.js'.
--->
+{% block beforeContent %}
+    {% include "../includes/phase-banner.html" %}
+    {% include "../includes/back-link.html" %}
+{% endblock %}
 
 
 <!-- Setting the big main heading at the top of the page -->
@@ -92,7 +85,11 @@ What is the width of the square in metres?
             }}
 
 
-            {{ govukButton({ text: "Continue" }) }}
+            <div class="govuk-button-group">
+                {{ govukButton({
+                  text: "Save and continue"
+                }) }}
+            </div>
 
 
         </form>

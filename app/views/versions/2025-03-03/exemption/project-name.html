@@ -1,18 +1,17 @@
 {% extends "../layouts/exemption.html" %}
 
 {% block beforeContent %}
-
-{% include "../includes/phase-banner.html" %}
-
-{% include "../includes/back-link.html" %}
-
+    {% include "../includes/phase-banner.html" %}
+    {% include "../includes/back-link.html" %}
 {% endblock %}
+
 
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
 Project name
 {% endset %}
+
 
 <!-- Set the text for each error type -->
 {% set errorTextHTML %}
@@ -65,7 +64,10 @@ Error:
                 classes: "govuk-label--l",
                 isPageHeading: true
             },
-            
+            hint: {
+                text: "[Hint text]"
+              },
+              
                 autocomplete: "off",
                 id: "exemption-project-name-text-input",
                 name: "exemption-project-name-text-input",
@@ -76,13 +78,9 @@ Error:
             }) }}
 
 
-            <div class="govuk-button-group">
-                {{ govukButton({
-                  text: "Save and continue"
-                }) }}
-              
-                <a class="govuk-link govuk-link--no-visited-state" href="task-list.html">Cancel</a>
-            </div>
+            {{ govukButton({
+text: "Save and continue"
+ }) }}
 
         </form>
 

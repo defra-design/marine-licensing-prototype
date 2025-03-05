@@ -1,26 +1,29 @@
 {% extends "../layouts/exemption.html" %}
 
 {% block beforeContent %}
-
-{% include "../includes/phase-banner.html" %}
-
-{% include "../includes/back-link.html" %}
-
+    {% include "../includes/phase-banner.html" %}
+    {% include "../includes/back-link.html" %}
 {% endblock %}
 
-<!-- Setting the big main heading at the top of the page -->
-{% set pageHeadingTextHTML %}
-Location details
-{% endset %}
+<!--
+NOTES ON USING THIS TEMPLATE Page
+This will save you time.
 
-<!-- Setting the heading caption -->
-{% set captionTextHTML %}
-	Check if you need a marine licence
-{% endset %}
+1. Put your heading for the page after '% set pageHeadingTextHTML %'
+2. Put your question heading for the page after '% set questionHeadingTextHTML %'
+3. Type/customise the error message after '% set errorTextHTML %'
+4. Use 'Find and replace' to replace "SECTION" with the name of the section of the service you're working on.
+5. Use 'Find and replace' to replace "PAGENAME_RADIOS_COMPLEX" with whatever you named this page/file.
+6. Use 'Find and replace' to replace each of the radio button values. Starting with 'xxxx'
+7. Go to the javascript file 'templates.js' and copy the section 'COMPLEX PAGE OF RADIO BUTTONS' into your routes.js file.
+8. Follow instructions at the top of the 'templates.js'.
+-->
+
+
 
 <!-- Setting the smaller secondary heading lower down the page -->
-{% set questionHeadingTextHTML %}
-How do you want to provide the location?
+{% set pageHeadingTextHTML %}
+How do you want to provide the coordinates?
 {% endset %}
 
 
@@ -28,7 +31,7 @@ How do you want to provide the location?
 {% set errorTextHTML %}
     <!-- Nothing was selected -->
     {% if data['errortypeone'] == "true" %}
-    Select how you want to provide the location
+    Select how you want to provide the coordinates
     {% endif %}
 {% endset %}
 
@@ -56,7 +59,7 @@ How do you want to provide the location?
                     [
                         {
                             html: errorTextHTML,
-                            href: "#exemption-about-the-location-of-the-activity-radios"
+                            href: "#exemption-how-do-you-want-to-provide-the-coordinates-radios"
                         }
                     ]
                 })
@@ -66,27 +69,21 @@ How do you want to provide the location?
 
 
         <!-- go to routes.js for routing  -->
-        <form action="about-the-location-of-the-activity-router" method="post" novalidate>
-
-            <h1 class="govuk-heading-l">
-                {{ pageHeadingTextHTML }}
-            </h1>
-
-            <p>We need to know the exact location of the area your activity will take place.</p>
+        <form action="how-do-you-want-to-provide-the-coordinates-router" method="post" novalidate>
 
             {{ govukRadios
                 ({
-                    name: "exemption-about-the-location-of-the-activity-radios",
+                    name: "exemption-how-do-you-want-to-provide-the-coordinates-radios",
 
-                    id: "exemption-about-the-location-of-the-activity-radios",
+                    id: "exemption-how-do-you-want-to-provide-the-coordinates-radios",
 
                     fieldset:
                     {
                         legend:
                         {
-                            html: questionHeadingTextHTML,
-                            isPageHeading: false,
-                            classes: "govuk-fieldset__legend--m"
+                            html: pageHeadingTextHTML,
+                            isPageHeading: true,
+                            classes: "govuk-fieldset__legend--l"
                         }
                     },
 
@@ -95,21 +92,16 @@ How do you want to provide the location?
 
                     items:
                     [
-                    {
-                        value: "Draw the area on a map",
-                        text: "Draw the area on a map",
-                        checked: data['exemption-about-the-location-of-the-activity-radios'] == "Draw the area on a map"
-                    },
-                    {
-                        value: "Enter the coordinates of the area",
-                        text: "Enter the coordinates of the area",
-                        checked: data['exemption-about-the-location-of-the-activity-radios'] == "Enter the coordinates of the area"
-                    },
-                    {
-                        value: "Upload a file with coordinates of the area",
-                        text: "Upload a file with coordinates of the area",
-                        checked: data['exemption-about-the-location-of-the-activity-radios'] == "Upload a file with coordinates of the area"
-                    }     
+                        {
+                            value: "Enter them manually",
+                            text: "Enter them manually",
+                            checked: data['exemption-how-do-you-want-to-provide-the-coordinates-radios'] == "Enter them manually"
+                        },
+                        {
+                            value: "Upload a file",
+                            text: "Upload a file",
+                            checked: data['exemption-how-do-you-want-to-provide-the-coordinates-radios'] == "Upload a file"
+                        }
                     ]
                 })
             }}
@@ -117,13 +109,9 @@ How do you want to provide the location?
 
             <div class="govuk-button-group">
                 {{ govukButton({
-                  text: "Continue"
+                  text: "Save and continue"
                 }) }}
-              
-                <a class="govuk-link govuk-link--no-visited-state" href="task-list.html?exemption-about-the-location-of-the-activity-radios=">Cancel</a>
             </div>
-            
-            
 
         </form>
 

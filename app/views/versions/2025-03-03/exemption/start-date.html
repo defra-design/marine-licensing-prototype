@@ -1,11 +1,8 @@
 {% extends "../layouts/exemption.html" %}
 
 {% block beforeContent %}
-
-{% include "../includes/phase-banner.html" %}
-
-{% include "../includes/back-link.html" %}
-
+    {% include "../includes/phase-banner.html" %}
+    {% include "../includes/back-link.html" %}
 {% endblock %}
 
 
@@ -49,7 +46,10 @@ What is the estimated start date of your activity?
 {% endif %}
         <!--  END OF 'error summary' -->
 
-
+        <h1 class="govuk-heading-l">
+            {{ pageHeadingTextHTML }}
+        </h1>
+        <p>Allow for any required consent, such as a river works licence, to be in place. </p>
         <form action="start-date-router" method="post" novalidate>
 
             {{ govukDateInput({
@@ -58,8 +58,8 @@ What is the estimated start date of your activity?
                 fieldset: {
                     legend: {
                         html: pageHeadingTextHTML,
-                        isPageHeading: true,
-                        classes: "govuk-fieldset__legend--l"
+                        isPageHeading: false,
+                        classes: "label govuk-visually-hidden"
                     }
                 },
                 hint: {
@@ -75,13 +75,9 @@ What is the estimated start date of your activity?
             }) }}
 
 
-            <div class="govuk-button-group">
-                {{ govukButton({
-                  text: "Save and continue"
-                }) }}
-              
-                <a class="govuk-link govuk-link--no-visited-state" href="task-list.html">Cancel</a>
-            </div>
+            {{ govukButton({
+text: "Save and continue"
+ }) }}
 
         </form>
 

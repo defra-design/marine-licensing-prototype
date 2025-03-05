@@ -1,4 +1,9 @@
-{% extends "../layouts/main.html" %}
+{% extends "../layouts/exemption.html" %}
+
+{% block beforeContent %}
+    {% include "../includes/phase-banner.html" %}
+    {% include "../includes/back-link.html" %}
+{% endblock %}
 
 {% set pageName="Next page" %}
 

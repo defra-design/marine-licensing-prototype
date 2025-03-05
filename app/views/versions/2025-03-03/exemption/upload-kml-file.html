@@ -1,4 +1,9 @@
-{% extends "../layouts/main.html" %}
+{% extends "../layouts/exemption.html" %}
+
+{% block beforeContent %}
+    {% include "../includes/phase-banner.html" %}
+    {% include "../includes/back-link.html" %}
+{% endblock %}
 
 
 <!-- Setting the smaller secondary heading lower down the page -->
@@ -35,7 +40,9 @@ Upload a KML file
             
 
 
-            {{ govukButton({ text: "Continue" }) }}
+            {{ govukButton({
+text: "Save and continue"
+ }) }}
 
         </form>
 

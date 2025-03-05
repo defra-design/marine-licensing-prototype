@@ -6,11 +6,36 @@ https://prototype-kit.service.gov.uk/docs/how-to-use-layouts
 {% extends "govuk-prototype-kit/layouts/govuk-branded.njk" %}
 
 {% block header %}
-{{ govukHeader({
-    homepageUrl: "/",
-    serviceName: "[Service name]",
-    serviceUrl: "/versions/2025-03-03/check/start"
-}) }}
+{% from "govuk/components/header/macro.njk" import govukHeader %}
+{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
+
+{% set linksHTML %}
+<ul class="hmrc-account-menu__main" style="display: flex; align-items: center; justify-content: flex-end; margin: 0; padding: 0; list-style-type: none;">
+    <li style="margin-right: 15px;">
+      <a href="#" class="hmrc-account-menu__link">
+        Defra account</a>
+    </li>
+    <li>
+      <a href="#" class="hmrc-account-menu__link">
+        Sign out</a>
+    </li>
+</ul>
+{% endset %}
+
+    {{ govukHeader({
+    classes: "govuk-header--full-width-border"
+    }) }}
+    {{ govukServiceNavigation({
+        serviceName: "Marine licensing",
+        serviceUrl: "#",
+        navigation: [
+            {
+                href: "#",
+                text: "Homepage"
+            }
+        ],
+        navigationEnd: linksHTML
+    }) }}
 {% endblock %}
 
 

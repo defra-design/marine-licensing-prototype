@@ -5,10 +5,19 @@
     {% include "../includes/back-link.html" %}
 {% endblock %}
 
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+Provide site details
+{% endset %}
+
+<!-- Setting the heading caption -->
+{% set captionTextHTML %}
+	Check if you need a marine licence
+{% endset %}
 
 <!-- Setting the smaller secondary heading lower down the page -->
-{% set pageHeadingTextHTML %}
-Which type of file do you want to upload?
+{% set questionHeadingTextHTML %}
+Do you have the site coordinates?
 {% endset %}
 
 
@@ -16,7 +25,7 @@ Which type of file do you want to upload?
 {% set errorTextHTML %}
     <!-- Nothing was selected -->
     {% if data['errortypeone'] == "true" %}
-    Select which type of file you want to upload
+    Select if you have the coordinates of the location
     {% endif %}
 {% endset %}
 
@@ -44,7 +53,7 @@ Which type of file do you want to upload?
                     [
                         {
                             html: errorTextHTML,
-                            href: "#exemption-which-type-of-file-radios"
+                            href: "#exemption-provide-site-details-radios"
                         }
                     ]
                 })
@@ -54,21 +63,27 @@ Which type of file do you want to upload?
 
 
         <!-- go to routes.js for routing  -->
-        <form action="which-type-of-file-router" method="post" novalidate>
+        <form action="provide-site-details-router" method="post" novalidate>
+
+            <h1 class="govuk-heading-l">
+                {{ pageHeadingTextHTML }}
+            </h1>
+
+            <p>We need to know the boundary of the site where your activity will take place. You can either draw it on our map or provide coordinates.</p>
 
             {{ govukRadios
                 ({
-                    name: "exemption-which-type-of-file-radios",
+                    name: "exemption-provide-site-details-radios",
 
-                    id: "exemption-which-type-of-file-radios",
+                    id: "exemption-provide-site-details-radios",
 
                     fieldset:
                     {
                         legend:
                         {
-                            html: pageHeadingTextHTML,
-                            isPageHeading: true,
-                            classes: "govuk-fieldset__legend--l"
+                            html: questionHeadingTextHTML,
+                            isPageHeading: false,
+                            classes: "govuk-fieldset__legend--m"
                         }
                     },
 
@@ -77,29 +92,28 @@ Which type of file do you want to upload?
 
                     items:
                     [
-                        {
-                            value: "Shapefile",
-                            text: "Shapefile",
-                            checked: data['exemption-which-type-of-file-radios'] == "Shapefile"
-                        },
-                        {
-                            value: "MapInfo TAB",
-                            text: "MapInfo TAB",
-                            checked: data['exemption-which-type-of-file-radios'] == "MapInfo TAB"
-                        },
-                        {
-                            value: "KML",
-                            text: "KML",
-                            checked: data['exemption-which-type-of-file-radios'] == "KML"
-                        }
+                    {
+                        value: "Yes",
+                        text: "Yes",
+                        checked: data['exemption-provide-site-details-radios'] == "Yes"
+                    },
+                    {
+                        value: "No",
+                        text: "No",
+                        checked: data['exemption-provide-site-details-radios'] == "No"
+                    }   
                     ]
                 })
             }}
 
 
-            {{ govukButton({
-text: "Save and continue"
- }) }}
+            <div class="govuk-button-group">
+                {{ govukButton({
+                  text: "Save and continue"
+                }) }}
+            </div>
+            
+            
 
         </form>
 

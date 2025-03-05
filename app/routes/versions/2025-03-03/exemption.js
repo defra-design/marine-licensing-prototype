@@ -28,9 +28,24 @@ function clearCoordinateData(session) {
 
 // Add these new clearing functions
 function clearAllLocationData(session) {
+    // Clear coordinate data
     clearCoordinateData(session);
+    
+    // Clear coordinate system
     clearCoordinateSystem(session);
+    
+    // Clear coordinate type
     clearCoordinateType(session);
+    
+    // Clear method of providing coordinates
+    delete session.data['exemption-how-do-you-want-to-provide-the-coordinates-radios'];
+    
+    // Clear file upload data
+    delete session.data['exemption-which-type-of-file-radios'];
+    delete session.data['kml-file-upload'];
+    
+    // Clear map data
+    clearMapData(session);
 }
 
 function clearCoordinateSystem(session) {
@@ -40,6 +55,8 @@ function clearCoordinateSystem(session) {
 
 function clearCoordinateType(session) {
     delete session.data['coords-type'];
+    delete session.data['exemption-how-do-you-want-to-enter-the-coordinates-radios']; // Clear the selection itself
+    delete session.data['previous-coords-entry-method']; // Clear the tracking variable
     clearCoordinateValues(session);
 }
 
@@ -166,36 +183,90 @@ router.post('/' + version + section + 'end-date-router', function (req, res) {
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 // About location router - clear everything when changing method
-router.post('/' + version + section + 'about-the-location-of-the-activity-router', function (req, res) {
+router.post('/' + version + section + 'provide-site-details-router', function (req, res) {
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
 
-    const selection = req.session.data['exemption-about-the-location-of-the-activity-radios'];
+    const selection = req.session.data['exemption-provide-site-details-radios'];
 
     if (!selection) {
         req.session.data['errorthispage'] = "true";
         req.session.data['errortypeone'] = "true";
-        res.redirect('about-the-location-of-the-activity');
+        res.redirect('provide-site-details');
         return;
     }
 
-    // Clear appropriate data when changing methods
+    // Clear all location data regardless of what was previously selected
     clearAllLocationData(req.session);
-
+    
+    // Also clear how-do-you-want-to-provide-the-coordinates-radios
+    delete req.session.data['exemption-how-do-you-want-to-provide-the-coordinates-radios'];
+    
+    // Also clear map data if it exists
+    clearMapData(req.session);
+    
+    // Clear file upload data
+    delete req.session.data['exemption-which-type-of-file-radios'];
+    delete req.session.data['kml-file-upload'];
+    
     // Route based on selection
     switch(selection) {
         // change to which-type-of-file to allow it, or stop to not
-        case "Upload a file with coordinates of the area":
-            res.redirect('which-type-of-file');
+        case "Yes":
+            res.redirect('how-do-you-want-to-provide-the-coordinates');
             break;
-        case "Enter the coordinates of the area":
-            res.redirect('how-do-you-want-to-enter-the-coordinates');
-            break;
-        case "Draw the area on a map":
+        case "No":
             res.redirect('map');
             break;
         default:
-            res.redirect('about-the-location-of-the-activity');
+            res.redirect('provide-site-details');
+    }
+});
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// How do you want to provide the coordinates?
+// PAGE OF RADIO BUTTONS
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+router.post('/' + version + section + 'how-do-you-want-to-provide-the-coordinates-router', function (req, res) {
+    // Turn errors off by default
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    const selection = req.session.data['exemption-how-do-you-want-to-provide-the-coordinates-radios'];
+
+    if (!selection) {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        res.redirect('how-do-you-want-to-provide-the-coordinates');
+        return;
+    }
+
+    // Clear data based on selection
+    switch(selection) {
+        case "Enter them manually":
+            // Clear file upload data if it exists
+            delete req.session.data['exemption-which-type-of-file-radios'];
+            delete req.session.data['kml-file-upload'];
+            break;
+        case "Upload a file":
+            // Clear manual entry data if it exists
+            clearCoordinateType(req.session);
+            clearCoordinateSystem(req.session);
+            clearCoordinateValues(req.session);
+            break;
+    }
+
+    // Route based on selection
+    switch(selection) {
+        case "Enter them manually":
+            res.redirect('how-do-you-want-to-enter-the-coordinates');
+            break;
+        case "Upload a file":
+            res.redirect('which-type-of-file');
+            break;
+        default:
+            res.redirect('how-do-you-want-to-provide-the-coordinates');
     }
 });
 
@@ -266,6 +337,18 @@ router.post('/' + version + section + 'how-do-you-want-to-enter-the-coordinates-
         res.redirect('how-do-you-want-to-enter-the-coordinates');
         return;
     }
+
+    // Save the current selection for reference
+    const previousSelection = req.session.data['previous-coords-entry-method'];
+    
+    // If the selection has changed, clear all relevant data
+    if (previousSelection && previousSelection !== selection) {
+        // Clear previous selection's data
+        clearCoordinateValues(req.session);
+    }
+    
+    // Store current selection for next time
+    req.session.data['previous-coords-entry-method'] = selection;
 
     // Set coords-type based on selection
     switch(selection) {
