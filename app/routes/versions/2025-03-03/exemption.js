@@ -312,6 +312,7 @@ router.post('/' + version + section + 'which-type-of-file-router', function (req
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 router.post('/' + version + section + 'upload-kml-file-router', function (req, res) {
+    req.session.data['siteTitle'] = 'review';
     // Redirect to review location page
     res.redirect('review-location');
 });
@@ -472,6 +473,7 @@ router.post('/' + version + section + 'width-of-circle-router', function (req, r
         res.redirect('width-of-circle');
         return;
     }
+    req.session.data['siteTitle'] = 'review';
     // If coming from review page, go back to review
     if (req.query.fromreview) {
         res.redirect('review-location');
@@ -526,6 +528,7 @@ router.post('/' + version + section + 'width-of-square-router', function (req, r
         res.redirect('width-of-square');
         return;
     }
+    req.session.data['siteTitle'] = 'review';
     // If coming from review page, go back to review
     if (req.query.fromreview) {
         res.redirect('review-location');
@@ -541,6 +544,7 @@ router.post('/' + version + section + 'width-of-square-router', function (req, r
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 router.post('/' + version + section + 'enter-multiple-coordinates-router', function (req, res) {
+    req.session.data['siteTitle'] = 'review';
     // If coming from review page, go back to review
     if (req.query.fromreview) {
         res.redirect('review-location');
@@ -644,5 +648,11 @@ router.post('/' + version + section + 'public-register-router', function (req, r
     }
 });
 
+// Map router
+router.post('/' + version + section + 'map-router', function (req, res) {
+    // Set siteTitle
+    req.session.data['siteTitle'] = 'review';
+    res.redirect('review-location');
+});
 
 }

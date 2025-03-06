@@ -564,10 +564,10 @@ router.post('/' + version + section + 'who-will-carry-out-activity-router', func
 
     // Route based on selection
     switch(selection) {
-        case "A harbour authority or its representative":
+        case "Yes":
             res.redirect('stop');
             break;
-        case "Someone else":
+        case "No":
             res.redirect('will-activity-take-place-harbour-authority-area');
             break;
         default:

@@ -3,7 +3,7 @@
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-Who will carry out the activity?
+Will a harbour authority or someone acting on their behalf carry out the activity? 
 {% endset %}
 
 
@@ -77,14 +77,14 @@ Who will carry out the activity?
                     items:
                     [
 {
-                            value: "A harbour authority or its representative",
-                            text: "A harbour authority or its representative",
-                            checked: data['check-who-will-carry-out-activity-radios'] == "A harbour authority or its representative"
+                            value: "Yes",
+                            text: "Yes",
+                            checked: data['check-who-will-carry-out-activity-radios'] == "Yes"
                         },
                         {
-                            value: "Someone else",
-                            text: "Someone else",
-                            checked: data['check-who-will-carry-out-activity-radios'] == "Someone else"
+                            value: "No",
+                            text: "No",
+                            checked: data['check-who-will-carry-out-activity-radios'] == "No"
                         }
                     ]
                 })

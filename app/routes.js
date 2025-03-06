@@ -38,17 +38,6 @@ require('./routes/versions/2025-03-03/sites.js')(router);
 require('./routes/versions/2025-03-03/check.js')(router);
 require('./routes/versions/2025-03-03/exemption.js')(router);
 
-// logging
-
-router.use((req, res, next) => {
-    const log = {
-      method: req.method,
-      url: req.originalUrl,
-      data: req.session.data
-    }
-    console.log(JSON.stringify(log, null, 2))
-  next()
- })
 
 
 // viewing session data

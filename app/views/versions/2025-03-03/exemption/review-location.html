@@ -1,12 +1,19 @@
 {% extends "../layouts/exemption.html" %}
 
 {% block beforeContent %}
+    {% include "../includes/account-bar.html" %}
     {% include "../includes/phase-banner.html" %}
     {% include "../includes/back-link.html" %}
 {% endblock %}
 
 {% set pageHeadingTextHTML %}
-Review your location
+
+{% if data['siteTitle'] == "review" or not data['siteTitle'] %}
+  Review site details
+{% elif data['siteTitle'] == "view" %}
+Review site details
+{% endif %}
+
 {% endset %}
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
@@ -47,7 +54,7 @@ Review your location
           {{ data['exemption-provide-site-details-radios'] }}
         </dd>
         <dd class="govuk-summary-list__actions">
-          <a class="govuk-link" href="provide-site-details">Change<span class="govuk-visually-hidden"> Do you have the site coordinates??</span></a>
+          <a class="govuk-link" href="provide-site-details?fromreview=true">Change<span class="govuk-visually-hidden"> Do you have the site coordinates??</span></a>
         </dd>
       </div>
 
@@ -62,7 +69,7 @@ Review your location
           
         </dd>
         <dd class="govuk-summary-list__actions">
-          <a class="govuk-link" href="map">Change<span class="govuk-visually-hidden"> name</span></a>
+          <a class="govuk-link" href="map?fromreview=true">Change<span class="govuk-visually-hidden"> name</span></a>
         </dd>
       </div>
 
@@ -90,7 +97,7 @@ Review your location
         {{ data['exemption-how-do-you-want-to-provide-the-coordinates-radios'] }}
       </dd>
       <dd class="govuk-summary-list__actions">
-        <a class="govuk-link" href="how-do-you-want-to-provide-the-coordinates">Change<span class="govuk-visually-hidden"> How do you want to provide the coordinates?</span></a>
+        <a class="govuk-link" href="how-do-you-want-to-provide-the-coordinates?fromreview=true">Change<span class="govuk-visually-hidden"> How do you want to provide the coordinates?</span></a>
       </dd>
     </div>
     

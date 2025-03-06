@@ -1,10 +1,10 @@
 {% extends "../layouts/exemption.html" %}
 
 {% block beforeContent %}
+    {% include "../includes/account-bar.html" %}
     {% include "../includes/phase-banner.html" %}
     {% include "../includes/back-link.html" %}
 {% endblock %}
-
 
 
 <!-- Setting the big main heading at the top of the page -->
@@ -65,7 +65,7 @@ Error:
                 isPageHeading: true
             },
             hint: {
-                text: "[Hint text]"
+                text: "Enter a clear, descriptive name to easily identify your project later."
               },
               
                 autocomplete: "off",

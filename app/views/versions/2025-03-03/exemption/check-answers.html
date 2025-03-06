@@ -1,12 +1,11 @@
 {% extends "../layouts/exemption.html" %}
 
 {% block beforeContent %}
-
-{% include "../includes/phase-banner.html" %}
-
-<a class="govuk-back-link" href="task-list.html" style="margin-bottom: 0;">Go back to task list</a>
-
+    {% include "../includes/account-bar.html" %}
+    {% include "../includes/phase-banner.html" %}
+    <a class="govuk-back-link" href="task-list.html" style="margin-bottom: 0;">Go back to task list</a>
 {% endblock %}
+
 
 {% set pageHeadingTextHTML %}
 Check your answers before sending your information
@@ -53,9 +52,99 @@ Check your answers before sending your information
               name</span></a>
         </dd>
       </div>
+      
+      <!-- Show pontoon scenario details -->
+      {% if (data['exemption'] == "pontoon-approval" or data['exemption'] == "pontoon-notification" or data['exemption'] == "") %}
+      
+      <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+        <dt class="govuk-summary-list__key">
+          Type of activity 
+        </dt>
+        <dd class="govuk-summary-list__value">
+          Construction 
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          
+        </dd>
+      </div>
 
+      <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+        <dt class="govuk-summary-list__key">
+          What the activity involves  
+        </dt>
+        <dd class="govuk-summary-list__value">
+          Pontoons 
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          
+        </dd>
+      </div>
+
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Why this activity is exempt
+        </dt>
+        <dd class="govuk-summary-list__value">
+          Based on your answers, your activity is exempt under the <a href="http://www.legislation.gov.uk/uksi/2011/409/article/25A" rel="noreferrer noopener" target="_blank">Article 25A of the Marine Licence (Exempted Activities) Order 2011 (opens in new tab)</a> 
+        </dd>
+        <dd class="govuk-summary-list__actions">
+           
+        </dd>
+      </div>
+
+      <!-- Show scientific samples scenario details -->
+      {% elif data['exemption'] == "sample-notification" %}
       
+      <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+        <dt class="govuk-summary-list__key">
+          Type of activity 
+        </dt>
+        <dd class="govuk-summary-list__value">
+          Removal of a substance or object  
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          
+        </dd>
+      </div>
+
+      <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+        <dt class="govuk-summary-list__key">
+          What the activity involves  
+        </dt>
+        <dd class="govuk-summary-list__value">
+          Scientific research 
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          
+        </dd>
+      </div>
+
+      <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+        <dt class="govuk-summary-list__key">
+          What will be removed   
+        </dt>
+        <dd class="govuk-summary-list__value">
+          Samples for testing and analysis  
+        </dd>
+        <dd class="govuk-summary-list__actions">
+          
+        </dd>
+      </div>
+
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Why this activity is exempt
+        </dt>
+        <dd class="govuk-summary-list__value">
+          Based on your answers, your activity is exempt under <a href="https://www.legislation.gov.uk/uksi/2011/409/article/17A" rel="noreferrer noopener" target="_blank">Article 17a of the Marine Licensing (Exempted Activities) Order 2011 (opens in new tab) </a> 
+        </dd>
+        <dd class="govuk-summary-list__actions">
+           
+        </dd>
+      </div>
       
+
+      {% endif %}
     </dl>
       </div>
     </div>
@@ -128,6 +217,11 @@ Check your answers before sending your information
     <h2 class="govuk-summary-card__title">
       Site details
     </h2>
+    <ul class="govuk-summary-card__actions">
+      <li class="govuk-summary-card__action">
+        <a class="govuk-link" href="review-location?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Location details</span></a>
+      </li>
+    </ul>
   </div>
   <div class="govuk-summary-card__content">
 
@@ -139,9 +233,7 @@ Check your answers before sending your information
     <dd class="govuk-summary-list__value">
       {{ data['exemption-provide-site-details-radios'] }}
     </dd>
-    <dd class="govuk-summary-list__actions">
-      <a class="govuk-link" href="provide-site-details">Change<span class="govuk-visually-hidden"> Do you have the site coordinates??</span></a>
-    </dd>
+    
   </div>
 
 
@@ -154,9 +246,7 @@ Check your answers before sending your information
     <dd class="govuk-summary-list__value">
       
     </dd>
-    <dd class="govuk-summary-list__actions">
-      <a class="govuk-link" href="map">Change<span class="govuk-visually-hidden"> name</span></a>
-    </dd>
+    
   </div>
 
 </dl>  
@@ -183,7 +273,7 @@ Check your answers before sending your information
     {{ data['exemption-how-do-you-want-to-provide-the-coordinates-radios'] }}
   </dd>
   <dd class="govuk-summary-list__actions">
-    <a class="govuk-link" href="how-do-you-want-to-provide-the-coordinates">Change<span class="govuk-visually-hidden"> How do you want to provide the coordinates?</span></a>
+    
   </dd>
 </div>
 
@@ -199,7 +289,7 @@ Check your answers before sending your information
     {{ data['exemption-which-type-of-file-radios'] }}
   </dd>
   <dd class="govuk-summary-list__actions">
-    <a class="govuk-link" href="which-type-of-file?fromreview=true">Change<span class="govuk-visually-hidden"> Which type of file do you want to upload?</span></a>
+    
   </dd>
 </div>
 
@@ -211,7 +301,7 @@ Check your answers before sending your information
     coordinates.kml
   </dd>
   <dd class="govuk-summary-list__actions">
-    <a class="govuk-link" href="upload-kml-file?fromreview=true">Change<span class="govuk-visually-hidden"> File uploaded</span></a>
+    
   </dd>
 </div>
 
@@ -257,7 +347,7 @@ Check your answers before sending your information
     {{ data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] }}
   </dd>
   <dd class="govuk-summary-list__actions">
-    <a class="govuk-link" href="how-do-you-want-to-enter-the-coordinates">Change<span class="govuk-visually-hidden"> How do you want to enter the coordinates?</span></a>
+    
   </dd>
 </div>
 
@@ -268,7 +358,7 @@ Check your answers before sending your information
     {{ data['exemption-what-coordinate-system-radios'] }}
   </dd>
   <dd class="govuk-summary-list__actions">
-    <a class="govuk-link" href="what-coordinate-system.html">Change<span class="govuk-visually-hidden"> Which coordinate system do you want to use?</span></a>
+    
   </dd>
 </div>
 
@@ -290,15 +380,7 @@ Check your answers before sending your information
    {{ data['exemption-what-are-the-coordinates-of-the-circle-latitude-text-input'] }}
   </dd>
   <dd class="govuk-summary-list__actions">
-    <a class="govuk-link" href="what-are-the-coordinates-of-the-circle?fromreview=true">Change<span class="govuk-visually-hidden"> {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['exemption-what-coordinate-system-radios'] %}
-                  
-      Latitude
-
-      {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
-
-      Eastings
-
-      {% endif %}</span></a>
+    
   </dd>
 </div>
 <div class="govuk-summary-list__row">
@@ -317,15 +399,7 @@ Check your answers before sending your information
    {{ data['exemption-what-are-the-coordinates-of-the-circle-longitude-text-input'] }}
   </dd>
   <dd class="govuk-summary-list__actions">
-    <a class="govuk-link" href="what-are-the-coordinates-of-the-circle?fromreview=true">Change<span class="govuk-visually-hidden"> {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['exemption-what-coordinate-system-radios'] %}
-                  
-      Longitude
-
-      {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
-
-      Northings
-
-      {% endif %}</span></a>
+    
   </dd>
 </div>
 <div class="govuk-summary-list__row">
@@ -336,7 +410,7 @@ Check your answers before sending your information
     {{ data['exemption-width-of-circle-number-input'] }}
   </dd>
   <dd class="govuk-summary-list__actions">
-    <a class="govuk-link" href="width-of-circle?fromreview=true">Change<span class="govuk-visually-hidden"> Width of circle</span></a>
+    
   </dd>
 </div>
 </dl>
@@ -382,17 +456,7 @@ Check your answers before sending your information
    {{ data['exemption-what-are-the-coordinates-of-the-square-latitude-text-input'] }}
   </dd>
   <dd class="govuk-summary-list__actions">
-    <a class="govuk-link" href="what-are-the-coordinates-of-the-square?fromreview=true">Change<span class="govuk-visually-hidden"> 
-      {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['exemption-what-coordinate-system-radios'] %}
-                  
-      Latitude
-
-      {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
-
-      Eastings
-
-      {% endif %}
-    </span></a>
+    
   </dd>
 </div>
 <div class="govuk-summary-list__row">
@@ -411,17 +475,7 @@ Check your answers before sending your information
    {{ data['exemption-what-are-the-coordinates-of-the-square-longitude-text-input'] }}
   </dd>
   <dd class="govuk-summary-list__actions">
-    <a class="govuk-link" href="what-are-the-coordinates-of-the-square?fromreview=true">Change<span class="govuk-visually-hidden"> 
-      {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['exemption-what-coordinate-system-radios'] %}
-                  
-    Longitude
-
-    {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
-
-    Northings
-
-    {% endif %}
-    </span></a>
+    
   </dd>
 </div>
 <div class="govuk-summary-list__row">
@@ -432,7 +486,7 @@ Check your answers before sending your information
     {{ data['exemption-width-of-square-number-input'] }}
   </dd>
   <dd class="govuk-summary-list__actions">
-    <a class="govuk-link" href="width-of-square?fromreview=true">Change<span class="govuk-visually-hidden"> Width of square</span></a>
+    
   </dd>
 </div>
 </dl>
@@ -473,7 +527,7 @@ Check your answers before sending your information
   {{ data['coordinates-point-1-latitude'] }}, {{ data['coordinates-point-1-longitude'] }}
 </dd>
 <dd class="govuk-summary-list__actions">
-  <a class="govuk-link" href="enter-multiple-coordinates?fromreview=true">Change<span class="govuk-visually-hidden"> coordinates</span></a>
+  
 </dd>
 </div>
 
