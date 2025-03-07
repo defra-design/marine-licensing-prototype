@@ -179,7 +179,18 @@ Review site details
       <dt class="govuk-summary-list__key">Which coordinate system do you want to use?
       </dt>
       <dd class="govuk-summary-list__value">
-        {{ data['exemption-what-coordinate-system-radios'] }}
+        {{ data['exemption-what-coordinate-system-radios'] }}<br> 
+        {% if data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter multiple coordinates of the area" or
+        data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter the centre point of a circle and its width" or
+        data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter the centre point of a square and its width" %}
+          
+        {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['exemption-what-coordinate-system-radios'] %} Latitude and longitude
+        
+        {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %} Eastings and Northings
+
+        {% endif %}
+         
+        {% endif %}
       </dd>
       <dd class="govuk-summary-list__actions">
         <a class="govuk-link" href="what-coordinate-system.html">Change<span class="govuk-visually-hidden"> Which coordinate system do you want to use?</span></a>
@@ -247,7 +258,7 @@ Review site details
         Width of circle
       </dt>
       <dd class="govuk-summary-list__value">
-        {{ data['exemption-width-of-circle-number-input'] }}
+        {{ data['exemption-width-of-circle-number-input'] }} metres
       </dd>
       <dd class="govuk-summary-list__actions">
         <a class="govuk-link" href="width-of-circle?fromreview=true">Change<span class="govuk-visually-hidden"> Width of circle</span></a>
@@ -343,7 +354,7 @@ Review site details
         Width of square
       </dt>
       <dd class="govuk-summary-list__value">
-        {{ data['exemption-width-of-square-number-input'] }}
+        {{ data['exemption-width-of-square-number-input'] }} metres
       </dd>
       <dd class="govuk-summary-list__actions">
         <a class="govuk-link" href="width-of-square?fromreview=true">Change<span class="govuk-visually-hidden"> Width of square</span></a>
@@ -379,12 +390,24 @@ Review site details
 
   <!-- Start of enter multiple coords -->
   {% elif data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter multiple coordinates of the area" %}
+  <!--<div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+    <dt class="govuk-summary-list__key">
+      Coordinate units
+    </dt>
+    <dd class="govuk-summary-list__value">
+      Latitude, longitude 
+    </dd>
+    <dd class="govuk-summary-list__actions">
+      
+    </dd>
+  </div>-->
+  
   <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
     <dt class="govuk-summary-list__key">
       Start and end points
     </dt>
     <dd class="govuk-summary-list__value">
-      {{ data['coordinates-point-1-latitude'] }}, {{ data['coordinates-point-1-longitude'] }}
+      {{ data['coordinates-point-1-latitude'] }}, {{ data['coordinates-point-1-longitude'] }} 
     </dd>
     <dd class="govuk-summary-list__actions">
       <a class="govuk-link" href="enter-multiple-coordinates?fromreview=true">Change<span class="govuk-visually-hidden"> coordinates</span></a>
