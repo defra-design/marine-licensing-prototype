@@ -255,9 +255,7 @@ Check your answers before sending your information
     <dt class="govuk-summary-list__key">
       Map drawing
     </dt>
-    <dd class="govuk-summary-list__value">
-      
-    </dd>
+
     
   </div>
 
@@ -284,9 +282,6 @@ Check your answers before sending your information
   <dd class="govuk-summary-list__value">
     {{ data['exemption-how-do-you-want-to-provide-the-coordinates-radios'] }}
   </dd>
-  <dd class="govuk-summary-list__actions">
-    
-  </dd>
 </div>
 
 <!-- End of common to all coordinates-->
@@ -300,9 +295,6 @@ Check your answers before sending your information
   <dd class="govuk-summary-list__value">
     {{ data['exemption-which-type-of-file-radios'] }}
   </dd>
-  <dd class="govuk-summary-list__actions">
-    
-  </dd>
 </div>
 
 <div class="govuk-summary-list__row">
@@ -311,9 +303,6 @@ Check your answers before sending your information
   </dt>
   <dd class="govuk-summary-list__value">
     coordinates.kml
-  </dd>
-  <dd class="govuk-summary-list__actions">
-    
   </dd>
 </div>
 
@@ -327,9 +316,6 @@ Check your answers before sending your information
   <dt class="govuk-summary-list__key">
     Map view
   </dt>
-  <dd class="govuk-summary-list__value">
-    
-  </dd>
 </div>
 </dl>  
 
@@ -358,62 +344,41 @@ Check your answers before sending your information
   <dd class="govuk-summary-list__value">
     {{ data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] }}
   </dd>
-  <dd class="govuk-summary-list__actions">
-    
-  </dd>
+
 </div>
 
 <div class="govuk-summary-list__row">
   <dt class="govuk-summary-list__key">Which coordinate system do you want to use?
   </dt>
   <dd class="govuk-summary-list__value">
-    {{ data['exemption-what-coordinate-system-radios'] }}
+    {{ data['exemption-what-coordinate-system-radios'] }}<br> 
+        {% if data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter multiple coordinates of the area" or
+        data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter the centre point of a circle and its width" or
+        data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter the centre point of a square and its width" %}
+          
+        {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['exemption-what-coordinate-system-radios'] %} Latitude and longitude
+        
+        {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %} Eastings and Northings
+
+        {% endif %}
+         
+        {% endif %}
   </dd>
-  <dd class="govuk-summary-list__actions">
-    
-  </dd>
+  
 </div>
 
 <!-- Start of it's a circle -->
 {% if data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter the centre point of a circle and its width" %}
 <div class="govuk-summary-list__row">
   <dt class="govuk-summary-list__key">
-    {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['exemption-what-coordinate-system-radios'] %}
-                  
-    Latitude
-
-    {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
-
-    Eastings
-
-    {% endif %}
+    What are the coordinates of the centre of the circle?
   </dt>
   <dd class="govuk-summary-list__value">
-   {{ data['exemption-what-are-the-coordinates-of-the-circle-latitude-text-input'] }}
+   {{ data['exemption-what-are-the-coordinates-of-the-circle-latitude-text-input'] }}, {{ data['exemption-what-are-the-coordinates-of-the-circle-longitude-text-input'] }}
   </dd>
-  <dd class="govuk-summary-list__actions">
-    
-  </dd>
+  
 </div>
-<div class="govuk-summary-list__row">
-  <dt class="govuk-summary-list__key">
-    {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['exemption-what-coordinate-system-radios'] %}
-                  
-    Longitude
 
-    {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
-
-    Northings
-
-    {% endif %}
-  </dt>
-  <dd class="govuk-summary-list__value">
-   {{ data['exemption-what-are-the-coordinates-of-the-circle-longitude-text-input'] }}
-  </dd>
-  <dd class="govuk-summary-list__actions">
-    
-  </dd>
-</div>
 <div class="govuk-summary-list__row">
   <dt class="govuk-summary-list__key">
     Width of circle
@@ -421,9 +386,7 @@ Check your answers before sending your information
   <dd class="govuk-summary-list__value">
     {{ data['exemption-width-of-circle-number-input'] }} metres
   </dd>
-  <dd class="govuk-summary-list__actions">
-    
-  </dd>
+  
 </div>
 </dl>
 <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
@@ -434,9 +397,7 @@ Check your answers before sending your information
   <dt class="govuk-summary-list__key">
     Map view
   </dt>
-  <dd class="govuk-summary-list__value">
-    
-  </dd>
+  
 </div>
 </dl>   
 
@@ -454,42 +415,14 @@ Check your answers before sending your information
 {% elif data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter the centre point of a square and its width" %}
 <div class="govuk-summary-list__row">
   <dt class="govuk-summary-list__key">
-    {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['exemption-what-coordinate-system-radios'] %}
-                  
-    Latitude
-
-    {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
-
-    Eastings
-
-    {% endif %}
+    What are the coordinates of the centre of the square?
   </dt>
   <dd class="govuk-summary-list__value">
-   {{ data['exemption-what-are-the-coordinates-of-the-square-latitude-text-input'] }}
+   {{ data['exemption-what-are-the-coordinates-of-the-square-latitude-text-input'] }}, {{ data['exemption-what-are-the-coordinates-of-the-square-longitude-text-input'] }}
   </dd>
-  <dd class="govuk-summary-list__actions">
-    
-  </dd>
+  
 </div>
-<div class="govuk-summary-list__row">
-  <dt class="govuk-summary-list__key">
-    {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['exemption-what-coordinate-system-radios'] %}
-                  
-    Longitude
 
-    {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
-
-    Northings
-
-    {% endif %}
-  </dt>
-  <dd class="govuk-summary-list__value">
-   {{ data['exemption-what-are-the-coordinates-of-the-square-longitude-text-input'] }}
-  </dd>
-  <dd class="govuk-summary-list__actions">
-    
-  </dd>
-</div>
 <div class="govuk-summary-list__row">
   <dt class="govuk-summary-list__key">
     Width of square
@@ -497,9 +430,7 @@ Check your answers before sending your information
   <dd class="govuk-summary-list__value">
     {{ data['exemption-width-of-square-number-input'] }} metres
   </dd>
-  <dd class="govuk-summary-list__actions">
-    
-  </dd>
+  
 </div>
 </dl>
 
@@ -511,9 +442,7 @@ Check your answers before sending your information
   <dt class="govuk-summary-list__key">
     Map view
   </dt>
-  <dd class="govuk-summary-list__value">
-    
-  </dd>
+  
 </div>
 </dl>   
 
@@ -538,9 +467,7 @@ Check your answers before sending your information
 <dd class="govuk-summary-list__value">
   {{ data['coordinates-point-1-latitude'] }}, {{ data['coordinates-point-1-longitude'] }}
 </dd>
-<dd class="govuk-summary-list__actions">
-  
-</dd>
+
 </div>
 
 <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
@@ -550,9 +477,7 @@ Check your answers before sending your information
 <dd class="govuk-summary-list__value">
   {{ data['coordinates-point-2-latitude'] }}, {{ data['coordinates-point-2-longitude'] }}
 </dd>
-<dd class="govuk-summary-list__actions">
 
-</dd>
 </div>
 
 <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
@@ -562,9 +487,7 @@ Check your answers before sending your information
 <dd class="govuk-summary-list__value">
   {{ data['coordinates-point-3-latitude'] }}, {{ data['coordinates-point-3-longitude'] }}
 </dd>
-<dd class="govuk-summary-list__actions">
 
-</dd>
 </div>
 
 <!-- Only display Point 4 if data was entered -->
@@ -576,9 +499,7 @@ Check your answers before sending your information
 <dd class="govuk-summary-list__value">
   {{ data['coordinates-point-4-latitude'] }}, {{ data['coordinates-point-4-longitude'] }}
 </dd>
-<dd class="govuk-summary-list__actions">
 
-</dd>
 </div>
 {% endif %}
 
@@ -591,9 +512,7 @@ Check your answers before sending your information
 <dd class="govuk-summary-list__value">
   {{ data['coordinates-point-5-latitude'] }}, {{ data['coordinates-point-5-longitude'] }}
 </dd>
-<dd class="govuk-summary-list__actions">
 
-</dd>
 </div>
 {% endif %}
 </dl>
@@ -606,9 +525,7 @@ Check your answers before sending your information
 <dt class="govuk-summary-list__key">
   Map view
 </dt>
-<dd class="govuk-summary-list__value">
-  
-</dd>
+
 </div>
 </dl>  
 
