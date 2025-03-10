@@ -1,0 +1,151 @@
+{% extends "layouts/main.html" %}
+
+{% block header %}
+{{ govukHeader({
+    homepageUrl: "/",
+    serviceName: "Marine Management Organisation",
+    serviceUrl: ""
+  }) }}
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+About the prototype
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - Marine Management Organisation
+{% endblock %}
+
+{% block beforeContent %}
+{{ govukPhaseBanner({
+        tag: {
+          text: "Prototype"
+        },
+        html: ''
+      }) }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+
+    <div class="govuk-grid-column-two-thirds">
+      <strong class="govuk-tag govuk-tag--yellow" style="float:right">In progress</strong>
+      <h1 class="govuk-heading-xl">
+          {{ pageHeadingTextHTML }}
+        </h1>
+  
+        <p>This prototype is made using the <a href="https://prototype-kit.service.gov.uk/">GOV.UK Prototype Kit</a> and components and patterns from the the <a href="https://design-system.service.gov.uk/">GOV.UK Design System</a>.</p>
+
+        <h2 class="govuk-heading-m">User journeys worked on so far</h2>
+
+        <ul class="govuk-list govuk-list--bullet">
+          <li>Check if you need a marine licence</li>
+          <li>The exemption notification journey</li>
+        </ul>
+
+        <!--<p>The Check if you need a marine licence service guides you through questions and helps users determine whether their marine activity requires a licence or is exempt. You can view the live one here.</p>
+
+        <p>This is for activities that do not require a marine licence but MMO need to be notified of the activity.</p>
+
+        <p>The exemption notification journey starting with Check if you need a licence questions that allows for removal of sediment from the sea bed for scientific research.</p>-->
+
+
+        <h2 class="govuk-heading-m">Prototype limitations</h2>
+
+        <p>If you see a page titled 'Journey end' it means either a feature you've selected isn't available or you need to go back and answer a question differently.</p>
+
+        <h2 class="govuk-heading-m">Drawing on a map</h2>
+
+        <p>For drawing an area/site on a map, the prototype uses the map software that the 2024 alpha were using and developing. This has some limitations in terms of usability and accessibility and we have been investigating other fully accessible options that could be used instead, including the Flood risk map that is being developed within Defra.</p>
+
+        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
+        <h2 class="govuk-heading-m">Iteration 1</h2>
+
+        <p>The exemption notification journey starting with Check if you need a licence questions that allows for answering questions relating to removal of sediment from the sea bed for scientific research.</p>
+
+        <p>Linear journey with no account creation / sign in required.</p>
+
+        <p>Pete, our Content Designer, worked on the Check if you need a licence questions making sure they followed the Government Digital Service style guide and restructuring the question format where necessary.</p>
+
+        <p>The Marine Protected Areas (MPA) question (/versions/2025-01-27/check/marine-protected-areas), links to an arcgis mapping tool which has various layers on it to help identify different areas. This is linked to from the live service, but in the prototype the map loads with only the MPA layer visible, rather than all of them, which is currently the case in live.</p>
+
+        <p>Out of the location details options the available ones are draw on a map and specify the centre of a square and its width.</p>
+
+        <p>[Link to Mural or Figma board to show the journey]</p>
+
+        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
+        <h2 class="govuk-heading-m">Iteration 2</h2>
+
+        <p>Based on the UR feedback some of the Check if you need a licence questions were updated with different or new content, but we also added in new pages to allow us to test a different scenario more appropriate for novice users - pontoon construction in a residential setting.</p>
+
+        <p>Features added:</p>
+        <ul class="govuk-list govuk-list--bullet">
+          <li>File with coordinates upload options, with KML file upload the one that works</li>
+          <li>Specifying centre of a circle and it's width as the location</li>
+          <li>Manually entering multiple coordinates of the area</li>
+          <li>Specifying which coordinate system is used for coordinate entry</li>
+          <li>Check answers and review location now uses Cards style summary lists, with location changes happening only on the Review your location page with a single link to that page from Check answers</li>
+        </ul>
+
+        <p>We didn't have time to iterate all the recommendations from all the UR feedback (specifically dates guidance and duplication of project and activity details), as we were waiting for a response from the legal team.</p>
+
+        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
+        <h2 class="govuk-heading-m">Iteration 3</h2>
+
+        <p>For this iteration we wanted to explore users needing a Defra account to send the exemption notification information. Part of the reason being enabling users to save and comeback later - for example if they needed to get coordinates or check on the dates of the activity.</p>
+
+        <p>The design switches from being linear to using the task list component, which enables users to see all sections that need to be completed and to do that in the order they choose. Using this pattern would also be beneficial for the more complex standard marine licence and self-service marine licence when those come to be designed and developed.</p>
+
+        <p>The prototype journey assumes the user already has a Defra account and Government Gateway account which the user signs in with.</p>
+
+        <p>Various questions in the Check if you need a licence journey were updated with different or new content.</p>
+
+        <p>Provide site details (formerly location details) has been simplified to ask if the user has site coordinates and if not show them the map and if they do then ask whether they want to enter them manually or upload them in a file. Previously with the 3 options on that page the novice users found the page daunting.</p>
+
+        <p>Hint text has been added to the project name page and start and end dates pages.</p>
+
+        <p>Project background and activity details text fields have been removed completely as legal said they weren't required.</p>
+
+        <p>A summary of the activity the user has picked from the Check if you need a licence journey is played back on the Check answers page.</p>
+
+        <p>The file upload component was updated so it uses the latest improved version from the Design System.</p>
+
+        <p>Cancel links were added next to the Save and continue buttons but they became complicated as users could be coming from the task list or the review and check answers page. As time was limited these were taken out but we would need to include them for the developed service.</p>
+
+        <p>Being able to add multiple sites would also need to be an option. Early on designs were done in Figma, but those designs would need to be reviewed and updated.</p>
+
+         
+    </div>
+
+    <!-- Right 3rd of the home screen.   Mostly admin stuff  -->
+    <div class="govuk-grid-column-one-third govuk-!-margin-top-9 govuk-!-padding-left-8">
+        <p class="govuk-!-margin-top-6" style="border-top: 2px solid #1d70b8; margin-bottom: 30px;">
+
+          <div class="govuk-!-margin-bottom-7">
+            <h3 class="govuk-heading-s govuk-!-margin-top-3">2025 alpha</h3> 
+            <p><a href="#">About each iteration</a></p>   
+    </div>  
+
+        <div class="govuk-!-margin-bottom-7">
+                <h3 class="govuk-heading-s govuk-!-margin-top-3">Previous alpha</h3> 
+                <p><a href="alpha-2024.html">2024 prototype</a></p>   
+        </div>
+
+        <div class="govuk-!-margin-bottom-7">
+            <h3 class="govuk-heading-s govuk-!-margin-top-3">For designers</h3>
+            <p><a href="templates/a-list-of-templates">Templates </a></p>
+            <p><a href="templates/a-list-of-helpful-features">Helpful features</a></p>
+            <p><a href="documentation">Documentation</a></p>
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}
