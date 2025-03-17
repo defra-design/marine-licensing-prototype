@@ -3,7 +3,7 @@
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-Will 10 or more pontoons have been built at the location in the 6 months before the activity begins?
+In the 6 months before the activity begins, will more than 10 pontoons have been built by, or with consent of, the harbour authority?  
 {% endset %}
 
 
@@ -55,7 +55,7 @@ Will 10 or more pontoons have been built at the location in the 6 months before 
             <h1 class="govuk-heading-l">
                 {{ pageHeadingTextHTML }}
             </h1>
-
+            <p class="govuk-hint">Check with the appropriate harbour authority if you’re unsure. </p>
             {{ govukRadios
                 ({
                     name: "check-10-pontoons-or-more",
