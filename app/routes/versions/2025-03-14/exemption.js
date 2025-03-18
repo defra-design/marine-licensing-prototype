@@ -356,9 +356,6 @@ router.post('/' + version + section + 'how-do-you-want-to-enter-the-coordinates-
         case "Enter the centre point of a circle and its width":
             req.session.data['coords-type'] = 'coords-circle';
             break;
-        case "Enter the centre point of a square and its width":
-            req.session.data['coords-type'] = 'coords-square';
-            break;
         case "Enter multiple coordinates of the area":
             req.session.data['coords-type'] = 'coords-multiple';
             break;
