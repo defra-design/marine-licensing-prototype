@@ -29,7 +29,7 @@ router.post('/' + version + section + 'where-will-the-activity-take-place-router
         case "In or over the sea":
         case "On or under the seabed":
         case "In a river, estuary, or channel, up to the normal tidal limit at mean high water spring tide":
-        case "Waters in closed areas, such as docks, where seawater can flow in or out":
+        case "Waters in a closed area, such as a dock, where seawater can flow in or out":
             res.redirect('in-which-waters');
             break;
         case "Somewhere else":
