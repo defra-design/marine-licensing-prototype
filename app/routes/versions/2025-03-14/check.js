@@ -5,38 +5,40 @@ module.exports = function (router)
     let section = "check/";
 
 
-/////////////////////////////////////////////////////////////////////////////////////////////
-// Where will the activity take place? 
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Where will the activity take place?
 // COMPLEX PAGE OF RADIO BUTTONS
 /////////////////////////////////////////////////////////////////////////////////////////////
-router.post('/' + version + section + 'where-will-the-activity-take-place-router', function (req, res)
-{
+
+router.post('/' + version + section + 'where-will-the-activity-take-place-router', function (req, res) {
     // Turn errors off by default
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
 
-    // If Yes was selected, continue to next page
-    if (req.session.data['check-where-will-the-activity-take-place-radios'] == "Yes")
-    {
-        // This page name needs to match the page the user was just on
-        res.redirect('in-which-waters');    
-    }
-    else if (req.session.data
-    ['check-where-will-the-activity-take-place-radios'] == "No")
-    {
-        // This page name needs to match the page the user was just on
-        res.redirect('marine-licence-not-required-sea');
-    }
-    else
-    {
-        // Trigger validation and reload the page
+    const selection = req.session.data['check-where-will-the-activity-take-place-radios'];
+
+    if (!selection) {
         req.session.data['errorthispage'] = "true";
         req.session.data['errortypeone'] = "true";
-
-        // This page name needs to match the page the user was just on
         res.redirect('where-will-the-activity-take-place');
+        return;
     }
-})
+
+    // Route based on selection
+    switch(selection) {
+        case "In or over the sea":
+        case "On or under the seabed":
+        case "In a river, estuary, or channel, up to the normal tidal limit at mean high water spring tide":
+        case "Waters in closed areas, such as docks, where seawater can flow in or out":
+            res.redirect('in-which-waters');
+            break;
+        case "Somewhere else":
+            res.redirect('marine-licence-not-required-sea');
+            break;
+        default:
+            res.redirect('where-will-the-activity-take-place');
+    }
+});
 
 ////////////////////////////////////////////////////////////////////////////////////////////
 // The waters in which the activity will take place 

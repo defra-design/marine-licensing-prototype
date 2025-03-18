@@ -1,22 +1,9 @@
 {% extends "../layouts/main.html" %}
 
-<!--
-NOTES ON USING THIS TEMPLATE Page
-This will save you time.
-
-1. Put your heading for the page after '% set pageHeadingTextHTML %'
-2. Put your question heading for the page after '% set questionHeadingTextHTML %'
-3. Type/customise the error message after '% set errorTextHTML %'
-4. Use 'Find and replace' to replace "SECTION" with the name of the section of the service you're working on.
-5. Use 'Find and replace' to replace "PAGENAME_RADIOS_COMPLEX" with whatever you named this page/file.
-6. Use 'Find and replace' to replace each of the radio button values. Starting with 'xxxx'
-7. Go to the javascript file 'templates.js' and copy the section 'COMPLEX PAGE OF RADIO BUTTONS' into your routes.js file.
-8. Follow instructions at the top of the 'templates.js'.
--->
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-Will the activity take place in or over the sea? 
+Where will the activity take place?  
 {% endset %}
 
 <!-- Setting the heading caption -->
@@ -34,7 +21,7 @@ Will the activity take place in the sea, over the sea, or on or under the seabed
 {% set errorTextHTML %}
     <!-- Nothing was selected -->
     {% if data['errortypeone'] == "true" %}
-    Select whether the activity will take place in the sea, over the sea, or on or under the seabed?
+    Select where the activity will take place  
     {% endif %}
 {% endset %}
 
@@ -79,15 +66,7 @@ Will the activity take place in the sea, over the sea, or on or under the seabed
                 {{ pageHeadingTextHTML }}
             </h1>
 
-            <p>The sea includes:</p>
-            <ul class="govuk-list govuk-list--bullet">
-                <li>any area submerged at mean high water spring tide</li>
-                <li>estuaries, rivers, or channels, as far as the tide flows at mean high water spring tide</li>
-                <li>waters in generally closed areas, such as docks, where seawater can flow in or out</li>
-                <li>the seabed and subsoil</li>
-            </ul>
-
-			<p>Find out more about <a href="https://www.gov.uk/guidance/marine-licensing-definitions" target="_blank" rel="noreferrer noopener">mean high water springs (opens in new tab)</a></p>
+            <p>Find out more about <a href="https://www.gov.uk/guidance/marine-licensing-definitions" target="_blank" rel="noreferrer noopener">mean high water springs (opens in new tab)</a></p>
 
             {{ govukRadios
                 ({
@@ -111,14 +90,38 @@ Will the activity take place in the sea, over the sea, or on or under the seabed
                     items:
                     [
                         {
-                            value: "Yes",
-                            text: "Yes",
-                            checked: data['check-where-will-the-activity-take-place-radios'] == "Yes"
+                            value: "In or over the sea",
+                            text: "In or over the sea",
+                            checked: data['check-where-will-the-activity-take-place-radios'] == "In or over the sea",
+                            hint: {
+                                text: "The sea includes any area submerged at mean high water springs"
+                              }
                         },
                         {
-                            value: "No",
-                            text: "No",
-                            checked: data['check-where-will-the-activity-take-place-radios'] == "No"
+                            value: "On or under the seabed",
+                            text: "On or under the seabed",
+                            checked: data['check-where-will-the-activity-take-place-radios'] == "On or under the seabed"
+                        },
+                        {
+                            value: "In a river, estuary, or channel, up to the normal tidal limit at mean high water spring tide",
+                            text: "In a river, estuary, or channel, up to the normal tidal limit at mean high water spring tide",
+                            checked: data['check-where-will-the-activity-take-place-radios'] == "In a river, estuary, or channel, up to the normal tidal limit at mean high water spring tide"
+                        },
+                        {
+                            value: "Waters in closed areas, such as docks, where seawater can flow in or out",
+                            text: "Waters in closed areas, such as docks, where seawater can flow in or out",
+                            checked: data['check-where-will-the-activity-take-place-radios'] == "Waters in closed areas, such as docks, where seawater can flow in or out"
+                        },
+                        {
+                            divider: "or"
+                          },
+                        {
+                            value: "Somewhere else",
+                            text: "Somewhere else",
+                            checked: data['check-where-will-the-activity-take-place-radios'] == "Somewhere else",
+                            hint: {
+                                text: "For example, the part of beach above mean high water springs, or a land locked body of water, such as a lake"
+                              }
                         }
                     ]
                 })
