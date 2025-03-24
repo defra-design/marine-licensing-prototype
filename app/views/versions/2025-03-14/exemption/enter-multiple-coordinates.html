@@ -14,23 +14,10 @@
 
 
 <!-- Set the text for each error type -->
+<!-- Set the text for each error type -->
 {% set errorTextHTML %}
-    <!-- Error 1 - No answer selected -->
-    {% if data['errortypeone'] == "true" %}
-    Enter the latitude coordinate
-
-    <!-- Error 2 - If answer is too long -->
-    {% elif data['errortypetwo'] == "true" %}
-    Enter the longitude coordinate
-
-<!-- Error 3 - If answer is too short -->
-    {% elif data['errortypethree'] == "true" %}
-    Enter the latitude coordinate
-
-    <!-- Error 4 - If answer has characters that aren't allowed and you know what the characters are -->
-    {% elif data['errortypefour'] == "true" %}
-        Enter a valid longitude
-
+    {% if data['errorlatitudelongitude'] == "true" %}
+      Enter the latitude and longitude coordinates
     {% endif %}
 {% endset %}
 
@@ -53,19 +40,20 @@
 
         <!-- ERROR LOGIC 'error summary' -->
         {% if data['errorthispage'] == "true" %}
-            {{ govukErrorSummary
-                ({
-                    titleText: "There is a problem",
-                    errorList:
-                    [
-                        {
-                            html: errorTextHTML,
-                            href: "#exemption-circle-centre-coordinates-text-input"  if data['errorthispage'] != "true" or  data['errortypeone'] == 'true' or  data['errortypethree'] == 'true'
-                                    else "#exemption-enter-multiple-coordinates-longitude-text-input"
-                        }
-                    ]
-                })
-            }}
+        <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+            <h2 class="govuk-error-summary__title" id="error-summary-title">
+            There is a problem
+            </h2>
+            <div class="govuk-error-summary__body">
+            <ul class="govuk-list govuk-error-summary__list">
+                {% for error in data['errors'] %}
+                <li>
+                    <a href="#{{ error.anchor }}">{{ error.text }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+            </div>
+        </div>
         {% endif %}
         <!--  END OF 'error summary' -->
 
@@ -88,7 +76,7 @@
         <!-- go to routes.js for routing  -->
         <form action="enter-multiple-coordinates-router" method="post" novalidate>
 
-            <dl class="govuk-summary-list govuk-!-margin-bottom-3 multiple-coordinates">
+            <dl class="govuk-summary-list govuk-!-margin-bottom-3 multiple-coordinates" style>
 
                 <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
@@ -122,7 +110,13 @@
 
                             {% endif %}
 						  </label>
-                        <input class="govuk-input" id="coordinates-point-1-latitude" name="coordinates-point-1-latitude" type="text" value="{{ data['coordinates-point-1-latitude'] }}" autocomplete="off">
+
+                          <input class="govuk-input{% if data['error-coordinates-point-1-latitude'] == 'true' %} govuk-input--error{% endif %}" 
+                                id="coordinates-point-1-latitude" 
+                                name="coordinates-point-1-latitude" 
+                                type="text" 
+                                value="{{ data['coordinates-point-1-latitude'] }}" 
+                                autocomplete="off">
                     </dd>
                     <dd class="govuk-summary-list__value">
 						<label class="govuk-label govuk-visually-hidden" for="coordinates-point-1-longitude">
@@ -135,7 +129,12 @@
 
                             {% endif %}
 						  </label>
-                        <input class="govuk-input" id="coordinates-point-1-longitude" name="coordinates-point-1-longitude" type="text" value="{{ data['coordinates-point-1-longitude'] }}" autocomplete="off">
+                          <input class="govuk-input{% if data['error-coordinates-point-1-longitude'] == 'true' %} govuk-input--error{% endif %}" 
+                            id="coordinates-point-1-longitude" 
+                            name="coordinates-point-1-longitude" 
+                            type="text" 
+                            value="{{ data['coordinates-point-1-longitude'] }}" 
+                            autocomplete="off">    
                     </dd>
                     <dd class="govuk-summary-list__value">
                         
@@ -160,7 +159,12 @@
                             {% endif %}
 						  </label>
 
-                        <input class="govuk-input" id="coordinates-point-2-latitude" name="coordinates-point-2-latitude" type="text" value="{{ data['coordinates-point-2-latitude'] }}" autocomplete="off">
+                          <input class="govuk-input{% if data['error-coordinates-point-2-latitude'] == 'true' %} govuk-input--error{% endif %}" 
+                          id="coordinates-point-2-latitude" 
+                          name="coordinates-point-2-latitude" 
+                          type="text" 
+                          value="{{ data['coordinates-point-2-latitude'] }}" 
+                          autocomplete="off">
                     </dd>
                     <dd class="govuk-summary-list__value">
                         <label class="govuk-label govuk-visually-hidden" for="coordinates-point-2-longitude">
@@ -174,7 +178,13 @@
 
                             {% endif %}
 						  </label>
-                        <input class="govuk-input" id="coordinates-point-2-longitude" name="coordinates-point-2-longitude" type="text" value="{{ data['coordinates-point-2-longitude'] }}" autocomplete="off">
+
+                        <input class="govuk-input{% if data['error-coordinates-point-2-longitude'] == 'true' %} govuk-input--error{% endif %}" 
+                            id="coordinates-point-2-longitude" 
+                            name="coordinates-point-2-longitude" 
+                            type="text" 
+                            value="{{ data['coordinates-point-2-longitude'] }}" 
+                            autocomplete="off">
                     </dd>
                     <dd class="govuk-summary-list__value">
                         
@@ -197,7 +207,14 @@
 
                             {% endif %}
 						  </label>
-                        <input class="govuk-input" id="coordinates-point-3-latitude" name="coordinates-point-3-latitude" type="text" value="{{ data['coordinates-point-3-latitude'] }}" autocomplete="off">
+
+                          <input class="govuk-input{% if data['error-coordinates-point-3-latitude'] == 'true' %} govuk-input--error{% endif %}" 
+                          id="coordinates-point-3-latitude" 
+                          name="coordinates-point-3-latitude" 
+                          type="text" 
+                          value="{{ data['coordinates-point-3-latitude'] }}" 
+                          autocomplete="off">
+
                     </dd>
                     <dd class="govuk-summary-list__value">
                         <label class="govuk-label govuk-visually-hidden" for="coordinates-point-3-longitude">
@@ -211,7 +228,14 @@
 
                             {% endif %}
 						  </label>
-                        <input class="govuk-input" id="coordinates-point-3-longitude" name="coordinates-point-3-longitude" type="text" value="{{ data['coordinates-point-3-longitude'] }}" autocomplete="off">
+                        
+                          <input class="govuk-input{% if data['error-coordinates-point-3-longitude'] == 'true' %} govuk-input--error{% endif %}" 
+                          id="coordinates-point-3-longitude" 
+                          name="coordinates-point-3-longitude" 
+                          type="text" 
+                          value="{{ data['coordinates-point-3-longitude'] }}" 
+                          autocomplete="off">
+                          
                     </dd>
                     <dd class="govuk-summary-list__value">
                         

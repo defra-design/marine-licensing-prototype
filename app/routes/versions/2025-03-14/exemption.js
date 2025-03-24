@@ -112,6 +112,58 @@ router.post('/' + version + section + 'project-name-router', function (req, res)
     }
 });
 
+
+
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+// Activity dates
+// DATE ENTRY -  both start and end
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+router.post('/' + version + section + 'activity-dates-router', function (req, res) {
+    // Reset separate error flags
+    req.session.data['startdateerror'] = "false";
+    req.session.data['enddateerror'] = "false";
+
+    // Retrieve the start date values
+    const startDay   = req.session.data['exemption-start-date-date-input-day'];
+    const startMonth = req.session.data['exemption-start-date-date-input-month'];
+    const startYear  = req.session.data['exemption-start-date-date-input-year'];
+
+    // Retrieve the end date values
+    const endDay   = req.session.data['exemption-end-date-date-input-day'];
+    const endMonth = req.session.data['exemption-end-date-date-input-month'];
+    const endYear  = req.session.data['exemption-end-date-date-input-year'];
+
+    // Check if the start date is missing any field
+    if (!startDay || !startMonth || !startYear) {
+        req.session.data['startdateerror'] = "true";
+    }
+
+    // Check if the end date is missing any field
+    if (!endDay || !endMonth || !endYear) {
+        req.session.data['enddateerror'] = "true";
+    }
+
+    // If either date is incomplete, redirect back to show the errors
+    if (req.session.data['startdateerror'] === "true" || req.session.data['enddateerror'] === "true") {
+        return res.redirect('activity-dates');
+    }
+
+    // If we reach here, both dates have been fully entered
+    req.session.data['exempt-information-2-status'] = 'completed';
+
+    // Check if we need to return to the check answers page
+    if (req.session.data['camefromcheckanswers'] === 'true') {
+        req.session.data['camefromcheckanswers'] = false;
+        return res.redirect('check-answers#about-your-activity');
+    }
+
+    // Otherwise, go to the task list
+    return res.redirect('task-list');
+});
+
+
 ///////////////////////////////////////////////////////////////////////////////////////////////
 // Start Date
 // DATE ENTRY
@@ -541,14 +593,71 @@ router.post('/' + version + section + 'width-of-square-router', function (req, r
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 router.post('/' + version + section + 'enter-multiple-coordinates-router', function (req, res) {
-    req.session.data['siteTitle'] = 'review';
-    // If coming from review page, go back to review
-    if (req.query.fromreview) {
-        res.redirect('review-location');
-    } else {
-        res.redirect('review-location');
+    // Clear any previous error flags for the 6 fields
+    req.session.data['error-coordinates-point-1-latitude'] = '';
+    req.session.data['error-coordinates-point-1-longitude'] = '';
+    req.session.data['error-coordinates-point-2-latitude'] = '';
+    req.session.data['error-coordinates-point-2-longitude'] = '';
+    req.session.data['error-coordinates-point-3-latitude'] = '';
+    req.session.data['error-coordinates-point-3-longitude'] = '';
+  
+    // Define the points with anchors for each coordinate field
+    const points = [
+      {
+        lat: req.session.data['coordinates-point-1-latitude'],
+        lng: req.session.data['coordinates-point-1-longitude'],
+        label: 'the start and end point',
+        latAnchor: 'coordinates-point-1-latitude',
+        lngAnchor: 'coordinates-point-1-longitude'
+      },
+      {
+        lat: req.session.data['coordinates-point-2-latitude'],
+        lng: req.session.data['coordinates-point-2-longitude'],
+        label: 'point 2',
+        latAnchor: 'coordinates-point-2-latitude',
+        lngAnchor: 'coordinates-point-2-longitude'
+      },
+      {
+        lat: req.session.data['coordinates-point-3-latitude'],
+        lng: req.session.data['coordinates-point-3-longitude'],
+        label: 'point 3',
+        latAnchor: 'coordinates-point-3-latitude',
+        lngAnchor: 'coordinates-point-3-longitude'
+      }
+    ];
+  
+    // Build error messages array
+    let errors = [];
+  
+    points.forEach((point) => {
+      const latEmpty = !point.lat || point.lat.trim() === '';
+      const lngEmpty = !point.lng || point.lng.trim() === '';
+  
+      if (latEmpty && lngEmpty) {
+        errors.push({ text: `Enter the latitude and longitude coordinates of ${point.label}`, anchor: point.latAnchor });
+        req.session.data['error-' + point.latAnchor] = 'true';
+        req.session.data['error-' + point.lngAnchor] = 'true';
+      } else if (latEmpty) {
+        errors.push({ text: `Enter the latitude coordinates of ${point.label}`, anchor: point.latAnchor });
+        req.session.data['error-' + point.latAnchor] = 'true';
+      } else if (lngEmpty) {
+        errors.push({ text: `Enter the longitude coordinates of ${point.label}`, anchor: point.lngAnchor });
+        req.session.data['error-' + point.lngAnchor] = 'true';
+      }
+    });
+  
+    // If there are any errors, set the error flag and store the errors array
+    if (errors.length > 0) {
+      req.session.data['errorthispage'] = 'true';
+      req.session.data['errors'] = errors;
+      return res.redirect('enter-multiple-coordinates');
     }
-});
+  
+    // Otherwise, clear errors and proceed
+    req.session.data['errorthispage'] = 'false';
+    req.session.data['errors'] = [];
+    return res.redirect('review-location');
+  });
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////

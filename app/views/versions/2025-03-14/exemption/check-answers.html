@@ -166,8 +166,15 @@ Check your answers before sending your information
     <div class="govuk-summary-card">
       <div class="govuk-summary-card__title-wrapper">
         <h2 class="govuk-summary-card__title">
-          Dates of the activity
+          Activity dates
         </h2>
+
+        <ul class="govuk-summary-card__actions">
+          <li class="govuk-summary-card__action">
+            <a class="govuk-link" href="activity-dates.html">Change<span class="govuk-visually-hidden"> Activity dates</span></a>
+          </li>
+        </ul>
+        
       </div>
       <div class="govuk-summary-card__content">
 
@@ -190,9 +197,6 @@ Check your answers before sending your information
           {% set formattedDate = data['exemption-start-date-date-input-year'] + '-' + paddedMonth + '-' + paddedDay %}
           {{ formattedDate | govukDate }}
         </dd>
-        <dd class="govuk-summary-list__actions">
-          <a class="govuk-link" href="start-date?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Estimated start date</span></a>
-        </dd>
       </div>
       <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">
@@ -211,9 +215,6 @@ Check your answers before sending your information
 
           {% set formattedDate = data['exemption-end-date-date-input-year'] + '-' + paddedMonth + '-' + paddedDay %}
           {{ formattedDate | govukDate }}
-        </dd>
-        <dd class="govuk-summary-list__actions">
-          <a class="govuk-link" href="end-date?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> End date</span></a>
         </dd>
       </div>
     </dl>
@@ -582,6 +583,13 @@ Check your answers before sending your information
       <h2 class="govuk-summary-card__title">
         Public register
       </h2>
+
+      <ul class="govuk-summary-card__actions">
+        <li class="govuk-summary-card__action">
+          <a class="govuk-link" href="public-register?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Do you believe the information you have provided should be withheld from the public register?</span></a>
+        </li>
+      </ul>
+
     </div>
     <div class="govuk-summary-card__content">
 
@@ -593,9 +601,6 @@ Check your answers before sending your information
       <dd class="govuk-summary-list__value">
         {{ data['exemption-public-register-radios'] }}
       </dd>
-      <dd class="govuk-summary-list__actions">
-        <a class="govuk-link" href="public-register?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Do you believe the information you have provided should be withheld from the public register?</span></a>
-      </dd>
     </div>
 
     {% if data['exemption-public-register-radios'] == "Yes" %}
@@ -606,9 +611,7 @@ Check your answers before sending your information
       <dd class="govuk-summary-list__value">
       {{ data['exemption-public-register-text-area'] }}
       </dd>
-      <dd class="govuk-summary-list__actions">
-      <a class="govuk-link" href="public-register?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Provide details of why the information should be withheld</span></a>
-      </dd>
+
     </div>
     {% endif %}
   </dl>
