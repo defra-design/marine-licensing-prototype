@@ -353,8 +353,8 @@ Check your answers before sending your information
   </dt>
   <dd class="govuk-summary-list__value">
     {{ data['exemption-what-coordinate-system-radios'] }}<br> 
-        {% if data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter multiple coordinates of the area" or
-        data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter the centre point of a circle and its width" or
+        {% if data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter multiple pairs of coordinates to mark the boundary of the site" or
+        data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter a pair of coordinates (one point) and a width to create a circular site" or
         data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter the centre point of a square and its width" %}
           
         {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['exemption-what-coordinate-system-radios'] %} Latitude and longitude
@@ -369,23 +369,23 @@ Check your answers before sending your information
 </div>
 
 <!-- Start of it's a circle -->
-{% if data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter the centre point of a circle and its width" %}
+{% if data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter a pair of coordinates (one point) and a width to create a circular site" %}
 <div class="govuk-summary-list__row">
   <dt class="govuk-summary-list__key">
-    What are the coordinates of the centre of the circle?
+    Enter the coordinates at the centre point of the site
   </dt>
   <dd class="govuk-summary-list__value">
-   {{ data['exemption-what-are-the-coordinates-of-the-circle-latitude-text-input'] }}, {{ data['exemption-what-are-the-coordinates-of-the-circle-longitude-text-input'] }}
+   {{ data['exemption-enter-the-coordinates-at-the-centre-point-latitude-text-input'] }}, {{ data['exemption-enter-the-coordinates-at-the-centre-point-longitude-text-input'] }}
   </dd>
   
 </div>
 
 <div class="govuk-summary-list__row">
   <dt class="govuk-summary-list__key">
-    Width of circle
+    Width of site
   </dt>
   <dd class="govuk-summary-list__value">
-    {{ data['exemption-width-of-circle-number-input'] }} metres
+    {{ data['exemption-width-of-site-number-input'] }} metres
   </dd>
   
 </div>
@@ -460,7 +460,7 @@ Check your answers before sending your information
 <!-- End of square -->
 
 <!-- Start of enter multiple coords -->
-{% elif data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter multiple coordinates of the area" %}
+{% elif data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter multiple pairs of coordinates to mark the boundary of the site" %}
 <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
 <dt class="govuk-summary-list__key">
   Start and end points

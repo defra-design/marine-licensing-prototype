@@ -78,14 +78,20 @@ How do you want to enter the coordinates?
                     items:
                     [
                         {
-                            value: "Enter the centre point of a circle and its width",
-                            text: "Enter the centre point of a circle and its width",
-                            checked: data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter the centre point of a circle and its width"
+                            value: "Enter a pair of coordinates (one point) and a width to create a circular site",
+                            text: "Enter a pair of coordinates (one point) and a width to create a circular site",
+                            hint: {
+                                text: "Use this if you know the centre point of the site and it isn’t a custom shape"
+                              },
+                            checked: data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter a pair of coordinates (one point) and a width to create a circular site"
                         },
                         {
-                            value: "Enter multiple coordinates of the area",
-                            text: "Enter multiple coordinates of the area",
-                            checked: data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter multiple coordinates of the area"
+                            value: "Enter multiple pairs of coordinates to mark the boundary of the site",
+                            text: "Enter multiple pairs of coordinates to mark the boundary of the site",
+                            hint: {
+                                text: "Use this if the site is a custom shape with more than one point, like a square"
+                              },
+                            checked: data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter multiple pairs of coordinates to mark the boundary of the site"
                         }
                     ]
                 })

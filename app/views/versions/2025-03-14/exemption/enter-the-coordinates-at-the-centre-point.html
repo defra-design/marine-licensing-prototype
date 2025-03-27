@@ -9,7 +9,7 @@
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-What are the coordinates of the centre of the circle?
+Enter the coordinates at the centre point of the site
 {% endset %}
 
 <!-- Setting the smaller secondary headings lower down the page -->
@@ -40,7 +40,7 @@ What are the coordinates of the centre of the circle?
 
 <!-- Set the text for each error type -->
 {% set errorTextHTML %}
-    
+    Enter the coordinates
 {% endset %}
 
 
@@ -68,8 +68,10 @@ What are the coordinates of the centre of the circle?
     <div class="govuk-error-summary__body">
         <ul class="govuk-list govuk-error-summary__list">
             {% if data['errortypeone'] == "true" %}
-                
-            
+            <li><a href="#">Enter the coordinates</a></li> 
+            {% endif %}
+            {% if data['errortypetwo'] == "true" %}
+            <li><a href="#">Enter the coordinates</a></li> 
             {% endif %}
         </ul>
     </div>
@@ -77,7 +79,7 @@ What are the coordinates of the centre of the circle?
 {% endif %}
 
         <!-- go to routes.js for routing  -->
-        <form action="what-are-the-coordinates-of-the-circle-router{% if query.fromreview %}?fromreview=true{% endif %}" method="post" novalidate>
+        <form action="enter-the-coordinates-at-the-centre-point-router{% if query.fromreview %}?fromreview=true{% endif %}" method="post" novalidate>
 
             {% call govukFieldset({
                 legend: {
@@ -108,14 +110,14 @@ What are the coordinates of the centre of the circle?
             
                     autocomplete: "off",
 
-                    id: "exemption-what-are-the-coordinates-of-the-circle-latitude-text-input",
+                    id: "exemption-enter-the-coordinates-at-the-centre-point-latitude-text-input",
             
-                    name: "exemption-what-are-the-coordinates-of-the-circle-latitude-text-input",
+                    name: "exemption-enter-the-coordinates-at-the-centre-point-latitude-text-input",
             
                     errorMessage: null if data['errortypeone'] != "true"
                                    else { html: errorTextHTML },
             
-                    value: data['exemption-what-are-the-coordinates-of-the-circle-latitude-text-input'],
+                    value: data['exemption-enter-the-coordinates-at-the-centre-point-latitude-text-input'],
             
                     classes: "govuk-input govuk-!-width-one-half"
                 })
@@ -132,14 +134,14 @@ What are the coordinates of the centre of the circle?
             
                     autocomplete: "off",
 
-                    id: "exemption-what-are-the-coordinates-of-the-circle-longitude-text-input",
+                    id: "exemption-enter-the-coordinates-at-the-centre-point-longitude-text-input",
             
-                    name: "exemption-what-are-the-coordinates-of-the-circle-longitude-text-input",
+                    name: "exemption-enter-the-coordinates-at-the-centre-point-longitude-text-input",
             
                     errorMessage: null if data['errortypetwo'] != "true"
                                    else { html: errorTextHTML },
             
-                    value: data['exemption-what-are-the-coordinates-of-the-circle-longitude-text-input'],
+                    value: data['exemption-enter-the-coordinates-at-the-centre-point-longitude-text-input'],
             
                     classes: "govuk-input govuk-!-width-one-half"
                 })

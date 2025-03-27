@@ -10,9 +10,9 @@ delete session.data['sites-drawn-coordinates'];
 
 function clearCoordinateData(session) {
     // Clear circle data
-    delete session.data['exemption-what-are-the-coordinates-of-the-circle-latitude-text-input'];
-    delete session.data['exemption-what-are-the-coordinates-of-the-circle-longitude-text-input'];
-    delete session.data['exemption-width-of-circle-number-input'];
+    delete session.data['exemption-enter-the-coordinates-at-the-centre-point-latitude-text-input'];
+    delete session.data['exemption-enter-the-coordinates-at-the-centre-point-longitude-text-input'];
+    delete session.data['exemption-width-of-site-number-input'];
     
     // Clear square data
     delete session.data['exemption-what-are-the-coordinates-of-the-square-latitude-text-input'];
@@ -62,9 +62,9 @@ function clearCoordinateType(session) {
 
 function clearCoordinateValues(session) {
     // Clear circle data
-    delete session.data['exemption-what-are-the-coordinates-of-the-circle-latitude-text-input'];
-    delete session.data['exemption-what-are-the-coordinates-of-the-circle-longitude-text-input'];
-    delete session.data['exemption-width-of-circle-number-input'];
+    delete session.data['exemption-enter-the-coordinates-at-the-centre-point-latitude-text-input'];
+    delete session.data['exemption-enter-the-coordinates-at-the-centre-point-longitude-text-input'];
+    delete session.data['exemption-width-of-site-number-input'];
     
     // Clear square data
     delete session.data['exemption-what-are-the-coordinates-of-the-square-latitude-text-input'];
@@ -405,10 +405,10 @@ router.post('/' + version + section + 'how-do-you-want-to-enter-the-coordinates-
 
     // Set coords-type based on selection
     switch(selection) {
-        case "Enter the centre point of a circle and its width":
+        case "Enter a pair of coordinates (one point) and a width to create a circular site":
             req.session.data['coords-type'] = 'coords-circle';
             break;
-        case "Enter multiple coordinates of the area":
+        case "Enter multiple pairs of coordinates to mark the boundary of the site":
             req.session.data['coords-type'] = 'coords-multiple';
             break;
     }
@@ -449,7 +449,7 @@ router.post('/' + version + section + 'what-coordinate-system-router', function 
     
     switch(coordsType) {
         case 'coords-circle':
-            res.redirect('what-are-the-coordinates-of-the-circle');
+            res.redirect('enter-the-coordinates-at-the-centre-point');
             break;
         case 'coords-square':
             res.redirect('what-are-the-coordinates-of-the-square');
@@ -468,13 +468,13 @@ router.post('/' + version + section + 'what-coordinate-system-router', function 
 // TEXT ENTRY - LATITUDE & LONGITUDE
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-router.post('/' + version + section + 'what-are-the-coordinates-of-the-circle-router', function (req, res) {
+router.post('/' + version + section + 'enter-the-coordinates-at-the-centre-point-router', function (req, res) {
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
     req.session.data['errortypetwo'] = "false";
 
-    const latitude = req.session.data['exemption-what-are-the-coordinates-of-the-circle-latitude-text-input'];
-    const longitude = req.session.data['exemption-what-are-the-coordinates-of-the-circle-longitude-text-input'];
+    const latitude = req.session.data['exemption-enter-the-coordinates-at-the-centre-point-latitude-text-input'];
+    const longitude = req.session.data['exemption-enter-the-coordinates-at-the-centre-point-longitude-text-input'];
 
     if (!latitude || latitude.trim() === "") {
         req.session.data['errorthispage'] = "true";
@@ -487,7 +487,7 @@ router.post('/' + version + section + 'what-are-the-coordinates-of-the-circle-ro
     }
 
     if (req.session.data['errorthispage'] === "true") {
-        res.redirect('what-are-the-coordinates-of-the-circle');
+        res.redirect('enter-the-coordinates-at-the-centre-point');
         return;
     }
 
@@ -495,7 +495,7 @@ router.post('/' + version + section + 'what-are-the-coordinates-of-the-circle-ro
     if (req.url.includes('fromreview=true')) {
         res.redirect('review-location');
     } else {
-        res.redirect('width-of-circle');
+        res.redirect('width-of-site');
     }
 });
 
@@ -517,9 +517,9 @@ function validateWidth(req, shapeType) {
     return true;
 }
 
-router.post('/' + version + section + 'width-of-circle-router', function (req, res) {
-    if (!validateWidth(req, 'circle')) {
-        res.redirect('width-of-circle');
+router.post('/' + version + section + 'width-of-site-router', function (req, res) {
+    if (!validateWidth(req, 'site')) {
+        res.redirect('width-of-site');
         return;
     }
     req.session.data['siteTitle'] = 'review';

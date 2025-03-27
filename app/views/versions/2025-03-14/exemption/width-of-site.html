@@ -9,7 +9,7 @@
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-What is the width of the circle in metres?
+Enter the width of the site in metres
 {% endset %}
 
 
@@ -17,7 +17,7 @@ What is the width of the circle in metres?
 {% set errorTextHTML %}
     <!-- Error 1 - If answer is not a number when it should be -->
     {%  if  data['errortypeone'] == "true"  %}
-        Enter the width of the circle in metres
+        Enter the width of the site in metres
     {%  endif  %}
 {% endset %}
 
@@ -46,7 +46,7 @@ What is the width of the circle in metres?
                     [
                         {
                             html: errorTextHTML,
-                            href: "#exemption-width-of-circle-number-input"
+                            href: "#exemption-width-of-site-number-input"
                         }
                     ]
                 })
@@ -56,7 +56,7 @@ What is the width of the circle in metres?
 
 
         <!-- go to routes.js for routing  -->
-        <form action="width-of-circle-router" method="post" novalidate>
+        <form action="width-of-site-router" method="post" novalidate>
 
             {{ govukInput
                 ({
@@ -69,14 +69,14 @@ What is the width of the circle in metres?
 
 					autocomplete: "off",
 
-                    id: "exemption-width-of-circle-number-input",
+                    id: "exemption-width-of-site-number-input",
 
-                    name: "exemption-width-of-circle-number-input",
+                    name: "exemption-width-of-site-number-input",
 
                     errorMessage: null if data['errorthispage'] != "true"
                                        else { html: errorTextHTML },
 
-                    value: data['exemption-width-of-circle-number-input'],
+                    value: data['exemption-width-of-site-number-input'],
 					suffix:
                     {
                         text: "metres"
