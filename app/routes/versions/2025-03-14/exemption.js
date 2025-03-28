@@ -405,10 +405,10 @@ router.post('/' + version + section + 'how-do-you-want-to-enter-the-coordinates-
 
     // Set coords-type based on selection
     switch(selection) {
-        case "Enter a pair of coordinates (one point) and a width to create a circular site":
+        case "Enter one set of coordinates and a width to create a circular site":
             req.session.data['coords-type'] = 'coords-circle';
             break;
-        case "Enter multiple pairs of coordinates to mark the boundary of the site":
+        case "Enter multiple sets of coordinates to mark the boundary of the site":
             req.session.data['coords-type'] = 'coords-multiple';
             break;
     }
@@ -451,9 +451,6 @@ router.post('/' + version + section + 'what-coordinate-system-router', function 
         case 'coords-circle':
             res.redirect('enter-the-coordinates-at-the-centre-point');
             break;
-        case 'coords-square':
-            res.redirect('what-are-the-coordinates-of-the-square');
-            break;
         case 'coords-multiple':
             res.redirect('enter-multiple-coordinates');
             break;
@@ -464,7 +461,7 @@ router.post('/' + version + section + 'what-coordinate-system-router', function 
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////
-// Enter the coordinates at the centre point of the site
+// What are the coordinates of the centre of the circle?
 // TEXT ENTRY - LATITUDE & LONGITUDE
 /////////////////////////////////////////////////////////////////////////////////////////////
 

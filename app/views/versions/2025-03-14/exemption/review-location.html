@@ -180,8 +180,8 @@ Review site details
       </dt>
       <dd class="govuk-summary-list__value">
         {{ data['exemption-what-coordinate-system-radios'] }}<br> 
-        {% if data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter multiple pairs of coordinates to mark the boundary of the site" or
-        data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter a pair of coordinates (one point) and a width to create a circular site" or
+        {% if data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter multiple sets of coordinates to mark the boundary of the site" or
+        data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter one set of coordinates and a width to create a circular site" or
         data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter the centre point of a square and its width" %}
           
         {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['exemption-what-coordinate-system-radios'] %} Latitude and longitude
@@ -198,7 +198,7 @@ Review site details
     </div>
 
     <!-- Start of it's a circle -->
-    {% if data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter a pair of coordinates (one point) and a width to create a circular site" %}
+    {% if data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter one set of coordinates and a width to create a circular site" %}
     <div class="govuk-summary-list__row">
       <dt class="govuk-summary-list__key">
         Enter the coordinates at the centre point of the site
@@ -301,7 +301,7 @@ Review site details
   <!-- End of square -->
 
   <!-- Start of enter multiple coords -->
-  {% elif data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter multiple pairs of coordinates to mark the boundary of the site" %}
+  {% elif data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter multiple sets of coordinates to mark the boundary of the site" %}
   <!--<div class="govuk-summary-list__row govuk-summary-list__row--no-border">
     <dt class="govuk-summary-list__key">
       Coordinate units

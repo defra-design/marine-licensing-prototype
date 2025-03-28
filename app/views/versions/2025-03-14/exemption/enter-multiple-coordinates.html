@@ -9,7 +9,7 @@
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-Enter multiple pairs of coordinates to mark the boundary of the site
+Enter multiple sets of coordinates to mark the boundary of the site
 {% endset %}
 
 
@@ -120,6 +120,7 @@ Enter multiple pairs of coordinates to mark the boundary of the site
                           value="{{ data['coordinates-point-1-longitude'] }}"
                           autocomplete="off">
                       </dd>
+                      <dd></dd>
                   </div>
                   
                   <div class="govuk-summary-list__row{% if data['error-coordinates-point-2-latitude'] == 'true' or data['error-coordinates-point-2-longitude'] == 'true' %} coordinate-row-error{% endif %}">   
@@ -144,6 +145,7 @@ Enter multiple pairs of coordinates to mark the boundary of the site
                           value="{{ data['coordinates-point-2-longitude'] }}"
                           autocomplete="off">
                       </dd>
+                      <dd></dd>
                   </div>
                   
                   <div class="govuk-summary-list__row{% if data['error-coordinates-point-3-latitude'] == 'true' or data['error-coordinates-point-3-longitude'] == 'true' %} coordinate-row-error{% endif %}">
@@ -168,6 +170,7 @@ Enter multiple pairs of coordinates to mark the boundary of the site
                           value="{{ data['coordinates-point-3-longitude'] }}"
                           autocomplete="off">
                       </dd>
+                      <dd></dd>
                     </div>
 
                 <!-- Hidden row 4 - can be made visible -->
