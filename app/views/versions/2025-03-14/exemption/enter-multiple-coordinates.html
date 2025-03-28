@@ -98,149 +98,77 @@ Enter multiple pairs of coordinates to mark the boundary of the site
                 </div>
 
                 
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key govuk-!-font-weight-regular">
+                <div class="govuk-summary-list__row{% if data['error-coordinates-point-1-latitude'] == 'true' or data['error-coordinates-point-1-longitude'] == 'true' %} coordinate-row-error{% endif %}">
+                      <dt class="govuk-summary-list__key govuk-!-font-weight-regular">
                         Start and end point
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-						<label class="govuk-label govuk-visually-hidden" for="coordinates-point-1-latitude">
-                            {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" %}Latitude of start and end point
-
-                            {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}Eastings of start and end point
-
-                            {% endif %}
-						  </label>
-
-                          <input class="govuk-input{% if data['error-coordinates-point-1-latitude'] == 'true' %} govuk-input--error{% endif %}" 
-                                id="coordinates-point-1-latitude" 
-                                name="coordinates-point-1-latitude" 
-                                type="text" 
-                                value="{{ data['coordinates-point-1-latitude'] }}" 
-                                autocomplete="off">
-                    </dd>
-                    <dd class="govuk-summary-list__value">
-						<label class="govuk-label govuk-visually-hidden" for="coordinates-point-1-longitude">
-							
-                            {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" %}Longitude of start and end point
-
-                            {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
-
-                            Northings of start and end point
-
-                            {% endif %}
-						  </label>
-                          <input class="govuk-input{% if data['error-coordinates-point-1-longitude'] == 'true' %} govuk-input--error{% endif %}" 
-                            id="coordinates-point-1-longitude" 
-                            name="coordinates-point-1-longitude" 
-                            type="text" 
-                            value="{{ data['coordinates-point-1-longitude'] }}" 
-                            autocomplete="off">    
-                    </dd>
-                    <dd class="govuk-summary-list__value">
-                        
-                    </dd>
-                </div>
-
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key govuk-!-font-weight-regular">
-                        Point 2
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-
-                        <label class="govuk-label govuk-visually-hidden" for="coordinates-point-2-latitude">
-							{% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" %}
-                        
-                            Latitude of point 2
-
-                            {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
-
-                            Eastings of point 2
-
-                            {% endif %}
-						  </label>
-
-                          <input class="govuk-input{% if data['error-coordinates-point-2-latitude'] == 'true' %} govuk-input--error{% endif %}" 
-                          id="coordinates-point-2-latitude" 
-                          name="coordinates-point-2-latitude" 
-                          type="text" 
-                          value="{{ data['coordinates-point-2-latitude'] }}" 
+                      </dt>
+                      <dd class="govuk-summary-list__value">
+                        <label class="govuk-label govuk-visually-hidden" for="coordinates-point-1-latitude">Latitude of start and end point</label>
+                        <input class="govuk-input{% if data['error-coordinates-point-1-latitude'] == 'true' %} govuk-input--error{% endif %}"
+                          id="coordinates-point-1-latitude"
+                          name="coordinates-point-1-latitude"
+                          type="text"
+                          value="{{ data['coordinates-point-1-latitude'] }}"
                           autocomplete="off">
-                    </dd>
-                    <dd class="govuk-summary-list__value">
-                        <label class="govuk-label govuk-visually-hidden" for="coordinates-point-2-longitude">
-                            {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" %}
-                        
-                            Longitude of point 2
-
-                            {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
-
-                            Northings of point 2
-
-                            {% endif %}
-						  </label>
-
-                        <input class="govuk-input{% if data['error-coordinates-point-2-longitude'] == 'true' %} govuk-input--error{% endif %}" 
-                            id="coordinates-point-2-longitude" 
-                            name="coordinates-point-2-longitude" 
-                            type="text" 
-                            value="{{ data['coordinates-point-2-longitude'] }}" 
-                            autocomplete="off">
-                    </dd>
-                    <dd class="govuk-summary-list__value">
-                        
-                    </dd>
-                </div>
-
-                <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key govuk-!-font-weight-regular">
-                        Point 3
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                        <label class="govuk-label govuk-visually-hidden" for="coordinates-point-3-latitude">
-							{% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" %}
-                        
-                            Latitude of point 3
-
-                            {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
-
-                            Eastings of point 3
-
-                            {% endif %}
-						  </label>
-
-                          <input class="govuk-input{% if data['error-coordinates-point-3-latitude'] == 'true' %} govuk-input--error{% endif %}" 
-                          id="coordinates-point-3-latitude" 
-                          name="coordinates-point-3-latitude" 
-                          type="text" 
-                          value="{{ data['coordinates-point-3-latitude'] }}" 
-                          autocomplete="off">
-
-                    </dd>
-                    <dd class="govuk-summary-list__value">
-                        <label class="govuk-label govuk-visually-hidden" for="coordinates-point-3-longitude">
-							{% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" %}
-                        
-                            Longitude of point 3
-
-                            {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
-
-                            Northings of point 3
-
-                            {% endif %}
-						  </label>
-                        
-                          <input class="govuk-input{% if data['error-coordinates-point-3-longitude'] == 'true' %} govuk-input--error{% endif %}" 
-                          id="coordinates-point-3-longitude" 
-                          name="coordinates-point-3-longitude" 
-                          type="text" 
-                          value="{{ data['coordinates-point-3-longitude'] }}" 
-                          autocomplete="off">
-                          
-                    </dd>
-                    <dd class="govuk-summary-list__value">
-                        
                       </dd>
-                </div>
+                      <dd class="govuk-summary-list__value">
+                        <label class="govuk-label govuk-visually-hidden" for="coordinates-point-1-longitude">Longitude of start and end point</label>
+                        <input class="govuk-input{% if data['error-coordinates-point-1-longitude'] == 'true' %} govuk-input--error{% endif %}"
+                          id="coordinates-point-1-longitude"
+                          name="coordinates-point-1-longitude"
+                          type="text"
+                          value="{{ data['coordinates-point-1-longitude'] }}"
+                          autocomplete="off">
+                      </dd>
+                  </div>
+                  
+                  <div class="govuk-summary-list__row{% if data['error-coordinates-point-2-latitude'] == 'true' or data['error-coordinates-point-2-longitude'] == 'true' %} coordinate-row-error{% endif %}">   
+                      <dt class="govuk-summary-list__key govuk-!-font-weight-regular">
+                        Point 2
+                      </dt>
+                      <dd class="govuk-summary-list__value">
+                        <label class="govuk-label govuk-visually-hidden" for="coordinates-point-2-latitude">Latitude of point 2</label>
+                        <input class="govuk-input{% if data['error-coordinates-point-2-latitude'] == 'true' %} govuk-input--error{% endif %}"
+                          id="coordinates-point-2-latitude"
+                          name="coordinates-point-2-latitude"
+                          type="text"
+                          value="{{ data['coordinates-point-2-latitude'] }}"
+                          autocomplete="off">
+                      </dd>
+                      <dd class="govuk-summary-list__value">
+                        <label class="govuk-label govuk-visually-hidden" for="coordinates-point-2-longitude">Longitude of point 2</label>
+                        <input class="govuk-input{% if data['error-coordinates-point-2-longitude'] == 'true' %} govuk-input--error{% endif %}"
+                          id="coordinates-point-2-longitude"
+                          name="coordinates-point-2-longitude"
+                          type="text"
+                          value="{{ data['coordinates-point-2-longitude'] }}"
+                          autocomplete="off">
+                      </dd>
+                  </div>
+                  
+                  <div class="govuk-summary-list__row{% if data['error-coordinates-point-3-latitude'] == 'true' or data['error-coordinates-point-3-longitude'] == 'true' %} coordinate-row-error{% endif %}">
+                      <dt class="govuk-summary-list__key govuk-!-font-weight-regular">
+                        Point 3
+                      </dt>
+                      <dd class="govuk-summary-list__value">
+                        <label class="govuk-label govuk-visually-hidden" for="coordinates-point-3-latitude">Latitude of point 3</label>
+                        <input class="govuk-input{% if data['error-coordinates-point-3-latitude'] == 'true' %} govuk-input--error{% endif %}"
+                          id="coordinates-point-3-latitude"
+                          name="coordinates-point-3-latitude"
+                          type="text"
+                          value="{{ data['coordinates-point-3-latitude'] }}"
+                          autocomplete="off">
+                      </dd>
+                      <dd class="govuk-summary-list__value">
+                        <label class="govuk-label govuk-visually-hidden" for="coordinates-point-3-longitude">Longitude of point 3</label>
+                        <input class="govuk-input{% if data['error-coordinates-point-3-longitude'] == 'true' %} govuk-input--error{% endif %}"
+                          id="coordinates-point-3-longitude"
+                          name="coordinates-point-3-longitude"
+                          type="text"
+                          value="{{ data['coordinates-point-3-longitude'] }}"
+                          autocomplete="off">
+                      </dd>
+                    </div>
 
                 <!-- Hidden row 4 - can be made visible -->
                 <div class="govuk-summary-list__row" {% if not query.fromreview %}style="display: none;"{% endif %}>

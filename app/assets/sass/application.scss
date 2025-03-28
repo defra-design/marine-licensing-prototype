@@ -93,7 +93,17 @@
 	  display: none;
 	}
 }
+.coordinate-row-error {
+	border-left: 5px solid #d4351c;
+  }
 
-
-
-
+.coordinate-row-error .govuk-summary-list__key {
+	padding-left: 15px;
+  }
+  
+  @media (max-width: 40.0525em) {
+	.coordinate-row-error .govuk-summary-list__value {
+		padding-left: 15px;
+	  }
+}
+  

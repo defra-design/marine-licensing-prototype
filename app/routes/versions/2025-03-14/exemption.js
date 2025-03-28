@@ -464,10 +464,23 @@ router.post('/' + version + section + 'what-coordinate-system-router', function 
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////
-// What are the coordinates of the centre of the circle?
+// Enter the coordinates at the centre point of the site
 // TEXT ENTRY - LATITUDE & LONGITUDE
 /////////////////////////////////////////////////////////////////////////////////////////////
 
+router.get('/' + version + section + 'enter-the-coordinates-at-the-centre-point', function (req, res) {
+    // Clear error flags so red borders don't persist
+    req.session.data['errorthispage'] = 'false';
+    req.session.data['errortypeone'] = 'false';
+    req.session.data['errortypetwo'] = 'false';
+  
+    // Render the page and preserve query string (e.g. ?fromreview=true)
+    res.render(version + section + 'enter-the-coordinates-at-the-centre-point', {
+      query: req.query
+    });
+  });
+
+  
 router.post('/' + version + section + 'enter-the-coordinates-at-the-centre-point-router', function (req, res) {
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
@@ -592,6 +605,21 @@ router.post('/' + version + section + 'width-of-square-router', function (req, r
 // TEXT ENTRY
 /////////////////////////////////////////////////////////////////////////////////////////////
 
+// This clears the red borders on the page when you go back to it if there were previous errors
+router.get('/' + version + section + 'enter-multiple-coordinates', function (req, res) {
+    // Clear all coordinate-related error flags
+    for (let i = 1; i <= 5; i++) {
+      req.session.data[`error-coordinates-point-${i}-latitude`] = '';
+      req.session.data[`error-coordinates-point-${i}-longitude`] = '';
+    }
+  
+    req.session.data['errorthispage'] = 'false';
+    req.session.data['errors'] = [];
+  
+    res.render(version + section + 'enter-multiple-coordinates');
+  });
+
+  
 router.post('/' + version + section + 'enter-multiple-coordinates-router', function (req, res) {
     // Clear any previous error flags for the 6 fields
     req.session.data['error-coordinates-point-1-latitude'] = '';
