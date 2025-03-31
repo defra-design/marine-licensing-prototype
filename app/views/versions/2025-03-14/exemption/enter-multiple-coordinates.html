@@ -103,7 +103,17 @@ Enter multiple sets of coordinates to mark the boundary of the site
                         Start and end point
                       </dt>
                       <dd class="govuk-summary-list__value">
-                        <label class="govuk-label govuk-visually-hidden" for="coordinates-point-1-latitude">Latitude of start and end point</label>
+                        <label class="govuk-label govuk-visually-hidden" for="coordinates-point-1-latitude">
+                            {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" %}
+                        
+                            Latitude of start and end point
+
+                            {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+
+                            Eastings of start and end point
+
+                            {% endif %}
+                        </label>
                         <input class="govuk-input{% if data['error-coordinates-point-1-latitude'] == 'true' %} govuk-input--error{% endif %}"
                           id="coordinates-point-1-latitude"
                           name="coordinates-point-1-latitude"
@@ -112,7 +122,17 @@ Enter multiple sets of coordinates to mark the boundary of the site
                           autocomplete="off">
                       </dd>
                       <dd class="govuk-summary-list__value">
-                        <label class="govuk-label govuk-visually-hidden" for="coordinates-point-1-longitude">Longitude of start and end point</label>
+                        <label class="govuk-label govuk-visually-hidden" for="coordinates-point-1-longitude">
+                            {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" %}
+                        
+                            Longitude of start and end point
+
+                            {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+
+                            Northings of start and end point
+
+                            {% endif %}
+                        </label>
                         <input class="govuk-input{% if data['error-coordinates-point-1-longitude'] == 'true' %} govuk-input--error{% endif %}"
                           id="coordinates-point-1-longitude"
                           name="coordinates-point-1-longitude"
@@ -128,7 +148,17 @@ Enter multiple sets of coordinates to mark the boundary of the site
                         Point 2
                       </dt>
                       <dd class="govuk-summary-list__value">
-                        <label class="govuk-label govuk-visually-hidden" for="coordinates-point-2-latitude">Latitude of point 2</label>
+                        <label class="govuk-label govuk-visually-hidden" for="coordinates-point-2-latitude">
+                            {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" %}
+                        
+                            Latitude of point 2
+
+                            {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+
+                            Eastings of point 2
+
+                            {% endif %}
+                        </label>
                         <input class="govuk-input{% if data['error-coordinates-point-2-latitude'] == 'true' %} govuk-input--error{% endif %}"
                           id="coordinates-point-2-latitude"
                           name="coordinates-point-2-latitude"
@@ -137,7 +167,17 @@ Enter multiple sets of coordinates to mark the boundary of the site
                           autocomplete="off">
                       </dd>
                       <dd class="govuk-summary-list__value">
-                        <label class="govuk-label govuk-visually-hidden" for="coordinates-point-2-longitude">Longitude of point 2</label>
+                        <label class="govuk-label govuk-visually-hidden" for="coordinates-point-2-longitude">
+                            {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" %}
+                        
+                            Longitude of point 2
+
+                            {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+
+                            Northings of point 2
+
+                            {% endif %}
+                        </label>
                         <input class="govuk-input{% if data['error-coordinates-point-2-longitude'] == 'true' %} govuk-input--error{% endif %}"
                           id="coordinates-point-2-longitude"
                           name="coordinates-point-2-longitude"
@@ -153,7 +193,17 @@ Enter multiple sets of coordinates to mark the boundary of the site
                         Point 3
                       </dt>
                       <dd class="govuk-summary-list__value">
-                        <label class="govuk-label govuk-visually-hidden" for="coordinates-point-3-latitude">Latitude of point 3</label>
+                        <label class="govuk-label govuk-visually-hidden" for="coordinates-point-3-latitude">
+                            {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" %}
+                        
+                            Latitude of point 3
+
+                            {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+
+                            Eastings of point 3
+
+                            {% endif %}
+                        </label>
                         <input class="govuk-input{% if data['error-coordinates-point-3-latitude'] == 'true' %} govuk-input--error{% endif %}"
                           id="coordinates-point-3-latitude"
                           name="coordinates-point-3-latitude"
@@ -162,7 +212,17 @@ Enter multiple sets of coordinates to mark the boundary of the site
                           autocomplete="off">
                       </dd>
                       <dd class="govuk-summary-list__value">
-                        <label class="govuk-label govuk-visually-hidden" for="coordinates-point-3-longitude">Longitude of point 3</label>
+                        <label class="govuk-label govuk-visually-hidden" for="coordinates-point-3-longitude">
+                            {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" %}
+                        
+                            Longitude of point 3
+
+                            {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+
+                            Northings of point 3
+
+                            {% endif %}
+                        </label>
                         <input class="govuk-input{% if data['error-coordinates-point-3-longitude'] == 'true' %} govuk-input--error{% endif %}"
                           id="coordinates-point-3-longitude"
                           name="coordinates-point-3-longitude"
