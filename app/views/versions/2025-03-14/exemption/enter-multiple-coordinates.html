@@ -171,6 +171,9 @@
             {{ pageHeadingTextHTML }}
         </h1>
 
+
+        
+        
         {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" %}
                         
         {% include "../includes/lat-long-content.html" %}
@@ -180,7 +183,6 @@
         <p class="govuk-hint">Eastings and northings should only include numbers. For example: 123456</p>
 
         {% endif %}
-        
 
         <!-- go to routes.js for routing  -->
         <form action="enter-multiple-coordinates-router" method="post" novalidate>
@@ -206,7 +208,7 @@
                             errorMessage: null if data['error-coordinates-point-1-latitude'] != "true"
                                 else { html: point1LatError },
                             value: data['coordinates-point-1-latitude'],
-                            classes: "govuk-input"
+                            classes: "govuk-input govuk-!-width-one-half"
                         })
                     }}
                 </div>
@@ -225,7 +227,7 @@
                             errorMessage: null if data['error-coordinates-point-1-longitude'] != "true"
                                 else { html: point1LongError },
                             value: data['coordinates-point-1-longitude'],
-                            classes: "govuk-input"
+                            classes: "govuk-input govuk-!-width-one-half"
                         })
                     }}
                 </div>
@@ -253,7 +255,7 @@
                             errorMessage: null if data['error-coordinates-point-2-latitude'] != "true"
                                 else { html: point2LatError },
                             value: data['coordinates-point-2-latitude'],
-                            classes: "govuk-input"
+                            classes: "govuk-input govuk-!-width-one-half"
                         })
                     }}
                 </div>
@@ -275,7 +277,7 @@
                             errorMessage: null if data['error-coordinates-point-2-longitude'] != "true"
                                 else { html: point2LongError },
                             value: data['coordinates-point-2-longitude'],
-                            classes: "govuk-input"
+                            classes: "govuk-input govuk-!-width-one-half"
                         })
                     }}
                 </div>
@@ -304,7 +306,7 @@
                             errorMessage: null if data['error-coordinates-point-3-latitude'] != "true"
                                 else { html: point3LatError },
                             value: data['coordinates-point-3-latitude'],
-                            classes: "govuk-input"
+                            classes: "govuk-input govuk-!-width-one-half"
                         })
                     }}
                 </div>
@@ -323,7 +325,7 @@
                             errorMessage: null if data['error-coordinates-point-3-longitude'] != "true"
                                 else { html: point3LongError },
                             value: data['coordinates-point-3-longitude'],
-                            classes: "govuk-input"
+                            classes: "govuk-input govuk-!-width-one-half"
                         })
                     }}
                 </div>
@@ -332,11 +334,11 @@
             <!-- Hidden fieldset 4 - can be made visible -->
             <fieldset class="govuk-fieldset" {% if not query.fromreview %}style="display: none;"{% endif %}>
                 
-                <legend class="govuk-fieldset__legend govuk-fieldset__legend--s" style="float: left;">
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--s govuk-!-width-one-half" style="float: left;">
                     Point 4
+                    <a class=" govuk-button govuk-button--secondary remove-button govuk-!-margin-bottom-0" href="#" style="float:right">Remove<span class="govuk-visually-hidden"> point</span></a>
                 </legend>
 
-                <a class=" govuk-button govuk-button--secondary remove-button govuk-!-margin-bottom-0" href="#" style="float: right;">Remove<span class="govuk-visually-hidden"> point</span></a>
                 
                 <div class="govuk-form-group" style="clear: both;">
                       {{ govukInput
@@ -353,7 +355,7 @@
                             value: data['coordinates-point-4-latitude'],
                             errorMessage: null if data['error-coordinates-point-4-latitude'] != "true"
                                 else { html: point4LatError },
-                            classes: "govuk-input"
+                            classes: "govuk-input govuk-!-width-one-half"
                         })
                     }}
                 </div>
@@ -372,7 +374,7 @@
                             value: data['coordinates-point-4-longitude'],
                             errorMessage: null if data['error-coordinates-point-4-longitude'] != "true" 
                                 else { html: "Enter the longitude of point 4" },
-                            classes: "govuk-input"
+                            classes: "govuk-input govuk-!-width-one-half"
                         })
                     }}
                 </div>
@@ -383,11 +385,10 @@
             <!-- Hidden fieldset 5 - can be made visible -->
             <fieldset class="govuk-fieldset" {% if not query.fromreview %}style="display: none;"{% endif %}>
                 
-                <legend class="govuk-fieldset__legend govuk-fieldset__legend--s" style="float: left;">
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--s govuk-!-width-one-half" style="float: left;">
                     Point 5
+                    <a class="govuk-button govuk-button--secondary remove-button govuk-!-margin-bottom-0" href="#" style="float:right">Remove<span class="govuk-visually-hidden"> point</span></a>
                 </legend>
-
-                <a class="govuk-button govuk-button--secondary remove-button govuk-!-margin-bottom-0 " href="#" style="float: right;">Remove<span class="govuk-visually-hidden"> point</span></a>
 
                 <div class="govuk-form-group" style="clear: both;">
                       {{ govukInput
@@ -404,7 +405,7 @@
                             value: data['coordinates-point-5-latitude'],
                             errorMessage: null if data['error-coordinates-point-5-latitude'] != "true"
                                 else { html: point5LatError },
-                            classes: "govuk-input"
+                            classes: "govuk-input govuk-!-width-one-half"
                         })
                     }}
                 </div>
@@ -424,7 +425,7 @@
                             value: data['coordinates-point-5-longitude'],
                             errorMessage: null if data['error-coordinates-point-5-longitude'] != "true" 
                                 else { html: "Enter the longitude of point 5" },
-                            classes: "govuk-input"
+                            classes: "govuk-input govuk-!-width-one-half"
                         })
                     }}
                 </div>
@@ -442,7 +443,6 @@
             </div>
 
         </form>
-
     </div>
 </div>
 
