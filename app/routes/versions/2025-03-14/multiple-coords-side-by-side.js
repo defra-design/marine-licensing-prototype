@@ -4,7 +4,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 // This clears the red borders on the page when you go back to it if there were previous errors
-router.get('/' + version + section + 'enter-multiple-coordinates', function (req, res) {
+router.get('/' + version + section + 'enter-multiple-coordinates-v1', function (req, res) {
     // Clear all coordinate-related error flags
     for (let i = 1; i <= 5; i++) {
       req.session.data[`error-coordinates-point-${i}-latitude`] = '';
@@ -14,11 +14,11 @@ router.get('/' + version + section + 'enter-multiple-coordinates', function (req
     req.session.data['errorthispage'] = 'false';
     req.session.data['errors'] = [];
   
-    res.render(version + section + 'enter-multiple-coordinates');
+    res.render(version + section + 'enter-multiple-coordinates-v1');
   });
 
   
-router.post('/' + version + section + 'enter-multiple-coordinates-router', function (req, res) {
+router.post('/' + version + section + 'enter-multiple-coordinates-v1-router', function (req, res) {
     // Clear any previous error flags for the 6 fields
     req.session.data['error-coordinates-point-1-latitude'] = '';
     req.session.data['error-coordinates-point-1-longitude'] = '';
@@ -76,7 +76,7 @@ router.post('/' + version + section + 'enter-multiple-coordinates-router', funct
     if (errors.length > 0) {
       req.session.data['errorthispage'] = 'true';
       req.session.data['errors'] = errors;
-      return res.redirect('enter-multiple-coordinates');
+      return res.redirect('enter-multiple-coordinates-v1');
     }
   
     // Otherwise, clear errors and proceed
