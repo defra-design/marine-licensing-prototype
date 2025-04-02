@@ -107,8 +107,50 @@
 	  }
 }
   
-@media (max-width: 40.0525em) {
-	a.govuk-button.govuk-button--secondary.remove-button {
-	  width: auto !important;
-	}
+@media (max-width: 40.0525em) { /* Or use 40.0625em */
+
+    /* --- Target the remove button ONLY within multi-coords fieldsets --- */
+    .multi-coords a.govuk-button.govuk-button--secondary.remove-button {
+        width: auto !important;
+        /* Explicitly remove float for mobile if needed later */
+        /* float: none !important; */
+        margin-top: 0;
+        /* margin-bottom: 0; is already set by utility class */
+    }
+
+    /* --- Adjustments for the Legend ONLY within multi-coords fieldsets --- */
+    .multi-coords legend.govuk-fieldset__legend.govuk-fieldset__legend--s {
+        /* === Spacing === */
+        margin-top: 30px; /* Adjust value (e.g., govuk-spacing(6)) */
+        margin-bottom: 0 !important; /* Adjust value (e.g., govuk-spacing(4)) */
+
+        /* === Vertical Alignment Attempt (using padding) === */
+        padding-top: 4px !important;
+        padding-bottom: 4px !important;
+
+        /* === Overriding Floats & Using Flexbox === */
+        float: none !important; /* Disable float: left */
+        width: 100% !important; /* Override potential inline width */
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    /* --- Adjustments for the Button INSIDE the multi-coords Legend --- */
+    .multi-coords legend.govuk-fieldset__legend a.remove-button {
+        float: none !important; /* Disable float: right */
+    }
+
+    /* --- Adjustments for the Form Group AFTER the multi-coords Legend --- */
+    /* Target the form group immediately following the legend inside .multi-coords */
+    .multi-coords legend.govuk-fieldset__legend + .govuk-form-group {
+        clear: none !important; /* Disable clear: both */
+        /* margin-top: 0 !important; */ /* Optional reset */
+    }
+
+    /* --- Ensure Inputs are Full Width ONLY within multi-coords fieldsets --- */
+    /* Override half-width utility for inputs inside .multi-coords */
+    .multi-coords .govuk-input.govuk-\!-width-one-half {
+        width: 100% !important;
+    }
 }
