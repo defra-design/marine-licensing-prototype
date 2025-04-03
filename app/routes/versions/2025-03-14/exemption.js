@@ -661,7 +661,7 @@ router.post('/' + version + section + 'enter-multiple-coordinates-router', funct
             req.session.data[`error-${latKey}`] = "true";
             req.session.data['errors'].push({
                 text: `Enter the ${latLabel.toLowerCase()} of ${pointLabel}`,
-                href: `#${latKey}`
+                anchor: `${latKey}`
             });
         } else {
             req.session.data[`error-${latKey}`] = "false";
@@ -672,7 +672,7 @@ router.post('/' + version + section + 'enter-multiple-coordinates-router', funct
             req.session.data[`error-${longKey}`] = "true";
             req.session.data['errors'].push({
                 text: `Enter the ${longLabel.toLowerCase()} of ${pointLabel}`,
-                href: `#${longKey}`
+                anchor: `${longKey}`
             });
         } else {
             req.session.data[`error-${longKey}`] = "false";
