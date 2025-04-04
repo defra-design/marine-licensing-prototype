@@ -17,7 +17,7 @@
     {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['exemption-what-coordinate-system-radios'] %}                  
     Latitude of start and end point
     {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
-    Eastings of start and end point
+    Eastings of the start and end point
     {% endif %}
 {% endset %}
 
@@ -26,7 +26,7 @@
     {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['exemption-what-coordinate-system-radios'] %}
     Longitude of start and end point
     {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
-    Northings of start and end point
+    Northings of the start and end point
     {% endif %}
 {% endset %}
 
@@ -119,8 +119,8 @@
     {% endif %}
 {% endset %}
 
-{% set point1LatError = "Enter the " + ("eastings" if data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" else "latitude") + " of start and end point" %}
-{% set point1LongError = "Enter the " + ("northings" if data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" else "longitude") + " of start and end point" %}
+{% set point1LatError = "Enter the " + ("eastings" if data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" else "latitude") + " of the start and end point" %}
+{% set point1LongError = "Enter the " + ("northings" if data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" else "longitude") + " of the start and end point" %}
 {% set point2LatError = "Enter the " + ("eastings" if data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" else "latitude") + " of point 2" %}
 {% set point2LongError = "Enter the " + ("northings" if data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" else "longitude") + " of point 2" %}
 {% set point3LatError = "Enter the " + ("eastings" if data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" else "latitude") + " of point 3" %}
