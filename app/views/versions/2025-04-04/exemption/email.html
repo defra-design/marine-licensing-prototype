@@ -1,0 +1,69 @@
+{% extends "../layouts/email.html" %}
+
+{% block pageTitle %}
+  Email - Confirmation of your marine licence exemption
+{% endblock %}
+
+{% block content %}
+
+
+<style>
+.govuk-width-container {
+	max-width: 640px;
+}
+.govuk-main-wrapper {
+    padding-top: 10px;
+    padding-bottom: 40px;
+}
+h1 {
+	font-size: 36px;
+	font-family: Arial,Helvetica;
+	color: #000;
+}
+p {
+	font-size: 21px;
+	font-family: Arial,Helvetica;
+	color: #000;
+}
+h2 {
+	font-size: 30px;
+	font-family: Arial,Helvetica;
+	color: #000;
+}
+.govuk-template {
+    background-color: #fff;
+}
+</style>
+
+<p style="font-size:21px; font-family:Arial,Helvetica; padding-bottom: 10px; border-bottom:solid #005ea5 1px; line-height: 23px;">
+	<span style="color: #00a33b;">|</span> <img src="/public/images/mmo-crest.png" style="width: 28px; vertical-align: middle; margin-right: 4px;">
+	<span style="vertical-align: middle;">Marine Management Organisation</span>
+</p>
+
+<h1>Confirmation of your marine licence exemption</h1>
+
+<p>Dear {{ data['exemption-what-is-your-name-text-input'] }}</p>
+
+<p>Thank you for sending us details of your activity.</p>
+
+<p>Your reference number is EXE/2025/0004.</p>
+
+<p>We can confirm your activity is exempt based on the answers you gave us. </p>
+
+<h2>What happens next </h2>
+
+<p>You can proceed within the dates you provided.</p>
+
+<p>Make sure your activity matches the details you gave us. If we later find it didn't, we may take enforcement action. We've attached a copy of your answers for reference.</p>
+
+<h2>If details of your activity change</h2>
+
+<p>If anything changes, you'll need to check whether you still qualify for an exemption.</p>
+
+<p>To do this search GOV.UK for 'Check if you need a marine licence' and follow the guidance. If your activity is still exempt, you'll need to send us your information again. </p>
+
+<p>From Marine Management Organisation</p>
+
+
+
+{% endblock %}

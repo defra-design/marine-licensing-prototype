@@ -44,6 +44,12 @@ require('./routes/versions/2025-03-14/sites.js')(router);
 require('./routes/versions/2025-03-14/check.js')(router);
 require('./routes/versions/2025-03-14/exemption.js')(router);
 
+// 4 Apr 2025
+require('./routes/versions/2025-04-04/account.js')(router);
+require('./routes/versions/2025-04-04/sites.js')(router);
+require('./routes/versions/2025-04-04/check.js')(router);
+require('./routes/versions/2025-04-04/exemption.js')(router);
+
 
 
 // viewing session data

@@ -1,0 +1,164 @@
+{% extends "../layouts/main.html" %}
+
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+Will the activity take place within 200 metres of a marine protected area (MPA)?
+{% endset %}
+
+<!-- Setting the heading caption -->
+{% set captionTextHTML %}
+	Check if you need a marine licence
+{% endset %}
+
+<!-- Setting the smaller secondary heading lower down the page -->
+{% set questionHeadingTextHTML %}
+Will the removal activity take place within 200 metres of an MPA?
+{% endset %}
+
+
+<!-- Set the text for the error type -->
+{% set errorTextHTML %}
+    <!-- Nothing was selected -->
+    {% if data['errortypeone'] == "true" %}
+    Select whether the removal activity will take place within 200 metres of an MPA 
+    {% endif %}
+{% endset %}
+
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {% if  data['errorthispage'] == "true"  %}
+        Error:
+    {% endif %}
+
+    {{ pageHeadingTextHTML }} - {{ data['headerName'] }}
+{% endblock %}
+
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <!-- ERROR LOGIC 'error summary' -->
+        {% if data['errorthispage'] == "true" %}
+            {{ govukErrorSummary
+                ({
+                    titleText: "There is a problem",
+                    errorList:
+                    [
+                        {
+                            html: errorTextHTML,
+                            href: "#check-marine-protected-areas-radios"
+                        }
+                    ]
+                })
+            }}
+        {% endif %}
+        <!--  END OF 'error summary' -->
+
+
+        <!-- go to routes.js for routing  -->
+        <form action="marine-protected-areas-router" method="post" novalidate>
+
+            
+            <h1 class="govuk-heading-l">
+                {{ pageHeadingTextHTML }}
+            </h1>
+
+
+            <p>MPAs are designated areas of the sea protected from harmful human activity. Any activity within 200 metres of an MPA may need a marine licence. </p>
+			
+            <p>To find out if the activity falls within 200 metres of an MPA, you can use the <a href="https://defra.maps.arcgis.com/apps/webappviewer/index.html?id=28f91021979447d3b43dc83e6e93094c&showLayers=Marine%20Protected%20Areas" rel="noreferrer noopener" target="_blank">marine licensing interactive map (opens in new tab)</a>.</p>
+
+            {{ govukRadios
+                ({
+                    name: "check-marine-protected-areas-radios",
+
+                    id: "check-marine-protected-areas-radios",
+
+                    fieldset:
+                    {
+                        legend:
+                        {
+                            html: questionHeadingTextHTML,
+                            isPageHeading: false,
+                            classes: "govuk-fieldset__legend--m govuk-visually-hidden"
+                        }
+                    },
+
+                    errorMessage: null if data['errorthispage'] != "true"
+                                       else { html: errorTextHTML },
+
+                    items:
+                    [
+                        {
+                            value: "Yes",
+                            text: "Yes",
+                            checked: data['check-marine-protected-areas-radios'] == "Yes"
+                        },
+                        {
+                            value: "No",
+                            text: "No",
+                            checked: data['check-marine-protected-areas-radios'] == "No"
+                        }
+                    ]
+                })
+            }}
+
+
+            {{ govukButton({ text: "Continue" }) }}
+
+        </form>
+
+    </div>
+</div>
+
+
+
+
+<!-- ERROR LOGIC  drop down to toggle states  -->
+<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-225px;  ">
+
+    <select style="height:30px;" onchange="window.location.href='?'+this.value">
+
+        <option value="errorthispage=false&errortypeone=false&errortypetwo=false&"
+                {% if (data['errorthispage'] != "true") %}selected{% endif %}
+        >Errors - Off</option>
+
+        <option value="errorthispage=true&errortypeone=true&errortypetwo=false&"
+                {% if (data['errortypeone'] == 'true' and data['errortypetwo'] != 'true')  %}selected{% endif %}
+        >Error 1 - Must select at least one</option>
+
+    </select>
+
+</form>
+<!--  END OF ERROR LOGIC -->
+
+
+
+<!-- USER TYPE TOGGLE  -->
+<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-225px;  ">
+
+    <select style="height:30px;" onchange="window.location.href='?'+this.value">
+
+        <option value="user=citizen&"
+                {% if  data['user'] != "agent"  %} selected {% endif %}
+        >User type - Individual</option>
+
+        <option value="user=agent&"
+                {% if  data['user'] == "agent"  %} selected {% endif %}
+        >User type - Agent</option>
+
+    </select>
+
+</form>
+<!--  END USER TYPE TOGGLE -->
+
+
+
+
+
+{% endblock %}
+
+

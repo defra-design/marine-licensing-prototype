@@ -1,0 +1,215 @@
+{% extends "../layouts/exemption.html" %}
+
+{% block beforeContent %}
+    {% include "../includes/phase-banner.html" %}
+    {% include "../includes/account-bar.html" %}
+    {% include "../includes/back-link.html" %}
+{% endblock %}
+
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+What are the coordinates of the centre of the square?
+{% endset %}
+
+<!-- Setting the smaller secondary headings lower down the page -->
+{% set questionHeadingTextOneHTML %}
+    {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['exemption-what-coordinate-system-radios'] %}
+                            
+    Latitude
+
+    {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+
+    Eastings
+
+    {% endif %}
+{% endset %}
+
+{% set questionHeadingTextTwoHTML %}
+    {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['exemption-what-coordinate-system-radios'] %}
+                            
+    Longitude
+
+    {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+
+    Northings
+
+    {% endif %}
+{% endset %}
+
+
+<!-- Set the text for each error type -->
+{% set errorTextHTML %}
+
+{% endset %}
+
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {% if  data['errorthispage'] == "true"  %}
+        Error:
+    {% endif %}
+
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+<!-- ERROR LOGIC 'error summary' -->
+{% if data['errorthispage'] == "true" %}
+<div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+    <h2 class="govuk-error-summary__title" id="error-summary-title">
+        There is a problem
+    </h2>
+    <div class="govuk-error-summary__body">
+        <ul class="govuk-list govuk-error-summary__list">
+            {% if data['errortypeone'] == "true" %}
+                
+            
+            {% endif %}
+        </ul>
+    </div>
+</div>
+{% endif %}
+
+        <!-- go to routes.js for routing  -->
+        <form action="what-are-the-coordinates-of-the-square-router{% if query.fromreview %}?fromreview=true{% endif %}" method="post" novalidate>
+
+            {% call govukFieldset({
+                legend: {
+                  html: pageHeadingTextHTML,
+                  classes: "govuk-fieldset__legend--l",
+                  isPageHeading: true
+                }
+              }) %}
+              
+              {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['exemption-what-coordinate-system-radios'] %}
+                        
+              {% include "../includes/lat-long-content.html" %}
+      
+              {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+      
+              <p class="govuk-hint">Eastings and northings should only include numbers. For example: 123456</p>
+      
+              {% endif %}
+
+            {{ govukInput
+                ({
+                    label:
+                    {
+                        html: questionHeadingTextOneHTML,
+                        classes: "govuk-label",
+                        isPageHeading: false
+                    },
+            
+                    autocomplete: "off",
+
+                    id: "exemption-what-are-the-coordinates-of-the-square-latitude-text-input",
+            
+                    name: "exemption-what-are-the-coordinates-of-the-square-latitude-text-input",
+            
+                    errorMessage: null if data['errortypeone'] != "true"
+                                   else { html: errorTextHTML },
+            
+                    value: data['exemption-what-are-the-coordinates-of-the-square-latitude-text-input'],
+            
+                    classes: "govuk-input govuk-!-width-one-half"
+                })
+            }}
+
+            {{ govukInput
+                ({
+                    label:
+                    {
+                        html: questionHeadingTextTwoHTML,
+                        classes: "govuk-label",
+                        isPageHeading: false
+                    },
+            
+                    autocomplete: "off",
+
+                    id: "exemption-what-are-the-coordinates-of-the-square-longitude-text-input",
+            
+                    name: "exemption-what-are-the-coordinates-of-the-square-longitude-text-input",
+            
+                    errorMessage: null if data['errortypetwo'] != "true"
+                    else { html: errorTextHTML },
+            
+                    value: data['exemption-what-are-the-coordinates-of-the-square-longitude-text-input'],
+            
+                    classes: "govuk-input govuk-!-width-one-half"
+                })
+            }}
+            {% endcall %}
+
+            <div class="govuk-button-group">
+                {{ govukButton({
+                  text: "Save and continue"
+                }) }}
+            </div>
+
+
+        </form>
+
+    </div>
+</div>
+
+
+<!-- ERROR LOGIC  drop down to toggle states  -->
+<!-- Best thing to do would be to replace 'errorthispage', 'errortypeone' and 'errortypetwo' with novel name for this page  -->
+<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-225px;  ">
+
+    <select style="height:30px;" onchange="window.location.href='?'+this.value">
+
+        <option value="errorthispage=false&errortypeone=false&errortypetwo=false&errortypethree=false&errortypefour=false&errortypefive=false&errortypesix=false&"
+                {% if  data['errorthispage'] != "true"  %}selected{% endif %}
+        >Errors - Off</option>
+
+        <option value="errorthispage=true&errortypeone=true&errortypetwo=false&errortypethree=false&errortypefour=false&errortypefive=false&errortypesix=false&"
+                {% if  data['errortypeone'] == 'true'  and  data['errortypetwo'] != 'true'  and  data['errortypethree'] != 'true'  and  data['errortypefour'] != 'true'  and data['errortypefive'] != 'true'  and  data['errortypesix'] != 'true'  %}selected{% endif %}
+        >Error 1 - No answer entered</option>
+
+        <option value="errorthispage=true&errortypeone=false&errortypetwo=true&errortypethree=false&errortypefour=false&errortypefive=false&errortypesix=false&"
+                {% if  data['errortypeone'] != 'true'  and  data['errortypetwo'] == 'true'  and  data['errortypethree'] != 'true'  and  data['errortypefour'] != 'true'   and data['errortypefive'] != 'true'  and  data['errortypesix'] != 'true'  %}selected{% endif %}
+        >Error 2 - No answer entered</option>
+
+
+    </select>
+
+</form>
+<!--  END OF ERROR LOGIC -->
+
+
+<!-- USER TYPE TOGGLE  -->
+<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-225px;  ">
+
+  <select style="height:30px;" onchange="window.location.href='?'+this.value">
+
+    <option value="user=citizen&"
+            {% if  data['user'] != "agent"  %} selected {% endif %}
+    >User type - Individual</option>
+
+    <option value="user=agent&"
+            {% if  data['user'] == "agent"  %} selected {% endif %}
+    >User type - Agent</option>
+
+  </select>
+
+</form>
+<!--  END USER TYPE TOGGLE -->
+
+
+
+
+
+
+{% endblock %}
+
+
+
+
+
