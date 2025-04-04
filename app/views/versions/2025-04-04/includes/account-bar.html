@@ -5,7 +5,11 @@
 	  <span
 		class="hmrc-account-menu__link--home">
 		<span class="hmrc-account-icon">
-			<a href="home" class="govuk-link--no-visited-state">Home</a>
+			{% if currentPageId == "home" %}
+        		Home
+      		{% else %}
+				<a href="home" class="govuk-link--no-visited-state">Home</a>
+      		{% endif %}
 		</span>
 		</span>
   
