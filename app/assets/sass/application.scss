@@ -10,20 +10,24 @@
 
 }
 
-.hmrc-account-menu__link, .hmrc-account-menu__link:visited {
-    text-decoration: underline;
-	color: #1D70B8}
+.hmrc-account-menu.version2 {
+  border-bottom: 1px solid #b1b4b6;
 
-  .hmrc-account-menu__link:hover {
-    border-bottom: none;
-	color: #1D70B8;
 }
 
+.hmrc-account-menu__link, .hmrc-account-menu__link:visited {
+  text-decoration: underline;
+	color: #1D70B8}
+
+.hmrc-account-menu__link:hover {
+  border-bottom: none;
+  color: #1D70B8;
+}
 
 
 @media (max-width: 50.0525em) {
 	.is-smaller.hmrc-account-menu {
-		border-bottom: 4px solid #1D70B8;
+		border-bottom: 1px solid #b1b4b6;
 		text-decoration: underline;
 		color: #1D70B8;
 	}
