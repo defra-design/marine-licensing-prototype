@@ -3,12 +3,22 @@
 {% block beforeContent %}
     {% include "../includes/phase-banner.html" %}
     {% include "../includes/account-bar.html" %}
+    
+    {% if data['applicationSubmitted'] == "true" %}
+    {% include "../includes/back-link.html" %}
+    {% else %}
     <a class="govuk-back-link" href="task-list.html" style="margin-bottom: 0;">Go back to task list</a>
+    {% endif %}
+    
 {% endblock %}
 
 
 {% set pageHeadingTextHTML %}
-Check your answers before sending your information
+  {% if data['applicationSubmitted'] == "true" %}
+    {{ data['exemption-project-name-text-input'] }}
+  {% else %}
+    Check your answers before sending your information
+  {% endif %}
 {% endset %}
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
@@ -47,10 +57,15 @@ Check your answers before sending your information
         <dd class="govuk-summary-list__value">
           {{ data['exemption-project-name-text-input'] }}
         </dd>
-        <dd class="govuk-summary-list__actions">
-          <a class="govuk-link" href="project-name?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Project
-              name</span></a>
-        </dd>
+        
+          {% if data['applicationSubmitted'] == "true" %}
+
+          {% else %}
+          <dd class="govuk-summary-list__actions">
+          <a class="govuk-link" href="project-name?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Project name</span></a>
+          </dd>
+          {% endif %}
+          
       </div>
       </dl>
       </div>
@@ -159,12 +174,18 @@ Check your answers before sending your information
           </dd>
         </div>
       </dl>
+
+      {% if data['applicationSubmitted'] == "true" %}
+
+      {% else %}
       <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-        <p class="govuk-body">If you need to change any of these answers:</p>
-        <ul class="govuk-list govuk-list--bullet">
-          <li>delete this exempt activity information from your <a href="#">dashboard</a></li>
-          <li>restart the process using the '<a href="#">Check if you need a marine licence</a>' service</li>
-        </ul>
+      <p class="govuk-body">If you need to change any of these answers:</p>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>delete this exempt activity information from your <a href="#">dashboard</a></li>
+        <li>restart the process using the '<a href="#">Check if you need a marine licence</a>' service</li>
+      </ul>
+      {% endif %}
+      
 
       <!-- Show scientific samples scenario details -->
       {% elif data['exemption'] == "sample-notification" %}
@@ -270,14 +291,18 @@ Check your answers before sending your information
             </div>
           </dl>
 
+          {% if data['applicationSubmitted'] == "true" %}
 
+          {% else %}
+          <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+          <p class="govuk-body">If you need to change any of these answers:</p>
+          <ul class="govuk-list govuk-list--bullet">
+            <li>delete this exempt activity information from your <a href="#">dashboard</a></li>
+            <li>restart the process using the '<a href="#">Check if you need a marine licence</a>' service</li>
+          </ul>
+          {% endif %}
 
-      <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-        <p class="govuk-body">If you need to change any of these answers:</p>
-        <ul class="govuk-list govuk-list--bullet">
-          <li>delete this exempt activity information from your <a href="#">dashboard</a></li>
-          <li>restart the process using the '<a href="#">Check if you need a marine licence</a>' service</li>
-        </ul>
+      
       
 
       {% endif %}
@@ -293,12 +318,16 @@ Check your answers before sending your information
           Activity dates
         </h2>
 
+        {% if data['applicationSubmitted'] == "true" %}
+
+        {% else %}
         <ul class="govuk-summary-card__actions">
           <li class="govuk-summary-card__action">
             <a class="govuk-link" href="activity-dates.html?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Activity dates</span></a>
           </li>
         </ul>
-        
+        {% endif %}
+
       </div>
       <div class="govuk-summary-card__content">
 
@@ -354,11 +383,17 @@ Check your answers before sending your information
     <h2 class="govuk-summary-card__title">
       Site details
     </h2>
+
+    {% if data['applicationSubmitted'] == "true" %}
+
+    {% else %}
     <ul class="govuk-summary-card__actions">
       <li class="govuk-summary-card__action">
         <a class="govuk-link" href="review-location?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Location details</span></a>
       </li>
     </ul>
+    {% endif %}
+
   </div>
   <div class="govuk-summary-card__content">
 
@@ -708,11 +743,15 @@ Check your answers before sending your information
         Public register
       </h2>
 
+      {% if data['applicationSubmitted'] == "true" %}
+
+      {% else %}
       <ul class="govuk-summary-card__actions">
         <li class="govuk-summary-card__action">
           <a class="govuk-link" href="public-register?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Do you believe the information you have provided should be withheld from the public register?</span></a>
         </li>
       </ul>
+      {% endif %}
 
     </div>
     <div class="govuk-summary-card__content">
@@ -742,7 +781,10 @@ Check your answers before sending your information
   </div>
   </div>
 
-  <form action="check-answers-router" method="post" novalidate>
+  {% if data['applicationSubmitted'] == "true" %}
+
+{% else %}
+<form action="check-answers-router" method="post" novalidate>
   <h2 class="govuk-heading-m">Now send your information</h2>
         <p class="govuk-body">By submitting this information you are confirming that, to the best of your knowledge, the details you are providing are correct.</p>
 
@@ -750,6 +792,9 @@ Check your answers before sending your information
         {{ govukButton({
           text: "Confirm and send"
         }) }}
+  
+{% endif %}
+
   
       </form>
 </div>
