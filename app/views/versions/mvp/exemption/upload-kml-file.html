@@ -1,0 +1,99 @@
+{% extends "../layouts/exemption.html" %}
+
+{% block beforeContent %}
+    {% include "../includes/phase-banner.html" %}
+    {% include "../includes/account-bar.html" %}
+    {% include "../includes/back-link.html" %}
+{% endblock %}
+
+
+<!-- Setting the smaller secondary heading lower down the page -->
+{% set pageHeadingTextHTML %}
+Upload a KML file
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+
+        <!-- go to routes.js for routing  -->
+        <form action="upload-kml-file-router" method="post" novalidate>
+
+			{% from "govuk/components/file-upload/macro.njk" import govukFileUpload %}
+
+			{{ govukFileUpload({
+			id: "file-upload-1",
+			name: "fileUpload1",
+			label:
+                    {
+                        html: pageHeadingTextHTML,
+                        classes: "govuk-label--l",
+                        isPageHeading: true
+                    },
+                    javascript: true
+			}) }}
+            
+            {% from "govuk/components/file-upload/macro.njk" import govukFileUpload %}
+
+
+            {{ govukButton({
+text: "Save and continue"
+ }) }}
+
+        </form>
+
+    </div>
+</div>
+
+<!-- ERROR LOGIC  drop down to toggle states  -->
+<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-225px;  ">
+
+    <select style="height:30px;" onchange="window.location.href='?'+this.value">
+
+        <option value="errorthispage=false&errortypeone=false&errortypetwo=false&"
+                {% if (data['errorthispage'] != "true") %}selected{% endif %}
+        >Errors - Off</option>
+
+        <option value="errorthispage=true&errortypeone=true&errortypetwo=false&"
+                {% if (data['errortypeone'] == 'true' and data['errortypetwo'] != 'true')  %}selected{% endif %}
+        >Error 1 - Must select at least one</option>
+
+    </select>
+
+</form>
+<!--  END OF ERROR LOGIC -->
+
+
+
+<!-- USER TYPE TOGGLE  -->
+<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-225px;  ">
+
+    <select style="height:30px;" onchange="window.location.href='?'+this.value">
+
+        <option value="user=citizen&"
+                {% if  data['user'] != "agent"  %} selected {% endif %}
+        >User type - Individual</option>
+
+        <option value="user=agent&"
+                {% if  data['user'] == "agent"  %} selected {% endif %}
+        >User type - Agent</option>
+
+    </select>
+
+</form>
+<!--  END USER TYPE TOGGLE -->
+
+
+
+
+
+{% endblock %}
+
+

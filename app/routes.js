@@ -44,11 +44,17 @@ require('./routes/versions/2025-03-14/sites.js')(router);
 require('./routes/versions/2025-03-14/check.js')(router);
 require('./routes/versions/2025-03-14/exemption.js')(router);
 
-// 4 Apr 2025
+// 4 Apr 2025 - Iteration 4
 require('./routes/versions/2025-04-04/account.js')(router);
 require('./routes/versions/2025-04-04/sites.js')(router);
 require('./routes/versions/2025-04-04/check.js')(router);
 require('./routes/versions/2025-04-04/exemption.js')(router);
+
+// 8 Apr 2025 - MVP for Private Beta
+require('./routes/versions/mvp/account.js')(router);
+require('./routes/versions/mvp/sites.js')(router);
+require('./routes/versions/mvp/check.js')(router);
+require('./routes/versions/mvp/exemption.js')(router);
 
 
 
