@@ -36,11 +36,19 @@
 
   <div class="govuk-grid-column-full">
 
+    {% if data['applicationSubmitted'] == "true" %}
+      <span class="govuk-caption-l">Exempt activity</span>
+    {% else %}
+      <!-- No caption -->
+    {% endif %}
     <h1 class="govuk-heading-l">
       {{ pageHeadingTextHTML }}
     </h1>
 
-    <!--Start of Project details-->
+    {% if data['applicationSubmitted'] == "true" %}
+      <!-- No project name card -->
+    {% else %}
+     <!--Start of Project details-->
     <div class="govuk-summary-card">
       <div class="govuk-summary-card__title-wrapper">
         <h2 class="govuk-summary-card__title">
@@ -48,7 +56,6 @@
         </h2>
       </div>
       <div class="govuk-summary-card__content">
-
     <dl class="govuk-summary-list">
       <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">
@@ -68,8 +75,14 @@
           
       </div>
       </dl>
+
       </div>
       </div>
+
+    {% endif %}
+
+
+    
       
       <!-- Show pontoon scenario details -->
       {% if (data['exemption'] == "pontoon-approval" or data['exemption'] == "pontoon-notification" or data['exemption'] == "") %}
@@ -77,7 +90,7 @@
       <div class="govuk-summary-card">
         <div class="govuk-summary-card__title-wrapper">
           <h2 class="govuk-summary-card__title">
-            Your answers from the 'Check if you need a marine licence' service
+            Your answers from 'Check if you need a marine licence'
           </h2>
         </div>
         <div class="govuk-summary-card__content">

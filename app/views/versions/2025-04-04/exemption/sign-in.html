@@ -62,10 +62,22 @@ Sign in using Government Gateway
 		</div>
 
 
+		{% if data['goto'] == "home" %}
+
+		{{ govukButton({
+			text: "Sign in",
+			href: "home.html"
+		}) }}
+
+		{% else %}
+
 		{{ govukButton({
 			text: "Sign in",
 			href: "project-name-start.html"
 		}) }}
+
+		{% endif %}	
+
 
 
 
