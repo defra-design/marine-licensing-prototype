@@ -38,6 +38,12 @@
 }
 
 
+/////// Start of multiple coordinates styles ///////
+///
+/// 
+/// 
+///
+/// 
 @media (max-width: 40.0525em) {
   
   .multiple-coordinates .govuk-label.govuk-visually-hidden {
@@ -87,7 +93,7 @@
 	}
   }
 
-  @media (max-width: 40.0525em) {
+@media (max-width: 40.0525em) {
 	.map-help-desktop {
 	  display: none;
 	}
@@ -159,7 +165,16 @@
     }
 }
 
+/////// End of multiple coordinates styles ///////
 
+
+
+
+/////// Start of service navigation bar styles ///////
+///
+/// 
+/// 
+///
 // Bespoke Service Navigation Bar Styles
 .app-bespoke-service-nav {
   background-color: govuk-colour("light-grey"); 
@@ -229,3 +244,11 @@
     text-decoration: none;
   }
 }
+
+@media (max-width: 40.0525em) {
+	.app-bespoke-service-nav__link {
+	  font-size: 14px;
+	}
+}
+
+/////// End of service navigation bar styles ///////

@@ -79,7 +79,43 @@ function clearCoordinateValues(session) {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
+// Project name start
+// NOT THE ONE IN THE TASK LIST - SEE BELOW FOR THAT ONE
+// TEXT ENTRY
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+router.post('/' + version + section + 'project-name-start-router', function (req, res) {
+    // Turn off errors by default
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    // Check if the text input (Project name) is blank
+    const projectTitle = req.session.data['exemption-project-name-text-input'];
+    if (!projectTitle || projectTitle.trim() === "") {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+    }
+
+    // Redirect based on errors
+    if (req.session.data['errorthispage'] === "true") {
+        res.redirect('project-name-start');
+    } else {
+        // Set the status to completed
+        req.session.data['exempt-information-1-status'] = 'completed';
+        
+        // Check if we need to return to check answers
+        if (req.session.data['camefromcheckanswers'] === 'true') {
+            req.session.data['camefromcheckanswers'] = false;
+            res.redirect('check-answers#project-name');
+        } else {
+            res.redirect('task-list');
+        }
+    }
+});
+
+//////////////////////////////////////////////////////////////////////////////////////////////
 // Project name
+// NOT THE OPENING ONE 
 // TEXT ENTRY
 //////////////////////////////////////////////////////////////////////////////////////////////
 
