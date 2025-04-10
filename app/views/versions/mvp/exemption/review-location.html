@@ -83,10 +83,14 @@ Review site details
         File uploaded
       </dt>
       <dd class="govuk-summary-list__value">
-        coordinates.kml
+        {% if data['exemption-which-type-of-file-radios'] == "KML" %}
+          coordinates.kml
+        {% elif data['exemption-which-type-of-file-radios'] == "Shapefile" %}
+          coordinates.shp
+        {% endif %}
       </dd>
       <dd class="govuk-summary-list__actions">
-        <a class="govuk-link" href="upload-kml-file?fromreview=true">Change<span class="govuk-visually-hidden"> File uploaded</span></a>
+        <a class="govuk-link" href="upload-file?fromreview=true">Change<span class="govuk-visually-hidden"> File uploaded</span></a>
       </dd>
     </div>
 
@@ -339,6 +343,7 @@ Review site details
         {{ govukButton({
           text: "Save and continue"
         }) }}
+        <a class="govuk-link govuk-link--no-visited-state" href="#">Cancel</a>
     </div>
     </form>
 

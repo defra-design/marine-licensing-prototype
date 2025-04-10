@@ -9,7 +9,11 @@
 
 <!-- Setting the smaller secondary heading lower down the page -->
 {% set pageHeadingTextHTML %}
-Upload a KML file
+    {% if data['exemption-which-type-of-file-radios'] == "KML" %}
+        Upload a KML file
+    {% elif data['exemption-which-type-of-file-radios'] == "Shapefile" %}
+        Upload a Shapefile
+    {% endif %}
 {% endset %}
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
@@ -24,7 +28,7 @@ Upload a KML file
 
 
         <!-- go to routes.js for routing  -->
-        <form action="upload-kml-file-router" method="post" novalidate>
+        <form action="upload-file-router" method="post" novalidate>
 
 			{% from "govuk/components/file-upload/macro.njk" import govukFileUpload %}
 
@@ -37,15 +41,21 @@ Upload a KML file
                         classes: "govuk-label--l",
                         isPageHeading: true
                     },
+                    hint: {
+                        text: "[Hint text if needed]"
+                      },
                     javascript: true
 			}) }}
             
             {% from "govuk/components/file-upload/macro.njk" import govukFileUpload %}
 
 
-            {{ govukButton({
-text: "Save and continue"
- }) }}
+            <div class="govuk-button-group">
+                {{ govukButton({
+                  text: "Continue"
+                }) }}
+                <a class="govuk-link govuk-link--no-visited-state" href="#">Cancel</a>
+            </div>
 
         </form>
 

@@ -1,0 +1,38 @@
+{% extends "../layouts/exemption.html" %}
+
+{% block beforeContent %}
+    {% include "../includes/phase-banner.html" %}
+    {% include "../includes/account-bar.html" %}
+    {% include "../includes/back-link.html" %}
+{% endblock %}
+
+{% set pageHeadingTextHTML %}
+
+Delete project
+
+{% endset %}
+
+{% block content %}
+
+
+<div class="govuk-grid-row">
+
+  <div class="govuk-grid-column-full">
+
+    <h1 class="govuk-heading-l">
+      {{ pageHeadingTextHTML }}
+    </h1>
+
+    <p>If you delete your project, all the information you have entered will be lost.</p>
+ 
+    <form action="delete-router" method="post" novalidate>
+      <div class="govuk-button-group">
+        {{ govukButton({
+          text: "Delete project",
+		  classes: "govuk-button--warning"
+        }) }}
+        <a class="govuk-link govuk-link--no-visited-state" href="javascript:window.history.back()">Cancel</a>
+    </div>
+    </form>
+
+{% endblock %}

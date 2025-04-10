@@ -116,9 +116,12 @@ Which coordinate system do you want to use?
             }}
 
 
-            {{ govukButton({
-text: "Save and continue"
- }) }}
+            <div class="govuk-button-group">
+                {{ govukButton({
+                  text: "Continue"
+                }) }}
+                <a class="govuk-link govuk-link--no-visited-state" href="#">Cancel</a>
+            </div>
 
         </form>
 

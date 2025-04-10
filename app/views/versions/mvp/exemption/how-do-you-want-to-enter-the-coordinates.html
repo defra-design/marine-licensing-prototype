@@ -98,9 +98,12 @@ How do you want to enter the coordinates?
             }}
 
 
-            {{ govukButton({
-text: "Save and continue"
- }) }}
+            <div class="govuk-button-group">
+                {{ govukButton({
+                  text: "Continue"
+                }) }}
+                <a class="govuk-link govuk-link--no-visited-state" href="#">Cancel</a>
+            </div>
 
         </form>
 

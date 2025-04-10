@@ -344,13 +344,10 @@ router.post('/' + version + section + 'which-type-of-file-router', function (req
     // Route based on selection
     switch(selection) {
         case "KML":
-            res.redirect('upload-kml-file');
+            res.redirect('upload-file');
             break;
         case "Shapefile":
-            res.redirect('stop');
-            break;
-        case "MapInfo TAB":
-            res.redirect('stop');
+            res.redirect('upload-file');
             break;
         default:
             res.redirect('which-type-of-file');
@@ -363,7 +360,7 @@ router.post('/' + version + section + 'which-type-of-file-router', function (req
 // FILE UPLOAD PAGE
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-router.post('/' + version + section + 'upload-kml-file-router', function (req, res) {
+router.post('/' + version + section + 'upload-file-router', function (req, res) {
     req.session.data['siteTitle'] = 'review';
     // Redirect to review location page
     res.redirect('review-location');
@@ -889,6 +886,18 @@ router.post('/' + version + section + 'check-answers-router', function (req, res
     req.session.data['applicationSubmitted'] = 'true';
     // Redirect to review location page
     res.redirect('confirmation');
+});
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Delete project router
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+router.post('/' + version + section + 'delete-router', function (req, res) {
+    req.session.data['deleteProject'] = 'true';
+    // Redirect to Your projects page
+    res.redirect('home');
 });
 
 }
