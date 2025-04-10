@@ -158,3 +158,74 @@
         width: 100% !important;
     }
 }
+
+
+// Bespoke Service Navigation Bar Styles
+.app-bespoke-service-nav {
+  background-color: govuk-colour("light-grey"); 
+  padding: 21px 0; // Vertical padding like the original component
+  border-bottom: 1px solid govuk-colour("mid-grey");
+}
+
+.app-bespoke-service-nav__container {
+  display: flex;
+  justify-content: space-between; // Pushes service name left, actions right
+  align-items: center; // Vertically aligns items
+  flex-wrap: nowrap; // Prevents wrapping
+}
+
+// Service Name Link Styling
+.app-bespoke-service-nav__service-name {
+  @include govuk-font($size: 19, $weight: bold); // Match component font size/weight
+  color: govuk-colour("black");
+  text-decoration: none; 
+
+  &:link, // Ensure default link state is black
+  &:visited { // Ensure visited state is black
+    color: govuk-colour("black");
+  }
+
+  &:hover {
+    // Thicker underline on hover
+    border-bottom: 3px solid govuk-colour("black");
+    // Prevent text jumping slightly on hover due to border
+    padding-bottom: 1px;
+    margin-bottom: -4px; 
+  }
+
+  &:focus {
+    // Use standard GOV.UK focus
+    @include govuk-focused-text;
+    // Ensure focus state also has black text
+    color: govuk-colour("black");
+  }
+}
+
+.app-bespoke-service-nav__actions {
+  // Container for the action links
+}
+
+// Action Links Styling (Defra account, Sign out)
+.app-bespoke-service-nav__link {
+  text-decoration: none; 
+
+  // Ensure links are always blue
+  &:link,
+  &:visited {
+    color: govuk-colour("blue");
+  }
+
+  // Underline only on hover/focus
+  &:hover {
+    color: govuk-colour("blue"); 
+    text-decoration: underline;
+    text-decoration-thickness: 1px; 
+  }
+
+  &:focus {
+    // Use standard GOV.UK focus
+    @include govuk-focused-text;
+    color: govuk-colour("black"); 
+    text-decoration: none;
+  }
+}
