@@ -61,7 +61,7 @@ End date
   </div>
 {% endif %}
         <!--  END OF 'error summary' -->
-
+        <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
         <h1 class="govuk-heading-l">
             {{ pageHeadingTextHTML }}
         </h1>
@@ -118,7 +118,7 @@ End date
         {{ govukButton({
           text: "Save and continue"
         }) }}
-        <a class="govuk-link govuk-link--no-visited-state" href="#">Cancel</a>
+        <a class="govuk-link govuk-link--no-visited-state" href="javascript:window.history.back()">Cancel</a>
     </div>
 
         </form>

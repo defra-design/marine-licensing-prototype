@@ -56,32 +56,25 @@ Error:
 
         <form action="project-name-router" method="post" novalidate>
 
-            {{ govukInput({
-            label: 
-            {
-                text: pageHeadingTextHTML,
-                classes: "govuk-label--l",
-                isPageHeading: true
-            },
-            hint: {
-                text: "Enter a descriptive name to help you find your project later"
-              },
-              
-                autocomplete: "off",
-                id: "exemption-project-name-text-input",
-                name: "exemption-project-name-text-input",
-                errorMessage: null if data['errortypeone'] != "true"
-                else { text: "Enter a project name" },
-                value: data['exemption-project-name-text-input'],
-                classes: "govuk-input--full-width"
-            }) }}
 
+            <div class="govuk-form-group">
+                <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
+                <h1 class="govuk-label-wrapper">
+                  <label class="govuk-label govuk-label--l"  for="exemption-project-name-text-input">
+                  Project name
+                  </label>
+                </h1>
+                <div id="exemption-project-name-text-input-hint" class="govuk-hint">
+                  Enter a descriptive name to help you find your project later
+                </div>
+                <input class="govuk-input govuk-input--full-width" id="exemption-project-name-text-input" name="exemption-project-name-text-input" type="text" value="{{ data['exemption-project-name-text-input'] }}" aria-describedby="exemption-project-name-text-input-hint" autocomplete="off">
+              </div>
 
             <div class="govuk-button-group">
                 {{ govukButton({
                   text: "Save and continue"
                 }) }}
-                <a class="govuk-link govuk-link--no-visited-state" href="#">Cancel</a>
+                <a class="govuk-link govuk-link--no-visited-state" href="javascript:window.history.back()">Cancel</a>
             </div>
             
         </form>

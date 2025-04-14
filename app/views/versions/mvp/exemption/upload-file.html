@@ -29,33 +29,34 @@
         <!-- go to routes.js for routing  -->
         <form action="upload-file-router" method="post" novalidate>
 
+
+            <div class="govuk-form-group">
+                <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
+                <h1 class="govuk-label-wrapper">
+                  <label class="govuk-label govuk-label--l" for="file-upload-1" id="file-upload-1-label">
+                    {{ pageHeadingTextHTML }}
+                  </label>
+                </h1>
+            
+                <div id="file-upload-1-hint" class="govuk-hint">
+                    [Hint text if needed]
+                  </div>
+                
 			{% from "govuk/components/file-upload/macro.njk" import govukFileUpload %}
 
 			{{ govukFileUpload({
 			id: "file-upload-1",
 			name: "fileUpload1",
-			label:
-                    {
-                        html: pageHeadingTextHTML,
-                        classes: "govuk-label--l",
-                        isPageHeading: true
-                    },
-                    hint: {
-                        text: "[Hint text if needed]"
-                      },
-                    javascript: true
+            javascript: true
 			}) }}
             
-            {% from "govuk/components/file-upload/macro.njk" import govukFileUpload %}
-
-
             <div class="govuk-button-group">
                 {{ govukButton({
                   text: "Continue"
                 }) }}
                 <a class="govuk-link govuk-link--no-visited-state" href="#">Cancel</a>
             </div>
-
+        </div>
         </form>
 
     </div>

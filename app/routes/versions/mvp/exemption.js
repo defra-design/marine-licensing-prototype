@@ -126,7 +126,7 @@ router.post('/' + version + section + 'project-name-router', function (req, res)
 
     // Check if the text input (Project name) is blank
     const projectTitle = req.session.data['exemption-project-name-text-input'];
-    if (!projectTitle || projectTitle.trim() === "") {
+    if (!projectTitle || String(projectTitle).trim() === "") {
         req.session.data['errorthispage'] = "true";
         req.session.data['errortypeone'] = "true";
     }

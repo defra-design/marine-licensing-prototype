@@ -51,10 +51,14 @@ How do you want to enter the coordinates?
         {% endif %}
         <!--  END OF 'error summary' -->
 
+        <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
+           <h1 class="govuk-heading-l">
+            {{ pageHeadingTextHTML }}
+            </h1> 
 
-        <!-- go to routes.js for routing  -->
         <form action="how-do-you-want-to-enter-the-coordinates-router" method="post" novalidate>
 
+            
             {{ govukRadios
                 ({
                     name: "exemption-how-do-you-want-to-enter-the-coordinates-radios",
@@ -66,8 +70,8 @@ How do you want to enter the coordinates?
                         legend:
                         {
                             html: pageHeadingTextHTML,
-                            isPageHeading: true,
-                            classes: "govuk-fieldset__legend--l"
+                            isPageHeading: false,
+                            classes: "govuk-visually-hidden"
                         }
                     },
 

@@ -38,8 +38,10 @@
     {% if data['applicationSubmitted'] == "true" %}
       <span class="govuk-caption-l">	EXE/2025/004 – Exempt activity</span>
     {% else %}
-      <!-- No caption -->
+      <!-- Caption but no reference-->
+      <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
     {% endif %}
+    
     <h1 class="govuk-heading-l">
       {{ pageHeadingTextHTML }}
     </h1>

@@ -6,7 +6,7 @@
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-Your exempt activity project
+Exempt activity
 {% endset %}
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
@@ -18,8 +18,9 @@ Your exempt activity project
 
 <div class="govuk-grid-row">
 	<div class="govuk-grid-column-two-thirds">
+		<span class="govuk-caption-l">{{ pageHeadingTextHTML }}</span>
 		<h1 class="govuk-heading-l">
-			{{ pageHeadingTextHTML }}
+			{{ data['exemption-project-name-text-input'] }}
 		</h1>
 
 		<p>You must complete each section before you can send us your information.</p>

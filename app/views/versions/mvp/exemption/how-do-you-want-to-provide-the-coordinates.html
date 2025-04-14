@@ -54,8 +54,15 @@ How do you want to provide the site location?
 
 
         <!-- go to routes.js for routing  -->
+
+        <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
+                    <h1 class="govuk-heading-l">
+                        {{ pageHeadingTextHTML }}
+                    </h1>
+
         <form action="how-do-you-want-to-provide-the-coordinates-router" method="post" novalidate>
 
+   
             {{ govukRadios
                 ({
                     name: "exemption-how-do-you-want-to-provide-the-coordinates-radios",
@@ -67,8 +74,8 @@ How do you want to provide the site location?
                         legend:
                         {
                             html: pageHeadingTextHTML,
-                            isPageHeading: true,
-                            classes: "govuk-fieldset__legend--l"
+                            isPageHeading: false,
+                            classes: "govuk-visually-hidden"
                         }
                     },
 
@@ -96,7 +103,7 @@ How do you want to provide the site location?
                 {{ govukButton({
                   text: "Continue"
                 }) }}
-                <a class="govuk-link govuk-link--no-visited-state" href="#">Cancel</a>
+                <a class="govuk-link govuk-link--no-visited-state" href="javascript:window.history.back()">Cancel</a>
             </div>
 
         </form>

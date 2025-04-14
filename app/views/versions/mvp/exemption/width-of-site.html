@@ -53,6 +53,10 @@ Enter the width of the circular site in metres
         {% endif %}
         <!--  END OF 'error summary' -->
 
+        <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
+            <h1 class="govuk-heading-l">
+                {{ pageHeadingTextHTML }}
+            </h1> 
 
         <!-- go to routes.js for routing  -->
         <form action="width-of-site-router" method="post" novalidate>
@@ -62,8 +66,8 @@ Enter the width of the circular site in metres
                     label:
                     {
                         html: pageHeadingTextHTML,
-                        classes: "govuk-label--l",
-                        isPageHeading: true
+                        classes: "govuk-visually-hidden",
+                        isPageHeading: false
                     },
 
 					autocomplete: "off",
