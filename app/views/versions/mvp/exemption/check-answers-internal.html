@@ -18,20 +18,8 @@
 {% endblock %}
 
 
-{% set pageHeadingTextHTML %}
-  {% if data['applicationSubmitted'] == "true" %}
-    {{ data['exemption-project-name-text-input'] }}
-  {% else %}
-    Check your answers before sending your information
-  {% endif %}
-{% endset %}
-
 <!-- Text that show in the browser tab. Does NOT need changing -->
 {% block pageTitle %}
-    {% if  data['errorthispage'] == "true"  %}
-        Error:
-    {% endif %}
-
     {{ pageHeadingTextHTML }} - {{ data['headerName'] }}
 {% endblock %}
 
@@ -42,7 +30,8 @@
   <div class="govuk-grid-column-full">
 
     <h1 class="govuk-heading-l">
-      {{ pageHeadingTextHTML }}
+      <span class="govuk-caption-l">	EXE/2025/004 – Exempt activity</span>
+      {{ data['exemption-project-name-text-input'] }}
     </h1>
 
     <!--Start of Project details-->
@@ -249,7 +238,7 @@
       <div class="govuk-summary-card">
         <div class="govuk-summary-card__title-wrapper">
           <h2 class="govuk-summary-card__title">
-            Their answers from the 'Check if you need a marine licence' service
+            Their answers from 'Check if you need a marine licence'
           </h2>
         </div>
         <div class="govuk-summary-card__content">
@@ -433,7 +422,7 @@
    
     <!-- Start of site details -->
 
-<!-- Common to all routes -->
+<!-- Common to all coordinates -->
 <div class="govuk-summary-card">
   <div class="govuk-summary-card__title-wrapper">
     <h2 class="govuk-summary-card__title">
@@ -445,7 +434,7 @@
     {% else %}
     <ul class="govuk-summary-card__actions">
       <li class="govuk-summary-card__action">
-        <a class="govuk-link" href="review-location?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Location details</span></a>
+        <a class="govuk-link" href="review-location?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Site details</span></a>
       </li>
     </ul>
     {% endif %}
@@ -455,42 +444,23 @@
 
 <dl class="govuk-summary-list">
 
-
-  <!-- Start of map drawing -->
-  {% if data['exemption-do-you-want-to-draw-the-site-on-our-map-radios'] == "Yes"  %}
-  <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
-    <dt class="govuk-summary-list__key">
-      Map drawing
-    </dt>
-
-    
-  </div>
-
-</dl>  
-
-  <!-- Display the correct map depending on the scenario - will default to the pontoon if no data available -->
-  {% if (data['exemption'] == "pontoon-approval" or data['exemption'] == "pontoon-notification" or data['exemption'] == "") %}
-  <img src="/public/images/pontoon-map-drawn.jpg" alt="Map view" class="govuk-!-margin-bottom-2" style="width: 100%;">
-
-  {% elif data['exemption'] == "sample-notification" %}
-  <img src="/public/images/worthing-map-drawn.jpg" alt="Map view" class="govuk-!-margin-bottom-2" style="width: 100%;">
-  {% endif %}
-
-<!-- End of map drawing -->
-
-
-<!-- Start of coordinates - common to all coordinates (not displaying for maps) -->
-{% elif data['exemption-do-you-want-to-draw-the-site-on-our-map-radios'] == "No, I've got the coordinates"  %}
-<!-- Common to all coordinates--> 
-
-
 <!-- End of common to all coordinates-->
 
 <!-- Start of upload file -->
-{% if data['exemption-how-do-you-want-to-provide-the-coordinates-radios'] == "Upload a file"  %}
+{% if data['exemption-how-do-you-want-to-provide-the-coordinates-radios'] == "Upload a file with the coordinates of the site"  %}
+
 <div class="govuk-summary-list__row">
   <dt class="govuk-summary-list__key">
-    Which type of file do you want to upload?
+    Method of providing site location
+  </dt>
+  <dd class="govuk-summary-list__value">
+    {{ data['exemption-how-do-you-want-to-provide-the-coordinates-radios'] }}
+  </dd>
+</div>
+
+<div class="govuk-summary-list__row">
+  <dt class="govuk-summary-list__key">
+    File type
   </dt>
   <dd class="govuk-summary-list__value">
     {{ data['exemption-which-type-of-file-radios'] }}
@@ -502,7 +472,11 @@
     File uploaded
   </dt>
   <dd class="govuk-summary-list__value">
-    coordinates.kml
+    {% if data['exemption-which-type-of-file-radios'] == "KML" %}
+      coordinates.kml
+    {% elif data['exemption-which-type-of-file-radios'] == "Shapefile" %}
+      coordinates.shp
+    {% endif %}
   </dd>
 </div>
 
@@ -516,6 +490,7 @@
   <dt class="govuk-summary-list__key">
     Map view
   </dt>
+  <dd></dd>
 </div>
 </dl>  
 
@@ -536,16 +511,16 @@
 <!-- Start of enter coordinates manually -->
 
 <!-- Start of entering square or circle coordinates -->
-{% if data['exemption-how-do-you-want-to-provide-the-coordinates-radios'] == "Enter them manually"  %}
-<!--<div class="govuk-summary-list__row">
+{% if data['exemption-how-do-you-want-to-provide-the-coordinates-radios'] == "Enter the coordinates of the site manually"  %}
+<div class="govuk-summary-list__row">
   <dt class="govuk-summary-list__key">
-    How do you want to enter the coordinates?
+    Method of providing site location
   </dt>
   <dd class="govuk-summary-list__value">
-    {{ data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] }}
+        Manually <span style="text-transform: lowercase;">{{ data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] }}</span>
   </dd>
+</div>
 
-</div>-->
 
 <div class="govuk-summary-list__row">
   <dt class="govuk-summary-list__key">Coordinate system
@@ -571,7 +546,7 @@
 {% if data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter one set of coordinates and a width to create a circular site" %}
 <div class="govuk-summary-list__row">
   <dt class="govuk-summary-list__key">
-    Enter the coordinates at the centre point of the site
+    Coordinates at centre of site
   </dt>
   <dd class="govuk-summary-list__value">
    {{ data['exemption-enter-the-coordinates-at-the-centre-point-latitude-text-input'] }}, {{ data['exemption-enter-the-coordinates-at-the-centre-point-longitude-text-input'] }}
@@ -766,7 +741,7 @@
 
 <!-- End of enter coordinates manually -->
 
-{% endif %}
+
 <!-- Closing summary card divs and button - common to all -->
 </div>
 </div>
@@ -788,7 +763,7 @@
       {% else %}
       <ul class="govuk-summary-card__actions">
         <li class="govuk-summary-card__action">
-          <a class="govuk-link" href="public-register?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Do you believe the information you have provided should be withheld from the public register?</span></a>
+          <a class="govuk-link" href="public-register?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Information withheld from public register</span></a>
         </li>
       </ul>
       {% endif %}
@@ -799,7 +774,7 @@
   <dl class="govuk-summary-list">
     <div class="govuk-summary-list__row">
       <dt class="govuk-summary-list__key">
-        Do you believe the information you have provided should be withheld from the public register?
+        Information withheld from public register
       </dt>
       <dd class="govuk-summary-list__value">
         {{ data['exemption-public-register-radios'] }}
@@ -809,7 +784,7 @@
     {% if data['exemption-public-register-radios'] == "Yes" %}
     <div class="govuk-summary-list__row">
       <dt class="govuk-summary-list__key">
-        Provide details of why the information should be withheld 
+        Why the information should be withheld 
       </dt>
       <dd class="govuk-summary-list__value">
       {{ data['exemption-public-register-text-area'] }}
