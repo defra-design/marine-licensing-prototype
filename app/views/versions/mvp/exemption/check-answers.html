@@ -388,7 +388,7 @@
    
     <!-- Start of site details -->
 
-<!-- Common to all routes -->
+<!-- Common to all coordinates -->
 <div class="govuk-summary-card">
   <div class="govuk-summary-card__title-wrapper">
     <h2 class="govuk-summary-card__title">
@@ -410,25 +410,23 @@
 
 <dl class="govuk-summary-list">
 
+<!-- End of common to all coordinates-->
 
+<!-- Start of upload file -->
+{% if data['exemption-how-do-you-want-to-provide-the-coordinates-radios'] == "Upload a file with the coordinates of the site"  %}
 
-<!-- Common to all coordinates--> 
 <div class="govuk-summary-list__row">
   <dt class="govuk-summary-list__key">
-    How do you want to provide the site location?
+    Method of providing site location
   </dt>
   <dd class="govuk-summary-list__value">
     {{ data['exemption-how-do-you-want-to-provide-the-coordinates-radios'] }}
   </dd>
 </div>
 
-<!-- End of common to all coordinates-->
-
-<!-- Start of upload file -->
-{% if data['exemption-how-do-you-want-to-provide-the-coordinates-radios'] == "Upload a file with the coordinates of the site"  %}
 <div class="govuk-summary-list__row">
   <dt class="govuk-summary-list__key">
-    Which type of file do you want to upload?
+    File type
   </dt>
   <dd class="govuk-summary-list__value">
     {{ data['exemption-which-type-of-file-radios'] }}
@@ -482,16 +480,16 @@
 {% if data['exemption-how-do-you-want-to-provide-the-coordinates-radios'] == "Enter the coordinates of the site manually"  %}
 <div class="govuk-summary-list__row">
   <dt class="govuk-summary-list__key">
-    How do you want to enter the coordinates?
+    Method of providing site location
   </dt>
   <dd class="govuk-summary-list__value">
-    {{ data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] }}
+        Manually <span style="text-transform: lowercase;">{{ data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] }}</span>
   </dd>
-
 </div>
 
+
 <div class="govuk-summary-list__row">
-  <dt class="govuk-summary-list__key">Which coordinate system do you want to use?
+  <dt class="govuk-summary-list__key">Coordinate system
   </dt>
   <dd class="govuk-summary-list__value">
     {{ data['exemption-what-coordinate-system-radios'] }}<br> 
@@ -514,7 +512,7 @@
 {% if data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter one set of coordinates and a width to create a circular site" %}
 <div class="govuk-summary-list__row">
   <dt class="govuk-summary-list__key">
-    Enter the coordinates at the centre point of the site
+    Coordinates at centre of site
   </dt>
   <dd class="govuk-summary-list__value">
    {{ data['exemption-enter-the-coordinates-at-the-centre-point-latitude-text-input'] }}, {{ data['exemption-enter-the-coordinates-at-the-centre-point-longitude-text-input'] }}
