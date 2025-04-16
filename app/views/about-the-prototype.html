@@ -189,9 +189,89 @@ About the prototype and iterations
 
         <h2 class="govuk-heading-m">Iteration 4</h2>
 
-        <p>This iteration is still being worked on, but the main changes are how we ask for site details - asking whether they want to draw on our map, rather than asking if they have the coordinates - and providing a support phone number.</p>
+        <h3 class="govuk-heading-s">Project name page moved before task list</h3>
+<p>Users now see the 'Project name' page immediately after signing in or creating an account. This change ensures a draft project is saved with a name before reaching the task list.</p>
+<p>Previously, if users reached the task list and left without clicking save, no project would be created.</p>
 
-        <p>The section will be updated when the changes are complete.</p>
+<h3 class="govuk-heading-s">Dashboard</h3>
+<p>A new dashboard now shows users a list of their projects. They can access it by clicking on 'Projects home'.</p>
+<p>Projects are listed with their name, type, status, and a reference number (once available). Users can return to a draft project or view the details of a completed exemption notification.</p>
+<p>This gives users a clearer view of their progress and makes it easier to manage multiple applications.</p>
+
+<h3 class="govuk-heading-s">Start and end dates now on the same page</h3>
+<p>Previously, start and end dates were entered on separate pages. They are now combined into one page.</p>
+<p>This change was made following user research, where a neurodiverse participant using a screen ruler (an assistive tool) mistakenly entered the start date twice. When they moved from the start date page to the end date page, the layout looked so similar that it appeared to be the same page.</p>
+<p>Putting both dates on a single page reduces the risk of confusion, particularly for users relying on assistive technology, and makes the task quicker and more intuitive for everyone.</p>
+
+<h3 class="govuk-heading-s">Reworded site location question</h3>
+<p>We changed the question from 'Do you have the site coordinates?' to 'Do you want to draw the site on our map?'</p>
+<p>This was based on feedback from novice users during research. Some users thought they couldn't continue without coordinates and didn't realise they'd be given the option to draw the site on a map. The new wording makes it clear that they can draw on a map and the professional users can select the coordinates option.</p>
+
+<h3 class="govuk-heading-s">Help text added to file upload page</h3>
+<p>We added expandable help text to the 'Which type of file do you want to upload?' page to explain the different file types: Shapefile, MapInfo TAB, and KML.</p>
+<p>This change was based on user research. One participant didn't recognise any of the file types and said they would have to “Google them” before continuing. By providing brief descriptions up front, users can now understand what each option is for.</p>
+
+<h3 class="govuk-heading-s">Coordinate entry options simplified and clarified</h3>
+<p>We iterated on the 'How do you want to enter the coordinates?' page to reduce confusion and better support user behaviour.</p>
+<p>In earlier versions, users were given three options: circle, square, or multiple coordinates. We removed the square option in a later step as it was very similar to the circle and added complexity without clear value.</p>
+<p>Research consistently showed that most users can provide a single pair of coordinates but were mistakenly choosing the 'multiple coordinates' route – then only entering one pair. This led to incorrect submissions and user frustration.</p>
+<p>To support this behaviour, we updated the page to:</p>
+<ul class="govuk-list govuk-list--bullet">
+  <li>Focus on two options: creating a circular site or entering multiple coordinates</li>
+  <li>Added help text under each option to explain when to use it</li>
+</ul>
+<p>This change aims to guide users more clearly based on the level of detail they can provide, helping them choose the correct path more confidently.</p>
+
+<h3 class="govuk-heading-s">Multiple coordinates page updated to follow design system</h3>
+<p>We updated the 'Enter multiple coordinates' page to improve accessibility, consistency and error handling.</p>
+<p>Previously, the page used a custom side-by-side layout for entering latitude and longitude. While it made visual sense, especially for users familiar with coordinates, the layout didn't follow the GOV.UK Design System. It also introduced a few challenges:</p>
+<ul class="govuk-list govuk-list--bullet">
+  <li>Accessibility: Although hidden labels were added to support screen readers, the layout still didn't follow the standard GOV.UK pattern of visible labels above inputs. This could cause confusion for some users, and wasn't as clear or robust as the default approach.</li>
+  <li>Error handling: The bespoke layout didn't support GOV.UK Design System error messaging – it was difficult to display inline errors without breaking the layout.</li>
+</ul>
+<p>In iteration 4, we moved to a stacked layout with visible labels above each field – even on desktop. This:</p>
+<ul class="govuk-list govuk-list--bullet">
+  <li>Brings the page in line with GOV.UK form conventions</li>
+  <li>Makes the form clearer and more consistent for all users</li>
+  <li>Enables native error handling without extra work</li>
+</ul>
+<p>The earlier layout was inherited from the previous alpha, but this change makes the page more usable, more accessible, and easier to maintain.</p>
+
+<h3 class="govuk-heading-s">Phone support added to help users complete the service</h3>
+<p>We added a support phone number to the 'Check if you need a marine licence' start page and the 'Draw the site on a map' page.</p>
+<p>This is to help users who might struggle to complete the service on their own, including those having difficulty providing a site location. Clear contact details give users confidence they can get support if they're unsure or stuck – especially at key points where issues are more likely to arise.</p>
+
+<details class="govuk-details govuk-!-margin-bottom-2">
+  <summary class="govuk-details__summary">
+    <span class="govuk-details__summary-text">
+     The scenarios to follow for this iteration
+    </span>
+  </summary>
+  <div class="govuk-details__text">
+   
+    <p>We tested with novice and professional users, so both scenarios are relevant for this iteration.</p>
+
+    <h2 class="govuk-heading-m">Scenario 1</h2>
+
+    <p>You're looking to carry out some research involving analysis of sediments from just off the coast of Worthing, by the pier.</p>
+    <p>You need to carry out a survey taking 1 sample within 100m of the pier.</p>
+    <p>You'll travel to the sample sites by boat and lower a grab overboard.</p>
+    <p>The grab will be used to extract 0.3m<sup>3</sup> of material from the surface of the sea floor.</p>
+    <p>The material removed will be returned to the vessel and taken anyway for testing and analysis.</p>
+    <p>The material will be disposed to land once testing and analysis is complete.</p>
+    <p>A colleague advised that you might need to get permission from the Marine Management Organisation before you carry out this activity.</p>
+
+    <h2 class="govuk-heading-m">Scenario 2</h2>
+
+    <p>You live in Hammersmith London W6 9TS with a private garden fronting onto the River Thames.</p>
+    <p>You'd like to install a new private pontoon of 20m<sup>2</sup>, accessible via gangway, enabling independent access to the River Thames. You'll employ a builder to do this work for you.</p>
+    <p>Five of your neighbours properties have a similar pontoon.</p>
+    <p>The Pontoon and gangway will be constructed and installed on site.</p>
+    <p>You have also applied for permission from the Marine Harbour Authority.</p>
+    <p>Works are planned to be conducted in one phase, over an estimated period of 2 days in the period April-May 2025.</p>
+
+  </div>
+</details>
     </div>
 
     <!-- Right 3rd of the home screen.   Mostly admin stuff  -->
