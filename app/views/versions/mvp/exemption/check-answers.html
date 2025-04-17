@@ -42,6 +42,10 @@
       {{ pageHeadingTextHTML }}
     </h1>
 
+
+    {% if data['applicationSubmitted'] == "true" %}
+    <!--Don't display Project details at all as the name is the H1-->
+    {% else %}
    
      <!--Start of Project details-->
     <div class="govuk-summary-card">
@@ -49,13 +53,17 @@
         <h2 class="govuk-summary-card__title">
           Project details
         </h2>
+        
+        <ul class="govuk-summary-card__actions">
+          <li class="govuk-summary-card__action">
+            <a class="govuk-link" href="project-name.html?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Project name</span></a>
+          </li>
+        </ul>
       </div>
+
       <div class="govuk-summary-card__content">
-    
       <dl class="govuk-summary-list">
-      {% if data['applicationSubmitted'] == "true" %}
-      <!-- Don't display name as it is the title -->
-          {% else %}
+      
       <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">
           Project name
@@ -63,110 +71,13 @@
         <dd class="govuk-summary-list__value">
           {{ data['exemption-project-name-text-input'] }}
         </dd>
-        
-          {% if data['applicationSubmitted'] == "true" %}
-          <!-- Don't display the change link -->
-          {% else %}
-          <dd class="govuk-summary-list__actions">
-          <a class="govuk-link" href="project-name?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Project name</span></a>
-          </dd>
-          {% endif %}
-          
       </div>
-      {% endif %}
-
-
-      
-      <!-- Show pontoon scenario details -->
-      {% if (data['exemption'] == "pontoon-approval" or data['exemption'] == "pontoon-notification" or data['exemption'] == "") %}
-      
-      
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-          Your answers from 'Check if you need a marine licence' 
-        </dt>
-        <dd class="govuk-summary-list__value">
-          <a href="/public/downloads/approval-pontoon-answers.pdf" rel="noreferrer noopener" target="_blank">Download a copy of your answers (PDF)</a> 
-        </dd>
-
-      </div>
-
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-          Why this activity is exempt
-        </dt>
-        <dd class="govuk-summary-list__value">
-          Based on your answers, your activity is exempt under <a href="http://www.legislation.gov.uk/uksi/2011/409/article/25A" rel="noreferrer noopener" target="_blank">Article 25A of the Marine Licence (Exempted Activities) Order 2011 (opens in new tab)</a> 
-        </dd>
-   
-      </div>
-
-      
-      {% if data['applicationSubmitted'] == "true" %}
-      <!-- Don't show the below -->
-      {% else %}
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-          If anything about the activity is wrong
-        </dt>
-        <dd class="govuk-summary-list__value">
-          <ol class="govuk-list govuk-list--number">
-            <li>Delete this project from <a href="home" class="govuk-link--no-visited-state">your projects.</a></li>
-            <li>Restart the process by <a href="#">checking if you need a marine licence.</a></li>
-          </ol>
-        </dd>
-      </div>
-      
-      {% endif %}
-      
-
-      <!-- Show scientific samples scenario details -->
-      {% elif data['exemption'] == "sample-notification" %}
-      
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-          Your answers from 'Check if you need a marine licence'  
-        </dt>
-        <dd class="govuk-summary-list__value">
-          <a href="/public/downloads/notification-sample-answers.pdf" rel="noreferrer noopener" target="_blank">Download a copy of your answers (PDF)</a>   
-        </dd>
-
-      </div>
-
-      <div class="govuk-summary-list__row">
-        <dt class="govuk-summary-list__key">
-          Why this activity is exempt
-        </dt>
-        <dd class="govuk-summary-list__value">
-          Based on your answers, your activity is exempt under <a href="https://www.legislation.gov.uk/uksi/2011/409/article/17A" rel="noreferrer noopener" target="_blank">Article 17a of the Marine Licensing (Exempted Activities) Order 2011 (opens in new tab)</a> 
-        </dd>
-
-      </div>
-
-          {% if data['applicationSubmitted'] == "true" %}
-      <!-- Don't show the below -->
-          {% else %}
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-              If anything about the activity is wrong
-            </dt>
-            <dd class="govuk-summary-list__value">
-              <ol class="govuk-list govuk-list--number">
-                <li>Delete this project from <a href="home" class="govuk-link--no-visited-state">your projects.</a></li>
-                <li>Restart the process by <a href="#">checking if you need a marine licence.</a></li>
-              </ol>
-            </dd>
-          </div>
-          {% endif %}
-
-      
-      
-
-      {% endif %}
     </dl>
       </div>
     </div>
     <!-- End of project details -->
+    {% endif %}
+
 
     <!-- Start of dates -->
     <div class="govuk-summary-card">
@@ -239,15 +150,7 @@
           Activity details
         </h2>
 
-        {% if data['applicationSubmitted'] == "true" %}
-
-        {% else %}
-        <ul class="govuk-summary-card__actions">
-          <li class="govuk-summary-card__action">
-            <a class="govuk-link" href="activity-details.html?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Activity details</span></a>
-          </li>
-        </ul>
-        {% endif %}
+        
 
       </div>
       <div class="govuk-summary-card__content">
@@ -260,12 +163,99 @@
         <dd class="govuk-summary-list__value">
           {{ data['exemption-activity-details-text-area'] }}
         </dd>
+
+        {% if data['applicationSubmitted'] == "true" %}
+
+        {% else %}
+        <dd class="govuk-summary-list__actions">
+            <a class="govuk-link" href="activity-details.html?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Activity details</span></a>
+          </dd>
+        {% endif %}
       </div>
 
-    </dl>
-      </div>
+     <!-- Show pontoon scenario details -->
+     {% if (data['exemption'] == "pontoon-approval" or data['exemption'] == "pontoon-notification" or data['exemption'] == "") %}
+      
+      
+     <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+       <dt class="govuk-summary-list__key">
+         Your answers from 'Check if you need a marine licence' 
+       </dt>
+       <dd class="govuk-summary-list__value">
+         <a href="/public/downloads/approval-pontoon-answers.pdf" rel="noreferrer noopener" target="_blank">Download a copy of your answers (PDF)</a> 
+       </dd>
+     </div>
+
+     {% if data['applicationSubmitted'] == "true" %}
+     <!-- Don't show the below -->
+     {% else %}
+     <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+       <dt class="govuk-summary-list__key">
+         If any of your 'Check if you need a marine licence' answers are wrong
+       </dt>
+       <dd class="govuk-summary-list__value">
+         <ol class="govuk-list govuk-list--number">
+           <li>Delete this project from <a href="home" class="govuk-link--no-visited-state">your projects.</a></li>
+           <li>Restart the process by <a href="#">checking if you need a marine licence.</a></li>
+         </ol>
+       </dd>
+     </div>
+     
+     {% endif %}
+
+     <div class="govuk-summary-list__row">
+       <dt class="govuk-summary-list__key">
+         Why this activity is exempt
+       </dt>
+       <dd class="govuk-summary-list__value">
+         Based on your answers from 'Check if you need a marine licence', your activity is exempt under <a href="http://www.legislation.gov.uk/uksi/2011/409/article/25A" rel="noreferrer noopener" target="_blank">Article 25A of the Marine Licence (Exempted Activities) Order 2011 (opens in new tab)</a> 
+       </dd>
+  
+     </div>
+
+    <!-- Show scientific samples scenario details -->
+    {% elif data['exemption'] == "sample-notification" %}
+      
+    <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+      <dt class="govuk-summary-list__key">
+        Your answers from 'Check if you need a marine licence'  
+      </dt>
+      <dd class="govuk-summary-list__value">
+        <a href="/public/downloads/notification-sample-answers.pdf" rel="noreferrer noopener" target="_blank">Download a copy of your answers (PDF)</a>   
+      </dd>
     </div>
 
+    {% if data['applicationSubmitted'] == "true" %}
+          <!-- Don't show the below -->
+        {% else %}
+        <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+          <dt class="govuk-summary-list__key">
+            If any of your 'Check if you need a marine licence' answers are wrong
+          </dt>
+          <dd class="govuk-summary-list__value">
+            <ol class="govuk-list govuk-list--number">
+              <li>Delete this project from <a href="home" class="govuk-link--no-visited-state">your projects.</a></li>
+              <li>Restart the process by <a href="#">checking if you need a marine licence.</a></li>
+            </ol>
+          </dd>
+        </div>
+        {% endif %}
+
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">
+        Why this activity is exempt
+      </dt>
+      <dd class="govuk-summary-list__value">
+        Based on your answers from 'Check if you need a marine licence', your activity is exempt under <a href="https://www.legislation.gov.uk/uksi/2011/409/article/17A" rel="noreferrer noopener" target="_blank">Article 17a of the Marine Licensing (Exempted Activities) Order 2011 (opens in new tab)</a> 
+      </dd>
+
+    </div>
+
+        
+    {% endif %}
+  </dl>
+    </div>
+  </div>
 
     <!-- Start of site details -->
 

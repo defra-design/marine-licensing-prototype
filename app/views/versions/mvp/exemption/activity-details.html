@@ -58,25 +58,20 @@
             {{ govukTextarea({
                 
                 id: "exemption-activity-details-text-area",
-
                 name: "exemption-activity-details-text-area",
-
                 value: data['exemption-activity-details-text-area'],
-
 				errorMessage: null if data['errorthispage'] != "true"
                                        else { html: errorTextHTML },
-									   
-
                 label: {
                   html: pageHeadingTextHTML,
                   classes: "govuk-label--l",
                   isPageHeading: true
                 },
                 hint: {
-                  text: "Provide details about what you plan to do in this location"
-                }
+                  text: "Provide details about what you plan to do at this location"
+                },
+                rows: 8
               }) }}
-
 
               <div class="govuk-button-group">
                 {{ govukButton({
@@ -84,10 +79,7 @@
                 }) }}
                 <a class="govuk-link govuk-link--no-visited-state" href="javascript:window.history.back()">Cancel</a>
             </div>
-
-
         </form>
-
     </div>
 </div>
 
