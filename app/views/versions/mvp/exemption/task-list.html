@@ -6,19 +6,19 @@
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-Exempt activity
+{{ data['exemption-project-name-text-input'] }}
 {% endset %}
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
 {% block pageTitle %}
-    {{ pageHeadingTextHTML }} - {{ data['headerName'] }}
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
 {% endblock %}
 
 {% block content %}
 
 <div class="govuk-grid-row">
 	<div class="govuk-grid-column-two-thirds">
-		<span class="govuk-caption-l">{{ pageHeadingTextHTML }}</span>
+		<span class="govuk-caption-l">Exempt activity</span>
 		<h1 class="govuk-heading-l">
 			{{ data['exemption-project-name-text-input'] }}
 		</h1>
@@ -74,6 +74,30 @@ Exempt activity
 			  </div>
 
 			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+				<div class="govuk-task-list__name-and-hint">
+				  <a class="govuk-link govuk-task-list__link" href="activity-details.html" aria-describedby="exempt-information-5-status">
+					  Activity details
+				  </a>
+				</div>
+  
+				<div class="govuk-task-list__status" id="exempt-information-2-status">
+				  
+				  {% if data['exempt-information-5-status'] == "completed" %}
+				  Completed 
+  
+				  {% else %}
+  
+				  <strong class="govuk-tag govuk-tag--blue">
+					  Incomplete
+				  </strong>
+				  {% endif %}
+  
+				</div>
+  
+			  </li>
+
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
 			  <div class="govuk-task-list__name-and-hint">
 
@@ -134,7 +158,8 @@ Exempt activity
 		  {% if data['exempt-information-1-status'] == "completed" and
 		  data['exempt-information-2-status'] == "completed" and
 		  data['exempt-information-3-status'] == "completed" and
-		  data['exempt-information-4-status'] == "completed"  %}
+		  data['exempt-information-4-status'] == "completed" and
+		  data['exempt-information-5-status'] == "completed"  %}
 		  {{ govukButton({
 			text: "Review and send your information",
 			href: "check-answers.html"

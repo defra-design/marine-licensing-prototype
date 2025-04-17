@@ -22,7 +22,7 @@
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
 {% block pageTitle %}
-    {{ pageHeadingTextHTML }} - {{ data['headerName'] }}
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
 {% endblock %}
 
 {% block content %}
@@ -88,7 +88,7 @@
         <dd class="govuk-summary-list__value">
           <a href="/public/downloads/approval-pontoon-answers.pdf" rel="noreferrer noopener" target="_blank">Download a copy of your answers (PDF)</a> 
         </dd>
-        <dd></dd>
+
       </div>
 
       <div class="govuk-summary-list__row">
@@ -98,7 +98,7 @@
         <dd class="govuk-summary-list__value">
           Based on your answers, your activity is exempt under <a href="http://www.legislation.gov.uk/uksi/2011/409/article/25A" rel="noreferrer noopener" target="_blank">Article 25A of the Marine Licence (Exempted Activities) Order 2011 (opens in new tab)</a> 
         </dd>
-        <dd></dd>
+   
       </div>
 
       
@@ -232,6 +232,41 @@
     </div>
     
    
+     <!-- Start of activity details -->
+     <div class="govuk-summary-card">
+      <div class="govuk-summary-card__title-wrapper">
+        <h2 class="govuk-summary-card__title">
+          Activity details
+        </h2>
+
+        {% if data['applicationSubmitted'] == "true" %}
+
+        {% else %}
+        <ul class="govuk-summary-card__actions">
+          <li class="govuk-summary-card__action">
+            <a class="govuk-link" href="activity-details.html?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Activity details</span></a>
+          </li>
+        </ul>
+        {% endif %}
+
+      </div>
+      <div class="govuk-summary-card__content">
+
+    <dl class="govuk-summary-list">
+      <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">
+          Description of activity
+        </dt>
+        <dd class="govuk-summary-list__value">
+          {{ data['exemption-activity-details-text-area'] }}
+        </dd>
+      </div>
+
+    </dl>
+      </div>
+    </div>
+
+
     <!-- Start of site details -->
 
 <!-- Common to all coordinates -->
