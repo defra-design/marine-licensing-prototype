@@ -149,16 +149,13 @@
         <h2 class="govuk-summary-card__title">
           Activity details
         </h2>
-
-        
-
       </div>
       <div class="govuk-summary-card__content">
 
     <dl class="govuk-summary-list">
       <div class="govuk-summary-list__row">
         <dt class="govuk-summary-list__key">
-          Description of activity
+          Activity description
         </dt>
         <dd class="govuk-summary-list__value">
           {{ data['exemption-activity-details-text-area'] }}
@@ -176,7 +173,6 @@
      <!-- Show pontoon scenario details -->
      {% if (data['exemption'] == "pontoon-approval" or data['exemption'] == "pontoon-notification" or data['exemption'] == "") %}
       
-      
      <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
        <dt class="govuk-summary-list__key">
          Your answers from 'Check if you need a marine licence' 
@@ -191,7 +187,7 @@
      {% else %}
      <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
        <dt class="govuk-summary-list__key">
-         If any of your 'Check if you need a marine licence' answers are wrong
+        If you need to change any of your 'Check if you need a marine licence' answers
        </dt>
        <dd class="govuk-summary-list__value">
          <ol class="govuk-list govuk-list--number">
