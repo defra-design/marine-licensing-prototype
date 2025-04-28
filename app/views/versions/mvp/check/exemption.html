@@ -47,16 +47,21 @@ You do not need a marine licence, but you need to give us more information
         iconFallbackText: "Warning"
     }) }}
 {% endif %}
-		<h2 class="govuk-heading-m">What you'll need to provide</h2>
+		<h2 class="govuk-heading-m">Send your information using our new service</h2>
+
+		<p>This is a 'beta' service - <a href="https://www.gov.uk/help/beta" rel="noreferrer noopener" target="_blank">find out what this means for you (opens in new tab)</a>.</p>
+
+		<p>To use the service, you’ll need:</p>
 
 		<ul class="govuk-list govuk-list--bullet">
 			<li>details of the site where the activity will take place</li>
+			<li>information about what the activity involves</li>
 			<li>start and end dates for your activity</li>
 		</ul>
 
-		<p>You'll need a Defra account to send this information. Sign in or create one using Government Gateway. You can set up a Government Gateway account in the next step if needed. </p>
+		<p>You'll also need a Defra account to send this information. Sign in or create one using Government Gateway. You can set up a Government Gateway account in the next step if needed.</p>
 
-		<a href="../exemption/sign-in.html" class="govuk-button" role="button">Continue</a>
+		<a href="../exemption/sign-in.html" class="govuk-button" role="button">Continue to the new service</a>
 
 		<p>
 			{% if data['exemption'] == "pontoon-approval" %}
@@ -68,6 +73,9 @@ You do not need a marine licence, but you need to give us more information
 			{% endif %}
 			Download a PDF of your answers</a>
 		</p>
+
+		<h2 class="govuk-heading-m govuk-!-margin-top-8">If you've used the original service before</h2>
+		<p>Sign in to the Marine Case Management System to view or manage information you've sent us in that system. This will not appear in the new service.</p>
 
 	</div>
 </div>
