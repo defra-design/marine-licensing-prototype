@@ -97,8 +97,8 @@ Enter the coordinates at the centre point of the site
               {% include "../includes/lat-long-content.html" %}
       
               {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
-      
-              <p class="govuk-hint">Eastings and northings should only include numbers. For example: 123456</p>
+
+              {% include "../includes/east-north-content.html" %}
       
               {% endif %}
 
