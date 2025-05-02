@@ -168,148 +168,189 @@ When creating a new version:
 2. Update corresponding route files with the same date structure
 3. Update the index page to include the new version with appropriate links and status tag
 
+## Routing and Error Handling
 
-<!-- Good practice setup -->
+### Route File Organization
 
-# Efficient Prototyping Practices with GOV.UK Prototype Kit
+The prototype uses a modular routing structure where each section of the application has its own route file:
 
-This guide outlines best practices for efficient prototyping based on Vicky Teinaki's approach. Use this as a reference when building prototypes to ensure consistency, maintainability, and effective user research.
-
-## Layouts for Common Pages
-
-Create reusable layouts for:
-
-1. Service container pages (the main journey)
-2. Guidance pages (help and information)
-3. Email notifications (for testing email journeys)
-4. SMS messages (for testing text message journeys)
-5. Department specific footers
-6. Accessibility statements
-7. Cookie banners
-
-Example folder structure:
 ```
 app/
-  views/
-    layouts/
-      main.html         # Standard GOV.UK layout
-      guidance.html     # Layout for guidance pages
-      email.html        # Layout for email templates
-      sms.html          # Layout for SMS templates
+  routes/
+    versions/
+      2025-05-02/
+        exemption.js    # Routes for exemption journey
+        sites.js        # Routes for site management
+        account.js      # Routes for account management
+        check.js        # Routes for checking processes
 ```
 
-## Custom Filters
+Each route file follows these conventions:
 
-Define reusable Nunjucks filters to separate data from presentation, for example:
+1. Define version and section variables for path construction:
+   ```javascript
+   let version = "versions/2025-05-02/";
+   let section = "exemption/";
+   ```
+
+2. Export a function that accepts the router as a parameter:
+   ```javascript
+   module.exports = function(router) {
+     // Route definitions
+   }
+   ```
+
+3. Define routes using the version and section variables:
+   ```javascript
+   router.post('/' + version + section + 'page-name-router', function(req, res) {
+     // Route handling logic
+   });
+   ```
+
+### Form Validation Pattern
+
+Form validation consistently follows this pattern:
+
+1. Reset error flags at the beginning of the POST route:
+   ```javascript
+   req.session.data['errorthispage'] = "false";
+   req.session.data['errortypeone'] = "false";
+   ```
+
+2. Perform validation checks:
+   ```javascript
+   const inputValue = req.session.data['input-name'];
+   if (!inputValue || inputValue.trim() === "") {
+     req.session.data['errorthispage'] = "true";
+     req.session.data['errortypeone'] = "true";
+   }
+   ```
+
+3. Redirect based on validation results:
+   ```javascript
+   if (req.session.data['errorthispage'] === "true") {
+     res.redirect('page-name');
+   } else {
+     // Set completion status for task list
+     req.session.data['section-status'] = 'completed';
+     
+     // Check if returning to check answers page
+     if (req.session.data['camefromcheckanswers'] === 'true') {
+       req.session.data['camefromcheckanswers'] = false;
+       res.redirect('check-answers#section-anchor');
+     } else {
+       res.redirect('next-page');
+     }
+   }
+   ```
+
+### Data Clearing Functions
+
+For complex workflows where user inputs are dependent on previous selections:
+
+1. Define functions that clear related data:
+   ```javascript
+   function clearRelatedData(session) {
+     delete session.data['field-one'];
+     delete session.data['field-two'];
+     // Clear other related fields
+   }
+   ```
+
+2. Call these functions when selections change:
+   ```javascript
+   if (previousSelection !== currentSelection) {
+     clearRelatedData(req.session);
+   }
+   ```
+
+### Task List Management
+
+To track completion status for the task list:
+
+1. Update status after successful form submission:
+   ```javascript
+   req.session.data['section-name-status'] = 'completed';
+   ```
+
+2. Use this status in the task list template to show completion indicators
+
+### Complex Form Validation
+
+For multi-part forms (e.g., coordinate entry forms):
+
+1. Create specific error flags for each field:
+   ```javascript
+   req.session.data[`error-field-name`] = "false";
+   ```
+
+2. Build an errors array for the error summary:
+   ```javascript
+   req.session.data['errors'] = [];
+   
+   if (fieldIsInvalid) {
+     req.session.data[`error-field-name`] = "true";
+     req.session.data['errors'].push({
+       text: "Error message for this field",
+       anchor: "field-id"
+     });
+   }
+   ```
+
+3. Use these in templates to highlight specific fields and create accessible error messages
+
+### Conditional Routing
+
+For handling complex user journeys with multiple possible paths:
 
 ```javascript
-// In app/filters.js
-module.exports = function (env) {
-  // Convert number to money format
-  env.addFilter('toMoney', function(amount) {
-    return '£' + parseFloat(amount).toFixed(2)
-  })
+router.post('/' + version + section + 'decision-page-router', function(req, res) {
+  const selection = req.session.data['decision-radio-buttons'];
   
-  // Convert month number to name
-  env.addFilter('toMonth', function(monthNum) {
-    const months = ['January', 'February', 'March', 'April', 'May', 'June', 
-                   'July', 'August', 'September', 'October', 'November', 'December']
-    return months[monthNum - 1]
-  })
-}
+  switch(selection) {
+    case "Option A":
+      res.redirect('option-a-page');
+      break;
+    case "Option B":
+      res.redirect('option-b-page');
+      break;
+    default:
+      // Handle no selection
+      req.session.data['errorthispage'] = "true";
+      res.redirect('decision-page');
+  }
+});
 ```
 
-## Reusable Components
+### Error Handling in Templates
 
-Create components as you go to avoid duplication:
+In your Nunjucks templates, use the error flags and error arrays consistently:
 
-1. Identify repeating UI patterns
-2. Extract them into components
-3. Make them configurable with parameters
-
-Example component structure:
-```
-app/
-  views/
-    components/
-      task-list/
-        _task-list.html
-      application-summary/
-        _application-summary.html
-```
-
-Example usage:
 ```nunjucks
-{% from "components/task-list/_task-list.html" import taskList %}
-{{ taskList({
-  items: [
-    {
-      text: "Personal details",
-      href: "personal-details",
-      status: "Completed"
-    },
-    {
-      text: "Contact details",
-      href: "contact-details",
-      status: "In progress"
-    }
-  ]
-}) }}
-```
+{% if data['errorthispage'] == "true" %}
+  {{ govukErrorSummary({
+    titleText: "There is a problem",
+    errorList: data['errors'] if data['errors'] else [
+      {
+        text: errorTextHTML,
+        href: "#field-id"
+      }
+    ]
+  }) }}
+{% endif %}
 
-## Complex Branching
-
-For complex decision trees:
-
-1. Use clear, semantic variable names
-2. Create separate route files for complex journeys
-3. Document decision points with comments
-4. Use consistent conditionals
-
-Example:
-```javascript
-// In routes/application.js
-router.post('/eligibility-check', function (req, res) {
-  // Store answers
-  const age = req.session.data['applicant-age']
-  const residency = req.session.data['uk-resident']
-  const income = req.session.data['household-income']
-  
-  // Decision logic
-  if (age < 18) {
-    return res.redirect('not-eligible-age')
-  }
-  
-  if (residency !== 'yes') {
-    return res.redirect('not-eligible-residency')
-  }
-  
-  if (income > 50000) {
-    return res.redirect('not-eligible-income')
-  }
-  
-  res.redirect('eligible')
-})
-```
-
-## Implementation Tips
-
-1. Use the GOV.UK Design System components consistently
-2. Keep your prototype lean - don't implement more than necessary
-3. Use clear, descriptive naming for files, routes, and variables
-4. Comment your code, especially complex logic
-5. Always include a prototype banner at the top of every page using the phase-banner component
-
-Example prototype banner:
-```nunjucks
-{{ govukPhaseBanner({
-  tag: {
-    text: "Prototype"
+{{ govukInput({
+  label: {
+    text: "Field label"
   },
-  html: 'This is a prototype. Do not use it for real services.'
+  id: "field-id",
+  name: "field-name",
+  value: data['field-name'],
+  errorMessage: {
+    text: "Error message"
+  } if data['error-field-name'] == "true"
 }) }}
 ```
-
 
 ## Resources
 
