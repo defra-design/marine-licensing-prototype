@@ -1,0 +1,161 @@
+{% extends "../layouts/exemption.html" %}
+
+{% block beforeContent %}
+    {% include "../includes/phase-banner.html" %}
+    {% include "../includes/back-link.html" %}
+{% endblock %}
+
+
+<!-- Setting the smaller secondary heading lower down the page -->
+{% set pageHeadingTextHTML %}
+How do you want to provide the site location?
+{% endset %}
+
+
+<!-- Set the text for the error type -->
+{% set errorTextHTML %}
+    <!-- Nothing was selected -->
+    {% if data['errortypeone'] == "true" %}
+    Select how you want to provide the coordinates
+    {% endif %}
+{% endset %}
+
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {% if  data['errorthispage'] == "true"  %}
+        Error:
+    {% endif %}
+
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <!-- ERROR LOGIC 'error summary' -->
+        {% if data['errorthispage'] == "true" %}
+            {{ govukErrorSummary
+                ({
+                    titleText: "There is a problem",
+                    errorList:
+                    [
+                        {
+                            html: errorTextHTML,
+                            href: "#exemption-how-do-you-want-to-provide-the-coordinates-radios"
+                        }
+                    ]
+                })
+            }}
+        {% endif %}
+        <!--  END OF 'error summary' -->
+
+
+        <!-- go to routes.js for routing  -->
+
+        <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
+                    <h1 class="govuk-heading-l">
+                        {{ pageHeadingTextHTML }}
+                    </h1>
+
+        <form action="how-do-you-want-to-provide-the-coordinates-router" method="post" novalidate>
+
+   
+            {{ govukRadios
+                ({
+                    name: "exemption-how-do-you-want-to-provide-the-coordinates-radios",
+
+                    id: "exemption-how-do-you-want-to-provide-the-coordinates-radios",
+
+                    fieldset:
+                    {
+                        legend:
+                        {
+                            html: pageHeadingTextHTML,
+                            isPageHeading: false,
+                            classes: "govuk-visually-hidden"
+                        }
+                    },
+
+                    errorMessage: null if data['errorthispage'] != "true"
+                                       else { html: errorTextHTML },
+
+                    items:
+                    [
+                        {
+                            value: "Upload a file with the coordinates of the site",
+                            text: "Upload a file with the coordinates of the site",
+                            checked: data['exemption-how-do-you-want-to-provide-the-coordinates-radios'] == "Upload a file with the coordinates of the site"
+                        },
+                        {
+                            value: "Enter the coordinates of the site manually",
+                            text: "Enter the coordinates of the site manually",
+                            checked: data['exemption-how-do-you-want-to-provide-the-coordinates-radios'] == "Enter the coordinates of the site manually"
+                        }
+                    ]
+                })
+            }}
+
+
+            <div class="govuk-button-group">
+                {{ govukButton({
+                  text: "Continue"
+                }) }}
+                <a class="govuk-link govuk-link--no-visited-state" href="javascript:window.history.back()">Cancel</a>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+
+
+
+<!-- ERROR LOGIC  drop down to toggle states  -->
+<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-225px;  ">
+
+    <select style="height:30px;" onchange="window.location.href='?'+this.value">
+
+        <option value="errorthispage=false&errortypeone=false&errortypetwo=false&"
+                {% if (data['errorthispage'] != "true") %}selected{% endif %}
+        >Errors - Off</option>
+
+        <option value="errorthispage=true&errortypeone=true&errortypetwo=false&"
+                {% if (data['errortypeone'] == 'true' and data['errortypetwo'] != 'true')  %}selected{% endif %}
+        >Error 1 - Must select at least one</option>
+
+    </select>
+
+</form>
+<!--  END OF ERROR LOGIC -->
+
+
+
+<!-- USER TYPE TOGGLE  -->
+<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-225px;  ">
+
+    <select style="height:30px;" onchange="window.location.href='?'+this.value">
+
+        <option value="user=citizen&"
+                {% if  data['user'] != "agent"  %} selected {% endif %}
+        >User type - Individual</option>
+
+        <option value="user=agent&"
+                {% if  data['user'] == "agent"  %} selected {% endif %}
+        >User type - Agent</option>
+
+    </select>
+
+</form>
+<!--  END USER TYPE TOGGLE -->
+
+
+
+
+
+{% endblock %}
+
+

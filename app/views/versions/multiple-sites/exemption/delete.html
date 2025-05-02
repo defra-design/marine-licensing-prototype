@@ -1,0 +1,38 @@
+{% extends "../layouts/exemption.html" %}
+
+{% block beforeContent %}
+    {% include "../includes/phase-banner.html" %}
+    {% include "../includes/back-link.html" %}
+{% endblock %}
+
+{% set pageHeadingTextHTML %}
+Are you sure you want to delete this project?
+{% endset %}
+
+{% set projectnameHTML %}
+{{ data['exemption-project-name-text-input'] }}
+{% endset %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+
+  <div class="govuk-grid-column-full">
+
+    <h1 class="govuk-heading-l">
+      {{ pageHeadingTextHTML }}
+    </h1>
+
+    <p>{{ data['exemption-project-name-text-input'] }}</p>
+ 
+    <form action="delete-router" method="post" novalidate>
+      <div class="govuk-button-group govuk-!-margin-top-7">
+        {{ govukButton({
+          text: "Yes, delete project",
+		  classes: "govuk-button--warning"
+        }) }}
+        <a class="govuk-link govuk-link--no-visited-state" href="javascript:window.history.back()">Cancel</a>
+    </div>
+    </form>
+
+{% endblock %}

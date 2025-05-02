@@ -1,0 +1,183 @@
+{% extends "../layouts/exemption.html" %}
+
+<!-- Set a variable to identify this specific page -->
+{% set currentPageId = "home" %}
+
+{% block header %}
+{% from "govuk/components/header/macro.njk" import govukHeader %}
+{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
+
+{{ govukHeader({
+  classes: "govuk-header--full-width-border"
+}) }}
+{{ govukServiceNavigation({
+  serviceName: "MMO",
+  navigation: [
+    {
+      href: "home",
+      text: "Projects home",
+	  active: true
+    },
+    {
+      href: "#",
+      text: "Defra account",
+      active: false
+    },
+    {
+      href: "#",
+      text: "Sign out"
+    }
+  ]
+}) }}
+{% endblock %}
+
+{% block beforeContent %}
+	  	{% include "../includes/phase-banner.html" %}
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+Your projects
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-full">
+		<h1 class="govuk-heading-l">
+			{{ pageHeadingTextHTML }}
+		</h1>
+
+		{% if  data['deleteProject'] == "true"  %}
+
+		<p>You currently have no projects.</p>
+
+		{% else %}
+
+		<table class="govuk-table" data-module="moj-sortable-table">
+			<caption class="govuk-table__caption govuk-visually-hidden">{{ pageHeadingTextHTML }}</caption>
+			<thead class="govuk-table__head">
+			  <tr class="govuk-table__row">
+				<th scope="col" class="govuk-table__header" aria-sort="none">Name</th>
+				<th scope="col" class="govuk-table__header" aria-sort="none">Type</th>
+				<th scope="col" class="govuk-table__header" aria-sort="none">Reference</th>
+				<th scope="col" class="govuk-table__header" aria-sort="descending">Status</th>
+				<th scope="col" class="govuk-table__header" aria-sort="none">Actions</th>
+			  </tr>
+			</thead>
+			<tbody class="govuk-table__body">
+				<tr class="govuk-table__row">
+					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Westhaven Bay pipe maintenance</th>
+					<td class="govuk-table__cell">
+						Exempt activity
+					</td>
+					<td class="govuk-table__cell" data-sort-value="001">
+						EXE/2025/001
+					</td>
+					
+					<td class="govuk-table__cell" data-sort-value="Completed">
+						{{ govukTag({
+							text: "Completed",
+							classes: "govuk-tag--green"
+						}) }}
+					</td>
+					<td class="govuk-table__cell" data-sort-value="View details">	
+						<a href="#" class="govuk-link--no-visited-state">View details</a>
+					</td>
+				  </tr>
+				  <tr class="govuk-table__row">
+				<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Tynemouth - replacement of single pile</th>
+				<td class="govuk-table__cell">
+					Exempt activity
+				</td>
+				<td class="govuk-table__cell" data-sort-value="002">
+					EXE/2025/002
+				</td>
+				
+				<td class="govuk-table__cell" data-sort-value="Completed">
+					{{ govukTag({
+						text: "Completed",
+						classes: "govuk-tag--green"
+					}) }}
+				</td>
+				<td class="govuk-table__cell" data-sort-value="View details">	
+					<a href="#" class="govuk-link--no-visited-state">View details</a>
+				</td>
+			  </tr>
+
+			  <tr class="govuk-table__row">
+				<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Tower Bridge refurbishment</th>
+				<td class="govuk-table__cell">
+					Exempt activity
+				</td>
+				<td class="govuk-table__cell" data-sort-value="003">
+					-
+				</td>
+				
+				<td class="govuk-table__cell" data-sort-value="In progress">
+					{{ govukTag({
+						text: "In progress",
+						classes: "govuk-tag--light-blue"
+					}) }}
+				</td>
+				<td class="govuk-table__cell" data-sort-value="Continue">	
+					<a href="#" class="govuk-link--no-visited-state">Continue</a> <a href="#" class="govuk-!-margin-left-4 govuk-link--no-visited-state">Delete</a>
+				</td>
+			  </tr>
+
+			  <tr class="govuk-table__row">
+				<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">{{ data['exemption-project-name-text-input'] }}</th>
+				<td class="govuk-table__cell">
+					Exempt activity
+				</td>
+				<td class="govuk-table__cell" data-sort-value="004">
+					{% if data['applicationSubmitted'] == "true" %}	
+					EXE/2025/003
+					{% else %}
+					-
+					{% endif %}
+				</td>
+				
+				
+				{% if data['applicationSubmitted'] == "true" %}	
+					<td class="govuk-table__cell" data-sort-value="Completed">
+						{{ govukTag({
+							text: "Completed",
+							classes: "govuk-tag--green"
+						}) }}
+					</td>
+				{% else %}
+					<td class="govuk-table__cell" data-sort-value="In progress">
+						{{ govukTag({
+							text: "In progress",
+							classes: "govuk-tag--light-blue"
+						}) }}
+					</td>
+				{% endif %}
+				
+				
+					{% if data['applicationSubmitted'] == "true" %}	
+						<td class="govuk-table__cell" data-sort-value="View details">
+							<a href="check-answers.html" class="govuk-link--no-visited-state">View details</a>
+						</td>
+					{% else %}
+						<td class="govuk-table__cell" data-sort-value="Continue">
+							<a href="task-list" class="govuk-link--no-visited-state">Continue</a> <a href="delete" class="govuk-!-margin-left-4 govuk-link--no-visited-state">Delete</a>
+						</td>
+					{% endif %}
+
+			  </tr>
+			  
+			</tbody>
+		  </table>
+		{% endif %}
+
+		<!--<p>Go to <a class="govuk-link govuk-link--no-visited-state" href="">Check if you need a marine licence</a>.</p>-->
+	</div>
+</div>
+{% endblock %}
