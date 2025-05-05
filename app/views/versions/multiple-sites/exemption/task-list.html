@@ -113,10 +113,12 @@
 		  {% if data['exempt-information-1-status'] == "completed" and
 		  data['exempt-information-3-status'] == "completed" and
 		  data['exempt-information-4-status'] == "completed" %}
+		  {# Button temporarily commented out as requested
 		  {{ govukButton({
 			text: "Review and send your information",
 			href: "check-answers.html"
 		  }) }}
+		  #}
 		  {% endif %}
 	</div>
 </div>

@@ -322,6 +322,17 @@ router.post('/' + version + section + 'activity-dates-router', function (req, re
     const returnTo = req.session.data['returnTo'];
     if (returnTo === 'review-site-details') {
         delete req.session.data['returnTo']; // Clear the return flag
+        
+        // Look for anchor in referrer URL
+        const referer = req.headers.referer || '';
+        const hashPosition = referer.indexOf('#');
+        
+        if (hashPosition > -1) {
+            // Extract the anchor and redirect with it
+            const anchor = referer.substring(hashPosition);
+            return res.redirect('review-site-details' + anchor);
+        }
+        
         return res.redirect('review-site-details');
     }
 
@@ -359,6 +370,17 @@ router.post('/' + version + section + 'activity-details-router', function (req, 
     const returnTo = req.session.data['returnTo'];
     if (returnTo === 'review-site-details') {
         delete req.session.data['returnTo']; // Clear the return flag
+        
+        // Look for anchor in referrer URL
+        const referer = req.headers.referer || '';
+        const hashPosition = referer.indexOf('#');
+        
+        if (hashPosition > -1) {
+            // Extract the anchor and redirect with it
+            const anchor = referer.substring(hashPosition);
+            return res.redirect('review-site-details' + anchor);
+        }
+        
         return res.redirect('review-site-details');
     }
 
@@ -684,7 +706,15 @@ router.post('/' + version + section + 'site-name-router', function (req, res) {
         return res.redirect('site-name?site=' + siteNumber);
     }
 
-    // After valid site name is entered, return to review-site-details
+    // Extract the return parameter which contains the section name
+    const returnSection = req.session.data['return'];
+    
+    if (returnSection) {
+        // Redirect back to review-site-details with the anchor
+        return res.redirect('review-site-details#' + returnSection);
+    }
+
+    // Default: return to review-site-details without anchor
     res.redirect('review-site-details');
 });
 
@@ -725,7 +755,15 @@ router.post('/' + version + section + 'site-activity-dates-router', function (re
         return res.redirect('site-activity-dates?site=' + siteNumber);
     }
 
-    // After valid dates are entered, return to review-site-details
+    // Extract the return parameter which contains the section name
+    const returnSection = req.session.data['return'];
+    
+    if (returnSection) {
+        // Redirect back to review-site-details with the anchor
+        return res.redirect('review-site-details#' + returnSection);
+    }
+
+    // Default: return to review-site-details without anchor
     res.redirect('review-site-details');
 });
 
@@ -747,7 +785,15 @@ router.post('/' + version + section + 'site-activity-description-router', functi
         return res.redirect('site-activity-description?site=' + siteNumber);
     }
 
-    // After valid description is entered, return to review-site-details
+    // Extract the return parameter which contains the section name
+    const returnSection = req.session.data['return'];
+    
+    if (returnSection) {
+        // Redirect back to review-site-details with the anchor
+        return res.redirect('review-site-details#' + returnSection);
+    }
+
+    // Default: return to review-site-details without anchor
     res.redirect('review-site-details');
 });
 
@@ -760,8 +806,8 @@ router.post('/' + version + section + 'review-site-details-router', function (re
     // Set the status to completed
     req.session.data['exempt-information-3-status'] = 'completed';
     
-    // Redirect to stop.html page instead of task-list
-    res.redirect('stop');
+    // Redirect to task-list instead of stop.html
+    res.redirect('task-list');
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////
