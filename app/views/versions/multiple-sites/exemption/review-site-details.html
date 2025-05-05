@@ -151,7 +151,7 @@ Review site details
                         </dt>
                         <dd class="govuk-summary-list__value">
                             {% if data['exemption-start-date-date-input-day'] %}
-                                {{ data['exemption-start-date-date-input-day'] }} {{ data['exemption-start-date-date-input-month'] | toMonth }} {{ data['exemption-start-date-date-input-year'] }} - {{ data['exemption-end-date-date-input-day'] }} {{ data['exemption-end-date-date-input-month'] | toMonth }} {{ data['exemption-end-date-date-input-year'] }}
+                                {{ data['exemption-start-date-date-input-day'] }} {{ data['exemption-start-date-date-input-month'] | toMonth }} {{ data['exemption-start-date-date-input-year'] }} to {{ data['exemption-end-date-date-input-day'] }} {{ data['exemption-end-date-date-input-month'] | toMonth }} {{ data['exemption-end-date-date-input-year'] }}
                             {% else %}
                                 Not provided
                             {% endif %}
