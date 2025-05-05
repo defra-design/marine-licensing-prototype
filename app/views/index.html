@@ -44,11 +44,28 @@
         }) }}
         </span>-->
 
+        <!-- Start of session warning text -->
+        <div class="govuk-warning-text">
+          <span class="govuk-warning-text__icon info" aria-hidden="true">!</span>
+          <strong class="govuk-warning-text__text">
+            <span class="govuk-visually-hidden">Warning</span>
+            Remember to <a href="/manage-prototype/clear-data" class=" govuk-link--no-visited-state">clear session data</a>  every time you start a journey
+          </strong>
+        </div>
+        <!-- End of session warning text -->
+
         <!-- Start of Multiple Sites -->
         <strong class="govuk-tag govuk-tag--yellow" style="float:right">In progress</strong>
         <h2 class="govuk-heading-m">Multiple sites</h2>
         
-        <p>This version explores adding support for multiple sites in a single application. You can upload a file but you will not be able to submit the exemption notification. Note: you are not required to upload a file, just select 'Continue' on the upload page.</p>
+        <p>This version explores adding support for multiple sites in a single file upload.</p>
+        
+        <h3 class="govuk-heading-s">Note:</h3>
+
+        <ul class="govuk-list govuk-list--bullet">
+          <li>This is a prototype. You are not required to upload a file – just select ‘Continue’ on the upload page. The mapped coordinates shown are generic.</li>
+          <li>You will not be able to submit the exempt activity notification. This version only covers the file upload journey.</li>
+        </ul>
 
         <h3 class="govuk-heading-s">Start from:</h3>
 
@@ -72,7 +89,7 @@
         
         
             <ul class="govuk-list govuk-list--spaced">
-              <li>Exemption page, featured maps are: <a href="versions/mvp/check/exemption?headerName=Check%20if%20you%20need%20a%20marine%20licence&headerNameExemption=Apply%20for%20a%20marine%20licence&exemption=sample-notification&errorthispage=false&errortypeone=false&exempt-information-1-status=completed&">Sea sample</a> | <a href="versions/mvp/check/exemption?headerName=Check if you need a marine licence&headerNameExemption=Check if you need a marine licence&exemption=&errorthispage=false&errortypeone=false&exempt-information-1-status=completed&" class="govuk-link--no-visited-state">Pontoon</a></li>
+              <li>Exempt activity page, featured maps are: <a href="versions/mvp/check/exemption?headerName=Check%20if%20you%20need%20a%20marine%20licence&headerNameExemption=Apply%20for%20a%20marine%20licence&exemption=sample-notification&errorthispage=false&errortypeone=false&exempt-information-1-status=completed&">Sea sample</a> | <a href="versions/mvp/check/exemption?headerName=Check if you need a marine licence&headerNameExemption=Check if you need a marine licence&exemption=&errorthispage=false&errortypeone=false&exempt-information-1-status=completed&" class="govuk-link--no-visited-state">Pontoon</a></li>
               <li><a href="versions/mvp/exemption/sign-in.html" class="govuk-link--no-visited-state">Government Gateway sign in page</a></li>
               <li>Task list, project name completed: <a href="versions/mvp/exemption/task-list?headerName=Check%20if%20you%20need%20a%20marine%20licence&headerNameExemption=Apply%20for%20a%20marine%20licence&exemption=sample-notification&exemption-project-name-text-input=Worthing%20sea%20sample&errorthispage=false&errortypeone=false&exempt-information-1-status=completed&">Sea sample</a> | <a href="versions/mvp/exemption/task-list.html?headerName=Check if you need a marine licence&headerNameExemption=Check if you need a marine licence&exemption=&exemption-project-name-text-input=Hammersmith pontoon construction&errorthispage=false&errortypeone=false&exempt-information-1-status=completed&" class="govuk-link--no-visited-state">Pontoon</a></li>
 
@@ -93,15 +110,7 @@
 
         <!-- End of MVP -->
 
-        <!-- Start of session warning text -->
-        <div class="govuk-warning-text">
-          <span class="govuk-warning-text__icon info" aria-hidden="true">!</span>
-          <strong class="govuk-warning-text__text">
-            <span class="govuk-visually-hidden">Warning</span>
-            Remember to <a href="/manage-prototype/clear-data" class=" govuk-link--no-visited-state">clear session data</a>  every time you go through a journey
-          </strong>
-        </div>
-        <!-- End of session warning text -->
+        
 
         <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
 
@@ -156,7 +165,7 @@
           </summary>
           <div class="govuk-details__text">
             <ul class="govuk-list govuk-list--spaced">
-              <li><a href="versions/2025-04-04/check/exemption.html" class="govuk-link--no-visited-state">Exemption page</a></li>
+              <li><a href="versions/2025-04-04/check/exemption.html" class="govuk-link--no-visited-state">Exempt activity page</a></li>
               <li><a href="versions/2025-04-04/exemption/project-name-start.html" class="govuk-link--no-visited-state">Project name start page</a></li>
               <li><a href="versions/2025-04-04/exemption/task-list?headerName=Check if you need a marine licence&headerNameExemption=Check if you need a marine licence&exemption=sample-notification&exemption-do-you-want-to-draw-the-site-on-our-map-radios=No, I've got the coordinates&errorthispage=false&errortypeone=false&exemption-how-do-you-want-to-provide-the-coordinates-radios=Enter them manually&exemption-how-do-you-want-to-enter-the-coordinates-radios=Enter multiple sets of coordinates to mark the boundary of the site&previous-coords-entry-method=Enter multiple sets of coordinates to mark the boundary of the site&coords-type=coords-multiple&coordinate-system=WGS84 (World Geodetic System 1984)&errortypetwo=false&siteTitle=view&exempt-information-3-status=completed&exemption-project-name-text-input=Worthing sea sample&exempt-information-1-status=completed&exemption-start-date-date-input-day=1&exemption-start-date-date-input-month=5&exemption-start-date-date-input-year=2025&exemption-end-date-date-input-day=7&exemption-end-date-date-input-month=5&exemption-end-date-date-input-year=2025&startdateerror=false&enddateerror=false&exempt-information-2-status=completed&exemption-public-register-radios=No&exempt-information-4-status=completed&fromreview=true&exemption-what-coordinate-system-radios=WGS84 (World Geodetic System 1984)&errors=&error-coordinates-point-1-latitude=false&error-coordinates-point-1-longitude=false&error-coordinates-point-2-latitude=false&error-coordinates-point-2-longitude=false&error-coordinates-point-3-latitude=false&error-coordinates-point-3-longitude=false&error-coordinates-point-4-latitude=false&error-coordinates-point-4-longitude=false&error-coordinates-point-5-latitude=false&error-coordinates-point-5-longitude=false&coordinates-point-1-latitude=50.0000&coordinates-point-1-longitude=-1.0000&coordinates-point-2-latitude=50.0100&coordinates-point-2-longitude=-1.0100&coordinates-point-3-latitude=50.0200&coordinates-point-3-longitude=-1.0200&coordinates-point-4-latitude=50.0200&coordinates-point-4-longitude=-1.0200&coordinates-point-5-latitude=&coordinates-point-5-longitude=&" class="govuk-link--no-visited-state">Task list with all sections completed – Scenario 1: Sample removal</a></li>
 
@@ -210,7 +219,7 @@
           </summary>
           <div class="govuk-details__text">
             <ul class="govuk-list govuk-list--spaced">
-              <li><a href="versions/2025-03-03/check/exemption.html" class="govuk-link--no-visited-state">Exemption page</a></li>
+              <li><a href="versions/2025-03-03/check/exemption.html" class="govuk-link--no-visited-state">Exempt activity page</a></li>
               <li><a href="versions/2025-03-03/exemption/task-list.html" class="govuk-link--no-visited-state">Task list page</a></li>
           </ul>
           </div>
@@ -262,7 +271,7 @@
           </summary>
           <div class="govuk-details__text">
             <ul class="govuk-list govuk-list--spaced">
-              <li><a href="versions/2025-02-17/check/exemption" class="govuk-link--no-visited-state">Exemption page</a><br>
+              <li><a href="versions/2025-02-17/check/exemption" class="govuk-link--no-visited-state">Exempt activity page</a><br>
                 Defaults to pontoon scenario 2 if no data is saved</li>
               <!--<li><a href="versions/2025-02-17/check/exemption" class="govuk-link--no-visited-state">Exemption required page</a></li>
               <li><a href="versions/2025-02-17/exemption/what-is-your-name.html" class="govuk-link--no-visited-state">Exemption form start</a></li>-->
@@ -314,7 +323,7 @@
           </summary>
           <div class="govuk-details__text">
             <ul class="govuk-list govuk-list--spaced">
-              <li><a href="versions/2025-01-27/check/exemption" class="govuk-link--no-visited-state">Exemption page</a></li>
+              <li><a href="versions/2025-01-27/check/exemption" class="govuk-link--no-visited-state">Exempt activity page</a></li>
               <li><a href="versions/2025-01-27/exemption/what-is-your-name.html" class="govuk-link--no-visited-state">Start of exemption form</a></li>
           </ul>
           </div>
