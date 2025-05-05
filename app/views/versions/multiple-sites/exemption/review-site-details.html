@@ -128,50 +128,79 @@ Review site details
                 <dl class="govuk-summary-list">
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
-                            Activity dates
+                            Are the activity dates the same for every site?
                         </dt>
                         <dd class="govuk-summary-list__value">
                             {% if data['exemption-same-activity-dates-for-sites'] == "Yes" %}
-                                The same for every site
-                                <br>
-                                {% if data['exemption-start-date-date-input-day'] %}
-                                    {{ data['exemption-start-date-date-input-day'] }} {{ data['exemption-start-date-date-input-month'] | toMonth }} {{ data['exemption-start-date-date-input-year'] }} - {{ data['exemption-end-date-date-input-day'] }} {{ data['exemption-end-date-date-input-month'] | toMonth }} {{ data['exemption-end-date-date-input-year'] }}
-                                {% else %}
-                                    Not provided
-                                {% endif %}
+                                Yes
                             {% else %}
-                                Different for some or all sites
+                                No, some or all sites have different dates
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="{% if data['exemption-same-activity-dates-for-sites'] == 'Yes' %}activity-dates{% else %}same-activity-dates{% endif %}" class="govuk-link">
-                                Change<span class="govuk-visually-hidden"> activity dates</span>
+                            <a href="same-activity-dates" class="govuk-link">
+                                Change<span class="govuk-visually-hidden"> activity dates setting</span>
                             </a>
                         </dd>
                     </div>
+                    
+                    {% if data['exemption-same-activity-dates-for-sites'] == "Yes" %}
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
-                            Activity description
+                            Activity dates for all sites
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['exemption-start-date-date-input-day'] %}
+                                {{ data['exemption-start-date-date-input-day'] }} {{ data['exemption-start-date-date-input-month'] | toMonth }} {{ data['exemption-start-date-date-input-year'] }} - {{ data['exemption-end-date-date-input-day'] }} {{ data['exemption-end-date-date-input-month'] | toMonth }} {{ data['exemption-end-date-date-input-year'] }}
+                            {% else %}
+                                Not provided
+                            {% endif %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="activity-dates" class="govuk-link">
+                                Change<span class="govuk-visually-hidden"> activity dates for all sites</span>
+                            </a>
+                        </dd>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Is the activity description the same for every site?
                         </dt>
                         <dd class="govuk-summary-list__value">
                             {% if data['exemption-same-activity-description-for-sites'] == "Yes" %}
-                                The same for every site
-                                <br>
-                                {% if data['exemption-activity-details-text-area'] %}
-                                    {{ data['exemption-activity-details-text-area'] }}
-                                {% else %}
-                                    Not provided
-                                {% endif %}
+                                Yes
                             {% else %}
-                                Different for some or all sites
+                                No, some or all sites have a different description
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="{% if data['exemption-same-activity-description-for-sites'] == 'Yes' %}activity-details{% else %}same-activity-description{% endif %}" class="govuk-link">
-                                Change<span class="govuk-visually-hidden"> activity description</span>
+                            <a href="same-activity-description" class="govuk-link">
+                                Change<span class="govuk-visually-hidden"> activity description setting</span>
                             </a>
                         </dd>
                     </div>
+                    
+                    {% if data['exemption-same-activity-description-for-sites'] == "Yes" %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Activity description for all sites
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['exemption-activity-details-text-area'] %}
+                                {{ data['exemption-activity-details-text-area'] }}
+                            {% else %}
+                                Not provided
+                            {% endif %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="activity-details" class="govuk-link">
+                                Change<span class="govuk-visually-hidden"> activity description for all sites</span>
+                            </a>
+                        </dd>
+                    </div>
+                    {% endif %}
                 </dl>
             </div>
         </div>
@@ -243,7 +272,7 @@ Review site details
                     </div>
                     {% endif %}
                     
-                    <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+                    <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
                             Map view
                         </dt>
@@ -324,7 +353,7 @@ Review site details
                     </div>
                     {% endif %}
                     
-                    <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+                    <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
                             Map view
                         </dt>
