@@ -167,3 +167,7 @@
 
 /////// End of multiple coordinates styles ///////
 
+.govuk-summary-list__actions-list-item:not(:first-child), .govuk-summary-card__action:not(:first-child) {
+  border-left: none;
+}
+
