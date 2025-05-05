@@ -10,9 +10,9 @@
 
 <!-- Set the heading for the page -->
 {% set pageHeadingTextHTML %}
-{% if not data['site-1-name'] or not data['site-2-name'] or 
-   (data['exemption-same-activity-dates-for-sites'] == "No" and (not data['site-1-start-date-day'] or not data['site-2-start-date-day'])) or
-   (data['exemption-same-activity-description-for-sites'] == "No" and (not data['site-1-activity-description'] or not data['site-2-activity-description'])) %}
+{% if not data['site-1-name'] or not data['site-2-name'] or not data['site-3-name'] or not data['site-4-name'] or 
+   (data['exemption-same-activity-dates-for-sites'] == "No" and (not data['site-1-start-date-day'] or not data['site-2-start-date-day'] or not data['site-3-start-date-day'] or not data['site-4-start-date-day'])) or
+   (data['exemption-same-activity-description-for-sites'] == "No" and (not data['site-1-activity-description'] or not data['site-2-activity-description'] or not data['site-3-activity-description'] or not data['site-4-activity-description'])) %}
 Add and review site details
 {% else %}
 Review site details
@@ -42,20 +42,20 @@ Review site details
         
         <!-- Check if site-specific dates are required but incomplete -->
         {% if data['exemption-same-activity-dates-for-sites'] == "No" %}
-            {% if not data['site-1-start-date-day'] or not data['site-2-start-date-day'] %}
+            {% if not data['site-1-start-date-day'] or not data['site-2-start-date-day'] or not data['site-3-start-date-day'] or not data['site-4-start-date-day'] %}
                 {% set allComplete = false %}
             {% endif %}
         {% endif %}
         
         <!-- Check if site-specific descriptions are required but incomplete -->
         {% if data['exemption-same-activity-description-for-sites'] == "No" %}
-            {% if not data['site-1-activity-description'] or not data['site-2-activity-description'] %}
+            {% if not data['site-1-activity-description'] or not data['site-2-activity-description'] or not data['site-3-activity-description'] or not data['site-4-activity-description'] %}
                 {% set allComplete = false %}
             {% endif %}
         {% endif %}
         
         <!-- Check if site names are missing -->
-        {% if not data['site-1-name'] or not data['site-2-name'] %}
+        {% if not data['site-1-name'] or not data['site-2-name'] or not data['site-3-name'] or not data['site-4-name'] %}
             {% set allComplete = false %}
         {% endif %}
         
@@ -368,6 +368,168 @@ Review site details
                 </dl>
                 
                 <img src="{{ data['site-2-map-image'] or '/public/images/worthing-map-square.jpg' }}" alt="Map showing site 2 location" width="100%" />
+            </div>
+        </div>
+
+        <!-- Site 3 details section -->
+        <div id="site-3-details" class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">
+                    Site 3 details
+                </h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Site name
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['site-3-name'] %}
+                                {{ data['site-3-name'] }}
+                            {% else %}
+                                <span class="govuk-tag govuk-tag--blue">Incomplete</span>
+                            {% endif %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="site-name?site=3&return=site-3-details#site-3-details" class="govuk-link">
+                                {% if data['site-3-name'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> site name</span>
+                            </a>
+                        </dd>
+                    </div>
+                    
+                    {% if data['exemption-same-activity-dates-for-sites'] != "Yes" %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Activity dates for this site
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['site-3-start-date-day'] %}
+                                {{ data['site-3-start-date-day'] }} {{ data['site-3-start-date-month'] | toMonth }} {{ data['site-3-start-date-year'] }} to {{ data['site-3-end-date-day'] }} {{ data['site-3-end-date-month'] | toMonth }} {{ data['site-3-end-date-year'] }}
+                            {% else %}
+                                <span class="govuk-tag govuk-tag--blue">Incomplete</span>
+                            {% endif %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="site-activity-dates?site=3&return=site-3-details#site-3-details" class="govuk-link">
+                                {% if data['site-3-start-date-day'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> activity dates for this site</span>
+                            </a>
+                        </dd>
+                    </div>
+                    {% endif %}
+                    
+                    {% if data['exemption-same-activity-description-for-sites'] != "Yes" %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Activity description for this site
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['site-3-activity-description'] %}
+                                {{ data['site-3-activity-description'] }}
+                            {% else %}
+                                <span class="govuk-tag govuk-tag--blue">Incomplete</span>
+                            {% endif %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="site-activity-description?site=3&return=site-3-details#site-3-details" class="govuk-link">
+                                {% if data['site-3-activity-description'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> activity description for this site</span>
+                            </a>
+                        </dd>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Map view
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                        </dd>
+                        <dd class="govuk-summary-list__actions"></dd>
+                    </div>
+                </dl>
+                
+                <img src="{{ data['site-3-map-image'] or '/public/images/worthing-map-4-points.jpg' }}" alt="Map showing site 3 location" width="100%" />
+            </div>
+        </div>
+
+        <!-- Site 4 details section -->
+        <div id="site-4-details" class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">
+                    Site 4 details
+                </h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Site name
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['site-4-name'] %}
+                                {{ data['site-4-name'] }}
+                            {% else %}
+                                <span class="govuk-tag govuk-tag--blue">Incomplete</span>
+                            {% endif %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="site-name?site=4&return=site-4-details#site-4-details" class="govuk-link">
+                                {% if data['site-4-name'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> site name</span>
+                            </a>
+                        </dd>
+                    </div>
+                    
+                    {% if data['exemption-same-activity-dates-for-sites'] != "Yes" %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Activity dates for this site
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['site-4-start-date-day'] %}
+                                {{ data['site-4-start-date-day'] }} {{ data['site-4-start-date-month'] | toMonth }} {{ data['site-4-start-date-year'] }} to {{ data['site-4-end-date-day'] }} {{ data['site-4-end-date-month'] | toMonth }} {{ data['site-4-end-date-year'] }}
+                            {% else %}
+                                <span class="govuk-tag govuk-tag--blue">Incomplete</span>
+                            {% endif %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="site-activity-dates?site=4&return=site-4-details#site-4-details" class="govuk-link">
+                                {% if data['site-4-start-date-day'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> activity dates for this site</span>
+                            </a>
+                        </dd>
+                    </div>
+                    {% endif %}
+                    
+                    {% if data['exemption-same-activity-description-for-sites'] != "Yes" %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Activity description for this site
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['site-4-activity-description'] %}
+                                {{ data['site-4-activity-description'] }}
+                            {% else %}
+                                <span class="govuk-tag govuk-tag--blue">Incomplete</span>
+                            {% endif %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="site-activity-description?site=4&return=site-4-details#site-4-details" class="govuk-link">
+                                {% if data['site-4-activity-description'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> activity description for this site</span>
+                            </a>
+                        </dd>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Map view
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                        </dd>
+                        <dd class="govuk-summary-list__actions"></dd>
+                    </div>
+                </dl>
+                
+                <img src="{{ data['site-4-map-image'] or '/public/images/worthing-map-5-points.jpg' }}" alt="Map showing site 4 location" width="100%" />
             </div>
         </div>
 
