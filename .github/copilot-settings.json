@@ -1,0 +1,33 @@
+{
+  "ruleDefinitions": [
+    {
+      "name": "GOV.UK Prototype Kit Rules",
+      "description": "Rules for developing with the GOV.UK Prototype Kit",
+      "file": "copilot-instructions.md"
+    }
+  ],
+  "activeRules": ["GOV.UK Prototype Kit Rules"],
+  "settings": {
+    "typescript": {
+      "compilerOptions": {
+        "lib": ["es2020", "dom"],
+        "module": "commonjs",
+        "target": "es2020",
+        "strict": true
+      }
+    },
+    "javascript": {
+      "formatter": {
+        "indentSize": 2,
+        "useTabs": false
+      }
+    },
+    "nunjucks": {
+      "formatter": {
+        "indentSize": 2,
+        "useTabs": false
+      }
+    }
+  },
+  "version": "1.0.0"
+}

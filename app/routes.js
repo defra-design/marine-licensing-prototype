@@ -56,7 +56,11 @@ require('./routes/versions/mvp/sites.js')(router);
 require('./routes/versions/mvp/check.js')(router);
 require('./routes/versions/mvp/exemption.js')(router);
 
-
+// Multiple Sites Version
+require('./routes/versions/multiple-sites/account.js')(router);
+require('./routes/versions/multiple-sites/sites.js')(router);
+require('./routes/versions/multiple-sites/check.js')(router);
+require('./routes/versions/multiple-sites/exemption.js')(router);
 
 // viewing session data
 // When the user goes to 'prototype-admin/view-data' this collects all the session data

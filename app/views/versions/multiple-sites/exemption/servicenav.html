@@ -1,0 +1,57 @@
+{% extends "../layouts/exemption.html" %}
+
+{% block header %}
+{% from "govuk/components/header/macro.njk" import govukHeader %}
+{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
+
+{% set serviceNavEndSlotHTML %}
+<div class="app-service-nav__actions">
+  <a href="#" class="govuk-link govuk-link--no-visited-state">Defra account</a>
+  <a href="#" class="govuk-link govuk-link--no-visited-state govuk-!-margin-left-3">Sign out</a>
+</div>
+{% endset %}
+
+{{ govukHeader({
+  classes: "govuk-header--full-width-border"
+}) }}
+
+<div class="app-bespoke-service-nav">
+	<div class="govuk-width-container">
+	  <div class="app-bespoke-service-nav__container">
+
+		<a href="home" class="app-bespoke-service-nav__service-name">Apply for a marine licence</a>
+  
+		<div class="app-bespoke-service-nav__actions">
+		  <a href="#" class="govuk-link govuk-link--no-visited-state app-bespoke-service-nav__link">Defra account</a>
+		  <a href="#" class="govuk-link govuk-link--no-visited-state govuk-!-margin-left-3 app-bespoke-service-nav__link">Sign out</a>
+		</div>
+	  </div>
+	</div>
+  </div>
+{% endblock %}
+
+
+{% block beforeContent %}
+    {% include "../includes/phase-banner.html" %}
+    {% include "../includes/back-link.html" %}
+{% endblock %}
+
+{% set pageHeadingTextHTML %}
+Service nav test page
+{% endset %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+
+  <div class="govuk-grid-column-full">
+
+    <h1 class="govuk-heading-l">
+      {{ pageHeadingTextHTML }}
+    </h1>
+
+    <p></p>
+ 
+    
+
+{% endblock %}
