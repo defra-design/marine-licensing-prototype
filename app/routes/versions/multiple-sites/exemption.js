@@ -187,8 +187,15 @@ router.post('/' + version + section + 'activity-dates-router', function (req, re
     if (req.session.data['startdateerror'] === "true" || req.session.data['enddateerror'] === "true") {
         return res.redirect('activity-dates');
     }
+    
+    // Check if we're coming from review-site-details page
+    const returnTo = req.session.data['returnTo'];
+    if (returnTo === 'review-site-details') {
+        delete req.session.data['returnTo']; // Clear the return flag
+        return res.redirect('review-site-details');
+    }
 
-    // After valid dates are entered, go to the activity description question
+    // Default behavior - go to the activity description question
     res.redirect('same-activity-description');
 });
 
@@ -218,7 +225,14 @@ router.post('/' + version + section + 'activity-details-router', function (req, 
         return res.redirect('activity-details');
     }
 
-    // After a valid description is entered, go to review-site-details
+    // Check if we're coming from review-site-details page
+    const returnTo = req.session.data['returnTo'];
+    if (returnTo === 'review-site-details') {
+        delete req.session.data['returnTo']; // Clear the return flag
+        return res.redirect('review-site-details');
+    }
+
+    // Default behavior - go to review-site-details
     res.redirect('review-site-details');
 });
 
@@ -387,6 +401,7 @@ router.post('/' + version + section + 'same-activity-dates-router', function (re
     req.session.data['errortypeone'] = "false";
 
     const selection = req.session.data['exemption-same-activity-dates-for-sites'];
+    const previousSelection = req.session.data['previous-activity-dates-selection'];
 
     if (!selection) {
         req.session.data['errorthispage'] = "true";
@@ -395,16 +410,43 @@ router.post('/' + version + section + 'same-activity-dates-router', function (re
         return;
     }
 
+    // Store the current selection for future comparison
+    req.session.data['previous-activity-dates-selection'] = selection;
+
+    // Check if we're coming from review-site-details page
+    const returnTo = req.session.data['returnTo'];
+    
     // Route based on selection
     switch(selection) {
         case "Yes":
             // If dates are the same for all sites, take them to the activity-dates page
-            res.redirect('activity-dates');
+            // Pass the returnTo parameter so activity-dates knows where to return
+            if (returnTo === 'review-site-details') {
+                req.session.data['returnTo'] = 'review-site-details';
+                res.redirect('activity-dates');
+            } else {
+                res.redirect('activity-dates');
+            }
             break;
         case "No":
-            // If dates are different for each site, skip to activity description question
-            // We'll collect site-specific dates later
-            res.redirect('same-activity-description');
+            // If coming from review page and changing from Yes to No
+            if (returnTo === 'review-site-details' && previousSelection === "Yes") {
+                // Clear shared activity dates
+                delete req.session.data['exemption-start-date-date-input-day'];
+                delete req.session.data['exemption-start-date-date-input-month'];
+                delete req.session.data['exemption-start-date-date-input-year'];
+                delete req.session.data['exemption-end-date-date-input-day'];
+                delete req.session.data['exemption-end-date-date-input-month'];
+                delete req.session.data['exemption-end-date-date-input-year'];
+                
+                // Return to review page
+                delete req.session.data['returnTo'];
+                res.redirect('review-site-details');
+            } else {
+                // If dates are different for each site, skip to activity description question
+                // We'll collect site-specific dates later
+                res.redirect('same-activity-description');
+            }
             break;
         default:
             res.redirect('same-activity-dates');
@@ -421,6 +463,7 @@ router.post('/' + version + section + 'same-activity-description-router', functi
     req.session.data['errortypeone'] = "false";
 
     const selection = req.session.data['exemption-same-activity-description-for-sites'];
+    const previousSelection = req.session.data['previous-activity-description-selection'];
 
     if (!selection) {
         req.session.data['errorthispage'] = "true";
@@ -429,16 +472,37 @@ router.post('/' + version + section + 'same-activity-description-router', functi
         return;
     }
 
+    // Store the current selection for future comparison
+    req.session.data['previous-activity-description-selection'] = selection;
+
+    // Check if we're coming from review-site-details page
+    const returnTo = req.session.data['returnTo'];
+    
     // Route based on selection
     switch(selection) {
         case "Yes":
             // If description is the same for all sites, take them to the activity-details page
-            res.redirect('activity-details');
+            if (returnTo === 'review-site-details') {
+                req.session.data['returnTo'] = 'review-site-details';
+                res.redirect('activity-details');
+            } else {
+                res.redirect('activity-details');
+            }
             break;
         case "No":
-            // If description is different for each site, skip to review-site-details
-            // We'll collect site-specific descriptions later
-            res.redirect('review-site-details');
+            // If coming from review page and changing from Yes to No
+            if (returnTo === 'review-site-details' && previousSelection === "Yes") {
+                // Clear shared activity description
+                delete req.session.data['exemption-activity-details-text-area'];
+                
+                // Return to review page
+                delete req.session.data['returnTo'];
+                res.redirect('review-site-details');
+            } else {
+                // If description is different for each site, skip to review-site-details
+                // We'll collect site-specific descriptions later
+                res.redirect('review-site-details');
+            }
             break;
         default:
             res.redirect('same-activity-description');
