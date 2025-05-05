@@ -188,31 +188,41 @@ router.post('/' + version + section + 'activity-dates-router', function (req, re
         return res.redirect('activity-dates');
     }
 
-    // If we reach here, both dates have been fully entered
-    req.session.data['exempt-information-2-status'] = 'completed';
-
-    // Check if we need to return to the check answers page
-    if (req.session.data['camefromcheckanswers'] === 'true') {
-        req.session.data['camefromcheckanswers'] = false;
-        return res.redirect('check-answers#about-your-activity');
-    }
-
-    // Otherwise, go to the task list
-    return res.redirect('task-list');
+    // After valid dates are entered, go to the activity description question
+    res.redirect('same-activity-description');
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Activity details
 // TEXT ENTRY (TEXTAREA)
 /////////////////////////////////////////////////////////////////////////////////////////////
+
+// Fix the route for activity-details GET request
 router.get('/' + version + section + 'activity-details', function (req, res) {
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
     req.session.data['errors'] = [];
 
-    res.render(version + '/' + section + 'activity-details');
+    res.render(version + section + 'activity-details');
 });
 
+// Fix the route handler for activity details POST request
+router.post('/' + version + section + 'activity-details-router', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    const activityDetails = req.session.data['exemption-activity-details-text-area'];
+    if (!activityDetails || activityDetails.trim() === "") {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        return res.redirect('activity-details');
+    }
+
+    // After a valid description is entered, go to review-site-details
+    res.redirect('review-site-details');
+});
+
+// Maintain the existing about-your-activity-router for backward compatibility
 router.post('/' + version + section + 'about-your-activity-router', function (req, res) {
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
@@ -224,19 +234,9 @@ router.post('/' + version + section + 'about-your-activity-router', function (re
         return res.redirect('activity-details');
     }
 
-    // Mark as completed for the task list
-    req.session.data['exempt-information-5-status'] = 'completed';
-
-    // Redirect to check answers if returning from there
-    if (req.session.data['camefromcheckanswers'] === 'true') {
-        req.session.data['camefromcheckanswers'] = false;
-        return res.redirect('check-answers#activity-details');
-    }
-
-    // Otherwise go to task list
-    res.redirect('task-list');
+    // After a valid description is entered, go to review-site-details
+    res.redirect('review-site-details');
 });
-
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Location details
@@ -373,11 +373,178 @@ router.post('/' + version + section + 'which-type-of-file-router', function (req
 
 router.post('/' + version + section + 'upload-file-router', function (req, res) {
     req.session.data['siteTitle'] = 'review';
-    // Redirect to review location page
-    res.redirect('review-location');
+    // After uploading file, go to same-activity-dates question
+    res.redirect('same-activity-dates');
 });
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Are the activity dates the same for every site?
+// RADIO BUTTONS
+/////////////////////////////////////////////////////////////////////////////////////////////
 
+router.post('/' + version + section + 'same-activity-dates-router', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    const selection = req.session.data['exemption-same-activity-dates-for-sites'];
+
+    if (!selection) {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        res.redirect('same-activity-dates');
+        return;
+    }
+
+    // Route based on selection
+    switch(selection) {
+        case "Yes":
+            // If dates are the same for all sites, take them to the activity-dates page
+            res.redirect('activity-dates');
+            break;
+        case "No":
+            // If dates are different for each site, skip to activity description question
+            // We'll collect site-specific dates later
+            res.redirect('same-activity-description');
+            break;
+        default:
+            res.redirect('same-activity-dates');
+    }
+});
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Is the activity description the same for every site?
+// RADIO BUTTONS
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+router.post('/' + version + section + 'same-activity-description-router', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    const selection = req.session.data['exemption-same-activity-description-for-sites'];
+
+    if (!selection) {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        res.redirect('same-activity-description');
+        return;
+    }
+
+    // Route based on selection
+    switch(selection) {
+        case "Yes":
+            // If description is the same for all sites, take them to the activity-details page
+            res.redirect('activity-details');
+            break;
+        case "No":
+            // If description is different for each site, skip to review-site-details
+            // We'll collect site-specific descriptions later
+            res.redirect('review-site-details');
+            break;
+        default:
+            res.redirect('same-activity-description');
+    }
+});
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Site-specific name
+// TEXT ENTRY
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+router.post('/' + version + section + 'site-name-router', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    const siteNumber = req.session.data['site'];
+    const siteName = req.session.data['site-' + siteNumber + '-name'];
+
+    if (!siteName || siteName.trim() === "") {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        return res.redirect('site-name?site=' + siteNumber);
+    }
+
+    // After valid site name is entered, return to review-site-details
+    res.redirect('review-site-details');
+});
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Site-specific activity dates
+// DATE ENTRY - both start and end
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+router.post('/' + version + section + 'site-activity-dates-router', function (req, res) {
+    // Reset separate error flags
+    req.session.data['startdateerror'] = "false";
+    req.session.data['enddateerror'] = "false";
+
+    const siteNumber = req.session.data['site'];
+
+    // Retrieve the start date values
+    const startDay = req.session.data['site-' + siteNumber + '-start-date-day'];
+    const startMonth = req.session.data['site-' + siteNumber + '-start-date-month'];
+    const startYear = req.session.data['site-' + siteNumber + '-start-date-year'];
+
+    // Retrieve the end date values
+    const endDay = req.session.data['site-' + siteNumber + '-end-date-day'];
+    const endMonth = req.session.data['site-' + siteNumber + '-end-date-month'];
+    const endYear = req.session.data['site-' + siteNumber + '-end-date-year'];
+
+    // Check if the start date is missing any field
+    if (!startDay || !startMonth || !startYear) {
+        req.session.data['startdateerror'] = "true";
+    }
+
+    // Check if the end date is missing any field
+    if (!endDay || !endMonth || !endYear) {
+        req.session.data['enddateerror'] = "true";
+    }
+
+    // If either date is incomplete, redirect back to show the errors
+    if (req.session.data['startdateerror'] === "true" || req.session.data['enddateerror'] === "true") {
+        return res.redirect('site-activity-dates?site=' + siteNumber);
+    }
+
+    // After valid dates are entered, return to review-site-details
+    res.redirect('review-site-details');
+});
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Site-specific activity description
+// TEXT ENTRY (TEXTAREA)
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+router.post('/' + version + section + 'site-activity-description-router', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    const siteNumber = req.session.data['site'];
+    const siteDescription = req.session.data['site-' + siteNumber + '-activity-description'];
+
+    if (!siteDescription || siteDescription.trim() === "") {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        return res.redirect('site-activity-description?site=' + siteNumber);
+    }
+
+    // After valid description is entered, return to review-site-details
+    res.redirect('review-site-details');
+});
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Review Site Details
+// REVIEW PAGE
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+router.post('/' + version + section + 'review-site-details-router', function (req, res) {
+    // Set the status to completed
+    req.session.data['exempt-information-3-status'] = 'completed';
+    
+    if (req.session.data['camefromcheckanswers'] === 'true') {
+        res.redirect('check-answers');
+    } else {
+        res.redirect('task-list');
+    }
+});
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // How do you want to enter the coordinates of the area?

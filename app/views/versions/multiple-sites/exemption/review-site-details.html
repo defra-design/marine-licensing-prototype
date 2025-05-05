@@ -1,0 +1,359 @@
+{% extends "../layouts/exemption.html" %}
+
+{% block beforeContent %}
+    {% include "../includes/phase-banner.html" %}
+    {% include "../includes/back-link.html" %}
+{% endblock %}
+
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+<!-- Set the heading for the page -->
+{% set pageHeadingTextHTML %}
+{% if not data['site-1-name'] or not data['site-2-name'] or 
+   (data['exemption-same-activity-dates-for-sites'] == "No" and (not data['site-1-start-date-day'] or not data['site-2-start-date-day'])) or
+   (data['exemption-same-activity-description-for-sites'] == "No" and (not data['site-1-activity-description'] or not data['site-2-activity-description'])) %}
+Add and review site details
+{% else %}
+Review site details
+{% endif %}
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {% if  data['errorthispage'] == "true"  %}
+        Error:
+    {% endif %}
+
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
+        <h1 class="govuk-heading-l">
+            {{ pageHeadingTextHTML }}
+        </h1>
+        
+        <!-- Check if all required fields are completed -->
+        {% set allComplete = true %}
+        
+        <!-- Check if site-specific dates are required but incomplete -->
+        {% if data['exemption-same-activity-dates-for-sites'] == "No" %}
+            {% if not data['site-1-start-date-day'] or not data['site-2-start-date-day'] %}
+                {% set allComplete = false %}
+            {% endif %}
+        {% endif %}
+        
+        <!-- Check if site-specific descriptions are required but incomplete -->
+        {% if data['exemption-same-activity-description-for-sites'] == "No" %}
+            {% if not data['site-1-activity-description'] or not data['site-2-activity-description'] %}
+                {% set allComplete = false %}
+            {% endif %}
+        {% endif %}
+        
+        <!-- Check if site names are missing -->
+        {% if not data['site-1-name'] or not data['site-2-name'] %}
+            {% set allComplete = false %}
+        {% endif %}
+        
+        {% if not allComplete %}
+            {{ govukInsetText({
+                text: "You must add the incomplete information before you can save and continue."
+            }) }}
+        {% endif %}
+        
+        <!-- Providing the site location section -->
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">
+                    Providing the site location
+                </h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Method of providing site location
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            Upload a file with the coordinates of the site
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="how-do-you-want-to-provide-the-coordinates" class="govuk-link">
+                                Change<span class="govuk-visually-hidden"> method of providing site location</span>
+                            </a>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            File type
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ data['exemption-which-type-of-file-radios'] }}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="which-type-of-file" class="govuk-link">
+                                Change<span class="govuk-visually-hidden"> file type</span>
+                            </a>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            File uploaded
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            se-coast-sample-sites-coordinates.zip
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="upload-file" class="govuk-link">
+                                Change<span class="govuk-visually-hidden"> file uploaded</span>
+                            </a>
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        <!-- Activity details section -->
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">
+                    Activity details
+                </h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Activity dates
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['exemption-same-activity-dates-for-sites'] == "Yes" %}
+                                {% if data['exemption-start-date-date-input-day'] %}
+                                    {{ data['exemption-start-date-date-input-day'] }} {{ data['exemption-start-date-date-input-month'] | toMonth }} {{ data['exemption-start-date-date-input-year'] }} to {{ data['exemption-end-date-date-input-day'] }} {{ data['exemption-end-date-date-input-month'] | toMonth }} {{ data['exemption-end-date-date-input-year'] }}
+                                {% else %}
+                                    Not provided
+                                {% endif %}
+                            {% else %}
+                                Different for some or all sites
+                            {% endif %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="{% if data['exemption-same-activity-dates-for-sites'] == 'Yes' %}activity-dates{% else %}same-activity-dates{% endif %}" class="govuk-link">
+                                Change<span class="govuk-visually-hidden"> activity dates</span>
+                            </a>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Activity description
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['exemption-same-activity-description-for-sites'] == "Yes" %}
+                                {% if data['exemption-activity-details-text-area'] %}
+                                    {{ data['exemption-activity-details-text-area'] }}
+                                {% else %}
+                                    Not provided
+                                {% endif %}
+                            {% else %}
+                                Different for some or all sites
+                            {% endif %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="{% if data['exemption-same-activity-description-for-sites'] == 'Yes' %}activity-details{% else %}same-activity-description{% endif %}" class="govuk-link">
+                                Change<span class="govuk-visually-hidden"> activity description</span>
+                            </a>
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        <!-- Site 1 details section -->
+        <div id="site-1-details" class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">
+                    Site 1 details
+                </h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Site name
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['site-1-name'] %}
+                                {{ data['site-1-name'] }}
+                            {% else %}
+                                <span class="govuk-tag govuk-tag--blue">Incomplete</span>
+                            {% endif %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="site-name?site=1&return=site-1-details#site-1-details" class="govuk-link">
+                                {% if data['site-1-name'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> site name</span>
+                            </a>
+                        </dd>
+                    </div>
+                    
+                    {% if data['exemption-same-activity-dates-for-sites'] != "Yes" %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Activity dates for this site
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['site-1-start-date-day'] %}
+                                {{ data['site-1-start-date-day'] }} {{ data['site-1-start-date-month'] | toMonth }} {{ data['site-1-start-date-year'] }} to {{ data['site-1-end-date-day'] }} {{ data['site-1-end-date-month'] | toMonth }} {{ data['site-1-end-date-year'] }}
+                            {% else %}
+                                <span class="govuk-tag govuk-tag--blue">Incomplete</span>
+                            {% endif %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="site-activity-dates?site=1&return=site-1-details#site-1-details" class="govuk-link">
+                                {% if data['site-1-start-date-day'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> activity dates for this site</span>
+                            </a>
+                        </dd>
+                    </div>
+                    {% endif %}
+                    
+                    {% if data['exemption-same-activity-description-for-sites'] != "Yes" %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Activity description for this site
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['site-1-activity-description'] %}
+                                {{ data['site-1-activity-description'] }}
+                            {% else %}
+                                <span class="govuk-tag govuk-tag--blue">Incomplete</span>
+                            {% endif %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="site-activity-description?site=1&return=site-1-details#site-1-details" class="govuk-link">
+                                {% if data['site-1-activity-description'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> activity description for this site</span>
+                            </a>
+                        </dd>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+                        <dt class="govuk-summary-list__key">
+                            Map view
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                        </dd>
+                        <dd class="govuk-summary-list__actions"></dd>
+                    </div>
+                </dl>
+                
+                <img src="{{ data['site-1-map-image'] or '/public/images/worthing-map-drawn.jpg' }}" alt="Map showing site 1 location" width="100%" />
+            </div>
+        </div>
+
+        <!-- Site 2 details section -->
+        <div id="site-2-details" class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">
+                    Site 2 details
+                </h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Site name
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['site-2-name'] %}
+                                {{ data['site-2-name'] }}
+                            {% else %}
+                                <span class="govuk-tag govuk-tag--blue">Incomplete</span>
+                            {% endif %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="site-name?site=2&return=site-2-details#site-2-details" class="govuk-link">
+                                {% if data['site-2-name'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> site name</span>
+                            </a>
+                        </dd>
+                    </div>
+                    
+                    {% if data['exemption-same-activity-dates-for-sites'] != "Yes" %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Activity dates for this site
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['site-2-start-date-day'] %}
+                                {{ data['site-2-start-date-day'] }} {{ data['site-2-start-date-month'] | toMonth }} {{ data['site-2-start-date-year'] }} to {{ data['site-2-end-date-day'] }} {{ data['site-2-end-date-month'] | toMonth }} {{ data['site-2-end-date-year'] }}
+                            {% else %}
+                                <span class="govuk-tag govuk-tag--blue">Incomplete</span>
+                            {% endif %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="site-activity-dates?site=2&return=site-2-details#site-2-details" class="govuk-link">
+                                {% if data['site-2-start-date-day'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> activity dates for this site</span>
+                            </a>
+                        </dd>
+                    </div>
+                    {% endif %}
+                    
+                    {% if data['exemption-same-activity-description-for-sites'] != "Yes" %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Activity description for this site
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['site-2-activity-description'] %}
+                                {{ data['site-2-activity-description'] }}
+                            {% else %}
+                                <span class="govuk-tag govuk-tag--blue">Incomplete</span>
+                            {% endif %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="site-activity-description?site=2&return=site-2-details#site-2-details" class="govuk-link">
+                                {% if data['site-2-activity-description'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> activity description for this site</span>
+                            </a>
+                        </dd>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+                        <dt class="govuk-summary-list__key">
+                            Map view
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                        </dd>
+                        <dd class="govuk-summary-list__actions"></dd>
+                    </div>
+                </dl>
+                
+                <img src="{{ data['site-2-map-image'] or '/public/images/worthing-map-square.jpg' }}" alt="Map showing site 2 location" width="100%" />
+            </div>
+        </div>
+
+        <form action="review-site-details-router" method="post" novalidate>
+            <div class="govuk-button-group">
+                {% if allComplete %}
+                    {{ govukButton({
+                        text: "Save and continue"
+                    }) }}
+                {% endif %}
+                <a class="govuk-link govuk-link--no-visited-state" href="javascript:window.history.back()">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- USER TYPE TOGGLE  -->
+<form method="post" action="#" class="for4" style="float: left; position: relative; bottom:-225px;">
+    <select style="height:30px;" onchange="window.location.href='?'+this.value">
+        <option value="user=citizen&" {% if data['user'] != "agent" %} selected {% endif %}>User type - Individual</option>
+        <option value="user=agent&" {% if data['user'] == "agent" %} selected {% endif %}>User type - Agent</option>
+    </select>
+</form>
+<!--  END USER TYPE TOGGLE -->
+
+{% endblock %}
