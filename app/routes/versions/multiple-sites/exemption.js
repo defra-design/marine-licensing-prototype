@@ -822,7 +822,7 @@ router.post('/' + version + section + 'site-details-added-router', function (req
         res.redirect('task-list');
     } else {
         // User wants to add more sites, redirect to site details page
-        res.redirect('site-details');
+        res.redirect('task-list');
     }
 });
 

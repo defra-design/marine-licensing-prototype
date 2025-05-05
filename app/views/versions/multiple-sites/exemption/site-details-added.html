@@ -30,6 +30,7 @@ Site details
         
         <div class="govuk-!-margin-bottom-6">
             {{ govukSummaryList({
+                classes: "govuk-!-margin-bottom-6",
                 rows: [
                     {
                         key: {
@@ -39,9 +40,10 @@ Site details
                             text: data['site-1-name'] or "Worthing sample"
                         },
                         actions: {
+                            classes: "govuk-!-width-one-quarter",
                             items: [
                                 {
-                                    href: "site-name?site=1&return=site-1-details#site-1-details",
+                                    href: "review-site-details?site=1",
                                     text: "Review",
                                     visuallyHiddenText: "site 1"
                                 },
@@ -61,9 +63,10 @@ Site details
                             text: data['site-2-name'] or "Brighton sample"
                         },
                         actions: {
+                            classes: "govuk-!-width-one-quarter",
                             items: [
                                 {
-                                    href: "site-name?site=2&return=site-2-details#site-2-details",
+                                    href: "review-site-details?site=2",
                                     text: "Review",
                                     visuallyHiddenText: "site 2"
                                 },
@@ -83,9 +86,10 @@ Site details
                             text: data['site-3-name'] or "Hastings sample"
                         },
                         actions: {
+                            classes: "govuk-!-width-one-quarter",
                             items: [
                                 {
-                                    href: "site-name?site=3&return=site-3-details#site-3-details",
+                                    href: "review-site-details?site=3",
                                     text: "Review",
                                     visuallyHiddenText: "site 3"
                                 },
@@ -105,9 +109,10 @@ Site details
                             text: data['site-4-name'] or "Eastbourne sample"
                         },
                         actions: {
+                            classes: "govuk-!-width-one-quarter",
                             items: [
                                 {
-                                    href: "site-name?site=4&return=site-4-details#site-4-details",
+                                    href: "review-site-details?site=4",
                                     text: "Review",
                                     visuallyHiddenText: "site 4"
                                 },
@@ -136,13 +141,13 @@ Site details
             </div>
             
             <div class="govuk-button-group">
-                {{ govukButton({
-                    text: "Save and continue"
-                }) }}
+				{{ govukButton({
+					text: "Save and continue"
+
+				}) }}
                 
                 {{ govukButton({
                     text: "Add another site",
-                    href: "site-details",
                     classes: "govuk-button--secondary"
                 }) }}
             </div>
