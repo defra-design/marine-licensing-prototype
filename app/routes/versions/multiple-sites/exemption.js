@@ -760,11 +760,8 @@ router.post('/' + version + section + 'review-site-details-router', function (re
     // Set the status to completed
     req.session.data['exempt-information-3-status'] = 'completed';
     
-    if (req.session.data['camefromcheckanswers'] === 'true') {
-        res.redirect('check-answers');
-    } else {
-        res.redirect('task-list');
-    }
+    // Redirect to stop.html page instead of task-list
+    res.redirect('stop');
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////
