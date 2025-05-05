@@ -38,12 +38,18 @@
                   </label>
                 </h1>
             
+                <!--<div class="govuk-inset-text">
+                    <strong>Note: This is a prototype.</strong><br>
+                    You don’t need to upload a file. Just select <strong>‘Continue’</strong> to move to the next step.
+                  </div>-->
+                  
                 <div id="file-upload-1-hint" class="govuk-hint">
                     {% if data['exemption-which-type-of-file-radios'] == "Shapefile" %}
                       Upload a ZIP file with all the files for your Shapefile. You can include more than one site.
                     {% endif %}
                   </div>
                 
+                  
 			{% from "govuk/components/file-upload/macro.njk" import govukFileUpload %}
 
 			{{ govukFileUpload({
@@ -52,6 +58,7 @@
             javascript: true
 			}) }}
             
+           
             <div class="govuk-button-group">
                 {{ govukButton({
                   text: "Continue"
