@@ -61,7 +61,7 @@ Review site details
         
         {% if not allComplete %}
             {{ govukInsetText({
-                text: "You must add the incomplete information before you can save and continue."
+                html: "You must add the <span class='govuk-tag govuk-tag--blue' style='padding-right: 5px;'>Incomplete</span> information before you can save and continue."
             }) }}
         {% endif %}
         
