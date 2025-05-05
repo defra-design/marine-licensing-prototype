@@ -78,6 +78,61 @@ function clearCoordinateValues(session) {
     }
 }
 
+// Function to clear all site details data when cancelling to task list
+function clearAllSiteDetails(session) {
+    // Clear site location data
+    clearAllLocationData(session);
+    
+    // Clear activity date settings
+    delete session.data['exemption-same-activity-dates-for-sites'];
+    delete session.data['previous-activity-dates-selection'];
+    
+    // Clear shared activity dates
+    delete session.data['exemption-start-date-date-input-day'];
+    delete session.data['exemption-start-date-date-input-month'];
+    delete session.data['exemption-start-date-date-input-year'];
+    delete session.data['exemption-end-date-date-input-day'];
+    delete session.data['exemption-end-date-date-input-month'];
+    delete session.data['exemption-end-date-date-input-year'];
+    
+    // Clear activity description settings
+    delete session.data['exemption-same-activity-description-for-sites'];
+    delete session.data['previous-activity-description-selection'];
+    
+    // Clear shared activity description
+    delete session.data['exemption-activity-details-text-area'];
+    
+    // Clear site-specific data
+    for (let i = 1; i <= 2; i++) {
+        // Clear site name
+        delete session.data[`site-${i}-name`];
+        
+        // Clear site-specific dates
+        delete session.data[`site-${i}-start-date-day`];
+        delete session.data[`site-${i}-start-date-month`];
+        delete session.data[`site-${i}-start-date-year`];
+        delete session.data[`site-${i}-end-date-day`];
+        delete session.data[`site-${i}-end-date-month`];
+        delete session.data[`site-${i}-end-date-year`];
+        
+        // Clear site-specific description
+        delete session.data[`site-${i}-activity-description`];
+        
+        // Clear site-specific map image
+        delete session.data[`site-${i}-map-image`];
+    }
+    
+    // Clear any error states
+    delete session.data['startdateerror'];
+    delete session.data['enddateerror'];
+    delete session.data['errorthispage'];
+    delete session.data['errortypeone'];
+    delete session.data['errortypetwo'];
+    
+    // Reset task status
+    delete session.data['exempt-information-3-status'];
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Project name start
 // NOT THE ONE IN THE TASK LIST - SEE BELOW FOR THAT ONE
@@ -1032,6 +1087,25 @@ router.post('/' + version + section + 'review-location-router', function (req, r
     } else {
         res.redirect('task-list');
     }
+});
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Cancel actions
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+router.get('/' + version + section + 'cancel-site-details', function (req, res) {
+    // Clear all site details data
+    clearAllSiteDetails(req.session);
+    
+    // Redirect to task list
+    res.redirect('task-list');
+});
+
+// Cancel handler for returning to review-site-details without clearing data
+// Used when editing details from the review page
+router.get('/' + version + section + 'cancel-to-review', function (req, res) {
+    // Simply return to the review page without clearing data
+    res.redirect('review-site-details');
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////
