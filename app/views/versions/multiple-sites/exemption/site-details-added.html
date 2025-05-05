@@ -1,0 +1,154 @@
+{% extends "../layouts/exemption.html" %}
+
+{% block beforeContent %}
+    {% include "../includes/phase-banner.html" %}
+    {% include "../includes/back-link.html" %}
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+Site details
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
+        <h1 class="govuk-heading-l">
+            {{ pageHeadingTextHTML }}
+        </h1>
+
+        <p class="govuk-body">We need to know the exact location of where your activity will take place.</p>
+        
+        <p class="govuk-body">If your project involves multiple sites, you must tell us about each one.</p>
+        
+        <div class="govuk-!-margin-bottom-6">
+            {{ govukSummaryList({
+                rows: [
+                    {
+                        key: {
+                            text: "Site 1"
+                        },
+                        value: {
+                            text: data['site-1-name'] or "Worthing sample"
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "site-name?site=1&return=site-1-details#site-1-details",
+                                    text: "Review",
+                                    visuallyHiddenText: "site 1"
+                                },
+                                {
+                                    href: "#",
+                                    text: "Delete",
+                                    visuallyHiddenText: "site 1"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Site 2"
+                        },
+                        value: {
+                            text: data['site-2-name'] or "Brighton sample"
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "site-name?site=2&return=site-2-details#site-2-details",
+                                    text: "Review",
+                                    visuallyHiddenText: "site 2"
+                                },
+                                {
+                                    href: "#",
+                                    text: "Delete",
+                                    visuallyHiddenText: "site 2"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Site 3"
+                        },
+                        value: {
+                            text: data['site-3-name'] or "Hastings sample"
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "site-name?site=3&return=site-3-details#site-3-details",
+                                    text: "Review",
+                                    visuallyHiddenText: "site 3"
+                                },
+                                {
+                                    href: "#",
+                                    text: "Delete",
+                                    visuallyHiddenText: "site 3"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        key: {
+                            text: "Site 4"
+                        },
+                        value: {
+                            text: data['site-4-name'] or "Eastbourne sample"
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "site-name?site=4&return=site-4-details#site-4-details",
+                                    text: "Review",
+                                    visuallyHiddenText: "site 4"
+                                },
+                                {
+                                    href: "#",
+                                    text: "Delete",
+                                    visuallyHiddenText: "site 4"
+                                }
+                            ]
+                        }
+                    }
+                ]
+            }) }}
+        </div>
+        
+        <form action="site-details-added-router" method="post" novalidate>
+            <div class="govuk-form-group">
+                <div class="govuk-checkboxes" data-module="govuk-checkboxes">
+                    <div class="govuk-checkboxes__item">
+                        <input class="govuk-checkboxes__input" id="finished-adding-sites" name="finished-adding-sites" type="checkbox" value="yes">
+                        <label class="govuk-label govuk-checkboxes__label" for="finished-adding-sites">
+                            I've finished adding sites
+                        </label>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="govuk-button-group">
+                {{ govukButton({
+                    text: "Save and continue"
+                }) }}
+                
+                {{ govukButton({
+                    text: "Add another site",
+                    href: "site-details",
+                    classes: "govuk-button--secondary"
+                }) }}
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+<!-- Generated by Copilot -->

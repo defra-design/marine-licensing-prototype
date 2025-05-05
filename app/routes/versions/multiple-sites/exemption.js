@@ -806,8 +806,24 @@ router.post('/' + version + section + 'review-site-details-router', function (re
     // Set the status to completed
     req.session.data['exempt-information-3-status'] = 'completed';
     
-    // Redirect to task-list instead of stop.html
-    res.redirect('task-list');
+    // Redirect to the site-details-added page instead of task-list
+    res.redirect('site-details-added');
+});
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Site details added
+// PAGE WITH SUMMARY LIST OF SITES
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+router.post('/' + version + section + 'site-details-added-router', function (req, res) {
+    // Check if "I've finished adding sites" checkbox is checked
+    if (req.session.data['finished-adding-sites'] === 'yes') {
+        // User has finished adding sites, redirect to task list
+        res.redirect('task-list');
+    } else {
+        // User wants to add more sites, redirect to site details page
+        res.redirect('site-details');
+    }
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////
