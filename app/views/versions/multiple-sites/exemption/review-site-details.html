@@ -61,7 +61,7 @@ Review site details
         
         {% if not allComplete %}
             {{ govukInsetText({
-                text: "You must add the incomplete information before you can save and continue."
+                html: "You must add the <span class='govuk-tag govuk-tag--blue' style='padding-right: 5px;'>Incomplete</span> information before you can save and continue."
             }) }}
         {% endif %}
         
@@ -82,7 +82,7 @@ Review site details
                             Upload a file with the coordinates of the site
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="how-do-you-want-to-provide-the-coordinates" class="govuk-link">
+                            <a href="how-do-you-want-to-provide-the-coordinates?fromreview=true" class="govuk-link">
                                 Change<span class="govuk-visually-hidden"> method of providing site location</span>
                             </a>
                         </dd>
@@ -95,7 +95,7 @@ Review site details
                             {{ data['exemption-which-type-of-file-radios'] }}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="which-type-of-file" class="govuk-link">
+                            <a href="which-type-of-file?fromreview=true" class="govuk-link">
                                 Change<span class="govuk-visually-hidden"> file type</span>
                             </a>
                         </dd>
@@ -105,10 +105,14 @@ Review site details
                             File uploaded
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            se-coast-sample-sites-coordinates.zip
+                            {% if data['exemption-which-type-of-file-radios'] == "KML" %}
+                                se-coast-sample-sites-coordinates.kml
+                            {% else %}
+                                se-coast-sample-sites-coordinates.zip
+                            {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="upload-file" class="govuk-link">
+                            <a href="upload-file?fromreview=true" class="govuk-link">
                                 Change<span class="govuk-visually-hidden"> file uploaded</span>
                             </a>
                         </dd>
@@ -374,7 +378,7 @@ Review site details
                         text: "Save and continue"
                     }) }}
                 {% endif %}
-                <a class="govuk-link govuk-link--no-visited-state" href="javascript:window.history.back()">Cancel</a>
+                <a class="govuk-link govuk-link--no-visited-state" href="cancel-site-details">Cancel</a>
             </div>
         </form>
     </div>
