@@ -133,6 +133,81 @@ function clearAllSiteDetails(session) {
     delete session.data['exempt-information-3-status'];
 }
 
+// Function to clear all data after method of providing site location
+function clearDataAfterLocationMethod(session) {
+    // Clear file type selection
+    delete session.data['exemption-which-type-of-file-radios'];
+    
+    // Clear file upload data
+    delete session.data['kml-file-upload'];
+    
+    // Clear activity date settings
+    delete session.data['exemption-same-activity-dates-for-sites'];
+    delete session.data['previous-activity-dates-selection'];
+    
+    // Clear shared activity dates
+    delete session.data['exemption-start-date-date-input-day'];
+    delete session.data['exemption-start-date-date-input-month'];
+    delete session.data['exemption-start-date-date-input-year'];
+    delete session.data['exemption-end-date-date-input-day'];
+    delete session.data['exemption-end-date-date-input-month'];
+    delete session.data['exemption-end-date-date-input-year'];
+    
+    // Clear activity description settings
+    delete session.data['exemption-same-activity-description-for-sites'];
+    delete session.data['previous-activity-description-selection'];
+    
+    // Clear shared activity description
+    delete session.data['exemption-activity-details-text-area'];
+}
+
+// Function to clear all data after file type selection
+function clearDataAfterFileType(session) {
+    // Clear file upload data
+    delete session.data['kml-file-upload'];
+    
+    // Clear activity date settings
+    delete session.data['exemption-same-activity-dates-for-sites'];
+    delete session.data['previous-activity-dates-selection'];
+    
+    // Clear shared activity dates
+    delete session.data['exemption-start-date-date-input-day'];
+    delete session.data['exemption-start-date-date-input-month'];
+    delete session.data['exemption-start-date-date-input-year'];
+    delete session.data['exemption-end-date-date-input-day'];
+    delete session.data['exemption-end-date-date-input-month'];
+    delete session.data['exemption-end-date-date-input-year'];
+    
+    // Clear activity description settings
+    delete session.data['exemption-same-activity-description-for-sites'];
+    delete session.data['previous-activity-description-selection'];
+    
+    // Clear shared activity description
+    delete session.data['exemption-activity-details-text-area'];
+}
+
+// Function to clear all data after file upload
+function clearDataAfterFileUpload(session) {
+    // Clear activity date settings
+    delete session.data['exemption-same-activity-dates-for-sites'];
+    delete session.data['previous-activity-dates-selection'];
+    
+    // Clear shared activity dates
+    delete session.data['exemption-start-date-date-input-day'];
+    delete session.data['exemption-start-date-date-input-month'];
+    delete session.data['exemption-start-date-date-input-year'];
+    delete session.data['exemption-end-date-date-input-day'];
+    delete session.data['exemption-end-date-date-input-month'];
+    delete session.data['exemption-end-date-date-input-year'];
+    
+    // Clear activity description settings
+    delete session.data['exemption-same-activity-description-for-sites'];
+    delete session.data['previous-activity-description-selection'];
+    
+    // Clear shared activity description
+    delete session.data['exemption-activity-details-text-area'];
+}
+
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Project name start
 // NOT THE ONE IN THE TASK LIST - SEE BELOW FOR THAT ONE
@@ -360,6 +435,15 @@ router.post('/' + version + section + 'do-you-want-to-draw-the-site-on-our-map-r
 // PAGE OF RADIO BUTTONS
 /////////////////////////////////////////////////////////////////////////////////////////////
 
+// GET route handler for the "How do you want to provide coordinates" page
+router.get('/' + version + section + 'how-do-you-want-to-provide-the-coordinates', function (req, res) {
+    // If coming from review page, clear data for subsequent pages
+    if (req.query.fromreview) {
+        clearDataAfterLocationMethod(req.session);
+    }
+    res.render(version + section + 'how-do-you-want-to-provide-the-coordinates');
+});
+
 router.post('/' + version + section + 'how-do-you-want-to-provide-the-coordinates-router', function (req, res) {
     // Turn errors off by default
     req.session.data['errorthispage'] = "false";
@@ -392,7 +476,7 @@ router.post('/' + version + section + 'how-do-you-want-to-provide-the-coordinate
     // Route based on selection
     switch(selection) {
         case "Enter the coordinates of the site manually":
-            res.redirect('how-do-you-want-to-enter-the-coordinates');
+            res.redirect('stop');
             break;
         case "Upload a file with the coordinates of the site":
             res.redirect('which-type-of-file');
@@ -406,6 +490,15 @@ router.post('/' + version + section + 'how-do-you-want-to-provide-the-coordinate
 // Which type of file do you want to upload?
 // PAGE OF RADIO BUTTONS
 /////////////////////////////////////////////////////////////////////////////////////////////
+
+// GET route handler for the "Which type of file" page
+router.get('/' + version + section + 'which-type-of-file', function (req, res) {
+    // If coming from review page, clear data for subsequent pages
+    if (req.query.fromreview) {
+        clearDataAfterFileType(req.session);
+    }
+    res.render(version + section + 'which-type-of-file');
+});
 
 router.post('/' + version + section + 'which-type-of-file-router', function (req, res) {
     // Turn errors off by default
@@ -439,6 +532,15 @@ router.post('/' + version + section + 'which-type-of-file-router', function (req
 // Upload KML File
 // FILE UPLOAD PAGE
 /////////////////////////////////////////////////////////////////////////////////////////////
+
+// GET route handler for the "Upload file" page
+router.get('/' + version + section + 'upload-file', function (req, res) {
+    // If coming from review page, clear data for subsequent pages
+    if (req.query.fromreview) {
+        clearDataAfterFileUpload(req.session);
+    }
+    res.render(version + section + 'upload-file');
+});
 
 router.post('/' + version + section + 'upload-file-router', function (req, res) {
     req.session.data['siteTitle'] = 'review';
