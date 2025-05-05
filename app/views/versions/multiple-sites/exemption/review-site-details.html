@@ -132,8 +132,10 @@ Review site details
                         </dt>
                         <dd class="govuk-summary-list__value">
                             {% if data['exemption-same-activity-dates-for-sites'] == "Yes" %}
+                                The same for every site
+                                <br>
                                 {% if data['exemption-start-date-date-input-day'] %}
-                                    {{ data['exemption-start-date-date-input-day'] }} {{ data['exemption-start-date-date-input-month'] | toMonth }} {{ data['exemption-start-date-date-input-year'] }} to {{ data['exemption-end-date-date-input-day'] }} {{ data['exemption-end-date-date-input-month'] | toMonth }} {{ data['exemption-end-date-date-input-year'] }}
+                                    {{ data['exemption-start-date-date-input-day'] }} {{ data['exemption-start-date-date-input-month'] | toMonth }} {{ data['exemption-start-date-date-input-year'] }} - {{ data['exemption-end-date-date-input-day'] }} {{ data['exemption-end-date-date-input-month'] | toMonth }} {{ data['exemption-end-date-date-input-year'] }}
                                 {% else %}
                                     Not provided
                                 {% endif %}
@@ -153,6 +155,8 @@ Review site details
                         </dt>
                         <dd class="govuk-summary-list__value">
                             {% if data['exemption-same-activity-description-for-sites'] == "Yes" %}
+                                The same for every site
+                                <br>
                                 {% if data['exemption-activity-details-text-area'] %}
                                     {{ data['exemption-activity-details-text-area'] }}
                                 {% else %}
