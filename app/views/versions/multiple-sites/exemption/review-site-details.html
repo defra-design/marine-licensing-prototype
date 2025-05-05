@@ -66,7 +66,7 @@ Review site details
         {% endif %}
         
         <!-- Providing the site location section -->
-        <div class="govuk-summary-card">
+        <div id="site-location" class="govuk-summary-card">
             <div class="govuk-summary-card__title-wrapper">
                 <h2 class="govuk-summary-card__title">
                     Providing the site location
@@ -82,7 +82,7 @@ Review site details
                             Upload a file with the coordinates of the site
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="how-do-you-want-to-provide-the-coordinates?fromreview=true" class="govuk-link">
+                            <a href="how-do-you-want-to-provide-the-coordinates?fromreview=true#site-location" class="govuk-link">
                                 Change<span class="govuk-visually-hidden"> method of providing site location</span>
                             </a>
                         </dd>
@@ -95,7 +95,7 @@ Review site details
                             {{ data['exemption-which-type-of-file-radios'] }}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="which-type-of-file?fromreview=true" class="govuk-link">
+                            <a href="which-type-of-file?fromreview=true#site-location" class="govuk-link">
                                 Change<span class="govuk-visually-hidden"> file type</span>
                             </a>
                         </dd>
@@ -112,7 +112,7 @@ Review site details
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="upload-file?fromreview=true" class="govuk-link">
+                            <a href="upload-file?fromreview=true#site-location" class="govuk-link">
                                 Change<span class="govuk-visually-hidden"> file uploaded</span>
                             </a>
                         </dd>
@@ -122,7 +122,7 @@ Review site details
         </div>
 
         <!-- Activity details section -->
-        <div class="govuk-summary-card">
+        <div id="activity-details" class="govuk-summary-card">
             <div class="govuk-summary-card__title-wrapper">
                 <h2 class="govuk-summary-card__title">
                     Activity details
@@ -142,7 +142,7 @@ Review site details
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="same-activity-dates?returnTo=review-site-details" class="govuk-link">
+                            <a href="same-activity-dates?returnTo=review-site-details#activity-details" class="govuk-link">
                                 Change<span class="govuk-visually-hidden"> activity dates setting</span>
                             </a>
                         </dd>
@@ -157,12 +157,12 @@ Review site details
                             {% if data['exemption-start-date-date-input-day'] %}
                                 {{ data['exemption-start-date-date-input-day'] }} {{ data['exemption-start-date-date-input-month'] | toMonth }} {{ data['exemption-start-date-date-input-year'] }} to {{ data['exemption-end-date-date-input-day'] }} {{ data['exemption-end-date-date-input-month'] | toMonth }} {{ data['exemption-end-date-date-input-year'] }}
                             {% else %}
-                                Not provided
+                                <span class="govuk-tag govuk-tag--blue">Incomplete</span>
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="activity-dates?returnTo=review-site-details" class="govuk-link">
-                                Change<span class="govuk-visually-hidden"> activity dates for all sites</span>
+                            <a href="activity-dates?returnTo=review-site-details#activity-details" class="govuk-link">
+                                {% if data['exemption-start-date-date-input-day'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> activity dates for all sites</span>
                             </a>
                         </dd>
                     </div>
@@ -180,7 +180,7 @@ Review site details
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="same-activity-description?returnTo=review-site-details" class="govuk-link">
+                            <a href="same-activity-description?returnTo=review-site-details#activity-details" class="govuk-link">
                                 Change<span class="govuk-visually-hidden"> activity description setting</span>
                             </a>
                         </dd>
@@ -195,12 +195,12 @@ Review site details
                             {% if data['exemption-activity-details-text-area'] %}
                                 {{ data['exemption-activity-details-text-area'] }}
                             {% else %}
-                                Not provided
+                                <span class="govuk-tag govuk-tag--blue">Incomplete</span>
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="activity-details?returnTo=review-site-details" class="govuk-link">
-                                Change<span class="govuk-visually-hidden"> activity description for all sites</span>
+                            <a href="activity-details?returnTo=review-site-details#activity-details" class="govuk-link">
+                                {% if data['exemption-activity-details-text-area'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> activity description for all sites</span>
                             </a>
                         </dd>
                     </div>
@@ -537,7 +537,7 @@ Review site details
             <div class="govuk-button-group">
                 {% if allComplete %}
                     {{ govukButton({
-                        text: "Save and continue"
+                        text: "Continue"
                     }) }}
                 {% endif %}
                 <a class="govuk-link govuk-link--no-visited-state" href="cancel-site-details">Cancel</a>
