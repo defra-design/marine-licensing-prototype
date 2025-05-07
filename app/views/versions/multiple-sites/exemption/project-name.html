@@ -5,6 +5,9 @@
 {% include "../includes/back-link.html" %}
 {% endblock %}
 
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
@@ -37,38 +40,44 @@ Error:
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         {% if data['errorthispage'] == "true" %}
-        <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1"
-            data-module="govuk-error-summary">
-            <h2 class="govuk-error-summary__title" id="error-summary-title">
-                There is a problem
-            </h2>
-            <div class="govuk-error-summary__body">
-                <ul class="govuk-list govuk-error-summary__list">
-                    {% if data['errortypeone'] == "true" %}
-                    <li><a href="#exemption-project-name-text-input">Enter a project name</a></li>
-                    {% endif %}
-                </ul>
-            </div>
-        </div>
+        {{ govukErrorSummary({
+            titleText: "There is a problem",
+            errorList: [
+                {
+                    text: "Enter a project name",
+                    href: "#exemption-project-name-text-input"
+                }
+            ] if data['errortypeone'] == "true"
+        }) }}
         {% endif %}
 
         <!--  END OF 'error summary' -->
 
         <form action="project-name-router" method="post" novalidate>
 
-
-            <div class="govuk-form-group">
-                <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
-                <h1 class="govuk-label-wrapper">
-                  <label class="govuk-label govuk-label--l"  for="exemption-project-name-text-input">
-                  Project name
-                  </label>
-                </h1>
-                <div id="exemption-project-name-text-input-hint" class="govuk-hint">
-                  Enter a descriptive name to help you find your project later
-                </div>
-                <input class="govuk-input govuk-input--full-width" id="exemption-project-name-text-input" name="exemption-project-name-text-input" type="text" value="{{ data['exemption-project-name-text-input'] }}" aria-describedby="exemption-project-name-text-input-hint" autocomplete="off">
-              </div>
+            <!-- Caption needs to be outside the input component -->
+            {% if data['exemption-project-name-text-input'] %}
+            <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
+            {% endif %}
+            
+            {{ govukInput({
+                label: {
+                    text: pageHeadingTextHTML,
+                    classes: "govuk-label--l",
+                    isPageHeading: true
+                },
+                hint: {
+                    text: "Enter a descriptive name to help you find your project later"
+                },
+                id: "exemption-project-name-text-input",
+                name: "exemption-project-name-text-input",
+                value: data['exemption-project-name-text-input'],
+                autocomplete: "off",
+                classes: "govuk-input--full-width",
+                errorMessage: {
+                    text: "Enter a project name"
+                } if data['errortypeone'] == "true"
+            }) }}
 
             <div class="govuk-button-group">
                 {{ govukButton({
@@ -119,10 +128,5 @@ Error:
 
 </form>
 <!--  END USER TYPE TOGGLE -->
-
-
-
-
-
 
 {% endblock %}
