@@ -46,8 +46,10 @@ Site {{ data['site'] }} name
 {% endif %}
         <!--  END OF 'error summary' -->
         <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
-        <h1 class="govuk-heading-l">
-            {{ pageHeadingTextHTML }}
+        <h1 class="govuk-label-wrapper">
+          <label class="govuk-label govuk-label--l" for="site-{{ data['site'] }}-name">
+            Site {{ data['site'] }} name
+          </label>
         </h1>
 
         <form action="site-name-router" method="post" novalidate>
@@ -56,19 +58,17 @@ Site {{ data['site'] }} name
             {% from "govuk/components/input/macro.njk" import govukInput %}
 
             {{ govukInput({
-                label: {
-                    text: "Enter a name for this site",
-                    classes: "govuk-label--s"
-                },
-                hint: {
-                    text: "This name will be used to identify this specific site in your application"
-                },
+
                 id: "site-" + data['site'] + "-name",
                 name: "site-" + data['site'] + "-name",
                 errorMessage: {
                     text: errorText1HTML
                 } if data['errortypeone'] == "true",
-                value: data["site-" + data['site'] + "-name"]
+                value: data["site-" + data['site'] + "-name"],
+                label: {
+                    text: "",
+                    classes: "govuk-visually-hidden"
+                }
             }) }}
 
             <div class="govuk-button-group">

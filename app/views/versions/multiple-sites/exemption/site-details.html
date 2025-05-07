@@ -26,9 +26,25 @@ Site details
 
 		<h2 class="govuk-heading-m">Before you start</h2>
 
-		<p>Here we will add some help text about providing coordinates. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+		<p>In the next step, you'll need to provide the following for every site:</p>
 
-		<p>Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+		<ul class="govuk-list govuk-list--bullet">
+			<li>a site name</li>
+			<li>the exact location of the site</li>
+			<li>the dates the activity will take place</li>
+			<li>a description of the activity</li>
+		</ul>
+
+		<p>You can provide the site location in 2 ways:</p>
+
+		<ul class="govuk-list govuk-list--bullet">
+			<li>upload a file with the coordinates</li>
+			<li>enter the coordinates manually</li>
+		</ul>
+
+		<p>The coordinates must mark the full boundary of every site, including space for any movement or small changes in the activity location.</p>
+
+		<p>If the activity happens outside the marked boundary, the exemption will not apply.</p>
 
 		<div class="govuk-button-group">
 			{% from "govuk/components/button/macro.njk" import govukButton %}
@@ -37,7 +53,7 @@ Site details
 				href: "how-do-you-want-to-provide-the-coordinates"
 			}) }}
 			
-			<a class="govuk-link" href="#" onclick="javascript:history.back(); return false;">Cancel</a>
+			<a class="govuk-link" href="javascript:history.back()">Cancel</a>
 		</div>
 	</div>
 </div>

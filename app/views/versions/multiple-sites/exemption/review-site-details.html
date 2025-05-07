@@ -138,7 +138,7 @@ Review site details
                             {% if data['exemption-same-activity-dates-for-sites'] == "Yes" %}
                                 Yes
                             {% else %}
-                                No, some or all sites have different dates
+                                No
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
@@ -151,7 +151,7 @@ Review site details
                     {% if data['exemption-same-activity-dates-for-sites'] == "Yes" %}
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
-                            Activity dates for all sites
+                            Activity dates
                         </dt>
                         <dd class="govuk-summary-list__value">
                             {% if data['exemption-start-date-date-input-day'] %}
@@ -162,7 +162,7 @@ Review site details
                         </dd>
                         <dd class="govuk-summary-list__actions">
                             <a href="activity-dates?returnTo=review-site-details#activity-details" class="govuk-link">
-                                {% if data['exemption-start-date-date-input-day'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> activity dates for all sites</span>
+                                {% if data['exemption-start-date-date-input-day'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> activity dates</span>
                             </a>
                         </dd>
                     </div>
@@ -176,7 +176,7 @@ Review site details
                             {% if data['exemption-same-activity-description-for-sites'] == "Yes" %}
                                 Yes
                             {% else %}
-                                No, some or all sites have a different description
+                                No
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
@@ -189,7 +189,7 @@ Review site details
                     {% if data['exemption-same-activity-description-for-sites'] == "Yes" %}
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
-                            Activity description for all sites
+                            Activity description
                         </dt>
                         <dd class="govuk-summary-list__value">
                             {% if data['exemption-activity-details-text-area'] %}
@@ -200,7 +200,7 @@ Review site details
                         </dd>
                         <dd class="govuk-summary-list__actions">
                             <a href="activity-details?returnTo=review-site-details#activity-details" class="govuk-link">
-                                {% if data['exemption-activity-details-text-area'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> activity description for all sites</span>
+                                {% if data['exemption-activity-details-text-area'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> Activity description</span>
                             </a>
                         </dd>
                     </div>
@@ -239,7 +239,7 @@ Review site details
                     {% if data['exemption-same-activity-dates-for-sites'] != "Yes" %}
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
-                            Activity dates for this site
+                            Activity dates
                         </dt>
                         <dd class="govuk-summary-list__value">
                             {% if data['site-1-start-date-day'] %}
@@ -250,7 +250,7 @@ Review site details
                         </dd>
                         <dd class="govuk-summary-list__actions">
                             <a href="site-activity-dates?site=1&return=site-1-details#site-1-details" class="govuk-link">
-                                {% if data['site-1-start-date-day'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> activity dates for this site</span>
+                                {% if data['site-1-start-date-day'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> Activity dates</span>
                             </a>
                         </dd>
                     </div>
@@ -259,7 +259,7 @@ Review site details
                     {% if data['exemption-same-activity-description-for-sites'] != "Yes" %}
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
-                            Activity description for this site
+                            Activity description
                         </dt>
                         <dd class="govuk-summary-list__value">
                             {% if data['site-1-activity-description'] %}
@@ -270,7 +270,7 @@ Review site details
                         </dd>
                         <dd class="govuk-summary-list__actions">
                             <a href="site-activity-description?site=1&return=site-1-details#site-1-details" class="govuk-link">
-                                {% if data['site-1-activity-description'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> activity description for this site</span>
+                                {% if data['site-1-activity-description'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> Activity description</span>
                             </a>
                         </dd>
                     </div>
@@ -320,7 +320,7 @@ Review site details
                     {% if data['exemption-same-activity-dates-for-sites'] != "Yes" %}
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
-                            Activity dates for this site
+                            Activity dates
                         </dt>
                         <dd class="govuk-summary-list__value">
                             {% if data['site-2-start-date-day'] %}
@@ -331,7 +331,7 @@ Review site details
                         </dd>
                         <dd class="govuk-summary-list__actions">
                             <a href="site-activity-dates?site=2&return=site-2-details#site-2-details" class="govuk-link">
-                                {% if data['site-2-start-date-day'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> activity dates for this site</span>
+                                {% if data['site-2-start-date-day'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> Activity dates</span>
                             </a>
                         </dd>
                     </div>
@@ -340,7 +340,7 @@ Review site details
                     {% if data['exemption-same-activity-description-for-sites'] != "Yes" %}
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
-                            Activity description for this site
+                            Activity description
                         </dt>
                         <dd class="govuk-summary-list__value">
                             {% if data['site-2-activity-description'] %}
@@ -351,7 +351,7 @@ Review site details
                         </dd>
                         <dd class="govuk-summary-list__actions">
                             <a href="site-activity-description?site=2&return=site-2-details#site-2-details" class="govuk-link">
-                                {% if data['site-2-activity-description'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> activity description for this site</span>
+                                {% if data['site-2-activity-description'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> Activity description</span>
                             </a>
                         </dd>
                     </div>
@@ -401,7 +401,7 @@ Review site details
                     {% if data['exemption-same-activity-dates-for-sites'] != "Yes" %}
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
-                            Activity dates for this site
+                            Activity dates
                         </dt>
                         <dd class="govuk-summary-list__value">
                             {% if data['site-3-start-date-day'] %}
@@ -412,7 +412,7 @@ Review site details
                         </dd>
                         <dd class="govuk-summary-list__actions">
                             <a href="site-activity-dates?site=3&return=site-3-details#site-3-details" class="govuk-link">
-                                {% if data['site-3-start-date-day'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> activity dates for this site</span>
+                                {% if data['site-3-start-date-day'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> Activity dates</span>
                             </a>
                         </dd>
                     </div>
@@ -421,7 +421,7 @@ Review site details
                     {% if data['exemption-same-activity-description-for-sites'] != "Yes" %}
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
-                            Activity description for this site
+                            Activity description
                         </dt>
                         <dd class="govuk-summary-list__value">
                             {% if data['site-3-activity-description'] %}
@@ -432,7 +432,7 @@ Review site details
                         </dd>
                         <dd class="govuk-summary-list__actions">
                             <a href="site-activity-description?site=3&return=site-3-details#site-3-details" class="govuk-link">
-                                {% if data['site-3-activity-description'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> activity description for this site</span>
+                                {% if data['site-3-activity-description'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> Activity description</span>
                             </a>
                         </dd>
                     </div>
@@ -482,7 +482,7 @@ Review site details
                     {% if data['exemption-same-activity-dates-for-sites'] != "Yes" %}
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
-                            Activity dates for this site
+                            Activity dates
                         </dt>
                         <dd class="govuk-summary-list__value">
                             {% if data['site-4-start-date-day'] %}
@@ -493,7 +493,7 @@ Review site details
                         </dd>
                         <dd class="govuk-summary-list__actions">
                             <a href="site-activity-dates?site=4&return=site-4-details#site-4-details" class="govuk-link">
-                                {% if data['site-4-start-date-day'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> activity dates for this site</span>
+                                {% if data['site-4-start-date-day'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> Activity dates</span>
                             </a>
                         </dd>
                     </div>
@@ -502,7 +502,7 @@ Review site details
                     {% if data['exemption-same-activity-description-for-sites'] != "Yes" %}
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
-                            Activity description for this site
+                            Activity description
                         </dt>
                         <dd class="govuk-summary-list__value">
                             {% if data['site-4-activity-description'] %}
@@ -513,7 +513,7 @@ Review site details
                         </dd>
                         <dd class="govuk-summary-list__actions">
                             <a href="site-activity-description?site=4&return=site-4-details#site-4-details" class="govuk-link">
-                                {% if data['site-4-activity-description'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> activity description for this site</span>
+                                {% if data['site-4-activity-description'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> Activity description</span>
                             </a>
                         </dd>
                     </div>

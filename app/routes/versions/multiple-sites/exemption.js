@@ -1377,4 +1377,31 @@ router.post('/' + version + section + 'delete-router', function (req, res) {
     res.redirect('home');
 });
 
+// Manual site name router
+router.post('/' + version + section + 'manual-site-name-router', function (req, res) {
+    // Reset error flags
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    
+    // Get the site number
+    const siteNum = req.session.data['site'];
+    
+    // Validate input
+    if (!req.session.data['manual-site-name-input'] || req.session.data['manual-site-name-input'].trim() === '') {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        res.redirect('manual-site-name');
+    } else {
+        // Save the site name to the site-specific variable
+        req.session.data['site-' + siteNum + '-name'] = req.session.data['manual-site-name-input'];
+        
+        // Clear the temporary input field
+        req.session.data['manual-site-name-input'] = '';
+        
+        // Redirect back to the review site details page
+        const returnSection = req.session.data['return'] || '';
+        res.redirect('review-site-details#site-' + siteNum + '-details');
+    }
+});
+
 }
