@@ -11,7 +11,7 @@ Site name
 {% endset %}
 
 {% set errorText1HTML %}
-    Enter a name for site {{ data['site'] }}
+    Enter a site name
 {% endset %}
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
@@ -43,26 +43,25 @@ Site name
   </div>
 {% endif %}
         <!--  END OF 'error summary' -->
-        
-
-        <div class="govuk-form-group{% if data['errortypeone'] == "true" %} govuk-form-group--error{% endif %}">
-          <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
-            <h1 class="govuk-label-wrapper">
-                <label class="govuk-label govuk-label--l" for="site-{{ data['site'] }}-name">
-                    Site name
-                    <span class="govuk-caption-l">Site {{ data['site'] }}</span>
-                </label>
-            </h1>
-            {% if data['errortypeone'] == "true" %}
-                <p id="site-{{ data['site'] }}-name-error" class="govuk-error-message">
-                    <span class="govuk-visually-hidden">Error:</span> {{ errorText1HTML }}
-                </p>
-            {% endif %}
-            <input class="govuk-input{% if data['errortypeone'] == "true" %} govuk-input--error{% endif %}" id="site-{{ data['site'] }}-name" name="site-{{ data['site'] }}-name" type="text" value="{{ data['site-' + data['site'] + '-name'] }}">
-        </div>
 
         <form action="site-name-router" method="post" novalidate>
             <input type="hidden" name="site" value="{{ data['site'] }}" />
+            
+            <div class="govuk-form-group{% if data['errortypeone'] == "true" %} govuk-form-group--error{% endif %}">
+                <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
+                <h1 class="govuk-label-wrapper">
+                    <label class="govuk-label govuk-label--l" for="site-{{ data['site'] }}-name">
+                        Site name
+                        <span class="govuk-caption-l">Site {{ data['site'] }}</span>
+                    </label>
+                </h1>
+                {% if data['errortypeone'] == "true" %}
+                    <p id="site-{{ data['site'] }}-name-error" class="govuk-error-message">
+                        <span class="govuk-visually-hidden">Error:</span> {{ errorText1HTML }}
+                    </p>
+                {% endif %}
+                <input class="govuk-input{% if data['errortypeone'] == "true" %} govuk-input--error{% endif %}" id="site-{{ data['site'] }}-name" name="site-{{ data['site'] }}-name" type="text" value="{{ data['site-' + data['site'] + '-name'] }}">
+            </div>
             
             <div class="govuk-button-group">
                 {{ govukButton({
@@ -70,7 +69,6 @@ Site name
                 }) }}
                 <a class="govuk-link govuk-link--no-visited-state" href="cancel-to-review">Cancel</a>
             </div>
-
         </form>
 
     </div>

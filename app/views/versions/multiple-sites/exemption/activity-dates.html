@@ -7,7 +7,7 @@
 
 <!-- Set the heading for the page -->
 {% set pageHeadingTextHTML %}
-Activity dates for all sites
+Activity dates
 {% endset %}
 
 {% set question1TextHTML %}
@@ -65,8 +65,8 @@ End date
         <h1 class="govuk-heading-l">
             {{ pageHeadingTextHTML }}
         </h1>
-        <p>Enter the activity dates. Allow time for potential delays, like consents (for example, a river works licence) or bad weather. If you miss the dates, you'll need to restart the process.</p>
-        <p>You can enter a start date from today and begin your activity as soon as you've sent your information.</p>
+        <p>Enter the activity dates for all sites. Allow time for potential delays, like consents (for example, a river works licence) or bad weather. If you miss the dates, you'll need to restart the process.</p>
+        <p>You can enter a start date from today and begin your activity as soon as you've sent your information. </p>
         <form action="activity-dates-router" method="post" novalidate>
 
 			{{ govukDateInput({
