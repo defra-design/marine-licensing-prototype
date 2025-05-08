@@ -46,8 +46,10 @@ Activity description for site {{ data['site'] }}
 {% endif %}
         <!--  END OF 'error summary' -->
         <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
-        <h1 class="govuk-heading-l">
-            {{ pageHeadingTextHTML }}
+        <h1 class="govuk-label-wrapper">
+            <label class="govuk-label govuk-label--l" for="site-{{ data['site'] }}-activity-description">
+                Activity description for site {{ data['site'] }}
+            </label>
         </h1>
 
         <form action="site-activity-description-router" method="post" novalidate>
@@ -58,17 +60,17 @@ Activity description for site {{ data['site'] }}
             {{ govukTextarea({
                 name: "site-" + data['site'] + "-activity-description",
                 id: "site-" + data['site'] + "-activity-description",
-                label: {
-                    text: "Provide a description of the activity for this site",
-                    classes: "govuk-label--s"
-                },
                 hint: {
-                    text: "Include all relevant information about the activity that will take place at this specific site"
+                    text: "Provide details about what you plan to do in this location"
                 },
                 errorMessage: {
                     text: errorText1HTML
                 } if data['errortypeone'] == "true",
-                value: data["site-" + data['site'] + "-activity-description"]
+                value: data["site-" + data['site'] + "-activity-description"],
+                label: {
+                    text: "",
+                    classes: "govuk-visually-hidden"
+                }
             }) }}
 
             <div class="govuk-button-group">

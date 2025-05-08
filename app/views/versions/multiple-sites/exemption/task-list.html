@@ -56,7 +56,7 @@
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
 			  <div class="govuk-task-list__name-and-hint">
 
-				{% if data['exempt-information-3-status'] == "completed" %}
+				{% if data['exempt-information-3-status'] == "completed" or data['exempt-information-3-status'] == "in-progress" %}
 				<a class="govuk-link govuk-task-list__link" href="site-details-added.html" aria-describedby="exempt-information-3-status">
 					Site details
 				  </a>
@@ -73,13 +73,15 @@
 			  <div class="govuk-task-list__status" id="exempt-information-3-status">
 				
 				{% if data['exempt-information-3-status'] == "completed" %}
-				Completed 
-
+					Completed 
+				{% elif data['exempt-information-3-status'] == "in-progress" %}
+					<strong class="govuk-tag govuk-tag--light-blue">
+						In progress
+					</strong>
 				{% else %}
-
-				<strong class="govuk-tag govuk-tag--blue">
-					Not yet started
-				</strong>
+					<strong class="govuk-tag govuk-tag--blue">
+						Not yet started
+					</strong>
 				{% endif %}
 
 			  </div>
@@ -113,12 +115,10 @@
 		  {% if data['exempt-information-1-status'] == "completed" and
 		  data['exempt-information-3-status'] == "completed" and
 		  data['exempt-information-4-status'] == "completed" %}
-		  {# Button temporarily commented out as requested
 		  {{ govukButton({
 			text: "Review and send your information",
-			href: "check-answers.html"
+			href: "check-answers-multiple-sites.html"
 		  }) }}
-		  #}
 		  {% endif %}
 	</div>
 </div>

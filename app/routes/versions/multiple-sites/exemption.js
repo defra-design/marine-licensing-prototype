@@ -271,7 +271,7 @@ router.post('/' + version + section + 'project-name-router', function (req, res)
         // Check if we need to return to check answers
         if (req.session.data['camefromcheckanswers'] === 'true') {
             req.session.data['camefromcheckanswers'] = false;
-            res.redirect('check-answers#project-name');
+            res.redirect('check-answers-multiple-sites');
         } else {
             res.redirect('task-list');
         }
@@ -806,8 +806,14 @@ router.post('/' + version + section + 'review-site-details-router', function (re
     // Set the status to completed
     req.session.data['exempt-information-3-status'] = 'completed';
     
-    // Redirect to the site-details-added page instead of task-list
-    res.redirect('site-details-added');
+    // Check if we came from check-answers-multiple-sites
+    if (req.session.data['camefromcheckanswers'] === 'true') {
+        req.session.data['camefromcheckanswers'] = false;
+        res.redirect('check-answers-multiple-sites');
+    } else {
+        // Otherwise redirect to the site-details-added page
+        res.redirect('site-details-added');
+    }
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -816,14 +822,25 @@ router.post('/' + version + section + 'review-site-details-router', function (re
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 router.post('/' + version + section + 'site-details-added-router', function (req, res) {
+    // For debugging
+    console.log("Checkbox value:", req.session.data['finished-adding-sites']);
+    
     // Check if "I've finished adding sites" checkbox is checked
-    if (req.session.data['finished-adding-sites'] === 'yes') {
-        // User has finished adding sites, redirect to task list
-        res.redirect('task-list');
+    if (req.session.data['finished-adding-sites'] && req.session.data['finished-adding-sites'].includes('yes')) {
+        // Mark the section as completed
+        req.session.data['exempt-information-3-status'] = 'completed';
+        console.log("Setting status to completed");
     } else {
-        // User wants to add more sites, redirect to site details page
-        res.redirect('task-list');
+        // Mark the section as in progress
+        req.session.data['exempt-information-3-status'] = 'in-progress';
+        console.log("Setting status to in-progress");
     }
+    
+    // Log the final status
+    console.log("Final status:", req.session.data['exempt-information-3-status']);
+    
+    // Always redirect to task list
+    res.redirect('task-list');
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -1340,7 +1357,7 @@ router.post('/' + version + section + 'public-register-router', function (req, r
        // Check if we need to return to check answers
        if (req.session.data['camefromcheckanswers'] === 'true') {
             req.session.data['camefromcheckanswers'] = false;
-            res.redirect('check-answers#public-register');
+            res.redirect('check-answers-multiple-sites');
         } else {
             res.redirect('task-list');
         }
@@ -1365,7 +1382,15 @@ router.post('/' + version + section + 'check-answers-router', function (req, res
     res.redirect('confirmation');
 });
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Check answers multiple sites
+/////////////////////////////////////////////////////////////////////////////////////////////
 
+router.post('/' + version + section + 'check-answers-router', function (req, res) {
+    req.session.data['applicationSubmitted'] = 'true';
+    // Redirect to confirmation page
+    res.redirect('confirmation');
+});
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Delete project router
@@ -1375,6 +1400,33 @@ router.post('/' + version + section + 'delete-router', function (req, res) {
     req.session.data['deleteProject'] = 'true';
     // Redirect to Your projects page
     res.redirect('home');
+});
+
+// Manual site name router
+router.post('/' + version + section + 'manual-site-name-router', function (req, res) {
+    // Reset error flags
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    
+    // Get the site number
+    const siteNum = req.session.data['site'];
+    
+    // Validate input
+    if (!req.session.data['manual-site-name-input'] || req.session.data['manual-site-name-input'].trim() === '') {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        res.redirect('manual-site-name');
+    } else {
+        // Save the site name to the site-specific variable
+        req.session.data['site-' + siteNum + '-name'] = req.session.data['manual-site-name-input'];
+        
+        // Clear the temporary input field
+        req.session.data['manual-site-name-input'] = '';
+        
+        // Redirect back to the review site details page
+        const returnSection = req.session.data['return'] || '';
+        res.redirect('review-site-details#site-' + siteNum + '-details');
+    }
 });
 
 }
