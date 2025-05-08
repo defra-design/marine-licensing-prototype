@@ -7,7 +7,7 @@
 
 <!-- Set the heading for the page -->
 {% set pageHeadingTextHTML %}
-Activity dates for site {{ data['site'] }}
+Activity dates
 {% endset %}
 
 {% set question1TextHTML %}
@@ -62,11 +62,18 @@ End date
 {% endif %}
         <!--  END OF 'error summary' -->
         <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
-        <h1 class="govuk-heading-l">
-            {{ pageHeadingTextHTML }}
-        </h1>
-        <p>Enter the activity dates for this site. Allow time for potential delays, like consents (for example, a river works licence) or bad weather. If you miss the dates, you'll need to restart the process.</p>
-        <p>You can enter a start date from today and begin your activity as soon as you've sent your information.</p>
+        
+        <div class="govuk-form-group">
+            <h1 class="govuk-label-wrapper">
+                <label class="govuk-label govuk-label--l">
+                    Activity dates
+                    <span class="govuk-caption-l">Site {{ data['site'] }}</span>
+                </label>
+            </h1>
+            <p>Enter the activity dates for this site. Allow time for potential delays, like consents (for example, a river works licence) or bad weather. If you miss the dates, you'll need to restart the process.</p>
+            <p>You can enter a start date from today and begin your activity as soon as you've sent your information.</p>
+        </div>
+
         <form action="site-activity-dates-router" method="post" novalidate>
             <input type="hidden" name="site" value="{{ data['site'] }}" />
 
