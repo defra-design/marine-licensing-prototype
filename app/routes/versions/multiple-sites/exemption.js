@@ -816,14 +816,25 @@ router.post('/' + version + section + 'review-site-details-router', function (re
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 router.post('/' + version + section + 'site-details-added-router', function (req, res) {
+    // For debugging
+    console.log("Checkbox value:", req.session.data['finished-adding-sites']);
+    
     // Check if "I've finished adding sites" checkbox is checked
-    if (req.session.data['finished-adding-sites'] === 'yes') {
-        // User has finished adding sites, redirect to task list
-        res.redirect('task-list');
+    if (req.session.data['finished-adding-sites'] && req.session.data['finished-adding-sites'].includes('yes')) {
+        // Mark the section as completed
+        req.session.data['exempt-information-3-status'] = 'completed';
+        console.log("Setting status to completed");
     } else {
-        // User wants to add more sites, redirect to site details page
-        res.redirect('task-list');
+        // Mark the section as in progress
+        req.session.data['exempt-information-3-status'] = 'in-progress';
+        console.log("Setting status to in-progress");
     }
+    
+    // Log the final status
+    console.log("Final status:", req.session.data['exempt-information-3-status']);
+    
+    // Always redirect to task list
+    res.redirect('task-list');
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////
