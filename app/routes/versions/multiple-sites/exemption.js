@@ -271,7 +271,7 @@ router.post('/' + version + section + 'project-name-router', function (req, res)
         // Check if we need to return to check answers
         if (req.session.data['camefromcheckanswers'] === 'true') {
             req.session.data['camefromcheckanswers'] = false;
-            res.redirect('check-answers#project-name');
+            res.redirect('check-answers-multiple-sites');
         } else {
             res.redirect('task-list');
         }
@@ -806,8 +806,14 @@ router.post('/' + version + section + 'review-site-details-router', function (re
     // Set the status to completed
     req.session.data['exempt-information-3-status'] = 'completed';
     
-    // Redirect to the site-details-added page instead of task-list
-    res.redirect('site-details-added');
+    // Check if we came from check-answers-multiple-sites
+    if (req.session.data['camefromcheckanswers'] === 'true') {
+        req.session.data['camefromcheckanswers'] = false;
+        res.redirect('check-answers-multiple-sites');
+    } else {
+        // Otherwise redirect to the site-details-added page
+        res.redirect('site-details-added');
+    }
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -1351,7 +1357,7 @@ router.post('/' + version + section + 'public-register-router', function (req, r
        // Check if we need to return to check answers
        if (req.session.data['camefromcheckanswers'] === 'true') {
             req.session.data['camefromcheckanswers'] = false;
-            res.redirect('check-answers#public-register');
+            res.redirect('check-answers-multiple-sites');
         } else {
             res.redirect('task-list');
         }
@@ -1376,7 +1382,15 @@ router.post('/' + version + section + 'check-answers-router', function (req, res
     res.redirect('confirmation');
 });
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Check answers multiple sites
+/////////////////////////////////////////////////////////////////////////////////////////////
 
+router.post('/' + version + section + 'check-answers-router', function (req, res) {
+    req.session.data['applicationSubmitted'] = 'true';
+    // Redirect to confirmation page
+    res.redirect('confirmation');
+});
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Delete project router
