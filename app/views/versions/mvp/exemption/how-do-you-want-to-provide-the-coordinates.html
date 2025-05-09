@@ -14,7 +14,6 @@ How do you want to provide the site location?
 
 <!-- Set the text for the error type -->
 {% set errorTextHTML %}
-    <!-- Nothing was selected -->
     {% if data['errortypeone'] == "true" %}
     Select how you want to provide the coordinates
     {% endif %}
@@ -55,13 +54,19 @@ How do you want to provide the site location?
 
         <!-- go to routes.js for routing  -->
 
-        <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
-                    <h1 class="govuk-heading-l">
-                        {{ pageHeadingTextHTML }}
-                    </h1>
-
         <form action="how-do-you-want-to-provide-the-coordinates-router" method="post" novalidate>
 
+        <div class="govuk-form-group {% if data['errorthispage'] == 'true' %}govuk-form-group--error{% endif %}">
+            <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
+            <h1 class="govuk-heading-l">
+                {{ pageHeadingTextHTML }}
+            </h1>
+
+            {% if data['errorthispage'] == "true" %}
+                <p id="exemption-how-do-you-want-to-provide-the-coordinates-radios-error" class="govuk-error-message">
+                    <span class="govuk-visually-hidden">Error:</span> {{ errorTextHTML }}
+                </p>
+            {% endif %}
    
             {{ govukRadios
                 ({
@@ -79,9 +84,6 @@ How do you want to provide the site location?
                         }
                     },
 
-                    errorMessage: null if data['errorthispage'] != "true"
-                                       else { html: errorTextHTML },
-
                     items:
                     [
                         {
@@ -98,6 +100,7 @@ How do you want to provide the site location?
                 })
             }}
 
+            </div>
 
             <div class="govuk-button-group">
                 {{ govukButton({
