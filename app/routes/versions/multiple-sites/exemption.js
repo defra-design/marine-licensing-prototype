@@ -818,28 +818,55 @@ router.post('/' + version + section + 'review-site-details-router', function (re
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Site details added
-// PAGE WITH SUMMARY LIST OF SITES
+// PAGE WITH TABLE OF SITES
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 router.post('/' + version + section + 'site-details-added-router', function (req, res) {
-    // For debugging
-    console.log("Checkbox value:", req.session.data['finished-adding-sites']);
+    // Reset error flag
+    req.session.data['errorthispage'] = "false";
+    
+    // Check if any site is incomplete
+    let hasSiteIncomplete = false;
+    
+    // Check each site for completeness
+    for (let site = 1; site <= 4; site++) {
+        // Check if site name is missing
+        if (!req.session.data[`site-${site}-name`]) {
+            hasSiteIncomplete = true;
+        }
+        
+        // Check if site-specific dates are required but incomplete
+        if (req.session.data['exemption-same-activity-dates-for-sites'] === "No") {
+            if (!req.session.data[`site-${site}-start-date-day`]) {
+                hasSiteIncomplete = true;
+            }
+        }
+        
+        // Check if site-specific descriptions are required but incomplete
+        if (req.session.data['exemption-same-activity-description-for-sites'] === "No") {
+            if (!req.session.data[`site-${site}-activity-description`]) {
+                hasSiteIncomplete = true;
+            }
+        }
+    }
     
     // Check if "I've finished adding sites" checkbox is checked
     if (req.session.data['finished-adding-sites'] && req.session.data['finished-adding-sites'].includes('yes')) {
-        // Mark the section as completed
-        req.session.data['exempt-information-3-status'] = 'completed';
-        console.log("Setting status to completed");
+        if (hasSiteIncomplete) {
+            // Set error flag if sites are incomplete and checkbox is checked
+            req.session.data['errorthispage'] = "true";
+            res.redirect('site-details-added');
+            return;
+        } else {
+            // Mark the section as completed if all sites are complete
+            req.session.data['exempt-information-3-status'] = 'completed';
+        }
     } else {
         // Mark the section as in progress
         req.session.data['exempt-information-3-status'] = 'in-progress';
-        console.log("Setting status to in-progress");
     }
     
-    // Log the final status
-    console.log("Final status:", req.session.data['exempt-information-3-status']);
-    
-    // Always redirect to task list
+    // Redirect to task list if no errors
     res.redirect('task-list');
 });
 
