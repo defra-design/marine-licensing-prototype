@@ -14,7 +14,6 @@ Which type of file do you want to upload?
 
 <!-- Set the text for the error type -->
 {% set errorTextHTML %}
-    <!-- Nothing was selected -->
     {% if data['errortypeone'] == "true" %}
     Select which type of file you want to upload
     {% endif %}
@@ -51,11 +50,14 @@ Which type of file do you want to upload?
             }}
         {% endif %}
         <!--  END OF 'error summary' -->
-        <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
-           <h1 class="govuk-heading-l">
-            {{ pageHeadingTextHTML }}
-            </h1> 
 
+        <form action="which-type-of-file-router" method="post" novalidate>
+
+        <div class="govuk-form-group {% if data['errorthispage'] == 'true' %}govuk-form-group--error{% endif %}">
+            <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
+            <h1 class="govuk-heading-l">
+                {{ pageHeadingTextHTML }}
+            </h1>
 
             <details class="govuk-details">
                 <summary class="govuk-details__summary">
@@ -72,9 +74,11 @@ Which type of file do you want to upload?
                 </div>
               </details>
 
-
-        <!-- go to routes.js for routing  -->
-        <form action="which-type-of-file-router" method="post" novalidate>
+            {% if data['errorthispage'] == "true" %}
+                <p id="exemption-which-type-of-file-radios-error" class="govuk-error-message">
+                    <span class="govuk-visually-hidden">Error:</span> {{ errorTextHTML }}
+                </p>
+            {% endif %}
 
             {{ govukRadios
                 ({
@@ -92,9 +96,6 @@ Which type of file do you want to upload?
                         }
                     },
 
-                    errorMessage: null if data['errorthispage'] != "true"
-                                       else { html: errorTextHTML },
-
                     items:
                     [
                         {
@@ -110,6 +111,8 @@ Which type of file do you want to upload?
                     ]
                 })
             }}
+
+            </div>
 
             <div class="govuk-button-group">
                 {{ govukButton({
