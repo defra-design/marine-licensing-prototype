@@ -14,7 +14,6 @@ Enter the width of the circular site in metres
 
 <!-- Set the text for each error type -->
 {% set errorTextHTML %}
-    <!-- Error 1 - If answer is not a number when it should be -->
     {%  if  data['errortypeone'] == "true"  %}
     Enter the width of the circular site in metres
     {%  endif  %}
@@ -53,40 +52,58 @@ Enter the width of the circular site in metres
         {% endif %}
         <!--  END OF 'error summary' -->
 
-        <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
-            <h1 class="govuk-heading-l">
-                {{ pageHeadingTextHTML }}
-            </h1> 
+        
 
         <!-- go to routes.js for routing  -->
         <form action="width-of-site-router" method="post" novalidate>
 
-            {{ govukInput
-                ({
-                    label:
-                    {
-                        html: pageHeadingTextHTML,
-                        classes: "govuk-visually-hidden",
-                        isPageHeading: false
-                    },
-
-					autocomplete: "off",
-
-                    id: "exemption-width-of-site-number-input",
-
-                    name: "exemption-width-of-site-number-input",
-
-                    errorMessage: null if data['errorthispage'] != "true"
-                                       else { html: errorTextHTML },
-
-                    value: data['exemption-width-of-site-number-input'],
-					suffix:
-                    {
-                        text: "metres"
-                    },
-                    classes: "govuk-input--width-5"
-                })
-            }}
+            {% if data['errorthispage'] == "true" %}
+            <div class="govuk-form-group govuk-form-group--error">
+            {% else %}
+            <div class="govuk-form-group">
+            {% endif %}
+            
+                <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
+                <h1 class="govuk-heading-l">
+                    {{ pageHeadingTextHTML }}
+                </h1>
+                
+                {% if data['errorthispage'] == "true" %}
+                <p id="width-of-site-error" class="govuk-error-message">
+                    <span class="govuk-visually-hidden">Error:</span> {{ errorTextHTML }}
+                </p>
+                {% endif %}
+                
+                {{ govukInput
+                    ({
+                        label:
+                        {
+                            html: pageHeadingTextHTML,
+                            classes: "govuk-visually-hidden",
+                            isPageHeading: false
+                        },
+                        
+                        autocomplete: "off",
+                        
+                        id: "exemption-width-of-site-number-input",
+                        
+                        name: "exemption-width-of-site-number-input",
+                        
+                        value: data['exemption-width-of-site-number-input'],
+                        
+                        suffix:
+                        {
+                            text: "metres"
+                        },
+                        
+                        classes: "govuk-input--width-5" + (" govuk-input--error" if data['errorthispage'] == "true" else ""),
+                        
+                        formGroup: {
+                            classes: "govuk-!-margin-bottom-0"
+                        }
+                    })
+                }}
+            </div>
 
 
             <div class="govuk-button-group">

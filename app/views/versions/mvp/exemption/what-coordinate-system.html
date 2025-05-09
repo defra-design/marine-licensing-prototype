@@ -13,7 +13,6 @@ Which coordinate system do you want to use?
 
 <!-- Set the text for the error type -->
 {% set errorTextHTML %}
-    <!-- Nothing was selected -->
     {% if data['errortypeone'] == "true" %}
     Select which coordinate system you want to use
     {% endif %}
@@ -51,28 +50,35 @@ Which coordinate system do you want to use?
         {% endif %}
         <!--  END OF 'error summary' -->
 
-		<span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
+        <!-- go to routes.js for routing  -->
+        <form action="what-coordinate-system-router" method="post" novalidate>
+        
+        <div class="govuk-form-group {% if data['errorthispage'] == 'true' %}govuk-form-group--error{% endif %}">
+            <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
             <h1 class="govuk-heading-l">
                 {{ pageHeadingTextHTML }}
             </h1> 
 
-		<details class="govuk-details">
-			<summary class="govuk-details__summary">
-			  <span class="govuk-details__summary-text">
-				Help with the coordinate systems
-			  </span>
-			</summary>
-			<div class="govuk-details__text">
-			 <h2 class="govuk-heading-s">WGS84 (World Geodetic System 1984)</h2>
-			  <p>WGS84 is a global system that pinpoints locations using latitude and longitude. Latitude shows how far north or south a place is, and longitude shows how far east or west it is. WGS84 is widely used in GPS and mapping tools like Google Maps.</p>
-				
-			  <h2 class="govuk-heading-s">OSGB36 (National Grid)</h2>
-			  <p>Also known as the British National Grid (BNG), OSGB36 is a system used to map Great Britain. It divides the country into squares using numerical east and north positions, known as eastings and northings.</p>
-			</div>
-		  </details>
-
-        <!-- go to routes.js for routing  -->
-        <form action="what-coordinate-system-router" method="post" novalidate>
+            <details class="govuk-details">
+                <summary class="govuk-details__summary">
+                  <span class="govuk-details__summary-text">
+                    Help with the coordinate systems
+                  </span>
+                </summary>
+                <div class="govuk-details__text">
+                 <h2 class="govuk-heading-s">WGS84 (World Geodetic System 1984)</h2>
+                  <p>WGS84 is a global system that pinpoints locations using latitude and longitude. Latitude shows how far north or south a place is, and longitude shows how far east or west it is. WGS84 is widely used in GPS and mapping tools like Google Maps.</p>
+                    
+                  <h2 class="govuk-heading-s">OSGB36 (National Grid)</h2>
+                  <p>Also known as the British National Grid (BNG), OSGB36 is a system used to map Great Britain. It divides the country into squares using numerical east and north positions, known as eastings and northings.</p>
+                </div>
+            </details>
+            
+            {% if data['errorthispage'] == "true" %}
+                <p id="exemption-what-coordinate-system-radios-error" class="govuk-error-message">
+                    <span class="govuk-visually-hidden">Error:</span> {{ errorTextHTML }}
+                </p>
+            {% endif %}
 
             {{ govukRadios
                 ({
@@ -89,9 +95,6 @@ Which coordinate system do you want to use?
                             classes: "govuk-fieldset__legend--l govuk-visually-hidden"
                         }
                     },
-
-                    errorMessage: null if data['errorthispage'] != "true"
-                                       else { html: errorTextHTML },
 
                     items:
                     [
@@ -114,7 +117,8 @@ Which coordinate system do you want to use?
                     ]
                 })
             }}
-
+            
+            </div>
 
             <div class="govuk-button-group">
                 {{ govukButton({

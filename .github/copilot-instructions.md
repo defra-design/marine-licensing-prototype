@@ -404,6 +404,26 @@ In your Nunjucks templates, use the error flags and error arrays consistently:
 }) }}
 ```
 
+IMPORTANT: When defining variables that will be rendered in the UI, such as error messages, do NOT include HTML comments inside the variable block as they will be rendered. For example:
+
+```nunjucks
+/* INCORRECT - Comments will appear in rendered output */
+{% set errorTextHTML %}
+    <!-- This comment will show in the error message -->
+    {% if data['errortypeone'] == "true" %}
+    Select how you want to provide the coordinates
+    {% endif %}
+{% endset %}
+
+/* CORRECT - Place comments outside the variable block */
+<!-- Error message for when nothing is selected -->
+{% set errorTextHTML %}
+    {% if data['errortypeone'] == "true" %}
+    Select how you want to provide the coordinates
+    {% endif %}
+{% endset %}
+```
+
 ## Resources
 
 - [GOV.UK Prototype Kit documentation](https://govuk-prototype-kit.herokuapp.com/docs)
