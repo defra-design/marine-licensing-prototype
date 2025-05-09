@@ -61,7 +61,7 @@ Review site details
         
         {% if not allComplete %}
             {{ govukInsetText({
-                html: "You must add the <span class='govuk-tag govuk-tag--blue' style='padding-right: 5px;'>Incomplete</span> information before you can save and continue."
+                html: "You must add the <span class='govuk-tag govuk-tag--red' style='padding-right: 5px;'>Incomplete</span> information before you can submit your application. You can still save the page and come back later if you can't complete it now."
             }) }}
         {% endif %}
         
@@ -157,7 +157,7 @@ Review site details
                             {% if data['exemption-start-date-date-input-day'] %}
                                 {{ data['exemption-start-date-date-input-day'] }} {{ data['exemption-start-date-date-input-month'] | toMonth }} {{ data['exemption-start-date-date-input-year'] }} to {{ data['exemption-end-date-date-input-day'] }} {{ data['exemption-end-date-date-input-month'] | toMonth }} {{ data['exemption-end-date-date-input-year'] }}
                             {% else %}
-                                <span class="govuk-tag govuk-tag--blue">Incomplete</span>
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
@@ -195,7 +195,7 @@ Review site details
                             {% if data['exemption-activity-details-text-area'] %}
                                 {{ data['exemption-activity-details-text-area'] }}
                             {% else %}
-                                <span class="govuk-tag govuk-tag--blue">Incomplete</span>
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
@@ -226,7 +226,7 @@ Review site details
                             {% if data['site-1-name'] %}
                                 {{ data['site-1-name'] }}
                             {% else %}
-                                <span class="govuk-tag govuk-tag--blue">Incomplete</span>
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
@@ -245,7 +245,7 @@ Review site details
                             {% if data['site-1-start-date-day'] %}
                                 {{ data['site-1-start-date-day'] }} {{ data['site-1-start-date-month'] | toMonth }} {{ data['site-1-start-date-year'] }} to {{ data['site-1-end-date-day'] }} {{ data['site-1-end-date-month'] | toMonth }} {{ data['site-1-end-date-year'] }}
                             {% else %}
-                                <span class="govuk-tag govuk-tag--blue">Incomplete</span>
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
@@ -265,7 +265,7 @@ Review site details
                             {% if data['site-1-activity-description'] %}
                                 {{ data['site-1-activity-description'] }}
                             {% else %}
-                                <span class="govuk-tag govuk-tag--blue">Incomplete</span>
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
@@ -307,7 +307,7 @@ Review site details
                             {% if data['site-2-name'] %}
                                 {{ data['site-2-name'] }}
                             {% else %}
-                                <span class="govuk-tag govuk-tag--blue">Incomplete</span>
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
@@ -326,7 +326,7 @@ Review site details
                             {% if data['site-2-start-date-day'] %}
                                 {{ data['site-2-start-date-day'] }} {{ data['site-2-start-date-month'] | toMonth }} {{ data['site-2-start-date-year'] }} to {{ data['site-2-end-date-day'] }} {{ data['site-2-end-date-month'] | toMonth }} {{ data['site-2-end-date-year'] }}
                             {% else %}
-                                <span class="govuk-tag govuk-tag--blue">Incomplete</span>
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
@@ -346,7 +346,7 @@ Review site details
                             {% if data['site-2-activity-description'] %}
                                 {{ data['site-2-activity-description'] }}
                             {% else %}
-                                <span class="govuk-tag govuk-tag--blue">Incomplete</span>
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
@@ -388,7 +388,7 @@ Review site details
                             {% if data['site-3-name'] %}
                                 {{ data['site-3-name'] }}
                             {% else %}
-                                <span class="govuk-tag govuk-tag--blue">Incomplete</span>
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
@@ -407,7 +407,7 @@ Review site details
                             {% if data['site-3-start-date-day'] %}
                                 {{ data['site-3-start-date-day'] }} {{ data['site-3-start-date-month'] | toMonth }} {{ data['site-3-start-date-year'] }} to {{ data['site-3-end-date-day'] }} {{ data['site-3-end-date-month'] | toMonth }} {{ data['site-3-end-date-year'] }}
                             {% else %}
-                                <span class="govuk-tag govuk-tag--blue">Incomplete</span>
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
@@ -427,7 +427,7 @@ Review site details
                             {% if data['site-3-activity-description'] %}
                                 {{ data['site-3-activity-description'] }}
                             {% else %}
-                                <span class="govuk-tag govuk-tag--blue">Incomplete</span>
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
@@ -469,7 +469,7 @@ Review site details
                             {% if data['site-4-name'] %}
                                 {{ data['site-4-name'] }}
                             {% else %}
-                                <span class="govuk-tag govuk-tag--blue">Incomplete</span>
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
@@ -488,7 +488,7 @@ Review site details
                             {% if data['site-4-start-date-day'] %}
                                 {{ data['site-4-start-date-day'] }} {{ data['site-4-start-date-month'] | toMonth }} {{ data['site-4-start-date-year'] }} to {{ data['site-4-end-date-day'] }} {{ data['site-4-end-date-month'] | toMonth }} {{ data['site-4-end-date-year'] }}
                             {% else %}
-                                <span class="govuk-tag govuk-tag--blue">Incomplete</span>
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
@@ -508,7 +508,7 @@ Review site details
                             {% if data['site-4-activity-description'] %}
                                 {{ data['site-4-activity-description'] }}
                             {% else %}
-                                <span class="govuk-tag govuk-tag--blue">Incomplete</span>
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
@@ -535,11 +535,9 @@ Review site details
 
         <form action="review-site-details-router" method="post" novalidate>
             <div class="govuk-button-group">
-                {% if allComplete %}
-                    {{ govukButton({
-                        text: "Save and continue"
-                    }) }}
-                {% endif %}
+                {{ govukButton({
+                    text: "Save and continue"
+                }) }}
                 <a class="govuk-link govuk-link--no-visited-state" href="cancel-site-details">Cancel</a>
             </div>
         </form>
