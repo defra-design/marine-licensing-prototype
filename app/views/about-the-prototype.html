@@ -1,11 +1,15 @@
 {% extends "layouts/main.html" %}
 
 {% block header %}
+{% from "govuk/components/header/macro.njk" import govukHeader %}
+{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
+
 {{ govukHeader({
-    homepageUrl: "/",
-    serviceName: "Marine Management Organisation",
-    serviceUrl: ""
-  }) }}
+  classes: "govuk-header--full-width-border"
+}) }}
+{{ govukServiceNavigation({
+  serviceName: "MMO"
+}) }}
 {% endblock %}
 
 <!-- Setting the big main heading at the top of the page -->
