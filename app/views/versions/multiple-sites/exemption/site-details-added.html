@@ -1,3 +1,4 @@
+<!-- filepath: /Users/tom/Documents/Prototypes/defra/marine-licensing-prototype/app/views/versions/multiple-sites/exemption/site-details-added.html -->
 {% extends "../layouts/exemption.html" %}
 
 {% block beforeContent %}
@@ -8,6 +9,7 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
@@ -22,112 +24,144 @@ Your sites
 {% block content %}
 
 <div class="govuk-grid-row">
-    <div class="govuk-grid-column-two-thirds">
+    <div class="govuk-grid-column-full">
+        {% set hasSiteIncomplete = false %}
+        
+        <!-- Determine if any site is incomplete -->
+        {% for site in [1, 2, 3, 4] %}
+            {% set siteIncomplete = false %}
+            
+            <!-- Check if site name is missing -->
+            {% if not data['site-' + site + '-name'] %}
+                {% set siteIncomplete = true %}
+                {% set hasSiteIncomplete = true %}
+            {% endif %}
+            
+            <!-- Check if site-specific dates are required but incomplete -->
+            {% if data['exemption-same-activity-dates-for-sites'] == "No" %}
+                {% if not data['site-' + site + '-start-date-day'] %}
+                    {% set siteIncomplete = true %}
+                    {% set hasSiteIncomplete = true %}
+                {% endif %}
+            {% endif %}
+            
+            <!-- Check if site-specific descriptions are required but incomplete -->
+            {% if data['exemption-same-activity-description-for-sites'] == "No" %}
+                {% if not data['site-' + site + '-activity-description'] %}
+                    {% set siteIncomplete = true %}
+                    {% set hasSiteIncomplete = true %}
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        
+        <!-- Display error summary if applicable -->
+        {% if data['errorthispage'] == "true" %}
+            {{ govukErrorSummary({
+                titleText: "There is a problem",
+                errorList: [
+                    {
+                        text: "To continue, either complete all the sites or uncheck the box and save your changes",
+                        href: "#finished-adding-sites"
+                    }
+                ]
+            }) }}
+        {% endif %}
+        
         <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
         <h1 class="govuk-heading-l">
             {{ pageHeadingTextHTML }}
         </h1>
-        
-        <p class="govuk-body">You can review, delete or add more sites before you continue.</p>
+
         
         <div class="govuk-!-margin-bottom-6">
-            {{ govukSummaryList({
-                classes: "govuk-!-margin-bottom-6",
-                rows: [
-                    {
-                        key: {
-                            text: "Site 1"
-                        },
-                        value: {
-                            text: data['site-1-name'] or "Worthing sample"
-                        },
-                        actions: {
-                            classes: "govuk-!-width-one-quarter",
-                            items: [
-                                {
-                                    href: "review-site-details?site=1",
-                                    text: "Review",
-                                    visuallyHiddenText: "site 1"
-                                },
-                                {
-                                    href: "#",
-                                    text: "Delete",
-                                    visuallyHiddenText: "site 1"
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        key: {
-                            text: "Site 2"
-                        },
-                        value: {
-                            text: data['site-2-name'] or "Brighton sample"
-                        },
-                        actions: {
-                            classes: "govuk-!-width-one-quarter",
-                            items: [
-                                {
-                                    href: "review-site-details?site=2",
-                                    text: "Review",
-                                    visuallyHiddenText: "site 2"
-                                },
-                                {
-                                    href: "#",
-                                    text: "Delete",
-                                    visuallyHiddenText: "site 2"
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        key: {
-                            text: "Site 3"
-                        },
-                        value: {
-                            text: data['site-3-name'] or "Hastings sample"
-                        },
-                        actions: {
-                            classes: "govuk-!-width-one-quarter",
-                            items: [
-                                {
-                                    href: "review-site-details?site=3",
-                                    text: "Review",
-                                    visuallyHiddenText: "site 3"
-                                },
-                                {
-                                    href: "#",
-                                    text: "Delete",
-                                    visuallyHiddenText: "site 3"
-                                }
-                            ]
-                        }
-                    },
-                    {
-                        key: {
-                            text: "Site 4"
-                        },
-                        value: {
-                            text: data['site-4-name'] or "Eastbourne sample"
-                        },
-                        actions: {
-                            classes: "govuk-!-width-one-quarter",
-                            items: [
-                                {
-                                    href: "review-site-details?site=4",
-                                    text: "Review",
-                                    visuallyHiddenText: "site 4"
-                                },
-                                {
-                                    href: "#",
-                                    text: "Delete",
-                                    visuallyHiddenText: "site 4"
-                                }
-                            ]
-                        }
-                    }
-                ]
-            }) }}
+            <!-- Plain HTML GOV.UK styled table -->
+            <table class="govuk-table govuk-!-margin-bottom-6">
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th scope="col" class="govuk-table__header">Site</th>
+                        <th scope="col" class="govuk-table__header">Site name</th>
+                        <th scope="col" class="govuk-table__header">Status</th>
+                        <th scope="col" class="govuk-table__header">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="govuk-table__body">
+                    <!-- Site 1 -->
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell">Site 1</td>
+                        <td class="govuk-table__cell">{{ data['site-1-name'] or "-" }}</td>
+                        <td class="govuk-table__cell">
+                            {% if not data['site-1-name'] or 
+                               (data['exemption-same-activity-dates-for-sites'] == "No" and not data['site-1-start-date-day']) or 
+                               (data['exemption-same-activity-description-for-sites'] == "No" and not data['site-1-activity-description']) %}
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                            {% else %}
+                                Completed
+                            {% endif %}
+                        </td>
+                        <td class="govuk-table__cell">
+                            <a href="review-site-details#site-1-details" class="govuk-link govuk-!-margin-right-3">Review</a> 
+                            <a href="delete-site?site=1" class="govuk-link">Delete</a>
+                        </td>
+                    </tr>
+                    
+                    <!-- Site 2 -->
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell">Site 2</td>
+                        <td class="govuk-table__cell">{{ data['site-2-name'] or "-" }}</td>
+                        <td class="govuk-table__cell">
+                            {% if not data['site-2-name'] or 
+                               (data['exemption-same-activity-dates-for-sites'] == "No" and not data['site-2-start-date-day']) or 
+                               (data['exemption-same-activity-description-for-sites'] == "No" and not data['site-2-activity-description']) %}
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                            {% else %}
+                                Completed
+                            {% endif %}
+                        </td>
+                        <td class="govuk-table__cell">
+                            <a href="review-site-details#site-2-details" class="govuk-link govuk-!-margin-right-3">Review</a> 
+                            <a href="delete-site?site=2" class="govuk-link">Delete</a>
+                        </td>
+                    </tr>
+                    
+                    <!-- Site 3 -->
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell">Site 3</td>
+                        <td class="govuk-table__cell">{{ data['site-3-name'] or "-" }}</td>
+                        <td class="govuk-table__cell">
+                            {% if not data['site-3-name'] or 
+                               (data['exemption-same-activity-dates-for-sites'] == "No" and not data['site-3-start-date-day']) or 
+                               (data['exemption-same-activity-description-for-sites'] == "No" and not data['site-3-activity-description']) %}
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                            {% else %}
+                                Completed
+                            {% endif %}
+                        </td>
+                        <td class="govuk-table__cell">
+                            <a href="review-site-details#site-3-details" class="govuk-link govuk-!-margin-right-3">Review</a> 
+                            <a href="delete-site?site=3" class="govuk-link">Delete</a>
+                        </td>
+                    </tr>
+                    
+                    <!-- Site 4 -->
+                    <tr class="govuk-table__row">
+                        <td class="govuk-table__cell">Site 4</td>
+                        <td class="govuk-table__cell">{{ data['site-4-name'] or "-" }}</td>
+                        <td class="govuk-table__cell">
+                            {% if not data['site-4-name'] or 
+                               (data['exemption-same-activity-dates-for-sites'] == "No" and not data['site-4-start-date-day']) or 
+                               (data['exemption-same-activity-description-for-sites'] == "No" and not data['site-4-activity-description']) %}
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                            {% else %}
+                                Completed
+                            {% endif %}
+                        </td>
+                        <td class="govuk-table__cell">
+                            <a href="review-site-details#site-4-details" class="govuk-link govuk-!-margin-right-3">Review</a> 
+                            <a href="delete-site?site=4" class="govuk-link">Delete</a>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
         {{ govukButton({
@@ -138,14 +172,18 @@ Your sites
         
         <form action="site-details-added-router" method="post" novalidate>
             {{ govukCheckboxes({
-              name: "finished-adding-sites",
-              items: [
-                {
-                  value: "yes",
-                  text: "I've finished adding sites",
-                  checked: data['finished-adding-sites'] and data['finished-adding-sites'].includes("yes")
-                }
-              ]
+                idPrefix: "finished-adding-sites",
+                name: "finished-adding-sites",
+                errorMessage: {
+                    text: "To continue, either complete all the sites or uncheck the box and save your changes"
+                } if data['errorthispage'] == "true",
+                items: [
+                    {
+                        value: "yes",
+                        text: "I've finished adding sites",
+                        checked: data['finished-adding-sites'] and data['finished-adding-sites'].includes("yes")
+                    }
+                ]
             }) }}
             
             <div class="govuk-button-group">
