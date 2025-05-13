@@ -23,13 +23,13 @@ Are you sure you want to delete this project?
       {{ pageHeadingTextHTML }}
     </h1>
 
-    <p>
+    <div class="govuk-inset-text">
       {% if data['project'] == 'tower-bridge' %}
         Tower Bridge refurbishment
       {% else %}
         {{ data['exemption-project-name-text-input'] }}
       {% endif %}
-    </p>
+    </div>
  
     <form action="delete-router?project={{ data['project'] }}" method="post" novalidate>
       <div class="govuk-button-group govuk-!-margin-top-7">
