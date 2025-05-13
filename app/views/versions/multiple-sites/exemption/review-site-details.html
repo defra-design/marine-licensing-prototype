@@ -53,10 +53,11 @@ Review site details
         {% if not data['site-1-name'] or not data['site-2-name'] or not data['site-3-name'] or not data['site-4-name'] %}
             {% set allComplete = false %}
         {% endif %}
-        
+
+
         {% if not allComplete %}
             {{ govukInsetText({
-                html: "Complete all sections marked <span class='govuk-tag govuk-tag--red'>Incomplete</span> before submitting your application.<br>You can use 'Save and continue' to keep your current progress and return to finish later."
+                html: "You must complete all sections marked <span class='govuk-tag govuk-tag--red'>Incomplete</span> before you can send your information.<br>You can select 'Save and continue' to keep your progress and return later."
             }) }}
         {% endif %}
         

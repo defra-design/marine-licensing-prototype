@@ -119,10 +119,10 @@ Your projects
 					-
 				</td>
 				
-				<td class="govuk-table__cell" data-sort-value="In progress">
+				<td class="govuk-table__cell" data-sort-value="Incomplete">
 					{{ govukTag({
-						text: "In progress",
-						classes: "govuk-tag--light-blue"
+						text: "Incomplete",
+						classes: "govuk-tag--red"
 					}) }}
 				</td>
 				<td class="govuk-table__cell" data-sort-value="Continue">	
@@ -152,10 +152,10 @@ Your projects
 						}) }}
 					</td>
 				{% else %}
-					<td class="govuk-table__cell" data-sort-value="In progress">
+					<td class="govuk-table__cell" data-sort-value="Incomplete">
 						{{ govukTag({
-							text: "In progress",
-							classes: "govuk-tag--light-blue"
+							text: "Incomplete",
+							classes: "govuk-tag--red"
 						}) }}
 					</td>
 				{% endif %}

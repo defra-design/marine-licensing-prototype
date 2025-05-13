@@ -10,6 +10,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
@@ -72,6 +73,10 @@ Your sites
             {{ pageHeadingTextHTML }}
         </h1>
 
+        {{ govukInsetText({
+            html: "You can select 'Save and continue' to keep your progress and return later if any sites are marked <span class='govuk-tag govuk-tag--red govuk-!-margin-bottom-1'>Incomplete</span><br>
+            You must complete all site details before selecting 'I've finished adding sites'."
+        }) }}
         
         <div class="govuk-!-margin-bottom-6">
             <!-- Plain HTML GOV.UK styled table -->
