@@ -1424,9 +1424,41 @@ router.post('/' + version + section + 'check-answers-router', function (req, res
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 router.post('/' + version + section + 'delete-router', function (req, res) {
-    req.session.data['deleteProject'] = 'true';
+    // Get the project to delete from the query parameter
+    const projectToDelete = req.query.project;
+    
+    if (projectToDelete === 'user') {
+        // Delete the user's project
+        req.session.data['userProjectDeleted'] = 'true';
+    } else if (projectToDelete === 'tower-bridge') {
+        // Delete the Tower Bridge project
+        req.session.data['towerBridgeProjectDeleted'] = 'true';
+    } else {
+        // Fallback to old behavior for backward compatibility
+        req.session.data['deleteProject'] = 'true';
+    }
+    
     // Redirect to Your projects page
     res.redirect('home');
+});
+
+// Home page initialization - ensure project deletion flags are properly set
+router.get('/' + version + section + 'home', function (req, res) {
+    // Initialize flags if they don't exist already
+    if (req.session.data['userProjectDeleted'] === undefined) {
+        req.session.data['userProjectDeleted'] = 'false';
+    }
+    
+    if (req.session.data['towerBridgeProjectDeleted'] === undefined) {
+        req.session.data['towerBridgeProjectDeleted'] = 'false';
+    }
+    
+    if (req.session.data['deleteProject'] === undefined) {
+        req.session.data['deleteProject'] = 'false';
+    }
+    
+    // Render the home page
+    res.render(version + section + 'home');
 });
 
 // Manual site name router
