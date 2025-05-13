@@ -43,25 +43,22 @@
       {{ pageHeadingTextHTML }}
     </h1>
 
-    {% if data['applicationSubmitted'] == "true" %}
-    <!-- Don't display Project details if already submitted -->
-    {% else %}
-    <!-- Project details section -->
+    
+    <!-- Project summary section -->
     <div class="govuk-summary-card">
       <div class="govuk-summary-card__title-wrapper">
         <h2 class="govuk-summary-card__title">
-          Project details
+          Project summary
         </h2>
-        
-        <ul class="govuk-summary-card__actions">
-          <li class="govuk-summary-card__action">
-            <a class="govuk-link" href="project-name.html?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Project name</span></a>
-          </li>
-        </ul>
       </div>
 
       <div class="govuk-summary-card__content">
         <dl class="govuk-summary-list">
+
+          {% if data['applicationSubmitted'] == "true" %}
+          <!-- Don't display Project name if already submitted as it is now the H1-->
+          {% else %}
+
           <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
               Project name
@@ -69,11 +66,72 @@
             <dd class="govuk-summary-list__value">
               {{ data['exemption-project-name-text-input'] }}
             </dd>
+            {% if data['applicationSubmitted'] != "true" %}
+            <dd class="govuk-summary-list__actions">
+              <a class="govuk-link" href="project-name.html?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Project name</span></a>
+            </dd>
+            {% endif %}
           </div>
+          {% endif %}
+
+          <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+        <dt class="govuk-summary-list__key">
+          Type of activity
+        </dt>
+        <dd class="govuk-summary-list__value">
+          Removal of a substance or object
+        </dd>
+      </div>
+
+      <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+        <dt class="govuk-summary-list__key">
+          The purpose of the activity
+        </dt>
+        <dd class="govuk-summary-list__value">
+          Scientific research
+        </dd>
+      </div>
+
+      <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+        <dt class="govuk-summary-list__key">
+          What the activity involves
+        </dt>
+        <dd class="govuk-summary-list__value">
+          Samples for testing and analysis
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+      <dt class="govuk-summary-list__key">
+        Why this activity is exempt
+      </dt>
+      <dd class="govuk-summary-list__value">
+        Based on your answers from 'Check if you need a marine licence', your activity is exempt under <a href="https://www.legislation.gov.uk/uksi/2011/409/article/17A" rel="noreferrer noopener" target="_blank">Article 17a of the Marine Licensing (Exempted Activities) Order 2011 (opens in new tab)</a> 
+      </dd>
+
+    </div>
+
+    <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+      <dt class="govuk-summary-list__key">
+        Your answers from 'Check if you need a marine licence'  
+      </dt>
+      <dd class="govuk-summary-list__value">
+        <p><a href="/public/downloads/notification-sample-answers.pdf" rel="noreferrer noopener" target="_blank">Download a copy of your answers (PDF)</a></p>  
+        
+          {% if data['applicationSubmitted'] != "true" %}
+              <p>If you need to change any of your 'Check if you need a marine licence' answers</p>
+
+              <ol class="govuk-list govuk-list--number">
+                <li>Delete this project from <a href="home" class="govuk-link--no-visited-state">your projects</a>.</li>
+                <li>Restart the process by <a href="/versions/mvp/check/start">checking if you need a marine licence</a>.</li>
+              </ol>
+          {% endif %}
+
+      </dd>
+    </div>
         </dl>
       </div>
     </div>
-    {% endif %}
+    <!-- End of project summary section -->
 
     <!-- Site 1 details -->
     <div class="govuk-summary-card">
@@ -82,6 +140,7 @@
           Site 1 details
         </h2>
         
+        {% if data['applicationSubmitted'] != "true" %}
         <ul class="govuk-summary-card__actions">
           <li class="govuk-summary-card__action">
             <a class="govuk-link" href="review-site-details?site=1&camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Site 1 details</span></a>
@@ -90,6 +149,7 @@
             <a class="govuk-link" href="delete-site?site=1">Delete site<span class="govuk-visually-hidden"> 1</span></a>
           </li>
         </ul>
+        {% endif %}
       </div>
 
       <div class="govuk-summary-card__content">
@@ -194,6 +254,7 @@
           Site 2 details
         </h2>
         
+        {% if data['applicationSubmitted'] != "true" %}
         <ul class="govuk-summary-card__actions">
           <li class="govuk-summary-card__action">
             <a class="govuk-link" href="review-site-details?site=2&camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Site 2 details</span></a>
@@ -202,6 +263,7 @@
             <a class="govuk-link" href="delete-site?site=2">Delete site<span class="govuk-visually-hidden"> 2</span></a>
           </li>
         </ul>
+        {% endif %}
       </div>
 
       <div class="govuk-summary-card__content">
@@ -306,6 +368,7 @@
           Site 3 details
         </h2>
         
+        {% if data['applicationSubmitted'] != "true" %}
         <ul class="govuk-summary-card__actions">
           <li class="govuk-summary-card__action">
             <a class="govuk-link" href="review-site-details?site=3&camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Site 3 details</span></a>
@@ -314,6 +377,7 @@
             <a class="govuk-link" href="delete-site?site=3">Delete site<span class="govuk-visually-hidden"> 3</span></a>
           </li>
         </ul>
+        {% endif %}
       </div>
 
       <div class="govuk-summary-card__content">
@@ -418,6 +482,7 @@
           Site 4 details
         </h2>
         
+        {% if data['applicationSubmitted'] != "true" %}
         <ul class="govuk-summary-card__actions">
           <li class="govuk-summary-card__action">
             <a class="govuk-link" href="review-site-details?site=4&camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Site 4 details</span></a>
@@ -426,6 +491,7 @@
             <a class="govuk-link" href="delete-site?site=4">Delete site<span class="govuk-visually-hidden"> 4</span></a>
           </li>
         </ul>
+        {% endif %}
       </div>
 
       <div class="govuk-summary-card__content">
@@ -529,12 +595,13 @@
         <h2 class="govuk-summary-card__title">
           Public register
         </h2>
-        
+        {% if data['applicationSubmitted'] != "true" %}
         <ul class="govuk-summary-card__actions">
           <li class="govuk-summary-card__action">
             <a class="govuk-link" href="public-register?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Information withheld from public register</span></a>
           </li>
         </ul>
+        {% endif %}
       </div>
 
       <div class="govuk-summary-card__content">
