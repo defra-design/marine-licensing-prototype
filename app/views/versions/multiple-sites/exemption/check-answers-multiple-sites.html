@@ -50,14 +50,8 @@
     <div class="govuk-summary-card">
       <div class="govuk-summary-card__title-wrapper">
         <h2 class="govuk-summary-card__title">
-          Project details
+          Project summary
         </h2>
-        
-        <ul class="govuk-summary-card__actions">
-          <li class="govuk-summary-card__action">
-            <a class="govuk-link" href="project-name.html?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Project name</span></a>
-          </li>
-        </ul>
       </div>
 
       <div class="govuk-summary-card__content">
@@ -69,7 +63,64 @@
             <dd class="govuk-summary-list__value">
               {{ data['exemption-project-name-text-input'] }}
             </dd>
+            <dd class="govuk-summary-list__actions">
+              <a class="govuk-link" href="project-name.html?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Project name</span></a>
+            </dd>
           </div>
+
+          <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+        <dt class="govuk-summary-list__key">
+          Type of activity
+        </dt>
+        <dd class="govuk-summary-list__value">
+          Removal of a substance or object
+        </dd>
+      </div>
+
+      <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+        <dt class="govuk-summary-list__key">
+          The purpose of the activity
+        </dt>
+        <dd class="govuk-summary-list__value">
+          Scientific research
+        </dd>
+      </div>
+
+      <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+        <dt class="govuk-summary-list__key">
+          What the activity involves
+        </dt>
+        <dd class="govuk-summary-list__value">
+          Samples for testing and analysis
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+      <dt class="govuk-summary-list__key">
+        Why this activity is exempt
+      </dt>
+      <dd class="govuk-summary-list__value">
+        Based on your answers from 'Check if you need a marine licence', your activity is exempt under <a href="https://www.legislation.gov.uk/uksi/2011/409/article/17A" rel="noreferrer noopener" target="_blank">Article 17a of the Marine Licensing (Exempted Activities) Order 2011 (opens in new tab)</a> 
+      </dd>
+
+    </div>
+
+    <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+      <dt class="govuk-summary-list__key">
+        Your answers from 'Check if you need a marine licence'  
+      </dt>
+      <dd class="govuk-summary-list__value">
+        <p><a href="/public/downloads/notification-sample-answers.pdf" rel="noreferrer noopener" target="_blank">Download a copy of your answers (PDF)</a></p>  
+        
+          
+              <p>If you need to change any of your 'Check if you need a marine licence' answers</p>
+
+              <ol class="govuk-list govuk-list--number">
+                <li>Delete this project from <a href="home" class="govuk-link--no-visited-state">your projects</a>.</li>
+                <li>Restart the process by <a href="/versions/mvp/check/start">checking if you need a marine licence</a>.</li>
+              </ol>
+
+      </dd>
+    </div>
         </dl>
       </div>
     </div>
