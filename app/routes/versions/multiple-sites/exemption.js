@@ -574,7 +574,7 @@ router.post('/' + version + section + 'upload-file-router', function (req, res) 
     // In a real implementation, this would parse the uploaded file
     req.session.data['sites'] = [
         {
-            name: 'Beach Cleanup Area 1',
+            name: 'Borehole 1',
             description: '',
             startDate: {
                 day: '',
@@ -589,7 +589,7 @@ router.post('/' + version + section + 'upload-file-router', function (req, res) 
             mapImage: '/public/images/worthing-map-drawn-copy.jpg'
         },
         {
-            name: 'Beach Cleanup Area 2',
+            name: 'Borehole 2',
             description: '',
             startDate: {
                 day: '',
@@ -604,7 +604,7 @@ router.post('/' + version + section + 'upload-file-router', function (req, res) 
             mapImage: '/public/images/worthing-map-square-copy.jpg'
         },
         {
-            name: 'Beach Cleanup Area 3',
+            name: 'Borehole 3',
             description: '',
             startDate: {
                 day: '',
@@ -619,7 +619,7 @@ router.post('/' + version + section + 'upload-file-router', function (req, res) 
             mapImage: '/public/images/worthing-map-4-points-copy.jpg'
         },
         {
-            name: 'Beach Cleanup Area 4',
+            name: 'Borehole 4',
             description: '',
             startDate: {
                 day: '',
@@ -762,38 +762,70 @@ router.post('/' + version + section + 'same-activity-description-router', functi
 // TEXT ENTRY
 /////////////////////////////////////////////////////////////////////////////////////////////
 
+// GET handler for site-name
+router.get('/' + version + section + 'site-name', function (req, res) {
+    // Initialize the sites array if it doesn't exist
+    if (!req.session.data['sites']) {
+        req.session.data['sites'] = [];
+    }
+    
+    // Set up for a new site
+    req.session.data['current-site-index'] = req.session.data['sites'].length;
+    
+    res.render(version + section + 'site-name');
+});
+
 router.post('/' + version + section + 'site-name-router', function (req, res) {
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
 
-    const siteNumber = parseInt(req.session.data['site']) || 1;
-    const siteName = req.session.data['site-name-text-input']; // Changed to use form input directly
+    const siteName = req.session.data['site-name-text-input'];
 
     if (!siteName || siteName.trim() === "") {
         req.session.data['errorthispage'] = "true";
         req.session.data['errortypeone'] = "true";
-        return res.redirect('site-name?site=' + siteNumber);
+        return res.redirect('site-name');
     }
 
-    // Get sites array
+    // Get sites array and current index
     const sites = req.session.data['sites'] || [];
+    const siteIndex = parseInt(req.session.data['site']) || null;
     
-    // Update the site name in the array (convert from 1-based to 0-based index)
-    if (sites.length >= siteNumber) {
-        sites[siteNumber - 1].name = siteName;
-        req.session.data['sites'] = sites;
+    // If we're editing an existing site
+    if (siteIndex && sites.length >= siteIndex) {
+        // Update existing site (convert from 1-based to 0-based index)
+        sites[siteIndex - 1].name = siteName;
+    } else {
+        // Add a new site
+        sites.push({
+            name: siteName
+        });
     }
+    
+    // Save the updated array
+    req.session.data['sites'] = sites;
 
     // Extract the return parameter which contains the section name
     const returnSection = req.session.data['return'];
     
-    if (returnSection) {
+    // If we need site-specific dates and we're not returning to somewhere else
+    if (req.session.data['exemption-same-activity-dates-for-sites'] === "No" && !returnSection) {
+        // Go to site-specific dates page
+        return res.redirect('site-activity-dates?site=' + req.session.data['sites'].length);
+    } 
+    // If we need site-specific descriptions and we're not returning to somewhere else
+    else if (req.session.data['exemption-same-activity-description-for-sites'] === "No" && !returnSection) {
+        // Go to site-specific description page
+        return res.redirect('site-activity-description?site=' + req.session.data['sites'].length);
+    }
+    else if (returnSection) {
         // Redirect back to review-site-details with the anchor
         return res.redirect('review-site-details#' + returnSection);
     }
-
-    // Default: return to review-site-details without anchor
-    res.redirect('review-site-details');
+    else {
+        // Default: return to site-details-added list
+        return res.redirect('site-details-added');
+    }
 });
 
 router.get('/' + version + section + 'site-name', function (req, res) {
@@ -1037,24 +1069,29 @@ router.post('/' + version + section + 'site-details-added-router', function (req
     // Check if any site is incomplete
     let hasSiteIncomplete = false;
     
+    // Get the sites array
+    const sites = req.session.data['sites'] || [];
+    
     // Check each site for completeness
-    for (let site = 1; site <= 4; site++) {
-        // Check if site name is missing
-        if (!req.session.data[`site-${site}-name`]) {
-            hasSiteIncomplete = true;
-        }
-        
-        // Check if site-specific dates are required but incomplete
-        if (req.session.data['exemption-same-activity-dates-for-sites'] === "No") {
-            if (!req.session.data[`site-${site}-start-date-day`]) {
+    if (sites.length > 0) {
+        for (const site of sites) {
+            // Check if site name is missing
+            if (!site.name) {
                 hasSiteIncomplete = true;
             }
-        }
-        
-        // Check if site-specific descriptions are required but incomplete
-        if (req.session.data['exemption-same-activity-description-for-sites'] === "No") {
-            if (!req.session.data[`site-${site}-activity-description`]) {
-                hasSiteIncomplete = true;
+            
+            // Check if site-specific dates are required but incomplete
+            if (req.session.data['exemption-same-activity-dates-for-sites'] === "No") {
+                if (!site.startDate || !site.startDate.day) {
+                    hasSiteIncomplete = true;
+                }
+            }
+            
+            // Check if site-specific descriptions are required but incomplete
+            if (req.session.data['exemption-same-activity-description-for-sites'] === "No") {
+                if (!site.description) {
+                    hasSiteIncomplete = true;
+                }
             }
         }
     }
@@ -1705,7 +1742,11 @@ router.post('/' + version + section + 'manual-site-name-router', function (req, 
 router.get('/' + version + section + 'delete-site', function (req, res) {
     // Make site parameter available to the template
     const siteIndex = parseInt(req.query.site) || 1;
+    const returnTo = req.query.return || 'review-site-details';
+    
+    // Store these values in the session for use in the POST handler
     req.session.data['site'] = siteIndex;
+    req.session.data['returnTo'] = returnTo;
     
     // Render the delete site confirmation page
     res.render(version + section + 'delete-site');
@@ -1714,6 +1755,9 @@ router.get('/' + version + section + 'delete-site', function (req, res) {
 router.post('/' + version + section + 'delete-site-router', function (req, res) {
     // Get the site index from the session (1-based)
     const siteIndex = parseInt(req.session.data['site']) || 1;
+    
+    // Get the return page from the session
+    const returnTo = req.session.data['returnTo'] || 'review-site-details';
     
     // Get the sites array
     const sites = req.session.data['sites'] || [];
@@ -1727,8 +1771,15 @@ router.post('/' + version + section + 'delete-site-router', function (req, res) 
         req.session.data['sites'] = sites;
     }
     
-    // Redirect back to the review page
-    res.redirect('review-site-details');
+    // Redirect based on the returnTo value
+    if (returnTo === 'review-site-details') {
+        res.redirect('review-site-details#site-' + siteIndex + '-details');
+    } else if (returnTo === 'site-details-added') {
+        res.redirect('site-details-added');
+    } else {
+        // Default fallback
+        res.redirect('review-site-details');
+    }
 });
 
 }
