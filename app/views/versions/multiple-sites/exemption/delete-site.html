@@ -22,17 +22,18 @@ Are you sure you want to delete this site?
       {{ pageHeadingTextHTML }}
     </h1>
 
-    {% set siteNumber = data['site'] or '1' %}
+    {% set siteIndex = data['site'] | int or 1 %}
+    {% set siteNumber = siteIndex %}
     
     <div class="govuk-inset-text">
-      {% if data['site-' + siteNumber + '-name'] %}
-        Site {{ siteNumber }}: {{ data['site-' + siteNumber + '-name'] }}
+      {% if data['sites'] and data['sites'][siteIndex-1] and data['sites'][siteIndex-1].name %}
+        Site {{ siteNumber }}: {{ data['sites'][siteIndex-1].name }}
       {% else %}
         Site {{ siteNumber }}
       {% endif %}
     </div>
  
-    <form action="#" method="post" novalidate>
+    <form action="delete-site-router" method="post" novalidate>
       <div class="govuk-button-group govuk-!-margin-top-7">
         {{ govukButton({
           text: "Yes, delete site",
@@ -40,6 +41,10 @@ Are you sure you want to delete this site?
         }) }}
         <a class="govuk-link govuk-link--no-visited-state" href="javascript:window.history.back()">Cancel</a>
       </div>
+      
+      {% if query.return %}
+      <input type="hidden" name="return" value="{{ query.return }}">
+      {% endif %}
     </form>
   </div>
 </div>

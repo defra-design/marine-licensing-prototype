@@ -36,7 +36,7 @@ Site name
     <div class="govuk-error-summary__body">
       <ul class="govuk-list govuk-error-summary__list">
         {% if data['errortypeone'] == "true" %}
-          <li><a href="#site-{{ data['site'] }}-name">{{ errorText1HTML }}</a></li>
+          <li><a href="#site-name-text-input">{{ errorText1HTML }}</a></li>
         {% endif %}
       </ul>
     </div>
@@ -47,20 +47,30 @@ Site name
         <form action="site-name-router" method="post" novalidate>
             <input type="hidden" name="site" value="{{ data['site'] }}" />
             
+            {% set siteIndex = data['site'] | int or 1 %}
+            {% set currentSiteName = '' %}
+            {% if data['sites'] and data['sites'][siteIndex-1] %}
+                {% set currentSiteName = data['sites'][siteIndex-1].name %}
+            {% endif %}
+            
             <div class="govuk-form-group{% if data['errortypeone'] == "true" %} govuk-form-group--error{% endif %}">
                 <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
                 <h1 class="govuk-label-wrapper">
-                    <label class="govuk-label govuk-label--l" for="site-{{ data['site'] }}-name">
+                    <label class="govuk-label govuk-label--l" for="site-name-text-input">
                         Site name
-                        <span class="govuk-caption-l">Site {{ data['site'] }}</span>
+                        <span class="govuk-caption-l">Site {{ siteIndex }}</span>
                     </label>
                 </h1>
                 {% if data['errortypeone'] == "true" %}
-                    <p id="site-{{ data['site'] }}-name-error" class="govuk-error-message">
+                    <p id="site-name-text-input-error" class="govuk-error-message">
                         <span class="govuk-visually-hidden">Error:</span> {{ errorText1HTML }}
                     </p>
                 {% endif %}
-                <input class="govuk-input{% if data['errortypeone'] == "true" %} govuk-input--error{% endif %}" id="site-{{ data['site'] }}-name" name="site-{{ data['site'] }}-name" type="text" value="{{ data['site-' + data['site'] + '-name'] }}">
+                <input class="govuk-input{% if data['errortypeone'] == "true" %} govuk-input--error{% endif %}" 
+                       id="site-name-text-input" 
+                       name="site-name-text-input" 
+                       type="text" 
+                       value="{{ currentSiteName }}">
             </div>
             
             <div class="govuk-button-group">

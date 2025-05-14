@@ -1,0 +1,266 @@
+// filepath: /Users/tom/Documents/Prototypes/defra/marine-licensing-prototype/app/routes/versions/multiple-sites/exemption.js
+const { log } = require("govuk-prototype-kit/migrator/logger");
+module.exports = function (router) {
+    let version = "versions/multiple-sites/";
+    let section = "exemption/";
+
+// Functions for clearing location data
+function clearMapData(session) {
+delete session.data['sites-drawn-coordinates'];
+}
+
+function clearCoordinateData(session) {
+    // Clear circle data
+    delete session.data['exemption-enter-the-coordinates-at-the-centre-point-latitude-text-input'];
+    delete session.data['exemption-enter-the-coordinates-at-the-centre-point-longitude-text-input'];
+    delete session.data['exemption-width-of-site-number-input'];
+    
+    // Clear square data
+    delete session.data['exemption-what-are-the-coordinates-of-the-square-latitude-text-input'];
+    delete session.data['exemption-what-are-the-coordinates-of-the-square-longitude-text-input'];
+    delete session.data['exemption-width-of-square-number-input'];
+
+    // Clear multiple coordinates data
+    for (let i = 1; i <= 5; i++) {
+        delete session.data[`coordinates-point-${i}-latitude`];
+        delete session.data[`coordinates-point-${i}-longitude`];
+    }
+}
+
+// Add these new clearing functions
+function clearAllLocationData(session) {
+    // Clear coordinate data
+    clearCoordinateData(session);
+    
+    // Clear coordinate system
+    clearCoordinateSystem(session);
+    
+    // Clear coordinate type
+    clearCoordinateType(session);
+    
+    // Clear method of providing coordinates
+    delete session.data['exemption-how-do-you-want-to-provide-the-coordinates-radios'];
+    
+    // Clear file upload data
+    delete session.data['exemption-which-type-of-file-radios'];
+    delete session.data['kml-file-upload'];
+    
+    // Clear map data
+    clearMapData(session);
+}
+
+function clearCoordinateSystem(session) {
+    delete session.data['exemption-what-coordinate-system-radios'];
+    clearCoordinateValues(session);
+}
+
+function clearCoordinateType(session) {
+    delete session.data['coords-type'];
+    delete session.data['exemption-how-do-you-want-to-enter-the-coordinates-radios']; // Clear the selection itself
+    delete session.data['previous-coords-entry-method']; // Clear the tracking variable
+    clearCoordinateValues(session);
+}
+
+function clearCoordinateValues(session) {
+    // Clear circle data
+    delete session.data['exemption-enter-the-coordinates-at-the-centre-point-latitude-text-input'];
+    delete session.data['exemption-enter-the-coordinates-at-the-centre-point-longitude-text-input'];
+    delete session.data['exemption-width-of-site-number-input'];
+    
+    // Clear square data
+    delete session.data['exemption-what-are-the-coordinates-of-the-square-latitude-text-input'];
+    delete session.data['exemption-what-are-the-coordinates-of-the-square-longitude-text-input'];
+    delete session.data['exemption-width-of-square-number-input'];
+
+    // Clear multiple coordinates data
+    for (let i = 1; i <= 5; i++) {
+        delete session.data[`coordinates-point-${i}-latitude`];
+        delete session.data[`coordinates-point-${i}-longitude`];
+    }
+}
+
+// Function to clear all site details data when cancelling to task list
+function clearAllSiteDetails(session) {
+    // Clear site location data
+    clearAllLocationData(session);
+    
+    // Clear activity date settings
+    delete session.data['exemption-same-activity-dates-for-sites'];
+    delete session.data['previous-activity-dates-selection'];
+    
+    // Clear shared activity dates
+    delete session.data['exemption-start-date-date-input-day'];
+    delete session.data['exemption-start-date-date-input-month'];
+    delete session.data['exemption-start-date-date-input-year'];
+    delete session.data['exemption-end-date-date-input-day'];
+    delete session.data['exemption-end-date-date-input-month'];
+    delete session.data['exemption-end-date-date-input-year'];
+    
+    // Clear activity description settings
+    delete session.data['exemption-same-activity-description-for-sites'];
+    delete session.data['previous-activity-description-selection'];
+    
+    // Clear shared activity description
+    delete session.data['exemption-activity-details-text-area'];
+    
+    // Clear sites array
+    delete session.data['sites'];
+    
+    // For backward compatibility, also clear old site-specific data
+    for (let i = 1; i <= 4; i++) {
+        // Clear site name
+        delete session.data[`site-${i}-name`];
+        
+        // Clear site-specific dates
+        delete session.data[`site-${i}-start-date-day`];
+        delete session.data[`site-${i}-start-date-month`];
+        delete session.data[`site-${i}-start-date-year`];
+        delete session.data[`site-${i}-end-date-day`];
+        delete session.data[`site-${i}-end-date-month`];
+        delete session.data[`site-${i}-end-date-year`];
+        
+        // Clear site-specific description
+        delete session.data[`site-${i}-activity-description`];
+        
+        // Clear site-specific map image
+        delete session.data[`site-${i}-map-image`];
+    }
+    
+    // Clear any error states
+    delete session.data['startdateerror'];
+    delete session.data['enddateerror'];
+    delete session.data['errorthispage'];
+    delete session.data['errortypeone'];
+    delete session.data['errortypetwo'];
+    
+    // Reset task status
+    delete session.data['exempt-information-3-status'];
+}
+
+// Function to clear all data after method of providing site location
+function clearDataAfterLocationMethod(session) {
+    // Clear file type selection
+    delete session.data['exemption-which-type-of-file-radios'];
+    
+    // Clear file upload data
+    delete session.data['kml-file-upload'];
+    
+    // Clear activity date settings
+    delete session.data['exemption-same-activity-dates-for-sites'];
+    delete session.data['previous-activity-dates-selection'];
+    
+    // Clear shared activity dates
+    delete session.data['exemption-start-date-date-input-day'];
+    delete session.data['exemption-start-date-date-input-month'];
+    delete session.data['exemption-start-date-date-input-year'];
+    delete session.data['exemption-end-date-date-input-day'];
+    delete session.data['exemption-end-date-date-input-month'];
+    delete session.data['exemption-end-date-date-input-year'];
+    
+    // Clear activity description settings
+    delete session.data['exemption-same-activity-description-for-sites'];
+    delete session.data['previous-activity-description-selection'];
+    
+    // Clear shared activity description
+    delete session.data['exemption-activity-details-text-area'];
+}
+
+// Function to clear all data after file type selection
+function clearDataAfterFileType(session) {
+    // Clear file upload data
+    delete session.data['kml-file-upload'];
+    
+    // Clear activity date settings
+    delete session.data['exemption-same-activity-dates-for-sites'];
+    delete session.data['previous-activity-dates-selection'];
+    
+    // Clear shared activity dates
+    delete session.data['exemption-start-date-date-input-day'];
+    delete session.data['exemption-start-date-date-input-month'];
+    delete session.data['exemption-start-date-date-input-year'];
+    delete session.data['exemption-end-date-date-input-day'];
+    delete session.data['exemption-end-date-date-input-month'];
+    delete session.data['exemption-end-date-date-input-year'];
+    
+    // Clear activity description settings
+    delete session.data['exemption-same-activity-description-for-sites'];
+    delete session.data['previous-activity-description-selection'];
+    
+    // Clear shared activity description
+    delete session.data['exemption-activity-details-text-area'];
+}
+
+// Function to clear all data after file upload
+function clearDataAfterFileUpload(session) {
+    // Clear activity date settings
+    delete session.data['exemption-same-activity-dates-for-sites'];
+    delete session.data['previous-activity-dates-selection'];
+    
+    // Clear shared activity dates
+    delete session.data['exemption-start-date-date-input-day'];
+    delete session.data['exemption-start-date-date-input-month'];
+    delete session.data['exemption-start-date-date-input-year'];
+    delete session.data['exemption-end-date-date-input-day'];
+    delete session.data['exemption-end-date-date-input-month'];
+    delete session.data['exemption-end-date-date-input-year'];
+    
+    // Clear activity description settings
+    delete session.data['exemption-same-activity-description-for-sites'];
+    delete session.data['previous-activity-description-selection'];
+    
+    // Clear shared activity description
+    delete session.data['exemption-activity-details-text-area'];
+}
+
+// The rest of your router handlers go here
+// ...
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Delete site confirmation
+// CONFIRMATION PAGE
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+router.get('/' + version + section + 'delete-site', function (req, res) {
+    // Make site parameter available to the template
+    const siteIndex = parseInt(req.query.site) || 1;
+    const returnTo = req.query.return || 'review-site-details';
+    
+    // Store these values in the session for use in the POST handler
+    req.session.data['site'] = siteIndex;
+    req.session.data['returnTo'] = returnTo;
+    
+    // Render the delete site confirmation page
+    res.render(version + section + 'delete-site');
+});
+
+router.post('/' + version + section + 'delete-site-router', function (req, res) {
+    // Get the site index from the session (1-based)
+    const siteIndex = parseInt(req.session.data['site']) || 1;
+    
+    // Get the return page from the session
+    const returnTo = req.session.data['returnTo'] || 'review-site-details';
+    
+    // Get the sites array
+    const sites = req.session.data['sites'] || [];
+    
+    // Only proceed if we have sites and the index is valid
+    if (sites.length > 0 && siteIndex > 0 && siteIndex <= sites.length) {
+        // Remove the site at the specified index (convert from 1-based to 0-based)
+        sites.splice(siteIndex - 1, 1);
+        
+        // Save the updated array back to the session
+        req.session.data['sites'] = sites;
+    }
+    
+    // Redirect based on the returnTo value
+    if (returnTo === 'review-site-details') {
+        res.redirect('review-site-details#site-' + siteIndex + '-details');
+    } else if (returnTo === 'site-details-added') {
+        res.redirect('site-details-added');
+    } else {
+        // Default fallback
+        res.redirect('review-site-details');
+    }
+});
+
+}

@@ -69,11 +69,20 @@ Activity description
                 <div id="site-{{ data['site'] }}-activity-description-hint" class="govuk-hint">
                     Provide details about what you plan to do at this site
                 </div>
+                {% set siteIndex = data['site'] | int or 1 %}
+                {% set activityDescription = '' %}
+                
+                {% if site and site.description %}
+                    {% set activityDescription = site.description %}
+                {% else %}
+                    {% set activityDescription = data['site-' + data['site'] + '-activity-description'] %}
+                {% endif %}
+                
                 <textarea class="govuk-textarea{% if data['errortypeone'] == "true" %} govuk-textarea--error{% endif %}" 
                     id="site-{{ data['site'] }}-activity-description" 
                     name="site-{{ data['site'] }}-activity-description" 
                     rows="5" 
-                    aria-describedby="site-{{ data['site'] }}-activity-description-hint">{{ data['site-' + data['site'] + '-activity-description'] }}</textarea>
+                    aria-describedby="site-{{ data['site'] }}-activity-description-hint">{{ activityDescription }}</textarea>
             </div>
             
             <div class="govuk-button-group">

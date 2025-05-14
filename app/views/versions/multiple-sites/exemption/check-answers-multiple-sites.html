@@ -133,461 +133,132 @@
     </div>
     <!-- End of project summary section -->
 
-    <!-- Site 1 details -->
-    <div class="govuk-summary-card">
-      <div class="govuk-summary-card__title-wrapper">
-        <h2 class="govuk-summary-card__title">
-          Site 1 details
-        </h2>
-        
-        {% if data['applicationSubmitted'] != "true" %}
-        <ul class="govuk-summary-card__actions">
-          <li class="govuk-summary-card__action">
-            <a class="govuk-link" href="review-site-details?site=1&camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Site 1 details</span></a>
-          </li>
-          <li class="govuk-summary-card__action">
-            <a class="govuk-link" href="delete-site?site=1">Delete site<span class="govuk-visually-hidden"> 1</span></a>
-          </li>
-        </ul>
-        {% endif %}
-      </div>
-
-      <div class="govuk-summary-card__content">
-        <dl class="govuk-summary-list">
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-              Site name
-            </dt>
-            <dd class="govuk-summary-list__value">
-              {{ data['site-1-name'] or "Worthing sample" }}
-            </dd>
+    <!-- Dynamic site cards using a loop -->
+    {% if data.sites and data.sites.length > 0 %}
+      {% for site in data.sites %}
+        <div class="govuk-summary-card">
+          <div class="govuk-summary-card__title-wrapper">
+            <h2 class="govuk-summary-card__title">
+              Site {{ loop.index }} details
+            </h2>
+            
+            {% if data['applicationSubmitted'] != "true" %}
+            <ul class="govuk-summary-card__actions">
+              <li class="govuk-summary-card__action">
+                <a class="govuk-link" href="review-site-details?site={{ loop.index }}&camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Site {{ loop.index }} details</span></a>
+              </li>
+              <li class="govuk-summary-card__action">
+                <a class="govuk-link" href="delete-site?site={{ loop.index }}&return=check-answers-multiple-sites">Delete site<span class="govuk-visually-hidden"> {{ loop.index }}</span></a>
+              </li>
+            </ul>
+            {% endif %}
           </div>
 
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-              Activity dates
-            </dt>
-            <dd class="govuk-summary-list__value">
-              {% if data['exemption-same-activity-dates-for-sites'] == "Yes" %}
-                {% set paddedDay = data['exemption-start-date-date-input-day'] %}
-                {% if paddedDay | length == 1 %}{% set paddedDay = '0' + paddedDay %}{% endif %}
-                {% set paddedMonth = data['exemption-start-date-date-input-month'] %}
-                {% if paddedMonth | length == 1 %}{% set paddedMonth = '0' + paddedMonth %}{% endif %}
-                {% set formattedStartDate = data['exemption-start-date-date-input-year'] + '-' + paddedMonth + '-' + paddedDay %}
-                
-                {% set paddedDay = data['exemption-end-date-date-input-day'] %}
-                {% if paddedDay | length == 1 %}{% set paddedDay = '0' + paddedDay %}{% endif %}
-                {% set paddedMonth = data['exemption-end-date-date-input-month'] %}
-                {% if paddedMonth | length == 1 %}{% set paddedMonth = '0' + paddedMonth %}{% endif %}
-                {% set formattedEndDate = data['exemption-end-date-date-input-year'] + '-' + paddedMonth + '-' + paddedDay %}
-                
-                {{ formattedStartDate | govukDate }} to {{ formattedEndDate | govukDate }}
-              {% else %}
-                {% set paddedDay = data['site-1-start-date-day'] %}
-                {% if paddedDay | length == 1 %}{% set paddedDay = '0' + paddedDay %}{% endif %}
-                {% set paddedMonth = data['site-1-start-date-month'] %}
-                {% if paddedMonth | length == 1 %}{% set paddedMonth = '0' + paddedMonth %}{% endif %}
-                {% set formattedStartDate = data['site-1-start-date-year'] + '-' + paddedMonth + '-' + paddedDay %}
-                
-                {% set paddedDay = data['site-1-end-date-day'] %}
-                {% if paddedDay | length == 1 %}{% set paddedDay = '0' + paddedDay %}{% endif %}
-                {% set paddedMonth = data['site-1-end-date-month'] %}
-                {% if paddedMonth | length == 1 %}{% set paddedMonth = '0' + paddedMonth %}{% endif %}
-                {% set formattedEndDate = data['site-1-end-date-year'] + '-' + paddedMonth + '-' + paddedDay %}
-                
-                {{ formattedStartDate | govukDate or "01 May 2025" }} to {{ formattedEndDate | govukDate or "17 May 2025" }}
-              {% endif %}
-            </dd>
+          <div class="govuk-summary-card__content">
+            <dl class="govuk-summary-list">
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                  Site name
+                </dt>
+                <dd class="govuk-summary-list__value">
+                  {{ site.name or "-" }}
+                </dd>
+              </div>
+
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                  Activity dates
+                </dt>
+                <dd class="govuk-summary-list__value">
+                  {% if data['exemption-same-activity-dates-for-sites'] == "Yes" %}
+                    {% set paddedDay = data['exemption-start-date-date-input-day'] %}
+                    {% if paddedDay | length == 1 %}{% set paddedDay = '0' + paddedDay %}{% endif %}
+                    {% set paddedMonth = data['exemption-start-date-date-input-month'] %}
+                    {% if paddedMonth | length == 1 %}{% set paddedMonth = '0' + paddedMonth %}{% endif %}
+                    {% set formattedStartDate = data['exemption-start-date-date-input-year'] + '-' + paddedMonth + '-' + paddedDay %}
+                    
+                    {% set paddedDay = data['exemption-end-date-date-input-day'] %}
+                    {% if paddedDay | length == 1 %}{% set paddedDay = '0' + paddedDay %}{% endif %}
+                    {% set paddedMonth = data['exemption-end-date-date-input-month'] %}
+                    {% if paddedMonth | length == 1 %}{% set paddedMonth = '0' + paddedMonth %}{% endif %}
+                    {% set formattedEndDate = data['exemption-end-date-date-input-year'] + '-' + paddedMonth + '-' + paddedDay %}
+                    
+                    {{ formattedStartDate | govukDate }} to {{ formattedEndDate | govukDate }}
+                  {% else %}
+                    {% if site.startDate and site.startDate.day %}
+                      {% set paddedDay = site.startDate.day %}
+                      {% if paddedDay | length == 1 %}{% set paddedDay = '0' + paddedDay %}{% endif %}
+                      {% set paddedMonth = site.startDate.month %}
+                      {% if paddedMonth | length == 1 %}{% set paddedMonth = '0' + paddedMonth %}{% endif %}
+                      {% set formattedStartDate = site.startDate.year + '-' + paddedMonth + '-' + paddedDay %}
+                      
+                      {% set paddedDay = site.endDate.day %}
+                      {% if paddedDay | length == 1 %}{% set paddedDay = '0' + paddedDay %}{% endif %}
+                      {% set paddedMonth = site.endDate.month %}
+                      {% if paddedMonth | length == 1 %}{% set paddedMonth = '0' + paddedMonth %}{% endif %}
+                      {% set formattedEndDate = site.endDate.year + '-' + paddedMonth + '-' + paddedDay %}
+                      
+                      {{ formattedStartDate | govukDate }} to {{ formattedEndDate | govukDate }}
+                    {% else %}
+                      {% set defaultStart = "01 May 2025" %}
+                      {% set defaultEnd = (17 + loop.index) + " May 2025" %}
+                      {{ defaultStart }} to {{ defaultEnd }}
+                    {% endif %}
+                  {% endif %}
+                </dd>
+              </div>
+
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                  Activity description
+                </dt>
+                <dd class="govuk-summary-list__value">
+                  {% if data['exemption-same-activity-description-for-sites'] == "Yes" %}
+                    {{ data['exemption-activity-details-text-area'] }}
+                  {% else %}
+                    {{ site.description or "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." }}
+                  {% endif %}
+                </dd>
+              </div>
+
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                  Method of providing site location
+                </dt>
+                <dd class="govuk-summary-list__value">
+                  {{ site.locationMethod or data['exemption-how-do-you-want-to-provide-the-coordinates-radios'] or "Upload a file with the coordinates of the site" }}
+                </dd>
+              </div>
+
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                  File uploaded
+                </dt>
+                <dd class="govuk-summary-list__value">
+                  {{ site.fileUploaded or "se-coast-sample-sites-coordinates.zip" }}
+                </dd>
+              </div>
+            </dl>
+
+            <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
+
+            <dl class="govuk-summary-list">
+              <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+                <dt class="govuk-summary-list__key">
+                  Map view
+                </dt>
+                <dd></dd>
+              </div>
+            </dl>
+
+            <img src="{{ site.mapImage or '/public/images/worthing-map-' ~ loop.index ~ '-points-copy.jpg' }}" alt="Map showing site {{ loop.index }} location" style="width: 100%;">
           </div>
-
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-              Activity description
-            </dt>
-            <dd class="govuk-summary-list__value">
-              {% if data['exemption-same-activity-description-for-sites'] == "Yes" %}
-                {{ data['exemption-activity-details-text-area'] }}
-              {% else %}
-                {{ data['site-1-activity-description'] or "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." }}
-              {% endif %}
-            </dd>
-          </div>
-
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-              Method of providing site location
-            </dt>
-            <dd class="govuk-summary-list__value">
-              {{ data['exemption-how-do-you-want-to-provide-the-coordinates-radios'] or "Upload a file with the coordinates of the site" }}
-            </dd>
-          </div>
-
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-              File uploaded
-            </dt>
-            <dd class="govuk-summary-list__value">
-              se-coast-sample-sites-coordinates.zip
-            </dd>
-          </div>
-        </dl>
-
-        <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
-
-        <dl class="govuk-summary-list">
-          <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
-            <dt class="govuk-summary-list__key">
-              Map view
-            </dt>
-            <dd></dd>
-          </div>
-        </dl>
-
-        <img src="{{ data['site-1-map-image'] or '/public/images/worthing-map-drawn-copy.jpg' }}" alt="Map view" style="width: 100%;">
-      </div>
-    </div>
-
-    <!-- Site 2 details -->
-    <div class="govuk-summary-card">
-      <div class="govuk-summary-card__title-wrapper">
-        <h2 class="govuk-summary-card__title">
-          Site 2 details
-        </h2>
-        
-        {% if data['applicationSubmitted'] != "true" %}
-        <ul class="govuk-summary-card__actions">
-          <li class="govuk-summary-card__action">
-            <a class="govuk-link" href="review-site-details?site=2&camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Site 2 details</span></a>
-          </li>
-          <li class="govuk-summary-card__action">
-            <a class="govuk-link" href="delete-site?site=2">Delete site<span class="govuk-visually-hidden"> 2</span></a>
-          </li>
-        </ul>
-        {% endif %}
-      </div>
-
-      <div class="govuk-summary-card__content">
-        <dl class="govuk-summary-list">
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-              Site name
-            </dt>
-            <dd class="govuk-summary-list__value">
-              {{ data['site-2-name'] or "Brighton south sample" }}
-            </dd>
-          </div>
-
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-              Activity dates
-            </dt>
-            <dd class="govuk-summary-list__value">
-              {% if data['exemption-same-activity-dates-for-sites'] == "Yes" %}
-                {% set paddedDay = data['exemption-start-date-date-input-day'] %}
-                {% if paddedDay | length == 1 %}{% set paddedDay = '0' + paddedDay %}{% endif %}
-                {% set paddedMonth = data['exemption-start-date-date-input-month'] %}
-                {% if paddedMonth | length == 1 %}{% set paddedMonth = '0' + paddedMonth %}{% endif %}
-                {% set formattedStartDate = data['exemption-start-date-date-input-year'] + '-' + paddedMonth + '-' + paddedDay %}
-                
-                {% set paddedDay = data['exemption-end-date-date-input-day'] %}
-                {% if paddedDay | length == 1 %}{% set paddedDay = '0' + paddedDay %}{% endif %}
-                {% set paddedMonth = data['exemption-end-date-date-input-month'] %}
-                {% if paddedMonth | length == 1 %}{% set paddedMonth = '0' + paddedMonth %}{% endif %}
-                {% set formattedEndDate = data['exemption-end-date-date-input-year'] + '-' + paddedMonth + '-' + paddedDay %}
-                
-                {{ formattedStartDate | govukDate }} to {{ formattedEndDate | govukDate }}
-              {% else %}
-                {% set paddedDay = data['site-2-start-date-day'] %}
-                {% if paddedDay | length == 1 %}{% set paddedDay = '0' + paddedDay %}{% endif %}
-                {% set paddedMonth = data['site-2-start-date-month'] %}
-                {% if paddedMonth | length == 1 %}{% set paddedMonth = '0' + paddedMonth %}{% endif %}
-                {% set formattedStartDate = data['site-2-start-date-year'] + '-' + paddedMonth + '-' + paddedDay %}
-                
-                {% set paddedDay = data['site-2-end-date-day'] %}
-                {% if paddedDay | length == 1 %}{% set paddedDay = '0' + paddedDay %}{% endif %}
-                {% set paddedMonth = data['site-2-end-date-month'] %}
-                {% if paddedMonth | length == 1 %}{% set paddedMonth = '0' + paddedMonth %}{% endif %}
-                {% set formattedEndDate = data['site-2-end-date-year'] + '-' + paddedMonth + '-' + paddedDay %}
-                
-                {{ formattedStartDate | govukDate or "01 May 2025" }} to {{ formattedEndDate | govukDate or "21 May 2025" }}
-              {% endif %}
-            </dd>
-          </div>
-
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-              Activity description
-            </dt>
-            <dd class="govuk-summary-list__value">
-              {% if data['exemption-same-activity-description-for-sites'] == "Yes" %}
-                {{ data['exemption-activity-details-text-area'] }}
-              {% else %}
-                {{ data['site-2-activity-description'] or "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." }}
-              {% endif %}
-            </dd>
-          </div>
-
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-              Method of providing site location
-            </dt>
-            <dd class="govuk-summary-list__value">
-              {{ data['exemption-how-do-you-want-to-provide-the-coordinates-radios'] or "Upload a file with the coordinates of the site" }}
-            </dd>
-          </div>
-
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-              File uploaded
-            </dt>
-            <dd class="govuk-summary-list__value">
-              se-coast-sample-sites-coordinates.zip
-            </dd>
-          </div>
-        </dl>
-
-        <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
-
-        <dl class="govuk-summary-list">
-          <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
-            <dt class="govuk-summary-list__key">
-              Map view
-            </dt>
-            <dd></dd>
-          </div>
-        </dl>
-
-        <img src="{{ data['site-2-map-image'] or '/public/images/worthing-map-square-copy.jpg' }}" alt="Map view" style="width: 100%;">
-      </div>
-    </div>
-
-    <!-- Site 3 details -->
-    <div class="govuk-summary-card">
-      <div class="govuk-summary-card__title-wrapper">
-        <h2 class="govuk-summary-card__title">
-          Site 3 details
-        </h2>
-        
-        {% if data['applicationSubmitted'] != "true" %}
-        <ul class="govuk-summary-card__actions">
-          <li class="govuk-summary-card__action">
-            <a class="govuk-link" href="review-site-details?site=3&camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Site 3 details</span></a>
-          </li>
-          <li class="govuk-summary-card__action">
-            <a class="govuk-link" href="delete-site?site=3">Delete site<span class="govuk-visually-hidden"> 3</span></a>
-          </li>
-        </ul>
-        {% endif %}
-      </div>
-
-      <div class="govuk-summary-card__content">
-        <dl class="govuk-summary-list">
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-              Site name
-            </dt>
-            <dd class="govuk-summary-list__value">
-              {{ data['site-3-name'] or "Hove sample" }}
-            </dd>
-          </div>
-
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-              Activity dates
-            </dt>
-            <dd class="govuk-summary-list__value">
-              {% if data['exemption-same-activity-dates-for-sites'] == "Yes" %}
-                {% set paddedDay = data['exemption-start-date-date-input-day'] %}
-                {% if paddedDay | length == 1 %}{% set paddedDay = '0' + paddedDay %}{% endif %}
-                {% set paddedMonth = data['exemption-start-date-date-input-month'] %}
-                {% if paddedMonth | length == 1 %}{% set paddedMonth = '0' + paddedMonth %}{% endif %}
-                {% set formattedStartDate = data['exemption-start-date-date-input-year'] + '-' + paddedMonth + '-' + paddedDay %}
-                
-                {% set paddedDay = data['exemption-end-date-date-input-day'] %}
-                {% if paddedDay | length == 1 %}{% set paddedDay = '0' + paddedDay %}{% endif %}
-                {% set paddedMonth = data['exemption-end-date-date-input-month'] %}
-                {% if paddedMonth | length == 1 %}{% set paddedMonth = '0' + paddedMonth %}{% endif %}
-                {% set formattedEndDate = data['exemption-end-date-date-input-year'] + '-' + paddedMonth + '-' + paddedDay %}
-                
-                {{ formattedStartDate | govukDate }} to {{ formattedEndDate | govukDate }}
-              {% else %}
-                {% set paddedDay = data['site-3-start-date-day'] %}
-                {% if paddedDay | length == 1 %}{% set paddedDay = '0' + paddedDay %}{% endif %}
-                {% set paddedMonth = data['site-3-start-date-month'] %}
-                {% if paddedMonth | length == 1 %}{% set paddedMonth = '0' + paddedMonth %}{% endif %}
-                {% set formattedStartDate = data['site-3-start-date-year'] + '-' + paddedMonth + '-' + paddedDay %}
-                
-                {% set paddedDay = data['site-3-end-date-day'] %}
-                {% if paddedDay | length == 1 %}{% set paddedDay = '0' + paddedDay %}{% endif %}
-                {% set paddedMonth = data['site-3-end-date-month'] %}
-                {% if paddedMonth | length == 1 %}{% set paddedMonth = '0' + paddedMonth %}{% endif %}
-                {% set formattedEndDate = data['site-3-end-date-year'] + '-' + paddedMonth + '-' + paddedDay %}
-                
-                {{ formattedStartDate | govukDate or "01 May 2025" }} to {{ formattedEndDate | govukDate or "21 May 2025" }}
-              {% endif %}
-            </dd>
-          </div>
-
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-              Activity description
-            </dt>
-            <dd class="govuk-summary-list__value">
-              {% if data['exemption-same-activity-description-for-sites'] == "Yes" %}
-                {{ data['exemption-activity-details-text-area'] }}
-              {% else %}
-                {{ data['site-3-activity-description'] or "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." }}
-              {% endif %}
-            </dd>
-          </div>
-
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-              Method of providing site location
-            </dt>
-            <dd class="govuk-summary-list__value">
-              {{ data['exemption-how-do-you-want-to-provide-the-coordinates-radios'] or "Upload a file with the coordinates of the site" }}
-            </dd>
-          </div>
-
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-              File uploaded
-            </dt>
-            <dd class="govuk-summary-list__value">
-              se-coast-sample-sites-coordinates.zip
-            </dd>
-          </div>
-        </dl>
-
-        <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
-
-        <dl class="govuk-summary-list">
-          <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
-            <dt class="govuk-summary-list__key">
-              Map view
-            </dt>
-            <dd></dd>
-          </div>
-        </dl>
-
-        <img src="{{ data['site-3-map-image'] or '/public/images/worthing-map-4-points-copy.jpg' }}" alt="Map view" style="width: 100%;">
-      </div>
-    </div>
-
-    <!-- Site 4 details -->
-    <div class="govuk-summary-card">
-      <div class="govuk-summary-card__title-wrapper">
-        <h2 class="govuk-summary-card__title">
-          Site 4 details
-        </h2>
-        
-        {% if data['applicationSubmitted'] != "true" %}
-        <ul class="govuk-summary-card__actions">
-          <li class="govuk-summary-card__action">
-            <a class="govuk-link" href="review-site-details?site=4&camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Site 4 details</span></a>
-          </li>
-          <li class="govuk-summary-card__action">
-            <a class="govuk-link" href="delete-site?site=4">Delete site<span class="govuk-visually-hidden"> 4</span></a>
-          </li>
-        </ul>
-        {% endif %}
-      </div>
-
-      <div class="govuk-summary-card__content">
-        <dl class="govuk-summary-list">
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-              Site name
-            </dt>
-            <dd class="govuk-summary-list__value">
-              {{ data['site-4-name'] or "Southend sample" }}
-            </dd>
-          </div>
-
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-              Activity dates
-            </dt>
-            <dd class="govuk-summary-list__value">
-              {% if data['exemption-same-activity-dates-for-sites'] == "Yes" %}
-                {% set paddedDay = data['exemption-start-date-date-input-day'] %}
-                {% if paddedDay | length == 1 %}{% set paddedDay = '0' + paddedDay %}{% endif %}
-                {% set paddedMonth = data['exemption-start-date-date-input-month'] %}
-                {% if paddedMonth | length == 1 %}{% set paddedMonth = '0' + paddedMonth %}{% endif %}
-                {% set formattedStartDate = data['exemption-start-date-date-input-year'] + '-' + paddedMonth + '-' + paddedDay %}
-                
-                {% set paddedDay = data['exemption-end-date-date-input-day'] %}
-                {% if paddedDay | length == 1 %}{% set paddedDay = '0' + paddedDay %}{% endif %}
-                {% set paddedMonth = data['exemption-end-date-date-input-month'] %}
-                {% if paddedMonth | length == 1 %}{% set paddedMonth = '0' + paddedMonth %}{% endif %}
-                {% set formattedEndDate = data['exemption-end-date-date-input-year'] + '-' + paddedMonth + '-' + paddedDay %}
-                
-                {{ formattedStartDate | govukDate }} to {{ formattedEndDate | govukDate }}
-              {% else %}
-                {% set paddedDay = data['site-4-start-date-day'] %}
-                {% if paddedDay | length == 1 %}{% set paddedDay = '0' + paddedDay %}{% endif %}
-                {% set paddedMonth = data['site-4-start-date-month'] %}
-                {% if paddedMonth | length == 1 %}{% set paddedMonth = '0' + paddedMonth %}{% endif %}
-                {% set formattedStartDate = data['site-4-start-date-year'] + '-' + paddedMonth + '-' + paddedDay %}
-                
-                {% set paddedDay = data['site-4-end-date-day'] %}
-                {% if paddedDay | length == 1 %}{% set paddedDay = '0' + paddedDay %}{% endif %}
-                {% set paddedMonth = data['site-4-end-date-month'] %}
-                {% if paddedMonth | length == 1 %}{% set paddedMonth = '0' + paddedMonth %}{% endif %}
-                {% set formattedEndDate = data['site-4-end-date-year'] + '-' + paddedMonth + '-' + paddedDay %}
-                
-                {{ formattedStartDate | govukDate or "19 May 2025" }} to {{ formattedEndDate | govukDate or "21 May 2025" }}
-              {% endif %}
-            </dd>
-          </div>
-
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-              Activity description
-            </dt>
-            <dd class="govuk-summary-list__value">
-              {% if data['exemption-same-activity-description-for-sites'] == "Yes" %}
-                {{ data['exemption-activity-details-text-area'] }}
-              {% else %}
-                {{ data['site-4-activity-description'] or "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." }}
-              {% endif %}
-            </dd>
-          </div>
-
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-              Method of providing site location
-            </dt>
-            <dd class="govuk-summary-list__value">
-              {{ data['exemption-how-do-you-want-to-provide-the-coordinates-radios'] or "Upload a file with the coordinates of the site" }}
-            </dd>
-          </div>
-
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-              File uploaded
-            </dt>
-            <dd class="govuk-summary-list__value">
-              se-coast-sample-sites-coordinates.zip
-            </dd>
-          </div>
-        </dl>
-
-        <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
-
-        <dl class="govuk-summary-list">
-          <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
-            <dt class="govuk-summary-list__key">
-              Map view
-            </dt>
-            <dd></dd>
-          </div>
-        </dl>
-
-        <img src="{{ data['site-4-map-image'] or '/public/images/worthing-map-5-points-copy.jpg' }}" alt="Map view" style="width: 100%;">
-      </div>
-    </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <p class="govuk-body">No sites have been added yet.</p>
+    {% endif %}
+    <!-- End of dynamic site cards -->
 
     <!-- Public register section -->
     <div class="govuk-summary-card">
