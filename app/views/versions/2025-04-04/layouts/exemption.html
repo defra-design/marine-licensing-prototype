@@ -6,10 +6,29 @@ https://prototype-kit.service.gov.uk/docs/how-to-use-layouts
 {% extends "govuk-prototype-kit/layouts/govuk-branded.njk" %}
 
 {% block header %}
+{% from "govuk/components/header/macro.njk" import govukHeader %}
+{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
+
 {{ govukHeader({
-    homepageUrl: "/",
-    serviceName: "Apply for a marine licence",
-    serviceUrl: "/versions/2025-04-04/check/start"
+  classes: "govuk-header--full-width-border"
+}) }}
+{{ govukServiceNavigation({
+  serviceName: "MMO",
+  navigation: [
+    {
+      href: "home",
+      text: "Projects home"
+    },
+    {
+      href: "#",
+      text: "Defra account",
+      active: false
+    },
+    {
+      href: "#",
+      text: "Sign out"
+    }
+  ]
 }) }}
 {% endblock %}
 
