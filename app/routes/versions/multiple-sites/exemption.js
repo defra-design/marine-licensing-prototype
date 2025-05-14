@@ -983,8 +983,8 @@ router.post('/' + version + section + 'site-activity-description-router', functi
     // Update the site in the sites array
     const sites = req.session.data['sites'] || [];
     if (sites.length >= siteIndex) {
-        // Update the description
-        sites[siteIndex-1].activityDescription = description;
+        // Update the description - save to description property to match what the review template checks
+        sites[siteIndex-1].description = description;
         
         // Save the updated array back to the session
         req.session.data['sites'] = sites;

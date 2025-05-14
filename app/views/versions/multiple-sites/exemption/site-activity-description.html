@@ -72,8 +72,8 @@ Activity description
                 {% set siteIndex = data['site'] | int or 1 %}
                 {% set activityDescription = '' %}
                 
-                {% if site and site.activityDescription %}
-                    {% set activityDescription = site.activityDescription %}
+                {% if site and site.description %}
+                    {% set activityDescription = site.description %}
                 {% else %}
                     {% set activityDescription = data['site-' + data['site'] + '-activity-description'] %}
                 {% endif %}
