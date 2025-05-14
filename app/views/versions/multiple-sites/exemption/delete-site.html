@@ -41,6 +41,10 @@ Are you sure you want to delete this site?
         }) }}
         <a class="govuk-link govuk-link--no-visited-state" href="javascript:window.history.back()">Cancel</a>
       </div>
+      
+      {% if query.return %}
+      <input type="hidden" name="return" value="{{ query.return }}">
+      {% endif %}
     </form>
   </div>
 </div>

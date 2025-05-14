@@ -1776,6 +1776,8 @@ router.post('/' + version + section + 'delete-site-router', function (req, res) 
         res.redirect('review-site-details#site-' + siteIndex + '-details');
     } else if (returnTo === 'site-details-added') {
         res.redirect('site-details-added');
+    } else if (returnTo === 'check-answers-multiple-sites') {
+        res.redirect('check-answers-multiple-sites');
     } else {
         // Default fallback
         res.redirect('review-site-details');
