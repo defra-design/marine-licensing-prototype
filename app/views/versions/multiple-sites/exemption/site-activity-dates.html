@@ -77,6 +77,21 @@ End date
         <form action="site-activity-dates-router" method="post" novalidate>
             <input type="hidden" name="site" value="{{ data['site'] }}" />
 
+			{% set siteIndex = data['site'] | int or 1 %}
+			{% set startDay = '' %}
+			{% set startMonth = '' %}
+			{% set startYear = '' %}
+			
+			{% if site and site.startDate %}
+				{% set startDay = site.startDate.day %}
+				{% set startMonth = site.startDate.month %}
+				{% set startYear = site.startDate.year %}
+			{% else %}
+				{% set startDay = data["site-" + data['site'] + "-start-date-day"] %}
+				{% set startMonth = data["site-" + data['site'] + "-start-date-month"] %}
+				{% set startYear = data["site-" + data['site'] + "-start-date-year"] %}
+			{% endif %}
+
 			{{ govukDateInput({
 				idPrefix: "site-" + data['site'] + "-start-date",
 				namePrefix: "site-" + data['site'] + "-start-date",
@@ -93,13 +108,27 @@ End date
 				errorMessage: null if data['startdateerror'] != "true"
 							   else { text: errorText1HTML },
 				items: [
-					{ name: "day", classes: "govuk-input--width-2", value: data["site-" + data['site'] + "-start-date-day"], attributes: { autocomplete: "off", inputmode: "numeric" } },
-					{ name: "month", classes: "govuk-input--width-2", value: data["site-" + data['site'] + "-start-date-month"], attributes: { autocomplete: "off", inputmode: "numeric" } },
-					{ name: "year", classes: "govuk-input--width-4", value: data["site-" + data['site'] + "-start-date-year"], attributes: { autocomplete: "off", inputmode: "numeric" } }
+					{ name: "day", classes: "govuk-input--width-2", value: startDay, attributes: { autocomplete: "off", inputmode: "numeric" } },
+					{ name: "month", classes: "govuk-input--width-2", value: startMonth, attributes: { autocomplete: "off", inputmode: "numeric" } },
+					{ name: "year", classes: "govuk-input--width-4", value: startYear, attributes: { autocomplete: "off", inputmode: "numeric" } }
 				]
 			}) }}
 
 
+			{% set endDay = '' %}
+			{% set endMonth = '' %}
+			{% set endYear = '' %}
+			
+			{% if site and site.endDate %}
+				{% set endDay = site.endDate.day %}
+				{% set endMonth = site.endDate.month %}
+				{% set endYear = site.endDate.year %}
+			{% else %}
+				{% set endDay = data["site-" + data['site'] + "-end-date-day"] %}
+				{% set endMonth = data["site-" + data['site'] + "-end-date-month"] %}
+				{% set endYear = data["site-" + data['site'] + "-end-date-year"] %}
+			{% endif %}
+			
 			{{ govukDateInput({
 				idPrefix: "site-" + data['site'] + "-end-date",
 				namePrefix: "site-" + data['site'] + "-end-date",
@@ -116,9 +145,9 @@ End date
 				errorMessage: null if data['enddateerror'] != "true"
 							   else { text: errorText2HTML },
 				items: [
-					{ name: "day", classes: "govuk-input--width-2", value: data["site-" + data['site'] + "-end-date-day"], attributes: { autocomplete: "off", inputmode: "numeric" } },
-					{ name: "month", classes: "govuk-input--width-2", value: data["site-" + data['site'] + "-end-date-month"], attributes: { autocomplete: "off", inputmode: "numeric" } },
-					{ name: "year", classes: "govuk-input--width-4", value: data["site-" + data['site'] + "-end-date-year"], attributes: { autocomplete: "off", inputmode: "numeric" } }
+					{ name: "day", classes: "govuk-input--width-2", value: endDay, attributes: { autocomplete: "off", inputmode: "numeric" } },
+					{ name: "month", classes: "govuk-input--width-2", value: endMonth, attributes: { autocomplete: "off", inputmode: "numeric" } },
+					{ name: "year", classes: "govuk-input--width-4", value: endYear, attributes: { autocomplete: "off", inputmode: "numeric" } }
 				]
 			}) }}
 
