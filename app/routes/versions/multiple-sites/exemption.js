@@ -343,6 +343,15 @@ router.post('/' + version + section + 'activity-dates-router', function (req, re
     res.redirect('same-activity-description');
 });
 
+router.get('/' + version + section + 'activity-dates', function (req, res) {
+    // Check if we're returning from review-site-details
+    if (req.query.returnTo === 'review-site-details') {
+        req.session.data['fromReviewSiteDetails'] = 'true';
+    }
+    
+    res.render(version + section + 'activity-dates');
+});
+
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Activity details
 // TEXT ENTRY (TEXTAREA)
@@ -353,6 +362,11 @@ router.get('/' + version + section + 'activity-details', function (req, res) {
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
     req.session.data['errors'] = [];
+
+    // Check if we're returning from review-site-details
+    if (req.query.returnTo === 'review-site-details') {
+        req.session.data['fromReviewSiteDetails'] = 'true';
+    }
 
     res.render(version + section + 'activity-details');
 });
@@ -462,13 +476,14 @@ router.post('/' + version + section + 'do-you-want-to-draw-the-site-on-our-map-r
 
 // GET route handler for the "How do you want to provide coordinates" page
 router.get('/' + version + section + 'how-do-you-want-to-provide-the-coordinates', function (req, res) {
-    // Set the flag to false when starting the site details journey
-    req.session.data['siteDetailsSaved'] = false;
-
-    // If coming from review page, clear data for subsequent pages
-    if (req.query.fromreview) {
-        clearDataAfterLocationMethod(req.session);
+    // Check if we're returning from review-site-details
+    if (req.query.returnTo === 'review-site-details') {
+        req.session.data['fromReviewSiteDetails'] = 'true';
+    } else if (!req.query.returnTo) {
+        // If starting new journey, set the flag to false
+        req.session.data['siteDetailsSaved'] = false;
     }
+    
     res.render(version + section + 'how-do-you-want-to-provide-the-coordinates');
 });
 
@@ -521,10 +536,13 @@ router.post('/' + version + section + 'how-do-you-want-to-provide-the-coordinate
 
 // GET route handler for the "Which type of file" page
 router.get('/' + version + section + 'which-type-of-file', function (req, res) {
-    // If coming from review page, clear data for subsequent pages
-    if (req.query.fromreview) {
-        clearDataAfterFileType(req.session);
+    // Check if we're returning from review-site-details
+    if (req.session.data['fromReviewSiteDetails'] === 'true') {
+        // Keep the flag
+    } else if (req.session.data['returnTo'] === 'review-site-details') {
+        req.session.data['fromReviewSiteDetails'] = 'true';
     }
+    
     res.render(version + section + 'which-type-of-file');
 });
 
@@ -563,10 +581,13 @@ router.post('/' + version + section + 'which-type-of-file-router', function (req
 
 // GET route handler for the "Upload file" page
 router.get('/' + version + section + 'upload-file', function (req, res) {
-    // If coming from review page, clear data for subsequent pages
-    if (req.query.fromreview) {
-        clearDataAfterFileUpload(req.session);
+    // Check if we're returning from review-site-details
+    if (req.session.data['fromReviewSiteDetails'] === 'true') {
+        // Keep the flag
+    } else if (req.session.data['returnTo'] === 'review-site-details') {
+        req.session.data['fromReviewSiteDetails'] = 'true';
     }
+    
     res.render(version + section + 'upload-file');
 });
 
@@ -704,6 +725,15 @@ router.post('/' + version + section + 'same-activity-dates-router', function (re
     }
 });
 
+router.get('/' + version + section + 'same-activity-dates', function (req, res) {
+    // Check if we're returning from review-site-details
+    if (req.query.returnTo === 'review-site-details') {
+        req.session.data['fromReviewSiteDetails'] = 'true';
+    }
+    
+    res.render(version + section + 'same-activity-dates');
+});
+
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Is the activity description the same for every site?
 // RADIO BUTTONS
@@ -760,6 +790,15 @@ router.post('/' + version + section + 'same-activity-description-router', functi
     }
 });
 
+router.get('/' + version + section + 'same-activity-description', function (req, res) {
+    // Check if we're returning from review-site-details
+    if (req.query.returnTo === 'review-site-details') {
+        req.session.data['fromReviewSiteDetails'] = 'true';
+    }
+    
+    res.render(version + section + 'same-activity-description');
+});
+
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Site-specific name
 // TEXT ENTRY
@@ -767,13 +806,15 @@ router.post('/' + version + section + 'same-activity-description-router', functi
 
 // GET handler for site-name
 router.get('/' + version + section + 'site-name', function (req, res) {
-    // Initialize the sites array if it doesn't exist
-    if (!req.session.data['sites']) {
-        req.session.data['sites'] = [];
+    // Check if we're returning from review-site-details
+    if (req.query.return && req.query.return.includes('site-')) {
+        req.session.data['fromReviewSiteDetails'] = 'true';
     }
     
-    // Set up for a new site
-    req.session.data['current-site-index'] = req.session.data['sites'].length;
+    // If we have a site query parameter, set the active site
+    if (req.query.site) {
+        req.session.data['site'] = req.query.site;
+    }
     
     res.render(version + section + 'site-name');
 });
@@ -831,31 +872,6 @@ router.post('/' + version + section + 'site-name-router', function (req, res) {
     }
 });
 
-router.get('/' + version + section + 'site-name', function (req, res) {
-    // Reset error flags
-    req.session.data['errorthispage'] = "false";
-    req.session.data['errortypeone'] = "false";
-    
-    // Record the site number in the session for later use
-    const siteNumber = req.query.site ? parseInt(req.query.site) : 1;
-    req.session.data['site'] = siteNumber;
-    
-    // Record the return parameter
-    const returnSection = req.query.return || '';
-    req.session.data['return'] = returnSection;
-    
-    // Get the specific site data if it exists
-    const sites = req.session.data['sites'] || [];
-    const site = sites.length >= siteNumber ? sites[siteNumber - 1] : {};
-    
-    // Render with site context
-    res.render(version + section + 'site-name', {
-        site: site,
-        siteNumber: siteNumber,
-        returnSection: returnSection
-    });
-});
-
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Site-specific activity dates
 // DATE ENTRY - both start and end
@@ -863,31 +879,17 @@ router.get('/' + version + section + 'site-name', function (req, res) {
 
 // GET handler for site-activity-dates
 router.get('/' + version + section + 'site-activity-dates', function (req, res) {
-    // Reset error flags
-    req.session.data['errorthispage'] = "false";
-    req.session.data['errortypeone'] = "false";
-    req.session.data['errortypetwo'] = "false";
-    req.session.data['startdateerror'] = "false";
-    req.session.data['enddateerror'] = "false";
+    // Check if we're returning from review-site-details
+    if (req.query.return && req.query.return.includes('site-')) {
+        req.session.data['fromReviewSiteDetails'] = 'true';
+    }
     
-    // Record the site number in the session for later use
-    const siteNumber = req.query.site ? parseInt(req.query.site) : 1;
-    req.session.data['site'] = siteNumber;
+    // If we have a site query parameter, set the active site
+    if (req.query.site) {
+        req.session.data['site'] = req.query.site;
+    }
     
-    // Record the return parameter
-    const returnSection = req.query.return || '';
-    req.session.data['return'] = returnSection;
-    
-    // Get the specific site data if it exists
-    const sites = req.session.data['sites'] || [];
-    const site = sites.length >= siteNumber ? sites[siteNumber - 1] : {};
-    
-    // Render with site context
-    res.render(version + section + 'site-activity-dates', {
-        site: site,
-        siteNumber: siteNumber,
-        returnSection: returnSection
-    });
+    res.render(version + section + 'site-activity-dates');
 });
 
 // POST handler for site-activity-dates
@@ -977,28 +979,17 @@ router.post('/' + version + section + 'site-activity-dates-router', function (re
 
 // GET handler for site-activity-description
 router.get('/' + version + section + 'site-activity-description', function (req, res) {
-    // Reset error flags
-    req.session.data['errorthispage'] = "false";
-    req.session.data['errortypeone'] = "false";
+    // Check if we're returning from review-site-details
+    if (req.query.return && req.query.return.includes('site-')) {
+        req.session.data['fromReviewSiteDetails'] = 'true';
+    }
     
-    // Record the site number in the session for later use
-    const siteNumber = req.query.site ? parseInt(req.query.site) : 1;
-    req.session.data['site'] = siteNumber;
+    // If we have a site query parameter, set the active site
+    if (req.query.site) {
+        req.session.data['site'] = req.query.site;
+    }
     
-    // Record the return parameter
-    const returnSection = req.query.return || '';
-    req.session.data['return'] = returnSection;
-    
-    // Get the specific site data if it exists
-    const sites = req.session.data['sites'] || [];
-    const site = sites.length >= siteNumber ? sites[siteNumber - 1] : {};
-    
-    // Render with site context
-    res.render(version + section + 'site-activity-description', {
-        site: site,
-        siteNumber: siteNumber,
-        returnSection: returnSection
-    });
+    res.render(version + section + 'site-activity-description');
 });
 
 // POST handler for site-activity-description
@@ -1087,6 +1078,9 @@ router.post('/' + version + section + 'review-site-details-router', function (re
     
     // Set the flag to indicate site details have been saved
     req.session.data['siteDetailsSaved'] = true;
+    
+    // Clear the fromReviewSiteDetails flag since we're leaving the page
+    delete req.session.data['fromReviewSiteDetails'];
     
     // Check if we came from check-answers-multiple-sites
     if (req.session.data['camefromcheckanswers'] === 'true') {
@@ -1586,8 +1580,14 @@ router.post('/' + version + section + 'review-location-router', function (req, r
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 router.get('/' + version + section + 'cancel-site-details', function (req, res) {
+    // Check if we're coming from review-site-details page directly
+    if (req.session.data['fromReviewSiteDetails'] === 'true') {
+        // Return to the review page without clearing data
+        delete req.session.data['fromReviewSiteDetails'];
+        res.redirect('review-site-details');
+    }
     // Check if site details have been saved previously
-    if (req.session.data['siteDetailsSaved']) {
+    else if (req.session.data['siteDetailsSaved']) {
         // If we came from check answers page, return there
         if (req.session.data['camefromcheckanswers'] === 'true') {
             req.session.data['camefromcheckanswers'] = false;
@@ -1608,8 +1608,14 @@ router.get('/' + version + section + 'cancel-site-details', function (req, res) 
 // Cancel handler for returning to review-site-details without clearing data
 // Used when editing details from the review page
 router.get('/' + version + section + 'cancel-to-review', function (req, res) {
+    // Check if we're coming from review-site-details page directly
+    if (req.session.data['fromReviewSiteDetails'] === 'true') {
+        // Return to the review page without clearing data
+        delete req.session.data['fromReviewSiteDetails'];
+        res.redirect('review-site-details');
+    }
     // Check if site details have been saved previously
-    if (req.session.data['siteDetailsSaved']) {
+    else if (req.session.data['siteDetailsSaved']) {
         // If we came from check answers page, return there
         if (req.session.data['camefromcheckanswers'] === 'true') {
             req.session.data['camefromcheckanswers'] = false;
@@ -1623,6 +1629,22 @@ router.get('/' + version + section + 'cancel-to-review', function (req, res) {
         clearAllSiteDetails(req.session);
         
         // Redirect to task list
+        res.redirect('task-list');
+    }
+});
+
+// Cancel handler specifically from review-site-details page
+router.get('/' + version + section + 'cancel-from-review-site-details', function (req, res) {
+    // If we came from check answers page, return there
+    if (req.session.data['camefromcheckanswers'] === 'true') {
+        req.session.data['camefromcheckanswers'] = false;
+        res.redirect('check-answers-multiple-sites');
+    } else if (req.session.data['siteDetailsSaved']) {
+        // If details were previously saved, go to site-details-added
+        res.redirect('site-details-added');
+    } else {
+        // If nothing was saved yet, clear data and return to task list
+        clearAllSiteDetails(req.session);
         res.redirect('task-list');
     }
 });
@@ -1881,6 +1903,10 @@ router.get('/' + version + section + 'review-site-details', function (req, res) 
     if (req.query.site) {
         req.session.data['site'] = req.query.site;
     }
+    
+    // Set a flag to indicate we're coming from review-site-details
+    // This will help maintain data when cancelling from edit pages
+    req.session.data['fromReviewSiteDetails'] = 'true';
     
     // Render the page
     res.render(version + section + 'review-site-details');
