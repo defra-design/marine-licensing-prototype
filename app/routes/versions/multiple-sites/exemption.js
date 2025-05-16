@@ -1040,10 +1040,45 @@ router.post('/' + version + section + 'site-activity-description-router', functi
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 router.post('/' + version + section + 'review-site-details-router', function (req, res) {
-    // Set the status to completed only if we have sites
-    if (req.session.data['sites'] && req.session.data['sites'].length > 0) {
-        req.session.data['exempt-information-3-status'] = 'completed';
+    // Check if any site is incomplete
+    let hasSiteIncomplete = false;
+    
+    // Get the sites array
+    const sites = req.session.data['sites'] || [];
+    
+    if (sites.length > 0) {
+        // Check each site for completeness
+        for (const site of sites) {
+            // Check if site name is missing
+            if (!site.name) {
+                hasSiteIncomplete = true;
+            }
+            
+            // Check if site-specific dates are required but incomplete
+            if (req.session.data['exemption-same-activity-dates-for-sites'] === "No") {
+                if (!site.startDate || !site.startDate.day) {
+                    hasSiteIncomplete = true;
+                }
+            }
+            
+            // Check if site-specific descriptions are required but incomplete
+            if (req.session.data['exemption-same-activity-description-for-sites'] === "No") {
+                if (!site.description) {
+                    hasSiteIncomplete = true;
+                }
+            }
+        }
+        
+        // Set status based on completeness
+        if (hasSiteIncomplete) {
+            // Mark as in progress if any site is incomplete
+            req.session.data['exempt-information-3-status'] = 'in-progress';
+        } else {
+            // Mark as completed if all sites are complete
+            req.session.data['exempt-information-3-status'] = 'completed';
+        }
     } else {
+        // No sites exist
         req.session.data['exempt-information-3-status'] = 'cannot-start';
     }
     
