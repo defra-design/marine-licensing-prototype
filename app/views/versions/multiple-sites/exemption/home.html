@@ -165,8 +165,8 @@ Your projects
 								classes: "govuk-tag--green"
 							}) }}
 						</td>
-						<td class="govuk-table__cell" data-sort-value="-">
-						16 May 2025
+						<td class="govuk-table__cell" data-sort-value="250516">
+						{{ "today" | govukDate(truncate=true) }}
 						</td>
 					{% else %}
 						<td class="govuk-table__cell" data-sort-value="Incomplete">
