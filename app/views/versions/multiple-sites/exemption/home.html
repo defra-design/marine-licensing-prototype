@@ -66,7 +66,8 @@ Your projects
 				<th scope="col" class="govuk-table__header" aria-sort="none">Name</th>
 				<th scope="col" class="govuk-table__header" aria-sort="none">Type</th>
 				<th scope="col" class="govuk-table__header" aria-sort="none">Reference</th>
-				<th scope="col" class="govuk-table__header" aria-sort="descending">Status</th>
+				<th scope="col" class="govuk-table__header" aria-sort="ascending">Status</th>
+				<th scope="col" class="govuk-table__header" aria-sort="none">Date submitted</th>
 				<th scope="col" class="govuk-table__header" aria-sort="none">Actions</th>
 			  </tr>
 			</thead>
@@ -81,12 +82,13 @@ Your projects
 						EXE/2025/001
 					</td>
 					
-					<td class="govuk-table__cell" data-sort-value="Completed">
+					<td class="govuk-table__cell" data-sort-value="Submitted">
 						{{ govukTag({
-							text: "Completed",
+							text: "Submitted",
 							classes: "govuk-tag--green"
 						}) }}
 					</td>
+					<td class="govuk-table__cell" data-sort-value="250512">12 May 2025</td>
 					<td class="govuk-table__cell" data-sort-value="View details">	
 						<a href="#" class="govuk-link--no-visited-state">View details</a>
 					</td>
@@ -104,12 +106,13 @@ Your projects
 						EXE/2025/002
 					</td>
 					
-					<td class="govuk-table__cell" data-sort-value="Completed">
+					<td class="govuk-table__cell" data-sort-value="Submitted">
 						{{ govukTag({
-							text: "Completed",
+							text: "Submitted",
 							classes: "govuk-tag--green"
 						}) }}
 					</td>
+					<td class="govuk-table__cell" data-sort-value="250422">22 Apr 2025</td>
 					<td class="govuk-table__cell" data-sort-value="View details">	
 						<a href="#" class="govuk-link--no-visited-state">View details</a>
 					</td>
@@ -123,7 +126,7 @@ Your projects
 					<td class="govuk-table__cell">
 						Exempt activity
 					</td>
-					<td class="govuk-table__cell" data-sort-value="003">
+					<td class="govuk-table__cell" data-sort-value="-">
 						-
 					</td>
 					
@@ -133,6 +136,7 @@ Your projects
 							classes: "govuk-tag--red"
 						}) }}
 					</td>
+					<td class="govuk-table__cell" data-sort-value="-">-</td>
 					<td class="govuk-table__cell" data-sort-value="Continue">	
 						<a href="#" class="govuk-link--no-visited-state govuk-!-margin-right-4">Continue</a> <a href="delete?project=tower-bridge" class="govuk-link--no-visited-state">Delete</a>
 					</td>
@@ -155,11 +159,14 @@ Your projects
 					</td>
 				
 					{% if data['applicationSubmitted'] == "true" %}	
-						<td class="govuk-table__cell" data-sort-value="Completed">
+						<td class="govuk-table__cell" data-sort-value="Submitted">
 							{{ govukTag({
-								text: "Completed",
+								text: "Submitted",
 								classes: "govuk-tag--green"
 							}) }}
+						</td>
+						<td class="govuk-table__cell" data-sort-value="-">
+						16 May 2025
 						</td>
 					{% else %}
 						<td class="govuk-table__cell" data-sort-value="Incomplete">
@@ -167,6 +174,9 @@ Your projects
 								text: "Incomplete",
 								classes: "govuk-tag--red"
 							}) }}
+						</td>
+						<td class="govuk-table__cell" data-sort-value="-">
+						-
 						</td>
 					{% endif %}
 					

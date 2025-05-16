@@ -574,7 +574,7 @@ router.post('/' + version + section + 'upload-file-router', function (req, res) 
     // In a real implementation, this would parse the uploaded file
     req.session.data['sites'] = [
         {
-            name: 'Borehole 1',
+            name: 'Sediment sample 1',
             description: '',
             startDate: {
                 day: '',
@@ -589,7 +589,7 @@ router.post('/' + version + section + 'upload-file-router', function (req, res) 
             mapImage: '/public/images/worthing-map-drawn-copy.jpg'
         },
         {
-            name: 'Borehole 2',
+            name: 'Sediment sample 2',
             description: '',
             startDate: {
                 day: '',
@@ -604,7 +604,7 @@ router.post('/' + version + section + 'upload-file-router', function (req, res) 
             mapImage: '/public/images/worthing-map-square-copy.jpg'
         },
         {
-            name: 'Borehole 3',
+            name: '',
             description: '',
             startDate: {
                 day: '',
@@ -619,7 +619,7 @@ router.post('/' + version + section + 'upload-file-router', function (req, res) 
             mapImage: '/public/images/worthing-map-4-points-copy.jpg'
         },
         {
-            name: 'Borehole 4',
+            name: '',
             description: '',
             startDate: {
                 day: '',
