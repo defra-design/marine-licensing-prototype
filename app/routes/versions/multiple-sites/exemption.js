@@ -462,6 +462,9 @@ router.post('/' + version + section + 'do-you-want-to-draw-the-site-on-our-map-r
 
 // GET route handler for the "How do you want to provide coordinates" page
 router.get('/' + version + section + 'how-do-you-want-to-provide-the-coordinates', function (req, res) {
+    // Set the flag to false when starting the site details journey
+    req.session.data['siteDetailsSaved'] = false;
+
     // If coming from review page, clear data for subsequent pages
     if (req.query.fromreview) {
         clearDataAfterLocationMethod(req.session);
@@ -1082,6 +1085,9 @@ router.post('/' + version + section + 'review-site-details-router', function (re
         req.session.data['exempt-information-3-status'] = 'cannot-start';
     }
     
+    // Set the flag to indicate site details have been saved
+    req.session.data['siteDetailsSaved'] = true;
+    
     // Check if we came from check-answers-multiple-sites
     if (req.session.data['camefromcheckanswers'] === 'true') {
         req.session.data['camefromcheckanswers'] = false;
@@ -1580,18 +1586,45 @@ router.post('/' + version + section + 'review-location-router', function (req, r
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 router.get('/' + version + section + 'cancel-site-details', function (req, res) {
-    // Clear all site details data
-    clearAllSiteDetails(req.session);
-    
-    // Redirect to task list
-    res.redirect('task-list');
+    // Check if site details have been saved previously
+    if (req.session.data['siteDetailsSaved']) {
+        // If we came from check answers page, return there
+        if (req.session.data['camefromcheckanswers'] === 'true') {
+            req.session.data['camefromcheckanswers'] = false;
+            res.redirect('check-answers-multiple-sites');
+        } else {
+            // Otherwise return to site details added page
+            res.redirect('site-details-added');
+        }
+    } else {
+        // If not saved, clear all site details data
+        clearAllSiteDetails(req.session);
+        
+        // Redirect to task list
+        res.redirect('task-list');
+    }
 });
 
 // Cancel handler for returning to review-site-details without clearing data
 // Used when editing details from the review page
 router.get('/' + version + section + 'cancel-to-review', function (req, res) {
-    // Simply return to the review page without clearing data
-    res.redirect('review-site-details');
+    // Check if site details have been saved previously
+    if (req.session.data['siteDetailsSaved']) {
+        // If we came from check answers page, return there
+        if (req.session.data['camefromcheckanswers'] === 'true') {
+            req.session.data['camefromcheckanswers'] = false;
+            res.redirect('check-answers-multiple-sites');
+        } else {
+            // Return to the review page without clearing data
+            res.redirect('review-site-details');
+        }
+    } else {
+        // If not saved, clear all site details data
+        clearAllSiteDetails(req.session);
+        
+        // Redirect to task list
+        res.redirect('task-list');
+    }
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -1698,6 +1731,15 @@ router.post('/' + version + section + 'check-answers-router', function (req, res
     req.session.data['applicationSubmitted'] = 'true';
     // Redirect to confirmation page
     res.redirect('confirmation');
+});
+
+// Add route handler for check-answers-multiple-sites page
+router.get('/' + version + section + 'check-answers-multiple-sites', function (req, res) {
+    // Ensure the site details are marked as saved when reaching check answers
+    req.session.data['siteDetailsSaved'] = true;
+    
+    // Render the page
+    res.render(version + section + 'check-answers-multiple-sites');
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -1817,6 +1859,31 @@ router.post('/' + version + section + 'delete-site-router', function (req, res) 
         // Default fallback
         res.redirect('review-site-details');
     }
+});
+
+// When returning to site-details from task list, initialize the flow
+router.get('/' + version + section + 'site-details', function (req, res) {
+    // Set the flag to false when starting the site details journey
+    req.session.data['siteDetailsSaved'] = false;
+    
+    // Render the page
+    res.render(version + section + 'site-details');
+});
+
+// Route handler for review-site-details
+router.get('/' + version + section + 'review-site-details', function (req, res) {
+    // If we have the camefromcheckanswers query parameter, set the flag
+    if (req.query.camefromcheckanswers === 'true') {
+        req.session.data['camefromcheckanswers'] = 'true';
+    }
+    
+    // If we have a site query parameter, set the active site
+    if (req.query.site) {
+        req.session.data['site'] = req.query.site;
+    }
+    
+    // Render the page
+    res.render(version + section + 'review-site-details');
 });
 
 }
