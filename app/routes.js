@@ -62,6 +62,12 @@ require('./routes/versions/multiple-sites/sites.js')(router);
 require('./routes/versions/multiple-sites/check.js')(router);
 require('./routes/versions/multiple-sites/exemption.js')(router);
 
+// Multiple Sites Version V2
+require('./routes/versions/multiple-sites-v2/account.js')(router);
+require('./routes/versions/multiple-sites-v2/sites.js')(router);
+require('./routes/versions/multiple-sites-v2/check.js')(router);
+require('./routes/versions/multiple-sites-v2/exemption.js')(router);
+
 // viewing session data
 // When the user goes to 'prototype-admin/view-data' this collects all the session data
 // Then it opens 'prototypetools/view-data' and passes the session data into that page to be displayed.

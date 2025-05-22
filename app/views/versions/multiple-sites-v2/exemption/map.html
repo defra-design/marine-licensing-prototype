@@ -1,0 +1,637 @@
+{% extends "../layouts/exemption.html" %}
+
+{% block beforeContent %}
+    {% include "../includes/phase-banner.html" %}
+    {% include "../includes/back-link.html" %}
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+    Draw the site on a map
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+
+
+{% block head %}
+
+    {% block meta %}
+        <meta charset="utf-8" />
+        <meta name="viewport" content="initial-scale=1, maximum-scale=1, user-scalable=no" />
+    {% endblock %}
+
+    {% block stylesheets %}
+        {% include "govuk-prototype-kit/includes/stylesheets.njk" %}
+        <!-- Note the API is 4.29.  Not the older 3.x versions -->
+        <link rel="stylesheet" href="https://js.arcgis.com/4.29/esri/themes/light/main.css">
+
+        <style>
+
+            /* floating tooltip/Hint text styling */
+            #customText
+            {
+                position: absolute;
+                pointer-events: none;
+                width: 180px;
+                height: 28px;
+                font-size: 18px;
+                text-align: center;
+                color: white;
+                background-color: rgba(0, 0, 0);
+                padding: 5px;
+                border: 2px solid #000;
+                border-radius: 5px;
+                display: none;
+            }
+
+            /* Styling for the scale in the bottom left */
+            /* High contrast for accessibility and for any background map or image. */
+            .esri-scale-bar__line--top
+            {
+                border-bottom: 2px solid #000;
+                bottom: -1px;
+            }
+
+            .esri-scale-bar__line
+            {
+                z-index: 1;
+                background-color: #fff;
+                height: 1.5em;
+                position: relative;
+                left: 0;
+            }
+
+        </style>
+    {% endblock %}
+
+{% endblock %}
+
+
+{% block bodyStart  %}
+    <!-- Note the API is 4.29.  Not the older 3.x versions -->
+    <script src="https://js.arcgis.com/4.29/"></script>
+
+    <script>
+        /*  Importing only the libraries needed  */
+        require(
+            [
+                "esri/config",
+                "esri/Map",
+                "esri/views/MapView",
+
+                "esri/layers/GraphicsLayer",
+
+                "esri/widgets/Sketch",
+                "esri/widgets/Sketch/SketchViewModel",
+
+                "esri/widgets/Zoom",
+
+                "esri/geometry/support/webMercatorUtils",
+
+                "esri/widgets/ScaleBar"
+            ],
+
+            function(esriConfig, Map, MapView, GraphicsLayer, Sketch, SketchViewModel, Zoom, webMercatorUtils, ScaleBar)
+            {
+                esriConfig.apiKey = "AAPKedc23daa59aa4eeab0f7386312c93126RlZvJKZdkWMlQEKnl8gAyqZrxlr3Ume2Uu-kErVgL8wpHBP7GpUHr8MdjHRYY_il";
+
+
+                /*  Selecting the two types of maps for users  */
+                /*  IF users seelect satalite the they get that map loaded */
+                /*  IF users select map we show them the full colour detailed Open Street Map */
+                const map =
+                    new Map(
+                        {
+                            {% if data['satellitemap'] == "true" %}
+                                basemap: "arcgis/imagery" // arcgis/light-gray/labels   // arcgis/human-geography   // arcgis/imagery
+                            {% else %}
+                                basemap: "osm" // arcgis/light-gray/labels   // arcgis/human-geography   // arcgis/imagery
+                            {% endif %}
+                        }
+                    );
+
+
+                const view =
+                    new MapView(
+                        {
+                            map: map,
+                            ui:
+                            {
+                                components: ["attribution"]
+                            },
+
+                            /*  Different maps reuqie a different center point and zoom level to be the same  */
+                            /*  Map starts off showing the entire English marine area */
+                            {% if data['satellitemap'] == "true" %}
+                                center: [-2, 52.8], // Longitude, latitude
+                                zoom: 6, // Zoom level
+                            {% else %}
+                                 center: [-1.5, 52.8], // Longitude, latitude
+                                 zoom: 5, // Zoom level
+                            {% endif %}
+
+
+                            container: "viewDiv", // Div element of the map
+                            constraints:
+                            {
+                                /*  There isn't a need to rotate the maps  */
+                                /*  Users could otherwise do this by mistake due to shortcut keys, etc.  */
+                                rotationEnabled: false
+                            }
+                        }
+                    );
+
+                let zoom =
+                    new Zoom(
+                    {
+                        view: view
+                    }
+                );
+
+
+
+                // Scale bar at the bottom
+                const scaleBar = new ScaleBar
+                (
+                    {
+                        view: view,
+                        unit: "dual", // The scale bar displays both metric and non-metric units.
+                    }
+                );
+
+
+
+                // Add the widget to the bottom left corner of the view
+                view.ui.add(scaleBar,
+                {
+                    position: "bottom-left"
+                });
+
+
+
+                // add a GraphicsLayer for the user's sketches
+                const sketchLayer = new GraphicsLayer();
+                view.map.add(sketchLayer);
+
+
+
+                // use SketchViewModel to draw polygons that are used as a filter
+                let sketchGeometry = null;
+                const sketchViewModel = new SketchViewModel({
+                    layer: sketchLayer,
+                    view: view,
+
+                    // Style of the line drawing, not the points though
+                    polylineSymbol:
+                    {
+                        type: "simple-line",
+                        {% if data['satellitemap'] == "true" %}
+                            // White line for satellite
+                            color: 	"white",
+                        {% else %}
+                            // black line for map
+                            color: 	"black",
+                        {% endif %}
+                        width: 6
+                    },
+
+                    // style of the shape/polygon drawing, not the points though
+                    polygonSymbol:
+                    {
+                        type: "simple-fill",
+                        color: [255, 255, 255, 0.0],  // Not filling the shape with any colour
+                        outline:
+                        {
+                            {% if data['satellitemap'] == "true" %}
+                                // White line for satellite
+                                color: 	"white",
+                            {% else %}
+                                // black line for map
+                                color: 	"black",
+                            {% endif %}
+
+                            width: 5,  // Made the line wide so it is more visible for all users to see
+                            style: "solid"
+                        }
+                    },
+
+
+                    // Stopping the shape being modified after the user has created it
+                    defaultUpdateOptions:
+                    {
+                        "enableRotation": false,
+                        "enableScaling": false,
+                        "enableZ": false,
+                        "multipleSelectionEnabled": false,
+                        "toggleToolOnClick": false
+                    },
+
+
+                    // Setting the interactions to 2D.  ARCgis allows 3D but we have no need for that.
+                    defaultCreateOptions:
+                    {
+                        hasZ: false
+                    }
+                });
+
+
+                // set up the type of shape being drawn
+                var geometryType = null;
+
+
+                // Set the type of shape based on what the user selected
+                {% if data['sites-line-or-polygon-radios'] == "Line" %}
+                    geometryType = "polyline";
+                {% else %}
+                    geometryType = "polygon";
+                {% endif %}
+
+
+                // Start a new model with the same geometry type
+                sketchViewModel.create(geometryType);
+
+
+                // Knowing if the drawing has been completed
+                let drawingCompleted = false;
+
+
+                // Creating this array for saving each of the clicked coordinate pairs
+                let stringofcoordinates = [];
+
+
+                // Tooltip black background width set to 180 based on initial text width needed
+                let widthOfTooltipDiv = 180;
+
+                // A variable to count the number of point the user has clicked
+                var verticescount = 0;
+
+
+                // Run whenever the mouse moves on the map
+                view.on("pointer-move", function(event)
+                {
+                    if(drawingCompleted == true)
+                    {
+                        // don't show the hint text
+                        // don't update the coordinates
+                    }
+                    else
+                    {
+                        // Move the hint tex div around with the mouse
+                        var customText = document.getElementById("customText");
+                        customText.style.display = "block";
+
+                        // Get the position of the map div on the page
+                        // This is needed because the map isn't top left of the page
+                        const myDiv = document.getElementById("viewDiv")
+                        var rect = myDiv.getBoundingClientRect();
+                        var topleftofmapx = rect.left;
+                        var topleftofmapy = rect.top;
+                        var x = event.x + topleftofmapx;
+                        var y = event.y + topleftofmapy + window.scrollY;
+
+                        // Adjust the floating hint text based on the map location on the page
+                        customText.style.left = (x - (widthOfTooltipDiv/2 + 10) ) + "px";
+                        customText.style.top = (y - 80) + "px";
+
+
+                        // Update the coordinates show below the map
+                        var point = view.toMap(event);
+                        // map needs adjustment from mercator projection to get lat and long
+                        var thelngLat = webMercatorUtils.xyToLngLat(point.x, point.y);
+
+                        var latitudeText = document.getElementById("latitudeupdate");
+                        var longitudeText = document.getElementById("longitudupdate");
+
+                        // Get the coordinates out of the arrays
+                        //  Only extract a limited number of decimal places as excess accuracy is visual noise.
+                        // Note the Latitude is to more characters since the figure is 2 digits before the decimal place
+                        var reduceddigitslatitude = thelngLat[1].toString().slice(0, 9);
+                        var reduceddigitslongitude= thelngLat[0].toString().slice(0, 8);
+
+                        // Update the lat and long text showing below the map
+                        latitudeText.textContent = reduceddigitslatitude;
+                        longitudeText.textContent = reduceddigitslongitude;
+                    }
+
+                });
+
+
+
+                // When the user moves their cursor/mouse off the map
+                view.on("pointer-leave", function(event)
+                {
+                    // get the hint text div element and hide it
+                    var customText = document.getElementById("customText");
+                    customText.style.display = "none";
+
+                    // Don't show latitude and longitude if the mouse is off the map
+                    var latitudeText = document.getElementById("latitudeupdate");
+                    var longitudeText = document.getElementById("longitudupdate");
+
+                    // Set the latitude and longitude text shown to the user to be blank
+                    latitudeText.textContent = "";
+                    longitudeText.textContent = "";
+                });
+
+
+
+                // Run whenever a new point is drawn by the user
+                sketchViewModel.on(["create"], (event) =>
+                {
+                    const eventInfo = event.toolEventInfo;
+                    var customText = document.getElementById("customText");
+
+                    // update the filter every time the user finishes drawing the filtergeometry
+                    if (event.state == "complete")
+                    {
+                        // Hide the hint text for the user
+                        customText.style.display = "none";
+                        drawingCompleted = true;
+
+                        // Get all the input coordinates and combine them into one string
+                        let textofcoordinates = "";
+
+                        for (i=0; i<stringofcoordinates.length; i++)
+                        {
+                            textofcoordinates = textofcoordinates + stringofcoordinates[i] + "\n\n";
+                        }
+
+                        // Save the coordinates to the input field
+                        document.getElementById("sites-drawn-coordinates").value = textofcoordinates;
+                    }
+
+                    else if (event.state == "start")
+                    {
+                        // update the tooltip text and show it when the user starts drawing
+                        widthOfTooltipDiv = 240;
+                        customText.style.width = widthOfTooltipDiv + 'px';
+                        customText.innerText = "Click to continue drawing";
+                    }
+
+                    // Whenever the user has added a new point but not the final point
+                    if (eventInfo && eventInfo.type === "vertex-add" && event.state != "complete")
+                    {
+                        // Getting the mercator coordinates
+                        var coordinatex = eventInfo.vertices[0].coordinates[0];
+                        var coordinatey = eventInfo.vertices[0].coordinates[1];
+
+                        // Converting them to latitude and longitude
+                        var lngLat = webMercatorUtils.xyToLngLat(coordinatex, coordinatey);
+
+                        // Saving the saltitude and longitude for check answers
+                        stringofcoordinates.push( lngLat[1] + ", " + lngLat[0]);
+
+                        // Keep a count of the points
+                        verticescount = eventInfo.vertices[0].vertexIndex ;
+
+                        // Updating the hint text if there are 3 or more points
+                        if(verticescount > 1)
+                        {
+                            widthOfTooltipDiv = 340;
+                            customText.style.width = widthOfTooltipDiv + 'px';
+                            customText.innerText = "Click again or double click to complete ";
+                        }
+                    }
+
+                });
+
+
+
+                // Don't allow the user to update the drawing after they've finished drawing it
+                sketchViewModel.on(["update"], (event) =>
+                {
+                    const eventInfo = event.toolEventInfo;
+
+                    // Stop the user from being able to move the drawing
+                    if (eventInfo && eventInfo.type.includes("move"))
+                    {
+                        sketchViewModel.cancel();
+                    }
+                });
+
+
+
+                // Connect the start over again button to the remove functionality
+                document.getElementById("clearFilter").addEventListener("click", clearFilter);
+
+                // Remove the drawing and reset the interface
+                // This allows users to start over again
+                function clearFilter()
+                {
+                    //Delete the exsiting drawing stuff
+                    sketchGeometry = null;
+                    sketchLayer.removeAll();
+                    drawingCompleted = false;
+
+                    // Start a new model with the same geometry type
+                    sketchViewModel.create(geometryType);
+
+                    // Reset the hint text which follows the mouse
+                    var customText = document.getElementById("customText");
+                    widthOfTooltipDiv = 180;
+                    customText.style.width = widthOfTooltipDiv + 'px';
+                    customText.innerText = "Click to start drawing";
+
+                    // Wipe the record of added points
+                    stringofcoordinates = [];
+                }
+
+
+
+                // Removed the most recent point clicked
+                // Undo button
+                document.getElementById("undoLastPoint").onclick = undolastpoint;
+                function undolastpoint()
+                {
+                    // remove the most recent coordinates from the array of coordinates
+                    stringofcoordinates.pop();
+                    sketchViewModel.undo();
+
+                    // Update the floating hint text if needed
+                    var customText = document.getElementById("customText");
+
+                    // Reduce the quantity of points
+                    verticescount = verticescount - 1;
+
+                    // Depending on the amount of points the hint text and div size need adjusting
+                    // This current shows for lines
+                    // This shoult' be adjusted for lines as we need only 2 points
+                    if (verticescount < 0)
+                    {
+                        customText.innerText = "Click to start drawing";
+                        widthOfTooltipDiv = 180;
+                        customText.style.width = widthOfTooltipDiv + 'px';
+                    }
+                    else if (verticescount < 2)
+                    {
+                        customText.innerText = "Click to continue drawing";
+                        widthOfTooltipDiv = 240;
+                        customText.style.width = widthOfTooltipDiv + 'px';
+                    }
+                    else
+                    {
+                        customText.innerText = "Click again or double click to complete ";
+                        widthOfTooltipDiv = 340;
+                        customText.style.width = widthOfTooltipDiv + 'px';
+                    }
+
+                }
+
+
+
+                // Zoom in connected to the grey gov button
+                document.getElementById("zoomIn").onclick = zoominmap;
+                function zoominmap()
+                {
+                    zoom.zoomIn();
+                }
+
+
+
+                // Zoom out connected to the grey gov button
+                document.getElementById("zoomOut").onclick = zoomoutmap;
+                function zoomoutmap()
+                {
+                    zoom.zoomOut();
+                }
+
+
+            }
+        );
+    </script>
+{% endblock %}
+
+
+
+
+{% block content %}
+
+    <div class="govuk-grid-row">
+
+        <div class="govuk-grid-column-full">
+
+            <h1 class="govuk-heading-l">
+                {{ pageHeadingTextHTML }}
+            </h1>
+
+
+                <p class="map-help-desktop">You must draw 3 or more points.<br>To move the map click and drag or use the arrow keys on your keyboard.</p>
+
+                <details class="govuk-details map-help-mobile">
+                    <summary class="govuk-details__summary">
+                      <span class="govuk-details__summary-text">
+                        Help with using the map and drawing the site
+                      </span>
+                    </summary>
+                    <div class="govuk-details__text">
+                        To move the map, tap and hold the screen, then drag.<br>  
+                        To zoom in and out, pinch the screen.<br>
+                        You must draw 3 or more points.<br>
+                        Tap to start drawing.<br> 
+                        Tap to continue drawing.<br> 
+                        Tap again or double tap to complete.
+                    </div>
+                  </details>
+                
+
+            <!--  The 4 buttons above the map  -->
+            <div class="button-container" style="display: flex; justify-content: space-between;  align-items: center;">
+
+                <div id="left-buttons"
+                     class="govuk-button-group"
+                     style="text-align: left;">
+
+                    <button type=""
+                            class="govuk-button govuk-button--secondary "
+                            data-module="govuk-button"
+                            id="clearFilter">
+                        Start again
+                    </button>
+
+                    <button type=""
+                            class="govuk-button govuk-button--secondary"
+                            data-module="govuk-button"
+                            id="undoLastPoint">
+                        Undo last point
+                    </button>
+
+                </div>
+
+                <!-- Zoom buttons -->
+                <div id="right-buttons"
+                     class="govuk-button-group govuk-!-margin-left-3"
+                     >
+
+                    <button type=""
+                            class="govuk-button govuk-button--secondary "
+                            data-module="govuk-button"
+                            id="zoomIn"
+                            style="margin-left: auto;">
+                        Zoom in
+                    </button>
+
+
+                    <button type=""
+                            class="govuk-button govuk-button--secondary  govuk-!-padding-left-3 "
+                            data-module="govuk-button"
+                            id="zoomOut"
+                            style="margin-left: auto;">
+                        Zoom out
+                    </button>
+                </div>
+
+            </div>
+
+
+            <!--  The div which holds the map  -->
+            <div class="govuk-!-margin-bottom-3" id="viewDiv" style="width: 100%; height: 350px;"></div>
+
+
+            <!-- The floating tooltip/hint text  -->
+            <!-- This does NOT factor in the needs of mobile users  -->
+            <div id="customText">Click to start drawing</div>
+
+
+            <!-- Shows the latitude and longitude of the mouse while drawing -->
+            <!--  Javascript needs updating so it also shows these after drawing -->
+            <p>Latitude: <span id="latitudeupdate"></span>
+            <br>Longitude: <span id="longitudupdate"></span></p>
+
+
+            <form action="review-location" method="post" novalidate >
+
+                <!-- Invisible text area for scoring the coordinates which are saved on 'Continue' -->
+                <textarea id="sites-drawn-coordinates" name="sites-drawn-coordinates" style="display: none"></textarea>
+
+                <div class="govuk-button-group">
+                    {{ govukButton({
+                      text: "Save and continue"
+                    }) }}
+                  
+                </div>
+
+            </form>
+
+            <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+
+            <h2 class="govuk-heading-m">Get help with providing the site location</h2>
+            <ul class="govuk-list">
+              <li>Phone: 0300 123 1032</li>
+              <li>Monday to Friday, 9am to 5pm (except public holidays)</li>
+            </ul>
+            <p class="govuk-body">
+              <a class="govuk-link" href="#">Find out about call charges</a>
+            </p>
+            
+        </div>
+
+    </div>
+
+
+{% endblock %}
+
+
