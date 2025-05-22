@@ -1,0 +1,316 @@
+{% extends "../layouts/exemption.html" %}
+
+{% block beforeContent %}
+    {% include "../includes/phase-banner.html" %}
+    
+    {% if data['applicationSubmitted'] == "true" %}
+    {% include "../includes/back-link.html" %}
+    {% else %}
+    <a class="govuk-back-link" href="task-list.html" style="margin-bottom: 0;">Go back to your project</a>
+    {% endif %}
+    
+{% endblock %}
+
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageHeadingTextHTML %}
+  {% if data['applicationSubmitted'] == "true" %}
+    {{ data['exemption-project-name-text-input'] }}
+  {% else %}
+    Check your answers before sending your information
+  {% endif %}
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+
+    {% if data['applicationSubmitted'] == "true" %}
+      <span class="govuk-caption-l">	EXE/2025/004 – Exempt activity</span>
+    {% else %}
+      <!-- Caption but no reference-->
+      <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
+    {% endif %}
+    
+    <h1 class="govuk-heading-l">
+      {{ pageHeadingTextHTML }}
+    </h1>
+
+    
+    <!-- Project summary section -->
+    <div class="govuk-summary-card">
+      <div class="govuk-summary-card__title-wrapper">
+        <h2 class="govuk-summary-card__title">
+          Project summary
+        </h2>
+      </div>
+
+      <div class="govuk-summary-card__content">
+        <dl class="govuk-summary-list">
+
+          {% if data['applicationSubmitted'] == "true" %}
+          <!-- Don't display Project name if already submitted as it is now the H1-->
+          {% else %}
+
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Project name
+            </dt>
+            <dd class="govuk-summary-list__value">
+              {{ data['exemption-project-name-text-input'] }}
+            </dd>
+            {% if data['applicationSubmitted'] != "true" %}
+            <dd class="govuk-summary-list__actions">
+              <a class="govuk-link" href="project-name.html?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Project name</span></a>
+            </dd>
+            {% endif %}
+          </div>
+          {% endif %}
+
+          <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+        <dt class="govuk-summary-list__key">
+          Type of activity
+        </dt>
+        <dd class="govuk-summary-list__value">
+          Removal of a substance or object
+        </dd>
+      </div>
+
+      <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+        <dt class="govuk-summary-list__key">
+          The purpose of the activity
+        </dt>
+        <dd class="govuk-summary-list__value">
+          Scientific research
+        </dd>
+      </div>
+
+      <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+        <dt class="govuk-summary-list__key">
+          What the activity involves
+        </dt>
+        <dd class="govuk-summary-list__value">
+          Samples for testing and analysis
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+      <dt class="govuk-summary-list__key">
+        Why this activity is exempt
+      </dt>
+      <dd class="govuk-summary-list__value">
+        Based on your answers from 'Check if you need a marine licence', your activity is exempt under <a href="https://www.legislation.gov.uk/uksi/2011/409/article/17A" rel="noreferrer noopener" target="_blank">Article 17a of the Marine Licensing (Exempted Activities) Order 2011 (opens in new tab)</a> 
+      </dd>
+
+    </div>
+
+    <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+      <dt class="govuk-summary-list__key">
+        Your answers from 'Check if you need a marine licence'  
+      </dt>
+      <dd class="govuk-summary-list__value">
+        <p><a href="/public/downloads/notification-sample-answers.pdf" rel="noreferrer noopener" target="_blank">Download a copy of your answers (PDF)</a></p>  
+        
+          {% if data['applicationSubmitted'] != "true" %}
+              <p>If you need to change any of your 'Check if you need a marine licence' answers:</p>
+
+              <ol class="govuk-list govuk-list--number">
+                <li>Delete this project from <a href="home" class="govuk-link--no-visited-state">your projects</a>.</li>
+                <li>Restart the process by <a href="/versions/mvp/check/start">checking if you need a marine licence</a>.</li>
+              </ol>
+          {% endif %}
+
+      </dd>
+    </div>
+        </dl>
+      </div>
+    </div>
+    <!-- End of project summary section -->
+
+    <!-- Dynamic site cards using a loop -->
+    {% if data.sites and data.sites.length > 0 %}
+      {% for site in data.sites %}
+        <div class="govuk-summary-card">
+          <div class="govuk-summary-card__title-wrapper">
+            <h2 class="govuk-summary-card__title">
+              Site {{ loop.index }} details
+            </h2>
+            
+            {% if data['applicationSubmitted'] != "true" %}
+            <ul class="govuk-summary-card__actions">
+              <li class="govuk-summary-card__action">
+                <a class="govuk-link" href="review-site-details?site={{ loop.index }}&camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Site {{ loop.index }} details</span></a>
+              </li>
+            </ul>
+            {% endif %}
+          </div>
+
+          <div class="govuk-summary-card__content">
+            <dl class="govuk-summary-list">
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                  Site name
+                </dt>
+                <dd class="govuk-summary-list__value">
+                  {{ site.name or "-" }}
+                </dd>
+              </div>
+
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                  Activity dates
+                </dt>
+                <dd class="govuk-summary-list__value">
+                  {% if data['exemption-same-activity-dates-for-sites'] == "Yes" %}
+                    {% set paddedDay = data['exemption-start-date-date-input-day'] %}
+                    {% if paddedDay | length == 1 %}{% set paddedDay = '0' + paddedDay %}{% endif %}
+                    {% set paddedMonth = data['exemption-start-date-date-input-month'] %}
+                    {% if paddedMonth | length == 1 %}{% set paddedMonth = '0' + paddedMonth %}{% endif %}
+                    {% set formattedStartDate = data['exemption-start-date-date-input-year'] + '-' + paddedMonth + '-' + paddedDay %}
+                    
+                    {% set paddedDay = data['exemption-end-date-date-input-day'] %}
+                    {% if paddedDay | length == 1 %}{% set paddedDay = '0' + paddedDay %}{% endif %}
+                    {% set paddedMonth = data['exemption-end-date-date-input-month'] %}
+                    {% if paddedMonth | length == 1 %}{% set paddedMonth = '0' + paddedMonth %}{% endif %}
+                    {% set formattedEndDate = data['exemption-end-date-date-input-year'] + '-' + paddedMonth + '-' + paddedDay %}
+                    
+                    {{ formattedStartDate | govukDate }} to {{ formattedEndDate | govukDate }}
+                  {% else %}
+                    {% if site.startDate and site.startDate.day %}
+                      {% set paddedDay = site.startDate.day %}
+                      {% if paddedDay | length == 1 %}{% set paddedDay = '0' + paddedDay %}{% endif %}
+                      {% set paddedMonth = site.startDate.month %}
+                      {% if paddedMonth | length == 1 %}{% set paddedMonth = '0' + paddedMonth %}{% endif %}
+                      {% set formattedStartDate = site.startDate.year + '-' + paddedMonth + '-' + paddedDay %}
+                      
+                      {% set paddedDay = site.endDate.day %}
+                      {% if paddedDay | length == 1 %}{% set paddedDay = '0' + paddedDay %}{% endif %}
+                      {% set paddedMonth = site.endDate.month %}
+                      {% if paddedMonth | length == 1 %}{% set paddedMonth = '0' + paddedMonth %}{% endif %}
+                      {% set formattedEndDate = site.endDate.year + '-' + paddedMonth + '-' + paddedDay %}
+                      
+                      {{ formattedStartDate | govukDate }} to {{ formattedEndDate | govukDate }}
+                    {% else %}
+                      {% set defaultStart = "01 May 2025" %}
+                      {% set defaultEnd = (17 + loop.index) + " May 2025" %}
+                      {{ defaultStart }} to {{ defaultEnd }}
+                    {% endif %}
+                  {% endif %}
+                </dd>
+              </div>
+
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                  Activity description
+                </dt>
+                <dd class="govuk-summary-list__value">
+                  {% if data['exemption-same-activity-description-for-sites'] == "Yes" %}
+                    {{ data['exemption-activity-details-text-area'] }}
+                  {% else %}
+                    {{ site.description or "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." }}
+                  {% endif %}
+                </dd>
+              </div>
+
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                  Method of providing site location
+                </dt>
+                <dd class="govuk-summary-list__value">
+                  {{ site.locationMethod or data['exemption-how-do-you-want-to-provide-the-coordinates-radios'] or "Upload a file with the coordinates of the site" }}
+                </dd>
+              </div>
+
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                  File uploaded
+                </dt>
+                <dd class="govuk-summary-list__value">
+                  {{ site.fileUploaded or "se-coast-sample-sites-coordinates.zip" }}
+                </dd>
+              </div>
+            </dl>
+
+            <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
+
+            <dl class="govuk-summary-list">
+              <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+                <dt class="govuk-summary-list__key">
+                  Map view
+                </dt>
+                <dd></dd>
+              </div>
+            </dl>
+
+            <img src="{{ site.mapImage or '/public/images/worthing-map-' ~ loop.index ~ '-points-copy.jpg' }}" alt="Map showing site {{ loop.index }} location" style="width: 100%;">
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <p class="govuk-body">No sites have been added yet.</p>
+    {% endif %}
+    <!-- End of dynamic site cards -->
+
+    <!-- Public register section -->
+    <div class="govuk-summary-card">
+      <div class="govuk-summary-card__title-wrapper">
+        <h2 class="govuk-summary-card__title">
+          Public register
+        </h2>
+        {% if data['applicationSubmitted'] != "true" %}
+        <ul class="govuk-summary-card__actions">
+          <li class="govuk-summary-card__action">
+            <a class="govuk-link" href="public-register?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Information withheld from public register</span></a>
+          </li>
+        </ul>
+        {% endif %}
+      </div>
+
+      <div class="govuk-summary-card__content">
+        <dl class="govuk-summary-list">
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Information withheld from public register
+            </dt>
+            <dd class="govuk-summary-list__value">
+              {{ data['exemption-public-register-radios'] or "No" }}
+            </dd>
+          </div>
+
+          {% if data['exemption-public-register-radios'] == "Yes" %}
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Why the information should be withheld 
+            </dt>
+            <dd class="govuk-summary-list__value">
+              {{ data['exemption-public-register-text-area'] or "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." }}
+            </dd>
+          </div>
+          {% endif %}
+        </dl>
+      </div>
+    </div>
+
+    {% if data['applicationSubmitted'] == "true" %}
+    <!-- No button if already submitted -->
+    {% else %}
+    <form action="check-answers-router" method="post" novalidate>
+      <h2 class="govuk-heading-m">Now send your information</h2>
+      <p class="govuk-body">By submitting this information you are confirming that, to the best of your knowledge, the details you are providing are correct.</p>
+
+      {{ govukButton({
+        text: "Confirm and send"
+      }) }}
+    </form>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}
+<!-- Generated by Copilot -->
