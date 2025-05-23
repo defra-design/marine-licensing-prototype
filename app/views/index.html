@@ -65,6 +65,79 @@ Private beta prototype
 
         <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
         <!-- End of Multiple Sites v2 -->
+
+        <!-- Start of Interactive Assistance Tool (IAT) -->
+        <h2 class="govuk-heading-m">Interactive Assistance Tool (IAT) <strong class="govuk-tag govuk-tag--yellow" style="float:right">In progress</strong></h2>
+
+        <p><a href="versions/iat/start" class="govuk-link--no-visited-state">Start the IAT journey</a></p>
+
+        <p>This is a replica of the live Interactive Assistance Tool (IAT) which helps users determine whether they need a marine licence. The tool guides users through a series of questions to assess their proposed marine activities.</p>
+
+        <p><strong>Note:</strong> This prototype is currently in development. The styling on outcome and options pages is not yet finalised, and the ability to download PDF summaries of your answers has not been implemented.</p>
+
+        <details class="govuk-details govuk-!-margin-bottom-2">
+          <summary class="govuk-details__summary">
+            <span class="govuk-details__summary-text">
+             What each asset is doing
+            </span>
+          </summary>
+          <div class="govuk-details__text">
+            
+            <h3 class="govuk-heading-s">Technical architecture</h3>
+
+            <table class="govuk-table">
+              <thead class="govuk-table__head">
+                <tr class="govuk-table__row">
+                  <th scope="col" class="govuk-table__header">Asset</th>
+                  <th scope="col" class="govuk-table__header">Role in the prototype</th>
+                </tr>
+              </thead>
+              <tbody class="govuk-table__body">
+                <tr class="govuk-table__row">
+                  <td class="govuk-table__cell"><strong>app/data/iat.json</strong></td>
+                  <td class="govuk-table__cell">
+                    <strong>Single source of truth for content & routing.</strong><br>
+                    The route file (iat.js) reads this JSON to build every question/outcome page at runtime.
+                  </td>
+                </tr>
+                <tr class="govuk-table__row">
+                  <td class="govuk-table__cell"><strong>iat.js</strong> (routes)</td>
+                  <td class="govuk-table__cell">
+                    Converts the JSON into Express routes, decides whether to render a radio-page, card-selection, or outcome.
+                  </td>
+                </tr>
+                <tr class="govuk-table__row">
+                  <td class="govuk-table__cell"><strong>.njk templates</strong></td>
+                  <td class="govuk-table__cell">
+                    Present the pages: radio-page, card-selection, outcome, and (now) start.html.
+                  </td>
+                </tr>
+                <tr class="govuk-table__row">
+                  <td class="govuk-table__cell"><strong>IAT-design-spec.md</strong></td>
+                  <td class="govuk-table__cell">
+                    <strong>Human-readable spec</strong> – lists every screen's copy, component, and logic so you (and reviewers) can understand / QA the journey. Not referenced by any code.
+                  </td>
+                </tr>
+                <tr class="govuk-table__row">
+                  <td class="govuk-table__cell"><strong>iat-tech-spec.csv / flow diagram</strong></td>
+                  <td class="govuk-table__cell">
+                    Additional documentation aids; likewise not used programmatically.
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <h3 class="govuk-heading-s">Documentation</h3>
+            <ul class="govuk-list govuk-list--spaced">
+              <li><a href="/public/iat/IAT-design-spec.md" class="govuk-link--no-visited-state">IAT Design Specification</a></li>
+              <li><a href="/public/iat/iat-flow.svg" class="govuk-link--no-visited-state">IAT Flow Diagram</a></li>
+            </ul>
+
+          </div>
+        </details>
+
+        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+        <!-- End of Interactive Assistance Tool (IAT) -->
          
         <!-- Start of Multiple Sites -->
         <h2 class="govuk-heading-m">Multiple sites v1<strong class="govuk-tag govuk-tag--green" style="float:right">Finished</strong></h2>
@@ -74,7 +147,7 @@ Private beta prototype
         <h3 class="govuk-heading-s">Note:</h3>
 
         <ul class="govuk-list govuk-list--bullet">
-          <li>This is a prototype. You are not required to upload a file – just select ‘Continue’ on the upload page. The mapped coordinates shown are generic.</li>
+          <li>This is a prototype. You are not required to upload a file – just select 'Continue' on the upload page. The mapped coordinates shown are generic.</li>
           <li>The check your answers page is now complete.</li>
           <li>You can submit the exempt activity notification.</li>
           <li>Delete site functionality is now working.</li>
