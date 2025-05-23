@@ -1,0 +1,30 @@
+{# app/views/versions/iat/layouts/iat/card-selection.njk #}
+
+{% extends "layouts/main.html" %}
+
+{# Import GOV.UK button macro #}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block pageTitle %}
+  {{ h1 }} – Marine licence IAT
+{% endblock %}
+
+{% block content %}
+  <h1 class="govuk-heading-l">{{ h1 }}</h1>
+
+  {% if hintHtml %}
+    <div class="govuk-body">{{ hintHtml | safe }}</div>
+  {% endif %}
+
+  {# Render each answer block exactly as supplied in rawAnswers #}
+  {% for a in rawAnswers %}
+    <div class="govuk-!-margin-bottom-6 govuk-!-padding-4 govuk-border">
+      {{ a.text | safe }}
+
+      <form method="post" class="govuk-!-margin-top-3" novalidate>
+        <input type="hidden" name="selection" value="{{ a.id }}">
+        {{ govukButton({ text: "Continue" }) }}
+      </form>
+    </div>
+  {% endfor %}
+{% endblock %}
