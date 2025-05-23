@@ -5,6 +5,10 @@
 
 // Add extra styles here
 
+.govuk-border {
+  border: 2px solid #b1b4b6;  // govuk-colour("mid-grey")
+}
+
 .hmrc-account-menu {
     border-bottom: 4px solid #1D70B8;
 

@@ -1,0 +1,205 @@
+{% extends "../layouts/exemption.html" %}
+
+<!-- Set a variable to identify this specific page -->
+{% set currentPageId = "home" %}
+
+{% block header %}
+{% from "govuk/components/header/macro.njk" import govukHeader %}
+{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
+
+{{ govukHeader({
+  classes: "govuk-header--full-width-border"
+}) }}
+{{ govukServiceNavigation({
+  serviceName: "Get permission for a marine activity",
+  navigation: [
+    {
+      href: "home",
+      text: "Projects home",
+	  active: true
+    },
+    {
+      href: "#",
+      text: "Defra account",
+      active: false
+    },
+    {
+      href: "#",
+      text: "Sign out"
+    }
+  ]
+}) }}
+{% endblock %}
+
+{% block beforeContent %}
+	  	{% include "../includes/phase-banner.html" %}
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+Your projects
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-full">
+		<h1 class="govuk-heading-l">
+			{{ pageHeadingTextHTML }}
+		</h1>
+
+		{% set hasProjects = false %}
+		{% set allProjectsDeleted = data['towerBridgeProjectDeleted'] == "true" and data['userProjectDeleted'] == "true" %}
+		{% set isDeleteProject = data['deleteProject'] == "true" %}
+		{% set isTowerBridgeDeleted = data['towerBridgeProjectDeleted'] == "true" %}
+		{% set isUserProjectDeleted = data['userProjectDeleted'] == "true" %}
+
+		<table class="govuk-table" data-module="moj-sortable-table">
+			<caption class="govuk-table__caption govuk-visually-hidden">{{ pageHeadingTextHTML }}</caption>
+			<thead class="govuk-table__head">
+			  <tr class="govuk-table__row">
+				<th scope="col" class="govuk-table__header" aria-sort="none">Name</th>
+				<th scope="col" class="govuk-table__header" aria-sort="none">Type</th>
+				<th scope="col" class="govuk-table__header" aria-sort="none">Reference</th>
+				<th scope="col" class="govuk-table__header" aria-sort="ascending">Status</th>
+				<th scope="col" class="govuk-table__header" aria-sort="none">Date submitted</th>
+				<th scope="col" class="govuk-table__header" aria-sort="none">Actions</th>
+			  </tr>
+			</thead>
+			<tbody class="govuk-table__body">
+				{% if not isDeleteProject %}
+				<tr class="govuk-table__row">
+					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Westhaven Bay pipe maintenance</th>
+					<td class="govuk-table__cell">
+						Exempt activity
+					</td>
+					<td class="govuk-table__cell" data-sort-value="001">
+						EXE/2025/001
+					</td>
+					
+					<td class="govuk-table__cell" data-sort-value="Submitted">
+						{{ govukTag({
+							text: "Submitted",
+							classes: "govuk-tag--green"
+						}) }}
+					</td>
+					<td class="govuk-table__cell" data-sort-value="250512">12 May 2025</td>
+					<td class="govuk-table__cell" data-sort-value="View details">	
+						<a href="#" class="govuk-link--no-visited-state">View details</a>
+					</td>
+				</tr>
+				{% set hasProjects = true %}
+				{% endif %}
+
+				{% if not isDeleteProject %}
+				<tr class="govuk-table__row">
+					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Tynemouth - replacement of single pile</th>
+					<td class="govuk-table__cell">
+						Exempt activity
+					</td>
+					<td class="govuk-table__cell" data-sort-value="002">
+						EXE/2025/002
+					</td>
+					
+					<td class="govuk-table__cell" data-sort-value="Submitted">
+						{{ govukTag({
+							text: "Submitted",
+							classes: "govuk-tag--green"
+						}) }}
+					</td>
+					<td class="govuk-table__cell" data-sort-value="250422">22 Apr 2025</td>
+					<td class="govuk-table__cell" data-sort-value="View details">	
+						<a href="#" class="govuk-link--no-visited-state">View details</a>
+					</td>
+				</tr>
+				{% set hasProjects = true %}
+				{% endif %}
+
+				{% if not isTowerBridgeDeleted and not isDeleteProject %}
+				<tr class="govuk-table__row">
+					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Tower Bridge refurbishment</th>
+					<td class="govuk-table__cell">
+						Exempt activity
+					</td>
+					<td class="govuk-table__cell" data-sort-value="-">
+						-
+					</td>
+					
+					<td class="govuk-table__cell" data-sort-value="Incomplete">
+						{{ govukTag({
+							text: "Incomplete",
+							classes: "govuk-tag--red"
+						}) }}
+					</td>
+					<td class="govuk-table__cell" data-sort-value="-">-</td>
+					<td class="govuk-table__cell" data-sort-value="Continue">	
+						<a href="#" class="govuk-link--no-visited-state govuk-!-margin-right-4">Continue</a> <a href="delete?project=tower-bridge" class="govuk-link--no-visited-state">Delete</a>
+					</td>
+				</tr>
+				{% set hasProjects = true %}
+				{% endif %}
+
+				{% if not isUserProjectDeleted and not isDeleteProject %}
+				<tr class="govuk-table__row">
+					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">{{ data['exemption-project-name-text-input'] }}</th>
+					<td class="govuk-table__cell">
+						Exempt activity
+					</td>
+					<td class="govuk-table__cell" data-sort-value="004">
+						{% if data['applicationSubmitted'] == "true" %}	
+						EXE/2025/003
+						{% else %}
+						-
+						{% endif %}
+					</td>
+				
+					{% if data['applicationSubmitted'] == "true" %}	
+						<td class="govuk-table__cell" data-sort-value="Submitted">
+							{{ govukTag({
+								text: "Submitted",
+								classes: "govuk-tag--green"
+							}) }}
+						</td>
+						<td class="govuk-table__cell" data-sort-value="250516">
+						{{ "today" | govukDate(truncate=true) }}
+						</td>
+					{% else %}
+						<td class="govuk-table__cell" data-sort-value="Incomplete">
+							{{ govukTag({
+								text: "Incomplete",
+								classes: "govuk-tag--red"
+							}) }}
+						</td>
+						<td class="govuk-table__cell" data-sort-value="-">
+						-
+						</td>
+					{% endif %}
+					
+					{% if data['applicationSubmitted'] == "true" %}	
+						<td class="govuk-table__cell" data-sort-value="View details">
+							<a href="check-answers-multiple-sites.html" class="govuk-link--no-visited-state">View details</a>
+						</td>
+					{% else %}
+						<td class="govuk-table__cell" data-sort-value="Continue">
+							<a href="task-list" class="govuk-link--no-visited-state govuk-!-margin-right-4">Continue</a> <a href="delete?project=user" class="govuk-link--no-visited-state">Delete</a>
+						</td>
+					{% endif %}
+				</tr>
+				{% set hasProjects = true %}
+				{% endif %}			  
+			</tbody>
+		</table>
+		<!--
+		{% if allProjectsDeleted or (isDeleteProject and not hasProjects) %}
+			<p>You currently have no projects.</p>
+		{% endif %}-->
+
+		<!--<p>Go to <a class="govuk-link govuk-link--no-visited-state" href="">Check if you need a marine licence</a>.</p>-->
+	</div>
+</div>
+{% endblock %}

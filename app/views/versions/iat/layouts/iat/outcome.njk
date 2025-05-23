@@ -1,0 +1,19 @@
+{# views/versions/iat/layouts/iat/outcome.njk #}
+
+{% extends "layouts/main.html" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block pageTitle %}
+  {{ h1 }} – Marine licence IAT
+{% endblock %}
+
+{% block content %}
+  <h1 class="govuk-heading-l">{{ h1 }}</h1>
+
+  <div class="govuk-body">{{ bodyHtml | safe }}</div>
+
+  {% if primaryAction %}
+    {{ govukButton({ text: primaryAction.text, href: primaryAction.href }) }}
+  {% endif %}
+{% endblock %}

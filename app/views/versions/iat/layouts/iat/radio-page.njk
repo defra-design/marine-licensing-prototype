@@ -1,0 +1,31 @@
+{# views/versions/iat/layouts/iat/radio-page.njk #}
+
+{% extends "layouts/main.html" %}
+
+{# --- Import the GOV.UK component macros we need --- #}
+{% from "govuk/components/radios/macro.njk"   import govukRadios %}
+{% from "govuk/components/button/macro.njk"   import govukButton %}
+
+{% block pageTitle %}
+  {{ h1 }} – Marine licence IAT
+{% endblock %}
+
+{% block content %}
+  <form method="post" novalidate>
+
+    <h1 class="govuk-heading-l">{{ h1 }}</h1>
+
+    {% if hintHtml %}
+      <div class="govuk-body">{{ hintHtml | safe }}</div>
+    {% endif %}
+
+    {{ govukRadios({
+      idPrefix: inputName,
+      name: inputName,
+      items: radios
+    }) }}
+
+    {{ govukButton({ text: "Continue" }) }}
+
+  </form>
+{% endblock %}

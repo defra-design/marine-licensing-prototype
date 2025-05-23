@@ -68,6 +68,15 @@ require('./routes/versions/multiple-sites-v2/sites.js')(router);
 require('./routes/versions/multiple-sites-v2/check.js')(router);
 require('./routes/versions/multiple-sites-v2/exemption.js')(router);
 
+// IAT Version
+require('./routes/versions/iat/account.js')(router);
+require('./routes/versions/iat/sites.js')(router);
+require('./routes/versions/iat/check.js')(router);
+require('./routes/versions/iat/exemption.js')(router);
+require('./routes/versions/iat/exemption-updated.js')(router);
+require('./routes/versions/iat/multiple-coords-side-by-side.js')(router);
+require('./routes/versions/iat/iat.js')(router);
+
 // viewing session data
 // When the user goes to 'prototype-admin/view-data' this collects all the session data
 // Then it opens 'prototypetools/view-data' and passes the session data into that page to be displayed.
