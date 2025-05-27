@@ -129,8 +129,19 @@ module.exports = function (router) {
 
     // ----- POST -----------------------------------------------------
     router.post(fullPath, (req, res) => {
+      // Reset error flags
+      req.session.data['errorthispage'] = "false";
+      req.session.data['errortypeone'] = "false";
+
       // Radio pages submit under inputName; card pages under 'selection'
       const answer = req.body.selection || req.body[q.route.replace(/^\//, "")];
+
+      // Validation for radio pages (not card pages)
+      if (!isCard(q) && (!answer || answer.trim() === "")) {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        return res.redirect(fullPath);
+      }
 
       // For cards with outcomeTypes, find the selected outcome
       if (q.outcomeTypes) {
