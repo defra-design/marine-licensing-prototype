@@ -10,6 +10,9 @@
 {% endblock %}
 
 {% block content %}
+  {% if caption %}
+  <span class="govuk-caption-l">{{ caption }}</span>
+  {% endif %}
   <h1 class="govuk-heading-l">{{ h1 }}</h1>
 
   {% if hintHtml %}

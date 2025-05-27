@@ -8,6 +8,13 @@ module.exports = function (router) {
 
   const base = "/versions/iat/journey"; // prefix reused everywhere
 
+  // Helper function to get caption text from section
+  const getCaptionText = (sectionId) => {
+    if (!sectionId) return null;
+    const section = iat.sections.find(s => s.id === sectionId);
+    return section ? section.text : null;
+  };
+
   // Detect card pages - either questions with Option answers or outcomes with multiple outcomeTypes
   const isCard = (q) =>
     (q.answers &&
@@ -55,6 +62,7 @@ module.exports = function (router) {
       const view = {
         h1: q.text || q.heading, // questions use 'text', outcomes use 'heading'
         hintHtml: q.hint,
+        caption: getCaptionText(q.section)
       };
 
       // For outcomes that have both heading and text, use heading as h1 and text as hint
@@ -156,6 +164,7 @@ module.exports = function (router) {
         res.render("versions/iat/layouts/iat/outcome", {
           h1: o.heading || "",
           bodyHtml: o.text,
+          caption: getCaptionText(o.section),
           primaryAction: o.link
             ? { text: o.heading || "Continue", href: o.link }
             : null,
