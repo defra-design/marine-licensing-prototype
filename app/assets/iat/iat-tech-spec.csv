@@ -1,0 +1,1077 @@
+route,component,answer_text,next_or_outcome
+/sea,Radio,In the 'Sea',/jurisdiction
+/sea,Radio,Over the 'Sea',/jurisdiction
+/sea,Radio,On or under the 'Seabed',/jurisdiction
+/sea,Radio,Other,/exemption/licence-not-required/sea
+/jurisdiction,Radio,In English waters,/activity-type
+/jurisdiction,Radio,In Northern Ireland offshore waters,/activity-type
+/jurisdiction,Radio,In other UK waters,/licence-not-required-devolved
+/jurisdiction,Radio,Somewhere else in the world,/elsewhere-in-the-world/activity-type
+/elsewhere-in-the-world/activity-type,Radio,Deposit a substance or object,/elsewhere-in-the-world/deposit
+/elsewhere-in-the-world/activity-type,Radio,Sinking of a vessel or floating container,/elsewhere-in-the-world/scuttling
+/elsewhere-in-the-world/activity-type,Radio,Incinerate a substance or object,/elsewhere-in-the-world/incineration
+/elsewhere-in-the-world/activity-type,Radio,Other,/exemption/licence-not-required/Activity-elsewhere
+/elsewhere-in-the-world/deposit,Radio,From a British vessel,/exemption/licence-required-no-exemption-no-self-service
+/elsewhere-in-the-world/deposit,Radio,From a British marine structure,/exemption/licence-required-no-exemption-no-self-service
+/elsewhere-in-the-world/deposit,Radio,From a British aircraft,/exemption/licence-required-no-exemption-no-self-service
+/elsewhere-in-the-world/deposit,Radio,"From a Floating container and the deposit is controlled by a British vessel, British aircraft or British marine structure",/exemption/licence-required-no-exemption-no-self-service
+/elsewhere-in-the-world/deposit,Radio,Other,/elsewhere-in-the-world/deposit/where-loaded
+/elsewhere-in-the-world/deposit/where-loaded,Radio,United Kingdom (except Scotland),/exemption/licence-required-no-exemption-no-self-service
+/elsewhere-in-the-world/deposit/where-loaded,Radio,UK marine licensing area,/exemption/licence-required-no-exemption-no-self-service
+/elsewhere-in-the-world/deposit/where-loaded,Radio,Somewhere else,/exemption/licence-not-required/deposit-method-elsewhere
+/elsewhere-in-the-world/incineration,Radio,On a British vessel,/exemption/licence-required-no-exemption-no-self-service
+/elsewhere-in-the-world/incineration,Radio,On a British marine structure,/exemption/licence-required-no-exemption-no-self-service
+/elsewhere-in-the-world/incineration,Radio,"On a floating container controlled from a British vessel, British aircraft, or British marine structure.",/exemption/licence-required-no-exemption-no-self-service
+/elsewhere-in-the-world/incineration,Radio,Other,/elsewhere-in-the-world/incineration/where-loaded
+/elsewhere-in-the-world/incineration/where-loaded,Radio,United Kingdom (except Scotland),/exemption/licence-required-no-exemption-no-self-service
+/elsewhere-in-the-world/incineration/where-loaded,Radio,UK marine licensing area,/exemption/licence-required-no-exemption-no-self-service
+/elsewhere-in-the-world/incineration/where-loaded,Radio,Somewhere else,/exemption/licence-not-required/incineration-method-elsewhere
+/elsewhere-in-the-world/scuttling,Radio,From a British vessel,/exemption/licence-required-no-exemption-no-self-service
+/elsewhere-in-the-world/scuttling,Radio,From a British aircraft,/exemption/licence-required-no-exemption-no-self-service
+/elsewhere-in-the-world/scuttling,Radio,From a British marine structure,/exemption/licence-required-no-exemption-no-self-service
+/elsewhere-in-the-world/scuttling,Radio,Other,/elsewhere-in-the-world/scuttling/towed-or-propelled-from-uk
+/elsewhere-in-the-world/scuttling/towed-or-propelled-from-uk,Radio,United Kingdom (except Scotland),/exemption/licence-required-no-exemption-no-self-service
+/elsewhere-in-the-world/scuttling/towed-or-propelled-from-uk,Radio,UK marine licensing area (unless towing or propelling began outside of that area),/exemption/licence-required-no-exemption-no-self-service
+/elsewhere-in-the-world/scuttling/towed-or-propelled-from-uk,Radio,Somewhere else,/exemption/licence-not-required/scuttling-method-elsewhere
+/activity-type,Radio,Construction,/construction/journey-select
+/activity-type,Radio,Deposit of a substance or object,/deposit/method
+/activity-type,Radio,Removal of a substance or object,/removal/method
+/activity-type,Radio,Dredging,/dredging/journey-select
+/activity-type,Radio,Incineration of a substance or object,/incineration/method
+/activity-type,Radio,Use of an explosive substance,/exemption/licence-required-no-exemption
+/activity-type,Radio,Sinking of a vessel or floating container,/exemption/licence-required-no-exemption
+/deposit/method,Radio,From a vehicle or vessel,/deposit/journey-select
+/deposit/method,Radio,From an aircraft,/deposit/journey-select
+/deposit/method,Radio,From a marine structure,/deposit/journey-select
+/deposit/method,Radio,From a floating container in the 'Sea',/deposit/journey-select
+/deposit/method,Radio,From a structure on land constructed or adapted wholly or mainly for the purposes of depositing solids in the 'Sea',/deposit/journey-select
+/deposit/method,Radio,Other,/exemption/licence-not-required/deposit-method
+/removal/method,Radio,Using a vehicle or vessel,/removal
+/removal/method,Radio,Using an aircraft,/removal
+/removal/method,Radio,Using a marine structure,/removal
+/removal/method,Radio,Using a floating container in the 'Sea',/removal
+/removal/method,Radio,Using a structure on land constructed or adapted wholly or mainly for the purposes of depositing solids in the 'Sea',/removal
+/removal/method,Radio,Other,/exemption/licence-not-required/removal-method
+/removal,Radio,Yes,/removal/journey-select
+/removal,Radio,No,/exemption/licence-not-required/removal-seabed
+/incineration/method,Radio,On a vehicle,/exemption/licence-required-no-exemption
+/incineration/method,Radio,On a vessel,/exemption/licence-required-no-exemption
+/incineration/method,Radio,On a marine structure,/exemption/licence-required-no-exemption
+/incineration/method,Radio,On a floating container,/exemption/licence-required-no-exemption
+/incineration/method,Radio,Other,/exemption/licence-not-required/Incineration-on
+/construction/activity,Radio,Maintenance of existing structures or assets,/construction/maintenance-existing-works
+/construction/activity,Radio,Other,/standard-marine-licence-application/other-activity
+/deposit/activity,Radio,Deposit of markers,/deposit/markers/harbour-authority
+/deposit/activity,Radio,Burial at Sea,/burial-at-sea/completion
+/deposit/activity,Radio,Other,/standard-marine-licence-application/other-activity
+/removal/activity,Radio,Minor removals,/removal/activities
+/removal/activity,Radio,Other,/standard-marine-licence-application/other-activity
+/dredging/activity,Radio,Non-navigational clearance dredging,/dredging/activities
+/dredging/activity,Radio,Beach maintenance activities,/dredging/beach-maintenance/activities
+/dredging/activity,Radio,Other,/standard-marine-licence-application/other-activity
+/construction/maintenance-existing-works,Radio,Scaffolding or access towers,
+/construction/maintenance-existing-works,Radio,Re-painting of existing structures or assets,
+/construction/maintenance-existing-works,Radio,Sand or grit blasting,
+/construction/maintenance-existing-works,Radio,Removal of marine growth,
+/construction/maintenance-existing-works,Radio,"Re-rendering, resurfacing or repointing of existing structures or slipways",
+/construction/maintenance-existing-works,Radio,Removal of a single pile,
+/construction/maintenance-existing-works,Radio,Replacing a single pile,
+/construction/maintenance-existing-works,Radio,Installation of ladders,
+/construction/maintenance-existing-works,Radio,Minor maintenance,
+/construction/maintenance-existing-works,Radio,Other maintenance,
+/construction/maintenance-existing-works/scaffolding,Radio,Yes,/construction/maintenance-existing-works/scaffolding/harbour-authority
+/construction/maintenance-existing-works/scaffolding,Radio,No,/activity/completion
+/construction/maintenance-existing-works/scaffolding/harbour-authority,Radio,Yes,/construction/maintenance-existing-works/scaffolding/harbour-authority-agreed
+/construction/maintenance-existing-works/scaffolding/harbour-authority,Radio,No,/construction/maintenance-existing-works/scaffolding/mca-th-agreed
+/construction/maintenance-existing-works/scaffolding/harbour-authority-agreed,Radio,Yes,/activity/completion
+/construction/maintenance-existing-works/scaffolding/harbour-authority-agreed,Radio,No,/scaffolding-impede-navigation
+/construction/maintenance-existing-works/scaffolding/mca-th-agreed,Radio,Yes,/activity/completion
+/construction/maintenance-existing-works/scaffolding/mca-th-agreed,Radio,No,/scaffolding-mca-th-agreed
+/deposit/markers/harbour-authority,Radio,Yes,/deposit/markers/lighting-ha
+/deposit/markers/harbour-authority,Radio,No,/deposit/markers/lighting-th
+/deposit/markers/lighting-ha,Radio,Yes,/deposit/markers/activities
+/deposit/markers/lighting-ha,Radio,No,/markers/ha-not-agreed
+/deposit/markers/lighting-th,Radio,Yes,/deposit/markers/activities
+/deposit/markers/lighting-th,Radio,No,/markers/th-not-agreed
+/burial-at-sea/completion,Radio,Yes,/burial-at-sea/site
+/burial-at-sea/completion,Radio,No,/standard-marine-licence-application/bas-duration
+/burial-at-sea/site,Radio,"Needles, Isle of Wight",/burial-at-sea/site/needles
+/burial-at-sea/site,Radio,"Tynemouth, Northumberland",/burial-at-sea/site/tynemouth
+/burial-at-sea/site,Radio,"Between Hastings and Newhaven, South Coast",/burial-at-sea/site/between-hastings-and-newhaven
+/burial-at-sea/site,Radio,Other location,/standard-marine-licence-application/bas-other-location
+/burial-at-sea/site/needles,Radio,Yes,/fast-track-mla
+/burial-at-sea/site/needles,Radio,No,/fast-track-mla/bas-block
+/burial-at-sea/site/tynemouth,Radio,Yes,/fast-track-mla
+/burial-at-sea/site/tynemouth,Radio,No,/fast-track-mla/bas-block
+/burial-at-sea/site/between-hastings-and-newhaven,Radio,Yes,/fast-track-mla
+/burial-at-sea/site/between-hastings-and-newhaven,Radio,No,/fast-track-mla/bas-block
+/removal/activities,Radio,Litter,
+/removal/activities,Radio,Discreet minor objects,
+/removal/activities,Radio,Discreet minor objects from heritage designations,
+/removal/activities,Radio,Discreet minor objects of archaeological or historic interest,
+/removal/activities,Radio,Boreholes,
+/removal/activities,Radio,Trial pits,
+/removal/activities,Radio,Grab samples,
+/removal/activities,Radio,Removal of a single pile,
+/removal/activities,Radio,Other removals,
+/dredging/activities,Radio,Non-navigational clearance dredging (within a heritage designation or a wreck site elsewhere in the sea),
+/dredging/activities,Radio,Non-navigational clearance dredging (for operational purposes),
+/dredging/activities,Radio,Other clearance dredging,
+/dredging/beach-maintenance/activities,Radio,Beach re-profiling,
+/dredging/beach-maintenance/activities,Radio,Beach recycling,
+/dredging/beach-maintenance/activities,Radio,Replacing wind blown sand,
+/dredging/beach-maintenance/activities,Radio,Other beach maintenance,
+/deposit/markers/activities,Radio,Marker posts,
+/deposit/markers/activities,Radio,Marker buoys,
+/deposit/markers/activities,Radio,Other deposits,
+/activity/completion,Radio,Yes,/public-register
+/activity/completion,Radio,No,/standard-marine-licence-application/duration
+/public-register,Radio,Yes,/standard-marine-licence-application/public-register
+/public-register,Radio,No,/part-of-larger-project
+/part-of-larger-project,Radio,Yes,/eia-directive
+/part-of-larger-project,Radio,No,/single-location
+/eia-directive,Radio,Yes,/activities/ground
+/eia-directive,Radio,No,/single-location
+/activities/ground,Radio,Yes,/single-location
+/activities/ground,Radio,No,/screening-screened-out
+/screening-screened-out,Radio,Yes,/single-location
+/screening-screened-out,Radio,No,/not-screened-out
+/single-location,Radio,Yes,/military-defence-area
+/single-location,Radio,No,/multiple-locations
+/multiple-locations,Radio,Yes,/military-defence-area
+/multiple-locations,Radio,No,/standard-marine-licence-application/ten-square-miles
+/military-defence-area,Radio,Yes,/ministry-of-defence
+/military-defence-area,Radio,No,/admiralty-chart
+/ministry-of-defence,Radio,Yes,/admiralty-chart
+/ministry-of-defence,Radio,No,/ministry-of-defence/permission
+/ministry-of-defence/permission,Radio,Yes,/admiralty-chart
+/ministry-of-defence/permission,Radio,No,/mod-permission
+/admiralty-chart,Radio,Yes,/admiralty-chart/continued-use
+/admiralty-chart,Radio,No,/routing-measure
+/admiralty-chart/continued-use,Radio,Yes,/routing-measure
+/admiralty-chart/continued-use,Radio,No,/intrusive-nature
+/intrusive-nature,Radio,Yes,/standard-marine-licence-application/intrusive-in-nature
+/intrusive-nature,Radio,No,/routing-measure
+/routing-measure,Radio,Yes,/routing-measure/management
+/routing-measure,Radio,No,/protected-place
+/routing-measure/management,Radio,Yes,/protected-place
+/routing-measure/management,Radio,No,/standard-marine-licence-application/routing-measure
+/protected-place,Radio,Yes,/standard-marine-licence-application/protected-place
+/protected-place,Radio,No,/heritage-designation
+/heritage-designation,Radio,Yes,/historic-england
+/heritage-designation,Radio,No,/archaeological-heritage-historic-assets
+/archaeological-heritage-historic-assets,Radio,Yes,/historic-england
+/archaeological-heritage-historic-assets,Radio,No,/marine-protected-area
+/historic-england,Radio,Yes,/marine-protected-area
+/historic-england,Radio,No,/historic-england/not-agreed
+/marine-protected-area,Radio,Yes,/HPMA-Check
+/marine-protected-area,Radio,No,/vehicular-access
+/HPMA-Check,Radio,Yes,/natural-england
+/HPMA-Check,Radio,No,/fast-track-activity-limits
+/fast-track-activity-limits,Radio,Yes,/vehicular-access
+/fast-track-activity-limits,Radio,No,/natural-england
+/vehicular-access,Radio,Yes,/natural-england
+/vehicular-access,Radio,No,/fast-track-mla/activity
+/natural-england,Radio,Yes,/fast-track-mla/activity
+/natural-england,Radio,No,/natural-england/not-agreed
+/exemption/construction,Radio,Maintenance of existing structures and assets,/exemption/construction/maintenance
+/exemption/construction,Radio,Construction of something new,/exemption/construction/new
+/exemption/construction/maintenance,Radio,Moorings or aids to navigation,/exemption/construction/maintenance/moorings
+/exemption/construction/maintenance,Radio,Pontoons,/exemption/construction/maintenance/pontoons
+/exemption/construction/maintenance,Radio,"Coastal protection, drainage or flood defence",/exemption/construction/maintenance/coastal-drainage-flood
+/exemption/construction/maintenance,Radio,Harbour works,/exemption/construction/maintenance/harbour-works
+/exemption/construction/maintenance,Radio,Cables,/exemption/construction/maintenance/cables
+/exemption/construction/maintenance,Radio,Pipelines,/exemption/construction/maintenance/pipelines
+/exemption/construction/maintenance,Radio,Carbon Dioxide Storage,/exemption/construction/maintenance/carbon-storage
+/exemption/construction/maintenance,Radio,Bored tunnels,/exemption/construction/maintenance/bored-tunnel
+/exemption/construction/maintenance,Radio,Other,/exemption/construction-exe-not-available-continue
+/exemption/construction/maintenance/moorings,Radio,To provide a pile mooring,/exemption/construction/maintenance/moorings/undertaker
+/exemption/construction/maintenance/moorings,Radio,To provide a swinging mooring,/exemption/construction/maintenance/moorings/undertaker
+/exemption/construction/maintenance/moorings,Radio,To provide a trot mooring,/exemption/construction/maintenance/moorings/undertaker
+/exemption/construction/maintenance/moorings,Radio,To provide a aid to navigation,/exemption/construction/maintenance/moorings/undertaker
+/exemption/construction/maintenance/moorings,Radio,Something else,/exemption/construction-exe-not-available-continue
+/exemption/construction/maintenance/moorings/undertaker,Radio,A harbour authority or someone on behalf of a harbour authority,/exemption/licence-not-required-exemption-available-article-25
+/exemption/construction/maintenance/moorings/undertaker,Radio,A lighthouse authority or someone on behalf of a lighthouse authority,/exemption/licence-not-required-exemption-available-article-25
+/exemption/construction/maintenance/moorings/undertaker,Radio,Someone else,/exemption/construction/maintenance/moorings/undertaker/consent
+/exemption/construction/maintenance/moorings/undertaker/consent,Radio,Yes,/exemption/construction/maintenance/moorings/undertaker/approval
+/exemption/construction/maintenance/moorings/undertaker/consent,Radio,No,/exemption/construction-exe-not-available-continue
+/exemption/construction/maintenance/moorings/undertaker/approval,Radio,Yes,/exemption/licence-not-required-exemption-available-article-25-notification
+/exemption/construction/maintenance/moorings/undertaker/approval,Radio,No,/exemption/construction-exe-not-available-continue
+/exemption/construction/maintenance/pontoons,Radio,Yes,/exemption/construction/maintenance/pontoons/undertaker
+/exemption/construction/maintenance/pontoons,Radio,No,/exemption/construction-exe-not-available-continue
+/exemption/construction/maintenance/pontoons/undertaker,Radio,A harbour authority or someone on behalf of a harbour authority,/exemption/construction/maintenance/pontoons/deck
+/exemption/construction/maintenance/pontoons/undertaker,Radio,Someone else,/exemption/construction/maintenance/pontoons/consent
+/exemption/construction/maintenance/pontoons/consent,Radio,Yes,/exemption/construction/maintenance/pontoons/approval
+/exemption/construction/maintenance/pontoons/consent,Radio,No,/exemption/construction-exe-not-available-continue
+/exemption/construction/maintenance/pontoons/approval,Radio,Yes,/exemption/construction/maintenance/pontoons/deck
+/exemption/construction/maintenance/pontoons/approval,Radio,No,/exemption/construction-exe-not-available-continue
+/exemption/construction/maintenance/pontoons/deck,Radio,Yes,/exemption/construction-exe-not-available-continue
+/exemption/construction/maintenance/pontoons/deck,Radio,No,/exemption/construction/maintenance/pontoons/quantity
+/exemption/construction/maintenance/pontoons/quantity,Radio,Yes,/exemption/licence-not-required-exemption-available-article-25A-mmo-approval
+/exemption/construction/maintenance/pontoons/quantity,Radio,No,/exemption/licence-not-required-exemption-available-article-25A
+/exemption/construction/maintenance/harbour-works,Radio,Yes,/exemption/construction/maintenance/harbour-works/undertaker
+/exemption/construction/maintenance/harbour-works,Radio,No,/exemption/construction-exe-not-available-continue
+/exemption/construction/maintenance/harbour-works/undertaker,Radio,A harbour authority or someone on behalf of a harbour authority,/exemption/licence-not-required-exemption-available-article-23
+/exemption/construction/maintenance/harbour-works/undertaker,Radio,Someone else,/exemption/construction-exe-not-available-continue
+/exemption/construction/maintenance/cables,Radio,The transfer of data,/exemption/construction/maintenance/cables/location
+/exemption/construction/maintenance/cables,Radio,The transfer of electricity,/exemption/construction/maintenance/cables/location
+/exemption/construction/maintenance/cables,Radio,Renewable energy export,/exemption/construction/maintenance/cables/inspection-repair
+/exemption/construction/maintenance/cables,Radio,Other,/exemption/construction/maintenance/cables/inspection-repair
+/exemption/construction/maintenance/cables/location,Radio,Wholly inside 12NM,/exemption/construction/maintenance/cables/inspection-repair
+/exemption/construction/maintenance/cables/location,Radio,Wholly outside 12NM,/exemption/licence-not-required-cables/maintenance
+/exemption/construction/maintenance/cables/location,Radio,Part inside 12NM part outside 12NM,/exemption/licence-not-required-cables/maintenance/both
+/exemption/construction/maintenance/cables/inspection-repair,Radio,Yes,/exemption/construction/maintenance/cables/emergency
+/exemption/construction/maintenance/cables/inspection-repair,Radio,No,/exemption/construction-exe-not-available-continue
+/exemption/construction/maintenance/cables/emergency,Radio,Yes,/exemption/construction/maintenance/cables/protection
+/exemption/construction/maintenance/cables/emergency,Radio,No,/exemption/construction-exe-not-available-continue
+/exemption/construction/maintenance/cables/protection,Radio,Yes,/exemption/construction-exe-not-available-continue
+/exemption/construction/maintenance/cables/protection,Radio,No,/exemption/construction/maintenance/cables/explosives
+/exemption/construction/maintenance/cables/explosives,Radio,Yes,/exemption/construction-exe-not-available-continue
+/exemption/construction/maintenance/cables/explosives,Radio,No,/exemption/licence-not-required-exemption-available-article-34
+/exemption/construction/maintenance/coastal-drainage-flood,Radio,The Environment Agency or someone on behalf of the Environment Agency,/exemption/construction/maintenance/coastal-drainage-flood/EA
+/exemption/construction/maintenance/coastal-drainage-flood,Radio,The Coast Protection Authority or someone on behalf of the Coast Protection Authority,/exemption/construction/maintenance/coastal-drainage-flood/CPA
+/exemption/construction/maintenance/coastal-drainage-flood,Radio,The Local Authority or someone on behalf of the Local Authority,/exemption/construction/maintenance/coastal-drainage-flood/CPA
+/exemption/construction/maintenance/coastal-drainage-flood,Radio,The Secretary of State for Defence or someone on behalf of the Secretary of State for Defence,/exemption/construction/maintenance/coastal-drainage-flood/CPA
+/exemption/construction/maintenance/coastal-drainage-flood,Radio,Other,/exemption/construction-exe-not-available-continue
+/exemption/construction/maintenance/coastal-drainage-flood/EA,Radio,Yes,/exemption/construction/maintenance/coastal-drainage-flood/EA/beach-replenishment
+/exemption/construction/maintenance/coastal-drainage-flood/EA,Radio,No,/exemption/construction/maintenance/coastal-drainage-flood/EA/emergency
+/exemption/construction/maintenance/coastal-drainage-flood/EA/beach-replenishment,Radio,Yes,/exemption/construction-exe-not-available-continue
+/exemption/construction/maintenance/coastal-drainage-flood/EA/beach-replenishment,Radio,No,/exemption/licence-not-required-exemption-available-article-19
+/exemption/construction/maintenance/coastal-drainage-flood/EA/emergency,Radio,Yes,/exemption/licence-not-required-exemption-available-article-20
+/exemption/construction/maintenance/coastal-drainage-flood/EA/emergency,Radio,No,/exemption/construction-exe-not-available-continue
+/exemption/construction/maintenance/coastal-drainage-flood/CPA,Radio,Yes,/exemption/construction/maintenance/coastal-drainage-flood/CPA/boundaries
+/exemption/construction/maintenance/coastal-drainage-flood/CPA,Radio,No,/exemption/construction-exe-not-available-continue
+/exemption/construction/maintenance/coastal-drainage-flood/CPA/boundaries,Radio,Yes,/exemption/construction/maintenance/coastal-drainage-flood/CPA/beach-replenishment
+/exemption/construction/maintenance/coastal-drainage-flood/CPA/boundaries,Radio,No,/exemption/construction-exe-not-available-continue
+/exemption/construction/maintenance/coastal-drainage-flood/CPA/beach-replenishment,Radio,Yes,/exemption/construction-exe-not-available-continue
+/exemption/construction/maintenance/coastal-drainage-flood/CPA/beach-replenishment,Radio,No,/exemption/licence-not-required-exemption-available-article-19
+/exemption/construction/maintenance/pipelines,Radio,Oil and gas pipeline,/exemption/construction/maintenance/pipeline/oil-and-gas/purpose
+/exemption/construction/maintenance/pipelines,Radio,Other pipelines,/exemption/construction/maintenance/pipeline/inspection-repair
+/exemption/construction/maintenance/pipeline/oil-and-gas/purpose,Radio,something done in the course of carrying on an activity for which a licence under section 3 of the Petroleum Act 1998 or section 2 of the Petroleum (Production) Act 1934 is required,/exemption/licence-not-required-exemption-available-Section-77
+/exemption/construction/maintenance/pipeline/oil-and-gas/purpose,Radio,something done for the purpose of constructing or maintaining a pipeline as respects any part of which an authorisation (within the meaning of Part 3 of the Petroleum Act 1998) is in force;,/exemption/licence-not-required-exemption-available-Section-77
+/exemption/construction/maintenance/pipeline/oil-and-gas/purpose,Radio,something done for the purpose of establishing or maintaining an offshore installation (within the meaning of Part 4 of the Petroleum Act 1998;,/exemption/licence-not-required-exemption-available-Section-77
+/exemption/construction/maintenance/pipeline/oil-and-gas/purpose,Radio,Other,/exemption/construction/maintenance/pipeline/inspection-repair
+/exemption/construction/maintenance/pipeline/inspection-repair,Radio,Yes,/exemption/construction/maintenance/pipeline/emergency
+/exemption/construction/maintenance/pipeline/inspection-repair,Radio,No,/exemption/construction-exe-not-available-continue
+/exemption/construction/maintenance/pipeline/emergency,Radio,Yes,/exemption/construction/maintenance/pipeline/protection
+/exemption/construction/maintenance/pipeline/emergency,Radio,No,/exemption/construction-exe-not-available-continue
+/exemption/construction/maintenance/pipeline/protection,Radio,Yes,/exemption/construction-exe-not-available-continue
+/exemption/construction/maintenance/pipeline/protection,Radio,No,/exemption/construction/maintenance/pipeline/explosives
+/exemption/construction/maintenance/pipeline/explosives,Radio,Yes,/exemption/construction-exe-not-available-continue
+/exemption/construction/maintenance/pipeline/explosives,Radio,No,/exemption/licence-not-required-exemption-available-article-34
+/exemption/construction/maintenance/carbon-storage,Radio,Yes,/exemption/licence-not-required-exemption-available-Section-77
+/exemption/construction/maintenance/carbon-storage,Radio,No,/exemption/construction-exe-not-available-continue
+/exemption/construction/maintenance/bored-tunnel,Radio,Yes,/exemption/construction/maintenance/bored-tunnel/affect
+/exemption/construction/maintenance/bored-tunnel,Radio,No,/exemption/construction-exe-not-available-continue
+/exemption/construction/maintenance/bored-tunnel/affect,Radio,Yes,/exemption/construction-exe-not-available-continue
+/exemption/construction/maintenance/bored-tunnel/affect,Radio,No,/exemption/licence-not-required-exemption-available-article-35
+/exemption/construction/new,Radio,Moorings or aids to navigation,/exemption/construction/new/moorings
+/exemption/construction/new,Radio,Pontoons,/exemption/construction/new/pontoons
+/exemption/construction/new,Radio,Flood or flood risk,/exemption/construction/new/flood-emergency
+/exemption/construction/new,Radio,Cables,/exemption/construction/new/cables
+/exemption/construction/new,Radio,Pipelines,/exemption/construction/new/pipelines
+/exemption/construction/new,Radio,Other,/exemption/construction/new/miscellaneous
+/exemption/construction/new/moorings,Radio,To provide a pile mooring,/exemption/construction/new/moorings/undertaker
+/exemption/construction/new/moorings,Radio,To provide a swinging mooring,/exemption/construction/new/moorings/undertaker
+/exemption/construction/new/moorings,Radio,To provide a trot Mooring,/exemption/construction/new/moorings/undertaker
+/exemption/construction/new/moorings,Radio,To provide a aid to Navigation,/exemption/construction/new/moorings/undertaker
+/exemption/construction/new/moorings,Radio,Something else,/exemption/construction-exe-not-available-continue
+/exemption/construction/new/moorings/undertaker,Radio,A harbour authority or someone on behalf of a harbour authority,/exemption/licence-not-required-exemption-available-article-25
+/exemption/construction/new/moorings/undertaker,Radio,A lighthouse authority or someone on behalf of a lighthouse authority,/exemption/licence-not-required-exemption-available-article-25
+/exemption/construction/new/moorings/undertaker,Radio,Someone else,/exemption/construction/new/moorings/undertaker/consent
+/exemption/construction/new/moorings/undertaker/consent,Radio,Yes,/exemption/construction/new/moorings/undertaker/approval
+/exemption/construction/new/moorings/undertaker/consent,Radio,No,/exemption/construction-exe-not-available-continue
+/exemption/construction/new/moorings/undertaker/approval,Radio,Yes,/exemption/licence-not-required-exemption-available-article-25-notification
+/exemption/construction/new/moorings/undertaker/approval,Radio,No,/exemption/construction-exe-not-available-continue
+/exemption/construction/new/pontoons,Radio,Yes,/exemption/construction/new/pontoons/undertaker
+/exemption/construction/new/pontoons,Radio,No,/exemption/construction-exe-not-available-continue
+/exemption/construction/new/pontoons/undertaker,Radio,A harbour authority or someone on behalf of a harbour authority,/exemption/construction/new/pontoons/deck
+/exemption/construction/new/pontoons/undertaker,Radio,Someone else,/exemption/construction/new/pontoons/consent
+/exemption/construction/new/pontoons/consent,Radio,Yes,/exemption/construction/new/pontoons/approval
+/exemption/construction/new/pontoons/consent,Radio,No,/exemption/construction-exe-not-available-continue
+/exemption/construction/new/pontoons/approval,Radio,Yes,/exemption/construction/new/pontoons/deck
+/exemption/construction/new/pontoons/approval,Radio,No,/exemption/construction-exe-not-available-continue
+/exemption/construction/new/pontoons/deck,Radio,Yes,/exemption/construction-exe-not-available-continue
+/exemption/construction/new/pontoons/deck,Radio,No,/exemption/construction/new/pontoons/quantity
+/exemption/construction/new/pontoons/quantity,Radio,Yes,/exemption/licence-not-required-exemption-available-article-25A-mmo-approval
+/exemption/construction/new/pontoons/quantity,Radio,No,/exemption/licence-not-required-exemption-available-article-25A
+/exemption/construction/new/flood-emergency,Radio,Yes,/exemption/construction/new/flood-emergency/validation
+/exemption/construction/new/flood-emergency,Radio,No,/exemption/construction-exe-not-available-continue
+/exemption/construction/new/flood-emergency/validation,Radio,Yes,/exemption/licence-not-required-exemption-available-article-20
+/exemption/construction/new/flood-emergency/validation,Radio,No,/exemption/construction-exe-not-available-continue
+/exemption/construction/new/cables,Radio,The transfer of data,/exemption/construction/new/cables/location
+/exemption/construction/new/cables,Radio,The transfer of electricity,/exemption/construction/new/cables/location
+/exemption/construction/new/cables,Radio,Renewable energy export,/exemption/construction-exe-not-available-continue
+/exemption/construction/new/cables,Radio,Other,/exemption/construction-exe-not-available-continue
+/exemption/construction/new/cables/location,Radio,Wholly inside 12NM,/exemption/construction-exe-not-available-continue
+/exemption/construction/new/cables/location,Radio,Wholly outside 12NM,/exemption/licence-not-required-cables
+/exemption/construction/new/cables/location,Radio,Part inside 12NW part outside 12NM,/exemption/licence-required-no-exemption-part-cables
+/exemption/construction/new/pipelines,Radio,Oil and gas pipeline,/exemption/construction/new/pipelines/oil-and-gas/purpose
+/exemption/construction/new/pipelines,Radio,Other pipelines,/exemption/construction-exe-not-available-continue
+/exemption/construction/new/pipelines/oil-and-gas/purpose,Radio,something done in the course of carrying on an activity for which a licence under section 3 of the Petroleum Act 1998 or section 2 of the Petroleum (Production) Act 1934 is required,/exemption/licence-not-required-exemption-available-Section-77
+/exemption/construction/new/pipelines/oil-and-gas/purpose,Radio,something done for the purpose of constructing or maintaining a pipeline as respects any part of which an authorisation (within the meaning of Part 3 of the Petroleum Act 1998) is in force;,/exemption/licence-not-required-exemption-available-Section-77
+/exemption/construction/new/pipelines/oil-and-gas/purpose,Radio,something done for the purpose of establishing or maintaining an offshore installation (within the meaning of Part 4 of the Petroleum Act 1998;,/exemption/licence-not-required-exemption-available-Section-77
+/exemption/construction/new/pipelines/oil-and-gas/purpose,Radio,Other,/exemption/construction-exe-not-available-continue
+/exemption/construction/new/carbon-storage,Radio,Yes,/exemption/licence-not-required-exemption-available-Section-77
+/exemption/construction/new/carbon-storage,Radio,No,/exemption/licence-required-no-exemption
+/exemption/construction/new/miscellaneous,Radio,Bored tunnels,/exemption/construction/new/miscellaneous/bored-tunnel
+/exemption/construction/new/miscellaneous,Radio,Licensed deepsea mining,/exemption/construction/new/miscellaneous/deepsea-mining
+/exemption/construction/new/miscellaneous,Radio,Scheduled works authorised under the Crossrail Act 2008,/exemption/construction/new/miscellaneous/crossrail-act
+/exemption/construction/new/miscellaneous,Radio,Carbon Dioxide Storage,/exemption/construction/new/carbon-storage
+/exemption/construction/new/miscellaneous,Radio,Other,/exemption/construction-exe-not-available-continue
+/exemption/construction/new/miscellaneous/deepsea-mining,Radio,In pursuance of an exploration or exploitation licence issued under the Deep Sea Mining (Temporary Provision) Act 1981,/exemption/licence-not-required-exemption-available-article-30
+/exemption/construction/new/miscellaneous/deepsea-mining,Radio,In pursuance of a reciprocal authorisation within the meaning given by section 3(3) of the Deep Sea Mining (Temporary Provision) Act 1981,/exemption/licence-not-required-exemption-available-article-30
+/exemption/construction/new/miscellaneous/deepsea-mining,Radio,for another reason,/exemption/construction-exe-not-available-continue
+/exemption/construction/new/miscellaneous/crossrail-act,Radio,Yes,/exemption/licence-not-required-exemption-available-article-29
+/exemption/construction/new/miscellaneous/crossrail-act,Radio,No,/exemption/construction-exe-not-available-continue
+/exemption/construction/new/miscellaneous/bored-tunnel,Radio,Yes,/exemption/construction/new/miscellaneous/bored-tunnel/affect
+/exemption/construction/new/miscellaneous/bored-tunnel,Radio,No,/exemption/construction-exe-not-available-continue
+/exemption/construction/new/miscellaneous/bored-tunnel/affect,Radio,Yes,/exemption/construction-exe-not-available-continue
+/exemption/construction/new/miscellaneous/bored-tunnel/affect,Radio,No,/exemption/licence-not-required-exemption-available-article-35
+/exemption/deposit/activity-type,Radio,Fishing and shellfish propogation and cultivation,/exemption/deposit/fishing
+/exemption/deposit/activity-type,Radio,"Markers, moorings and aids to navigation",/exemption/deposit/markers-moorings-pontoons-aids-to-navigation
+/exemption/deposit/activity-type,Radio,Pontoons,/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/pontoons
+/exemption/deposit/activity-type,Radio,Scientific investigation or research,/exemption/deposit/scientific-research
+/exemption/deposit/activity-type,Radio,Hull cleaning,/exemption/deposit/vessels/hull-cleaning
+/exemption/deposit/activity-type,Radio,Maintenance of existing structures or assets,/exemption/deposit/maintenance
+/exemption/deposit/activity-type,Radio,Deposit or disposal of dredged material,/exemption/deposit/dredged-material
+/exemption/deposit/activity-type,Radio,"Emergency, safety and training",/exemption/deposit/emergency-safety-accident-investigation
+/exemption/deposit/activity-type,Radio,Pollution prevention and discharge of chemicals,/exemption/deposit/pollution
+/exemption/deposit/activity-type,Radio,Miscellaneous,/exemption/deposit/miscellaneous
+/exemption/deposit/maintenance,Radio,"Coast protection, drainage or flood defence works",/exemption/deposit/maintenance/coastal-drainage-flood
+/exemption/deposit/maintenance,Radio,Harbour works,/exemption/deposit/maintenance/harbour-works
+/exemption/deposit/maintenance,Radio,Other,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/maintenance/coastal-drainage-flood,Radio,The Environment Agency or someone on behalf of the Environment Agency,/exemption/deposit/maintenance/coastal-drainage-flood/EA
+/exemption/deposit/maintenance/coastal-drainage-flood,Radio,The Coast Protection Authority or someone on behalf of the Coast Protection Authority,/exemption/deposit/maintenance/coastal-drainage-flood/CPA
+/exemption/deposit/maintenance/coastal-drainage-flood,Radio,The Local Authority or someone on behalf of the Local Authority,/exemption/deposit/maintenance/coastal-drainage-flood/CPA
+/exemption/deposit/maintenance/coastal-drainage-flood,Radio,The Secretary of State for Defence or someone on behalf of the Secretary of State for Defence,/exemption/deposit/maintenance/coastal-drainage-flood/CPA
+/exemption/deposit/maintenance/coastal-drainage-flood,Radio,Other,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/maintenance/coastal-drainage-flood/EA,Radio,Yes,/exemption/deposit/maintenance/coastal-drainage-flood/EA/beach-replenishment
+/exemption/deposit/maintenance/coastal-drainage-flood/EA,Radio,No,/exemption/deposit/maintenance/coastal-drainage-flood/EA/emergency-flood
+/exemption/deposit/maintenance/coastal-drainage-flood/EA/beach-replenishment,Radio,Yes,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/maintenance/coastal-drainage-flood/EA/beach-replenishment,Radio,No,/exemption/licence-not-required-exemption-available-article-19
+/exemption/deposit/maintenance/coastal-drainage-flood/CPA,Radio,Yes,/exemption/deposit/maintenance/coastal-drainage-flood/CPA/beach-replenishment
+/exemption/deposit/maintenance/coastal-drainage-flood/CPA,Radio,No,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/maintenance/coastal-drainage-flood/CPA/beach-replenishment,Radio,Yes,/exemption/construction-exe-not-available-continue
+/exemption/deposit/maintenance/coastal-drainage-flood/CPA/beach-replenishment,Radio,No,/exemption/licence-not-required-exemption-available-article-19
+/exemption/deposit/maintenance/coastal-drainage-flood/EA/emergency-flood,Radio,Yes,/exemption/licence-not-required-exemption-available-article-20
+/exemption/deposit/maintenance/coastal-drainage-flood/EA/emergency-flood,Radio,No,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/maintenance/harbour-works,Radio,Yes,/exemption/deposit/maintenance/harbour-works/boundaries
+/exemption/deposit/maintenance/harbour-works,Radio,No,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/maintenance/harbour-works/boundaries,Radio,Yes,/exemption/deposit/maintenance/harbour-works/undertaker
+/exemption/deposit/maintenance/harbour-works/boundaries,Radio,No,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/maintenance/harbour-works/undertaker,Radio,Yes,/exemption/licence-not-required-exemption-available-article-23
+/exemption/deposit/maintenance/harbour-works/undertaker,Radio,No,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/fishing,Radio,Shellfish propogation and cultivation,/exemption/deposit/fishing/shellfish-propagation-cultivation
+/exemption/deposit/fishing,Radio,Fishing operations,/exemption/deposit/fishing/fishing-operations
+/exemption/deposit/fishing,Radio,Other,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/fishing/shellfish-propagation-cultivation,Radio,Yes,/exemption/deposit/fishing/shellfish-propagation-cultivation/obstruction
+/exemption/deposit/fishing/shellfish-propagation-cultivation,Radio,No,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/fishing/shellfish-propagation-cultivation/obstruction,Radio,Yes,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/fishing/shellfish-propagation-cultivation/obstruction,Radio,No,/exemption/deposit/fishing/shellfish-propagation-cultivation/disposal-artificial-reef
+/exemption/deposit/fishing/shellfish-propagation-cultivation/disposal-artificial-reef,Radio,Disposal,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/fishing/shellfish-propagation-cultivation/disposal-artificial-reef,Radio,"Creating, altering or maintaining an artificial reef",/exemption/deposit-exe-not-available-continue
+/exemption/deposit/fishing/shellfish-propagation-cultivation/disposal-artificial-reef,Radio,Other,/exemption/licence-not-required-exemption-available-article-13
+/exemption/deposit/fishing/fishing-operations,Radio,Fishing Gear,/exemption/deposit/fishing/fishing-operations/fishing-gear
+/exemption/deposit/fishing/fishing-operations,Radio,Fish or other objects caught and returned in the course of a fishing operation,/exemption/licence-not-required-exemption-available-article-12
+/exemption/deposit/fishing/fishing-operations,Radio,Other,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/fishing/fishing-operations/fishing-gear,Radio,Yes,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/fishing/fishing-operations/fishing-gear,Radio,No,/exemption/licence-not-required-exemption-available-article-12
+/exemption/deposit/dredged-material,Radio,Yes,/exemption/deposit/dredged-material/authorisation
+/exemption/deposit/dredged-material,Radio,No,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/dredged-material/authorisation,Radio,A local Act,/exemption/deposit/dredged-material/method
+/exemption/deposit/dredged-material/authorisation,Radio,An order under Section 14 or 16 of the Harbours Act 1964,/exemption/deposit/dredged-material/method
+/exemption/deposit/dredged-material/authorisation,Radio,An order under Section 1 of the Harbours Act (Northern ireland) 1970,/exemption/deposit/dredged-material/method
+/exemption/deposit/dredged-material/authorisation,Radio,An order under Section 10(3) of the Harbours Act (Northern ireland) 1970,/exemption/deposit/dredged-material/method
+/exemption/deposit/dredged-material/authorisation,Radio,None of the above,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/dredged-material/method,Radio,Yes,/exemption/deposit/dredged-material/location
+/exemption/deposit/dredged-material/method,Radio,No,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/dredged-material/location,Radio,Yes,/exemption/deposit/dredged-material/purpose
+/exemption/deposit/dredged-material/location,Radio,No,/exemption/dredging-exe-not-available-continue
+/exemption/deposit/dredged-material/purpose,Radio,Managing waters or waterways,/exemption/deposit/dredged-material/non-hazardous
+/exemption/deposit/dredged-material/purpose,Radio,Preventing floods,/exemption/deposit/dredged-material/non-hazardous
+/exemption/deposit/dredged-material/purpose,Radio,Mitigating the effects of floods or droughts,/exemption/deposit/dredged-material/non-hazardous
+/exemption/deposit/dredged-material/purpose,Radio,Land reclamation,/exemption/deposit/dredged-material/non-hazardous
+/exemption/deposit/dredged-material/purpose,Radio,Other,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/dredged-material/non-hazardous,Radio,Yes,/exemption/licence-not-required-exemption-available-Section-75-disposal
+/exemption/deposit/dredged-material/non-hazardous,Radio,No,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/emergency-safety-accident-investigation,Radio,Flood or flood risk,/exemption/deposit/emergency-safety-accident-investigation/flood
+/exemption/deposit/emergency-safety-accident-investigation,Radio,Cables and pipelines,/exemption/deposit/emergency-safety-accident-investigation/cables-pipelines
+/exemption/deposit/emergency-safety-accident-investigation,Radio,Coastguard activities - safety purposes and training,/exemption/deposit/emergency-safety-accident-investigation/coastguard
+/exemption/deposit/emergency-safety-accident-investigation,Radio,Flares - Safety purposes and training,/exemption/deposit/emergency-safety-accident-investigation/flares
+/exemption/deposit/emergency-safety-accident-investigation,Radio,Salvage Operation,/exemption/deposit/emergency-safety-accident-investigation/salvage
+/exemption/deposit/emergency-safety-accident-investigation,Radio,Safety directions under the Merchant Shipping Act 1995,/exemption/deposit/emergency-safety-accident-investigation/safety-directions
+/exemption/deposit/emergency-safety-accident-investigation,Radio,Fire Fighting,/exemption/deposit/emergency-safety-accident-investigation/fire-fighting
+/exemption/deposit/emergency-safety-accident-investigation,Radio,Other,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/emergency-safety-accident-investigation/flood,Radio,Yes,/exemption/deposit/emergency-safety-accident-investigation/flood/emergency
+/exemption/deposit/emergency-safety-accident-investigation/flood,Radio,No,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/emergency-safety-accident-investigation/flood/emergency,Radio,Yes,/exemption/licence-not-required-exemption-available-article-20
+/exemption/deposit/emergency-safety-accident-investigation/flood/emergency,Radio,No,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/emergency-safety-accident-investigation/cables-pipelines,Radio,Yes,/exemption/deposit/emergency-safety-accident-investigation/cables-pipelines/emergency
+/exemption/deposit/emergency-safety-accident-investigation/cables-pipelines,Radio,No,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/emergency-safety-accident-investigation/cables-pipelines/emergency,Radio,Yes,/exemption/deposit/emergency-safety-accident-investigation/cables-pipelines/protection
+/exemption/deposit/emergency-safety-accident-investigation/cables-pipelines/emergency,Radio,No,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/emergency-safety-accident-investigation/cables-pipelines/protection,Radio,Yes,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/emergency-safety-accident-investigation/cables-pipelines/protection,Radio,No,/exemption/deposit/emergency-safety-accident-investigation/cables-pipelines/explosives
+/exemption/deposit/emergency-safety-accident-investigation/cables-pipelines/explosives,Radio,Yes,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/emergency-safety-accident-investigation/cables-pipelines/explosives,Radio,No,/exemption/licence-not-required-exemption-available-article-34
+/exemption/deposit/emergency-safety-accident-investigation/coastguard,Radio,Yes,/exemption/deposit/emergency-safety-accident-investigation/coastguard/purpose
+/exemption/deposit/emergency-safety-accident-investigation/coastguard,Radio,No,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/emergency-safety-accident-investigation/coastguard/purpose,Radio,"Securing the safety of a vessel, aircraft or marine structure",/exemption/licence-not-required-exemption-available-article-32
+/exemption/deposit/emergency-safety-accident-investigation/coastguard/purpose,Radio,Saving life,/exemption/licence-not-required-exemption-available-article-32
+/exemption/deposit/emergency-safety-accident-investigation/coastguard/purpose,Radio,Training for either of the above two purposes,/exemption/licence-not-required-exemption-available-article-32
+/exemption/deposit/emergency-safety-accident-investigation/coastguard/purpose,Radio,Other,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/emergency-safety-accident-investigation/flares,Radio,Yes,/exemption/deposit/emergency-safety-accident-investigation/flares/purpose
+/exemption/deposit/emergency-safety-accident-investigation/flares,Radio,No,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/emergency-safety-accident-investigation/flares/purpose,Radio,"Securing the safety of a vessel, aircraft or marine structure",/exemption/licence-not-required-exemption-available-article-33
+/exemption/deposit/emergency-safety-accident-investigation/flares/purpose,Radio,Saving life,/exemption/licence-not-required-exemption-available-article-33
+/exemption/deposit/emergency-safety-accident-investigation/flares/purpose,Radio,Training for either of the above two purposes,/exemption/licence-not-required-exemption-available-article-33
+/exemption/deposit/emergency-safety-accident-investigation/flares/purpose,Radio,Other,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/emergency-safety-accident-investigation/salvage,Radio,Yes,/exemption/licence-not-required-exemption-available-article-9
+/exemption/deposit/emergency-safety-accident-investigation/salvage,Radio,No,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/emergency-safety-accident-investigation/safety-directions,Radio,In exercise of a power under Schedule 3A to the Merchant Shipping Act 1995 (safety directions) by or on behalf of the Secretary of State,/exemption/licence-not-required-exemption-available-article-8
+/exemption/deposit/emergency-safety-accident-investigation/safety-directions,Radio,Compliance with a direction under Schedule 3A to the Merchant Shipping Act 1995 (safety directions),/exemption/licence-not-required-exemption-available-article-8
+/exemption/deposit/emergency-safety-accident-investigation/safety-directions,Radio,Avoiding interference with action taken under Schedule 3A to the Merchant Shipping Act 1995 (safety directions),/exemption/licence-not-required-exemption-available-article-8
+/exemption/deposit/emergency-safety-accident-investigation/safety-directions,Radio,Other,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/emergency-safety-accident-investigation/fire-fighting,Radio,Yes,/exemption/licence-not-required-exemption-available-article-10
+/exemption/deposit/emergency-safety-accident-investigation/fire-fighting,Radio,No,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/emergency-safety-accident-investigation/air-accident-investigation,Radio,Yes,/exemption/licence-not-required-exemption-available-article-11
+/exemption/deposit/emergency-safety-accident-investigation/air-accident-investigation,Radio,No,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/pollution,Radio,Pollution prevention and treatment,/exemption/deposit/pollution/pollution-prevention-treatment
+/exemption/deposit/pollution,Radio,Discharge of offshore chemicals and oil,/exemption/deposit/pollution/offshore-chemical-oil
+/exemption/deposit/pollution,Radio,Other,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/pollution/pollution-prevention-treatment,Radio,"Equipment to contain, control or recover oils etc",/exemption/deposit/pollution/pollution-response-equipment
+/exemption/deposit/pollution/pollution-prevention-treatment,Radio,Marine chemical and marine oil treatment substances,/exemption/deposit/pollution/chemical-oil-treatment
+/exemption/deposit/pollution/pollution-prevention-treatment,Radio,Activities within Part 6 of the Merchant Shipping Act 1995,/exemption/deposit/pollution/pollution-prevention
+/exemption/deposit/pollution/pollution-prevention-treatment,Radio,Other,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/pollution/pollution-response-equipment,Radio,Yes,/exemption/deposit/pollution/pollution-response-equipment/explosives
+/exemption/deposit/pollution/pollution-response-equipment,Radio,No,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/pollution/pollution-response-equipment/explosives,Radio,Yes,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/pollution/pollution-response-equipment/explosives,Radio,No,/exemption/licence-not-required-exemption-available-article-16
+/exemption/deposit/pollution/chemical-oil-treatment,Radio,Dispersing or treating oil spills,/exemption/deposit/pollution/chemical-oil-treatment/approved
+/exemption/deposit/pollution/chemical-oil-treatment,Radio,Treat chemical pollution,/exemption/deposit/pollution/chemical-oil-treatment/approved
+/exemption/deposit/pollution/chemical-oil-treatment,Radio,Remove fouling matter from the surface of the 'Sea' or 'Seabed',/exemption/deposit/pollution/chemical-oil-treatment/approved
+/exemption/deposit/pollution/chemical-oil-treatment,Radio,Other,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/pollution/chemical-oil-treatment/approved,Radio,Yes,/exemption/deposit/pollution/chemical-oil-treatment/conditions
+/exemption/deposit/pollution/chemical-oil-treatment/approved,Radio,No,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/pollution/chemical-oil-treatment/conditions,Radio,Yes,/exemption/licence-not-required-exemption-available-article-15
+/exemption/deposit/pollution/chemical-oil-treatment/conditions,Radio,No,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/pollution/offshore-chemical-oil,Radio,Yes,/exemption/licence-not-required-exemption-available-article-14
+/exemption/deposit/pollution/offshore-chemical-oil,Radio,No,/exemption/deposit/pollution/offshore-chemical-oil/Permit2
+/exemption/deposit/pollution/offshore-chemical-oil/Permit2,Radio,Yes,/exemption/licence-not-required-exemption-available-article-14
+/exemption/deposit/pollution/offshore-chemical-oil/Permit2,Radio,No,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/pollution/pollution-prevention,Radio,Yes,/exemption/licence-not-required-exemption-available-article-7
+/exemption/deposit/pollution/pollution-prevention,Radio,No,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation,Radio,Temporary markers,/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/temporary-markers
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation,Radio,Moorings or aids to navigation,/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/moorings
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation,Radio,Markers for European marine sites and marine conservation zones,/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/marine-site-markers
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation,Radio,Diver trails,/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/dive-trails
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation,Radio,Other,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/temporary-markers,Radio,Placing a marker that will be in place for less than 24 hours,/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/temporary-markers24/obstruction
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/temporary-markers,Radio,Placing a marker that will be in place for longer than 24 hours but less than 28 days,/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/temporary-markers/obstruction
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/temporary-markers,Radio,Placing a marker that will be in place for longer than than 28 days,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/temporary-markers24/obstruction,Radio,Yes,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/temporary-markers24/obstruction,Radio,No,/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/temporary-markers24/mpa
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/temporary-markers24/mpa,Radio,Yes,/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/temporary-markers24/mpa-management
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/temporary-markers24/mpa,Radio,No,/exemption/licence-not-required-exemption-available-article-26a-no-notification
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/temporary-markers24/mpa-management,Radio,Yes,/exemption/licence-not-required-exemption-available-article-26a-no-notification
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/temporary-markers24/mpa-management,Radio,No,/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/temporary-markers24/lse
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/temporary-markers24/lse,Radio,Likely to have a significant effect on a European site?,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/temporary-markers24/lse,Radio,Likely to have a significant effect on a Ramsar site?,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/temporary-markers24/lse,Radio,"Capable of affecting (other than insignificantly), the protected features of a Marine Conservation Zone or Highly Protected Marine Area?",/exemption/deposit-exe-not-available-continue
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/temporary-markers24/lse,Radio,Unlikely to have any relevant effect on any sites specified above?,/exemption/licence-not-required-exemption-available-article-26a-no-notification
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/temporary-markers/obstruction,Radio,Yes,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/temporary-markers/obstruction,Radio,No,/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/temporary-markers/mpa
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/temporary-markers/mpa,Radio,Yes,/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/temporary-markers/mpa-management
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/temporary-markers/mpa,Radio,No,/exemption/licence-not-required-exemption-available-article-26a
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/temporary-markers/mpa-management,Radio,Yes,/exemption/licence-not-required-exemption-available-article-26a
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/temporary-markers/mpa-management,Radio,No,/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/temporary-markers/lse
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/temporary-markers/lse,Radio,Likely to have a significant effect on a European site?,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/temporary-markers/lse,Radio,Likely to have a significant effect on a Ramsar site?,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/temporary-markers/lse,Radio,"Capable of affecting (other than insignificantly), the protected features of a Marine Conservation Zone or Highly Protected Marine Area?",/exemption/deposit-exe-not-available-continue
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/temporary-markers/lse,Radio,Unlikely to have any relevant effect on any sites specified above?,/exemption/licence-not-required-exemption-available-article-26a
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/marine-site-markers,Radio,Natural England,/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/marine-site-markers/ne-purpose
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/marine-site-markers,Radio,A public authority,/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/marine-site-markers/pa-purpose
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/marine-site-markers,Radio,Someone else,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/marine-site-markers/ne-purpose,Radio,Installing a marker to indicate the existence and extent of a European Marine Site,/exemption/licence-not-required-exemption-available-article-26
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/marine-site-markers/ne-purpose,Radio,Other,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/marine-site-markers/pa-purpose,Radio,Installing a marker to indicate the existence and extent of a Marine Conservation Zone,/exemption/licence-not-required-exemption-available-article-26
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/marine-site-markers/pa-purpose,Radio,Other,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/moorings,Radio,Pile mooring,/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/moorings/undertaker
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/moorings,Radio,Swinging mooring,/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/moorings/undertaker
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/moorings,Radio,Trot Mooring,/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/moorings/undertaker
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/moorings,Radio,Aid to Navigation,/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/moorings/undertaker
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/moorings,Radio,Something else,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/moorings/undertaker,Radio,A harbour authority or someone on behalf of a harbour authority,/exemption/licence-not-required-exemption-available-article-25
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/moorings/undertaker,Radio,A lighthouse authority or someone on behalf of a lighthouse authority,/exemption/licence-not-required-exemption-available-article-25
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/moorings/undertaker,Radio,Someone else,/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/moorings/consent
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/moorings/consent,Radio,Yes,/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/moorings/approval
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/moorings/consent,Radio,No,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/moorings/approval,Radio,Yes,/exemption/licence-not-required-exemption-available-article-25-notification
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/moorings/approval,Radio,No,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/pontoons,Radio,Yes,/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/pontoons/undertaker
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/pontoons,Radio,No,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/pontoons/undertaker,Radio,A harbour authority or someone on behalf of a harbour authority,/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/pontoon/deck
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/pontoons/undertaker,Radio,Someone else,/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/pontoon/consent
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/pontoon/consent,Radio,Yes,/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/pontoon/approval
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/pontoon/consent,Radio,No,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/pontoon/approval,Radio,Yes,/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/pontoon/deck
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/pontoon/approval,Radio,No,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/pontoon/deck,Radio,Yes,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/pontoon/deck,Radio,No,/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/pontoon/quantity
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/pontoon/quantity,Radio,Yes,/exemption/licence-not-required-exemption-available-article-25A-mmo-approval
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/pontoon/quantity,Radio,No,/exemption/licence-not-required-exemption-available-article-25A
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/dive-trails,Radio,a wreck within an area designated as a restricted area within the meaning of section 1 of the Protection of Wrecks Act 1973,/exemption/licence-not-required-exemption-available-article-31
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/dive-trails,Radio,a monument designated as a scheduled monument under section 1 of the Ancient Monuments and Archaeological Areas Act 1979,/exemption/licence-not-required-exemption-available-article-31
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/dive-trails,Radio,an area designated as a controlled site under section 1(2)(b) of the Protection of Military Remains Act 1986,/exemption/licence-not-required-exemption-available-article-31
+/exemption/deposit/markers-moorings-pontoons-aids-to-navigation/dive-trails,Radio,Other,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/scientific-research,Radio,Scientific instruments and associated equipment,/exemption/deposit/scientific-research/scientific-equipment
+/exemption/deposit/scientific-research,Radio,Tracers and reagents,/exemption/deposit/scientific-research/tracers-reagents
+/exemption/deposit/scientific-research,Radio,Other,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/scientific-research/scientific-equipment,Radio,Yes,/exemption/deposit/scientific-research/scientific-equipment/survey
+/exemption/deposit/scientific-research/scientific-equipment,Radio,No,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/scientific-research/scientific-equipment/survey,Radio,Yes,/exemption/deposit/scientific-research/scientific-equipment/tethered
+/exemption/deposit/scientific-research/scientific-equipment/survey,Radio,No,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/scientific-research/scientific-equipment/tethered,Radio,Yes,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/scientific-research/scientific-equipment/tethered,Radio,No,/exemption/deposit/scientific-research/scientific-equipment/navigational-clearance
+/exemption/deposit/scientific-research/scientific-equipment/navigational-clearance,Radio,Yes,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/scientific-research/scientific-equipment/navigational-clearance,Radio,No,/exemption/deposit/scientific-research/scientific-equipment/obstruction
+/exemption/deposit/scientific-research/scientific-equipment/obstruction,Radio,Yes,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/scientific-research/scientific-equipment/obstruction,Radio,No,/exemption/deposit/scientific-research/scientific-equipment/mpa
+/exemption/deposit/scientific-research/scientific-equipment/mpa,Radio,Yes,/exemption/deposit/scientific-research/scientific-equipment/mpa-management
+/exemption/deposit/scientific-research/scientific-equipment/mpa,Radio,No,/exemption/deposit/scientific-research/scientific-equipment/disposal
+/exemption/deposit/scientific-research/scientific-equipment/mpa-management,Radio,Yes,/exemption/deposit/scientific-research/scientific-equipment/disposal
+/exemption/deposit/scientific-research/scientific-equipment/mpa-management,Radio,No,/exemption/deposit/scientific-research/scientific-equipment/lse
+/exemption/deposit/scientific-research/scientific-equipment/lse,Radio,Likely to have a significant effect on a European site?,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/scientific-research/scientific-equipment/lse,Radio,Likely to have a significant effect on a Ramsar site?,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/scientific-research/scientific-equipment/lse,Radio,"Capable of affecting (other than insignificantly), the protected features of a Marine Conservation Zone or Highly Protected Marine Area?",/exemption/deposit-exe-not-available-continue
+/exemption/deposit/scientific-research/scientific-equipment/lse,Radio,Unlikely to have any relevant effect on any sites specified above,/exemption/deposit/scientific-research/scientific-equipment/disposal
+/exemption/deposit/scientific-research/scientific-equipment/disposal,Radio,Yes,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/scientific-research/scientific-equipment/disposal,Radio,No,/exemption/licence-not-required-exemption-available-article-17
+/exemption/deposit/scientific-research/tracers-reagents,Radio,Yes,/exemption/deposit/scientific-research/tracers-reagents/obstruction
+/exemption/deposit/scientific-research/tracers-reagents,Radio,No,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/scientific-research/tracers-reagents/obstruction,Radio,Yes,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/scientific-research/tracers-reagents/obstruction,Radio,No,/exemption/deposit/scientific-research/tracers-reagents/mpa
+/exemption/deposit/scientific-research/tracers-reagents/mpa,Radio,Yes,/exemption/deposit/scientific-research/tracers-reagents/mpa-management
+/exemption/deposit/scientific-research/tracers-reagents/mpa,Radio,No,/exemption/licence-not-required-exemption-available-article-17
+/exemption/deposit/scientific-research/tracers-reagents/mpa-management,Radio,Yes,/exemption/licence-not-required-exemption-available-article-17
+/exemption/deposit/scientific-research/tracers-reagents/mpa-management,Radio,No,/exemption/deposit/scientific-research/tracers-reagents/lse
+/exemption/deposit/scientific-research/tracers-reagents/lse,Radio,Likely to have a significant effect on a European site,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/scientific-research/tracers-reagents/lse,Radio,Likely to have a significant effect on a Ramsar site?,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/scientific-research/tracers-reagents/lse,Radio,"Capable of affecting (other than insignificantly), the protected features of a Marine Conservation Zone or Highly Protected Marine Area?",/exemption/deposit-exe-not-available-continue
+/exemption/deposit/scientific-research/tracers-reagents/lse,Radio,Unlikely to have any relevant effect on any sites specified above,/exemption/licence-not-required-exemption-available-article-17
+/exemption/deposit/vessels,Radio,Launching of vessels etc,/exemption/deposit/vessels/launch
+/exemption/deposit/vessels,Radio,Deposits in the normal course of navigation or maintenance,/exemption/deposit/vessels/navigation
+/exemption/deposit/vessels,Radio,Deposits in the course of aggregate dredging,/exemption/deposit/vessels/aggregate-dredging
+/exemption/deposit/vessels,Radio,Dismantling of ships,/exemption/deposit/vessels/dismantling-ships
+/exemption/deposit/vessels,Radio,Exercising rights of foreign vessels,/exemption/deposit/vessels/foreign-vessels
+/exemption/deposit/vessels,Radio,Other,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/vessels/launch,Radio,Yes,/exemption/deposit/vessels/launch/construction
+/exemption/deposit/vessels/launch,Radio,No,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/vessels/launch/construction,Radio,Yes,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/vessels/launch/construction,Radio,No,/exemption/licence-not-required-exemption-available-article-27
+/exemption/deposit/vessels/hull-cleaning,Radio,Yes,/exemption/deposit/vessels/hull-cleaning/method
+/exemption/deposit/vessels/hull-cleaning,Radio,No,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/vessels/hull-cleaning/method,Radio,By hand using a soft cloth,/exemption/licence-not-required-exemption-available-article-27A
+/exemption/deposit/vessels/hull-cleaning/method,Radio,By hand using a sponge,/exemption/licence-not-required-exemption-available-article-27A
+/exemption/deposit/vessels/hull-cleaning/method,Radio,By hand using the bristles of a soft brush,/exemption/licence-not-required-exemption-available-article-27A
+/exemption/deposit/vessels/hull-cleaning/method,Radio,By hand using sandpaper with a grit size of at least P2000,/exemption/licence-not-required-exemption-available-article-27A
+/exemption/deposit/vessels/hull-cleaning/method,Radio,Other,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/vessels/navigation,Radio,Yes,/exemption/deposit/vessels/navigation/disposal
+/exemption/deposit/vessels/navigation,Radio,No,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/vessels/navigation/disposal,Radio,Yes,/exemption/deposit/vessels/navigation/explosives
+/exemption/deposit/vessels/navigation/disposal,Radio,No,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/vessels/navigation/explosives,Radio,Yes,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/vessels/navigation/explosives,Radio,No,/exemption/licence-not-required-exemption-available-article-22
+/exemption/deposit/vessels/aggregate-dredging,Radio,Yes,/exemption/deposit/vessels/aggregate-dredging/object-type
+/exemption/deposit/vessels/aggregate-dredging,Radio,No,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/vessels/aggregate-dredging/object-type,Radio,Aggregate or minerals,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/vessels/aggregate-dredging/object-type,Radio,Water,/exemption/deposit/vessels/aggregate-dredging/water-location
+/exemption/deposit/vessels/aggregate-dredging/object-type,Radio,Something else,/exemption/deposit/vessels/aggregate-dredging/something-else-location
+/exemption/deposit/vessels/aggregate-dredging/water-location,Radio,Yes,/exemption/licence-not-required-exemption-available-article-18
+/exemption/deposit/vessels/aggregate-dredging/water-location,Radio,No,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/vessels/aggregate-dredging/something-else-location,Radio,Yes,/exemption/licence-not-required-exemption-available-article-18
+/exemption/deposit/vessels/aggregate-dredging/something-else-location,Radio,No,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/vessels/dismantling-ships,Radio,Yes,/exemption/deposit/vessels/dismantling-ships/disposal
+/exemption/deposit/vessels/dismantling-ships,Radio,No,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/vessels/dismantling-ships/disposal,Radio,Yes,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/vessels/dismantling-ships/disposal,Radio,No,/exemption/deposit/vessels/dismantling-ships/explosives
+/exemption/deposit/vessels/dismantling-ships/explosives,Radio,Yes,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/vessels/dismantling-ships/explosives,Radio,No,/exemption/licence-not-required-exemption-available-article-28
+/exemption/deposit/vessels/foreign-vessels,Radio,Yes,/exemption/deposit/vessels/foreign-vessels/undertaker
+/exemption/deposit/vessels/foreign-vessels,Radio,No,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/vessels/foreign-vessels/undertaker,Radio,A third country vessel,/exemption/licence-not-required-exemption-available-article-37
+/exemption/deposit/vessels/foreign-vessels/undertaker,Radio,"A warship, naval auxiliary, other vessel or aircraft owned or operated by a state and used, for the time being, only on government non-commercial service (whether or not the warship, naval auxiliary, other vessel is a third country vessel)",/exemption/licence-not-required-exemption-available-article-37
+/exemption/deposit/vessels/foreign-vessels/undertaker,Radio,Other,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/miscellaneous,Radio,Vessels,/exemption/deposit/vessels
+/exemption/deposit/miscellaneous,Radio,Defence activities,/exemption/deposit/miscellaneous/defence-activities
+/exemption/deposit/miscellaneous,Radio,Licensed deepsea mining,/exemption/deposit/miscellaneous/deepsea-mining
+/exemption/deposit/miscellaneous,Radio,Scheduled works authorised under the Crossrail Act 2008,/exemption/deposit/miscellaneous/crossrail-act
+/exemption/deposit/miscellaneous,Radio,Air accident investigation,/exemption/deposit/emergency-safety-accident-investigation/air-accident-investigation
+/exemption/deposit/miscellaneous,Radio,Other,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/miscellaneous/defence-activities,Radio,"The naval, military or air forces of the crown (including reserve forces and the Royal Fleet Auxiliary)",/exemption/deposit/miscellaneous/defence-activities/restriction
+/exemption/deposit/miscellaneous/defence-activities,Radio,A visiting force within the meaning given by Section 12 of the Visiting Forces Act 1952,/exemption/deposit/miscellaneous/defence-activities/restriction
+/exemption/deposit/miscellaneous/defence-activities,Radio,Someone else,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/miscellaneous/defence-activities/restriction,Radio,Yes,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/miscellaneous/defence-activities/restriction,Radio,No,/exemption/deposit/miscellaneous/defence-activities/purpose
+/exemption/deposit/miscellaneous/defence-activities/purpose,Radio,Defence of the Realm,/exemption/licence-not-required-exemption-available-article-36
+/exemption/deposit/miscellaneous/defence-activities/purpose,Radio,Other,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/miscellaneous/deepsea-mining,Radio,In pursuance of an exploration or exploitation licence issued under the Deep Sea Mining (Temporary Provision) Act 1981,/exemption/licence-not-required-exemption-available-article-30
+/exemption/deposit/miscellaneous/deepsea-mining,Radio,In pursuance of a reciprocal authorisation within the meaning given by section 3(3) of the Deep Sea Mining (Temporary Provision) Act 1981,/exemption/licence-not-required-exemption-available-article-30
+/exemption/deposit/miscellaneous/deepsea-mining,Radio,for another reason,/exemption/deposit-exe-not-available-continue
+/exemption/deposit/miscellaneous/crossrail-act,Radio,Yes,/exemption/licence-not-required-exemption-available-article-29
+/exemption/deposit/miscellaneous/crossrail-act,Radio,No,/exemption/deposit-exe-not-available-continue
+/exemption/removal/activity-type,Radio,Fishing and shellfish propogation and cultivation,/exemption/removal/fishing
+/exemption/removal/activity-type,Radio,"Markers, moorings and aids to navigation",/exemption/removal/markers-moorings-pontoons-aids-to-navigation
+/exemption/removal/activity-type,Radio,Pontoons,/exemption/removal/markers-moorings-pontoons-aids-to-navigation/pontoons
+/exemption/removal/activity-type,Radio,Scientific investigation or research,/exemption/removal/scientific-research
+/exemption/removal/activity-type,Radio,Maintenance of existing strucutres or assets,/exemption/removal/maintenance
+/exemption/removal/activity-type,Radio,Litter and Dead animals,/exemption/removal/waste
+/exemption/removal/activity-type,Radio,"Obstructions, danger to navigation and accidental deposits",/exemption/removal/obstruction
+/exemption/removal/activity-type,Radio,"Emergency, safety and training",/exemption/removal/emergency-safety-pollution-response-accident-investigation
+/exemption/removal/activity-type,Radio,Other,/exemption/removal/miscellaneous
+/exemption/removal/markers-moorings-pontoons-aids-to-navigation,Radio,Temporary markers,/exemption/removal/markers-moorings-pontoons-aids-to-navigation/temporary-markers
+/exemption/removal/markers-moorings-pontoons-aids-to-navigation,Radio,Moorings and aids to navigation,/exemption/removal/markers-moorings-pontoons-aids-to-navigation/moorings
+/exemption/removal/markers-moorings-pontoons-aids-to-navigation,Radio,Markers for European marine sites and marine conservation zones,/exemption/removal/markers-moorings-pontoons-aids-to-navigation/marine-site-markers
+/exemption/removal/markers-moorings-pontoons-aids-to-navigation,Radio,Diver trails,/exemption/removal/markers-moorings-pontoons-aids-to-navigation/dive-trails
+/exemption/removal/markers-moorings-pontoons-aids-to-navigation,Radio,Other,/exemption/removal-exe-not-available-continue
+/exemption/removal/markers-moorings-pontoons-aids-to-navigation/temporary-markers,Radio,The removal of a marker and its appurtenances that has been in place for less than 24 hours,/exemption/licence-not-required-exemption-available-article-26a-no-notification
+/exemption/removal/markers-moorings-pontoons-aids-to-navigation/temporary-markers,Radio,The removal of a marker and its appurtenances that has been in place for longer than 24 hours but less than 28 days and for which notification of the intention to carry out the activity under article 26A has previously been given to the MMO,/exemption/licence-not-required-exemption-available-article-26a
+/exemption/removal/markers-moorings-pontoons-aids-to-navigation/temporary-markers,Radio,The removal of a marker and its appurtenances that has been in place for longer than than 28 days,/exemption/removal-exe-not-available-continue
+/exemption/removal/markers-moorings-pontoons-aids-to-navigation/marine-site-markers,Radio,Natural England,/exemption/removal/markers-moorings-pontoons-aids-to-navigation/marine-site-markers/ne-purpose
+/exemption/removal/markers-moorings-pontoons-aids-to-navigation/marine-site-markers,Radio,A public authority,/exemption/removal/markers-moorings-pontoons-aids-to-navigation/marine-site-markers/pa-purpose
+/exemption/removal/markers-moorings-pontoons-aids-to-navigation/marine-site-markers,Radio,Someone else,/exemption/removal-exe-not-available-continue
+/exemption/removal/markers-moorings-pontoons-aids-to-navigation/marine-site-markers/ne-purpose,Radio,Removal of a marker installed to indicate the existence and extent of a European Marine Site,/exemption/licence-not-required-exemption-available-article-26
+/exemption/removal/markers-moorings-pontoons-aids-to-navigation/marine-site-markers/ne-purpose,Radio,Other,/exemption/removal-exe-not-available-continue
+/exemption/removal/markers-moorings-pontoons-aids-to-navigation/marine-site-markers/pa-purpose,Radio,Removal of a marker installed to indicate the existence and extent of a Marine Conservation Zone,/exemption/licence-not-required-exemption-available-article-26
+/exemption/removal/markers-moorings-pontoons-aids-to-navigation/marine-site-markers/pa-purpose,Radio,Other,/exemption/removal-exe-not-available-continue
+/exemption/removal/markers-moorings-pontoons-aids-to-navigation/moorings,Radio,Pile mooring,/exemption/removal/markers-moorings-pontoons-aids-to-navigation/moorings/undertaker
+/exemption/removal/markers-moorings-pontoons-aids-to-navigation/moorings,Radio,Swinging mooring,/exemption/removal/markers-moorings-pontoons-aids-to-navigation/moorings/undertaker
+/exemption/removal/markers-moorings-pontoons-aids-to-navigation/moorings,Radio,Trot Mooring,/exemption/removal/markers-moorings-pontoons-aids-to-navigation/moorings/undertaker
+/exemption/removal/markers-moorings-pontoons-aids-to-navigation/moorings,Radio,Aid to Navigation,/exemption/removal/markers-moorings-pontoons-aids-to-navigation/moorings/undertaker
+/exemption/removal/markers-moorings-pontoons-aids-to-navigation/moorings,Radio,Something else,/exemption/removal-exe-not-available-continue
+/exemption/removal/markers-moorings-pontoons-aids-to-navigation/moorings/undertaker,Radio,A harbour authority or someone on behalf of a harbour authority,/exemption/licence-not-required-exemption-available-article-25
+/exemption/removal/markers-moorings-pontoons-aids-to-navigation/moorings/undertaker,Radio,A lighthouse authority or someone on behalf of a lighthouse authority,/exemption/licence-not-required-exemption-available-article-25
+/exemption/removal/markers-moorings-pontoons-aids-to-navigation/moorings/undertaker,Radio,Someone else,/exemption/removal/markers-moorings-pontoons-aids-to-navigation/moorings/consent
+/exemption/removal/markers-moorings-pontoons-aids-to-navigation/moorings/consent,Radio,Yes,/exemption/removal/markers-moorings-pontoons-aids-to-navigation/moorings/approval
+/exemption/removal/markers-moorings-pontoons-aids-to-navigation/moorings/consent,Radio,No,/exemption/removal-exe-not-available-continue
+/exemption/removal/markers-moorings-pontoons-aids-to-navigation/moorings/approval,Radio,Yes,/exemption/licence-not-required-exemption-available-article-25-notification
+/exemption/removal/markers-moorings-pontoons-aids-to-navigation/moorings/approval,Radio,No,/exemption/removal-exe-not-available-continue
+/exemption/removal/markers-moorings-pontoons-aids-to-navigation/pontoons,Radio,Yes,/exemption/removal/markers-moorings-pontoons-aids-to-navigation/pontoons/undertaker
+/exemption/removal/markers-moorings-pontoons-aids-to-navigation/pontoons,Radio,No,/exemption/removal-exe-not-available-continue
+/exemption/removal/markers-moorings-pontoons-aids-to-navigation/pontoons/undertaker,Radio,A harbour authority or someone on behalf of a harbour authority,/exemption/removal/markers-moorings-pontoons-aids-to-navigation/pontoon/deck
+/exemption/removal/markers-moorings-pontoons-aids-to-navigation/pontoons/undertaker,Radio,Someone else,/exemption/removal/markers-moorings-pontoons-aids-to-navigation/pontoon/consent
+/exemption/removal/markers-moorings-pontoons-aids-to-navigation/pontoon/consent,Radio,Yes,/exemption/removal/markers-moorings-pontoons-aids-to-navigation/pontoon/approval
+/exemption/removal/markers-moorings-pontoons-aids-to-navigation/pontoon/consent,Radio,No,/exemption/removal-exe-not-available-continue
+/exemption/removal/markers-moorings-pontoons-aids-to-navigation/pontoon/approval,Radio,Yes,/exemption/removal/markers-moorings-pontoons-aids-to-navigation/pontoon/deck
+/exemption/removal/markers-moorings-pontoons-aids-to-navigation/pontoon/approval,Radio,No,/exemption/removal-exe-not-available-continue
+/exemption/removal/markers-moorings-pontoons-aids-to-navigation/pontoon/deck,Radio,Yes,/exemption/removal-exe-not-available-continue
+/exemption/removal/markers-moorings-pontoons-aids-to-navigation/pontoon/deck,Radio,No,/exemption/licence-not-required-exemption-available-article-25A
+/exemption/removal/markers-moorings-pontoons-aids-to-navigation/dive-trails,Radio,a wreck within an area designated as a restricted area within the meaning of section 1 of the Protection of Wrecks Act 1973,/exemption/licence-not-required-exemption-available-article-31
+/exemption/removal/markers-moorings-pontoons-aids-to-navigation/dive-trails,Radio,a monument designated as a scheduled monument under section 1 of the Ancient Monuments and Archaeological Areas Act 1979,/exemption/licence-not-required-exemption-available-article-31
+/exemption/removal/markers-moorings-pontoons-aids-to-navigation/dive-trails,Radio,an area designated as a controlled site under section 1(2)(b) of the Protection of Military Remains Act 1986,/exemption/licence-not-required-exemption-available-article-31
+/exemption/removal/markers-moorings-pontoons-aids-to-navigation/dive-trails,Radio,Other,/exemption/removal-exe-not-available-continue
+/exemption/removal/scientific-research,Radio,Scientific instruments and associated equipment,/exemption/removal/scientific-research/scientific-equipment
+/exemption/removal/scientific-research,Radio,Samples for testing and analysis,/exemption/removal/scientific-research/samples
+/exemption/removal/scientific-research,Radio,Other,/exemption/removal-exe-not-available-continue
+/exemption/removal/scientific-research/scientific-equipment,Radio,Yes,/exemption/removal/scientific-research/scientific-equipment/survey
+/exemption/removal/scientific-research/scientific-equipment,Radio,No,/exemption/removal-exe-not-available-continue
+/exemption/removal/scientific-research/scientific-equipment/survey,Radio,Yes,/exemption/removal/scientific-research/scientific-equipment/mpa
+/exemption/removal/scientific-research/scientific-equipment/survey,Radio,No,/exemption/removal-exe-not-available-continue
+/exemption/removal/scientific-research/scientific-equipment/mpa,Radio,Yes,/exemption/removal/scientific-research/scientific-equipment/mpa-management
+/exemption/removal/scientific-research/scientific-equipment/mpa,Radio,No,/exemption/licence-not-required-exemption-available-article-17
+/exemption/removal/scientific-research/scientific-equipment/mpa-management,Radio,Yes,/exemption/licence-not-required-exemption-available-article-17
+/exemption/removal/scientific-research/scientific-equipment/mpa-management,Radio,No,/exemption/removal/scientific-research/scientific-equipment/lse
+/exemption/removal/scientific-research/scientific-equipment/lse,Radio,Likely to have a significant effect on a European site?,/exemption/removal-exe-not-available-continue
+/exemption/removal/scientific-research/scientific-equipment/lse,Radio,Likely to have a significant effect on a Ramsar site?,/exemption/removal-exe-not-available-continue
+/exemption/removal/scientific-research/scientific-equipment/lse,Radio,"Capable of affecting (other than insignificantly), the protected features of a Marine Conservation Zone or Highly Protected Marine Area?",/exemption/removal-exe-not-available-continue
+/exemption/removal/scientific-research/scientific-equipment/lse,Radio,Unlikely to have any relevant effect on any sites specified above,/exemption/licence-not-required-exemption-available-article-17
+/exemption/removal/scientific-research/samples,Radio,Yes,/exemption/removal/scientific-research/samples/volume
+/exemption/removal/scientific-research/samples,Radio,No,/exemption/removal-exe-not-available-continue
+/exemption/removal/scientific-research/samples/volume,Radio,Yes,/exemption/removal/scientific-research/samples/obstruction
+/exemption/removal/scientific-research/samples/volume,Radio,No,/exemption/removal-exe-not-available-continue
+/exemption/removal/scientific-research/samples/obstruction,Radio,Yes,/exemption/removal-exe-not-available-continue
+/exemption/removal/scientific-research/samples/obstruction,Radio,No,/exemption/removal/scientific-research/samples/mpa
+/exemption/removal/scientific-research/samples/mpa,Radio,Yes,/exemption/removal/scientific-research/samples/mpa-management
+/exemption/removal/scientific-research/samples/mpa,Radio,No,/exemption/licence-not-required-exemption-available-article-17A
+/exemption/removal/scientific-research/samples/mpa-management,Radio,Yes,/exemption/licence-not-required-exemption-available-article-17A
+/exemption/removal/scientific-research/samples/mpa-management,Radio,No,/exemption/removal/scientific-research/scientific-equipment/lse
+/exemption/removal/scientific-research/samples/lse,Radio,Likely to have a significant effect on a European site?,/exemption/removal-exe-not-available-continue
+/exemption/removal/scientific-research/samples/lse,Radio,Likely to have a significant effect on a Ramsar site?,/exemption/removal-exe-not-available-continue
+/exemption/removal/scientific-research/samples/lse,Radio,"Capable of affecting (other than insignificantly), the protected features of a Marine Conservation Zone or Highly Protected Marine Area?",/exemption/removal-exe-not-available-continue
+/exemption/removal/scientific-research/samples/lse,Radio,Unlikely to have any relevant effect on any sites specified above,/exemption/licence-not-required-exemption-available-article-17A
+/exemption/removal/maintenance,Radio,"Maintenance of coast protection, drainage or flood defence works",/exemption/removal/maintenance/coastal-drainage-flood
+/exemption/removal/maintenance,Radio,Maintenance of harbour works,/exemption/removal/maintenance/harbour-works
+/exemption/removal/maintenance,Radio,Cables and pipelines,/exemption/removal/maintenance/cables-pipelines
+/exemption/removal/maintenance,Radio,Other,/exemption/removal-exe-not-available-continue
+/exemption/removal/maintenance/coastal-drainage-flood,Radio,The Environment Agency or someone on behalf of the Environment Agency,/exemption/removal/maintenance/coastal-drainage-flood/EA
+/exemption/removal/maintenance/coastal-drainage-flood,Radio,The Coast Protection Authority or someone on behalf of the Coast Protection Authority,/exemption/removal/maintenance/coastal-drainage-flood/CPA
+/exemption/removal/maintenance/coastal-drainage-flood,Radio,The Local Authority or someone on behalf of the Local Authority,/exemption/removal/maintenance/coastal-drainage-flood/CPA
+/exemption/removal/maintenance/coastal-drainage-flood,Radio,The Secretary of State for Defence or someone on behalf of the Secretary of State for Defence,/exemption/removal/maintenance/coastal-drainage-flood/CPA
+/exemption/removal/maintenance/coastal-drainage-flood,Radio,Other,/exemption/removal-exe-not-available-continue
+/exemption/removal/maintenance/coastal-drainage-flood/EA,Radio,Yes,/exemption/licence-not-required-exemption-available-article-19
+/exemption/removal/maintenance/coastal-drainage-flood/EA,Radio,No,/exemption/removal/maintenance/coastal-drainage-flood/EA/emergency-flood
+/exemption/removal/maintenance/coastal-drainage-flood/EA/emergency-flood,Radio,Yes,/exemption/licence-not-required-exemption-available-article-20
+/exemption/removal/maintenance/coastal-drainage-flood/EA/emergency-flood,Radio,No,/exemption/removal-exe-not-available-continue
+/exemption/removal/maintenance/coastal-drainage-flood/CPA,Radio,Yes,/exemption/licence-not-required-exemption-available-article-19
+/exemption/removal/maintenance/coastal-drainage-flood/CPA,Radio,No,/exemption/removal-exe-not-available-continue
+/exemption/removal/maintenance/harbour-works,Radio,Yes,/exemption/removal/maintenance/harbour-works/boundaries
+/exemption/removal/maintenance/harbour-works,Radio,No,/exemption/removal-exe-not-available-continue
+/exemption/removal/maintenance/harbour-works/boundaries,Radio,Yes,/exemption/removal/maintenance/harbour-works/undertaker
+/exemption/removal/maintenance/harbour-works/boundaries,Radio,No,/exemption/removal-exe-not-available-continue
+/exemption/removal/maintenance/harbour-works/undertaker,Radio,Yes,/exemption/licence-not-required-exemption-available-article-23
+/exemption/removal/maintenance/harbour-works/undertaker,Radio,No,/exemption/removal-exe-not-available-continue
+/exemption/removal/maintenance/cables-pipelines,Radio,Yes,/exemption/removal/maintenance/cables-pipelines/emergency
+/exemption/removal/maintenance/cables-pipelines,Radio,No,/exemption/removal-exe-not-available-continue
+/exemption/removal/maintenance/cables-pipelines/emergency,Radio,Yes,/exemption/licence-not-required-exemption-available-article-34
+/exemption/removal/maintenance/cables-pipelines/emergency,Radio,No,/exemption/removal-exe-not-available-continue
+/exemption/removal/waste,Radio,Dead animals,/exemption/removal/waste/dead-animals
+/exemption/removal/waste,Radio,Marine litter (by divers),/exemption/removal/waste/marine-litter
+/exemption/removal/waste,Radio,Litter and seaweed,/exemption/removal/waste/litter-seaweed
+/exemption/removal/waste,Radio,Marine litter and debris,/exemption/removal/waste/litter-debris
+/exemption/removal/waste,Radio,Other,/exemption/removal-exe-not-available-continue
+/exemption/removal/obstruction,Radio,Accidental deposits,/exemption/removal/waste/accidental-deposits
+/exemption/removal/obstruction,Radio,Obstruction or danger to navigation,/exemption/removal/waste/obstruction-danger-navigation
+/exemption/removal/obstruction,Radio,Other,/exemption/removal-exe-not-available-continue
+/exemption/removal/waste/dead-animals,Radio,Yes,/exemption/removal/waste/dead-animals/undertaker
+/exemption/removal/waste/dead-animals,Radio,No,/exemption/removal-exe-not-available-continue
+/exemption/removal/waste/dead-animals/undertaker,Radio,Yes,/exemption/removal/waste/dead-animals/undertaker/mpa
+/exemption/removal/waste/dead-animals/undertaker,Radio,No,/exemption/removal-exe-not-available-continue
+/exemption/removal/waste/dead-animals/undertaker/mpa,Radio,Yes,/exemption/removal/waste/dead-animals/undertaker/mpa-management
+/exemption/removal/waste/dead-animals/undertaker/mpa,Radio,No,/exemption/licence-not-required-exemption-available-article-21
+/exemption/removal/waste/dead-animals/undertaker/mpa-management,Radio,Yes,/exemption/licence-not-required-exemption-available-article-21
+/exemption/removal/waste/dead-animals/undertaker/mpa-management,Radio,No,/exemption/removal/waste/dead-animals/undertaker/lse
+/exemption/removal/waste/dead-animals/undertaker/lse,Radio,Likely to have a significant effect on a European site?,/exemption/removal-exe-not-available-continue
+/exemption/removal/waste/dead-animals/undertaker/lse,Radio,Likely to have a significant effect on a Ramsar site?,/exemption/removal-exe-not-available-continue
+/exemption/removal/waste/dead-animals/undertaker/lse,Radio,"Capable of affecting (other than insignificantly), the protected features of a Marine Conservation Zone or Highly Protected Marine Area?",/exemption/removal-exe-not-available-continue
+/exemption/removal/waste/dead-animals/undertaker/lse,Radio,Unlikely to have any relevant effect on any sites specified above,/exemption/licence-not-required-exemption-available-article-21
+/exemption/removal/waste/marine-litter,Radio,Yes,/exemption/removal/waste/marine-litter/historic-interest
+/exemption/removal/waste/marine-litter,Radio,No,/exemption/removal-exe-not-available-continue
+/exemption/removal/waste/marine-litter/historic-interest,Radio,Yes,/exemption/removal-exe-not-available-continue
+/exemption/removal/waste/marine-litter/historic-interest,Radio,No,/exemption/removal/waste/marine-litter/mpa
+/exemption/removal/waste/marine-litter/mpa,Radio,Yes,/exemption/removal/waste/marine-litter/mpa-management
+/exemption/removal/waste/marine-litter/mpa,Radio,No,/exemption/licence-not-required-exemption-available-article-21A
+/exemption/removal/waste/marine-litter/mpa-management,Radio,Yes,/exemption/licence-not-required-exemption-available-article-21A
+/exemption/removal/waste/marine-litter/mpa-management,Radio,No,/exemption/removal/waste/marine-litter/lse
+/exemption/removal/waste/marine-litter/lse,Radio,Likely to have a significant effect on a European site?,/exemption/removal-exe-not-available-continue
+/exemption/removal/waste/marine-litter/lse,Radio,Likely to have a significant effect on a Ramsar site?,/exemption/removal-exe-not-available-continue
+/exemption/removal/waste/marine-litter/lse,Radio,"Capable of affecting (other than insignificantly), the protected features of a Marine Conservation Zone or Highly Protected Marine Area?",/exemption/removal-exe-not-available-continue
+/exemption/removal/waste/marine-litter/lse,Radio,Unlikely to have any relevant effect on any sites specified above,/exemption/licence-not-required-exemption-available-article-21A
+/exemption/removal/waste/litter-seaweed,Radio,Yes,/exemption/removal/waste/litter-seaweed/undertaker
+/exemption/removal/waste/litter-seaweed,Radio,No,/exemption/removal-exe-not-available-continue
+/exemption/removal/waste/litter-seaweed/undertaker,Radio,Yes,/exemption/removal/waste/litter-seaweed/mpa
+/exemption/removal/waste/litter-seaweed/undertaker,Radio,No,/exemption/removal-exe-not-available-continue
+/exemption/removal/waste/litter-seaweed/mpa,Radio,Yes,/exemption/removal/waste/litter-seaweed/mpa-management
+/exemption/removal/waste/litter-seaweed/mpa,Radio,No,/exemption/licence-not-required-exemption-available-article-21-no-notification
+/exemption/removal/waste/litter-seaweed/mpa-management,Radio,Yes,/exemption/licence-not-required-exemption-available-article-21-no-notification
+/exemption/removal/waste/litter-seaweed/mpa-management,Radio,No,/exemption/removal/waste/dead-animals/undertaker/lse
+/exemption/removal/waste/litter-seaweed/lse,Radio,Likely to have a significant effect on a European site?,/exemption/removal-exe-not-available-continue
+/exemption/removal/waste/litter-seaweed/lse,Radio,Likely to have a significant effect on a Ramsar site?,/exemption/removal-exe-not-available-continue
+/exemption/removal/waste/litter-seaweed/lse,Radio,"Capable of affecting (other than insignificantly), the protected features of a Marine Conservation Zone or Highly Protected Marine Area?",/exemption/removal-exe-not-available-continue
+/exemption/removal/waste/litter-seaweed/lse,Radio,Unlikely to have any relevant effect on any sites specified above,/exemption/licence-not-required-exemption-available-article-21-no-notification
+/exemption/removal/waste/litter-debris,Radio,Yes,/exemption/removal/waste/litter-debris/undertaker
+/exemption/removal/waste/litter-debris,Radio,No,/exemption/removal-exe-not-available-continue
+/exemption/removal/waste/litter-debris/undertaker,Radio,A harbour authority or someone on behalf of a harbour authority,/exemption/removal/waste/litter-debris/historic-interest
+/exemption/removal/waste/litter-debris/undertaker,Radio,Other,/exemption/removal-exe-not-available-continue
+/exemption/removal/waste/litter-debris/historic-interest,Radio,Yes,/exemption/removal-exe-not-available-continue
+/exemption/removal/waste/litter-debris/historic-interest,Radio,No,/exemption/removal/waste/litter-debris/mpa
+/exemption/removal/waste/litter-debris/mpa,Radio,Yes,/exemption/removal/waste/litter-debris/mpa-management
+/exemption/removal/waste/litter-debris/mpa,Radio,No,/exemption/licence-not-required-exemption-available-article-24A
+/exemption/removal/waste/litter-debris/mpa-management,Radio,Yes,/exemption/licence-not-required-exemption-available-article-24A
+/exemption/removal/waste/litter-debris/mpa-management,Radio,No,/exemption/removal/waste/litter-debris/lse
+/exemption/removal/waste/litter-debris/lse,Radio,Likely to have a significant effect on a European site?,/exemption/removal-exe-not-available-continue
+/exemption/removal/waste/litter-debris/lse,Radio,Likely to have a significant effect on a Ramsar site?,/exemption/removal-exe-not-available-continue
+/exemption/removal/waste/litter-debris/lse,Radio,"Capable of affecting (other than insignificantly), the protected features of a Marine Conservation Zone or Highly Protected Marine Area?",/exemption/removal-exe-not-available-continue
+/exemption/removal/waste/litter-debris/lse,Radio,Unlikely to have any relevant effect on any sites specified above,/exemption/licence-not-required-exemption-available-article-24A
+/exemption/removal/waste/accidental-deposits,Radio,Yes,/exemption/removal/waste/accidental-deposits/within-12-months
+/exemption/removal/waste/accidental-deposits,Radio,No,/exemption/removal-exe-not-available-continue
+/exemption/removal/waste/accidental-deposits/within-12-months,Radio,Yes,/exemption/removal/waste/accidental-deposits/obstruction
+/exemption/removal/waste/accidental-deposits/within-12-months,Radio,No,/exemption/removal-exe-not-available-continue
+/exemption/removal/waste/accidental-deposits/obstruction,Radio,Yes,/exemption/removal-exe-not-available-continue
+/exemption/removal/waste/accidental-deposits/obstruction,Radio,No,/exemption/removal/waste/accidental-deposits/mpa
+/exemption/removal/waste/accidental-deposits/mpa,Radio,Yes,/exemption/removal/waste/accidental-deposits/mpa-management
+/exemption/removal/waste/accidental-deposits/mpa,Radio,No,/exemption/licence-not-required-exemption-available-article-17B
+/exemption/removal/waste/accidental-deposits/mpa-management,Radio,Yes,/exemption/licence-not-required-exemption-available-article-17B
+/exemption/removal/waste/accidental-deposits/mpa-management,Radio,No,/exemption/removal/waste/accidental-deposits/lse
+/exemption/removal/waste/accidental-deposits/lse,Radio,Likely to have a significant effect on a European site?,/exemption/removal-exe-not-available-continue
+/exemption/removal/waste/accidental-deposits/lse,Radio,Likely to have a significant effect on a Ramsar site?,/exemption/removal-exe-not-available-continue
+/exemption/removal/waste/accidental-deposits/lse,Radio,"Capable of affecting (other than insignificantly), the protected features of a Marine Conservation Zone or Highly Protected Marine Area?",/exemption/removal-exe-not-available-continue
+/exemption/removal/waste/accidental-deposits/lse,Radio,Unlikely to have any relevant effect on any sites specified above,/exemption/licence-not-required-exemption-available-article-17B
+/exemption/removal/waste/obstruction-danger-navigation,Radio,A harbour authority,/exemption/removal/waste/obstruction-danger-navigation/purpose
+/exemption/removal/waste/obstruction-danger-navigation,Radio,A conservancy authority,/exemption/removal/waste/obstruction-danger-navigation/purpose
+/exemption/removal/waste/obstruction-danger-navigation,Radio,A lighthouse authority,/exemption/removal/waste/obstruction-danger-navigation/purpose
+/exemption/removal/waste/obstruction-danger-navigation,Radio,A person with powers under any enactment or statutory order to work on or maintain a canal or other inland navigation including navigation in tidal water.,/exemption/removal/waste/obstruction-danger-navigation/purpose
+/exemption/removal/waste/obstruction-danger-navigation,Radio,Other,/exemption/removal-exe-not-available-continue
+/exemption/removal/waste/obstruction-danger-navigation/purpose,Radio,Yes,/exemption/licence-not-required-exemption-available-article-24
+/exemption/removal/waste/obstruction-danger-navigation/purpose,Radio,No,/exemption/removal-exe-not-available-continue
+/exemption/removal/emergency-safety-pollution-response-accident-investigation,Radio,Flood or flood risk,/exemption/removal/emergency-safety-pollution-response-accident-investigation/flood
+/exemption/removal/emergency-safety-pollution-response-accident-investigation,Radio,Cables and pipelines,/exemption/removal/emergency-safety-pollution-response-accident-investigation/cables-pipelines
+/exemption/removal/emergency-safety-pollution-response-accident-investigation,Radio,Coastguard activities - safety purposes and training,/exemption/removal/emergency-safety-pollution-response-accident-investigation/coastguard
+/exemption/removal/emergency-safety-pollution-response-accident-investigation,Radio,Salvage Operation,/exemption/removal/emergency-safety-pollution-response-accident-investigation/salvage
+/exemption/removal/emergency-safety-pollution-response-accident-investigation,Radio,Safety directions under the Merchant Shipping Act 1995,/exemption/removal/emergency-safety-pollution-response-accident-investigation/safety-directions
+/exemption/removal/emergency-safety-pollution-response-accident-investigation,Radio,Pollution prevention - activities within Part 6 of the Merchant Shipping Act 1995,/exemption/removal/emergency-safety-pollution-response-accident-investigation/pollution-prevention
+/exemption/removal/emergency-safety-pollution-response-accident-investigation,Radio,Fire Fighting,/exemption/removal/emergency-safety-pollution-response-accident-investigation/fire-fighting
+/exemption/removal/emergency-safety-pollution-response-accident-investigation,Radio,Other,/exemption/removal-exe-not-available-continue
+/exemption/removal/emergency-safety-pollution-response-accident-investigation/flood,Radio,Yes,/exemption/removal/emergency-safety-pollution-response-accident-investigation/flood/emergency
+/exemption/removal/emergency-safety-pollution-response-accident-investigation/flood,Radio,No,/exemption/removal-exe-not-available-continue
+/exemption/removal/emergency-safety-pollution-response-accident-investigation/flood/emergency,Radio,Yes,/exemption/licence-not-required-exemption-available-article-20
+/exemption/removal/emergency-safety-pollution-response-accident-investigation/flood/emergency,Radio,No,/exemption/removal-exe-not-available-continue
+/exemption/removal/emergency-safety-pollution-response-accident-investigation/cables-pipelines,Radio,Yes,/exemption/removal/emergency-safety-pollution-response-accident-investigation/cables-pipelines/emergency
+/exemption/removal/emergency-safety-pollution-response-accident-investigation/cables-pipelines,Radio,No,/exemption/removal-exe-not-available-continue
+/exemption/removal/emergency-safety-pollution-response-accident-investigation/cables-pipelines/emergency,Radio,Yes,/exemption/licence-not-required-exemption-available-article-34
+/exemption/removal/emergency-safety-pollution-response-accident-investigation/cables-pipelines/emergency,Radio,No,/exemption/removal-exe-not-available-continue
+/exemption/removal/emergency-safety-pollution-response-accident-investigation/coastguard,Radio,Yes,/exemption/removal/emergency-safety-pollution-response-accident-investigation/coastguard/purpose
+/exemption/removal/emergency-safety-pollution-response-accident-investigation/coastguard,Radio,No,/exemption/removal-exe-not-available-continue
+/exemption/removal/emergency-safety-pollution-response-accident-investigation/coastguard/purpose,Radio,"Securing the safety of a vessel, aircraft or marine structure",/exemption/licence-not-required-exemption-available-article-32
+/exemption/removal/emergency-safety-pollution-response-accident-investigation/coastguard/purpose,Radio,Saving life,/exemption/licence-not-required-exemption-available-article-32
+/exemption/removal/emergency-safety-pollution-response-accident-investigation/coastguard/purpose,Radio,Training for either of the above two purposes,/exemption/licence-not-required-exemption-available-article-32
+/exemption/removal/emergency-safety-pollution-response-accident-investigation/coastguard/purpose,Radio,Other,/exemption/removal-exe-not-available-continue
+/exemption/removal/emergency-safety-pollution-response-accident-investigation/salvage,Radio,Yes,/exemption/licence-not-required-exemption-available-article-9
+/exemption/removal/emergency-safety-pollution-response-accident-investigation/salvage,Radio,No,/exemption/removal-exe-not-available-continue
+/exemption/removal/emergency-safety-pollution-response-accident-investigation/safety-directions,Radio,In exercise of a power under Schedule 3A to the Merchant Shipping Act 1995 (safety directions) by or on behalf of the Secretary of State,/exemption/licence-not-required-exemption-available-article-8
+/exemption/removal/emergency-safety-pollution-response-accident-investigation/safety-directions,Radio,Compliance with a direction under Schedule 3A to the Merchant Shipping Act 1995 (safety directions),/exemption/licence-not-required-exemption-available-article-8
+/exemption/removal/emergency-safety-pollution-response-accident-investigation/safety-directions,Radio,Avoiding interference with action taken under Schedule 3A to the Merchant Shipping Act 1995 (safety directions),/exemption/licence-not-required-exemption-available-article-8
+/exemption/removal/emergency-safety-pollution-response-accident-investigation/safety-directions,Radio,Other,/exemption/removal-exe-not-available-continue
+/exemption/removal/emergency-safety-pollution-response-accident-investigation/pollution-prevention,Radio,Yes,/exemption/licence-not-required-exemption-available-article-7
+/exemption/removal/emergency-safety-pollution-response-accident-investigation/pollution-prevention,Radio,No,/exemption/removal-exe-not-available-continue
+/exemption/removal/emergency-safety-pollution-response-accident-investigation/fire-fighting,Radio,Yes,/exemption/licence-not-required-exemption-available-article-10
+/exemption/removal/emergency-safety-pollution-response-accident-investigation/fire-fighting,Radio,No,/exemption/removal-exe-not-available-continue
+/exemption/removal/emergency-safety-pollution-response-accident-investigation/air-accident-investigation,Radio,Yes,/exemption/licence-not-required-exemption-available-article-11
+/exemption/removal/emergency-safety-pollution-response-accident-investigation/air-accident-investigation,Radio,No,/exemption/removal-exe-not-available-continue
+/exemption/removal/fishing,Radio,Shellfish propogation and cultivation,/exemption/removal/fishing/shellfish-propagation-cultivation
+/exemption/removal/fishing,Radio,Fishing operations,/exemption/removal/fishing/fishing-operations
+/exemption/removal/fishing,Radio,Other,/exemption/removal-exe-not-available-continue
+/exemption/removal/fishing/shellfish-propagation-cultivation,Radio,Yes,/exemption/removal/fishing/shellfish-propagation-cultivation/obstruction
+/exemption/removal/fishing/shellfish-propagation-cultivation,Radio,No,/exemption/removal-exe-not-available-continue
+/exemption/removal/fishing/shellfish-propagation-cultivation/obstruction,Radio,Yes,/exemption/removal-exe-not-available-continue
+/exemption/removal/fishing/shellfish-propagation-cultivation/obstruction,Radio,No,/exemption/licence-not-required-exemption-available-article-13
+/exemption/removal/fishing/fishing-operations,Radio,Fishing or taking fish,/exemption/licence-not-required-exemption-available-article-12
+/exemption/removal/fishing/fishing-operations,Radio,Removing fishing gear,/exemption/licence-not-required-exemption-available-article-12
+/exemption/removal/fishing/fishing-operations,Radio,Other,/exemption/removal-exe-not-available-continue
+/exemption/removal/miscellaneous,Radio,Defence activities,/exemption/removal/miscellaneous/defence-activities
+/exemption/removal/miscellaneous,Radio,Licensed deepsea mining,/exemption/removal/miscellaneous/deepsea-mining
+/exemption/removal/miscellaneous,Radio,Scheduled works authorised under the Crossrail Act 2008,/exemption/removal/miscellaneous/crossrail-act
+/exemption/removal/miscellaneous,Radio,Dismantling Ships,/exemption/removal/miscellaneous/dismantling-ships
+/exemption/removal/miscellaneous,Radio,Exercising rights of foreign vessels,/exemption/removal/miscellaneous/foreign-vessels
+/exemption/removal/miscellaneous,Radio,Air accident investigation,/exemption/removal/emergency-safety-pollution-response-accident-investigation/air-accident-investigation
+/exemption/removal/miscellaneous,Radio,Other,/exemption/removal-exe-not-available-continue
+/exemption/removal/miscellaneous/defence-activities,Radio,"The naval, military or air forces of the crown (including reserve forces and the Royal Fleet Auxiliary)",/exemption/removal/miscellaneous/defence-activities/restriction
+/exemption/removal/miscellaneous/defence-activities,Radio,A visiting force within the meaning given by Section 12 of the Visiting Forces Act 1952,/exemption/removal/miscellaneous/defence-activities/restriction
+/exemption/removal/miscellaneous/defence-activities,Radio,Someone else,/exemption/removal-exe-not-available-continue
+/exemption/removal/miscellaneous/defence-activities/restriction,Radio,Yes,/exemption/removal-exe-not-available-continue
+/exemption/removal/miscellaneous/defence-activities/restriction,Radio,No,/exemption/removal/miscellaneous/defence-activities/purpose
+/exemption/removal/miscellaneous/defence-activities/purpose,Radio,Defence of the Realm,/exemption/licence-not-required-exemption-available-article-36
+/exemption/removal/miscellaneous/defence-activities/purpose,Radio,Other,/exemption/removal-exe-not-available-continue
+/exemption/removal/miscellaneous/deepsea-mining,Radio,In pursuance of an exploration or exploitation licence issued under the Deep Sea Mining (Temporary Provision) Act 1981,/exemption/licence-not-required-exemption-available-article-30
+/exemption/removal/miscellaneous/deepsea-mining,Radio,In pursuance of a reciprocal authorisation within the meaning given by section 3(3) of the Deep Sea Mining (Temporary Provision) Act 1981,/exemption/licence-not-required-exemption-available-article-30
+/exemption/removal/miscellaneous/deepsea-mining,Radio,for another reason,/exemption/removal-exe-not-available-continue
+/exemption/removal/miscellaneous/crossrail-act,Radio,Yes,/exemption/licence-not-required-exemption-available-article-29
+/exemption/removal/miscellaneous/crossrail-act,Radio,No,/exemption/removal-exe-not-available-continue
+/exemption/removal/miscellaneous/dismantling-ships,Radio,Yes,/exemption/licence-not-required-exemption-available-article-28
+/exemption/removal/miscellaneous/dismantling-ships,Radio,No,/exemption/removal-exe-not-available-continue
+/exemption/removal/miscellaneous/foreign-vessels,Radio,Yes,/exemption/removal/miscellaneous/foreign-vessels/undertaker
+/exemption/removal/miscellaneous/foreign-vessels,Radio,No,/exemption/removal-exe-not-available-continue
+/exemption/removal/miscellaneous/foreign-vessels/undertaker,Radio,A third country vessel,/exemption/licence-not-required-exemption-available-article-37
+/exemption/removal/miscellaneous/foreign-vessels/undertaker,Radio,"A warship, naval auxiliary, other vessel or aircraft owned or operated by a state and used, for the time being, only on government non-commercial service (whether or not the warship, naval auxiliary, other vessel is a third country vessel)",/exemption/licence-not-required-exemption-available-article-37
+/exemption/removal/miscellaneous/foreign-vessels/undertaker,Radio,Other,/exemption/removal-exe-not-available-continue
+/exemption/dredging,Radio,Navigational dredging,/exemption/dredging/navigational-dredging
+/exemption/dredging,Radio,Shellfish propagation and cultivation,/exemption/dredging/shellfish-propagation-cultivation
+/exemption/dredging,Radio,"Coastal Protection, drainage or flood defence",/exemption/dredging/coastal-drainage-flood
+/exemption/dredging,Radio,"Emergency, safety and training",/exemption/dredging/emergency
+/exemption/dredging,Radio,Licensed deepsea mining,/exemption/dredging/miscellaneous/deepsea-mining
+/exemption/dredging,Radio,Scheduled works authorised under the Crossrail Act 2008,/exemption/dredging/miscellaneous/crossrail-act
+/exemption/dredging,Radio,Other,/exemption/dredging-exe-not-available-continue
+/exemption/dredging/navigational-dredging,Radio,Yes,/exemption/dredging/navigational-dredging/authorisation
+/exemption/dredging/navigational-dredging,Radio,No,/exemption/dredging/navigational-dredging/purpose
+/exemption/dredging/navigational-dredging/authorisation,Radio,A local Act,/exemption/dredging/navigational-dredging/method
+/exemption/dredging/navigational-dredging/authorisation,Radio,An order under Section 14 or 16 of the Harbours Act 1964,/exemption/dredging/navigational-dredging/method
+/exemption/dredging/navigational-dredging/authorisation,Radio,An order under Section 1 of the Harbours Act (Northern ireland) 1970,/exemption/dredging/navigational-dredging/method
+/exemption/dredging/navigational-dredging/authorisation,Radio,An order under Section 10(3) of the Harbours Act (Northern ireland) 1970,/exemption/dredging/navigational-dredging/method
+/exemption/dredging/navigational-dredging/authorisation,Radio,None of the above,/exemption/dredging/navigational-dredging/purpose
+/exemption/dredging/navigational-dredging/method,Radio,Yes,/exemption/licence-not-required-exemption-available-Section-75
+/exemption/dredging/navigational-dredging/method,Radio,No,/exemption/dredging/navigational-dredging/purpose
+/exemption/dredging/navigational-dredging/purpose,Radio,Yes,/exemption/dredging/navigational-dredging/maintenance
+/exemption/dredging/navigational-dredging/purpose,Radio,No,/exemption/dredging-exe-not-available-continue
+/exemption/dredging/navigational-dredging/maintenance,Radio,Yes,/exemption/dredging/navigational-dredging/previous-purpose
+/exemption/dredging/navigational-dredging/maintenance,Radio,No,/exemption/dredging-exe-not-available-continue
+/exemption/dredging/navigational-dredging/previous-purpose,Radio,Yes,/exemption/dredging/navigational-dredging/quantity
+/exemption/dredging/navigational-dredging/previous-purpose,Radio,No,/exemption/dredging-exe-not-available-continue
+/exemption/dredging/navigational-dredging/quantity,Radio,500m3 or less,/exemption/dredging/navigational-dredging/last-12months
+/exemption/dredging/navigational-dredging/quantity,Radio,More than 500m3,/exemption/dredging-exe-not-available-continue
+/exemption/dredging/navigational-dredging/last-12months,Radio,Yes,/exemption/dredging/navigational-dredging/last-12-quantity
+/exemption/dredging/navigational-dredging/last-12months,Radio,No,/exemption/dredging/navigational-dredging/obstruction
+/exemption/dredging/navigational-dredging/last-12-quantity,Radio,Yes,/exemption/dredging-exe-not-available-continue
+/exemption/dredging/navigational-dredging/last-12-quantity,Radio,No,/exemption/dredging/navigational-dredging/obstruction
+/exemption/dredging/navigational-dredging/obstruction,Radio,Yes,/exemption/dredging-exe-not-available-continue
+/exemption/dredging/navigational-dredging/obstruction,Radio,No,/exemption/dredging/navigational-dredging/mpa
+/exemption/dredging/navigational-dredging/mpa,Radio,Yes,/exemption/dredging/navigational-dredging/mpa-management
+/exemption/dredging/navigational-dredging/mpa,Radio,No,/exemption/licence-not-required-exemption-available-article-18A
+/exemption/dredging/navigational-dredging/mpa-management,Radio,Yes,/exemption/licence-not-required-exemption-available-article-18A
+/exemption/dredging/navigational-dredging/mpa-management,Radio,No,/exemption/dredging/navigational-dredging/lse
+/exemption/dredging/navigational-dredging/lse,Radio,Likely to have a significant effect on a European site?,/exemption/dredging-exe-not-available-continue
+/exemption/dredging/navigational-dredging/lse,Radio,Likely to have a significant effect on a Ramsar site?,/exemption/dredging-exe-not-available-continue
+/exemption/dredging/navigational-dredging/lse,Radio,"Capable of affecting (other than insignificantly), the protected features of a Marine Conservation Zone or Highly Protected Marine Area?",/exemption/dredging-exe-not-available-continue
+/exemption/dredging/navigational-dredging/lse,Radio,Unlikely to have any relevant effect on any sites specified above,/exemption/licence-not-required-exemption-available-article-18A
+/exemption/dredging/shellfish-propagation-cultivation,Radio,Yes,/exemption/licence-not-required-exemption-available-article-13
+/exemption/dredging/shellfish-propagation-cultivation,Radio,No,/exemption/dredging-exe-not-available-continue
+/exemption/dredging/coastal-drainage-flood,Radio,"Maintenance of coast protection, drainage or flood defence works",/exemption/dredging/coastal-drainage-flood/maintenance
+/exemption/dredging/coastal-drainage-flood,Radio,Emergency works in relation to flood or flood risk,/exemption/dredging/coastal-drainage-flood/emergency
+/exemption/dredging/coastal-drainage-flood,Radio,Other,/exemption/dredging-exe-not-available-continue
+/exemption/dredging/coastal-drainage-flood/maintenance,Radio,The Environment Agency or someone on behalf of the Environment Agency,/exemption/dredging/coastal-drainage-flood/maintenance/EA
+/exemption/dredging/coastal-drainage-flood/maintenance,Radio,The Coast Protection Authority or someone on behalf of the Coast Protection Authority,/exemption/dredging/coastal-drainage-flood/maintenance/CPA
+/exemption/dredging/coastal-drainage-flood/maintenance,Radio,The Local Authority or someone on behalf of the Local Authority,/exemption/dredging/coastal-drainage-flood/maintenance/CPA
+/exemption/dredging/coastal-drainage-flood/maintenance,Radio,The Secretary of State for Defence or someone on behalf of the Secretary of State for Defence,/exemption/dredging/coastal-drainage-flood/maintenance/CPA
+/exemption/dredging/coastal-drainage-flood/maintenance,Radio,Someone else,/exemption/dredging-exe-not-available-continue
+/exemption/dredging/coastal-drainage-flood/maintenance/EA,Radio,Yes,/exemption/dredging/coastal-drainage-flood/maintenance/EA/beach-replenishment
+/exemption/dredging/coastal-drainage-flood/maintenance/EA,Radio,No,/exemption/dredging/coastal-drainage-flood/emergency/validation
+/exemption/dredging/coastal-drainage-flood/maintenance/EA/beach-replenishment,Radio,Yes,/exemption/dredging-exe-not-available-continue
+/exemption/dredging/coastal-drainage-flood/maintenance/EA/beach-replenishment,Radio,No,/exemption/licence-not-required-exemption-available-article-19
+/exemption/dredging/coastal-drainage-flood/maintenance/CPA,Radio,Yes,/exemption/dredging/coastal-drainage-flood/maintenance/EA/beach-replenishment
+/exemption/dredging/coastal-drainage-flood/maintenance/CPA,Radio,No,/exemption/dredging-exe-not-available-continue
+/exemption/dredging/coastal-drainage-flood/maintenance/CPA/beach-replenishment,Radio,Yes,/exemption/dredging-exe-not-available-continue
+/exemption/dredging/coastal-drainage-flood/maintenance/CPA/beach-replenishment,Radio,No,/exemption/licence-not-required-exemption-available-article-19
+/exemption/dredging/coastal-drainage-flood/emergency,Radio,Yes,/exemption/dredging/coastal-drainage-flood/emergency/validation
+/exemption/dredging/coastal-drainage-flood/emergency,Radio,No,/exemption/dredging-exe-not-available-continue
+/exemption/dredging/coastal-drainage-flood/emergency/validation,Radio,Yes,/exemption/licence-not-required-exemption-available-article-20
+/exemption/dredging/coastal-drainage-flood/emergency/validation,Radio,No,/exemption/dredging-exe-not-available-continue
+/exemption/dredging/emergency,Radio,Flood or flood risk,/exemption/dredging/emergency/flood-flood-risk
+/exemption/dredging/emergency,Radio,Cables and pipelines,/exemption/dredging/emergency/cables-pipelines
+/exemption/dredging/emergency,Radio,Coastguard activities,/exemption/dredging/emergency/coastguard
+/exemption/dredging/emergency,Radio,Salvage Operation,/exemption/dredging/emergency/salvage-operation
+/exemption/dredging/emergency,Radio,Safety directions under the Merchant Shipping Act 1995,/exemption/dredging/safety-training/safety-directions
+/exemption/dredging/emergency,Radio,Other,/exemption/dredging-exe-not-available-continue
+/exemption/dredging/emergency/flood-flood-risk,Radio,Yes,/exemption/dredging/emergency/flood-flood-risk/emergency
+/exemption/dredging/emergency/flood-flood-risk,Radio,No,/exemption/dredging-exe-not-available-continue
+/exemption/dredging/emergency/flood-flood-risk/emergency,Radio,Yes,/exemption/licence-not-required-exemption-available-article-20
+/exemption/dredging/emergency/flood-flood-risk/emergency,Radio,No,/exemption/dredging-exe-not-available-continue
+/exemption/dredging/emergency/cables-pipelines,Radio,Yes,/exemption/dredging/emergency/cables-pipelines/emergency
+/exemption/dredging/emergency/cables-pipelines,Radio,No,/exemption/dredging-exe-not-available-continue
+/exemption/dredging/emergency/cables-pipelines/emergency,Radio,Yes,/exemption/dredging/emergency/cables-pipelines/protection
+/exemption/dredging/emergency/cables-pipelines/emergency,Radio,No,/exemption/dredging-exe-not-available-continue
+/exemption/dredging/emergency/cables-pipelines/protection,Radio,Yes,/exemption/dredging-exe-not-available-continue
+/exemption/dredging/emergency/cables-pipelines/protection,Radio,No,/exemption/dredging/emergency/cables-pipelines/protection/explosives
+/exemption/dredging/emergency/cables-pipelines/protection/explosives,Radio,Yes,/exemption/dredging-exe-not-available-continue
+/exemption/dredging/emergency/cables-pipelines/protection/explosives,Radio,No,/exemption/licence-not-required-exemption-available-article-34
+/exemption/dredging/emergency/coastguard,Radio,Yes,/exemption/dredging/emergency/coastguard/purpose
+/exemption/dredging/emergency/coastguard,Radio,No,/exemption/dredging-exe-not-available-continue
+/exemption/dredging/emergency/coastguard/purpose,Radio,"Securing the safety of a vessel, aircraft or marine structure",/exemption/licence-not-required-exemption-available-article-32
+/exemption/dredging/emergency/coastguard/purpose,Radio,Saving life,/exemption/licence-not-required-exemption-available-article-32
+/exemption/dredging/emergency/coastguard/purpose,Radio,Training for either of the above two purposes,/exemption/licence-not-required-exemption-available-article-32
+/exemption/dredging/emergency/coastguard/purpose,Radio,Other,/exemption/dredging-exe-not-available-continue
+/exemption/dredging/emergency/salvage-operation,Radio,Yes,/exemption/licence-not-required-exemption-available-article-9
+/exemption/dredging/emergency/salvage-operation,Radio,No,/exemption/dredging-exe-not-available-continue
+/exemption/dredging/safety-training/safety-directions,Radio,In exercise of a power under Schedule 3A to the Merchant Shipping Act 1995 (safety directions) by or on behalf of the Secretary of State,/exemption/licence-not-required-exemption-available-article-8
+/exemption/dredging/safety-training/safety-directions,Radio,Compliance with a direction under Schedule 3A to the Merchant Shipping Act 1995 (safety directions),/exemption/licence-not-required-exemption-available-article-8
+/exemption/dredging/safety-training/safety-directions,Radio,Avoiding interference with action taken under Schedule 3A to the Merchant Shipping Act 1995 (safety directions),/exemption/licence-not-required-exemption-available-article-8
+/exemption/dredging/safety-training/safety-directions,Radio,Other,/exemption/dredging-exe-not-available-continue
+/exemption/dredging/miscellaneous/deepsea-mining,Radio,In pursuance of an exploration or exploitation licence issued under the Deep Sea Mining (Temporary Provision) Act 1981,/exemption/licence-not-required-exemption-available-article-30
+/exemption/dredging/miscellaneous/deepsea-mining,Radio,In pursuance of a reciprocal authorisation within the meaning given by section 3(3) of the Deep Sea Mining (Temporary Provision) Act 1981,/exemption/licence-not-required-exemption-available-article-30
+/exemption/dredging/miscellaneous/deepsea-mining,Radio,for another reason,/exemption/dredging-exe-not-available-continue
+/exemption/dredging/miscellaneous/crossrail-act,Radio,Yes,/exemption/licence-not-required-exemption-available-article-29
+/exemption/dredging/miscellaneous/crossrail-act,Radio,No,/exemption/dredging-exe-not-available-continue
+/mod-permission,Outcome,,
+/not-licensable,Outcome,,
+/scaffolding-impede-navigation,Outcome,,
+/scaffolding-mca-th-agreed,Outcome,,
+/markers/ha-not-agreed,Outcome,,
+/markers/th-not-agreed,Outcome,,
+/fast-track-mla,Outcome,,
+/fast-track-mla/bas-block,Outcome,,
+/not-screened-out,Outcome,,
+/historic-england/not-agreed,Outcome,,
+/fast-track-mla/activity,Outcome,,
+/natural-england/not-agreed,Outcome,,
+/standard-marine-licence-application/construction,Outcome,,
+/standard-marine-licence-application/deposit,Outcome,,
+/standard-marine-licence-application/removal,Outcome,,
+/standard-marine-licence-application/dredging,Outcome,,
+/standard-marine-licence-application/incineration,Outcome,,
+/standard-marine-licence-application/scuttling,Outcome,,
+/standard-marine-licence-application/explosives,Outcome,,
+/standard-marine-licence-application/other-activity,Outcome,,
+/standard-marine-licence-application/other-maintenance,Outcome,,
+/standard-marine-licence-application/bas-duration,Outcome,,
+/standard-marine-licence-application/bas-other-location,Outcome,,
+/standard-marine-licence-application/other-removals,Outcome,,
+/standard-marine-licence-application/other-clearance-dredging,Outcome,,
+/standard-marine-licence-application/other-beach-maintenance,Outcome,,
+/standard-marine-licence-application/other-deposits,Outcome,,
+/standard-marine-licence-application/duration,Outcome,,
+/standard-marine-licence-application/public-register,Outcome,,
+/standard-marine-licence-application/ten-square-miles,Outcome,,
+/standard-marine-licence-application/intrusive-in-nature,Outcome,,
+/standard-marine-licence-application/routing-measure,Outcome,,
+/standard-marine-licence-application/protected-place,Outcome,,
+/exemption/licence-not-required,Outcome,,
+/exemption/licence-not-required/deposit-method,Outcome,,
+/exemption/licence-not-required/sea,Outcome,,
+/exemption/licence-not-required/deposit-method,Outcome,,
+/exemption/licence-not-required/removal-seabed,Outcome,,
+/exemption/licence-not-required/removal-method,Outcome,,
+/exemption/licence-not-required/Incineration-on,Outcome,,
+/exemption/licence-not-required/Activity-elsewhere,Outcome,,
+/exemption/licence-not-required/deposit-method-elsewhere,Outcome,,
+/exemption/licence-not-required/scuttling-method-elsewhere,Outcome,,
+/exemption/licence-not-required/incineration-method-elsewhere,Outcome,,
+/exemption/licence-not-required/scuttling-method-elsewhere,Outcome,,
+/exemption/licence-not-required-cables,Outcome,,
+/exemption/licence-not-required-cables/maintenance,Outcome,,
+/exemption/licence-required-no-exemption-part-cables,Outcome,,
+/exemption/licence-not-required-cables/maintenance/both,Outcome,,
+/exemption/licence-not-required-exemption-available-article-7,Outcome,,
+/exemption/licence-not-required-exemption-available-article-8,Outcome,,
+/exemption/licence-not-required-exemption-available-article-9,Outcome,,
+/exemption/licence-not-required-exemption-available-article-10,Outcome,,
+/exemption/licence-not-required-exemption-available-article-11,Outcome,,
+/exemption/licence-not-required-exemption-available-article-12,Outcome,,
+/exemption/licence-not-required-exemption-available-article-13,Outcome,,
+/exemption/licence-not-required-exemption-available-article-14,Outcome,,
+/exemption/licence-not-required-exemption-available-article-15,Outcome,,
+/exemption/licence-not-required-exemption-available-article-16,Outcome,,
+/exemption/licence-not-required-exemption-available-article-17,Outcome,,
+/exemption/licence-not-required-exemption-available-article-17A,Outcome,,
+/exemption/licence-not-required-exemption-available-article-17B,Outcome,,
+/exemption/licence-not-required-exemption-available-article-18,Outcome,,
+/exemption/licence-not-required-exemption-available-article-18A,Outcome,,
+/exemption/licence-not-required-exemption-available-article-19,Outcome,,
+/exemption/licence-not-required-exemption-available-article-20,Outcome,,
+/exemption/licence-not-required-exemption-available-article-21,Outcome,,
+/exemption/licence-not-required-exemption-available-article-21-no-notification,Outcome,,
+/exemption/licence-not-required-exemption-available-article-21A,Outcome,,
+/exemption/licence-not-required-exemption-available-article-22,Outcome,,
+/exemption/licence-not-required-exemption-available-article-23,Outcome,,
+/exemption/licence-not-required-exemption-available-article-24,Outcome,,
+/exemption/licence-not-required-exemption-available-article-24A,Outcome,,
+/exemption/licence-not-required-exemption-available-article-25,Outcome,,
+/exemption/licence-not-required-exemption-available-article-25-notification,Outcome,,
+/exemption/licence-not-required-exemption-available-article-25A,Outcome,,
+/exemption/licence-not-required-exemption-available-article-25A-mmo-approval,Outcome,,
+/exemption/licence-not-required-exemption-available-article-26,Outcome,,
+/exemption/licence-not-required-exemption-available-article-26a,Outcome,,
+/exemption/licence-not-required-exemption-available-article-26a-no-notification,Outcome,,
+/exemption/licence-not-required-exemption-available-article-27,Outcome,,
+/exemption/licence-not-required-exemption-available-article-27A,Outcome,,
+/exemption/licence-not-required-exemption-available-article-28,Outcome,,
+/exemption/licence-not-required-exemption-available-article-29,Outcome,,
+/exemption/licence-not-required-exemption-available-article-30,Outcome,,
+/exemption/licence-not-required-exemption-available-article-31,Outcome,,
+/exemption/licence-not-required-exemption-available-article-32,Outcome,,
+/exemption/licence-not-required-exemption-available-article-33,Outcome,,
+/exemption/licence-not-required-exemption-available-article-34,Outcome,,
+/exemption/licence-not-required-exemption-available-article-35,Outcome,,
+/exemption/licence-not-required-exemption-available-article-36,Outcome,,
+/exemption/licence-not-required-exemption-available-article-37,Outcome,,
+/exemption/licence-not-required-exemption-available-Section-75,Outcome,,
+/exemption/licence-not-required-exemption-available-Section-75-disposal,Outcome,,
+/exemption/licence-not-required-exemption-available-Section-77,Outcome,,
+/licence-not-required-devolved,Outcome,,
+/exemption/licence-required-no-exemption-no-self-service,Outcome,,
+/exemption/licence-required-no-exemption,Outcome,,
+/exemption/construction-exe-not-available-continue,Outcome,,
+/exemption/deposit-exe-not-available-continue,Outcome,,
+/exemption/removal-exe-not-available-continue,Outcome,,
+/exemption/dredging-exe-not-available-continue,Outcome,,
+/construction/journey-select,Outcome,,
+/deposit/journey-select,Outcome,,
+/removal/journey-select,Outcome,,
+/dredging/journey-select,Outcome,,

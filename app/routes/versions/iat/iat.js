@@ -8,11 +8,18 @@ module.exports = function (router) {
 
   const base = "/versions/iat/journey"; // prefix reused everywhere
 
-  // Detect card pages - either questions with Option answers or outcomes with outcomeTypes
+  // Helper function to get caption text from section
+  const getCaptionText = (sectionId) => {
+    if (!sectionId) return null;
+    const section = iat.sections.find(s => s.id === sectionId);
+    return section ? section.text : null;
+  };
+
+  // Detect card pages - either questions with Option answers or outcomes with multiple outcomeTypes
   const isCard = (q) =>
     (q.answers &&
       q.answers.some((a) => /^option\s*\d+/i.test(a.text.trim()))) ||
-    (q.outcomeTypes && q.outcomeTypes.length > 0);
+    (q.outcomeTypes && q.outcomeTypes.length > 1);
 
   // Helper function to create answers from outcomeTypes
   const createAnswersFromOutcomeTypes = (q) => {
@@ -27,7 +34,7 @@ module.exports = function (router) {
 
         return {
           id: outcomeTypeId,
-          text: `<h3>Option ${index + 1}</h3><p><strong>${outcomeType.heading}</strong></p><p>${outcomeType.text}</p>`,
+          text: `<h3 class="govuk-heading-m">Option ${index + 1} - ${outcomeType.heading}</h3><p>${outcomeType.text}</p>`,
         };
       })
       .filter(Boolean);
@@ -55,12 +62,39 @@ module.exports = function (router) {
       const view = {
         h1: q.text || q.heading, // questions use 'text', outcomes use 'heading'
         hintHtml: q.hint,
+        caption: getCaptionText(q.section)
       };
 
       // For outcomes that have both heading and text, use heading as h1 and text as hint
       if (q.heading && q.text) {
         view.h1 = q.heading;
         view.hintHtml = q.text;
+      }
+
+      // Check if this is a single outcome type (like notification required exemptions)
+      if (q.outcomeTypes && q.outcomeTypes.length === 1) {
+        const outcomeType = iat.outcomeTypes.find(ot => ot.id === q.outcomeTypes[0]);
+        if (outcomeType) {
+          // Render as simple outcome page
+          view.h1 = q.heading;
+          view.bodyHtml = outcomeType.text;
+          
+          // Set up primary action if outcomeType has heading (like notification forms)
+          if (outcomeType.heading) {
+            view.primaryAction = {
+              text: outcomeType.heading,
+              href: "#" // This would be set to the actual service URL
+            };
+          }
+          
+          // Add secondary action for downloading answers
+          view.secondaryAction = {
+            text: "Download a PDF record of my answers",
+            href: "#" // This would be set to the actual download URL
+          };
+          
+          return res.render("versions/iat/layouts/iat/outcome", view);
+        }
       }
 
       if (isCard(q)) {
@@ -130,6 +164,7 @@ module.exports = function (router) {
         res.render("versions/iat/layouts/iat/outcome", {
           h1: o.heading || "",
           bodyHtml: o.text,
+          caption: getCaptionText(o.section),
           primaryAction: o.link
             ? { text: o.heading || "Continue", href: o.link }
             : null,
