@@ -13,7 +13,9 @@
   <h1 class="govuk-heading-l">{{ h1 }}</h1>
 
   {% if hintHtml %}
-    <div class="govuk-body">{{ hintHtml | safe }}</div>
+    <div class="govuk-inset-text">
+      {{ hintHtml | safe }}
+    </div>
   {% endif %}
 
   {# Render each answer block exactly as supplied in rawAnswers #}
@@ -21,10 +23,18 @@
     <div class="govuk-!-margin-bottom-6 govuk-!-padding-4 govuk-border">
       {{ a.text | safe }}
 
-      <form method="post" class="govuk-!-margin-top-3" novalidate>
-        <input type="hidden" name="selection" value="{{ a.id }}">
-        {{ govukButton({ text: "Continue" }) }}
-      </form>
+      <div class="govuk-!-margin-top-3">
+        <form method="post" style="display: inline-block; margin-right: 0.5rem;" novalidate>
+          <input type="hidden" name="selection" value="{{ a.id }}">
+          {{ govukButton({ text: "Continue", classes: "govuk-!-margin-bottom-0" }) }}
+        </form>
+        
+        {{ govukButton({ 
+          text: "Download a PDF record of my answers",
+          classes: "govuk-button--secondary govuk-!-margin-bottom-0",
+          href: "#"
+        }) }}
+      </div>
     </div>
   {% endfor %}
 {% endblock %}

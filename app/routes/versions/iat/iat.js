@@ -27,7 +27,7 @@ module.exports = function (router) {
 
         return {
           id: outcomeTypeId,
-          text: `<h3>Option ${index + 1}</h3><p><strong>${outcomeType.heading}</strong></p><p>${outcomeType.text}</p>`,
+          text: `<h3 class="govuk-heading-m">Option ${index + 1} - ${outcomeType.heading}</h3><p>${outcomeType.text}</p>`,
         };
       })
       .filter(Boolean);
