@@ -81,9 +81,24 @@ module.exports = function (router) {
           
           // Set up primary action if outcomeType has heading (like notification forms)
           if (outcomeType.heading) {
+            let actionHref = "#"; // Default fallback
+            
+            // For exemption notifications, link to the sign-in page with article parameter
+            if (outcomeType.heading === "Fill out an exemption notification") {
+              // Extract article from outcomeType params
+              const articleParam = outcomeType.params?.find(p => p.name === "ARTICLE");
+              const article = articleParam?.value;
+              
+              if (article) {
+                actionHref = `/versions/iat/exemption/sign-in?article=${article}`;
+              } else {
+                actionHref = "/versions/iat/exemption/sign-in";
+              }
+            }
+            
             view.primaryAction = {
               text: outcomeType.heading,
-              href: "#" // This would be set to the actual service URL
+              href: actionHref
             };
           }
           
