@@ -81,9 +81,16 @@ module.exports = function (router) {
           
           // Set up primary action if outcomeType has heading (like notification forms)
           if (outcomeType.heading) {
+            let actionHref = "#"; // Default fallback
+            
+            // For exemption notifications, link to the sign-in page
+            if (outcomeType.heading === "Fill out an exemption notification") {
+              actionHref = "/versions/iat/exemption/sign-in";
+            }
+            
             view.primaryAction = {
               text: outcomeType.heading,
-              href: "#" // This would be set to the actual service URL
+              href: actionHref
             };
           }
           
