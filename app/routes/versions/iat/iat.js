@@ -83,9 +83,17 @@ module.exports = function (router) {
           if (outcomeType.heading) {
             let actionHref = "#"; // Default fallback
             
-            // For exemption notifications, link to the sign-in page
+            // For exemption notifications, link to the sign-in page with article parameter
             if (outcomeType.heading === "Fill out an exemption notification") {
-              actionHref = "/versions/iat/exemption/sign-in";
+              // Extract article from outcomeType params
+              const articleParam = outcomeType.params?.find(p => p.name === "ARTICLE");
+              const article = articleParam?.value;
+              
+              if (article) {
+                actionHref = `/versions/iat/exemption/sign-in?article=${article}`;
+              } else {
+                actionHref = "/versions/iat/exemption/sign-in";
+              }
             }
             
             view.primaryAction = {
