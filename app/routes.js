@@ -21,56 +21,38 @@ require('./routes/versions/2024-03-18/account.js')(router);
 require('./routes/versions/2024-03-18/sites.js')(router);
 
 // 27 Jan 2025
-require('./routes/versions/2025-01-27/account.js')(router);
-require('./routes/versions/2025-01-27/sites.js')(router);
 require('./routes/versions/2025-01-27/check.js')(router);
 require('./routes/versions/2025-01-27/exemption.js')(router);
 
 // 17 Feb 2025
-require('./routes/versions/2025-02-17/account.js')(router);
-require('./routes/versions/2025-02-17/sites.js')(router);
 require('./routes/versions/2025-02-17/check.js')(router);
 require('./routes/versions/2025-02-17/exemption.js')(router);
 
 // 03 Mar 2025
-require('./routes/versions/2025-03-03/account.js')(router);
-require('./routes/versions/2025-03-03/sites.js')(router);
 require('./routes/versions/2025-03-03/check.js')(router);
 require('./routes/versions/2025-03-03/exemption.js')(router);
 
 // 14 Mar 2025
-require('./routes/versions/2025-03-14/account.js')(router);
-require('./routes/versions/2025-03-14/sites.js')(router);
 require('./routes/versions/2025-03-14/check.js')(router);
 require('./routes/versions/2025-03-14/exemption.js')(router);
 
 // 4 Apr 2025 - Iteration 4
-require('./routes/versions/2025-04-04/account.js')(router);
-require('./routes/versions/2025-04-04/sites.js')(router);
 require('./routes/versions/2025-04-04/check.js')(router);
 require('./routes/versions/2025-04-04/exemption.js')(router);
 
 // 8 Apr 2025 - MVP for Private Beta
-require('./routes/versions/mvp/account.js')(router);
-require('./routes/versions/mvp/sites.js')(router);
 require('./routes/versions/mvp/check.js')(router);
 require('./routes/versions/mvp/exemption.js')(router);
 
 // Multiple Sites Version
-require('./routes/versions/multiple-sites/account.js')(router);
-require('./routes/versions/multiple-sites/sites.js')(router);
 require('./routes/versions/multiple-sites/check.js')(router);
 require('./routes/versions/multiple-sites/exemption.js')(router);
 
 // Multiple Sites Version V2
-require('./routes/versions/multiple-sites-v2/account.js')(router);
-require('./routes/versions/multiple-sites-v2/sites.js')(router);
 require('./routes/versions/multiple-sites-v2/check.js')(router);
 require('./routes/versions/multiple-sites-v2/exemption.js')(router);
 
 // IAT Version
-require('./routes/versions/iat/account.js')(router);
-require('./routes/versions/iat/sites.js')(router);
 require('./routes/versions/iat/check.js')(router);
 require('./routes/versions/iat/exemption.js')(router);
 require('./routes/versions/iat/exemption-updated.js')(router);
