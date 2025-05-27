@@ -8,11 +8,11 @@ module.exports = function (router) {
 
   const base = "/versions/iat/journey"; // prefix reused everywhere
 
-  // Detect card pages - either questions with Option answers or outcomes with outcomeTypes
+  // Detect card pages - either questions with Option answers or outcomes with multiple outcomeTypes
   const isCard = (q) =>
     (q.answers &&
       q.answers.some((a) => /^option\s*\d+/i.test(a.text.trim()))) ||
-    (q.outcomeTypes && q.outcomeTypes.length > 0);
+    (q.outcomeTypes && q.outcomeTypes.length > 1);
 
   // Helper function to create answers from outcomeTypes
   const createAnswersFromOutcomeTypes = (q) => {
@@ -61,6 +61,32 @@ module.exports = function (router) {
       if (q.heading && q.text) {
         view.h1 = q.heading;
         view.hintHtml = q.text;
+      }
+
+      // Check if this is a single outcome type (like notification required exemptions)
+      if (q.outcomeTypes && q.outcomeTypes.length === 1) {
+        const outcomeType = iat.outcomeTypes.find(ot => ot.id === q.outcomeTypes[0]);
+        if (outcomeType) {
+          // Render as simple outcome page
+          view.h1 = q.heading;
+          view.bodyHtml = outcomeType.text;
+          
+          // Set up primary action if outcomeType has heading (like notification forms)
+          if (outcomeType.heading) {
+            view.primaryAction = {
+              text: outcomeType.heading,
+              href: "#" // This would be set to the actual service URL
+            };
+          }
+          
+          // Add secondary action for downloading answers
+          view.secondaryAction = {
+            text: "Download a PDF record of my answers",
+            href: "#" // This would be set to the actual download URL
+          };
+          
+          return res.render("versions/iat/layouts/iat/outcome", view);
+        }
       }
 
       if (isCard(q)) {
