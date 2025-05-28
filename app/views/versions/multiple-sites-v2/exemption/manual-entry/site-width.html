@@ -1,0 +1,132 @@
+{% extends "../../layouts/exemption.html" %}
+
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+
+{% set pageName = "Enter the width of the circular site in metres" %}
+
+{% block content %}
+
+<!-- Debug error states dropdown -->
+{% if data['showErrorStates'] == 'true' %}
+  <div class="govuk-!-margin-bottom-6" style="background: lightyellow; padding: 10px; border: 1px solid orange;">
+    <h3>Debug: Error States</h3>
+    <form method="post">
+      {{ govukSelect({
+        id: "error-type",
+        name: "error-type",
+        label: {
+          text: "Select error state to test:"
+        },
+        items: [
+          {
+            value: "",
+            text: "No errors",
+            selected: not data['error-type']
+          },
+          {
+            value: "width-empty",
+            text: "Width empty",
+            selected: data['error-type'] == "width-empty"
+          },
+          {
+            value: "width-invalid",
+            text: "Width not a number",
+            selected: data['error-type'] == "width-invalid"
+          },
+          {
+            value: "width-negative",
+            text: "Width negative or zero",
+            selected: data['error-type'] == "width-negative"
+          }
+        ]
+      }) }}
+      {{ govukButton({
+        text: "Apply"
+      }) }}
+    </form>
+  </div>
+{% endif %}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+
+    <form class="form" action="" method="post">
+
+      <!-- Error summary -->
+      {% if data['error-type'] %}
+        {% set errorArray = [] %}
+        {% if data['error-type'] == "width-empty" %}
+          {% set errorArray = (errorArray.push({
+            text: "Enter the width of the site",
+            href: "#manual-site-width"
+          }), errorArray) %}
+        {% endif %}
+        {% if data['error-type'] == "width-invalid" %}
+          {% set errorArray = (errorArray.push({
+            text: "Width must be a number",
+            href: "#manual-site-width"
+          }), errorArray) %}
+        {% endif %}
+        {% if data['error-type'] == "width-negative" %}
+          {% set errorArray = (errorArray.push({
+            text: "Width must be greater than 0",
+            href: "#manual-site-width"
+          }), errorArray) %}
+        {% endif %}
+
+        {{ govukErrorSummary({
+          titleText: "There is a problem",
+          errorList: errorArray
+        }) }}
+      {% endif %}
+
+      <!-- Caption -->
+      {% if data['exemption-project-name'] %}
+        <span class="govuk-caption-l">{{ data['exemption-project-name'] }}</span>
+      {% endif %}
+
+      <h1 class="govuk-heading-l">{{ pageName }}</h1>
+
+      <p class="govuk-body">Site 1</p>
+
+      {{ govukInput({
+        label: {
+          text: "Width in metres"
+        },
+        hint: {
+          text: "For example, 50"
+        },
+        id: "manual-site-width",
+        name: "manual-site-width",
+        value: data['manual-site-width'],
+        classes: "govuk-input--width-5",
+        inputmode: "numeric",
+        spellcheck: false,
+        errorMessage: {
+          text: "Enter the width of the site"
+        } if data['error-type'] == "width-empty",
+        errorMessage: {
+          text: "Width must be a number"
+        } if data['error-type'] == "width-invalid",
+        errorMessage: {
+          text: "Width must be greater than 0"
+        } if data['error-type'] == "width-negative"
+      }) }}
+
+      {{ govukButton({
+        text: "Continue"
+      }) }}
+
+    </form>
+
+    <p class="govuk-body">
+      <a href="../cancel-site-details" class="govuk-link">Cancel</a>
+    </p>
+
+  </div>
+</div>
+
+{% endblock %} 

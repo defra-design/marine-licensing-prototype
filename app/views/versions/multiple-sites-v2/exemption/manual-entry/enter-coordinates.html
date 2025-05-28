@@ -1,0 +1,164 @@
+{% extends "../../layouts/exemption.html" %}
+
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+
+{% set pageName = "Enter the coordinates at the centre point of the site" %}
+
+{% block content %}
+
+<!-- Debug error states dropdown -->
+{% if data['showErrorStates'] == 'true' %}
+  <div class="govuk-!-margin-bottom-6" style="background: lightyellow; padding: 10px; border: 1px solid orange;">
+    <h3>Debug: Error States</h3>
+    <form method="post">
+      {{ govukSelect({
+        id: "error-type",
+        name: "error-type",
+        label: {
+          text: "Select error state to test:"
+        },
+        items: [
+          {
+            value: "",
+            text: "No errors",
+            selected: not data['error-type']
+          },
+          {
+            value: "latitude-empty",
+            text: "Latitude empty",
+            selected: data['error-type'] == "latitude-empty"
+          },
+          {
+            value: "longitude-empty", 
+            text: "Longitude empty",
+            selected: data['error-type'] == "longitude-empty"
+          },
+          {
+            value: "both-empty",
+            text: "Both coordinates empty",
+            selected: data['error-type'] == "both-empty"
+          },
+          {
+            value: "invalid-latitude",
+            text: "Invalid latitude format",
+            selected: data['error-type'] == "invalid-latitude"
+          },
+          {
+            value: "invalid-longitude",
+            text: "Invalid longitude format", 
+            selected: data['error-type'] == "invalid-longitude"
+          }
+        ]
+      }) }}
+      {{ govukButton({
+        text: "Apply"
+      }) }}
+    </form>
+  </div>
+{% endif %}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+
+    <form class="form" action="" method="post">
+
+      <!-- Error summary -->
+      {% if data['error-type'] %}
+        {% set errorArray = [] %}
+        {% if data['error-type'] == "latitude-empty" or data['error-type'] == "both-empty" %}
+          {% set errorArray = (errorArray.push({
+            text: "Enter the latitude",
+            href: "#manual-latitude"
+          }), errorArray) %}
+        {% endif %}
+        {% if data['error-type'] == "longitude-empty" or data['error-type'] == "both-empty" %}
+          {% set errorArray = (errorArray.push({
+            text: "Enter the longitude", 
+            href: "#manual-longitude"
+          }), errorArray) %}
+        {% endif %}
+        {% if data['error-type'] == "invalid-latitude" %}
+          {% set errorArray = (errorArray.push({
+            text: "Enter latitude in the correct format, for example 50.7184",
+            href: "#manual-latitude"
+          }), errorArray) %}
+        {% endif %}
+        {% if data['error-type'] == "invalid-longitude" %}
+          {% set errorArray = (errorArray.push({
+            text: "Enter longitude in the correct format, for example -1.9648",
+            href: "#manual-longitude"
+          }), errorArray) %}
+        {% endif %}
+
+        {{ govukErrorSummary({
+          titleText: "There is a problem",
+          errorList: errorArray
+        }) }}
+      {% endif %}
+
+      <!-- Caption -->
+      {% if data['exemption-project-name'] %}
+        <span class="govuk-caption-l">{{ data['exemption-project-name'] }}</span>
+      {% endif %}
+
+      <h1 class="govuk-heading-l">{{ pageName }}</h1>
+
+      <p class="govuk-body">Site 1</p>
+
+      <p class="govuk-body">Use the {{ data['manual-coordinate-system'] or 'WGS84' }} coordinate system.</p>
+
+      {{ govukInput({
+        label: {
+          text: "Latitude"
+        },
+        hint: {
+          text: "For example, 50.7184"
+        },
+        id: "manual-latitude",
+        name: "manual-latitude",
+        value: data['manual-latitude'],
+        classes: "govuk-input--width-10",
+        errorMessage: {
+          text: "Enter the latitude"
+        } if data['error-type'] == "latitude-empty" or data['error-type'] == "both-empty",
+        errorMessage: {
+          text: "Enter latitude in the correct format, for example 50.7184"
+        } if data['error-type'] == "invalid-latitude"
+      }) }}
+
+      {{ govukInput({
+        label: {
+          text: "Longitude"
+        },
+        hint: {
+          text: "For example, -1.9648"
+        },
+        id: "manual-longitude", 
+        name: "manual-longitude",
+        value: data['manual-longitude'],
+        classes: "govuk-input--width-10",
+        errorMessage: {
+          text: "Enter the longitude"
+        } if data['error-type'] == "longitude-empty" or data['error-type'] == "both-empty",
+        errorMessage: {
+          text: "Enter longitude in the correct format, for example -1.9648"
+        } if data['error-type'] == "invalid-longitude"
+      }) }}
+
+      {{ govukButton({
+        text: "Continue"
+      }) }}
+
+    </form>
+
+    <p class="govuk-body">
+      <a href="../cancel-site-details" class="govuk-link">Cancel</a>
+    </p>
+
+  </div>
+</div>
+
+{% endblock %} 

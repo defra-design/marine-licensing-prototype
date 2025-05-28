@@ -604,7 +604,7 @@ router.post('/' + version + section + 'how-do-you-want-to-provide-the-coordinate
     // Route based on selection
     switch(selection) {
         case "Enter the coordinates of the site manually":
-            res.redirect('stop');
+            res.redirect('manual-entry/does-your-project-involve-more-than-one-site');
             break;
         case "Upload a file with the coordinates of the site":
             res.redirect('which-type-of-file');
