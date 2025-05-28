@@ -44,24 +44,20 @@ How do you want to enter the site coordinates?
 {% endif %}
         <!--  END OF 'error summary' -->
         
-        <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
-        
         <form action="how-do-you-want-to-enter-the-coordinates-router" method="post" novalidate>
 
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
 
 {{ govukRadios({
   idPrefix: "coordinate-entry-method",
   name: "coordinate-entry-method",
   fieldset: {
     legend: {
-      text: pageHeadingTextHTML,
+      html: '<span class="govuk-caption-l">' + data['exemption-project-name-text-input'] + '</span>' + pageHeadingTextHTML + '<span class="govuk-caption-l">Site 1</span>',
       isPageHeading: true,
       classes: "govuk-fieldset__legend--l"
     }
-  },
-  hint: {
-    text: "Site 1"
   },
   errorMessage: {
     text: errorText1HTML

@@ -11,7 +11,7 @@ Are the activity dates the same for every site?
 {% endset %}
 
 {% set errorText1HTML %}
-    Select yes if the activity dates are the same for every site
+    Select whether the activity dates the same for every site?
 {% endset %}
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
@@ -44,18 +44,17 @@ Are the activity dates the same for every site?
 {% endif %}
         <!--  END OF 'error summary' -->
         
-        <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
-        
         <form action="same-activity-dates-router" method="post" novalidate>
 
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
 
 {{ govukRadios({
   idPrefix: "same-activity-dates",
   name: "same-activity-dates",
   fieldset: {
     legend: {
-      text: pageHeadingTextHTML,
+      html: '<span class="govuk-caption-l">' + data['exemption-project-name-text-input'] + '</span>' + pageHeadingTextHTML,
       isPageHeading: true,
       classes: "govuk-fieldset__legend--l"
     }

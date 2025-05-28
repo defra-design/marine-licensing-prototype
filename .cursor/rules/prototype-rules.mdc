@@ -103,6 +103,7 @@ This approach ensures the page remains accessible while allowing the heading to 
 ### Validation & Accessibility
 - Return validation errors with `govukErrorSummary`
 - Add per-field error items
+- **Never include HTML comments in error message variables** - comments will be displayed to users
 - Meet WCAG 2.2 AA standards
 - Follow Home Office accessibility poster guidance:
   - Appropriate colour contrast
