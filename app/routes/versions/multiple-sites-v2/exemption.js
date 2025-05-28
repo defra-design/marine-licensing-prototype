@@ -604,7 +604,7 @@ router.post('/' + version + section + 'how-do-you-want-to-provide-the-coordinate
     // Route based on selection
     switch(selection) {
         case "Enter the coordinates of the site manually":
-            res.redirect('stop');
+            res.redirect('manual-entry/does-your-project-involve-more-than-one-site');
             break;
         case "Upload a file with the coordinates of the site":
             res.redirect('which-type-of-file');
@@ -1996,6 +1996,311 @@ router.get('/' + version + section + 'review-site-details', function (req, res) 
     
     // Render the page
     res.render(version + section + 'review-site-details');
+});
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Manual Entry Flow Routes
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+// Does your project involve more than one site?
+router.post('/' + version + section + 'manual-entry/does-your-project-involve-more-than-one-site-router', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    const selection = req.session.data['multiple-sites'];
+
+    if (!selection) {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        res.redirect('does-your-project-involve-more-than-one-site');
+        return;
+    }
+
+    // Route based on selection
+    switch(selection) {
+        case "Yes":
+            res.redirect('site-name');
+            break;
+        case "No":
+            res.redirect('../stop');
+            break;
+        default:
+            res.redirect('does-your-project-involve-more-than-one-site');
+    }
+});
+
+// Site name
+router.post('/' + version + section + 'manual-entry/site-name-router', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    const siteName = req.session.data['site-name-text-input'];
+
+    if (!siteName || siteName.trim() === "") {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        res.redirect('site-name');
+        return;
+    }
+
+    res.redirect('same-activity-dates');
+});
+
+// Are the activity dates the same for every site?
+router.post('/' + version + section + 'manual-entry/same-activity-dates-router', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    const selection = req.session.data['same-activity-dates'];
+
+    if (!selection) {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        res.redirect('same-activity-dates');
+        return;
+    }
+
+    // Route based on selection
+    switch(selection) {
+        case "Yes":
+            res.redirect('activity-dates');
+            break;
+        case "No":
+            res.redirect('individual-site-activity-dates');
+            break;
+        default:
+            res.redirect('same-activity-dates');
+    }
+});
+
+// Individual site activity dates
+router.post('/' + version + section + 'manual-entry/individual-site-activity-dates-router', function (req, res) {
+    req.session.data['startdateerror'] = "false";
+    req.session.data['enddateerror'] = "false";
+
+    const startDay = req.session.data['manual-start-date-date-input-day'];
+    const startMonth = req.session.data['manual-start-date-date-input-month'];
+    const startYear = req.session.data['manual-start-date-date-input-year'];
+
+    const endDay = req.session.data['manual-end-date-date-input-day'];
+    const endMonth = req.session.data['manual-end-date-date-input-month'];
+    const endYear = req.session.data['manual-end-date-date-input-year'];
+
+    if (!startDay || !startMonth || !startYear) {
+        req.session.data['startdateerror'] = "true";
+    }
+
+    if (!endDay || !endMonth || !endYear) {
+        req.session.data['enddateerror'] = "true";
+    }
+
+    if (req.session.data['startdateerror'] === "true" || req.session.data['enddateerror'] === "true") {
+        return res.redirect('individual-site-activity-dates');
+    }
+
+    res.redirect('same-activity-description');
+});
+
+// Activity dates
+router.post('/' + version + section + 'manual-entry/activity-dates-router', function (req, res) {
+    req.session.data['startdateerror'] = "false";
+    req.session.data['enddateerror'] = "false";
+
+    const startDay = req.session.data['manual-start-date-date-input-day'];
+    const startMonth = req.session.data['manual-start-date-date-input-month'];
+    const startYear = req.session.data['manual-start-date-date-input-year'];
+
+    const endDay = req.session.data['manual-end-date-date-input-day'];
+    const endMonth = req.session.data['manual-end-date-date-input-month'];
+    const endYear = req.session.data['manual-end-date-date-input-year'];
+
+    if (!startDay || !startMonth || !startYear) {
+        req.session.data['startdateerror'] = "true";
+    }
+
+    if (!endDay || !endMonth || !endYear) {
+        req.session.data['enddateerror'] = "true";
+    }
+
+    if (req.session.data['startdateerror'] === "true" || req.session.data['enddateerror'] === "true") {
+        return res.redirect('activity-dates');
+    }
+
+    res.redirect('same-activity-description');
+});
+
+// Is the activity description the same for every site?
+router.post('/' + version + section + 'manual-entry/same-activity-description-router', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    const selection = req.session.data['same-activity-description'];
+
+    if (!selection) {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        res.redirect('same-activity-description');
+        return;
+    }
+
+    // Route based on selection
+    switch(selection) {
+        case "Yes":
+            res.redirect('activity-description');
+            break;
+        case "No":
+            res.redirect('individual-site-activity-description');
+            break;
+        default:
+            res.redirect('same-activity-description');
+    }
+});
+
+// Individual site activity description
+router.post('/' + version + section + 'manual-entry/individual-site-activity-description-router', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    const activityDetails = req.session.data['manual-activity-details-text-area'];
+
+    if (!activityDetails || activityDetails.trim() === "") {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        return res.redirect('individual-site-activity-description');
+    }
+
+    res.redirect('how-do-you-want-to-enter-the-coordinates');
+});
+
+// Activity description
+router.post('/' + version + section + 'manual-entry/activity-description-router', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    const activityDescription = req.session.data['manual-activity-details-text-area'];
+
+    if (!activityDescription || activityDescription.trim() === "") {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        res.redirect('activity-description');
+        return;
+    }
+
+    res.redirect('how-do-you-want-to-enter-the-coordinates');
+});
+
+// How do you want to enter the coordinates?
+router.post('/' + version + section + 'manual-entry/how-do-you-want-to-enter-the-coordinates-router', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    const selection = req.session.data['coordinate-entry-method'];
+
+    if (!selection) {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        res.redirect('how-do-you-want-to-enter-the-coordinates');
+        return;
+    }
+
+    // Route based on selection
+    switch(selection) {
+        case "Enter one set of coordinates and a width to create a circular site":
+            res.redirect('which-coordinate-system');
+            break;
+        case "Enter multiple sets of coordinates to mark the boundary of the site":
+            res.redirect('../stop');
+            break;
+        default:
+            res.redirect('how-do-you-want-to-enter-the-coordinates');
+    }
+});
+
+// Which coordinate system do you want to use?
+router.post('/' + version + section + 'manual-entry/which-coordinate-system-router', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    const selection = req.session.data['manual-coordinate-system-radios'];
+
+    if (!selection) {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        res.redirect('which-coordinate-system');
+        return;
+    }
+
+    // Route based on selection
+    switch(selection) {
+        case "WGS84 (World Geodetic System 1984)":
+            res.redirect('enter-coordinates');
+            break;
+        case "OSGB36 (National Grid)":
+            res.redirect('../stop');
+            break;
+        default:
+            res.redirect('which-coordinate-system');
+    }
+});
+
+// Enter the coordinates at the centre point
+router.post('/' + version + section + 'manual-entry/enter-coordinates-router', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errortypetwo'] = "false";
+
+    const latitude = req.session.data['manual-latitude'];
+    const longitude = req.session.data['manual-longitude'];
+
+    if (!latitude || latitude.trim() === "") {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+    }
+
+    if (!longitude || longitude.trim() === "") {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypetwo'] = "true";
+    }
+
+    if (req.session.data['errorthispage'] === "true") {
+        res.redirect('enter-coordinates');
+        return;
+    }
+
+    res.redirect('site-width');
+});
+
+// Site width
+router.post('/' + version + section + 'manual-entry/site-width-router', function (req, res) {
+    req.session.data['error-type'] = "";
+
+    const width = req.session.data['manual-site-width'];
+
+    if (!width || width.trim() === "") {
+        req.session.data['error-type'] = "width-empty";
+        res.redirect('site-width');
+        return;
+    }
+
+    // Check if width is a valid number
+    const widthNum = parseFloat(width);
+    if (isNaN(widthNum)) {
+        req.session.data['error-type'] = "width-invalid";
+        res.redirect('site-width');
+        return;
+    }
+
+    // Check if width is positive
+    if (widthNum <= 0) {
+        req.session.data['error-type'] = "width-negative";
+        res.redirect('site-width');
+        return;
+    }
+
+    // Clear error and redirect to task list or next page
+    req.session.data['error-type'] = "";
+    req.session.data['exempt-information-3-status'] = 'completed';
+    res.redirect('../task-list');
 });
 
 }
