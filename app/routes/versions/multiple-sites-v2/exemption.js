@@ -2066,11 +2066,39 @@ router.post('/' + version + section + 'manual-entry/same-activity-dates-router',
             res.redirect('activity-dates');
             break;
         case "No":
-            res.redirect('same-activity-description');
+            res.redirect('individual-site-activity-dates');
             break;
         default:
             res.redirect('same-activity-dates');
     }
+});
+
+// Individual site activity dates
+router.post('/' + version + section + 'manual-entry/individual-site-activity-dates-router', function (req, res) {
+    req.session.data['startdateerror'] = "false";
+    req.session.data['enddateerror'] = "false";
+
+    const startDay = req.session.data['manual-start-date-date-input-day'];
+    const startMonth = req.session.data['manual-start-date-date-input-month'];
+    const startYear = req.session.data['manual-start-date-date-input-year'];
+
+    const endDay = req.session.data['manual-end-date-date-input-day'];
+    const endMonth = req.session.data['manual-end-date-date-input-month'];
+    const endYear = req.session.data['manual-end-date-date-input-year'];
+
+    if (!startDay || !startMonth || !startYear) {
+        req.session.data['startdateerror'] = "true";
+    }
+
+    if (!endDay || !endMonth || !endYear) {
+        req.session.data['enddateerror'] = "true";
+    }
+
+    if (req.session.data['startdateerror'] === "true" || req.session.data['enddateerror'] === "true") {
+        return res.redirect('individual-site-activity-dates');
+    }
+
+    res.redirect('same-activity-description');
 });
 
 // Activity dates
@@ -2121,11 +2149,27 @@ router.post('/' + version + section + 'manual-entry/same-activity-description-ro
             res.redirect('activity-description');
             break;
         case "No":
-            res.redirect('how-do-you-want-to-enter-the-coordinates');
+            res.redirect('individual-site-activity-description');
             break;
         default:
             res.redirect('same-activity-description');
     }
+});
+
+// Individual site activity description
+router.post('/' + version + section + 'manual-entry/individual-site-activity-description-router', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    const activityDetails = req.session.data['manual-activity-details-text-area'];
+
+    if (!activityDetails || activityDetails.trim() === "") {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        return res.redirect('individual-site-activity-description');
+    }
+
+    res.redirect('how-do-you-want-to-enter-the-coordinates');
 });
 
 // Activity description
