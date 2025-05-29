@@ -50,8 +50,8 @@ Are the activity dates the same for every site?
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
 {{ govukRadios({
-  idPrefix: "same-activity-dates",
-  name: "same-activity-dates",
+  idPrefix: "manual-same-activity-dates",
+  name: "manual-same-activity-dates",
   fieldset: {
     legend: {
       html: '<span class="govuk-caption-l">' + data['exemption-project-name-text-input'] + '</span>' + pageHeadingTextHTML,
@@ -69,12 +69,12 @@ Are the activity dates the same for every site?
     {
       value: "Yes",
       text: "Yes, the dates are the same for every site",
-      checked: data['same-activity-dates'] == "Yes"
+      checked: data['manual-same-activity-dates'] == "Yes"
     },
     {
       value: "No",
       text: "No, at least one site has different dates",
-      checked: data['same-activity-dates'] == "No"
+      checked: data['manual-same-activity-dates'] == "No"
     }
   ]
 }) }}

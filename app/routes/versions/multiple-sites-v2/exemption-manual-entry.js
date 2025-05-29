@@ -22,7 +22,7 @@ router.post('/' + version + section + 'manual-entry/does-your-project-involve-mo
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
 
-    const selection = req.session.data['multiple-sites'];
+    const selection = req.session.data['manual-multiple-sites'];
 
     if (!selection) {
         req.session.data['errorthispage'] = "true";
@@ -50,6 +50,11 @@ router.get('/' + version + section + 'manual-entry/site-name', function (req, re
     req.session.data['errortypeone'] = "false";
     req.session.data['errors'] = [];
     
+    // Check if we're returning from review-site-details
+    if (req.query.returnTo === 'review-site-details') {
+        req.session.data['fromReviewSiteDetails'] = 'true';
+    }
+    
     res.render(version + section + 'manual-entry/site-name');
 });
 
@@ -58,13 +63,20 @@ router.post('/' + version + section + 'manual-entry/site-name-router', function 
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
 
-    const siteName = req.session.data['site-name-text-input'];
+    const siteName = req.session.data['manual-site-name-text-input'];
+    const returnTo = req.query.returnTo;
 
     if (!siteName || siteName.trim() === "") {
         req.session.data['errorthispage'] = "true";
         req.session.data['errortypeone'] = "true";
-        res.redirect('site-name');
+        res.redirect('site-name' + (returnTo ? '?returnTo=' + returnTo : ''));
         return;
+    }
+
+    // Check if we're coming from review-site-details page
+    if (req.session.data['fromReviewSiteDetails'] === 'true') {
+        delete req.session.data['fromReviewSiteDetails']; // Clear the flag
+        return res.redirect('review-site-details');
     }
 
     res.redirect('same-activity-dates');
@@ -76,6 +88,11 @@ router.get('/' + version + section + 'manual-entry/same-activity-dates', functio
     req.session.data['errortypeone'] = "false";
     req.session.data['errors'] = [];
     
+    // Check if we're returning from review-site-details
+    if (req.query.returnTo === 'review-site-details') {
+        req.session.data['fromReviewSiteDetails'] = 'true';
+    }
+    
     res.render(version + section + 'manual-entry/same-activity-dates');
 });
 
@@ -84,13 +101,20 @@ router.post('/' + version + section + 'manual-entry/same-activity-dates-router',
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
 
-    const selection = req.session.data['same-activity-dates'];
+    const selection = req.session.data['manual-same-activity-dates'];
+    const returnTo = req.query.returnTo;
 
     if (!selection) {
         req.session.data['errorthispage'] = "true";
         req.session.data['errortypeone'] = "true";
-        res.redirect('same-activity-dates');
+        res.redirect('same-activity-dates' + (returnTo ? '?returnTo=' + returnTo : ''));
         return;
+    }
+
+    // Check if we're coming from review-site-details page
+    if (req.session.data['fromReviewSiteDetails'] === 'true') {
+        delete req.session.data['fromReviewSiteDetails']; // Clear the flag
+        return res.redirect('review-site-details');
     }
 
     // Route based on selection
@@ -112,6 +136,11 @@ router.get('/' + version + section + 'manual-entry/individual-site-activity-date
     req.session.data['enddateerror'] = "false";
     req.session.data['errors'] = [];
     
+    // Check if we're returning from review-site-details
+    if (req.query.returnTo === 'review-site-details') {
+        req.session.data['fromReviewSiteDetails'] = 'true';
+    }
+    
     res.render(version + section + 'manual-entry/individual-site-activity-dates');
 });
 
@@ -127,6 +156,8 @@ router.post('/' + version + section + 'manual-entry/individual-site-activity-dat
     const endDay = req.session.data['manual-end-date-date-input-day'];
     const endMonth = req.session.data['manual-end-date-date-input-month'];
     const endYear = req.session.data['manual-end-date-date-input-year'];
+    
+    const returnTo = req.query.returnTo;
 
     if (!startDay || !startMonth || !startYear) {
         req.session.data['startdateerror'] = "true";
@@ -137,7 +168,13 @@ router.post('/' + version + section + 'manual-entry/individual-site-activity-dat
     }
 
     if (req.session.data['startdateerror'] === "true" || req.session.data['enddateerror'] === "true") {
-        return res.redirect('individual-site-activity-dates');
+        return res.redirect('individual-site-activity-dates' + (returnTo ? '?returnTo=' + returnTo : ''));
+    }
+
+    // Check if we're coming from review-site-details page
+    if (req.session.data['fromReviewSiteDetails'] === 'true') {
+        delete req.session.data['fromReviewSiteDetails']; // Clear the flag
+        return res.redirect('review-site-details');
     }
 
     res.redirect('same-activity-description');
@@ -148,6 +185,11 @@ router.get('/' + version + section + 'manual-entry/activity-dates', function (re
     req.session.data['startdateerror'] = "false";
     req.session.data['enddateerror'] = "false";
     req.session.data['errors'] = [];
+    
+    // Check if we're returning from review-site-details
+    if (req.query.returnTo === 'review-site-details') {
+        req.session.data['fromReviewSiteDetails'] = 'true';
+    }
     
     res.render(version + section + 'manual-entry/activity-dates');
 });
@@ -164,6 +206,8 @@ router.post('/' + version + section + 'manual-entry/activity-dates-router', func
     const endDay = req.session.data['manual-end-date-date-input-day'];
     const endMonth = req.session.data['manual-end-date-date-input-month'];
     const endYear = req.session.data['manual-end-date-date-input-year'];
+    
+    const returnTo = req.query.returnTo;
 
     if (!startDay || !startMonth || !startYear) {
         req.session.data['startdateerror'] = "true";
@@ -174,7 +218,13 @@ router.post('/' + version + section + 'manual-entry/activity-dates-router', func
     }
 
     if (req.session.data['startdateerror'] === "true" || req.session.data['enddateerror'] === "true") {
-        return res.redirect('activity-dates');
+        return res.redirect('activity-dates' + (returnTo ? '?returnTo=' + returnTo : ''));
+    }
+
+    // Check if we're coming from review-site-details page
+    if (req.session.data['fromReviewSiteDetails'] === 'true') {
+        delete req.session.data['fromReviewSiteDetails']; // Clear the flag
+        return res.redirect('review-site-details');
     }
 
     res.redirect('same-activity-description');
@@ -186,6 +236,11 @@ router.get('/' + version + section + 'manual-entry/same-activity-description', f
     req.session.data['errortypeone'] = "false";
     req.session.data['errors'] = [];
     
+    // Check if we're returning from review-site-details
+    if (req.query.returnTo === 'review-site-details') {
+        req.session.data['fromReviewSiteDetails'] = 'true';
+    }
+    
     res.render(version + section + 'manual-entry/same-activity-description');
 });
 
@@ -194,13 +249,20 @@ router.post('/' + version + section + 'manual-entry/same-activity-description-ro
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
 
-    const selection = req.session.data['same-activity-description'];
+    const selection = req.session.data['manual-same-activity-description'];
+    const returnTo = req.query.returnTo;
 
     if (!selection) {
         req.session.data['errorthispage'] = "true";
         req.session.data['errortypeone'] = "true";
-        res.redirect('same-activity-description');
+        res.redirect('same-activity-description' + (returnTo ? '?returnTo=' + returnTo : ''));
         return;
+    }
+
+    // Check if we're coming from review-site-details page
+    if (req.session.data['fromReviewSiteDetails'] === 'true') {
+        delete req.session.data['fromReviewSiteDetails']; // Clear the flag
+        return res.redirect('review-site-details');
     }
 
     // Route based on selection
@@ -209,36 +271,11 @@ router.post('/' + version + section + 'manual-entry/same-activity-description-ro
             res.redirect('activity-description');
             break;
         case "No":
-            res.redirect('individual-site-activity-description');
+            res.redirect('activity-description');
             break;
         default:
             res.redirect('same-activity-description');
     }
-});
-
-// Individual site activity description - GET route
-router.get('/' + version + section + 'manual-entry/individual-site-activity-description', function (req, res) {
-    req.session.data['errorthispage'] = "false";
-    req.session.data['errortypeone'] = "false";
-    req.session.data['errors'] = [];
-    
-    res.render(version + section + 'manual-entry/individual-site-activity-description');
-});
-
-// Individual site activity description - POST route
-router.post('/' + version + section + 'manual-entry/individual-site-activity-description-router', function (req, res) {
-    req.session.data['errorthispage'] = "false";
-    req.session.data['errortypeone'] = "false";
-
-    const activityDetails = req.session.data['manual-activity-details-text-area'];
-
-    if (!activityDetails || activityDetails.trim() === "") {
-        req.session.data['errorthispage'] = "true";
-        req.session.data['errortypeone'] = "true";
-        return res.redirect('individual-site-activity-description');
-    }
-
-    res.redirect('how-do-you-want-to-enter-the-coordinates');
 });
 
 // Activity description - GET route
@@ -246,6 +283,11 @@ router.get('/' + version + section + 'manual-entry/activity-description', functi
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
     req.session.data['errors'] = [];
+    
+    // Check if we're returning from review-site-details
+    if (req.query.returnTo === 'review-site-details') {
+        req.session.data['fromReviewSiteDetails'] = 'true';
+    }
     
     res.render(version + section + 'manual-entry/activity-description');
 });
@@ -255,13 +297,20 @@ router.post('/' + version + section + 'manual-entry/activity-description-router'
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
 
-    const activityDescription = req.session.data['manual-activity-details-text-area'];
+    const description = req.session.data['manual-activity-details-text-area'];
+    const returnTo = req.query.returnTo;
 
-    if (!activityDescription || activityDescription.trim() === "") {
+    if (!description || description.trim() === "") {
         req.session.data['errorthispage'] = "true";
         req.session.data['errortypeone'] = "true";
-        res.redirect('activity-description');
+        res.redirect('activity-description' + (returnTo ? '?returnTo=' + returnTo : ''));
         return;
+    }
+
+    // Check if we're coming from review-site-details page
+    if (req.session.data['fromReviewSiteDetails'] === 'true') {
+        delete req.session.data['fromReviewSiteDetails']; // Clear the flag
+        return res.redirect('review-site-details');
     }
 
     res.redirect('how-do-you-want-to-enter-the-coordinates');
@@ -273,6 +322,11 @@ router.get('/' + version + section + 'manual-entry/how-do-you-want-to-enter-the-
     req.session.data['errortypeone'] = "false";
     req.session.data['errors'] = [];
     
+    // Check if we're returning from review-site-details
+    if (req.query.returnTo === 'review-site-details') {
+        req.session.data['fromReviewSiteDetails'] = 'true';
+    }
+    
     res.render(version + section + 'manual-entry/how-do-you-want-to-enter-the-coordinates');
 });
 
@@ -281,13 +335,37 @@ router.post('/' + version + section + 'manual-entry/how-do-you-want-to-enter-the
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
 
-    const selection = req.session.data['coordinate-entry-method'];
+    const selection = req.session.data['manual-coordinate-entry-method'];
+    const clearSubsequent = req.query.clearSubsequent;
+    const returnTo = req.query.returnTo;
 
     if (!selection) {
         req.session.data['errorthispage'] = "true";
         req.session.data['errortypeone'] = "true";
-        res.redirect('how-do-you-want-to-enter-the-coordinates');
+        res.redirect('how-do-you-want-to-enter-the-coordinates' + (returnTo ? '?returnTo=' + returnTo : ''));
         return;
+    }
+
+    // If clearSubsequent is true OR returning from review, clear coordinate-related data
+    if (clearSubsequent === 'true' || req.session.data['fromReviewSiteDetails'] === 'true') {
+        // Clear coordinate system
+        req.session.data['manual-coordinate-system-radios'] = '';
+        
+        // Clear coordinate data
+        req.session.data['manual-latitude'] = '';
+        req.session.data['manual-longitude'] = '';
+        req.session.data['manual-site-width'] = '';
+        
+        // Clear multiple coordinates
+        for (let i = 1; i <= 5; i++) {
+            req.session.data[`manual-coordinates-point-${i}-latitude`] = '';
+            req.session.data[`manual-coordinates-point-${i}-longitude`] = '';
+        }
+    }
+
+    // Clear the fromReviewSiteDetails flag if it was set
+    if (req.session.data['fromReviewSiteDetails'] === 'true') {
+        delete req.session.data['fromReviewSiteDetails'];
     }
 
     // Route based on selection
@@ -309,6 +387,11 @@ router.get('/' + version + section + 'manual-entry/which-coordinate-system', fun
     req.session.data['errortypeone'] = "false";
     req.session.data['errors'] = [];
     
+    // Check if we're returning from review-site-details
+    if (req.query.returnTo === 'review-site-details') {
+        req.session.data['fromReviewSiteDetails'] = 'true';
+    }
+    
     res.render(version + section + 'manual-entry/which-coordinate-system');
 });
 
@@ -318,13 +401,34 @@ router.post('/' + version + section + 'manual-entry/which-coordinate-system-rout
     req.session.data['errortypeone'] = "false";
 
     const selection = req.session.data['manual-coordinate-system-radios'];
-    const coordinateMethod = req.session.data['coordinate-entry-method'];
+    const coordinateMethod = req.session.data['manual-coordinate-entry-method'];
+    const clearCoordinates = req.query.clearCoordinates;
+    const returnTo = req.query.returnTo;
 
     if (!selection) {
         req.session.data['errorthispage'] = "true";
         req.session.data['errortypeone'] = "true";
-        res.redirect('which-coordinate-system');
+        res.redirect('which-coordinate-system' + (returnTo ? '?returnTo=' + returnTo : ''));
         return;
+    }
+
+    // If clearCoordinates is true OR returning from review, clear coordinate data but keep the system selection
+    if (clearCoordinates === 'true' || req.session.data['fromReviewSiteDetails'] === 'true') {
+        // Clear coordinate data
+        req.session.data['manual-latitude'] = '';
+        req.session.data['manual-longitude'] = '';
+        req.session.data['manual-site-width'] = '';
+        
+        // Clear multiple coordinates
+        for (let i = 1; i <= 5; i++) {
+            req.session.data[`manual-coordinates-point-${i}-latitude`] = '';
+            req.session.data[`manual-coordinates-point-${i}-longitude`] = '';
+        }
+    }
+
+    // Clear the fromReviewSiteDetails flag if it was set
+    if (req.session.data['fromReviewSiteDetails'] === 'true') {
+        delete req.session.data['fromReviewSiteDetails'];
     }
 
     // Route based on coordinate entry method
@@ -342,6 +446,11 @@ router.get('/' + version + section + 'manual-entry/enter-multiple-coordinates', 
     req.session.data['errortypeone'] = "false";
     req.session.data['errors'] = [];
     
+    // Check if we're returning from review-site-details
+    if (req.query.returnTo === 'review-site-details') {
+        req.session.data['fromReviewSiteDetails'] = 'true';
+    }
+    
     res.render(version + section + 'manual-entry/enter-multiple-coordinates');
 });
 
@@ -356,6 +465,7 @@ router.post('/' + version + section + 'manual-entry/enter-multiple-coordinates-r
     const usingOSGB36 = system === "OSGB36 (National Grid)";
     const latLabel = usingOSGB36 ? "Eastings" : "Latitude";
     const longLabel = usingOSGB36 ? "Northings" : "Longitude";
+    const returnTo = req.query.returnTo;
 
     // Loop over points 1-5
     for (let i = 1; i <= 5; i++) {
@@ -407,13 +517,32 @@ router.post('/' + version + section + 'manual-entry/enter-multiple-coordinates-r
         }
     }
 
-    // Redirect to the current page if there are errors, else continue to the next page
-    if (req.session.data['errorthispage'] === "true") {
-        return res.redirect('enter-multiple-coordinates');
+    // Copy manual coordinates to the coordinates data structure for display
+    for (let i = 1; i <= 5; i++) {
+        const manualLat = req.session.data[`manual-coordinates-point-${i}-latitude`];
+        const manualLong = req.session.data[`manual-coordinates-point-${i}-longitude`];
+        
+        if (manualLat) {
+            req.session.data[`manual-coordinates-point-${i}-latitude`] = manualLat;
+        }
+        if (manualLong) {
+            req.session.data[`manual-coordinates-point-${i}-longitude`] = manualLong;
+        }
     }
 
-    // For now, redirect to stop page as requested
-    res.redirect('../stop');
+    // Redirect to the current page if there are errors, else continue to the next page
+    if (req.session.data['errorthispage'] === "true") {
+        return res.redirect('enter-multiple-coordinates' + (returnTo ? '?returnTo=' + returnTo : ''));
+    }
+
+    // Check if we're coming from review-site-details page
+    if (req.session.data['fromReviewSiteDetails'] === 'true') {
+        delete req.session.data['fromReviewSiteDetails']; // Clear the flag
+        return res.redirect('review-site-details');
+    }
+
+    // Redirect to review page
+    res.redirect('review-site-details');
 });
 
 // Enter coordinates - GET route
@@ -422,6 +551,11 @@ router.get('/' + version + section + 'manual-entry/enter-coordinates', function 
     req.session.data['errortypeone'] = "false";
     req.session.data['errortypetwo'] = "false";
     req.session.data['errors'] = [];
+    
+    // Check if we're returning from review-site-details
+    if (req.query.returnTo === 'review-site-details') {
+        req.session.data['fromReviewSiteDetails'] = 'true';
+    }
     
     res.render(version + section + 'manual-entry/enter-coordinates');
 });
@@ -434,6 +568,7 @@ router.post('/' + version + section + 'manual-entry/enter-coordinates-router', f
 
     const latitude = req.session.data['manual-latitude'];
     const longitude = req.session.data['manual-longitude'];
+    const returnTo = req.query.returnTo;
 
     if (!latitude || latitude.trim() === "") {
         req.session.data['errorthispage'] = "true";
@@ -446,8 +581,14 @@ router.post('/' + version + section + 'manual-entry/enter-coordinates-router', f
     }
 
     if (req.session.data['errorthispage'] === "true") {
-        res.redirect('enter-coordinates');
+        res.redirect('enter-coordinates' + (returnTo ? '?returnTo=' + returnTo : ''));
         return;
+    }
+
+    // Check if we're coming from review-site-details page
+    if (req.session.data['fromReviewSiteDetails'] === 'true') {
+        delete req.session.data['fromReviewSiteDetails']; // Clear the flag
+        return res.redirect('review-site-details');
     }
 
     res.redirect('site-width');
@@ -459,39 +600,73 @@ router.get('/' + version + section + 'manual-entry/site-width', function (req, r
     req.session.data['errortypeone'] = "false";
     req.session.data['errors'] = [];
     
+    // Check if we're returning from review-site-details
+    if (req.query.returnTo === 'review-site-details') {
+        req.session.data['fromReviewSiteDetails'] = 'true';
+    }
+    
     res.render(version + section + 'manual-entry/site-width');
 });
 
 // Site width - POST route
 router.post('/' + version + section + 'manual-entry/site-width-router', function (req, res) {
-    req.session.data['error-type'] = "";
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
 
     const width = req.session.data['manual-site-width'];
+    const returnTo = req.query.returnTo;
 
     if (!width || width.trim() === "") {
-        req.session.data['error-type'] = "width-empty";
-        res.redirect('site-width');
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        res.redirect('site-width' + (returnTo ? '?returnTo=' + returnTo : ''));
         return;
     }
 
     // Check if width is a valid number
     const widthNum = parseFloat(width);
     if (isNaN(widthNum)) {
-        req.session.data['error-type'] = "width-invalid";
-        res.redirect('site-width');
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        res.redirect('site-width' + (returnTo ? '?returnTo=' + returnTo : ''));
         return;
     }
 
     // Check if width is positive
     if (widthNum <= 0) {
-        req.session.data['error-type'] = "width-negative";
-        res.redirect('site-width');
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        res.redirect('site-width' + (returnTo ? '?returnTo=' + returnTo : ''));
         return;
     }
 
-    // Clear error and redirect to task list or next page
-    req.session.data['error-type'] = "";
+    // Clear error
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    
+    // Check if we're coming from review-site-details page
+    if (req.session.data['fromReviewSiteDetails'] === 'true') {
+        delete req.session.data['fromReviewSiteDetails']; // Clear the flag
+        return res.redirect('review-site-details');
+    }
+
+    res.redirect('review-site-details');
+});
+
+// Review site details - GET route
+router.get('/' + version + section + 'manual-entry/review-site-details', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errors'] = [];
+    
+    res.render(version + section + 'manual-entry/review-site-details');
+});
+
+// Review site details - POST route
+router.post('/' + version + section + 'manual-entry/review-site-details-router', function (req, res) {
+    // Mark the task as completed
     req.session.data['exempt-information-3-status'] = 'completed';
+    
+    // Redirect to task list or next step
     res.redirect('../task-list');
 });
 

@@ -46,25 +46,23 @@ Site name
 
         <form action="site-name-router" method="post" novalidate>
             
-            <div class="govuk-form-group{% if data['errortypeone'] == "true" %} govuk-form-group--error{% endif %}">
-                <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
-                <h1 class="govuk-label-wrapper">
-                    <label class="govuk-label govuk-label--l" for="site-name-text-input">
-                        Site name
-                        <span class="govuk-caption-l">Site 1</span>
-                    </label>
-                </h1>
-                {% if data['errortypeone'] == "true" %}
-                    <p id="site-name-text-input-error" class="govuk-error-message">
-                        <span class="govuk-visually-hidden">Error:</span> {{ errorText1HTML }}
-                    </p>
-                {% endif %}
-                <input class="govuk-input{% if data['errortypeone'] == "true" %} govuk-input--error{% endif %}" 
-                       id="site-name-text-input" 
-                       name="site-name-text-input" 
-                       type="text" 
-                       value="{{ data['site-name-text-input'] }}">
-            </div>
+            {{ govukInput({
+                label: {
+                    text: pageHeadingTextHTML,
+                    classes: "govuk-label--l",
+                    isPageHeading: true
+                },
+                hint: {
+                    text: hintTextHTML
+                },
+                id: "manual-site-name-text-input",
+                name: "manual-site-name-text-input",
+                value: data['manual-site-name-text-input'],
+                classes: "govuk-input--width-20",
+                errorMessage: {
+                    text: errorTextHTML
+                } if data['errortypeone'] == "true"
+            }) }}
             
             <div class="govuk-button-group">
                 {{ govukButton({

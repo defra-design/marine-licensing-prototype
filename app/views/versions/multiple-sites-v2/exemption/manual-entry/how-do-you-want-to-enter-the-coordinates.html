@@ -50,8 +50,9 @@ How do you want to enter the site coordinates?
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
 {{ govukRadios({
-  idPrefix: "coordinate-entry-method",
-  name: "coordinate-entry-method",
+  idPrefix: "manual-coordinate-entry-method",
+  name: "manual-coordinate-entry-method",
+  value: data['manual-coordinate-entry-method'],
   fieldset: {
     legend: {
       html: '<span class="govuk-caption-l">' + data['exemption-project-name-text-input'] + '</span>' + pageHeadingTextHTML + '<span class="govuk-caption-l">Site 1</span>',
@@ -69,7 +70,7 @@ How do you want to enter the site coordinates?
       hint: {
         text: "Use this if you only have the centre point of the site"
       },
-      checked: data['coordinate-entry-method'] == "Enter one set of coordinates and a width to create a circular site"
+      checked: data['manual-coordinate-entry-method'] == "Enter one set of coordinates and a width to create a circular site"
     },
     {
       value: "Enter multiple sets of coordinates to mark the boundary of the site",
@@ -77,7 +78,7 @@ How do you want to enter the site coordinates?
       hint: {
         text: "Use this if the site is a custom shape with more than one point"
       },
-      checked: data['coordinate-entry-method'] == "Enter multiple sets of coordinates to mark the boundary of the site"
+      checked: data['manual-coordinate-entry-method'] == "Enter multiple sets of coordinates to mark the boundary of the site"
     }
   ]
 }) }}

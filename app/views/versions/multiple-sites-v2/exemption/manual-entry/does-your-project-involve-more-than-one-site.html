@@ -50,30 +50,29 @@ Does your project involve more than one site?
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
 {{ govukRadios({
-  idPrefix: "multiple-sites",
-  name: "multiple-sites",
+  idPrefix: "manual-multiple-sites",
+  name: "manual-multiple-sites",
+  value: data['manual-multiple-sites'],
   fieldset: {
     legend: {
-      html: '<span class="govuk-caption-l">' + data['exemption-project-name-text-input'] + '</span>' + pageHeadingTextHTML,
+      text: pageHeadingTextHTML,
       isPageHeading: true,
       classes: "govuk-fieldset__legend--l"
     }
   },
-  errorMessage: {
-    text: errorText1HTML
-  } if data['errortypeone'] == "true",
   items: [
     {
       value: "Yes",
-      text: "Yes",
-      checked: data['multiple-sites'] == "Yes"
+      text: "Yes"
     },
     {
       value: "No",
-      text: "No",
-      checked: data['multiple-sites'] == "No"
+      text: "No"
     }
-  ]
+  ],
+  errorMessage: {
+    text: errorText1HTML
+  } if data['errortypeone'] == "true"
 }) }}
 
       <div class="govuk-button-group">
