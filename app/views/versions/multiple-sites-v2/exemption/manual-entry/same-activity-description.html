@@ -50,8 +50,8 @@ Is the activity description the same for every site?
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
 {{ govukRadios({
-  idPrefix: "same-activity-description",
-  name: "same-activity-description",
+  idPrefix: "manual-same-activity-description",
+  name: "manual-same-activity-description",
   fieldset: {
     legend: {
       html: '<span class="govuk-caption-l">' + data['exemption-project-name-text-input'] + '</span>' + pageHeadingTextHTML,
@@ -69,12 +69,12 @@ Is the activity description the same for every site?
     {
       value: "Yes",
       text: "Yes, the description is the same for every site",
-      checked: data['same-activity-description'] == "Yes"
+      checked: data['manual-same-activity-description'] == "Yes"
     },
     {
       value: "No",
       text: "No, at least one site has a different description",
-      checked: data['same-activity-description'] == "No"
+      checked: data['manual-same-activity-description'] == "No"
     }
   ]
 }) }}

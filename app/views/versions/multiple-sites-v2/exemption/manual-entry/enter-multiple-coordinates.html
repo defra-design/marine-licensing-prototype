@@ -14,92 +14,96 @@
     Enter multiple sets of coordinates to mark the boundary of the site
 {% endset %}
 
+<!-- Get current site number and set up site-specific variables -->
+{% set currentSite = data['current-site'] or 1 %}
+{% set sitePrefix = 'manual-' if currentSite == 1 else 'manual-site-' + currentSite + '-' %}
+{% set coordinateSystemKey = sitePrefix + 'coordinate-system-radios' %}
 
 {% set point1LatHTML %}
-    {% if data['manual-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['manual-coordinate-system-radios'] %}                  
+    {% if data[coordinateSystemKey] == "WGS84 (World Geodetic System 1984)" or not data[coordinateSystemKey] %}                  
     Latitude of start and end point
-    {% elif data['manual-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+    {% elif data[coordinateSystemKey] == "OSGB36 (National Grid)" %}
     Eastings of the start and end point
     {% endif %}
 {% endset %}
 
 
 {% set point1LongHTML %}
-    {% if data['manual-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['manual-coordinate-system-radios'] %}
+    {% if data[coordinateSystemKey] == "WGS84 (World Geodetic System 1984)" or not data[coordinateSystemKey] %}
     Longitude of start and end point
-    {% elif data['manual-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+    {% elif data[coordinateSystemKey] == "OSGB36 (National Grid)" %}
     Northings of the start and end point
     {% endif %}
 {% endset %}
 
 
 {% set point2LatHTML %}
-    {% if data['manual-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['manual-coordinate-system-radios'] %}                 
+    {% if data[coordinateSystemKey] == "WGS84 (World Geodetic System 1984)" or not data[coordinateSystemKey] %}                 
     Latitude of point 2
-    {% elif data['manual-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+    {% elif data[coordinateSystemKey] == "OSGB36 (National Grid)" %}
     Eastings of point 2
     {% endif %}
 {% endset %}
 
 
 {% set point2LongHTML %}
-    {% if data['manual-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['manual-coordinate-system-radios'] %}          
+    {% if data[coordinateSystemKey] == "WGS84 (World Geodetic System 1984)" or not data[coordinateSystemKey] %}          
     Longitude of point 2
-    {% elif data['manual-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+    {% elif data[coordinateSystemKey] == "OSGB36 (National Grid)" %}
     Northings of point 2
     {% endif %}
 {% endset %}
 
 
 {% set point3LatHTML %}
-    {% if data['manual-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['manual-coordinate-system-radios'] %}              
+    {% if data[coordinateSystemKey] == "WGS84 (World Geodetic System 1984)" or not data[coordinateSystemKey] %}              
     Latitude of point 3
-    {% elif data['manual-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+    {% elif data[coordinateSystemKey] == "OSGB36 (National Grid)" %}
     Eastings of point 3
     {% endif %}
 {% endset %}
 
 
 {% set point3LongHTML %}
-{% if data['manual-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['manual-coordinate-system-radios'] %}          
+{% if data[coordinateSystemKey] == "WGS84 (World Geodetic System 1984)" or not data[coordinateSystemKey] %}          
     Longitude of point 3
-    {% elif data['manual-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+    {% elif data[coordinateSystemKey] == "OSGB36 (National Grid)" %}
     Northings of point 3
     {% endif %}
 {% endset %}
 
 
 {% set point4LatHTML %}
-    {% if data['manual-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['manual-coordinate-system-radios'] %}              
+    {% if data[coordinateSystemKey] == "WGS84 (World Geodetic System 1984)" or not data[coordinateSystemKey] %}              
     Latitude of point 4
-    {% elif data['manual-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+    {% elif data[coordinateSystemKey] == "OSGB36 (National Grid)" %}
     Eastings of point 4
     {% endif %}
 {% endset %}
 
 
 {% set point4LongHTML %}
-{% if data['manual-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['manual-coordinate-system-radios'] %}          
+{% if data[coordinateSystemKey] == "WGS84 (World Geodetic System 1984)" or not data[coordinateSystemKey] %}          
     Longitude of point 4
-    {% elif data['manual-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+    {% elif data[coordinateSystemKey] == "OSGB36 (National Grid)" %}
     Northings of point 4
     {% endif %}
 {% endset %}
 
 
 {% set point5LatHTML %}
-    {% if data['manual-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['manual-coordinate-system-radios'] %}              
+    {% if data[coordinateSystemKey] == "WGS84 (World Geodetic System 1984)" or not data[coordinateSystemKey] %}              
     Latitude of point 5
-    {% elif data['manual-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+    {% elif data[coordinateSystemKey] == "OSGB36 (National Grid)" %}
     Eastings of point 5
     {% endif %}
 {% endset %}
 
 
 {% set point5LongHTML %}
-{% if data['manual-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['manual-coordinate-system-radios'] %}          
+{% if data[coordinateSystemKey] == "WGS84 (World Geodetic System 1984)" or not data[coordinateSystemKey] %}          
     Longitude of point 5
-    {% elif data['manual-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+    {% elif data[coordinateSystemKey] == "OSGB36 (National Grid)" %}
     Northings of point 5
     {% endif %}
 {% endset %}
@@ -107,30 +111,30 @@
 <!-- Set the text for each error type -->
 {% set errorTextHTML %}
     {% if data['errorLatHTML'] == "true" %}
-        {% if data['manual-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['manual-coordinate-system-radios'] %} 
+        {% if data[coordinateSystemKey] == "WGS84 (World Geodetic System 1984)" or not data[coordinateSystemKey] %} 
             Enter the latitude
-        {% elif data['manual-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+        {% elif data[coordinateSystemKey] == "OSGB36 (National Grid)" %}
             Enter the eastings
         {% endif %}
     {% elif data['errorLongHTML'] == "true" %}
-        {% if data['manual-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['manual-coordinate-system-radios'] %} 
+        {% if data[coordinateSystemKey] == "WGS84 (World Geodetic System 1984)" or not data[coordinateSystemKey] %} 
             Enter the longitude
-        {% elif data['manual-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+        {% elif data[coordinateSystemKey] == "OSGB36 (National Grid)" %}
             Enter the northings
         {% endif %}
     {% endif %}
 {% endset %}
 
-{% set point1LatError = "Enter the " + ("eastings" if data['manual-coordinate-system-radios'] == "OSGB36 (National Grid)" else "latitude") + " of the start and end point" %}
-{% set point1LongError = "Enter the " + ("northings" if data['manual-coordinate-system-radios'] == "OSGB36 (National Grid)" else "longitude") + " of the start and end point" %}
-{% set point2LatError = "Enter the " + ("eastings" if data['manual-coordinate-system-radios'] == "OSGB36 (National Grid)" else "latitude") + " of point 2" %}
-{% set point2LongError = "Enter the " + ("northings" if data['manual-coordinate-system-radios'] == "OSGB36 (National Grid)" else "longitude") + " of point 2" %}
-{% set point3LatError = "Enter the " + ("eastings" if data['manual-coordinate-system-radios'] == "OSGB36 (National Grid)" else "latitude") + " of point 3" %}
-{% set point3LongError = "Enter the " + ("northings" if data['manual-coordinate-system-radios'] == "OSGB36 (National Grid)" else "longitude") + " of point 3" %}
-{% set point4LatError = "Enter the " + ("eastings" if data['manual-coordinate-system-radios'] == "OSGB36 (National Grid)" else "latitude") + " of point 4" %}
-{% set point4LongError = "Enter the " + ("northings" if data['manual-coordinate-system-radios'] == "OSGB36 (National Grid)" else "longitude") + " of point 4" %}
-{% set point5LatError = "Enter the " + ("eastings" if data['manual-coordinate-system-radios'] == "OSGB36 (National Grid)" else "latitude") + " of point 5" %}
-{% set point5LongError = "Enter the " + ("northings" if data['manual-coordinate-system-radios'] == "OSGB36 (National Grid)" else "longitude") + " of point 5" %}
+{% set point1LatError = "Enter the " + ("eastings" if data[coordinateSystemKey] == "OSGB36 (National Grid)" else "latitude") + " of the start and end point" %}
+{% set point1LongError = "Enter the " + ("northings" if data[coordinateSystemKey] == "OSGB36 (National Grid)" else "longitude") + " of the start and end point" %}
+{% set point2LatError = "Enter the " + ("eastings" if data[coordinateSystemKey] == "OSGB36 (National Grid)" else "latitude") + " of point 2" %}
+{% set point2LongError = "Enter the " + ("northings" if data[coordinateSystemKey] == "OSGB36 (National Grid)" else "longitude") + " of point 2" %}
+{% set point3LatError = "Enter the " + ("eastings" if data[coordinateSystemKey] == "OSGB36 (National Grid)" else "latitude") + " of point 3" %}
+{% set point3LongError = "Enter the " + ("northings" if data[coordinateSystemKey] == "OSGB36 (National Grid)" else "longitude") + " of point 3" %}
+{% set point4LatError = "Enter the " + ("eastings" if data[coordinateSystemKey] == "OSGB36 (National Grid)" else "latitude") + " of point 4" %}
+{% set point4LongError = "Enter the " + ("northings" if data[coordinateSystemKey] == "OSGB36 (National Grid)" else "longitude") + " of point 4" %}
+{% set point5LatError = "Enter the " + ("eastings" if data[coordinateSystemKey] == "OSGB36 (National Grid)" else "latitude") + " of point 5" %}
+{% set point5LongError = "Enter the " + ("northings" if data[coordinateSystemKey] == "OSGB36 (National Grid)" else "longitude") + " of point 5" %}
 
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
@@ -171,24 +175,24 @@
         <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
         <h1 class="govuk-heading-l">
             {{ pageHeadingTextHTML }}
-            <span class="govuk-caption-l">Site 1</span>
+            <span class="govuk-caption-l">Site {{ currentSite }}</span>
         </h1>
 
 
         
         
-        {% if data['manual-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" %}
+        {% if data[coordinateSystemKey] == "WGS84 (World Geodetic System 1984)" %}
                         
         {% include "../../includes/lat-long-content.html" %}
 
-        {% elif data['manual-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+        {% elif data[coordinateSystemKey] == "OSGB36 (National Grid)" %}
 
         {% include "../../includes/east-north-content.html" %}
 
         {% endif %}
 
         <!-- go to routes.js for routing  -->
-        <form action="enter-multiple-coordinates-router" method="post" novalidate>
+        <form action="enter-multiple-coordinates-router{% if currentSite > 1 %}?site={{ currentSite }}{% endif %}" method="post" novalidate>
 
             <fieldset class="govuk-fieldset">
                 <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
@@ -206,11 +210,11 @@
                                 isPageHeading: false
                             },
                             autocomplete: "off",
-                            id: "manual-coordinates-point-1-latitude",
-                            name: "manual-coordinates-point-1-latitude",
-                            errorMessage: null if data['error-manual-coordinates-point-1-latitude'] != "true"
+                            id: sitePrefix + "coordinates-point-1-latitude",
+                            name: sitePrefix + "coordinates-point-1-latitude",
+                            errorMessage: null if data['error-' + sitePrefix + 'coordinates-point-1-latitude'] != "true"
                                 else { html: point1LatError },
-                            value: data['manual-coordinates-point-1-latitude'],
+                            value: data[sitePrefix + 'coordinates-point-1-latitude'],
                             classes: "govuk-input govuk-!-width-one-half"
                         })
                     }}
@@ -225,11 +229,11 @@
                                 isPageHeading: false
                             },
                             autocomplete: "off",
-                            id: "manual-coordinates-point-1-longitude",
-                            name: "manual-coordinates-point-1-longitude",
-                            errorMessage: null if data['error-manual-coordinates-point-1-longitude'] != "true"
+                            id: sitePrefix + "coordinates-point-1-longitude",
+                            name: sitePrefix + "coordinates-point-1-longitude",
+                            errorMessage: null if data['error-' + sitePrefix + 'coordinates-point-1-longitude'] != "true"
                                 else { html: point1LongError },
-                            value: data['manual-coordinates-point-1-longitude'],
+                            value: data[sitePrefix + 'coordinates-point-1-longitude'],
                             classes: "govuk-input govuk-!-width-one-half"
                         })
                     }}
@@ -253,11 +257,11 @@
                                 isPageHeading: false
                             },
                             autocomplete: "off",
-                            id: "manual-coordinates-point-2-latitude",
-                            name: "manual-coordinates-point-2-latitude",
-                            errorMessage: null if data['error-manual-coordinates-point-2-latitude'] != "true"
+                            id: sitePrefix + "coordinates-point-2-latitude",
+                            name: sitePrefix + "coordinates-point-2-latitude",
+                            errorMessage: null if data['error-' + sitePrefix + 'coordinates-point-2-latitude'] != "true"
                                 else { html: point2LatError },
-                            value: data['manual-coordinates-point-2-latitude'],
+                            value: data[sitePrefix + 'coordinates-point-2-latitude'],
                             classes: "govuk-input govuk-!-width-one-half"
                         })
                     }}
@@ -275,11 +279,11 @@
                                 isPageHeading: false
                             },
                             autocomplete: "off",
-                            id: "manual-coordinates-point-2-longitude",
-                            name: "manual-coordinates-point-2-longitude",
-                            errorMessage: null if data['error-manual-coordinates-point-2-longitude'] != "true"
+                            id: sitePrefix + "coordinates-point-2-longitude",
+                            name: sitePrefix + "coordinates-point-2-longitude",
+                            errorMessage: null if data['error-' + sitePrefix + 'coordinates-point-2-longitude'] != "true"
                                 else { html: point2LongError },
-                            value: data['manual-coordinates-point-2-longitude'],
+                            value: data[sitePrefix + 'coordinates-point-2-longitude'],
                             classes: "govuk-input govuk-!-width-one-half"
                         })
                     }}
@@ -304,11 +308,11 @@
                                 isPageHeading: false
                             },
                             autocomplete: "off",
-                            id: "manual-coordinates-point-3-latitude",
-                            name: "manual-coordinates-point-3-latitude",
-                            errorMessage: null if data['error-manual-coordinates-point-3-latitude'] != "true"
+                            id: sitePrefix + "coordinates-point-3-latitude",
+                            name: sitePrefix + "coordinates-point-3-latitude",
+                            errorMessage: null if data['error-' + sitePrefix + 'coordinates-point-3-latitude'] != "true"
                                 else { html: point3LatError },
-                            value: data['manual-coordinates-point-3-latitude'],
+                            value: data[sitePrefix + 'coordinates-point-3-latitude'],
                             classes: "govuk-input govuk-!-width-one-half"
                         })
                     }}
@@ -323,11 +327,11 @@
                                 isPageHeading: false
                             },
                             autocomplete: "off",
-                            id: "manual-coordinates-point-3-longitude",
-                            name: "manual-coordinates-point-3-longitude",
-                            errorMessage: null if data['error-manual-coordinates-point-3-longitude'] != "true"
+                            id: sitePrefix + "coordinates-point-3-longitude",
+                            name: sitePrefix + "coordinates-point-3-longitude",
+                            errorMessage: null if data['error-' + sitePrefix + 'coordinates-point-3-longitude'] != "true"
                                 else { html: point3LongError },
-                            value: data['manual-coordinates-point-3-longitude'],
+                            value: data[sitePrefix + 'coordinates-point-3-longitude'],
                             classes: "govuk-input govuk-!-width-one-half"
                         })
                     }}
@@ -353,10 +357,10 @@
                                 isPageHeading: false
                             },
                             autocomplete: "off",
-                            id: "manual-coordinates-point-4-latitude",
-                            name: "manual-coordinates-point-4-latitude",
-                            value: data['manual-coordinates-point-4-latitude'],
-                            errorMessage: null if data['error-manual-coordinates-point-4-latitude'] != "true"
+                            id: sitePrefix + "coordinates-point-4-latitude",
+                            name: sitePrefix + "coordinates-point-4-latitude",
+                            value: data[sitePrefix + 'coordinates-point-4-latitude'],
+                            errorMessage: null if data['error-' + sitePrefix + 'coordinates-point-4-latitude'] != "true"
                                 else { html: point4LatError },
                             classes: "govuk-input govuk-!-width-one-half"
                         })
@@ -372,10 +376,10 @@
                                 isPageHeading: false
                             },
                             autocomplete: "off",
-                            id: "manual-coordinates-point-4-longitude",
-                            name: "manual-coordinates-point-4-longitude",
-                            value: data['manual-coordinates-point-4-longitude'],
-                            errorMessage: null if data['error-manual-coordinates-point-4-longitude'] != "true" 
+                            id: sitePrefix + "coordinates-point-4-longitude",
+                            name: sitePrefix + "coordinates-point-4-longitude",
+                            value: data[sitePrefix + 'coordinates-point-4-longitude'],
+                            errorMessage: null if data['error-' + sitePrefix + 'coordinates-point-4-longitude'] != "true" 
                                 else { html: point4LongError },
                             classes: "govuk-input govuk-!-width-one-half"
                         })
@@ -403,10 +407,10 @@
                                 isPageHeading: false
                             },
                             autocomplete: "off",
-                            id: "manual-coordinates-point-5-latitude",
-                            name: "manual-coordinates-point-5-latitude",
-                            value: data['manual-coordinates-point-5-latitude'],
-                            errorMessage: null if data['error-manual-coordinates-point-5-latitude'] != "true"
+                            id: sitePrefix + "coordinates-point-5-latitude",
+                            name: sitePrefix + "coordinates-point-5-latitude",
+                            value: data[sitePrefix + 'coordinates-point-5-latitude'],
+                            errorMessage: null if data['error-' + sitePrefix + 'coordinates-point-5-latitude'] != "true"
                                 else { html: point5LatError },
                             classes: "govuk-input govuk-!-width-one-half"
                         })
@@ -423,10 +427,10 @@
                                 isPageHeading: false
                             },
                             autocomplete: "off",
-                            id: "manual-coordinates-point-5-longitude",
-                            name: "manual-coordinates-point-5-longitude",
-                            value: data['manual-coordinates-point-5-longitude'],
-                            errorMessage: null if data['error-manual-coordinates-point-5-longitude'] != "true" 
+                            id: sitePrefix + "coordinates-point-5-longitude",
+                            name: sitePrefix + "coordinates-point-5-longitude",
+                            value: data[sitePrefix + 'coordinates-point-5-longitude'],
+                            errorMessage: null if data['error-' + sitePrefix + 'coordinates-point-5-longitude'] != "true" 
                                 else { html: point5LongError },
                             classes: "govuk-input govuk-!-width-one-half"
                         })
@@ -443,7 +447,7 @@
                 {{ govukButton({
                   text: "Continue"
                 }) }}
-                <a class="govuk-link govuk-link--no-visited-state" href="#">Cancel</a>
+                <a class="govuk-link govuk-link--no-visited-state" href="../cancel-site-details">Cancel</a>
             </div>
 
         </form>
@@ -487,16 +491,19 @@
 {% block pageScripts %}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+    // Site prefix for this page
+    const sitePrefix = '{{ sitePrefix }}';
+    
     // Get elements
     const addPointLink = document.querySelector('.add-point-link');
     const fieldset4 = document.querySelector('fieldset:nth-of-type(4)');
     const fieldset5 = document.querySelector('fieldset:nth-of-type(5)');
 
     // Check for existing data and show fieldsets accordingly
-    const point4Lat = document.getElementById('manual-coordinates-point-4-latitude');
-    const point4Long = document.getElementById('manual-coordinates-point-4-longitude');
-    const point5Lat = document.getElementById('manual-coordinates-point-5-latitude');
-    const point5Long = document.getElementById('manual-coordinates-point-5-longitude');
+    const point4Lat = document.getElementById(sitePrefix + 'coordinates-point-4-latitude');
+    const point4Long = document.getElementById(sitePrefix + 'coordinates-point-4-longitude');
+    const point5Lat = document.getElementById(sitePrefix + 'coordinates-point-5-latitude');
+    const point5Long = document.getElementById(sitePrefix + 'coordinates-point-5-longitude');
 
     // Show fieldset 4 if it has data
     if (point4Lat && point4Long && (point4Lat.value || point4Long.value)) {
@@ -509,18 +516,20 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Add click handler for "Add another point"
-    addPointLink.addEventListener('click', function(e) {
-        e.preventDefault();
-        
-        // If fieldset 4 is hidden, show it first
-        if (fieldset4.style.display === 'none') {
-            fieldset4.style.display = '';
-        }
-        // If fieldset 4 is visible but fieldset 5 is hidden, show fieldset 5
-        else if (fieldset5.style.display === 'none') {
-            fieldset5.style.display = '';
-        }
-    });
+    if (addPointLink) {
+        addPointLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // If fieldset 4 is hidden, show it first
+            if (fieldset4 && fieldset4.style.display === 'none') {
+                fieldset4.style.display = '';
+            }
+            // If fieldset 4 is visible but fieldset 5 is hidden, show fieldset 5
+            else if (fieldset5 && fieldset5.style.display === 'none') {
+                fieldset5.style.display = '';
+            }
+        });
+    }
 
     // Handle remove links - Updated selector to match your HTML
     const removeLinks = document.querySelectorAll('.govuk-button--secondary[href="#"]');

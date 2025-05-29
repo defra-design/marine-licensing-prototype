@@ -1,5 +1,8 @@
 {% extends "../../layouts/exemption.html" %}
 
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
 {% block beforeContent %}
 {% include "../../includes/phase-banner.html" %}
 {% include "../../includes/back-link.html" %}
@@ -31,6 +34,11 @@ Activity description
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
+        <!-- Get current site number -->
+        {% set currentSite = data['current-site'] or 1 %}
+        {% set siteDataKey = 'manual-activity-details-text-area' if currentSite == 1 else 'manual-site-' + currentSite + '-activity-details-text-area' %}
+        {% set siteInputId = 'manual-activity-details-text-area' if currentSite == 1 else 'manual-site-' + currentSite + '-activity-details-text-area' %}
+
         <!-- ERROR LOGIC 'error summary' -->
         {% if data['errorthispage'] == "true" %}
             {{ govukErrorSummary
@@ -40,7 +48,7 @@ Activity description
                     [
                         {
                             html: errorTextHTML,
-                            href: "#manual-activity-details-text-area"
+                            href: "#" + siteInputId
                         }
                     ]
                 })
@@ -49,37 +57,34 @@ Activity description
         <!--  END OF 'error summary' -->
 
         <!-- go to routes.js for routing  -->
-        <form action="individual-site-activity-description-router" method="post" novalidate>
-
-{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
-{% from "govuk/components/button/macro.njk" import govukButton %}
+        <form action="individual-site-activity-description-router{% if currentSite > 1 %}?site={{ currentSite }}{% endif %}" method="post" novalidate>
 
             <div class="govuk-form-group {% if data['errorthispage'] == 'true' and data['errortypeone'] == 'true' %}govuk-form-group--error{% endif %}">
                 <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
                 <h1 class="govuk-label-wrapper">
-                  <label class="govuk-label govuk-label--l" for="manual-activity-details-text-area">
+                  <label class="govuk-label govuk-label--l" for="{{ siteInputId }}">
                     {{ pageHeadingTextHTML }}
-                    <span class="govuk-caption-l">Site 1</span>
+                    <span class="govuk-caption-l">Site {{ currentSite }}</span>
                   </label>
                 </h1>
               
-                <div id="manual-activity-details-text-area-hint" class="govuk-hint">
-                  Provide details about what you plan to do at this site
+                <div id="{{ siteInputId }}-hint" class="govuk-hint">
+                  Provide details about what you plan to do in this location
                 </div>
               
                 {% if data['errorthispage'] == 'true' and data['errortypeone'] == 'true' %}
-                  <p id="manual-activity-details-text-area-error" class="govuk-error-message">
+                  <p id="{{ siteInputId }}-error" class="govuk-error-message">
                     <span class="govuk-visually-hidden">Error:</span> Enter the activity details
                   </p>
                 {% endif %}
               
                 <textarea
                   class="govuk-textarea {% if data['errorthispage'] == 'true' and data['errortypeone'] == 'true' %}govuk-textarea--error{% endif %}"
-                  id="manual-activity-details-text-area"
-                  name="manual-activity-details-text-area"
+                  id="{{ siteInputId }}"
+                  name="{{ siteDataKey }}"
                   rows="8"
-                  aria-describedby="manual-activity-details-text-area-hint{% if data['errorthispage'] == 'true' and data['errortypeone'] == 'true' %} manual-activity-details-text-area-error{% endif %}"
-                >{{ data['manual-activity-details-text-area'] }}</textarea>
+                  aria-describedby="{{ siteInputId }}-hint{% if data['errorthispage'] == 'true' and data['errortypeone'] == 'true' %} {{ siteInputId }}-error{% endif %}"
+                >{{ data[siteDataKey] }}</textarea>
               </div>
 
               <div class="govuk-button-group">
