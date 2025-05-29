@@ -8,7 +8,16 @@ module.exports = function (router) {
 // Manual Entry Flow Routes
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-// Does your project involve more than one site?
+// Does your project involve more than one site? - GET route
+router.get('/' + version + section + 'manual-entry/does-your-project-involve-more-than-one-site', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errors'] = [];
+    
+    res.render(version + section + 'manual-entry/does-your-project-involve-more-than-one-site');
+});
+
+// Does your project involve more than one site? - POST route
 router.post('/' + version + section + 'manual-entry/does-your-project-involve-more-than-one-site-router', function (req, res) {
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
@@ -35,7 +44,16 @@ router.post('/' + version + section + 'manual-entry/does-your-project-involve-mo
     }
 });
 
-// Site name
+// Site name - GET route
+router.get('/' + version + section + 'manual-entry/site-name', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errors'] = [];
+    
+    res.render(version + section + 'manual-entry/site-name');
+});
+
+// Site name - POST route
 router.post('/' + version + section + 'manual-entry/site-name-router', function (req, res) {
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
@@ -52,7 +70,16 @@ router.post('/' + version + section + 'manual-entry/site-name-router', function 
     res.redirect('same-activity-dates');
 });
 
-// Are the activity dates the same for every site?
+// Are the activity dates the same for every site? - GET route
+router.get('/' + version + section + 'manual-entry/same-activity-dates', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errors'] = [];
+    
+    res.render(version + section + 'manual-entry/same-activity-dates');
+});
+
+// Are the activity dates the same for every site? - POST route
 router.post('/' + version + section + 'manual-entry/same-activity-dates-router', function (req, res) {
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
@@ -79,7 +106,16 @@ router.post('/' + version + section + 'manual-entry/same-activity-dates-router',
     }
 });
 
-// Individual site activity dates
+// Individual site activity dates - GET route
+router.get('/' + version + section + 'manual-entry/individual-site-activity-dates', function (req, res) {
+    req.session.data['startdateerror'] = "false";
+    req.session.data['enddateerror'] = "false";
+    req.session.data['errors'] = [];
+    
+    res.render(version + section + 'manual-entry/individual-site-activity-dates');
+});
+
+// Individual site activity dates - POST route
 router.post('/' + version + section + 'manual-entry/individual-site-activity-dates-router', function (req, res) {
     req.session.data['startdateerror'] = "false";
     req.session.data['enddateerror'] = "false";
@@ -107,7 +143,16 @@ router.post('/' + version + section + 'manual-entry/individual-site-activity-dat
     res.redirect('same-activity-description');
 });
 
-// Activity dates
+// Activity dates - GET route
+router.get('/' + version + section + 'manual-entry/activity-dates', function (req, res) {
+    req.session.data['startdateerror'] = "false";
+    req.session.data['enddateerror'] = "false";
+    req.session.data['errors'] = [];
+    
+    res.render(version + section + 'manual-entry/activity-dates');
+});
+
+// Activity dates - POST route
 router.post('/' + version + section + 'manual-entry/activity-dates-router', function (req, res) {
     req.session.data['startdateerror'] = "false";
     req.session.data['enddateerror'] = "false";
@@ -135,7 +180,16 @@ router.post('/' + version + section + 'manual-entry/activity-dates-router', func
     res.redirect('same-activity-description');
 });
 
-// Is the activity description the same for every site?
+// Is the activity description the same for every site? - GET route
+router.get('/' + version + section + 'manual-entry/same-activity-description', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errors'] = [];
+    
+    res.render(version + section + 'manual-entry/same-activity-description');
+});
+
+// Is the activity description the same for every site? - POST route
 router.post('/' + version + section + 'manual-entry/same-activity-description-router', function (req, res) {
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
@@ -162,7 +216,16 @@ router.post('/' + version + section + 'manual-entry/same-activity-description-ro
     }
 });
 
-// Individual site activity description
+// Individual site activity description - GET route
+router.get('/' + version + section + 'manual-entry/individual-site-activity-description', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errors'] = [];
+    
+    res.render(version + section + 'manual-entry/individual-site-activity-description');
+});
+
+// Individual site activity description - POST route
 router.post('/' + version + section + 'manual-entry/individual-site-activity-description-router', function (req, res) {
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
@@ -178,7 +241,16 @@ router.post('/' + version + section + 'manual-entry/individual-site-activity-des
     res.redirect('how-do-you-want-to-enter-the-coordinates');
 });
 
-// Activity description
+// Activity description - GET route
+router.get('/' + version + section + 'manual-entry/activity-description', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errors'] = [];
+    
+    res.render(version + section + 'manual-entry/activity-description');
+});
+
+// Activity description - POST route
 router.post('/' + version + section + 'manual-entry/activity-description-router', function (req, res) {
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
@@ -195,7 +267,16 @@ router.post('/' + version + section + 'manual-entry/activity-description-router'
     res.redirect('how-do-you-want-to-enter-the-coordinates');
 });
 
-// How do you want to enter the coordinates?
+// How do you want to enter the coordinates? - GET route
+router.get('/' + version + section + 'manual-entry/how-do-you-want-to-enter-the-coordinates', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errors'] = [];
+    
+    res.render(version + section + 'manual-entry/how-do-you-want-to-enter-the-coordinates');
+});
+
+// How do you want to enter the coordinates? - POST route
 router.post('/' + version + section + 'manual-entry/how-do-you-want-to-enter-the-coordinates-router', function (req, res) {
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
@@ -215,19 +296,29 @@ router.post('/' + version + section + 'manual-entry/how-do-you-want-to-enter-the
             res.redirect('which-coordinate-system');
             break;
         case "Enter multiple sets of coordinates to mark the boundary of the site":
-            res.redirect('../stop');
+            res.redirect('which-coordinate-system');
             break;
         default:
             res.redirect('how-do-you-want-to-enter-the-coordinates');
     }
 });
 
-// Which coordinate system do you want to use?
+// Which coordinate system? - GET route
+router.get('/' + version + section + 'manual-entry/which-coordinate-system', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errors'] = [];
+    
+    res.render(version + section + 'manual-entry/which-coordinate-system');
+});
+
+// Which coordinate system? - POST route
 router.post('/' + version + section + 'manual-entry/which-coordinate-system-router', function (req, res) {
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
 
     const selection = req.session.data['manual-coordinate-system-radios'];
+    const coordinateMethod = req.session.data['coordinate-entry-method'];
 
     if (!selection) {
         req.session.data['errorthispage'] = "true";
@@ -236,20 +327,106 @@ router.post('/' + version + section + 'manual-entry/which-coordinate-system-rout
         return;
     }
 
-    // Route based on selection
-    switch(selection) {
-        case "WGS84 (World Geodetic System 1984)":
-            res.redirect('enter-coordinates');
-            break;
-        case "OSGB36 (National Grid)":
-            res.redirect('enter-coordinates');
-            break;
-        default:
-            res.redirect('which-coordinate-system');
+    // Route based on coordinate entry method
+    if (coordinateMethod === "Enter multiple sets of coordinates to mark the boundary of the site") {
+        res.redirect('enter-multiple-coordinates');
+    } else {
+        // For circular sites
+        res.redirect('enter-coordinates');
     }
 });
 
-// Enter the coordinates at the centre point
+// Enter multiple coordinates - GET route
+router.get('/' + version + section + 'manual-entry/enter-multiple-coordinates', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errors'] = [];
+    
+    res.render(version + section + 'manual-entry/enter-multiple-coordinates');
+});
+
+// Enter multiple coordinates - POST route
+router.post('/' + version + section + 'manual-entry/enter-multiple-coordinates-router', function (req, res) {
+    // Reset global error states
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errors'] = [];
+
+    // Get the selected coordinate system
+    const system = req.session.data['manual-coordinate-system-radios'];
+    const usingOSGB36 = system === "OSGB36 (National Grid)";
+    const latLabel = usingOSGB36 ? "Eastings" : "Latitude";
+    const longLabel = usingOSGB36 ? "Northings" : "Longitude";
+
+    // Loop over points 1-5
+    for (let i = 1; i <= 5; i++) {
+        const latKey = `manual-coordinates-point-${i}-latitude`;
+        const longKey = `manual-coordinates-point-${i}-longitude`;
+        const latVal = req.session.data[latKey];
+        const longVal = req.session.data[longKey];
+
+        const latMissing = !latVal || latVal.trim() === "";
+        const longMissing = !longVal || longVal.trim() === "";
+
+        const pointLabel = i === 1 ? "start and end point" : `point ${i}`;
+
+        // Check visibility for Points 4 & 5 based on flags
+        const isPointVisible = i <= 3 || req.session.data[`manual-coordinates-visible-point-${i}`] === "true";
+
+        // Skip validation for hidden points with no entered data
+        if (!isPointVisible && (latMissing && longMissing)) {
+            req.session.data[`error-${latKey}`] = "false";
+            req.session.data[`error-${longKey}`] = "false";
+            continue;
+        }
+
+        // If lat or long is missing, mark as an error
+        if (latMissing || longMissing) {
+            req.session.data['errorthispage'] = "true";
+        }
+
+        // Latitude error handling
+        if (latMissing) {
+            req.session.data[`error-${latKey}`] = "true";
+            req.session.data['errors'].push({
+                text: `Enter the ${latLabel.toLowerCase()} of ${pointLabel}`,
+                anchor: `${latKey}`
+            });
+        } else {
+            req.session.data[`error-${latKey}`] = "false";
+        }
+
+        // Longitude error handling
+        if (longMissing) {
+            req.session.data[`error-${longKey}`] = "true";
+            req.session.data['errors'].push({
+                text: `Enter the ${longLabel.toLowerCase()} of ${pointLabel}`,
+                anchor: `${longKey}`
+            });
+        } else {
+            req.session.data[`error-${longKey}`] = "false";
+        }
+    }
+
+    // Redirect to the current page if there are errors, else continue to the next page
+    if (req.session.data['errorthispage'] === "true") {
+        return res.redirect('enter-multiple-coordinates');
+    }
+
+    // For now, redirect to stop page as requested
+    res.redirect('../stop');
+});
+
+// Enter coordinates - GET route
+router.get('/' + version + section + 'manual-entry/enter-coordinates', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errortypetwo'] = "false";
+    req.session.data['errors'] = [];
+    
+    res.render(version + section + 'manual-entry/enter-coordinates');
+});
+
+// Enter coordinates - POST route
 router.post('/' + version + section + 'manual-entry/enter-coordinates-router', function (req, res) {
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
@@ -276,7 +453,16 @@ router.post('/' + version + section + 'manual-entry/enter-coordinates-router', f
     res.redirect('site-width');
 });
 
-// Site width
+// Site width - GET route
+router.get('/' + version + section + 'manual-entry/site-width', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errors'] = [];
+    
+    res.render(version + section + 'manual-entry/site-width');
+});
+
+// Site width - POST route
 router.post('/' + version + section + 'manual-entry/site-width-router', function (req, res) {
     req.session.data['error-type'] = "";
 
