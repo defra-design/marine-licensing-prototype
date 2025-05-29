@@ -1,5 +1,9 @@
 {% extends "../../layouts/exemption.html" %}
 
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
 {% block beforeContent %}
     {% include "../../includes/phase-banner.html" %}
     {% include "../../includes/back-link.html" %}
@@ -12,7 +16,7 @@ Enter the width of the circular site in metres
 
 <!-- Set the text for each error type -->
 {% set errorTextHTML %}
-    {%  if  data['errortypeone'] == "true"  %}
+    {%  if  data['errorthispage'] == "true"  %}
     Enter the width of the circular site in metres
     {%  endif  %}
 {% endset %}

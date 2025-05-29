@@ -616,24 +616,8 @@ router.post('/' + version + section + 'manual-entry/site-width-router', function
     const width = req.session.data['manual-site-width'];
     const returnTo = req.query.returnTo;
 
+    // Only check if data is entered (for prototype purposes)
     if (!width || width.trim() === "") {
-        req.session.data['errorthispage'] = "true";
-        req.session.data['errortypeone'] = "true";
-        res.redirect('site-width' + (returnTo ? '?returnTo=' + returnTo : ''));
-        return;
-    }
-
-    // Check if width is a valid number
-    const widthNum = parseFloat(width);
-    if (isNaN(widthNum)) {
-        req.session.data['errorthispage'] = "true";
-        req.session.data['errortypeone'] = "true";
-        res.redirect('site-width' + (returnTo ? '?returnTo=' + returnTo : ''));
-        return;
-    }
-
-    // Check if width is positive
-    if (widthNum <= 0) {
         req.session.data['errorthispage'] = "true";
         req.session.data['errortypeone'] = "true";
         res.redirect('site-width' + (returnTo ? '?returnTo=' + returnTo : ''));
