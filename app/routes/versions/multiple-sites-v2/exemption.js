@@ -2236,7 +2236,7 @@ router.post('/' + version + section + 'manual-entry/which-coordinate-system-rout
             res.redirect('enter-coordinates');
             break;
         case "OSGB36 (National Grid)":
-            res.redirect('../stop');
+            res.redirect('enter-coordinates');
             break;
         default:
             res.redirect('which-coordinate-system');
