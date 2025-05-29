@@ -52,15 +52,11 @@ require('./routes/versions/multiple-sites/exemption.js')(router);
 require('./routes/versions/multiple-sites-v2/check.js')(router);
 require('./routes/versions/multiple-sites-v2/exemption.js')(router);
 require('./routes/versions/multiple-sites-v2/exemption-manual-entry.js')(router);
-require('./routes/versions/multiple-sites-v2/exemption-updated.js')(router);
-require('./routes/versions/multiple-sites-v2/multiple-coords-side-by-side.js')(router);
 require('./routes/versions/multiple-sites-v2/iat.js')(router);
 
 // IAT Version
 require('./routes/versions/iat/check.js')(router);
 require('./routes/versions/iat/exemption.js')(router);
-require('./routes/versions/iat/exemption-updated.js')(router);
-require('./routes/versions/iat/multiple-coords-side-by-side.js')(router);
 require('./routes/versions/iat/iat.js')(router);
 
 // viewing session data
