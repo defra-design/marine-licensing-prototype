@@ -51,6 +51,7 @@ require('./routes/versions/multiple-sites/exemption.js')(router);
 // Multiple Sites Version V2
 require('./routes/versions/multiple-sites-v2/check.js')(router);
 require('./routes/versions/multiple-sites-v2/exemption.js')(router);
+require('./routes/versions/multiple-sites-v2/exemption-manual-entry.js')(router);
 require('./routes/versions/multiple-sites-v2/exemption-updated.js')(router);
 require('./routes/versions/multiple-sites-v2/multiple-coords-side-by-side.js')(router);
 require('./routes/versions/multiple-sites-v2/iat.js')(router);
