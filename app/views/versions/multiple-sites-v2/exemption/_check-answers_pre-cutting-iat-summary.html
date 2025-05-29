@@ -32,7 +32,7 @@
   <div class="govuk-grid-column-full">
 
     {% if data['applicationSubmitted'] == "true" %}
-      <span class="govuk-caption-l">	EXE/2025/004 – Exempt activity</span>
+      <span class="govuk-caption-l">	EXE/2025/00004 – Exempt activity</span>
     {% else %}
       <!-- Caption but no reference-->
       <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
@@ -357,7 +357,8 @@
 
 
 <div class="govuk-summary-list__row">
-  <dt class="govuk-summary-list__key">Coordinate system
+  <dt class="govuk-summary-list__key">
+    Coordinate system
   </dt>
   <dd class="govuk-summary-list__value">
     {{ data['exemption-what-coordinate-system-radios'] }}<br> 
