@@ -271,11 +271,49 @@ router.post('/' + version + section + 'manual-entry/same-activity-description-ro
             res.redirect('activity-description');
             break;
         case "No":
-            res.redirect('activity-description');
+            res.redirect('individual-site-activity-description');
             break;
         default:
             res.redirect('same-activity-description');
     }
+});
+
+// Individual site activity description - GET route
+router.get('/' + version + section + 'manual-entry/individual-site-activity-description', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errors'] = [];
+    
+    // Check if we're returning from review-site-details
+    if (req.query.returnTo === 'review-site-details') {
+        req.session.data['fromReviewSiteDetails'] = 'true';
+    }
+    
+    res.render(version + section + 'manual-entry/individual-site-activity-description');
+});
+
+// Individual site activity description - POST route
+router.post('/' + version + section + 'manual-entry/individual-site-activity-description-router', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    const description = req.session.data['manual-individual-activity-details-text-area'];
+    const returnTo = req.query.returnTo;
+
+    if (!description || description.trim() === "") {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        res.redirect('individual-site-activity-description' + (returnTo ? '?returnTo=' + returnTo : ''));
+        return;
+    }
+
+    // Check if we're coming from review-site-details page
+    if (req.session.data['fromReviewSiteDetails'] === 'true') {
+        delete req.session.data['fromReviewSiteDetails']; // Clear the flag
+        return res.redirect('review-site-details');
+    }
+
+    res.redirect('how-do-you-want-to-enter-the-coordinates');
 });
 
 // Activity description - GET route

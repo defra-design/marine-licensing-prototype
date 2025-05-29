@@ -1,5 +1,8 @@
 {% extends "../../layouts/exemption.html" %}
 
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
 {% block beforeContent %}
 {% include "../../includes/phase-banner.html" %}
 {% include "../../includes/back-link.html" %}
@@ -40,7 +43,7 @@ Activity description
                     [
                         {
                             html: errorTextHTML,
-                            href: "#manual-activity-details-text-area"
+                            href: "#manual-individual-activity-details-text-area"
                         }
                     ]
                 })
@@ -51,35 +54,32 @@ Activity description
         <!-- go to routes.js for routing  -->
         <form action="individual-site-activity-description-router" method="post" novalidate>
 
-{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
-{% from "govuk/components/button/macro.njk" import govukButton %}
-
             <div class="govuk-form-group {% if data['errorthispage'] == 'true' and data['errortypeone'] == 'true' %}govuk-form-group--error{% endif %}">
                 <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
                 <h1 class="govuk-label-wrapper">
-                  <label class="govuk-label govuk-label--l" for="manual-activity-details-text-area">
+                  <label class="govuk-label govuk-label--l" for="manual-individual-activity-details-text-area">
                     {{ pageHeadingTextHTML }}
                     <span class="govuk-caption-l">Site 1</span>
                   </label>
                 </h1>
               
-                <div id="manual-activity-details-text-area-hint" class="govuk-hint">
-                  Provide details about what you plan to do at this site
+                <div id="manual-individual-activity-details-text-area-hint" class="govuk-hint">
+                  Provide details about what you plan to do in this location
                 </div>
               
                 {% if data['errorthispage'] == 'true' and data['errortypeone'] == 'true' %}
-                  <p id="manual-activity-details-text-area-error" class="govuk-error-message">
+                  <p id="manual-individual-activity-details-text-area-error" class="govuk-error-message">
                     <span class="govuk-visually-hidden">Error:</span> Enter the activity details
                   </p>
                 {% endif %}
               
                 <textarea
                   class="govuk-textarea {% if data['errorthispage'] == 'true' and data['errortypeone'] == 'true' %}govuk-textarea--error{% endif %}"
-                  id="manual-activity-details-text-area"
-                  name="manual-activity-details-text-area"
+                  id="manual-individual-activity-details-text-area"
+                  name="manual-individual-activity-details-text-area"
                   rows="8"
-                  aria-describedby="manual-activity-details-text-area-hint{% if data['errorthispage'] == 'true' and data['errortypeone'] == 'true' %} manual-activity-details-text-area-error{% endif %}"
-                >{{ data['manual-activity-details-text-area'] }}</textarea>
+                  aria-describedby="manual-individual-activity-details-text-area-hint{% if data['errorthispage'] == 'true' and data['errortypeone'] == 'true' %} manual-individual-activity-details-text-area-error{% endif %}"
+                >{{ data['manual-individual-activity-details-text-area'] }}</textarea>
               </div>
 
               <div class="govuk-button-group">
