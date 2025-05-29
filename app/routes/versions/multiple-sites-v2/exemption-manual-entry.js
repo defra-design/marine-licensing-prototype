@@ -215,7 +215,7 @@ router.post('/' + version + section + 'manual-entry/how-do-you-want-to-enter-the
             res.redirect('which-coordinate-system');
             break;
         case "Enter multiple sets of coordinates to mark the boundary of the site":
-            res.redirect('../stop');
+            res.redirect('which-coordinate-system');
             break;
         default:
             res.redirect('how-do-you-want-to-enter-the-coordinates');
@@ -228,6 +228,7 @@ router.post('/' + version + section + 'manual-entry/which-coordinate-system-rout
     req.session.data['errortypeone'] = "false";
 
     const selection = req.session.data['manual-coordinate-system-radios'];
+    const coordinateMethod = req.session.data['coordinate-entry-method'];
 
     if (!selection) {
         req.session.data['errorthispage'] = "true";
@@ -236,17 +237,84 @@ router.post('/' + version + section + 'manual-entry/which-coordinate-system-rout
         return;
     }
 
-    // Route based on selection
-    switch(selection) {
-        case "WGS84 (World Geodetic System 1984)":
-            res.redirect('enter-coordinates');
-            break;
-        case "OSGB36 (National Grid)":
-            res.redirect('enter-coordinates');
-            break;
-        default:
-            res.redirect('which-coordinate-system');
+    // Route based on coordinate entry method
+    if (coordinateMethod === "Enter multiple sets of coordinates to mark the boundary of the site") {
+        res.redirect('enter-multiple-coordinates');
+    } else {
+        // For circular sites
+        res.redirect('enter-coordinates');
     }
+});
+
+// Enter multiple coordinates router
+router.post('/' + version + section + 'manual-entry/enter-multiple-coordinates-router', function (req, res) {
+    // Reset global error states
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errors'] = [];
+
+    // Get the selected coordinate system
+    const system = req.session.data['manual-coordinate-system-radios'];
+    const usingOSGB36 = system === "OSGB36 (National Grid)";
+    const latLabel = usingOSGB36 ? "Eastings" : "Latitude";
+    const longLabel = usingOSGB36 ? "Northings" : "Longitude";
+
+    // Loop over points 1-5
+    for (let i = 1; i <= 5; i++) {
+        const latKey = `manual-coordinates-point-${i}-latitude`;
+        const longKey = `manual-coordinates-point-${i}-longitude`;
+        const latVal = req.session.data[latKey];
+        const longVal = req.session.data[longKey];
+
+        const latMissing = !latVal || latVal.trim() === "";
+        const longMissing = !longVal || longVal.trim() === "";
+
+        const pointLabel = i === 1 ? "start and end point" : `point ${i}`;
+
+        // Check visibility for Points 4 & 5 based on flags
+        const isPointVisible = i <= 3 || req.session.data[`manual-coordinates-visible-point-${i}`] === "true";
+
+        // Skip validation for hidden points with no entered data
+        if (!isPointVisible && (latMissing && longMissing)) {
+            req.session.data[`error-${latKey}`] = "false";
+            req.session.data[`error-${longKey}`] = "false";
+            continue;
+        }
+
+        // If lat or long is missing, mark as an error
+        if (latMissing || longMissing) {
+            req.session.data['errorthispage'] = "true";
+        }
+
+        // Latitude error handling
+        if (latMissing) {
+            req.session.data[`error-${latKey}`] = "true";
+            req.session.data['errors'].push({
+                text: `Enter the ${latLabel.toLowerCase()} of ${pointLabel}`,
+                anchor: `${latKey}`
+            });
+        } else {
+            req.session.data[`error-${latKey}`] = "false";
+        }
+
+        // Longitude error handling
+        if (longMissing) {
+            req.session.data[`error-${longKey}`] = "true";
+            req.session.data['errors'].push({
+                text: `Enter the ${longLabel.toLowerCase()} of ${pointLabel}`,
+                anchor: `${longKey}`
+            });
+        } else {
+            req.session.data[`error-${longKey}`] = "false";
+        }
+    }
+
+    // Redirect to the current page if there are errors, else continue to the next page
+    if (req.session.data['errorthispage'] === "true") {
+        return res.redirect('enter-multiple-coordinates');
+    }
+
+    // For now, redirect to stop page as requested
+    res.redirect('../stop');
 });
 
 // Enter the coordinates at the centre point
