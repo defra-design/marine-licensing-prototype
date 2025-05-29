@@ -34,6 +34,11 @@ Enter the width of the circular site in metres
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
+        <!-- Get current site number -->
+        {% set currentSite = data['current-site'] or 1 %}
+        {% set sitePrefix = 'manual-' if currentSite == 1 else 'manual-site-' + currentSite + '-' %}
+        {% set siteWidthInputId = sitePrefix + 'site-width' %}
+
         <!-- ERROR LOGIC 'error summary' -->
         {% if data['errorthispage'] == "true" %}
             {{ govukErrorSummary
@@ -43,7 +48,7 @@ Enter the width of the circular site in metres
                     [
                         {
                             html: errorTextHTML,
-                            href: "#manual-site-width"
+                            href: "#" + siteWidthInputId
                         }
                     ]
                 })
@@ -52,7 +57,7 @@ Enter the width of the circular site in metres
         <!--  END OF 'error summary' -->
 
         <!-- go to routes.js for routing  -->
-        <form action="site-width-router" method="post" novalidate>
+        <form action="site-width-router{% if currentSite > 1 %}?site={{ currentSite }}{% endif %}" method="post" novalidate>
 
             {% if data['errorthispage'] == "true" %}
             <div class="govuk-form-group govuk-form-group--error">
@@ -63,11 +68,11 @@ Enter the width of the circular site in metres
                 <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
                 <h1 class="govuk-heading-l">
                     {{ pageHeadingTextHTML }}
-                    <span class="govuk-caption-l">Site 1</span>
+                    <span class="govuk-caption-l">Site {{ currentSite }}</span>
                 </h1>
                 
                 {% if data['errorthispage'] == "true" %}
-                <p id="manual-site-width-error" class="govuk-error-message">
+                <p id="{{ siteWidthInputId }}-error" class="govuk-error-message">
                     <span class="govuk-visually-hidden">Error:</span> {{ errorTextHTML }}
                 </p>
                 {% endif %}
@@ -83,11 +88,11 @@ Enter the width of the circular site in metres
 
                         autocomplete: "off",
 
-                        id: "manual-site-width",
+                        id: siteWidthInputId,
 
-                        name: "manual-site-width",
+                        name: siteWidthInputId,
 
-                        value: data['manual-site-width'],
+                        value: data[siteWidthInputId],
                         suffix:
                         {
                             text: "metres"

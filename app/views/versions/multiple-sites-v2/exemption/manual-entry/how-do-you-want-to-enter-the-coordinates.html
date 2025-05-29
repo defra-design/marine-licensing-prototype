@@ -27,6 +27,10 @@ How do you want to enter the site coordinates?
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
+        <!-- Get current site number -->
+        {% set currentSite = data['current-site'] or 1 %}
+        {% set siteDataKey = 'manual-coordinate-entry-method' if currentSite == 1 else 'manual-site-' + currentSite + '-coordinate-entry-method' %}
+
 <!-- ERROR LOGIC 'error summary' -->
 {% if data['errorthispage'] == "true" %}
   <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
@@ -36,7 +40,7 @@ How do you want to enter the site coordinates?
     <div class="govuk-error-summary__body">
       <ul class="govuk-list govuk-error-summary__list">
         {% if data['errortypeone'] == "true" %}
-          <li><a href="#coordinate-entry-method">{{ errorText1HTML }}</a></li>
+          <li><a href="#{{ siteDataKey }}">{{ errorText1HTML }}</a></li>
         {% endif %}
       </ul>
     </div>
@@ -44,18 +48,18 @@ How do you want to enter the site coordinates?
 {% endif %}
         <!--  END OF 'error summary' -->
         
-        <form action="how-do-you-want-to-enter-the-coordinates-router" method="post" novalidate>
+        <form action="how-do-you-want-to-enter-the-coordinates-router{% if currentSite > 1 %}?site={{ currentSite }}{% endif %}" method="post" novalidate>
 
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
 {{ govukRadios({
-  idPrefix: "manual-coordinate-entry-method",
-  name: "manual-coordinate-entry-method",
-  value: data['manual-coordinate-entry-method'],
+  idPrefix: siteDataKey,
+  name: siteDataKey,
+  value: data[siteDataKey],
   fieldset: {
     legend: {
-      html: '<span class="govuk-caption-l">' + data['exemption-project-name-text-input'] + '</span>' + pageHeadingTextHTML + '<span class="govuk-caption-l">Site 1</span>',
+      html: '<span class="govuk-caption-l">' + data['exemption-project-name-text-input'] + '</span>' + pageHeadingTextHTML + '<span class="govuk-caption-l">Site ' + currentSite + '</span>',
       isPageHeading: true,
       classes: "govuk-fieldset__legend--l"
     }
@@ -70,7 +74,7 @@ How do you want to enter the site coordinates?
       hint: {
         text: "Use this if you only have the centre point of the site"
       },
-      checked: data['manual-coordinate-entry-method'] == "Enter one set of coordinates and a width to create a circular site"
+      checked: data[siteDataKey] == "Enter one set of coordinates and a width to create a circular site"
     },
     {
       value: "Enter multiple sets of coordinates to mark the boundary of the site",
@@ -78,7 +82,7 @@ How do you want to enter the site coordinates?
       hint: {
         text: "Use this if the site is a custom shape with more than one point"
       },
-      checked: data['manual-coordinate-entry-method'] == "Enter multiple sets of coordinates to mark the boundary of the site"
+      checked: data[siteDataKey] == "Enter multiple sets of coordinates to mark the boundary of the site"
     }
   ]
 }) }}

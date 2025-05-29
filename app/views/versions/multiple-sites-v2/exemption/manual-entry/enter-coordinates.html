@@ -14,28 +14,6 @@
 Enter the coordinates at the centre point of the site
 {% endset %}
 
-<!-- Setting the smaller secondary headings lower down the page -->
-{% set questionHeadingTextOneHTML %}
-    {% if data['manual-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['manual-coordinate-system-radios'] %}
-    Latitude
-    {% elif data['manual-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
-    Eastings
-    {% endif %}
-{% endset %}
-
-{% set questionHeadingTextTwoHTML %}
-    {% if data['manual-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['manual-coordinate-system-radios'] %}
-    Longitude
-    {% elif data['manual-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
-    Northings
-    {% endif %}
-{% endset %}
-
-<!-- Set the text for each error type -->
-{% set errorTextHTML %}
-    Enter the coordinates
-{% endset %}
-
 <!-- Text that show in the browser tab. Does NOT need changing -->
 {% block pageTitle %}
     {% if  data['errorthispage'] == "true"  %}
@@ -49,6 +27,33 @@ Enter the coordinates at the centre point of the site
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
+        <!-- Get current site number -->
+        {% set currentSite = data['current-site'] or 1 %}
+        {% set sitePrefix = 'manual-' if currentSite == 1 else 'manual-site-' + currentSite + '-' %}
+        {% set coordinateSystemKey = sitePrefix + 'coordinate-system-radios' %}
+
+        <!-- Setting the smaller secondary headings based on site-specific coordinate system -->
+        {% set questionHeadingTextOneHTML %}
+            {% if data[coordinateSystemKey] == "WGS84 (World Geodetic System 1984)" or not data[coordinateSystemKey] %}
+            Latitude
+            {% elif data[coordinateSystemKey] == "OSGB36 (National Grid)" %}
+            Eastings
+            {% endif %}
+        {% endset %}
+
+        {% set questionHeadingTextTwoHTML %}
+            {% if data[coordinateSystemKey] == "WGS84 (World Geodetic System 1984)" or not data[coordinateSystemKey] %}
+            Longitude
+            {% elif data[coordinateSystemKey] == "OSGB36 (National Grid)" %}
+            Northings
+            {% endif %}
+        {% endset %}
+
+        <!-- Set the text for each error type -->
+        {% set errorTextHTML %}
+            Enter the coordinates
+        {% endset %}
+
         <!-- ERROR LOGIC 'error summary' -->
         {% if data['errorthispage'] == "true" %}
         <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
@@ -58,10 +63,10 @@ Enter the coordinates at the centre point of the site
             <div class="govuk-error-summary__body">
                 <ul class="govuk-list govuk-error-summary__list">
                     {% if data['errortypeone'] == "true" %}
-                    <li><a href="#">Enter the coordinates</a></li> 
+                    <li><a href="#{{ sitePrefix }}latitude">Enter the {{ questionHeadingTextOneHTML | lower }}</a></li> 
                     {% endif %}
                     {% if data['errortypetwo'] == "true" %}
-                    <li><a href="#">Enter the coordinates</a></li> 
+                    <li><a href="#{{ sitePrefix }}longitude">Enter the {{ questionHeadingTextTwoHTML | lower }}</a></li> 
                     {% endif %}
                 </ul>
             </div>
@@ -72,11 +77,11 @@ Enter the coordinates at the centre point of the site
         <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
         <h1 class="govuk-heading-l">
             {{ pageHeadingTextHTML }}
-            <span class="govuk-caption-l">Site 1</span>
+            <span class="govuk-caption-l">Site {{ currentSite }}</span>
           </h1> 
         
 
-        <form action="enter-coordinates-router{% if query.fromreview %}?fromreview=true{% endif %}" method="post" novalidate>
+        <form action="enter-coordinates-router{% if currentSite > 1 %}?site={{ currentSite }}{% endif %}{% if query.fromreview %}{% if currentSite > 1 %}&{% else %}?{% endif %}fromreview=true{% endif %}" method="post" novalidate>
 
             {% call govukFieldset({
                 legend: {
@@ -86,9 +91,9 @@ Enter the coordinates at the centre point of the site
                 }
               }) %}
               
-              {% if data['manual-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['manual-coordinate-system-radios'] %}
+              {% if data[coordinateSystemKey] == "WGS84 (World Geodetic System 1984)" or not data[coordinateSystemKey] %}
               {% include "../../includes/lat-long-content.html" %}
-              {% elif data['manual-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+              {% elif data[coordinateSystemKey] == "OSGB36 (National Grid)" %}
               {% include "../../includes/east-north-content.html" %}
               {% endif %}
 
@@ -103,14 +108,14 @@ Enter the coordinates at the centre point of the site
             
                     autocomplete: "off",
 
-                    id: "manual-latitude",
+                    id: sitePrefix + "latitude",
             
-                    name: "manual-latitude",
+                    name: sitePrefix + "latitude",
             
                     errorMessage: null if data['errortypeone'] != "true"
                                    else { html: errorTextHTML },
             
-                    value: data['manual-latitude'],
+                    value: data[sitePrefix + 'latitude'],
             
                     classes: "govuk-input govuk-!-width-one-half"
                 })
@@ -127,14 +132,14 @@ Enter the coordinates at the centre point of the site
             
                     autocomplete: "off",
 
-                    id: "manual-longitude",
+                    id: sitePrefix + "longitude",
             
-                    name: "manual-longitude",
+                    name: sitePrefix + "longitude",
             
                     errorMessage: null if data['errortypetwo'] != "true"
                                    else { html: errorTextHTML },
             
-                    value: data['manual-longitude'],
+                    value: data[sitePrefix + 'longitude'],
             
                     classes: "govuk-input govuk-!-width-one-half"
                 })
@@ -145,7 +150,7 @@ Enter the coordinates at the centre point of the site
                 {{ govukButton({
                   text: "Continue"
                 }) }}
-                <a class="govuk-link govuk-link--no-visited-state" href="#">Cancel</a>
+                <a class="govuk-link govuk-link--no-visited-state" href="../cancel-site-details">Cancel</a>
             </div>
 
         </form>

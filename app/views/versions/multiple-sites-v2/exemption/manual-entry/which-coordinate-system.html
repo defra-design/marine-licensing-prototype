@@ -1,5 +1,9 @@
 {% extends "../../layouts/exemption.html" %}
 
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
 {% block beforeContent %}
     {% include "../../includes/phase-banner.html" %}
     {% include "../../includes/back-link.html" %}
@@ -30,6 +34,10 @@ Which coordinate system do you want to use?
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
+        <!-- Get current site number -->
+        {% set currentSite = data['current-site'] or 1 %}
+        {% set siteDataKey = 'manual-coordinate-system-radios' if currentSite == 1 else 'manual-site-' + currentSite + '-coordinate-system-radios' %}
+
         <!-- ERROR LOGIC 'error summary' -->
         {% if data['errorthispage'] == "true" %}
             {{ govukErrorSummary
@@ -39,7 +47,7 @@ Which coordinate system do you want to use?
                     [
                         {
                             html: errorTextHTML,
-                            href: "#manual-coordinate-system-radios"
+                            href: "#" + siteDataKey
                         }
                     ]
                 })
@@ -48,13 +56,13 @@ Which coordinate system do you want to use?
         <!--  END OF 'error summary' -->
 
         <!-- go to routes.js for routing  -->
-        <form action="which-coordinate-system-router" method="post" novalidate>
+        <form action="which-coordinate-system-router{% if currentSite > 1 %}?site={{ currentSite }}{% endif %}" method="post" novalidate>
         
         <div class="govuk-form-group {% if data['errorthispage'] == 'true' %}govuk-form-group--error{% endif %}">
             <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
             <h1 class="govuk-heading-l">
                 {{ pageHeadingTextHTML }}
-                <span class="govuk-caption-l">Site 1</span>
+                <span class="govuk-caption-l">Site {{ currentSite }}</span>
             </h1>
 
             <details class="govuk-details">
@@ -73,17 +81,16 @@ Which coordinate system do you want to use?
               </details>
             
             {% if data['errorthispage'] == "true" %}
-                <p id="manual-coordinate-system-radios-error" class="govuk-error-message">
+                <p id="{{ siteDataKey }}-error" class="govuk-error-message">
                     <span class="govuk-visually-hidden">Error:</span> {{ errorTextHTML }}
                 </p>
             {% endif %}
 
             {{ govukRadios
                 ({
-                    name: "manual-coordinate-system-radios",
-
-                    id: "manual-coordinate-system-radios",
-
+                    name: siteDataKey,
+                    id: siteDataKey,
+                    value: data[siteDataKey],
                     fieldset:
                     {
                         legend:
@@ -93,13 +100,12 @@ Which coordinate system do you want to use?
                             classes: "govuk-fieldset__legend--l govuk-visually-hidden"
                         }
                     },
-
                     items:
                     [
                         {
                             value: "WGS84 (World Geodetic System 1984)",
                             text: "WGS84 (World Geodetic System 1984)",
-                            checked: data['manual-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)",
+                            checked: data[siteDataKey] == "WGS84 (World Geodetic System 1984)",
                             hint: {
                               text: "Uses latitude and longitude"
                             }
@@ -107,7 +113,7 @@ Which coordinate system do you want to use?
                         {
                             value: "OSGB36 (National Grid)",
                             text: "OSGB36 (National Grid)",
-                            checked: data['manual-coordinate-system-radios'] == "OSGB36 (National Grid)",
+                            checked: data[siteDataKey] == "OSGB36 (National Grid)",
                             hint: {
                               text: "Uses eastings and northings"
                             }
