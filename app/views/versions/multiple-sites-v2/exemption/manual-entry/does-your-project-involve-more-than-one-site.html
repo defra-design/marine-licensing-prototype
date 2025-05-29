@@ -49,13 +49,20 @@ Does your project involve more than one site?
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
+{% set legendHTML %}
+{% if data['exemption-project-name-text-input'] %}
+<span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
+{% endif %}
+{{ pageHeadingTextHTML }}
+{% endset %}
+
 {{ govukRadios({
   idPrefix: "manual-multiple-sites",
   name: "manual-multiple-sites",
   value: data['manual-multiple-sites'],
   fieldset: {
     legend: {
-      text: pageHeadingTextHTML,
+      html: legendHTML,
       isPageHeading: true,
       classes: "govuk-fieldset__legend--l"
     }

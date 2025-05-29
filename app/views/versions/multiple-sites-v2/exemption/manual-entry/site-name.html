@@ -1,5 +1,8 @@
 {% extends "../../layouts/exemption.html" %}
 
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
 {% block beforeContent %}
     {% include "../../includes/phase-banner.html" %}
     {% include "../../includes/back-link.html" %}
@@ -36,7 +39,7 @@ Site name
     <div class="govuk-error-summary__body">
       <ul class="govuk-list govuk-error-summary__list">
         {% if data['errortypeone'] == "true" %}
-          <li><a href="#site-name-text-input">{{ errorText1HTML }}</a></li>
+          <li><a href="#manual-site-name-text-input">{{ errorText1HTML }}</a></li>
         {% endif %}
       </ul>
     </div>
@@ -46,23 +49,32 @@ Site name
 
         <form action="site-name-router" method="post" novalidate>
             
-            {{ govukInput({
-                label: {
-                    text: pageHeadingTextHTML,
-                    classes: "govuk-label--l",
-                    isPageHeading: true
-                },
-                hint: {
-                    text: hintTextHTML
-                },
-                id: "manual-site-name-text-input",
-                name: "manual-site-name-text-input",
-                value: data['manual-site-name-text-input'],
-                classes: "govuk-input--width-20",
-                errorMessage: {
-                    text: errorTextHTML
-                } if data['errortypeone'] == "true"
-            }) }}
+            <div class="govuk-form-group {% if data['errorthispage'] == 'true' and data['errortypeone'] == 'true' %}govuk-form-group--error{% endif %}">
+                {% if data['exemption-project-name-text-input'] %}
+                <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
+                {% endif %}
+                <h1 class="govuk-label-wrapper">
+                  <label class="govuk-label govuk-label--l" for="manual-site-name-text-input">
+                    {{ pageHeadingTextHTML }}
+                    <span class="govuk-caption-l">Site 1</span>
+                  </label>
+                </h1>
+              
+                {% if data['errorthispage'] == 'true' and data['errortypeone'] == 'true' %}
+                  <p id="manual-site-name-text-input-error" class="govuk-error-message">
+                    <span class="govuk-visually-hidden">Error:</span> {{ errorText1HTML }}
+                  </p>
+                {% endif %}
+              
+                <input
+                  class="govuk-input govuk-!-width-full {% if data['errorthispage'] == 'true' and data['errortypeone'] == 'true' %}govuk-input--error{% endif %}"
+                  id="manual-site-name-text-input"
+                  name="manual-site-name-text-input"
+                  type="text"
+                  value="{{ data['manual-site-name-text-input'] }}"
+                  {% if data['errorthispage'] == 'true' and data['errortypeone'] == 'true' %}aria-describedby="manual-site-name-text-input-error"{% endif %}
+                />
+              </div>
             
             <div class="govuk-button-group">
                 {{ govukButton({
