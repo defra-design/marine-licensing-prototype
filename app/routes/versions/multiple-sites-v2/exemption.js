@@ -561,6 +561,11 @@ router.post('/' + version + section + 'do-you-want-to-draw-the-site-on-our-map-r
 
 // GET route handler for the "How do you want to provide coordinates" page
 router.get('/' + version + section + 'how-do-you-want-to-provide-the-coordinates', function (req, res) {
+    // Clear error states when loading the page
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errors'] = [];
+    
     // Check if we're returning from review-site-details
     if (req.query.returnTo === 'review-site-details') {
         req.session.data['fromReviewSiteDetails'] = 'true';
@@ -621,6 +626,11 @@ router.post('/' + version + section + 'how-do-you-want-to-provide-the-coordinate
 
 // GET route handler for the "Which type of file" page
 router.get('/' + version + section + 'which-type-of-file', function (req, res) {
+    // Clear error states when loading the page
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errors'] = [];
+    
     // Check if we're returning from review-site-details
     if (req.session.data['fromReviewSiteDetails'] === 'true') {
         // Keep the flag
@@ -666,6 +676,11 @@ router.post('/' + version + section + 'which-type-of-file-router', function (req
 
 // GET route handler for the "Upload file" page
 router.get('/' + version + section + 'upload-file', function (req, res) {
+    // Clear error states when loading the page
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errors'] = [];
+    
     // Check if we're returning from review-site-details
     if (req.session.data['fromReviewSiteDetails'] === 'true') {
         // Keep the flag

@@ -8,7 +8,16 @@ module.exports = function (router) {
 // Manual Entry Flow Routes
 //////////////////////////////////////////////////////////////////////////////////////////////
 
-// Does your project involve more than one site?
+// Does your project involve more than one site? - GET route
+router.get('/' + version + section + 'manual-entry/does-your-project-involve-more-than-one-site', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errors'] = [];
+    
+    res.render(version + section + 'manual-entry/does-your-project-involve-more-than-one-site');
+});
+
+// Does your project involve more than one site? - POST route
 router.post('/' + version + section + 'manual-entry/does-your-project-involve-more-than-one-site-router', function (req, res) {
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
@@ -35,7 +44,16 @@ router.post('/' + version + section + 'manual-entry/does-your-project-involve-mo
     }
 });
 
-// Site name
+// Site name - GET route
+router.get('/' + version + section + 'manual-entry/site-name', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errors'] = [];
+    
+    res.render(version + section + 'manual-entry/site-name');
+});
+
+// Site name - POST route
 router.post('/' + version + section + 'manual-entry/site-name-router', function (req, res) {
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
@@ -52,7 +70,16 @@ router.post('/' + version + section + 'manual-entry/site-name-router', function 
     res.redirect('same-activity-dates');
 });
 
-// Are the activity dates the same for every site?
+// Are the activity dates the same for every site? - GET route
+router.get('/' + version + section + 'manual-entry/same-activity-dates', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errors'] = [];
+    
+    res.render(version + section + 'manual-entry/same-activity-dates');
+});
+
+// Are the activity dates the same for every site? - POST route
 router.post('/' + version + section + 'manual-entry/same-activity-dates-router', function (req, res) {
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
@@ -79,7 +106,16 @@ router.post('/' + version + section + 'manual-entry/same-activity-dates-router',
     }
 });
 
-// Individual site activity dates
+// Individual site activity dates - GET route
+router.get('/' + version + section + 'manual-entry/individual-site-activity-dates', function (req, res) {
+    req.session.data['startdateerror'] = "false";
+    req.session.data['enddateerror'] = "false";
+    req.session.data['errors'] = [];
+    
+    res.render(version + section + 'manual-entry/individual-site-activity-dates');
+});
+
+// Individual site activity dates - POST route
 router.post('/' + version + section + 'manual-entry/individual-site-activity-dates-router', function (req, res) {
     req.session.data['startdateerror'] = "false";
     req.session.data['enddateerror'] = "false";
@@ -107,7 +143,16 @@ router.post('/' + version + section + 'manual-entry/individual-site-activity-dat
     res.redirect('same-activity-description');
 });
 
-// Activity dates
+// Activity dates - GET route
+router.get('/' + version + section + 'manual-entry/activity-dates', function (req, res) {
+    req.session.data['startdateerror'] = "false";
+    req.session.data['enddateerror'] = "false";
+    req.session.data['errors'] = [];
+    
+    res.render(version + section + 'manual-entry/activity-dates');
+});
+
+// Activity dates - POST route
 router.post('/' + version + section + 'manual-entry/activity-dates-router', function (req, res) {
     req.session.data['startdateerror'] = "false";
     req.session.data['enddateerror'] = "false";
@@ -135,7 +180,16 @@ router.post('/' + version + section + 'manual-entry/activity-dates-router', func
     res.redirect('same-activity-description');
 });
 
-// Is the activity description the same for every site?
+// Is the activity description the same for every site? - GET route
+router.get('/' + version + section + 'manual-entry/same-activity-description', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errors'] = [];
+    
+    res.render(version + section + 'manual-entry/same-activity-description');
+});
+
+// Is the activity description the same for every site? - POST route
 router.post('/' + version + section + 'manual-entry/same-activity-description-router', function (req, res) {
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
@@ -162,7 +216,16 @@ router.post('/' + version + section + 'manual-entry/same-activity-description-ro
     }
 });
 
-// Individual site activity description
+// Individual site activity description - GET route
+router.get('/' + version + section + 'manual-entry/individual-site-activity-description', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errors'] = [];
+    
+    res.render(version + section + 'manual-entry/individual-site-activity-description');
+});
+
+// Individual site activity description - POST route
 router.post('/' + version + section + 'manual-entry/individual-site-activity-description-router', function (req, res) {
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
@@ -178,7 +241,16 @@ router.post('/' + version + section + 'manual-entry/individual-site-activity-des
     res.redirect('how-do-you-want-to-enter-the-coordinates');
 });
 
-// Activity description
+// Activity description - GET route
+router.get('/' + version + section + 'manual-entry/activity-description', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errors'] = [];
+    
+    res.render(version + section + 'manual-entry/activity-description');
+});
+
+// Activity description - POST route
 router.post('/' + version + section + 'manual-entry/activity-description-router', function (req, res) {
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
@@ -195,7 +267,16 @@ router.post('/' + version + section + 'manual-entry/activity-description-router'
     res.redirect('how-do-you-want-to-enter-the-coordinates');
 });
 
-// How do you want to enter the coordinates?
+// How do you want to enter the coordinates? - GET route
+router.get('/' + version + section + 'manual-entry/how-do-you-want-to-enter-the-coordinates', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errors'] = [];
+    
+    res.render(version + section + 'manual-entry/how-do-you-want-to-enter-the-coordinates');
+});
+
+// How do you want to enter the coordinates? - POST route
 router.post('/' + version + section + 'manual-entry/how-do-you-want-to-enter-the-coordinates-router', function (req, res) {
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
@@ -222,7 +303,16 @@ router.post('/' + version + section + 'manual-entry/how-do-you-want-to-enter-the
     }
 });
 
-// Which coordinate system do you want to use?
+// Which coordinate system? - GET route
+router.get('/' + version + section + 'manual-entry/which-coordinate-system', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errors'] = [];
+    
+    res.render(version + section + 'manual-entry/which-coordinate-system');
+});
+
+// Which coordinate system? - POST route
 router.post('/' + version + section + 'manual-entry/which-coordinate-system-router', function (req, res) {
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
@@ -246,7 +336,16 @@ router.post('/' + version + section + 'manual-entry/which-coordinate-system-rout
     }
 });
 
-// Enter multiple coordinates router
+// Enter multiple coordinates - GET route
+router.get('/' + version + section + 'manual-entry/enter-multiple-coordinates', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errors'] = [];
+    
+    res.render(version + section + 'manual-entry/enter-multiple-coordinates');
+});
+
+// Enter multiple coordinates - POST route
 router.post('/' + version + section + 'manual-entry/enter-multiple-coordinates-router', function (req, res) {
     // Reset global error states
     req.session.data['errorthispage'] = "false";
@@ -317,7 +416,17 @@ router.post('/' + version + section + 'manual-entry/enter-multiple-coordinates-r
     res.redirect('../stop');
 });
 
-// Enter the coordinates at the centre point
+// Enter coordinates - GET route
+router.get('/' + version + section + 'manual-entry/enter-coordinates', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errortypetwo'] = "false";
+    req.session.data['errors'] = [];
+    
+    res.render(version + section + 'manual-entry/enter-coordinates');
+});
+
+// Enter coordinates - POST route
 router.post('/' + version + section + 'manual-entry/enter-coordinates-router', function (req, res) {
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
@@ -344,7 +453,16 @@ router.post('/' + version + section + 'manual-entry/enter-coordinates-router', f
     res.redirect('site-width');
 });
 
-// Site width
+// Site width - GET route
+router.get('/' + version + section + 'manual-entry/site-width', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errors'] = [];
+    
+    res.render(version + section + 'manual-entry/site-width');
+});
+
+// Site width - POST route
 router.post('/' + version + section + 'manual-entry/site-width-router', function (req, res) {
     req.session.data['error-type'] = "";
 
