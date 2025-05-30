@@ -707,7 +707,7 @@ Review site details
         {% endif %}
 
         <!-- Add the next site section -->
-        <div>
+        <div class="govuk-!-margin-bottom-4">
             {{ govukButton({
                 text: "Add the next site",
                 classes: "govuk-button--secondary",
@@ -717,20 +717,7 @@ Review site details
             }) }}
         </div>
 
-        <form action="../site-details-added" method="post" novalidate>
-            {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
-            
-            {{ govukCheckboxes({
-                idPrefix: "finished-adding-sites",
-                name: "finished-adding-sites",
-                items: [
-                    {
-                        value: "yes",
-                        text: "I've finished adding sites",
-                        checked: data['finished-adding-sites'] and data['finished-adding-sites'].includes("yes")
-                    }
-                ]
-            }) }}
+        <form action="review-site-details-router" method="post" novalidate>
 
             <div class="govuk-button-group">
                 {{ govukButton({

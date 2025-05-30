@@ -816,12 +816,103 @@ router.get('/' + version + section + 'manual-entry/review-site-details', functio
 
 // Review site details - POST route
 router.post('/' + version + section + 'manual-entry/review-site-details-router', function (req, res) {
+    // Convert manual entry sites to unified sites array format
+    convertManualSitesToUnifiedFormat(req);
+    
     // Mark the task as completed
     req.session.data['exempt-information-3-status'] = 'completed';
     
-    // Redirect to task list or next step
-    res.redirect('../task-list');
+    // Redirect to site-details-added (Your sites page) instead of task-list
+    res.redirect('../site-details-added');
 });
+
+// Function to convert manual entry sites to unified format
+function convertManualSitesToUnifiedFormat(req) {
+    console.log('=== DEBUG: Converting manual sites ===');
+    console.log('manual-current-site:', req.session.data['manual-current-site']);
+    
+    // Initialize sites array if it doesn't exist
+    if (!req.session.data['sites']) {
+        req.session.data['sites'] = [];
+    }
+    
+    const currentSiteNumber = req.session.data['manual-current-site'] || 1;
+    console.log('Processing sites 1 to', currentSiteNumber);
+    
+    // Convert each manual site to unified format
+    for (let i = 1; i <= currentSiteNumber; i++) {
+        const sitePrefix = i === 1 ? 'manual-' : 'manual-site-' + i + '-';
+        const siteNameKey = i === 1 ? 'manual-site-name-text-input' : 'manual-site-' + i + '-name-text-input';
+        const siteName = req.session.data[siteNameKey];
+        
+        console.log(`Site ${i}: nameKey="${siteNameKey}", name="${siteName}"`);
+        
+        // Only process sites that have a name (indicating they exist)
+        if (siteName) {
+            const siteData = {
+                name: siteName,
+                description: '',
+                startDate: {
+                    day: '',
+                    month: '',
+                    year: ''
+                },
+                endDate: {
+                    day: '',
+                    month: '',
+                    year: ''
+                },
+                mapImage: '/public/images/worthing-map-drawn-copy.jpg'
+            };
+            
+            // Add activity dates
+            if (req.session.data['manual-same-activity-dates'] === 'Yes') {
+                // Use shared dates
+                if (req.session.data['manual-start-date-date-input-day']) {
+                    siteData.startDate = {
+                        day: req.session.data['manual-start-date-date-input-day'],
+                        month: req.session.data['manual-start-date-date-input-month'],
+                        year: req.session.data['manual-start-date-date-input-year']
+                    };
+                    siteData.endDate = {
+                        day: req.session.data['manual-end-date-date-input-day'],
+                        month: req.session.data['manual-end-date-date-input-month'],
+                        year: req.session.data['manual-end-date-date-input-year']
+                    };
+                }
+            } else {
+                // Use individual dates
+                if (req.session.data[sitePrefix + 'start-date-date-input-day']) {
+                    siteData.startDate = {
+                        day: req.session.data[sitePrefix + 'start-date-date-input-day'],
+                        month: req.session.data[sitePrefix + 'start-date-date-input-month'],
+                        year: req.session.data[sitePrefix + 'start-date-date-input-year']
+                    };
+                    siteData.endDate = {
+                        day: req.session.data[sitePrefix + 'end-date-date-input-day'],
+                        month: req.session.data[sitePrefix + 'end-date-date-input-month'],
+                        year: req.session.data[sitePrefix + 'end-date-date-input-year']
+                    };
+                }
+            }
+            
+            // Add activity description
+            if (req.session.data['manual-same-activity-description'] === 'Yes') {
+                siteData.description = req.session.data['manual-activity-details-text-area'] || '';
+            } else {
+                siteData.description = req.session.data[sitePrefix + 'activity-details-text-area'] || '';
+            }
+            
+            console.log('Adding site to array:', siteData);
+            
+            // Add to sites array
+            req.session.data['sites'].push(siteData);
+        }
+    }
+    
+    console.log('Final sites array:', req.session.data['sites']);
+    console.log('=== END DEBUG ===');
+}
 
 // Add next site - GET route
 router.get('/' + version + section + 'manual-entry/add-next-site-router', function (req, res) {
