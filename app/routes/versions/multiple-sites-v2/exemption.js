@@ -111,6 +111,145 @@ function clearCoordinateData(session) {
     }
 }
 
+// Function to clear all manual entry session data
+function clearAllManualEntryData(session) {
+    // Clear manual entry specific data
+    delete session.data['manual-multiple-sites'];
+    delete session.data['manual-current-site'];
+    
+    // Clear activity dates settings
+    delete session.data['manual-same-activity-dates'];
+    delete session.data['manual-same-activity-description'];
+    
+    // Clear shared activity dates
+    delete session.data['manual-start-date-date-input-day'];
+    delete session.data['manual-start-date-date-input-month'];
+    delete session.data['manual-start-date-date-input-year'];
+    delete session.data['manual-end-date-date-input-day'];
+    delete session.data['manual-end-date-date-input-month'];
+    delete session.data['manual-end-date-date-input-year'];
+    
+    // Clear shared activity description
+    delete session.data['manual-activity-details-text-area'];
+    
+    // Clear coordinate entry method and system
+    delete session.data['manual-coordinate-entry-method'];
+    delete session.data['manual-coordinate-system-radios'];
+    
+    // Clear Site 1 data
+    delete session.data['manual-site-name-text-input'];
+    delete session.data['manual-latitude'];
+    delete session.data['manual-longitude'];
+    delete session.data['manual-site-width'];
+    
+    // Clear Site 1 multiple coordinates
+    for (let i = 1; i <= 5; i++) {
+        delete session.data[`manual-coordinates-point-${i}-latitude`];
+        delete session.data[`manual-coordinates-point-${i}-longitude`];
+    }
+    
+    // Clear Site 2+ data (sites 2-20)
+    for (let siteNum = 2; siteNum <= 20; siteNum++) {
+        // Site names
+        delete session.data[`manual-site-${siteNum}-name-text-input`];
+        
+        // Individual dates if different
+        delete session.data[`manual-site-${siteNum}-start-date-date-input-day`];
+        delete session.data[`manual-site-${siteNum}-start-date-date-input-month`];
+        delete session.data[`manual-site-${siteNum}-start-date-date-input-year`];
+        delete session.data[`manual-site-${siteNum}-end-date-date-input-day`];
+        delete session.data[`manual-site-${siteNum}-end-date-date-input-month`];
+        delete session.data[`manual-site-${siteNum}-end-date-date-input-year`];
+        
+        // Individual descriptions if different
+        delete session.data[`manual-site-${siteNum}-activity-details-text-area`];
+        
+        // Coordinate methods and systems
+        delete session.data[`manual-site-${siteNum}-coordinate-entry-method`];
+        delete session.data[`manual-site-${siteNum}-coordinate-system-radios`];
+        
+        // Circular coordinates
+        delete session.data[`manual-site-${siteNum}-latitude`];
+        delete session.data[`manual-site-${siteNum}-longitude`];
+        delete session.data[`manual-site-${siteNum}-site-width`];
+        
+        // Multiple coordinates
+        for (let i = 1; i <= 5; i++) {
+            delete session.data[`manual-site-${siteNum}-coordinates-point-${i}-latitude`];
+            delete session.data[`manual-site-${siteNum}-coordinates-point-${i}-longitude`];
+        }
+    }
+}
+
+// Function to clear all file upload session data
+function clearAllFileUploadData(session) {
+    // Clear file upload specific data
+    delete session.data['exemption-which-type-of-file-radios'];
+    delete session.data['kml-file-upload'];
+    
+    // Clear activity dates settings for file upload
+    delete session.data['exemption-same-activity-dates-for-sites'];
+    delete session.data['previous-activity-dates-selection'];
+    
+    // Clear shared activity dates for file upload
+    delete session.data['exemption-start-date-date-input-day'];
+    delete session.data['exemption-start-date-date-input-month'];
+    delete session.data['exemption-start-date-date-input-year'];
+    delete session.data['exemption-end-date-date-input-day'];
+    delete session.data['exemption-end-date-date-input-month'];
+    delete session.data['exemption-end-date-date-input-year'];
+    
+    // Clear activity description settings for file upload
+    delete session.data['exemption-same-activity-description-for-sites'];
+    delete session.data['previous-activity-description-selection'];
+    
+    // Clear shared activity description for file upload
+    delete session.data['exemption-activity-details-text-area'];
+    
+    // Clear individual site data for file upload
+    for (let i = 1; i <= 4; i++) {
+        delete session.data[`site-${i}-name`];
+        delete session.data[`site-${i}-start-date-day`];
+        delete session.data[`site-${i}-start-date-month`];
+        delete session.data[`site-${i}-start-date-year`];
+        delete session.data[`site-${i}-end-date-day`];
+        delete session.data[`site-${i}-end-date-month`];
+        delete session.data[`site-${i}-end-date-year`];
+        delete session.data[`site-${i}-activity-description`];
+        delete session.data[`site-${i}-map-image`];
+    }
+}
+
+// Function to clear all coordinate method session data for fresh start
+function clearAllCoordinateMethodData(session) {
+    // Clear manual entry data
+    clearAllManualEntryData(session);
+    
+    // Clear file upload data  
+    clearAllFileUploadData(session);
+    
+    // Clear coordinate method selection
+    delete session.data['exemption-how-do-you-want-to-provide-the-coordinates-radios'];
+    
+    // Clear coordinate data from old flow
+    clearCoordinateData(session);
+    clearMapData(session);
+    
+    // Clear any error states
+    delete session.data['errorthispage'];
+    delete session.data['errortypeone'];
+    delete session.data['errortypetwo'];
+    delete session.data['startdateerror'];
+    delete session.data['enddateerror'];
+    delete session.data['errors'];
+    
+    // Clear navigation flags
+    delete session.data['fromReviewSiteDetails'];
+    delete session.data['siteDetailsSaved'];
+    delete session.data['current-site'];
+    delete session.data['returnTo'];
+}
+
 // Add these new clearing functions
 function clearAllLocationData(session) {
     // Clear coordinate data
@@ -499,59 +638,251 @@ router.post('/' + version + section + 'about-your-activity-router', function (re
     if (!activityDetails || activityDetails.trim() === "") {
         req.session.data['errorthispage'] = "true";
         req.session.data['errortypeone'] = "true";
-        return res.redirect('activity-details');
+        res.redirect('about-your-activity');
+    } else {
+        // If the user came from check answers, return there
+        if (req.session.data['camefromcheckanswers'] === 'true') {
+            req.session.data['camefromcheckanswers'] = false;
+            res.redirect('check-answers#about-your-activity');
+        } else {
+            res.redirect('start-date');
+        }
+    }
+});
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Public Register
+// RADIO BUTTONS WITH CONDITIONAL TEXTAREA
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+router.post('/' + version + section + 'public-register-router', function (req, res) {
+    // Reset error states
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errortypetwo'] = "false";
+
+    // Clear text area if user changes from Yes to No
+    if (req.session.data['exemption-public-register-radios'] === 'No') {
+        delete req.session.data['exemption-public-register-text-area'];
     }
 
-    // After a valid description is entered, go to review-site-details
-    res.redirect('review-site-details');
+    // Check if the radio option is selected
+    if (
+        req.session.data['exemption-public-register-radios'] == undefined ||
+        req.session.data['exemption-public-register-radios'].trim() == ""
+    ) {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        res.redirect('public-register');
+    } 
+    // If "Yes" is selected, ensure the textarea is not empty
+    else if (
+        req.session.data['exemption-public-register-radios'] == "Yes" &&
+        (req.session.data['exemption-public-register-text-area'] == undefined ||
+         req.session.data['exemption-public-register-text-area'].trim() == "")
+    ) {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypetwo'] = "true";
+        res.redirect('public-register');
+    } else {
+       // Set the status to completed
+       req.session.data['exempt-information-4-status'] = 'completed';
+       
+       // Check if we need to return to check answers
+       if (req.session.data['camefromcheckanswers'] === 'true') {
+            req.session.data['camefromcheckanswers'] = false;
+            res.redirect('check-answers-multiple-sites');
+        } else {
+            res.redirect('task-list');
+        }
+    }
+});
+
+// Map router
+router.post('/' + version + section + 'map-router', function (req, res) {
+    // Set siteTitle
+    req.session.data['siteTitle'] = 'review';
+    res.redirect('review-location');
+});
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Check answers
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+router.post('/' + version + section + 'check-answers-router', function (req, res) {
+    req.session.data['applicationSubmitted'] = 'true';
+    // Redirect to review location page
+    res.redirect('confirmation');
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////
-// Location details
-// How do you want to provide the location?
-// About the location of the activity
-// PAGE OF RADIO BUTTONS
+// Check answers multiple sites
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-// About location router - clear everything when changing method
-router.post('/' + version + section + 'do-you-want-to-draw-the-site-on-our-map-router', function (req, res) {
+router.post('/' + version + section + 'check-answers-router', function (req, res) {
+    req.session.data['applicationSubmitted'] = 'true';
+    // Redirect to confirmation page
+    res.redirect('confirmation');
+});
+
+
+// Add route handler for check-answers-multiple-sites page
+router.get('/' + version + section + 'check-answers-multiple-sites', function (req, res) {
+    // Ensure the site details are marked as saved when reaching check answers
+    req.session.data['siteDetailsSaved'] = true;
+    
+    // Render the page
+    res.render(version + section + 'check-answers-multiple-sites');
+});
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Delete project router
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+router.post('/' + version + section + 'delete-router', function (req, res) {
+    // Get the project to delete from the query parameter
+    const projectToDelete = req.query.project;
+    
+    if (projectToDelete === 'user') {
+        // Delete the user's project
+        req.session.data['userProjectDeleted'] = 'true';
+    } else if (projectToDelete === 'tower-bridge') {
+        // Delete the Tower Bridge project
+        req.session.data['towerBridgeProjectDeleted'] = 'true';
+    } else {
+        // Fallback to old behavior for backward compatibility
+        req.session.data['deleteProject'] = 'true';
+    }
+    
+    // Redirect to Your projects page
+    res.redirect('home');
+});
+
+// Home page initialization - ensure project deletion flags are properly set
+router.get('/' + version + section + 'home', function (req, res) {
+    // Initialize flags if they don't exist already
+    if (req.session.data['userProjectDeleted'] === undefined) {
+        req.session.data['userProjectDeleted'] = 'false';
+    }
+    
+    if (req.session.data['towerBridgeProjectDeleted'] === undefined) {
+        req.session.data['towerBridgeProjectDeleted'] = 'false';
+    }
+    
+    if (req.session.data['deleteProject'] === undefined) {
+        req.session.data['deleteProject'] = 'false';
+    }
+    
+    // Render the home page
+    res.render(version + section + 'home');
+});
+
+// Manual site name router
+router.post('/' + version + section + 'manual-site-name-router', function (req, res) {
+    // Reset error flags
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
-
-    const selection = req.session.data['exemption-do-you-want-to-draw-the-site-on-our-map-radios'];
-
-    if (!selection) {
+    
+    // Get the site number
+    const siteNum = req.session.data['site'];
+    
+    // Validate input
+    if (!req.session.data['manual-site-name-input'] || req.session.data['manual-site-name-input'].trim() === '') {
         req.session.data['errorthispage'] = "true";
         req.session.data['errortypeone'] = "true";
-        res.redirect('do-you-want-to-draw-the-site-on-our-map');
-        return;
+        res.redirect('manual-site-name');
+    } else {
+        // Save the site name to the site-specific variable
+        req.session.data['site-' + siteNum + '-name'] = req.session.data['manual-site-name-input'];
+        
+        // Clear the temporary input field
+        req.session.data['manual-site-name-input'] = '';
+        
+        // Redirect back to the review site details page
+        const returnSection = req.session.data['return'] || '';
+        res.redirect('review-site-details#site-' + siteNum + '-details');
     }
+});
 
-    // Clear all location data regardless of what was previously selected
-    clearAllLocationData(req.session);
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Delete site confirmation
+// CONFIRMATION PAGE
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+router.get('/' + version + section + 'delete-site', function (req, res) {
+    // Make site parameter available to the template
+    const siteIndex = parseInt(req.query.site) || 1;
+    const returnTo = req.query.return || 'review-site-details';
     
-    // Also clear how-do-you-want-to-provide-the-coordinates-radios
-    delete req.session.data['exemption-how-do-you-want-to-provide-the-coordinates-radios'];
+    // Store these values in the session for use in the POST handler
+    req.session.data['site'] = siteIndex;
+    req.session.data['returnTo'] = returnTo;
     
-    // Also clear map data if it exists
-    clearMapData(req.session);
+    // Render the delete site confirmation page
+    res.render(version + section + 'delete-site');
+});
+
+router.post('/' + version + section + 'delete-site-router', function (req, res) {
+    // Get the site index from the session (1-based)
+    const siteIndex = parseInt(req.session.data['site']) || 1;
     
-    // Clear file upload data
-    delete req.session.data['exemption-which-type-of-file-radios'];
-    delete req.session.data['kml-file-upload'];
+    // Get the return page from the session
+    const returnTo = req.session.data['returnTo'] || 'review-site-details';
     
-    // Route based on selection
-    switch(selection) {
-        // change to which-type-of-file to allow it, or stop to not
-        case "Yes":
-            res.redirect('map');
-            break;
-        case "No, I've got the coordinates":
-            res.redirect('how-do-you-want-to-provide-the-coordinates');
-            break;
-        default:
-            res.redirect('do-you-want-to-draw-the-site-on-our-map');
+    // Get the sites array
+    const sites = req.session.data['sites'] || [];
+    
+    // Only proceed if we have sites and the index is valid
+    if (sites.length > 0 && siteIndex > 0 && siteIndex <= sites.length) {
+        // Remove the site at the specified index (convert from 1-based to 0-based)
+        sites.splice(siteIndex - 1, 1);
+        
+        // Save the updated array back to the session
+        req.session.data['sites'] = sites;
     }
+    
+    // Redirect based on the returnTo value
+    if (returnTo === 'review-site-details') {
+        res.redirect('review-site-details#site-' + siteIndex + '-details');
+    } else if (returnTo === 'site-details-added') {
+        res.redirect('site-details-added');
+    } else if (returnTo === 'check-answers-multiple-sites') {
+        res.redirect('check-answers-multiple-sites');
+    } else {
+        // Default fallback
+        res.redirect('review-site-details');
+    }
+});
+
+// When returning to site-details from task list, initialize the flow
+router.get('/' + version + section + 'site-details', function (req, res) {
+    // Set the flag to false when starting the site details journey
+    req.session.data['siteDetailsSaved'] = false;
+    
+    // Render the page
+    res.render(version + section + 'site-details');
+});
+
+// Route handler for review-site-details
+router.get('/' + version + section + 'review-site-details', function (req, res) {
+    // If we have the camefromcheckanswers query parameter, set the flag
+    if (req.query.camefromcheckanswers === 'true') {
+        req.session.data['camefromcheckanswers'] = 'true';
+    }
+    
+    // If we have a site query parameter, set the active site
+    if (req.query.site) {
+        req.session.data['site'] = req.query.site;
+    }
+    
+    // Set a flag to indicate we're coming from review-site-details
+    // This will help maintain data when cancelling from edit pages
+    req.session.data['fromReviewSiteDetails'] = 'true';
+    
+    // Render the page
+    res.render(version + section + 'review-site-details');
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -600,9 +931,7 @@ router.post('/' + version + section + 'how-do-you-want-to-provide-the-coordinate
             break;
         case "Upload a file with the coordinates of the site":
             // Clear manual entry data if it exists
-            clearCoordinateType(req.session);
-            clearCoordinateSystem(req.session);
-            clearCoordinateValues(req.session);
+            clearAllManualEntryData(req.session);
             break;
     }
 
@@ -668,7 +997,6 @@ router.post('/' + version + section + 'which-type-of-file-router', function (req
     }
 });
 
-
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Upload KML File
 // FILE UPLOAD PAGE
@@ -694,8 +1022,9 @@ router.get('/' + version + section + 'upload-file', function (req, res) {
 router.post('/' + version + section + 'upload-file-router', function (req, res) {
     req.session.data['siteTitle'] = 'review';
     
-    // Initialize sites array with sample data
+    // Initialize sites array with sample data including timestamps
     // In a real implementation, this would parse the uploaded file
+    const currentTime = new Date().toISOString();
     req.session.data['sites'] = [
         {
             name: 'Sediment sample 1',
@@ -710,7 +1039,9 @@ router.post('/' + version + section + 'upload-file-router', function (req, res) 
                 month: '',
                 year: ''
             },
-            mapImage: '/public/images/worthing-map-drawn-copy.jpg'
+            mapImage: '/public/images/worthing-map-drawn-copy.jpg',
+            addedAt: currentTime,
+            entryMethod: 'file-upload'
         },
         {
             name: 'Sediment sample 2',
@@ -725,7 +1056,9 @@ router.post('/' + version + section + 'upload-file-router', function (req, res) 
                 month: '',
                 year: ''
             },
-            mapImage: '/public/images/worthing-map-square-copy.jpg'
+            mapImage: '/public/images/worthing-map-square-copy.jpg',
+            addedAt: currentTime,
+            entryMethod: 'file-upload'
         },
         {
             name: '',
@@ -740,7 +1073,9 @@ router.post('/' + version + section + 'upload-file-router', function (req, res) 
                 month: '',
                 year: ''
             },
-            mapImage: '/public/images/worthing-map-4-points-copy.jpg'
+            mapImage: '/public/images/worthing-map-4-points-copy.jpg',
+            addedAt: currentTime,
+            entryMethod: 'file-upload'
         },
         {
             name: '',
@@ -755,7 +1090,9 @@ router.post('/' + version + section + 'upload-file-router', function (req, res) 
                 month: '',
                 year: ''
             },
-            mapImage: '/public/images/worthing-map-5-points-copy.jpg'
+            mapImage: '/public/images/worthing-map-5-points-copy.jpg',
+            addedAt: currentTime,
+            entryMethod: 'file-upload'
         }
     ];
     
@@ -940,9 +1277,12 @@ router.post('/' + version + section + 'site-name-router', function (req, res) {
         // Update existing site (convert from 1-based to 0-based index)
         sites[siteIndex - 1].name = siteName;
     } else {
-        // Add a new site
+        // Add a new site with timestamp
+        const currentTime = new Date().toISOString();
         sites.push({
-            name: siteName
+            name: siteName,
+            addedAt: currentTime,
+            entryMethod: 'file-upload'
         });
     }
     
@@ -1252,765 +1592,16 @@ router.post('/' + version + section + 'site-details-added-router', function (req
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////
-// How do you want to enter the coordinates of the area?
-// PAGE OF RADIO BUTTONS
+// Add another site - clear all data and start fresh coordinate method selection
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-// How to enter coordinates router - clear coordinate system and values
-router.post('/' + version + section + 'how-do-you-want-to-enter-the-coordinates-router', function (req, res) {
+// Route handler for "Add another site" functionality
+router.get('/' + version + section + 'add-another-site', function (req, res) {
+    // Clear all coordinate method data for a fresh start
+    clearAllCoordinateMethodData(req.session);
     
-    req.session.data['errorthispage'] = "false";
-    req.session.data['errortypeone'] = "false";
-
-    const selection = req.session.data['exemption-how-do-you-want-to-enter-the-coordinates-radios'];
-
-    if (!selection) {
-        req.session.data['errorthispage'] = "true";
-        req.session.data['errortypeone'] = "true";
-        res.redirect('how-do-you-want-to-enter-the-coordinates');
-        return;
-    }
-
-    // Save the current selection for reference
-    const previousSelection = req.session.data['previous-coords-entry-method'];
-    
-    // If the selection has changed, clear all relevant data
-    if (previousSelection && previousSelection !== selection) {
-        // Clear previous selection's data
-        clearCoordinateValues(req.session);
-    }
-    
-    // Store current selection for next time
-    req.session.data['previous-coords-entry-method'] = selection;
-
-    // Set coords-type based on selection
-    switch(selection) {
-        case "Enter one set of coordinates and a width to create a circular site":
-            req.session.data['coords-type'] = 'coords-circle';
-            break;
-        case "Enter multiple sets of coordinates to mark the boundary of the site":
-            req.session.data['coords-type'] = 'coords-multiple';
-            break;
-    }
-
-    clearCoordinateSystem(req.session);
-    
-    // Always redirect to what-coordinate-system
-    res.redirect('what-coordinate-system');
-});
-
-//////////////////////////////////////////////////////////////////////////////////////////////
-// What coordinate system do you want to use?
-// PAGE OF RADIO BUTTONS
-//////////////////////////////////////////////////////////////////////////////////////////////
-
-// What coordinate system router - clear only coordinate values
-router.post('/' + version + section + 'what-coordinate-system-router', function (req, res) {
-    
-    req.session.data['errorthispage'] = "false";
-    req.session.data['errortypeone'] = "false";
-
-    const selection = req.session.data['exemption-what-coordinate-system-radios'];
-
-    if (!selection) {
-        req.session.data['errorthispage'] = "true";
-        req.session.data['errortypeone'] = "true";
-        res.redirect('what-coordinate-system');
-        return;
-    }
-
-    // Save the selection
-    req.session.data['coordinate-system'] = selection;
-
-    clearCoordinateValues(req.session);
-
-    // Redirect based on coords-type
-    const coordsType = req.session.data['coords-type'];
-    
-    switch(coordsType) {
-        case 'coords-circle':
-            res.redirect('enter-the-coordinates-at-the-centre-point');
-            break;
-        case 'coords-multiple':
-            res.redirect('enter-multiple-coordinates');
-            break;
-        default:
-            // Fallback if coords-type is not set
-            res.redirect('how-do-you-want-to-enter-the-coordinates');
-    }
-});
-
-//////////////////////////////////////////////////////////////////////////////////////////////
-// What are the coordinates of the centre of the circle?
-// TEXT ENTRY - LATITUDE & LONGITUDE
-/////////////////////////////////////////////////////////////////////////////////////////////
-
-router.get('/' + version + section + 'enter-the-coordinates-at-the-centre-point', function (req, res) {
-    // Clear error flags so red borders don't persist
-    req.session.data['errorthispage'] = 'false';
-    req.session.data['errortypeone'] = 'false';
-    req.session.data['errortypetwo'] = 'false';
-  
-    // Render the page and preserve query string (e.g. ?fromreview=true)
-    res.render(version + section + 'enter-the-coordinates-at-the-centre-point', {
-      query: req.query
-    });
-  });
-
-  
-router.post('/' + version + section + 'enter-the-coordinates-at-the-centre-point-router', function (req, res) {
-    req.session.data['errorthispage'] = "false";
-    req.session.data['errortypeone'] = "false";
-    req.session.data['errortypetwo'] = "false";
-
-    const latitude = req.session.data['exemption-enter-the-coordinates-at-the-centre-point-latitude-text-input'];
-    const longitude = req.session.data['exemption-enter-the-coordinates-at-the-centre-point-longitude-text-input'];
-
-    if (!latitude || latitude.trim() === "") {
-        req.session.data['errorthispage'] = "true";
-        req.session.data['errortypeone'] = "true";
-    }
-
-    if (!longitude || longitude.trim() === "") {
-        req.session.data['errorthispage'] = "true";
-        req.session.data['errortypetwo'] = "true";
-    }
-
-    if (req.session.data['errorthispage'] === "true") {
-        res.redirect('enter-the-coordinates-at-the-centre-point');
-        return;
-    }
-
-    // Check if we're coming from review page
-    if (req.url.includes('fromreview=true')) {
-        res.redirect('review-location');
-    } else {
-        res.redirect('width-of-site');
-    }
-});
-
-//////////////////////////////////////////////////////////////////////////////////////////////
-// What is the width of the circle in metres?
-// TEXT ENTRY
-/////////////////////////////////////////////////////////////////////////////////////////////
-
-function validateWidth(req, shapeType) {
-    req.session.data['errorthispage'] = "false";
-    req.session.data['errortypeone'] = "false";
-
-    const width = req.session.data[`exemption-width-of-${shapeType}-number-input`];
-    if (!width || width.trim() === "") {
-        req.session.data['errorthispage'] = "true";
-        req.session.data['errortypeone'] = "true";
-        return false;
-    }
-    return true;
-}
-
-router.post('/' + version + section + 'width-of-site-router', function (req, res) {
-    if (!validateWidth(req, 'site')) {
-        res.redirect('width-of-site');
-        return;
-    }
-    req.session.data['siteTitle'] = 'review';
-    // If coming from review page, go back to review
-    if (req.query.fromreview) {
-        res.redirect('review-location');
-    } else {
-        res.redirect('review-location');
-    }
-});
-
-//////////////////////////////////////////////////////////////////////////////////////////////
-// What are the coordinates of the centre of the square?
-// TEXT ENTRY - LATITUDE & LONGITUDE
-/////////////////////////////////////////////////////////////////////////////////////////////
-
-router.post('/' + version + section + 'what-are-the-coordinates-of-the-square-router', function (req, res) {
-    req.session.data['errorthispage'] = "false";
-    req.session.data['errortypeone'] = "false";
-    req.session.data['errortypetwo'] = "false";
-
-    const latitude = req.session.data['exemption-what-are-the-coordinates-of-the-square-latitude-text-input'];
-    const longitude = req.session.data['exemption-what-are-the-coordinates-of-the-square-longitude-text-input'];
-
-    if (!latitude || latitude.trim() === "") {
-        req.session.data['errorthispage'] = "true";
-        req.session.data['errortypeone'] = "true";
-    }
-
-    if (!longitude || longitude.trim() === "") {
-        req.session.data['errorthispage'] = "true";
-        req.session.data['errortypetwo'] = "true";
-    }
-
-    if (req.session.data['errorthispage'] === "true") {
-        res.redirect('what-are-the-coordinates-of-the-square');
-        return;
-    }
-
-    // Check if we're coming from review page
-    if (req.url.includes('fromreview=true')) {
-        res.redirect('review-location');
-    } else {
-        res.redirect('width-of-square');
-    }
-});
-
-//////////////////////////////////////////////////////////////////////////////////////////////
-// What is the width of the square in metres?
-// TEXT ENTRY
-/////////////////////////////////////////////////////////////////////////////////////////////
-
-router.post('/' + version + section + 'width-of-square-router', function (req, res) {
-    if (!validateWidth(req, 'square')) {
-        res.redirect('width-of-square');
-        return;
-    }
-    req.session.data['siteTitle'] = 'review';
-    // If coming from review page, go back to review
-    if (req.query.fromreview) {
-        res.redirect('review-location');
-    } else {
-        res.redirect('review-location');
-    }
-});
-
-
-
-  
-//////////////////////////////////////////////////////////////////////////////////////////////
-// Enter multiple coordinates - stacked
-// TEXT ENTRY
-/////////////////////////////////////////////////////////////////////////////////////////////
-
-router.get('/' + version + section + 'enter-multiple-coordinates', function (req, res) {
-    req.session.data['errorthispage'] = "false";
-    req.session.data['errors'] = [];
-
-    // Clear error flags for each field
-    for (let i = 1; i <= 5; i++) {
-        req.session.data[`error-coordinates-point-${i}-latitude`] = "false";
-        req.session.data[`error-coordinates-point-${i}-longitude`] = "false";
-    }
-
-    res.render(version + '/' + section + 'enter-multiple-coordinates');
-});
-
-
-router.post('/' + version + section + 'enter-multiple-coordinates-router', function (req, res) {
-    // Reset global error states
-    req.session.data['errorthispage'] = "false";
-    req.session.data['errors'] = [];
-
-    // Get the selected coordinate system
-    const system = req.session.data['exemption-what-coordinate-system-radios'];
-    const usingOSGB36 = system === "OSGB36 (National Grid)";
-    const latLabel = usingOSGB36 ? "Eastings" : "Latitude";
-    const longLabel = usingOSGB36 ? "Northings" : "Longitude";
-
-    // Loop over points 1-5
-    for (let i = 1; i <= 5; i++) {
-        const latKey = `coordinates-point-${i}-latitude`;
-        const longKey = `coordinates-point-${i}-longitude`;
-        const latVal = req.session.data[latKey];
-        const longVal = req.session.data[longKey];
-
-        const latMissing = !latVal || latVal.trim() === "";
-        const longMissing = !longVal || longVal.trim() === "";
-
-        const pointLabel = i === 1 ? "start and end point" : `point ${i}`;
-
-        // Check visibility for Points 4 & 5 based on flags
-        const isPointVisible = i <= 3 || req.session.data[`coordinates-visible-point-${i}`] === "true";
-
-        // Skip validation for hidden points with no entered data
-        if (!isPointVisible && (latMissing && longMissing)) {
-            req.session.data[`error-${latKey}`] = "false";
-            req.session.data[`error-${longKey}`] = "false";
-            continue;
-        }
-
-        // If lat or long is missing, mark as an error
-        if (latMissing || longMissing) {
-            req.session.data['errorthispage'] = "true";
-        }
-
-        // Latitude error handling
-        if (latMissing) {
-            req.session.data[`error-${latKey}`] = "true";
-            req.session.data['errors'].push({
-                text: `Enter the ${latLabel.toLowerCase()} of ${pointLabel}`,
-                anchor: `${latKey}`
-            });
-        } else {
-            req.session.data[`error-${latKey}`] = "false";
-        }
-
-        // Longitude error handling
-        if (longMissing) {
-            req.session.data[`error-${longKey}`] = "true";
-            req.session.data['errors'].push({
-                text: `Enter the ${longLabel.toLowerCase()} of ${pointLabel}`,
-                anchor: `${longKey}`
-            });
-        } else {
-            req.session.data[`error-${longKey}`] = "false";
-        }
-    }
-
-    // Redirect to the current page if there are errors, else continue to the next page
-    if (req.session.data['errorthispage'] === "true") {
-        return res.redirect('enter-multiple-coordinates');
-    }
-
-    res.redirect('review-location');
-});
-
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////
-// Enter multiple coordinates of the area - side by side
-// TEXT ENTRY
-/////////////////////////////////////////////////////////////////////////////////////////////
-
-// This clears the red borders on the page when you go back to it if there were previous errors
-router.get('/' + version + section + 'enter-multiple-coordinates-router-v1', function (req, res) {
-    // Clear all coordinate-related error flags
-    for (let i = 1; i <= 5; i++) {
-      req.session.data[`error-coordinates-point-${i}-latitude`] = '';
-      req.session.data[`error-coordinates-point-${i}-longitude`] = '';
-    }
-  
-    req.session.data['errorthispage'] = 'false';
-    req.session.data['errors'] = [];
-  
-    res.render(version + section + 'enter-multiple-coordinates-v1');
-  });
-
-  
-router.post('/' + version + section + 'enter-multiple-coordinates-router-v1', function (req, res) {
-    // Clear any previous error flags for the 6 fields
-    req.session.data['error-coordinates-point-1-latitude'] = '';
-    req.session.data['error-coordinates-point-1-longitude'] = '';
-    req.session.data['error-coordinates-point-2-latitude'] = '';
-    req.session.data['error-coordinates-point-2-longitude'] = '';
-    req.session.data['error-coordinates-point-3-latitude'] = '';
-    req.session.data['error-coordinates-point-3-longitude'] = '';
-  
-    // Define the points with anchors for each coordinate field
-    const points = [
-      {
-        lat: req.session.data['coordinates-point-1-latitude'],
-        lng: req.session.data['coordinates-point-1-longitude'],
-        label: 'the start and end point',
-        latAnchor: 'coordinates-point-1-latitude',
-        lngAnchor: 'coordinates-point-1-longitude'
-      },
-      {
-        lat: req.session.data['coordinates-point-2-latitude'],
-        lng: req.session.data['coordinates-point-2-longitude'],
-        label: 'point 2',
-        latAnchor: 'coordinates-point-2-latitude',
-        lngAnchor: 'coordinates-point-2-longitude'
-      },
-      {
-        lat: req.session.data['coordinates-point-3-latitude'],
-        lng: req.session.data['coordinates-point-3-longitude'],
-        label: 'point 3',
-        latAnchor: 'coordinates-point-3-latitude',
-        lngAnchor: 'coordinates-point-3-longitude'
-      }
-    ];
-  
-    // Build error messages array
-    let errors = [];
-  
-    points.forEach((point) => {
-      const latEmpty = !point.lat || point.lat.trim() === '';
-      const lngEmpty = !point.lng || point.lng.trim() === '';
-  
-      if (latEmpty && lngEmpty) {
-        errors.push({ text: `Enter the latitude and longitude coordinates of ${point.label}`, anchor: point.latAnchor });
-        req.session.data['error-' + point.latAnchor] = 'true';
-        req.session.data['error-' + point.lngAnchor] = 'true';
-      } else if (latEmpty) {
-        errors.push({ text: `Enter the latitude coordinates of ${point.label}`, anchor: point.latAnchor });
-        req.session.data['error-' + point.latAnchor] = 'true';
-      } else if (lngEmpty) {
-        errors.push({ text: `Enter the longitude coordinates of ${point.label}`, anchor: point.lngAnchor });
-        req.session.data['error-' + point.lngAnchor] = 'true';
-      }
-    });
-  
-    // If there are any errors, set the error flag and store the errors array
-    if (errors.length > 0) {
-      req.session.data['errorthispage'] = 'true';
-      req.session.data['errors'] = errors;
-      return res.redirect('enter-multiple-coordinates-v1');
-    }
-  
-    // Otherwise, clear errors and proceed
-    req.session.data['errorthispage'] = 'false';
-    req.session.data['errors'] = [];
-    return res.redirect('review-location');
-  });
-
-
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////
-// Review Location
-// REVIEW PAGE
-/////////////////////////////////////////////////////////////////////////////////////////////
-
-router.post('/' + version + section + 'review-location-router', function (req, res) {
-    // Set the status to completed
-    req.session.data['exempt-information-3-status'] = 'completed';
-    
-    if (req.session.data['camefromcheckanswers'] === 'true') {
-        res.redirect('check-answers');
-    } else {
-        res.redirect('task-list');
-    }
-});
-
-//////////////////////////////////////////////////////////////////////////////////////////////
-// Cancel actions
-/////////////////////////////////////////////////////////////////////////////////////////////
-
-router.get('/' + version + section + 'cancel-site-details', function (req, res) {
-    // Check if we're coming from review-site-details page directly
-    if (req.session.data['fromReviewSiteDetails'] === 'true') {
-        // Return to the review page without clearing data
-        delete req.session.data['fromReviewSiteDetails'];
-        res.redirect('review-site-details');
-    }
-    // Check if site details have been saved previously
-    else if (req.session.data['siteDetailsSaved']) {
-        // If we came from check answers page, return there
-        if (req.session.data['camefromcheckanswers'] === 'true') {
-            req.session.data['camefromcheckanswers'] = false;
-            res.redirect('check-answers-multiple-sites');
-        } else {
-            // Otherwise return to site details added page
-            res.redirect('site-details-added');
-        }
-    } else {
-        // If not saved, clear all site details data
-        clearAllSiteDetails(req.session);
-        
-        // Redirect to task list
-        res.redirect('task-list');
-    }
-});
-
-// Cancel handler for returning to review-site-details without clearing data
-// Used when editing details from the review page
-router.get('/' + version + section + 'cancel-to-review', function (req, res) {
-    // Check if we're coming from review-site-details page directly
-    if (req.session.data['fromReviewSiteDetails'] === 'true') {
-        // Return to the review page without clearing data
-        delete req.session.data['fromReviewSiteDetails'];
-        res.redirect('review-site-details');
-    }
-    // Check if site details have been saved previously
-    else if (req.session.data['siteDetailsSaved']) {
-        // If we came from check answers page, return there
-        if (req.session.data['camefromcheckanswers'] === 'true') {
-            req.session.data['camefromcheckanswers'] = false;
-            res.redirect('check-answers-multiple-sites');
-        } else {
-            // Return to the review page without clearing data
-            res.redirect('review-site-details');
-        }
-    } else {
-        // If not saved, clear all site details data
-        clearAllSiteDetails(req.session);
-        
-        // Redirect to task list
-        res.redirect('task-list');
-    }
-});
-
-// Cancel handler specifically from review-site-details page
-router.get('/' + version + section + 'cancel-from-review-site-details', function (req, res) {
-    // If we came from check answers page, return there
-    if (req.session.data['camefromcheckanswers'] === 'true') {
-        req.session.data['camefromcheckanswers'] = false;
-        res.redirect('check-answers-multiple-sites');
-    } else if (req.session.data['siteDetailsSaved']) {
-        // If details were previously saved, go to site-details-added
-        res.redirect('site-details-added');
-    } else {
-        // If nothing was saved yet, clear data and return to task list
-        clearAllSiteDetails(req.session);
-        res.redirect('task-list');
-    }
-});
-
-//////////////////////////////////////////////////////////////////////////////////////////////
-// About your activity
-// TEXT ENTRY - TEXTAREA
-/////////////////////////////////////////////////////////////////////////////////////////////
-
-router.post('/' + version + section + 'about-your-activity-router', function (req, res) {
-    // Turn off errors by default
-    req.session.data['errorthispage'] = "false";
-    req.session.data['errortypeone'] = "false";
-
-    // Validation: Check if the textarea input is blank
-    let activityDescription = req.session.data['exemption-about-your-activity-text-area'];
-
-    if (activityDescription == undefined || activityDescription.trim() == "") {
-        // Trigger validation for empty input
-        req.session.data['errorthispage'] = "true";
-        req.session.data['errortypeone'] = "true";
-        res.redirect('about-your-activity');
-    } else {
-        // If the user came from check answers, return there
-        if (req.session.data['camefromcheckanswers'] === 'true') {
-            req.session.data['camefromcheckanswers'] = false;
-            res.redirect('check-answers#about-your-activity');
-        } else {
-            res.redirect('start-date');
-        }
-    }
-});
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////
-// Public Register
-// RADIO BUTTONS WITH CONDITIONAL TEXTAREA
-/////////////////////////////////////////////////////////////////////////////////////////////
-
-router.post('/' + version + section + 'public-register-router', function (req, res) {
-    // Reset error states
-    req.session.data['errorthispage'] = "false";
-    req.session.data['errortypeone'] = "false";
-    req.session.data['errortypetwo'] = "false";
-
-    // Clear text area if user changes from Yes to No
-    if (req.session.data['exemption-public-register-radios'] === 'No') {
-        delete req.session.data['exemption-public-register-text-area'];
-    }
-
-    // Check if the radio option is selected
-    if (
-        req.session.data['exemption-public-register-radios'] == undefined ||
-        req.session.data['exemption-public-register-radios'].trim() == ""
-    ) {
-        req.session.data['errorthispage'] = "true";
-        req.session.data['errortypeone'] = "true";
-        res.redirect('public-register');
-    } 
-    // If "Yes" is selected, ensure the textarea is not empty
-    else if (
-        req.session.data['exemption-public-register-radios'] == "Yes" &&
-        (req.session.data['exemption-public-register-text-area'] == undefined ||
-         req.session.data['exemption-public-register-text-area'].trim() == "")
-    ) {
-        req.session.data['errorthispage'] = "true";
-        req.session.data['errortypetwo'] = "true";
-        res.redirect('public-register');
-    } else {
-       // Set the status to completed
-       req.session.data['exempt-information-4-status'] = 'completed';
-       
-       // Check if we need to return to check answers
-       if (req.session.data['camefromcheckanswers'] === 'true') {
-            req.session.data['camefromcheckanswers'] = false;
-            res.redirect('check-answers-multiple-sites');
-        } else {
-            res.redirect('task-list');
-        }
-    }
-});
-
-// Map router
-router.post('/' + version + section + 'map-router', function (req, res) {
-    // Set siteTitle
-    req.session.data['siteTitle'] = 'review';
-    res.redirect('review-location');
-});
-
-
-//////////////////////////////////////////////////////////////////////////////////////////////
-// Check answers
-/////////////////////////////////////////////////////////////////////////////////////////////
-
-router.post('/' + version + section + 'check-answers-router', function (req, res) {
-    req.session.data['applicationSubmitted'] = 'true';
-    // Redirect to review location page
-    res.redirect('confirmation');
-});
-
-//////////////////////////////////////////////////////////////////////////////////////////////
-// Check answers multiple sites
-/////////////////////////////////////////////////////////////////////////////////////////////
-
-router.post('/' + version + section + 'check-answers-router', function (req, res) {
-    req.session.data['applicationSubmitted'] = 'true';
-    // Redirect to confirmation page
-    res.redirect('confirmation');
-});
-
-
-// Add route handler for check-answers-multiple-sites page
-router.get('/' + version + section + 'check-answers-multiple-sites', function (req, res) {
-    // Ensure the site details are marked as saved when reaching check answers
-    req.session.data['siteDetailsSaved'] = true;
-    
-    // Render the page
-    res.render(version + section + 'check-answers-multiple-sites');
-});
-
-//////////////////////////////////////////////////////////////////////////////////////////////
-// Delete project router
-/////////////////////////////////////////////////////////////////////////////////////////////
-
-router.post('/' + version + section + 'delete-router', function (req, res) {
-    // Get the project to delete from the query parameter
-    const projectToDelete = req.query.project;
-    
-    if (projectToDelete === 'user') {
-        // Delete the user's project
-        req.session.data['userProjectDeleted'] = 'true';
-    } else if (projectToDelete === 'tower-bridge') {
-        // Delete the Tower Bridge project
-        req.session.data['towerBridgeProjectDeleted'] = 'true';
-    } else {
-        // Fallback to old behavior for backward compatibility
-        req.session.data['deleteProject'] = 'true';
-    }
-    
-    // Redirect to Your projects page
-    res.redirect('home');
-});
-
-// Home page initialization - ensure project deletion flags are properly set
-router.get('/' + version + section + 'home', function (req, res) {
-    // Initialize flags if they don't exist already
-    if (req.session.data['userProjectDeleted'] === undefined) {
-        req.session.data['userProjectDeleted'] = 'false';
-    }
-    
-    if (req.session.data['towerBridgeProjectDeleted'] === undefined) {
-        req.session.data['towerBridgeProjectDeleted'] = 'false';
-    }
-    
-    if (req.session.data['deleteProject'] === undefined) {
-        req.session.data['deleteProject'] = 'false';
-    }
-    
-    // Render the home page
-    res.render(version + section + 'home');
-});
-
-// Manual site name router
-router.post('/' + version + section + 'manual-site-name-router', function (req, res) {
-    // Reset error flags
-    req.session.data['errorthispage'] = "false";
-    req.session.data['errortypeone'] = "false";
-    
-    // Get the site number
-    const siteNum = req.session.data['site'];
-    
-    // Validate input
-    if (!req.session.data['manual-site-name-input'] || req.session.data['manual-site-name-input'].trim() === '') {
-        req.session.data['errorthispage'] = "true";
-        req.session.data['errortypeone'] = "true";
-        res.redirect('manual-site-name');
-    } else {
-        // Save the site name to the site-specific variable
-        req.session.data['site-' + siteNum + '-name'] = req.session.data['manual-site-name-input'];
-        
-        // Clear the temporary input field
-        req.session.data['manual-site-name-input'] = '';
-        
-        // Redirect back to the review site details page
-        const returnSection = req.session.data['return'] || '';
-        res.redirect('review-site-details#site-' + siteNum + '-details');
-    }
-});
-
-//////////////////////////////////////////////////////////////////////////////////////////////
-// Delete site confirmation
-// CONFIRMATION PAGE
-/////////////////////////////////////////////////////////////////////////////////////////////
-
-router.get('/' + version + section + 'delete-site', function (req, res) {
-    // Make site parameter available to the template
-    const siteIndex = parseInt(req.query.site) || 1;
-    const returnTo = req.query.return || 'review-site-details';
-    
-    // Store these values in the session for use in the POST handler
-    req.session.data['site'] = siteIndex;
-    req.session.data['returnTo'] = returnTo;
-    
-    // Render the delete site confirmation page
-    res.render(version + section + 'delete-site');
-});
-
-router.post('/' + version + section + 'delete-site-router', function (req, res) {
-    // Get the site index from the session (1-based)
-    const siteIndex = parseInt(req.session.data['site']) || 1;
-    
-    // Get the return page from the session
-    const returnTo = req.session.data['returnTo'] || 'review-site-details';
-    
-    // Get the sites array
-    const sites = req.session.data['sites'] || [];
-    
-    // Only proceed if we have sites and the index is valid
-    if (sites.length > 0 && siteIndex > 0 && siteIndex <= sites.length) {
-        // Remove the site at the specified index (convert from 1-based to 0-based)
-        sites.splice(siteIndex - 1, 1);
-        
-        // Save the updated array back to the session
-        req.session.data['sites'] = sites;
-    }
-    
-    // Redirect based on the returnTo value
-    if (returnTo === 'review-site-details') {
-        res.redirect('review-site-details#site-' + siteIndex + '-details');
-    } else if (returnTo === 'site-details-added') {
-        res.redirect('site-details-added');
-    } else if (returnTo === 'check-answers-multiple-sites') {
-        res.redirect('check-answers-multiple-sites');
-    } else {
-        // Default fallback
-        res.redirect('review-site-details');
-    }
-});
-
-// When returning to site-details from task list, initialize the flow
-router.get('/' + version + section + 'site-details', function (req, res) {
-    // Set the flag to false when starting the site details journey
-    req.session.data['siteDetailsSaved'] = false;
-    
-    // Render the page
-    res.render(version + section + 'site-details');
-});
-
-// Route handler for review-site-details
-router.get('/' + version + section + 'review-site-details', function (req, res) {
-    // If we have the camefromcheckanswers query parameter, set the flag
-    if (req.query.camefromcheckanswers === 'true') {
-        req.session.data['camefromcheckanswers'] = 'true';
-    }
-    
-    // If we have a site query parameter, set the active site
-    if (req.query.site) {
-        req.session.data['site'] = req.query.site;
-    }
-    
-    // Set a flag to indicate we're coming from review-site-details
-    // This will help maintain data when cancelling from edit pages
-    req.session.data['fromReviewSiteDetails'] = 'true';
-    
-    // Render the page
-    res.render(version + section + 'review-site-details');
+    // Redirect to coordinate method selection page
+    res.redirect('how-do-you-want-to-provide-the-coordinates');
 });
 
 }
