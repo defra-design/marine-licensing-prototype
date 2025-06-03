@@ -36,11 +36,11 @@ Review site details
         {% set allComplete = true %}
         
         <!-- Check for sites data -->
-        {% if not data['sites'] or data['sites'].length === 0 %}
+        {% if not sites or sites.length === 0 %}
             {% set allComplete = false %}
         {% else %}
             <!-- Check site-specific required fields -->
-            {% for site in data['sites'] %}
+            {% for site in sites %}
                 {% if not site.name %}
                     {% set allComplete = false %}
                 {% endif %}
@@ -66,6 +66,16 @@ Review site details
             {{ govukInsetText({
                 html: "You must complete all sections marked <span class='govuk-tag govuk-tag--red'>Incomplete</span> before you can send your information.<br>You can select 'Save and continue' to keep your progress and return later."
             }) }}
+        {% endif %}
+        
+        <!-- Get current batch for use throughout template -->
+        {% set currentBatch = null %}
+        {% if sites and sites.length > 0 and sites[0].batchId %}
+            {% for batch in data['siteBatches'] %}
+                {% if batch.id == sites[0].batchId %}
+                    {% set currentBatch = batch %}
+                {% endif %}
+            {% endfor %}
         {% endif %}
         
         <!-- Providing the site location section -->
@@ -138,10 +148,12 @@ Review site details
                             Are the activity dates the same for every site?
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            {% if data['exemption-same-activity-dates-for-sites'] == "Yes" %}
-                                Yes
+                            {% if currentBatch and currentBatch.settings and currentBatch.settings.sameActivityDates %}
+                                {{ currentBatch.settings.sameActivityDates }}
+                            {% elif data['exemption-same-activity-dates-for-sites'] %}
+                                {{ data['exemption-same-activity-dates-for-sites'] }}
                             {% else %}
-                                No
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
@@ -151,13 +163,16 @@ Review site details
                         </dd>
                     </div>
                     
-                    {% if data['exemption-same-activity-dates-for-sites'] == "Yes" %}
+                    {% set showSharedDates = (currentBatch and currentBatch.settings and currentBatch.settings.sameActivityDates == "Yes") or (not currentBatch and data['exemption-same-activity-dates-for-sites'] == "Yes") %}
+                    {% if showSharedDates %}
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
                             Activity dates
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            {% if data['exemption-start-date-date-input-day'] %}
+                            {% if currentBatch and currentBatch.settings and currentBatch.settings.sharedStartDate and currentBatch.settings.sharedStartDate.day %}
+                                {{ currentBatch.settings.sharedStartDate.day }} {{ currentBatch.settings.sharedStartDate.month | toMonth }} {{ currentBatch.settings.sharedStartDate.year }} to {{ currentBatch.settings.sharedEndDate.day }} {{ currentBatch.settings.sharedEndDate.month | toMonth }} {{ currentBatch.settings.sharedEndDate.year }}
+                            {% elif data['exemption-start-date-date-input-day'] %}
                                 {{ data['exemption-start-date-date-input-day'] }} {{ data['exemption-start-date-date-input-month'] | toMonth }} {{ data['exemption-start-date-date-input-year'] }} to {{ data['exemption-end-date-date-input-day'] }} {{ data['exemption-end-date-date-input-month'] | toMonth }} {{ data['exemption-end-date-date-input-year'] }}
                             {% else %}
                                 <span class="govuk-tag govuk-tag--red">Incomplete</span>
@@ -165,7 +180,7 @@ Review site details
                         </dd>
                         <dd class="govuk-summary-list__actions">
                             <a href="activity-dates?returnTo=review-site-details#activity-details" class="govuk-link">
-                                {% if data['exemption-start-date-date-input-day'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> activity dates</span>
+                                {% if (currentBatch and currentBatch.settings and currentBatch.settings.sharedStartDate and currentBatch.settings.sharedStartDate.day) or data['exemption-start-date-date-input-day'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> activity dates</span>
                             </a>
                         </dd>
                     </div>
@@ -176,10 +191,12 @@ Review site details
                             Is the activity description the same for every site?
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            {% if data['exemption-same-activity-description-for-sites'] == "Yes" %}
-                                Yes
+                            {% if currentBatch and currentBatch.settings and currentBatch.settings.sameActivityDescription %}
+                                {{ currentBatch.settings.sameActivityDescription }}
+                            {% elif data['exemption-same-activity-description-for-sites'] %}
+                                {{ data['exemption-same-activity-description-for-sites'] }}
                             {% else %}
-                                No
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
@@ -189,13 +206,16 @@ Review site details
                         </dd>
                     </div>
                     
-                    {% if data['exemption-same-activity-description-for-sites'] == "Yes" %}
+                    {% set showSharedDescription = (currentBatch and currentBatch.settings and currentBatch.settings.sameActivityDescription == "Yes") or (not currentBatch and data['exemption-same-activity-description-for-sites'] == "Yes") %}
+                    {% if showSharedDescription %}
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
                             Activity description
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            {% if data['exemption-activity-details-text-area'] %}
+                            {% if currentBatch and currentBatch.settings and currentBatch.settings.sharedDescription %}
+                                {{ currentBatch.settings.sharedDescription }}
+                            {% elif data['exemption-activity-details-text-area'] %}
                                 {{ data['exemption-activity-details-text-area'] }}
                             {% else %}
                                 <span class="govuk-tag govuk-tag--red">Incomplete</span>
@@ -203,7 +223,7 @@ Review site details
                         </dd>
                         <dd class="govuk-summary-list__actions">
                             <a href="activity-details?returnTo=review-site-details#activity-details" class="govuk-link">
-                                {% if data['exemption-activity-details-text-area'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> Activity description</span>
+                                {% if (currentBatch and currentBatch.settings and currentBatch.settings.sharedDescription) or data['exemption-activity-details-text-area'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> Activity description</span>
                             </a>
                         </dd>
                     </div>
@@ -213,9 +233,9 @@ Review site details
         </div>
 
         <!-- Dynamic Site Details Sections -->
-        {% if data['sites'] and data['sites'].length > 0 %}
-            {% for site in data['sites'] %}
-                {% set siteIndex = loop.index %}
+        {% if sites and sites.length > 0 %}
+            {% for site in sites %}
+                {% set siteIndex = site.globalNumber or loop.index %}
                 <div id="site-{{ siteIndex }}-details" class="govuk-summary-card">
                     <div class="govuk-summary-card__title-wrapper">
                         <h2 class="govuk-summary-card__title">
@@ -249,7 +269,8 @@ Review site details
                                 </dd>
                             </div>
                             
-                            {% if data['exemption-same-activity-dates-for-sites'] != "Yes" %}
+                            {% set showSiteDates = (currentBatch and currentBatch.settings and currentBatch.settings.sameActivityDates == "No") or (not currentBatch and data['exemption-same-activity-dates-for-sites'] == "No") %}
+                            {% if showSiteDates %}
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">
                                     Activity dates
@@ -269,7 +290,8 @@ Review site details
                             </div>
                             {% endif %}
                             
-                            {% if data['exemption-same-activity-description-for-sites'] != "Yes" %}
+                            {% set showSiteDescription = (currentBatch and currentBatch.settings and currentBatch.settings.sameActivityDescription == "No") or (not currentBatch and data['exemption-same-activity-description-for-sites'] == "No") %}
+                            {% if showSiteDescription %}
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">
                                     Activity description

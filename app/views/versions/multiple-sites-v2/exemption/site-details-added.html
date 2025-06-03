@@ -89,7 +89,7 @@ Your sites
                 <tbody class="govuk-table__body">
                     {% if data['sites'] and data['sites'].length > 0 %}
                         {% for site in data['sites'] %}
-                            {% set siteIndex = loop.index %}
+                            {% set siteIndex = site.globalNumber or loop.index %}
                             {% set isComplete = true %}
                             
                             <!-- Determine if site is complete -->
@@ -120,7 +120,11 @@ Your sites
                                     {% endif %}
                                 </td>
                                 <td class="govuk-table__cell">
-                                    <a href="review-site-details?site={{ siteIndex }}#site-{{ siteIndex }}-details" class="govuk-link govuk-!-margin-right-3 govuk-link--no-visited-state">Review</a> 
+                                    {% set reviewUrl = "review-site-details?site=" + siteIndex + "&batchId=" + site.batchId + "#site-" + siteIndex + "-details" %}
+                                    {% if site.entryMethod == "manual-entry" %}
+                                        {% set reviewUrl = "manual-entry/review-site-details?site=" + siteIndex + "&batchId=" + site.batchId + "#site-" + siteIndex + "-details" %}
+                                    {% endif %}
+                                    <a href="{{ reviewUrl }}" class="govuk-link govuk-!-margin-right-3 govuk-link--no-visited-state">Review</a> 
                                     <a href="delete-site?site={{ siteIndex }}&return=site-details-added" class="govuk-link govuk-link--no-visited-state">Delete</a>
                                 </td>
                             </tr>
