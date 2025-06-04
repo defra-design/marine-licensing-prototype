@@ -916,6 +916,11 @@ router.get('/' + version + section + 'review-site-details', function (req, res) 
             req.session.data['exemption-same-activity-dates-for-sites'] = currentBatch.settings.sameActivityDates;
             req.session.data['exemption-same-activity-description-for-sites'] = currentBatch.settings.sameActivityDescription;
             
+            // Populate file type from batch (for file upload batches)
+            if (currentBatch.settings.fileType) {
+                req.session.data['exemption-which-type-of-file-radios'] = currentBatch.settings.fileType;
+            }
+            
             // Populate shared dates from batch
             if (currentBatch.settings.sharedStartDate) {
                 req.session.data['exemption-start-date-date-input-day'] = currentBatch.settings.sharedStartDate.day;
@@ -993,8 +998,8 @@ router.get('/' + version + section + 'how-do-you-want-to-provide-the-coordinates
     // Check if we're returning from review-site-details
     if (req.query.returnTo === 'review-site-details') {
         req.session.data['fromReviewSiteDetails'] = 'true';
-    } else if (!req.query.returnTo) {
-        // If starting new journey, set the flag to false and clear previous journey data
+    } else if (!req.query.returnTo && !req.query.camefromcheckanswers) {
+        // Only clear data if starting a truly new journey (not from check answers or review)
         req.session.data['siteDetailsSaved'] = false;
         
         // Clear all file upload data for a fresh start
@@ -1238,7 +1243,8 @@ router.post('/' + version + section + 'upload-file-router', function (req, res) 
             sameActivityDescription: null, // Will be set in same-activity-description
             sharedStartDate: {},
             sharedEndDate: {},
-            sharedDescription: null
+            sharedDescription: null,
+            fileType: req.session.data['exemption-which-type-of-file-radios'] // Store file type
         };
     }
     

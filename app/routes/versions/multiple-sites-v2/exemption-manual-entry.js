@@ -1412,8 +1412,14 @@ router.post('/' + version + section + 'manual-entry/review-site-details-router',
     req.session.data['siteDetailsSaved'] = true;
     delete req.session.data['currentBatchId'];
     
-    // Redirect to site-details-added (Your sites page)
-    res.redirect('../site-details-added');
+    // Check if we came from check answers page
+    if (req.session.data['camefromcheckanswers'] === 'true') {
+        req.session.data['camefromcheckanswers'] = false;
+        res.redirect('../check-answers-multiple-sites');
+    } else {
+        // Redirect to site-details-added (Your sites page)
+        res.redirect('../site-details-added');
+    }
 });
 
 // Function to convert manual entry sites to unified format

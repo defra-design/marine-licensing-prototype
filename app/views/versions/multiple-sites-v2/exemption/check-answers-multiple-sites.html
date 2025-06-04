@@ -246,7 +246,7 @@
                     Site name
                   </dt>
                   <dd class="govuk-summary-list__value">
-                    {{ site.name or "-" }}
+                    {{ site.name }}
                   </dd>
                 </div>
 
@@ -256,17 +256,9 @@
                   </dt>
                   <dd class="govuk-summary-list__value">
                     {% if data['exemption-same-activity-dates-for-sites'] == "Yes" %}
-                      {% if data['exemption-start-date-date-input-day'] %}
-                        {{ data['exemption-start-date-date-input-day'] }} {{ monthNames[data['exemption-start-date-date-input-month'] - 1] }} {{ data['exemption-start-date-date-input-year'] }} to {{ data['exemption-end-date-date-input-day'] }} {{ monthNames[data['exemption-end-date-date-input-month'] - 1] }} {{ data['exemption-end-date-date-input-year'] }}
-                      {% else %}
-                        19 May 2025 to {{ (21 + loop.index) }} May 2025
-                      {% endif %}
+                      {{ data['exemption-start-date-date-input-day'] }} {{ monthNames[data['exemption-start-date-date-input-month'] - 1] }} {{ data['exemption-start-date-date-input-year'] }} to {{ data['exemption-end-date-date-input-day'] }} {{ monthNames[data['exemption-end-date-date-input-month'] - 1] }} {{ data['exemption-end-date-date-input-year'] }}
                     {% else %}
-                      {% if site.startDate and site.startDate.day %}
-                        {{ site.startDate.day }} {{ monthNames[site.startDate.month - 1] }} {{ site.startDate.year }} to {{ site.endDate.day }} {{ monthNames[site.endDate.month - 1] }} {{ site.endDate.year }}
-                      {% else %}
-                        19 May 2025 to {{ (21 + loop.index) }} May 2025
-                      {% endif %}
+                      {{ site.startDate.day }} {{ monthNames[site.startDate.month - 1] }} {{ site.startDate.year }} to {{ site.endDate.day }} {{ monthNames[site.endDate.month - 1] }} {{ site.endDate.year }}
                     {% endif %}
                   </dd>
                 </div>
@@ -277,9 +269,9 @@
                   </dt>
                   <dd class="govuk-summary-list__value">
                     {% if data['exemption-same-activity-description-for-sites'] == "Yes" %}
-                      {{ data['exemption-activity-details-text-area'] or "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." }}
+                      {{ data['exemption-activity-details-text-area'] }}
                     {% else %}
-                      {{ site.description or "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." }}
+                      {{ site.description }}
                     {% endif %}
                   </dd>
                 </div>
@@ -310,7 +302,7 @@
                     Site name
                   </dt>
                   <dd class="govuk-summary-list__value">
-                    {{ site.name or "-" }}
+                    {{ site.name }}
                   </dd>
                 </div>
 
@@ -319,11 +311,7 @@
                     Activity dates
                   </dt>
                   <dd class="govuk-summary-list__value">
-                    {% if site.startDate and site.startDate.day %}
-                      {{ site.startDate.day }} {{ monthNames[site.startDate.month - 1] }} {{ site.startDate.year }} to {{ site.endDate.day }} {{ monthNames[site.endDate.month - 1] }} {{ site.endDate.year }}
-                    {% else %}
-                      19 May 2025 to {{ (21 + loop.index) }} May 2025
-                    {% endif %}
+                    {{ site.startDate.day }} {{ monthNames[site.startDate.month - 1] }} {{ site.startDate.year }} to {{ site.endDate.day }} {{ monthNames[site.endDate.month - 1] }} {{ site.endDate.year }}
                   </dd>
                 </div>
 
@@ -332,7 +320,7 @@
                     Activity description
                   </dt>
                   <dd class="govuk-summary-list__value">
-                    {{ site.description or "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." }}
+                    {{ site.description }}
                   </dd>
                 </div>
 
@@ -350,7 +338,7 @@
                     Coordinate system
                   </dt>
                   <dd class="govuk-summary-list__value">
-                    {{ site.coordinateSystem or "WGS84 (World Geodetic System 1984)" }}
+                    {{ site.coordinateSystem }}
                     <br>
                     {% if site.coordinateSystem == "OSGB36 (National Grid)" %}
                       Eastings and Northings
@@ -365,11 +353,7 @@
                     Coordinates at centre of site
                   </dt>
                   <dd class="govuk-summary-list__value">
-                    {% if site.coordinates and site.coordinates.center %}
-                      {{ site.coordinates.center.latitude }}, {{ site.coordinates.center.longitude }}
-                    {% else %}
-                      50.0000000, -1.0000000
-                    {% endif %}
+                    {{ site.coordinates.center.latitude }}, {{ site.coordinates.center.longitude }}
                   </dd>
                 </div>
 
@@ -378,11 +362,7 @@
                     Width of circular site
                   </dt>
                   <dd class="govuk-summary-list__value">
-                    {% if site.coordinates and site.coordinates.width %}
-                      {{ site.coordinates.width }} metres
-                    {% else %}
-                      100 metres
-                    {% endif %}
+                    {{ site.coordinates.width }} metres
                   </dd>
                 </div>
 
@@ -394,7 +374,7 @@
                     Site name
                   </dt>
                   <dd class="govuk-summary-list__value">
-                    {{ site.name or "-" }}
+                    {{ site.name }}
                   </dd>
                 </div>
 
@@ -403,11 +383,7 @@
                     Activity dates
                   </dt>
                   <dd class="govuk-summary-list__value">
-                    {% if site.startDate and site.startDate.day %}
-                      {{ site.startDate.day }} {{ monthNames[site.startDate.month - 1] }} {{ site.startDate.year }} to {{ site.endDate.day }} {{ monthNames[site.endDate.month - 1] }} {{ site.endDate.year }}
-                    {% else %}
-                      19 May 2025 to {{ (21 + loop.index) }} May 2025
-                    {% endif %}
+                    {{ site.startDate.day }} {{ monthNames[site.startDate.month - 1] }} {{ site.startDate.year }} to {{ site.endDate.day }} {{ monthNames[site.endDate.month - 1] }} {{ site.endDate.year }}
                   </dd>
                 </div>
 
@@ -416,7 +392,7 @@
                     Activity description
                   </dt>
                   <dd class="govuk-summary-list__value">
-                    {{ site.description or "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." }}
+                    {{ site.description }}
                   </dd>
                 </div>
 
@@ -434,7 +410,7 @@
                     Coordinate system
                   </dt>
                   <dd class="govuk-summary-list__value">
-                    {{ site.coordinateSystem or "WGS84 (World Geodetic System 1984)" }}
+                    {{ site.coordinateSystem }}
                     <br>
                     {% if site.coordinateSystem == "OSGB36 (National Grid)" %}
                       Eastings and Northings
@@ -444,47 +420,20 @@
                   </dd>
                 </div>
 
-                {% if site.coordinates and site.coordinates.points %}
-                  {% for point in site.coordinates.points %}
-                    <div class="govuk-summary-list__row">
-                      <dt class="govuk-summary-list__key">
-                        {% if loop.index == 1 %}
-                          Start and end points
-                        {% else %}
-                          Point {{ loop.index }}
-                        {% endif %}
-                      </dt>
-                      <dd class="govuk-summary-list__value">
-                        {{ point.latitude }}, {{ point.longitude }}
-                      </dd>
-                    </div>
-                  {% endfor %}
-                {% else %}
+                {% for point in site.coordinates.points %}
                   <div class="govuk-summary-list__row">
                     <dt class="govuk-summary-list__key">
-                      Start and end points
+                      {% if loop.index == 1 %}
+                        Start and end points
+                      {% else %}
+                        Point {{ loop.index }}
+                      {% endif %}
                     </dt>
                     <dd class="govuk-summary-list__value">
-                      50.0000000, -1.0000000
+                      {{ point.latitude }}, {{ point.longitude }}
                     </dd>
                   </div>
-                  <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
-                      Point 2
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                      50.1000000, -1.1000000
-                    </dd>
-                  </div>
-                  <div class="govuk-summary-list__row">
-                    <dt class="govuk-summary-list__key">
-                      Point 3
-                    </dt>
-                    <dd class="govuk-summary-list__value">
-                      50.2000000, -1.2000000
-                    </dd>
-                  </div>
-                {% endif %}
+                {% endfor %}
 
               <!-- Fallback for any other site types -->
               {% else %}
@@ -494,7 +443,7 @@
                     Site name
                   </dt>
                   <dd class="govuk-summary-list__value">
-                    {{ site.name or "-" }}
+                    {{ site.name }}
                   </dd>
                 </div>
 
@@ -503,11 +452,7 @@
                     Activity dates
                   </dt>
                   <dd class="govuk-summary-list__value">
-                    {% if site.startDate and site.startDate.day %}
-                      {{ site.startDate.day }} {{ monthNames[site.startDate.month - 1] }} {{ site.startDate.year }} to {{ site.endDate.day }} {{ monthNames[site.endDate.month - 1] }} {{ site.endDate.year }}
-                    {% else %}
-                      19 May 2025 to {{ (21 + loop.index) }} May 2025
-                    {% endif %}
+                    {{ site.startDate.day }} {{ monthNames[site.startDate.month - 1] }} {{ site.startDate.year }} to {{ site.endDate.day }} {{ monthNames[site.endDate.month - 1] }} {{ site.endDate.year }}
                   </dd>
                 </div>
 
@@ -516,7 +461,7 @@
                     Activity description
                   </dt>
                   <dd class="govuk-summary-list__value">
-                    {{ site.description or "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." }}
+                    {{ site.description }}
                   </dd>
                 </div>
 
