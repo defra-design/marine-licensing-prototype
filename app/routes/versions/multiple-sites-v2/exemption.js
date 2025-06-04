@@ -203,9 +203,6 @@ function clearAllFileUploadData(session) {
     delete session.data['exemption-same-activity-description-for-sites'];
     delete session.data['previous-activity-description-selection'];
     
-    // Clear shared activity description for file upload
-    delete session.data['exemption-activity-details-text-area'];
-    
     // Clear individual site data for file upload
     for (let i = 1; i <= 4; i++) {
         delete session.data[`site-${i}-name`];
@@ -304,50 +301,54 @@ function clearCoordinateValues(session) {
 
 // Function to clear all site details data when cancelling to task list
 function clearAllSiteDetails(session) {
+    // Clear batch system data
+    delete session.data['siteBatches'];
+    delete session.data['sites'];
+    delete session.data['currentBatchId'];
+    delete session.data['globalSiteCounter'];
+    
+    // Clear file upload tracking
+    delete session.data['hasUploadedFile'];
+    
     // Clear site location data
     clearAllLocationData(session);
     
-    // Clear activity date settings
+    // Clear file upload specific data
+    clearAllFileUploadData(session);
+    
+    // Clear manual entry specific data
+    clearAllManualEntryData(session);
+    
+    // Clear activity date settings (both file upload and manual entry)
     delete session.data['exemption-same-activity-dates-for-sites'];
     delete session.data['previous-activity-dates-selection'];
+    delete session.data['manual-same-activity-dates'];
     
-    // Clear shared activity dates
+    // Clear shared activity dates (both file upload and manual entry)
     delete session.data['exemption-start-date-date-input-day'];
     delete session.data['exemption-start-date-date-input-month'];
     delete session.data['exemption-start-date-date-input-year'];
     delete session.data['exemption-end-date-date-input-day'];
     delete session.data['exemption-end-date-date-input-month'];
     delete session.data['exemption-end-date-date-input-year'];
+    delete session.data['manual-start-date-date-input-day'];
+    delete session.data['manual-start-date-date-input-month'];
+    delete session.data['manual-start-date-date-input-year'];
+    delete session.data['manual-end-date-date-input-day'];
+    delete session.data['manual-end-date-date-input-month'];
+    delete session.data['manual-end-date-date-input-year'];
     
-    // Clear activity description settings
+    // Clear activity description settings (both file upload and manual entry)
     delete session.data['exemption-same-activity-description-for-sites'];
     delete session.data['previous-activity-description-selection'];
+    delete session.data['manual-same-activity-description'];
     
-    // Clear shared activity description
+    // Clear shared activity description (both file upload and manual entry)
     delete session.data['exemption-activity-details-text-area'];
+    delete session.data['manual-activity-details-text-area'];
     
-    // Clear sites array
-    delete session.data['sites'];
-    
-    // For backward compatibility, also clear old site-specific data
-    for (let i = 1; i <= 4; i++) {
-        // Clear site name
-        delete session.data[`site-${i}-name`];
-        
-        // Clear site-specific dates
-        delete session.data[`site-${i}-start-date-day`];
-        delete session.data[`site-${i}-start-date-month`];
-        delete session.data[`site-${i}-start-date-year`];
-        delete session.data[`site-${i}-end-date-day`];
-        delete session.data[`site-${i}-end-date-month`];
-        delete session.data[`site-${i}-end-date-year`];
-        
-        // Clear site-specific description
-        delete session.data[`site-${i}-activity-description`];
-        
-        // Clear site-specific map image
-        delete session.data[`site-${i}-map-image`];
-    }
+    // Clear coordinate method selection
+    delete session.data['exemption-how-do-you-want-to-provide-the-coordinates-radios'];
     
     // Clear any error states
     delete session.data['startdateerror'];
@@ -355,6 +356,16 @@ function clearAllSiteDetails(session) {
     delete session.data['errorthispage'];
     delete session.data['errortypeone'];
     delete session.data['errortypetwo'];
+    delete session.data['errors'];
+    
+    // Clear navigation flags
+    delete session.data['fromReviewSiteDetails'];
+    delete session.data['siteDetailsSaved'];
+    delete session.data['current-site'];
+    delete session.data['manual-current-site'];
+    delete session.data['returnTo'];
+    delete session.data['site'];
+    delete session.data['return'];
     
     // Reset task status
     delete session.data['exempt-information-3-status'];
@@ -1915,6 +1926,99 @@ router.get('/' + version + section + 'add-another-site', function (req, res) {
     
     // Redirect to coordinate method selection page
     res.redirect('how-do-you-want-to-provide-the-coordinates');
+});
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Cancel actions
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+router.get('/' + version + section + 'cancel-site-details', function (req, res) {
+    // Check if we're coming from review-site-details page directly
+    if (req.session.data['fromReviewSiteDetails'] === 'true') {
+        // Return to the review page without clearing data
+        delete req.session.data['fromReviewSiteDetails'];
+        
+        // Determine which review page to return to based on current batch type
+        const currentBatch = getCurrentBatch(req.session);
+        if (currentBatch && currentBatch.entryMethod === 'manual-entry') {
+            res.redirect('manual-entry/review-site-details');
+        } else {
+            res.redirect('review-site-details');
+        }
+    }
+    // Check if site details have been saved previously
+    else if (req.session.data['siteDetailsSaved']) {
+        // If we came from check answers page, return there
+        if (req.session.data['camefromcheckanswers'] === 'true') {
+            req.session.data['camefromcheckanswers'] = false;
+            res.redirect('check-answers-multiple-sites');
+        } else {
+            // Otherwise return to site details added page
+            res.redirect('site-details-added');
+        }
+    } else {
+        // If not saved, clear all site details data
+        clearAllSiteDetails(req.session);
+        
+        // Redirect to task list
+        res.redirect('task-list');
+    }
+});
+
+// Cancel handler for returning to review-site-details without clearing data
+// Used when editing details from the review page
+router.get('/' + version + section + 'cancel-to-review', function (req, res) {
+    // Check if we're coming from review-site-details page directly
+    if (req.session.data['fromReviewSiteDetails'] === 'true') {
+        // Return to the review page without clearing data
+        delete req.session.data['fromReviewSiteDetails'];
+        
+        // Determine which review page to return to based on current batch type
+        const currentBatch = getCurrentBatch(req.session);
+        if (currentBatch && currentBatch.entryMethod === 'manual-entry') {
+            res.redirect('manual-entry/review-site-details');
+        } else {
+            res.redirect('review-site-details');
+        }
+    }
+    // Check if site details have been saved previously
+    else if (req.session.data['siteDetailsSaved']) {
+        // If we came from check answers page, return there
+        if (req.session.data['camefromcheckanswers'] === 'true') {
+            req.session.data['camefromcheckanswers'] = false;
+            res.redirect('check-answers-multiple-sites');
+        } else {
+            // Return to the appropriate review page without clearing data
+            const currentBatch = getCurrentBatch(req.session);
+            if (currentBatch && currentBatch.entryMethod === 'manual-entry') {
+                res.redirect('manual-entry/review-site-details');
+            } else {
+                res.redirect('review-site-details');
+            }
+        }
+    } else {
+        // If not saved, clear all site details data
+        clearAllSiteDetails(req.session);
+        
+        // Redirect to task list
+        res.redirect('task-list');
+    }
+});
+
+// Cancel handler specifically from review-site-details page
+router.get('/' + version + section + 'cancel-from-review-site-details', function (req, res) {
+    // If we came from check answers page, return there
+    if (req.session.data['camefromcheckanswers'] === 'true') {
+        req.session.data['camefromcheckanswers'] = false;
+        res.redirect('check-answers-multiple-sites');
+    } else if (req.session.data['siteDetailsSaved']) {
+        // If details were previously saved, go to site-details-added
+        res.redirect('site-details-added');
+    } else {
+        // If nothing was saved yet, clear data and return to task list
+        clearAllSiteDetails(req.session);
+        res.redirect('task-list');
+    }
 });
 
 }

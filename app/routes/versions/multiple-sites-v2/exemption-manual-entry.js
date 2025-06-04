@@ -2052,4 +2052,24 @@ router.post('/' + version + section + 'manual-entry/enter-multiple-coordinates-r
     res.redirect('review-site-details');
 });
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Cancel actions for manual entry
+// These redirect to the main cancel handlers in the parent exemption routes
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+router.get('/' + version + section + 'manual-entry/cancel-site-details', function (req, res) {
+    // Redirect to the main cancel handler
+    res.redirect('../cancel-site-details');
+});
+
+router.get('/' + version + section + 'manual-entry/cancel-to-review', function (req, res) {
+    // Redirect to the main cancel handler
+    res.redirect('../cancel-to-review');
+});
+
+router.get('/' + version + section + 'manual-entry/cancel-from-review-site-details', function (req, res) {
+    // Redirect to the main cancel handler
+    res.redirect('../cancel-from-review-site-details');
+});
+
 }
