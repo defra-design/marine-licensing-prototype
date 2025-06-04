@@ -42,6 +42,18 @@ End date
         <!-- Get current site number -->
         {% set currentSite = data['current-site'] or 1 %}
         {% set sitePrefix = 'manual-' if currentSite == 1 else 'manual-site-' + currentSite + '-' %}
+        
+        <!-- Calculate the global site number for display using batch starting position -->
+        {% set currentBatch = null %}
+        {% if data['currentBatchId'] %}
+            {% for batch in data['siteBatches'] %}
+                {% if batch.id == data['currentBatchId'] %}
+                    {% set currentBatch = batch %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        {% set batchStartingNumber = currentBatch.startingGlobalNumber if currentBatch else 0 %}
+        {% set displaySiteNumber = batchStartingNumber + currentSite %}
 
 <!-- ERROR LOGIC 'error summary' -->
 {% if data['startdateerror'] == "true" or data['enddateerror'] == "true" %}
@@ -67,7 +79,7 @@ End date
         
         <h1 class="govuk-heading-l">
             {{ pageHeadingTextHTML }}
-			<span class="govuk-caption-l">Site {{ currentSite }}</span>
+			<span class="govuk-caption-l">Site {{ displaySiteNumber }}</span>
 		</h1>
         <p>Enter the activity dates for this site. Allow time for potential delays, like consents (for example, a river works licence) or bad weather. If you miss the dates, you'll need to restart the process.</p>
         <p>You can enter a start date from today and begin your activity as soon as you've sent your information.</p>

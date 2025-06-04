@@ -31,6 +31,18 @@ Enter the coordinates at the centre point of the site
         {% set currentSite = data['current-site'] or 1 %}
         {% set sitePrefix = 'manual-' if currentSite == 1 else 'manual-site-' + currentSite + '-' %}
         {% set coordinateSystemKey = sitePrefix + 'coordinate-system-radios' %}
+        
+        <!-- Calculate the global site number for display using batch starting position -->
+        {% set currentBatch = null %}
+        {% if data['currentBatchId'] %}
+            {% for batch in data['siteBatches'] %}
+                {% if batch.id == data['currentBatchId'] %}
+                    {% set currentBatch = batch %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        {% set batchStartingNumber = currentBatch.startingGlobalNumber if currentBatch else 0 %}
+        {% set displaySiteNumber = batchStartingNumber + currentSite %}
 
         <!-- Setting the smaller secondary headings based on site-specific coordinate system -->
         {% set questionHeadingTextOneHTML %}
@@ -77,7 +89,7 @@ Enter the coordinates at the centre point of the site
         <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
         <h1 class="govuk-heading-l">
             {{ pageHeadingTextHTML }}
-            <span class="govuk-caption-l">Site {{ currentSite }}</span>
+            <span class="govuk-caption-l">Site {{ displaySiteNumber }}</span>
           </h1> 
         
 

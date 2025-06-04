@@ -1284,7 +1284,7 @@ router.post('/' + version + section + 'upload-file-router', function (req, res) 
                 mapImage: '/public/images/worthing-map-square-copy.jpg'
             },
             {
-                name: '',
+                name: 'Sediment sample 3',
                 description: '',
                 startDate: {
                     day: '',
@@ -1299,7 +1299,7 @@ router.post('/' + version + section + 'upload-file-router', function (req, res) 
                 mapImage: '/public/images/worthing-map-4-points-copy.jpg'
             },
             {
-                name: '',
+                name: 'Sediment sample 4',
                 description: '',
                 startDate: {
                     day: '',

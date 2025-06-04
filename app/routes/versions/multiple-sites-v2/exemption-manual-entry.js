@@ -14,7 +14,8 @@ function initializeBatch(session, entryMethod) {
         id: batchId,
         entryMethod: entryMethod,
         createdAt: new Date().toISOString(),
-        sites: []
+        sites: [],
+        startingGlobalNumber: session.data['globalSiteCounter'] || 0  // Store the starting position
     };
     if (!session.data['siteBatches']) {
         session.data['siteBatches'] = [];
@@ -301,21 +302,17 @@ router.post('/' + version + section + 'manual-entry/does-your-project-involve-mo
     // Route based on selection
     switch(selection) {
         case "Yes":
-            // Calculate the starting site number based on existing global sites
-            const globalSiteCounter = req.session.data['globalSiteCounter'] || 0;
-            const startingSiteNumber = globalSiteCounter + 1;
-            
             // Initialize a new batch for this manual entry session
             const batchId = initializeBatch(req.session, 'manual-entry');
             req.session.data['currentBatchId'] = batchId;
             
             // Clear any previous manual entry session data to ensure fresh start
-            clearManualEntrySessionData(req.session, startingSiteNumber);
+            clearManualEntrySessionData(req.session, 1);
             
-            // Set the manual-current-site to start from the next global number
-            req.session.data['manual-current-site'] = startingSiteNumber;
+            // Set the manual-current-site to 1 (batch-relative, not global)
+            req.session.data['manual-current-site'] = 1;
             
-            res.redirect('site-name?site=' + startingSiteNumber);
+            res.redirect('site-name?site=1');
             break;
         case "No":
             res.redirect('../stop');
@@ -1868,19 +1865,11 @@ router.get('/' + version + section + 'manual-entry/add-next-site-router', functi
     let nextSiteNumber;
     
     if (currentBatch && currentBatch.sites.length > 0) {
-        // If we have a current batch, the next site number should be one more than the highest batch-relative position
-        let highestBatchPosition = 0;
-        currentBatch.sites.forEach(site => {
-            const batchPosition = getBatchRelativePosition(req.session, site.globalNumber);
-            if (batchPosition > highestBatchPosition) {
-                highestBatchPosition = batchPosition;
-            }
-        });
-        nextSiteNumber = highestBatchPosition + 1;
+        // If we have a current batch, the next site number should be one more than the number of sites in the batch
+        nextSiteNumber = currentBatch.sites.length + 1;
     } else {
-        // If no current batch or no sites in batch, calculate based on global counter
-        const globalSiteCounter = req.session.data['globalSiteCounter'] || 0;
-        nextSiteNumber = globalSiteCounter + 1;
+        // If no current batch or no sites in batch, start from site 1
+        nextSiteNumber = 1;
     }
     
     // Update the current site number

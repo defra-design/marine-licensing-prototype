@@ -34,6 +34,18 @@ Site name
         {% set currentSite = (query.site | int) or (data['current-site'] | int) or 1 %}
         {% set siteDataKey = 'manual-site-name-text-input' if currentSite == 1 else 'manual-site-' + currentSite + '-name-text-input' %}
         {% set siteInputId = 'manual-site-name-text-input' if currentSite == 1 else 'manual-site-' + currentSite + '-name-text-input' %}
+        
+        <!-- Calculate the global site number for display using batch starting position -->
+        {% set currentBatch = null %}
+        {% if data['currentBatchId'] %}
+            {% for batch in data['siteBatches'] %}
+                {% if batch.id == data['currentBatchId'] %}
+                    {% set currentBatch = batch %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        {% set batchStartingNumber = currentBatch.startingGlobalNumber if currentBatch else 0 %}
+        {% set displaySiteNumber = batchStartingNumber + currentSite %}
 
 <!-- ERROR LOGIC 'error summary' -->
 {% if data['errorthispage'] == "true" %}
@@ -61,7 +73,7 @@ Site name
                 <h1 class="govuk-label-wrapper">
                   <label class="govuk-label govuk-label--l" for="{{ siteInputId }}">
                     {{ pageHeadingTextHTML }}
-                    <span class="govuk-caption-l">Site {{ currentSite }}</span>
+                    <span class="govuk-caption-l">Site {{ displaySiteNumber }}</span>
                   </label>
                 </h1>
               
