@@ -1,5 +1,11 @@
 {% extends "../layouts/exemption.html" %}
 
+{# Set up month names array for date conversion #}
+{% set monthNames = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
+] %}
+
 {# Set up activity information based on article #}
 {% set activityData = {
   '13': {
@@ -212,13 +218,18 @@
         <div class="govuk-summary-card">
           <div class="govuk-summary-card__title-wrapper">
             <h2 class="govuk-summary-card__title">
-              Site {{ loop.index }} details
+              Site {{ site.globalNumber or loop.index }} details
             </h2>
             
             {% if data['applicationSubmitted'] != "true" %}
             <ul class="govuk-summary-card__actions">
               <li class="govuk-summary-card__action">
-                <a class="govuk-link" href="review-site-details?site={{ loop.index }}&camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Site {{ loop.index }} details</span></a>
+                {% set siteIndex = site.globalNumber or loop.index %}
+                {% set changeUrl = "review-site-details?site=" + siteIndex + "&batchId=" + site.batchId + "&camefromcheckanswers=true" %}
+                {% if site.entryMethod == "manual-entry" %}
+                  {% set changeUrl = "manual-entry/review-site-details?site=" + siteIndex + "&batchId=" + site.batchId + "&camefromcheckanswers=true" %}
+                {% endif %}
+                <a class="govuk-link" href="{{ changeUrl }}">Change<span class="govuk-visually-hidden"> Site {{ siteIndex }} details</span></a>
               </li>
             </ul>
             {% endif %}
@@ -226,88 +237,236 @@
 
           <div class="govuk-summary-card__content">
             <dl class="govuk-summary-list">
-              <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                  Site name
-                </dt>
-                <dd class="govuk-summary-list__value">
-                  {{ site.name or "-" }}
-                </dd>
-              </div>
+              
+              <!-- File upload sites -->
+              {% if site.entryMethod == 'file-upload' %}
+                
+                <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key">
+                    Site name
+                  </dt>
+                  <dd class="govuk-summary-list__value">
+                    {{ site.name }}
+                  </dd>
+                </div>
 
-              <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                  Activity dates
-                </dt>
-                <dd class="govuk-summary-list__value">
-                  {% if data['exemption-same-activity-dates-for-sites'] == "Yes" %}
-                    {% set paddedDay = data['exemption-start-date-date-input-day'] %}
-                    {% if paddedDay | length == 1 %}{% set paddedDay = '0' + paddedDay %}{% endif %}
-                    {% set paddedMonth = data['exemption-start-date-date-input-month'] %}
-                    {% if paddedMonth | length == 1 %}{% set paddedMonth = '0' + paddedMonth %}{% endif %}
-                    {% set formattedStartDate = data['exemption-start-date-date-input-year'] + '-' + paddedMonth + '-' + paddedDay %}
-                    
-                    {% set paddedDay = data['exemption-end-date-date-input-day'] %}
-                    {% if paddedDay | length == 1 %}{% set paddedDay = '0' + paddedDay %}{% endif %}
-                    {% set paddedMonth = data['exemption-end-date-date-input-month'] %}
-                    {% if paddedMonth | length == 1 %}{% set paddedMonth = '0' + paddedMonth %}{% endif %}
-                    {% set formattedEndDate = data['exemption-end-date-date-input-year'] + '-' + paddedMonth + '-' + paddedDay %}
-                    
-                    {{ formattedStartDate | govukDate }} to {{ formattedEndDate | govukDate }}
-                  {% else %}
-                    {% if site.startDate and site.startDate.day %}
-                      {% set paddedDay = site.startDate.day %}
-                      {% if paddedDay | length == 1 %}{% set paddedDay = '0' + paddedDay %}{% endif %}
-                      {% set paddedMonth = site.startDate.month %}
-                      {% if paddedMonth | length == 1 %}{% set paddedMonth = '0' + paddedMonth %}{% endif %}
-                      {% set formattedStartDate = site.startDate.year + '-' + paddedMonth + '-' + paddedDay %}
-                      
-                      {% set paddedDay = site.endDate.day %}
-                      {% if paddedDay | length == 1 %}{% set paddedDay = '0' + paddedDay %}{% endif %}
-                      {% set paddedMonth = site.endDate.month %}
-                      {% if paddedMonth | length == 1 %}{% set paddedMonth = '0' + paddedMonth %}{% endif %}
-                      {% set formattedEndDate = site.endDate.year + '-' + paddedMonth + '-' + paddedDay %}
-                      
-                      {{ formattedStartDate | govukDate }} to {{ formattedEndDate | govukDate }}
+                <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key">
+                    Activity dates
+                  </dt>
+                  <dd class="govuk-summary-list__value">
+                    {% if data['exemption-same-activity-dates-for-sites'] == "Yes" %}
+                      {{ data['exemption-start-date-date-input-day'] }} {{ monthNames[data['exemption-start-date-date-input-month'] - 1] }} {{ data['exemption-start-date-date-input-year'] }} to {{ data['exemption-end-date-date-input-day'] }} {{ monthNames[data['exemption-end-date-date-input-month'] - 1] }} {{ data['exemption-end-date-date-input-year'] }}
                     {% else %}
-                      {% set defaultStart = "01 May 2025" %}
-                      {% set defaultEnd = (17 + loop.index) + " May 2025" %}
-                      {{ defaultStart }} to {{ defaultEnd }}
+                      {{ site.startDate.day }} {{ monthNames[site.startDate.month - 1] }} {{ site.startDate.year }} to {{ site.endDate.day }} {{ monthNames[site.endDate.month - 1] }} {{ site.endDate.year }}
                     {% endif %}
-                  {% endif %}
-                </dd>
-              </div>
+                  </dd>
+                </div>
 
-              <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                  Activity description
-                </dt>
-                <dd class="govuk-summary-list__value">
-                  {% if data['exemption-same-activity-description-for-sites'] == "Yes" %}
-                    {{ data['exemption-activity-details-text-area'] }}
-                  {% else %}
-                    {{ site.description or "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." }}
-                  {% endif %}
-                </dd>
-              </div>
+                <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key">
+                    Activity description
+                  </dt>
+                  <dd class="govuk-summary-list__value">
+                    {% if data['exemption-same-activity-description-for-sites'] == "Yes" %}
+                      {{ data['exemption-activity-details-text-area'] }}
+                    {% else %}
+                      {{ site.description }}
+                    {% endif %}
+                  </dd>
+                </div>
 
-              <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                  Method of providing site location
-                </dt>
-                <dd class="govuk-summary-list__value">
-                  {{ site.locationMethod or data['exemption-how-do-you-want-to-provide-the-coordinates-radios'] or "Upload a file with the coordinates of the site" }}
-                </dd>
-              </div>
+                <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key">
+                    Method of providing site location
+                  </dt>
+                  <dd class="govuk-summary-list__value">
+                    Upload a file with the coordinates of the site
+                  </dd>
+                </div>
 
-              <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                  File uploaded
-                </dt>
-                <dd class="govuk-summary-list__value">
-                  {{ site.fileUploaded or "se-coast-sample-sites-coordinates.zip" }}
-                </dd>
-              </div>
+                <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key">
+                    File uploaded
+                  </dt>
+                  <dd class="govuk-summary-list__value">
+                    se-coast-sample-sites-coordinates.zip
+                  </dd>
+                </div>
+
+              <!-- Manual circular sites -->
+              {% elif site.entryMethod == 'manual-entry' and site.coordinates and site.coordinates.type == 'circle' %}
+
+                <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key">
+                    Site name
+                  </dt>
+                  <dd class="govuk-summary-list__value">
+                    {{ site.name }}
+                  </dd>
+                </div>
+
+                <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key">
+                    Activity dates
+                  </dt>
+                  <dd class="govuk-summary-list__value">
+                    {{ site.startDate.day }} {{ monthNames[site.startDate.month - 1] }} {{ site.startDate.year }} to {{ site.endDate.day }} {{ monthNames[site.endDate.month - 1] }} {{ site.endDate.year }}
+                  </dd>
+                </div>
+
+                <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key">
+                    Activity description
+                  </dt>
+                  <dd class="govuk-summary-list__value">
+                    {{ site.description }}
+                  </dd>
+                </div>
+
+                <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key">
+                    Method of providing site location
+                  </dt>
+                  <dd class="govuk-summary-list__value">
+                    Manually enter one set of coordinates and a width to create a circular site
+                  </dd>
+                </div>
+
+                <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key">
+                    Coordinate system
+                  </dt>
+                  <dd class="govuk-summary-list__value">
+                    {{ site.coordinateSystem }}
+                    <br>
+                    {% if site.coordinateSystem == "OSGB36 (National Grid)" %}
+                      Eastings and Northings
+                    {% else %}
+                      Latitude and longitude
+                    {% endif %}
+                  </dd>
+                </div>
+
+                <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key">
+                    Coordinates at centre of site
+                  </dt>
+                  <dd class="govuk-summary-list__value">
+                    {{ site.coordinates.center.latitude }}, {{ site.coordinates.center.longitude }}
+                  </dd>
+                </div>
+
+                <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key">
+                    Width of circular site
+                  </dt>
+                  <dd class="govuk-summary-list__value">
+                    {{ site.coordinates.width }} metres
+                  </dd>
+                </div>
+
+              <!-- Manual polygon sites -->
+              {% elif site.entryMethod == 'manual-entry' and site.coordinates and site.coordinates.type == 'polygon' %}
+
+                <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key">
+                    Site name
+                  </dt>
+                  <dd class="govuk-summary-list__value">
+                    {{ site.name }}
+                  </dd>
+                </div>
+
+                <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key">
+                    Activity dates
+                  </dt>
+                  <dd class="govuk-summary-list__value">
+                    {{ site.startDate.day }} {{ monthNames[site.startDate.month - 1] }} {{ site.startDate.year }} to {{ site.endDate.day }} {{ monthNames[site.endDate.month - 1] }} {{ site.endDate.year }}
+                  </dd>
+                </div>
+
+                <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key">
+                    Activity description
+                  </dt>
+                  <dd class="govuk-summary-list__value">
+                    {{ site.description }}
+                  </dd>
+                </div>
+
+                <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key">
+                    Method of providing site location
+                  </dt>
+                  <dd class="govuk-summary-list__value">
+                    Manually enter multiple sets of coordinates to mark the boundary of the site
+                  </dd>
+                </div>
+
+                <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key">
+                    Coordinate system
+                  </dt>
+                  <dd class="govuk-summary-list__value">
+                    {{ site.coordinateSystem }}
+                    <br>
+                    {% if site.coordinateSystem == "OSGB36 (National Grid)" %}
+                      Eastings and Northings
+                    {% else %}
+                      Latitude and longitude
+                    {% endif %}
+                  </dd>
+                </div>
+
+                {% for point in site.coordinates.points %}
+                  <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                      {% if loop.index == 1 %}
+                        Start and end points
+                      {% else %}
+                        Point {{ loop.index }}
+                      {% endif %}
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                      {{ point.latitude }}, {{ point.longitude }}
+                    </dd>
+                  </div>
+                {% endfor %}
+
+              <!-- Fallback for any other site types -->
+              {% else %}
+
+                <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key">
+                    Site name
+                  </dt>
+                  <dd class="govuk-summary-list__value">
+                    {{ site.name }}
+                  </dd>
+                </div>
+
+                <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key">
+                    Activity dates
+                  </dt>
+                  <dd class="govuk-summary-list__value">
+                    {{ site.startDate.day }} {{ monthNames[site.startDate.month - 1] }} {{ site.startDate.year }} to {{ site.endDate.day }} {{ monthNames[site.endDate.month - 1] }} {{ site.endDate.year }}
+                  </dd>
+                </div>
+
+                <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key">
+                    Activity description
+                  </dt>
+                  <dd class="govuk-summary-list__value">
+                    {{ site.description }}
+                  </dd>
+                </div>
+
+              {% endif %}
+
             </dl>
 
             <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
@@ -321,7 +480,7 @@
               </div>
             </dl>
 
-            <img src="{{ site.mapImage or '/public/images/worthing-map-' ~ loop.index ~ '-points-copy.jpg' }}" alt="Map showing site {{ loop.index }} location" style="width: 100%;">
+            <img src="{{ site.mapImage or '/public/images/worthing-map-' ~ loop.index ~ '-points-copy.jpg' }}" alt="Map showing site {{ site.globalNumber or loop.index }} location" style="width: 100%;">
           </div>
         </div>
       {% endfor %}

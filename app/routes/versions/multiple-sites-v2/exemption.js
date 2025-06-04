@@ -545,6 +545,21 @@ router.post('/' + version + section + 'activity-dates-router', function (req, re
         return res.redirect('activity-dates');
     }
     
+    // Save dates to current batch metadata if we have one
+    const currentBatch = getCurrentBatch(req.session);
+    if (currentBatch && currentBatch.settings) {
+        currentBatch.settings.sharedStartDate = {
+            day: startDay,
+            month: startMonth,
+            year: startYear
+        };
+        currentBatch.settings.sharedEndDate = {
+            day: endDay,
+            month: endMonth,
+            year: endYear
+        };
+    }
+    
     // Check if we're coming from review-site-details page
     const returnTo = req.session.data['returnTo'];
     if (returnTo === 'review-site-details') {
@@ -605,6 +620,12 @@ router.post('/' + version + section + 'activity-details-router', function (req, 
         req.session.data['errorthispage'] = "true";
         req.session.data['errortypeone'] = "true";
         return res.redirect('activity-details');
+    }
+
+    // Save description to current batch metadata if we have one
+    const currentBatch = getCurrentBatch(req.session);
+    if (currentBatch && currentBatch.settings) {
+        currentBatch.settings.sharedDescription = activityDetails;
     }
 
     // Check if we're coming from review-site-details page
@@ -825,27 +846,34 @@ router.get('/' + version + section + 'delete-site', function (req, res) {
 });
 
 router.post('/' + version + section + 'delete-site-router', function (req, res) {
-    // Get the site index from the session (1-based)
-    const siteIndex = parseInt(req.session.data['site']) || 1;
+    // Get the global site number from the session (1-based)
+    const globalSiteNumber = parseInt(req.session.data['site']) || 1;
     
     // Get the return page from the session
     const returnTo = req.session.data['returnTo'] || 'review-site-details';
     
-    // Get the sites array
-    const sites = req.session.data['sites'] || [];
+    // Find the site by global number
+    const siteToDelete = findSiteByGlobalNumber(req.session, globalSiteNumber);
     
-    // Only proceed if we have sites and the index is valid
-    if (sites.length > 0 && siteIndex > 0 && siteIndex <= sites.length) {
-        // Remove the site at the specified index (convert from 1-based to 0-based)
-        sites.splice(siteIndex - 1, 1);
+    if (siteToDelete) {
+        // Remove from the batch
+        if (req.session.data['siteBatches'] && siteToDelete.batchId) {
+            const batch = req.session.data['siteBatches'].find(b => b.id === siteToDelete.batchId);
+            if (batch) {
+                const batchSiteIndex = batch.sites.findIndex(s => s.globalNumber === globalSiteNumber);
+                if (batchSiteIndex !== -1) {
+                    batch.sites.splice(batchSiteIndex, 1);
+                }
+            }
+        }
         
-        // Save the updated array back to the session
-        req.session.data['sites'] = sites;
+        // Rebuild global sites array from all batches
+        req.session.data['sites'] = req.session.data['siteBatches'].flatMap(batch => batch.sites);
     }
     
     // Redirect based on the returnTo value
     if (returnTo === 'review-site-details') {
-        res.redirect('review-site-details#site-' + siteIndex + '-details');
+        res.redirect('review-site-details#site-' + globalSiteNumber + '-details');
     } else if (returnTo === 'site-details-added') {
         res.redirect('site-details-added');
     } else if (returnTo === 'check-answers-multiple-sites') {
@@ -871,18 +899,88 @@ router.get('/' + version + section + 'review-site-details', function (req, res) 
     if (req.query.camefromcheckanswers === 'true') {
         req.session.data['camefromcheckanswers'] = 'true';
     }
-    
     // If we have a site query parameter, set the active site
     if (req.query.site) {
         req.session.data['site'] = req.query.site;
     }
+    // If we have a batchId query parameter, set it as current batch
+    if (req.query.batchId) {
+        req.session.data['currentBatchId'] = req.query.batchId;
+    }
+    
+    // If we're reviewing a specific batch, populate session data from batch settings
+    if (req.query.batchId) {
+        const currentBatch = getCurrentBatch(req.session);
+        if (currentBatch && currentBatch.settings) {
+            // Populate activity settings from batch
+            req.session.data['exemption-same-activity-dates-for-sites'] = currentBatch.settings.sameActivityDates;
+            req.session.data['exemption-same-activity-description-for-sites'] = currentBatch.settings.sameActivityDescription;
+            
+            // Populate file type from batch (for file upload batches)
+            if (currentBatch.settings.fileType) {
+                req.session.data['exemption-which-type-of-file-radios'] = currentBatch.settings.fileType;
+            }
+            
+            // Populate shared dates from batch
+            if (currentBatch.settings.sharedStartDate) {
+                req.session.data['exemption-start-date-date-input-day'] = currentBatch.settings.sharedStartDate.day;
+                req.session.data['exemption-start-date-date-input-month'] = currentBatch.settings.sharedStartDate.month;
+                req.session.data['exemption-start-date-date-input-year'] = currentBatch.settings.sharedStartDate.year;
+            }
+            
+            if (currentBatch.settings.sharedEndDate) {
+                req.session.data['exemption-end-date-date-input-day'] = currentBatch.settings.sharedEndDate.day;
+                req.session.data['exemption-end-date-date-input-month'] = currentBatch.settings.sharedEndDate.month;
+                req.session.data['exemption-end-date-date-input-year'] = currentBatch.settings.sharedEndDate.year;
+            }
+            
+            // Populate shared description from batch
+            if (currentBatch.settings.sharedDescription) {
+                req.session.data['exemption-activity-details-text-area'] = currentBatch.settings.sharedDescription;
+            }
+            
+            // Populate site-specific data from batch sites
+            if (currentBatch.sites) {
+                currentBatch.sites.forEach((site, index) => {
+                    const siteNum = index + 1;
+                    
+                    // Populate site name using the site-name-text-input pattern for file uploads
+                    req.session.data[`site-${siteNum}-name`] = site.name;
+                    
+                    // Populate site-specific dates if they're different for each site
+                    if (currentBatch.settings.sameActivityDates === 'No') {
+                        if (site.startDate) {
+                            req.session.data[`site-${siteNum}-start-date-day`] = site.startDate.day;
+                            req.session.data[`site-${siteNum}-start-date-month`] = site.startDate.month;
+                            req.session.data[`site-${siteNum}-start-date-year`] = site.startDate.year;
+                        }
+                        if (site.endDate) {
+                            req.session.data[`site-${siteNum}-end-date-day`] = site.endDate.day;
+                            req.session.data[`site-${siteNum}-end-date-month`] = site.endDate.month;
+                            req.session.data[`site-${siteNum}-end-date-year`] = site.endDate.year;
+                        }
+                    }
+                    
+                    // Populate site-specific descriptions if they're different for each site
+                    if (currentBatch.settings.sameActivityDescription === 'No') {
+                        req.session.data[`site-${siteNum}-activity-description`] = site.description;
+                    }
+                });
+            }
+        }
+    }
     
     // Set a flag to indicate we're coming from review-site-details
-    // This will help maintain data when cancelling from edit pages
     req.session.data['fromReviewSiteDetails'] = 'true';
-    
-    // Render the page
-    res.render(version + section + 'review-site-details');
+    // Only pass the current batch's sites to the template
+    let sites = [];
+    if (typeof getCurrentBatch === 'function') {
+        const batch = getCurrentBatch(req.session);
+        if (batch) {
+            sites = batch.sites;
+        }
+    }
+    res.render(version + section + 'review-site-details', { sites });
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -900,9 +998,18 @@ router.get('/' + version + section + 'how-do-you-want-to-provide-the-coordinates
     // Check if we're returning from review-site-details
     if (req.query.returnTo === 'review-site-details') {
         req.session.data['fromReviewSiteDetails'] = 'true';
-    } else if (!req.query.returnTo) {
-        // If starting new journey, set the flag to false
+    } else if (!req.query.returnTo && !req.query.camefromcheckanswers) {
+        // Only clear data if starting a truly new journey (not from check answers or review)
         req.session.data['siteDetailsSaved'] = false;
+        
+        // Clear all file upload data for a fresh start
+        clearAllFileUploadData(req.session);
+        
+        // Also clear the coordinate method selection so user starts fresh
+        delete req.session.data['exemption-how-do-you-want-to-provide-the-coordinates-radios'];
+        
+        // Clear current batch ID so we can start a fresh batch
+        delete req.session.data['currentBatchId'];
     }
     
     res.render(version + section + 'how-do-you-want-to-provide-the-coordinates');
@@ -1019,82 +1126,238 @@ router.get('/' + version + section + 'upload-file', function (req, res) {
     res.render(version + section + 'upload-file');
 });
 
+// Batch handling functions
+function initializeBatch(session, entryMethod) {
+    const batchId = Date.now().toString(); // Unique batch ID
+    const batch = {
+        id: batchId,
+        entryMethod: entryMethod,
+        createdAt: new Date().toISOString(),
+        sites: []
+    };
+    
+    // Initialize batches array if it doesn't exist
+    if (!session.data['siteBatches']) {
+        session.data['siteBatches'] = [];
+    }
+    
+    // Add the new batch
+    session.data['siteBatches'].push(batch);
+    
+    // Set current batch ID
+    session.data['currentBatchId'] = batchId;
+    
+    return batchId;
+}
+
+function getCurrentBatch(session) {
+    const batchId = session.data['currentBatchId'];
+    if (!batchId || !session.data['siteBatches']) {
+        return null;
+    }
+    
+    return session.data['siteBatches'].find(batch => batch.id === batchId);
+}
+
+function addSiteToBatch(session, siteData) {
+    const batch = getCurrentBatch(session);
+    if (!batch) {
+        return false;
+    }
+    
+    // Initialize global site counter if it doesn't exist
+    if (!session.data['globalSiteCounter']) {
+        session.data['globalSiteCounter'] = 0;
+    }
+    
+    // Assign global site number
+    session.data['globalSiteCounter']++;
+    siteData.globalNumber = session.data['globalSiteCounter'];
+    
+    // Add batch metadata to site
+    siteData.batchId = batch.id;
+    siteData.entryMethod = batch.entryMethod;
+    siteData.addedAt = new Date().toISOString();
+    
+    // Add to batch's sites array
+    batch.sites.push(siteData);
+    
+    // Rebuild global sites array from all batches to prevent duplicates
+    if (!session.data['siteBatches']) {
+        session.data['sites'] = [];
+    } else {
+        session.data['sites'] = session.data['siteBatches'].flatMap(batch => batch.sites);
+    }
+    
+    return true;
+}
+
+function getSitesByBatch(session, batchId) {
+    if (!session.data['siteBatches']) {
+        return [];
+    }
+    
+    const batch = session.data['siteBatches'].find(b => b.id === batchId);
+    return batch ? batch.sites : [];
+}
+
+function getAllSites(session) {
+    if (!session.data['siteBatches']) {
+        return [];
+    }
+    
+    // Flatten all sites from all batches
+    return session.data['siteBatches'].flatMap(batch => batch.sites);
+}
+
+// Helper function to find a site by global number
+function findSiteByGlobalNumber(session, globalNumber) {
+    const allSites = getAllSites(session);
+    return allSites.find(site => site.globalNumber === parseInt(globalNumber));
+}
+
+// Helper function to get the batch-relative position of a site by global number
+function getBatchRelativePosition(session, globalNumber) {
+    const currentBatch = getCurrentBatch(session);
+    if (!currentBatch || !currentBatch.sites) {
+        return 1;
+    }
+    
+    const siteIndex = currentBatch.sites.findIndex(site => site.globalNumber === parseInt(globalNumber));
+    return siteIndex !== -1 ? siteIndex + 1 : 1;
+}
+
+// Update the upload file router to use batch handling
 router.post('/' + version + section + 'upload-file-router', function (req, res) {
     req.session.data['siteTitle'] = 'review';
+    // Initialize a new batch for file upload
+    const batchId = initializeBatch(req.session, 'file-upload');
+    req.session.data['currentBatchId'] = batchId;
     
-    // Initialize sites array with sample data including timestamps
-    // In a real implementation, this would parse the uploaded file
-    const currentTime = new Date().toISOString();
-    req.session.data['sites'] = [
-        {
-            name: 'Sediment sample 1',
-            description: '',
-            startDate: {
-                day: '',
-                month: '',
-                year: ''
+    // Get current batch and store settings
+    const currentBatch = getCurrentBatch(req.session);
+    if (currentBatch) {
+        // Store batch-level settings for file upload (will be populated later)
+        currentBatch.settings = {
+            sameActivityDates: null, // Will be set in same-activity-dates
+            sameActivityDescription: null, // Will be set in same-activity-description
+            sharedStartDate: {},
+            sharedEndDate: {},
+            sharedDescription: null,
+            fileType: req.session.data['exemption-which-type-of-file-radios'] // Store file type
+        };
+    }
+    
+    // Check if this is the first file upload or a subsequent one
+    const isFirstUpload = !req.session.data['hasUploadedFile'];
+    
+    // Mark that a file has been uploaded
+    req.session.data['hasUploadedFile'] = true;
+    
+    let sites;
+    
+    if (isFirstUpload) {
+        // First upload: use 4-site array
+        sites = [
+            {
+                name: 'Sediment sample 1',
+                description: '',
+                startDate: {
+                    day: '',
+                    month: '',
+                    year: ''
+                },
+                endDate: {
+                    day: '',
+                    month: '',
+                    year: ''
+                },
+                mapImage: '/public/images/worthing-map-drawn-copy.jpg'
             },
-            endDate: {
-                day: '',
-                month: '',
-                year: ''
+            {
+                name: 'Sediment sample 2',
+                description: '',
+                startDate: {
+                    day: '',
+                    month: '',
+                    year: ''
+                },
+                endDate: {
+                    day: '',
+                    month: '',
+                    year: ''
+                },
+                mapImage: '/public/images/worthing-map-square-copy.jpg'
             },
-            mapImage: '/public/images/worthing-map-drawn-copy.jpg',
-            addedAt: currentTime,
-            entryMethod: 'file-upload'
-        },
-        {
-            name: 'Sediment sample 2',
-            description: '',
-            startDate: {
-                day: '',
-                month: '',
-                year: ''
+            {
+                name: 'Sediment sample 3',
+                description: '',
+                startDate: {
+                    day: '',
+                    month: '',
+                    year: ''
+                },
+                endDate: {
+                    day: '',
+                    month: '',
+                    year: ''
+                },
+                mapImage: '/public/images/worthing-map-4-points-copy.jpg'
             },
-            endDate: {
-                day: '',
-                month: '',
-                year: ''
+            {
+                name: 'Sediment sample 4',
+                description: '',
+                startDate: {
+                    day: '',
+                    month: '',
+                    year: ''
+                },
+                endDate: {
+                    day: '',
+                    month: '',
+                    year: ''
+                },
+                mapImage: '/public/images/worthing-map-5-points-copy.jpg'
+            }
+        ];
+    } else {
+        // Subsequent uploads: use 2-site array (first 2 sites from the original array)
+        sites = [
+            {
+                name: 'Brighton sample',
+                description: '',
+                startDate: {
+                    day: '',
+                    month: '',
+                    year: ''
+                },
+                endDate: {
+                    day: '',
+                    month: '',
+                    year: ''
+                },
+                mapImage: '/public/images/worthing-map-drawn-copy.jpg'
             },
-            mapImage: '/public/images/worthing-map-square-copy.jpg',
-            addedAt: currentTime,
-            entryMethod: 'file-upload'
-        },
-        {
-            name: '',
-            description: '',
-            startDate: {
-                day: '',
-                month: '',
-                year: ''
-            },
-            endDate: {
-                day: '',
-                month: '',
-                year: ''
-            },
-            mapImage: '/public/images/worthing-map-4-points-copy.jpg',
-            addedAt: currentTime,
-            entryMethod: 'file-upload'
-        },
-        {
-            name: '',
-            description: '',
-            startDate: {
-                day: '',
-                month: '',
-                year: ''
-            },
-            endDate: {
-                day: '',
-                month: '',
-                year: ''
-            },
-            mapImage: '/public/images/worthing-map-5-points-copy.jpg',
-            addedAt: currentTime,
-            entryMethod: 'file-upload'
-        }
-    ];
+            {
+                name: 'Worthing sample',
+                description: '',
+                startDate: {
+                    day: '',
+                    month: '',
+                    year: ''
+                },
+                endDate: {
+                    day: '',
+                    month: '',
+                    year: ''
+                },
+                mapImage: '/public/images/worthing-map-square-copy.jpg'
+            }
+        ];
+    }
+    
+    // Add each site to the batch
+    sites.forEach(site => addSiteToBatch(req.session, site));
     
     // After uploading file, go to same-activity-dates question
     res.redirect('same-activity-dates');
@@ -1121,6 +1384,12 @@ router.post('/' + version + section + 'same-activity-dates-router', function (re
 
     // Store the current selection for future comparison
     req.session.data['previous-activity-dates-selection'] = selection;
+    
+    // Save setting to current batch metadata if we have one
+    const currentBatch = getCurrentBatch(req.session);
+    if (currentBatch && currentBatch.settings) {
+        currentBatch.settings.sameActivityDates = selection;
+    }
 
     // Check if we're coming from review-site-details page
     const returnTo = req.session.data['returnTo'];
@@ -1147,6 +1416,12 @@ router.post('/' + version + section + 'same-activity-dates-router', function (re
                 delete req.session.data['exemption-end-date-date-input-day'];
                 delete req.session.data['exemption-end-date-date-input-month'];
                 delete req.session.data['exemption-end-date-date-input-year'];
+                
+                // Clear from batch settings too
+                if (currentBatch && currentBatch.settings) {
+                    currentBatch.settings.sharedStartDate = {};
+                    currentBatch.settings.sharedEndDate = {};
+                }
                 
                 // Return to review page
                 delete req.session.data['returnTo'];
@@ -1192,6 +1467,12 @@ router.post('/' + version + section + 'same-activity-description-router', functi
 
     // Store the current selection for future comparison
     req.session.data['previous-activity-description-selection'] = selection;
+    
+    // Save setting to current batch metadata if we have one
+    const currentBatch = getCurrentBatch(req.session);
+    if (currentBatch && currentBatch.settings) {
+        currentBatch.settings.sameActivityDescription = selection;
+    }
 
     // Check if we're coming from review-site-details page
     const returnTo = req.session.data['returnTo'];
@@ -1212,6 +1493,11 @@ router.post('/' + version + section + 'same-activity-description-router', functi
             if (returnTo === 'review-site-details' && previousSelection === "Yes") {
                 // Clear shared activity description
                 delete req.session.data['exemption-activity-details-text-area'];
+                
+                // Clear from batch settings too
+                if (currentBatch && currentBatch.settings) {
+                    currentBatch.settings.sharedDescription = null;
+                }
                 
                 // Return to review page
                 delete req.session.data['returnTo'];
@@ -1261,6 +1547,8 @@ router.post('/' + version + section + 'site-name-router', function (req, res) {
     req.session.data['errortypeone'] = "false";
 
     const siteName = req.session.data['site-name-text-input'];
+    const globalSiteNumber = parseInt(req.session.data['site']) || 1;
+    const returnSection = req.session.data['return'];
 
     if (!siteName || siteName.trim() === "") {
         req.session.data['errorthispage'] = "true";
@@ -1268,39 +1556,63 @@ router.post('/' + version + section + 'site-name-router', function (req, res) {
         return res.redirect('site-name');
     }
 
-    // Get sites array and current index
-    const sites = req.session.data['sites'] || [];
-    const siteIndex = parseInt(req.session.data['site']) || null;
-    
-    // If we're editing an existing site
-    if (siteIndex && sites.length >= siteIndex) {
-        // Update existing site (convert from 1-based to 0-based index)
-        sites[siteIndex - 1].name = siteName;
-    } else {
-        // Add a new site with timestamp
-        const currentTime = new Date().toISOString();
-        sites.push({
-            name: siteName,
-            addedAt: currentTime,
-            entryMethod: 'file-upload'
-        });
+    // If we have a return section and existing sites, we're updating an existing site
+    if (returnSection && req.session.data['sites'] && req.session.data['sites'].length >= 1) {
+        // Find the site by global number and update it
+        const siteToUpdate = findSiteByGlobalNumber(req.session, globalSiteNumber);
+        if (siteToUpdate) {
+            siteToUpdate.name = siteName;
+            
+            // Update the site in its batch as well
+            if (siteToUpdate.batchId) {
+                const batch = req.session.data['siteBatches']?.find(b => b.id === siteToUpdate.batchId);
+                if (batch) {
+                    const batchSite = batch.sites.find(s => s.globalNumber === globalSiteNumber);
+                    if (batchSite) {
+                        batchSite.name = siteName;
+                    }
+                }
+            }
+            
+            // Rebuild global sites array
+            req.session.data['sites'] = req.session.data['siteBatches'].flatMap(batch => batch.sites);
+        }
+        
+        // Clear the input field
+        req.session.data['site-name-text-input'] = '';
+        
+        // Redirect back to review-site-details with the anchor
+        return res.redirect('review-site-details#' + returnSection);
     }
-    
-    // Save the updated array
-    req.session.data['sites'] = sites;
 
-    // Extract the return parameter which contains the section name
-    const returnSection = req.session.data['return'];
+    // If we're not updating an existing site, create a new one (manual entry flow)
+    // Get current batch
+    const batch = getCurrentBatch(req.session);
+    if (!batch) {
+        // Initialize a new batch for manual entry if none exists
+        initializeBatch(req.session, 'manual-entry');
+    }
+
+    // Create new site data
+    const siteData = {
+        name: siteName,
+        startDate: {},
+        endDate: {},
+        description: ''
+    };
+
+    // Add site to current batch
+    addSiteToBatch(req.session, siteData);
     
     // If we need site-specific dates and we're not returning to somewhere else
     if (req.session.data['exemption-same-activity-dates-for-sites'] === "No" && !returnSection) {
         // Go to site-specific dates page
-        return res.redirect('site-activity-dates?site=' + req.session.data['sites'].length);
+        return res.redirect('site-activity-dates?site=' + siteData.globalNumber);
     } 
     // If we need site-specific descriptions and we're not returning to somewhere else
     else if (req.session.data['exemption-same-activity-description-for-sites'] === "No" && !returnSection) {
         // Go to site-specific description page
-        return res.redirect('site-activity-description?site=' + req.session.data['sites'].length);
+        return res.redirect('site-activity-description?site=' + siteData.globalNumber);
     }
     else if (returnSection) {
         // Redirect back to review-site-details with the anchor
@@ -1474,60 +1786,48 @@ router.post('/' + version + section + 'site-activity-description-router', functi
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 router.post('/' + version + section + 'review-site-details-router', function (req, res) {
-    // Check if any site is incomplete
     let hasSiteIncomplete = false;
-    
-    // Get the sites array
-    const sites = req.session.data['sites'] || [];
-    
+    let sites = [];
+    if (typeof getCurrentBatch === 'function') {
+        const batch = getCurrentBatch(req.session);
+        if (batch) {
+            sites = batch.sites;
+        }
+    }
     if (sites.length > 0) {
-        // Check each site for completeness
         for (const site of sites) {
-            // Check if site name is missing
             if (!site.name) {
                 hasSiteIncomplete = true;
             }
-            
-            // Check if site-specific dates are required but incomplete
             if (req.session.data['exemption-same-activity-dates-for-sites'] === "No") {
                 if (!site.startDate || !site.startDate.day) {
                     hasSiteIncomplete = true;
                 }
             }
-            
-            // Check if site-specific descriptions are required but incomplete
             if (req.session.data['exemption-same-activity-description-for-sites'] === "No") {
                 if (!site.description) {
                     hasSiteIncomplete = true;
                 }
             }
         }
-        
-        // Set status based on completeness
         if (hasSiteIncomplete) {
-            // Mark as in progress if any site is incomplete
             req.session.data['exempt-information-3-status'] = 'in-progress';
         } else {
-            // Mark as completed if all sites are complete
             req.session.data['exempt-information-3-status'] = 'completed';
         }
     } else {
-        // No sites exist
         req.session.data['exempt-information-3-status'] = 'cannot-start';
     }
-    
-    // Set the flag to indicate site details have been saved
     req.session.data['siteDetailsSaved'] = true;
-    
-    // Clear the fromReviewSiteDetails flag since we're leaving the page
     delete req.session.data['fromReviewSiteDetails'];
     
-    // Check if we came from check-answers-multiple-sites
+    // Clear currentBatchId so we can start fresh next time
+    delete req.session.data['currentBatchId'];
+    
     if (req.session.data['camefromcheckanswers'] === 'true') {
         req.session.data['camefromcheckanswers'] = false;
         res.redirect('check-answers-multiple-sites');
     } else {
-        // Otherwise redirect to the site-details-added page
         res.redirect('site-details-added');
     }
 });
@@ -1597,8 +1897,21 @@ router.post('/' + version + section + 'site-details-added-router', function (req
 
 // Route handler for "Add another site" functionality
 router.get('/' + version + section + 'add-another-site', function (req, res) {
-    // Clear all coordinate method data for a fresh start
-    clearAllCoordinateMethodData(req.session);
+    // FIXED: Don't clear all data - preserve existing batches
+    // Instead of clearing all coordinate method data, only clear the method selection
+    // This prevents file uploads from wiping manual entry activity settings
+    
+    // Clear only the coordinate method selection to allow fresh choice
+    delete req.session.data['exemption-how-do-you-want-to-provide-the-coordinates-radios'];
+    
+    // Clear current batch ID so we can start a fresh batch
+    delete req.session.data['currentBatchId'];
+    
+    // Clear any navigation flags that might interfere
+    delete req.session.data['fromReviewSiteDetails'];
+    delete req.session.data['siteDetailsSaved'];
+    delete req.session.data['current-site'];
+    delete req.session.data['returnTo'];
     
     // Redirect to coordinate method selection page
     res.redirect('how-do-you-want-to-provide-the-coordinates');

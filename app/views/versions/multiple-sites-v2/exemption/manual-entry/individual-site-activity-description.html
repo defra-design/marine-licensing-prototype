@@ -38,6 +38,18 @@ Activity description
         {% set currentSite = data['current-site'] or 1 %}
         {% set siteDataKey = 'manual-activity-details-text-area' if currentSite == 1 else 'manual-site-' + currentSite + '-activity-details-text-area' %}
         {% set siteInputId = 'manual-activity-details-text-area' if currentSite == 1 else 'manual-site-' + currentSite + '-activity-details-text-area' %}
+        
+        <!-- Calculate the global site number for display using batch starting position -->
+        {% set currentBatch = null %}
+        {% if data['currentBatchId'] %}
+            {% for batch in data['siteBatches'] %}
+                {% if batch.id == data['currentBatchId'] %}
+                    {% set currentBatch = batch %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        {% set batchStartingNumber = currentBatch.startingGlobalNumber if currentBatch else 0 %}
+        {% set displaySiteNumber = batchStartingNumber + currentSite %}
 
         <!-- ERROR LOGIC 'error summary' -->
         {% if data['errorthispage'] == "true" %}
@@ -64,7 +76,7 @@ Activity description
                 <h1 class="govuk-label-wrapper">
                   <label class="govuk-label govuk-label--l" for="{{ siteInputId }}">
                     {{ pageHeadingTextHTML }}
-                    <span class="govuk-caption-l">Site {{ currentSite }}</span>
+                    <span class="govuk-caption-l">Site {{ displaySiteNumber }}</span>
                   </label>
                 </h1>
               

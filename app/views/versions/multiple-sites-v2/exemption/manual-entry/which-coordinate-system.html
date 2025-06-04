@@ -37,6 +37,18 @@ Which coordinate system do you want to use?
         <!-- Get current site number -->
         {% set currentSite = data['current-site'] or 1 %}
         {% set siteDataKey = 'manual-coordinate-system-radios' if currentSite == 1 else 'manual-site-' + currentSite + '-coordinate-system-radios' %}
+        
+        <!-- Calculate the global site number for display using batch starting position -->
+        {% set currentBatch = null %}
+        {% if data['currentBatchId'] %}
+            {% for batch in data['siteBatches'] %}
+                {% if batch.id == data['currentBatchId'] %}
+                    {% set currentBatch = batch %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        {% set batchStartingNumber = currentBatch.startingGlobalNumber if currentBatch else 0 %}
+        {% set displaySiteNumber = batchStartingNumber + currentSite %}
 
         <!-- ERROR LOGIC 'error summary' -->
         {% if data['errorthispage'] == "true" %}
@@ -62,7 +74,7 @@ Which coordinate system do you want to use?
             <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
             <h1 class="govuk-heading-l">
                 {{ pageHeadingTextHTML }}
-                <span class="govuk-caption-l">Site {{ currentSite }}</span>
+                <span class="govuk-caption-l">Site {{ displaySiteNumber }}</span>
             </h1>
 
             <details class="govuk-details">
