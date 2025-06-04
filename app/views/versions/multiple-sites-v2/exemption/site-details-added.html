@@ -120,9 +120,9 @@ Your sites
                                     {% endif %}
                                 </td>
                                 <td class="govuk-table__cell">
-                                    {% set reviewUrl = "review-site-details?site=" + siteIndex + "&batchId=" + site.batchId + "#site-" + siteIndex + "-details" %}
+                                    {% set reviewUrl = "review-site-details?site=" + siteIndex + "&batchId=" + site.batchId %}
                                     {% if site.entryMethod == "manual-entry" %}
-                                        {% set reviewUrl = "manual-entry/review-site-details?site=" + siteIndex + "&batchId=" + site.batchId + "#site-" + siteIndex + "-details" %}
+                                        {% set reviewUrl = "manual-entry/review-site-details?site=" + siteIndex + "&batchId=" + site.batchId %}
                                     {% endif %}
                                     <a href="{{ reviewUrl }}" class="govuk-link govuk-!-margin-right-3 govuk-link--no-visited-state">Review</a> 
                                     <a href="delete-site?site={{ siteIndex }}&return=site-details-added" class="govuk-link govuk-link--no-visited-state">Delete</a>

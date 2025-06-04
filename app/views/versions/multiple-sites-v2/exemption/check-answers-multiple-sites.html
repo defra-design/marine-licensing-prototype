@@ -224,7 +224,12 @@
             {% if data['applicationSubmitted'] != "true" %}
             <ul class="govuk-summary-card__actions">
               <li class="govuk-summary-card__action">
-                <a class="govuk-link" href="review-site-details?site={{ site.globalNumber or loop.index }}&camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Site {{ site.globalNumber or loop.index }} details</span></a>
+                {% set siteIndex = site.globalNumber or loop.index %}
+                {% set changeUrl = "review-site-details?site=" + siteIndex + "&batchId=" + site.batchId + "&camefromcheckanswers=true" %}
+                {% if site.entryMethod == "manual-entry" %}
+                  {% set changeUrl = "manual-entry/review-site-details?site=" + siteIndex + "&batchId=" + site.batchId + "&camefromcheckanswers=true" %}
+                {% endif %}
+                <a class="govuk-link" href="{{ changeUrl }}">Change<span class="govuk-visually-hidden"> Site {{ siteIndex }} details</span></a>
               </li>
             </ul>
             {% endif %}
@@ -250,10 +255,18 @@
                     Activity dates
                   </dt>
                   <dd class="govuk-summary-list__value">
-                    {% if site.startDate and site.startDate.day %}
-                      {{ site.startDate.day }} {{ monthNames[site.startDate.month - 1] }} {{ site.startDate.year }} to {{ site.endDate.day }} {{ monthNames[site.endDate.month - 1] }} {{ site.endDate.year }}
+                    {% if data['exemption-same-activity-dates-for-sites'] == "Yes" %}
+                      {% if data['exemption-start-date-date-input-day'] %}
+                        {{ data['exemption-start-date-date-input-day'] }} {{ monthNames[data['exemption-start-date-date-input-month'] - 1] }} {{ data['exemption-start-date-date-input-year'] }} to {{ data['exemption-end-date-date-input-day'] }} {{ monthNames[data['exemption-end-date-date-input-month'] - 1] }} {{ data['exemption-end-date-date-input-year'] }}
+                      {% else %}
+                        19 May 2025 to {{ (21 + loop.index) }} May 2025
+                      {% endif %}
                     {% else %}
-                      19 May 2025 to {{ (21 + loop.index) }} May 2025
+                      {% if site.startDate and site.startDate.day %}
+                        {{ site.startDate.day }} {{ monthNames[site.startDate.month - 1] }} {{ site.startDate.year }} to {{ site.endDate.day }} {{ monthNames[site.endDate.month - 1] }} {{ site.endDate.year }}
+                      {% else %}
+                        19 May 2025 to {{ (21 + loop.index) }} May 2025
+                      {% endif %}
                     {% endif %}
                   </dd>
                 </div>
@@ -263,7 +276,11 @@
                     Activity description
                   </dt>
                   <dd class="govuk-summary-list__value">
-                    {{ site.description or "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." }}
+                    {% if data['exemption-same-activity-description-for-sites'] == "Yes" %}
+                      {{ data['exemption-activity-details-text-area'] or "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." }}
+                    {% else %}
+                      {{ site.description or "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." }}
+                    {% endif %}
                   </dd>
                 </div>
 
