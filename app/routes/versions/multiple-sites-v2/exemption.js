@@ -994,8 +994,17 @@ router.get('/' + version + section + 'how-do-you-want-to-provide-the-coordinates
     if (req.query.returnTo === 'review-site-details') {
         req.session.data['fromReviewSiteDetails'] = 'true';
     } else if (!req.query.returnTo) {
-        // If starting new journey, set the flag to false
+        // If starting new journey, set the flag to false and clear previous journey data
         req.session.data['siteDetailsSaved'] = false;
+        
+        // Clear all file upload data for a fresh start
+        clearAllFileUploadData(req.session);
+        
+        // Also clear the coordinate method selection so user starts fresh
+        delete req.session.data['exemption-how-do-you-want-to-provide-the-coordinates-radios'];
+        
+        // Clear current batch ID so we can start a fresh batch
+        delete req.session.data['currentBatchId'];
     }
     
     res.render(version + section + 'how-do-you-want-to-provide-the-coordinates');
@@ -1233,70 +1242,113 @@ router.post('/' + version + section + 'upload-file-router', function (req, res) 
         };
     }
     
-    // Initialize sites array with sample data
-    // In a real implementation, this would parse the uploaded file
-    const sites = [
-        {
-            name: 'Sediment sample 1',
-            description: '',
-            startDate: {
-                day: '',
-                month: '',
-                year: ''
+    // Check if this is the first file upload or a subsequent one
+    const isFirstUpload = !req.session.data['hasUploadedFile'];
+    
+    // Mark that a file has been uploaded
+    req.session.data['hasUploadedFile'] = true;
+    
+    let sites;
+    
+    if (isFirstUpload) {
+        // First upload: use 4-site array
+        sites = [
+            {
+                name: 'Sediment sample 1',
+                description: '',
+                startDate: {
+                    day: '',
+                    month: '',
+                    year: ''
+                },
+                endDate: {
+                    day: '',
+                    month: '',
+                    year: ''
+                },
+                mapImage: '/public/images/worthing-map-drawn-copy.jpg'
             },
-            endDate: {
-                day: '',
-                month: '',
-                year: ''
+            {
+                name: 'Sediment sample 2',
+                description: '',
+                startDate: {
+                    day: '',
+                    month: '',
+                    year: ''
+                },
+                endDate: {
+                    day: '',
+                    month: '',
+                    year: ''
+                },
+                mapImage: '/public/images/worthing-map-square-copy.jpg'
             },
-            mapImage: '/public/images/worthing-map-drawn-copy.jpg'
-        },
-        {
-            name: 'Sediment sample 2',
-            description: '',
-            startDate: {
-                day: '',
-                month: '',
-                year: ''
+            {
+                name: '',
+                description: '',
+                startDate: {
+                    day: '',
+                    month: '',
+                    year: ''
+                },
+                endDate: {
+                    day: '',
+                    month: '',
+                    year: ''
+                },
+                mapImage: '/public/images/worthing-map-4-points-copy.jpg'
             },
-            endDate: {
-                day: '',
-                month: '',
-                year: ''
+            {
+                name: '',
+                description: '',
+                startDate: {
+                    day: '',
+                    month: '',
+                    year: ''
+                },
+                endDate: {
+                    day: '',
+                    month: '',
+                    year: ''
+                },
+                mapImage: '/public/images/worthing-map-5-points-copy.jpg'
+            }
+        ];
+    } else {
+        // Subsequent uploads: use 2-site array (first 2 sites from the original array)
+        sites = [
+            {
+                name: 'Brighton sample',
+                description: '',
+                startDate: {
+                    day: '',
+                    month: '',
+                    year: ''
+                },
+                endDate: {
+                    day: '',
+                    month: '',
+                    year: ''
+                },
+                mapImage: '/public/images/worthing-map-drawn-copy.jpg'
             },
-            mapImage: '/public/images/worthing-map-square-copy.jpg'
-        },
-        {
-            name: '',
-            description: '',
-            startDate: {
-                day: '',
-                month: '',
-                year: ''
-            },
-            endDate: {
-                day: '',
-                month: '',
-                year: ''
-            },
-            mapImage: '/public/images/worthing-map-4-points-copy.jpg'
-        },
-        {
-            name: '',
-            description: '',
-            startDate: {
-                day: '',
-                month: '',
-                year: ''
-            },
-            endDate: {
-                day: '',
-                month: '',
-                year: ''
-            },
-            mapImage: '/public/images/worthing-map-5-points-copy.jpg'
-        }
-    ];
+            {
+                name: 'Worthing sample',
+                description: '',
+                startDate: {
+                    day: '',
+                    month: '',
+                    year: ''
+                },
+                endDate: {
+                    day: '',
+                    month: '',
+                    year: ''
+                },
+                mapImage: '/public/images/worthing-map-square-copy.jpg'
+            }
+        ];
+    }
     
     // Add each site to the batch
     sites.forEach(site => addSiteToBatch(req.session, site));
