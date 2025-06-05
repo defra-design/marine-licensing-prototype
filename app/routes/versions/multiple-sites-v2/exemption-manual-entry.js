@@ -2437,7 +2437,62 @@ router.get('/' + version + section + 'manual-entry-single-site/review-site-detai
     req.session.data['errorthispage'] = "false";
     req.session.data['errors'] = [];
     
-    res.render(version + section + 'manual-entry-single-site/review-site-details');
+    // Check if this is a converted single site (data in batch) or true single site (session data)
+    const currentBatch = getCurrentBatch(req.session);
+    let templateData = {};
+    
+    if (currentBatch && currentBatch.sites && currentBatch.sites.length === 1) {
+        // CONVERTED SINGLE SITE MODE: Pass batch data directly to template
+        const site = currentBatch.sites[0];
+        
+        // Populate session data for template compatibility
+        if (site.startDate) {
+            req.session.data['single-site-start-date-date-input-day'] = site.startDate.day;
+            req.session.data['single-site-start-date-date-input-month'] = site.startDate.month;
+            req.session.data['single-site-start-date-date-input-year'] = site.startDate.year;
+        }
+        if (site.endDate) {
+            req.session.data['single-site-end-date-date-input-day'] = site.endDate.day;
+            req.session.data['single-site-end-date-date-input-month'] = site.endDate.month;
+            req.session.data['single-site-end-date-date-input-year'] = site.endDate.year;
+        }
+        if (site.description) {
+            req.session.data['single-site-activity-details-text-area'] = site.description;
+        }
+        if (site.name) {
+            req.session.data['site-1-name'] = site.name;
+        }
+        if (site.coordinateSystem) {
+            req.session.data['single-site-coordinate-system-radios'] = site.coordinateSystem;
+        }
+        
+        // Convert coordinates data
+        if (site.coordinates) {
+            if (site.coordinates.type === 'circle') {
+                req.session.data['single-site-coordinate-entry-method'] = "Enter one set of coordinates and a width to create a circular site";
+                if (site.coordinates.center) {
+                    req.session.data['single-site-latitude'] = site.coordinates.center.latitude;
+                    req.session.data['single-site-longitude'] = site.coordinates.center.longitude;
+                }
+                if (site.coordinates.width) {
+                    req.session.data['single-site-width'] = site.coordinates.width;
+                }
+            } else if (site.coordinates.type === 'polygon') {
+                req.session.data['single-site-coordinate-entry-method'] = "Enter multiple sets of coordinates to mark the boundary of the site";
+                if (site.coordinates.points) {
+                    site.coordinates.points.forEach(point => {
+                        req.session.data[`single-site-coordinates-point-${point.pointNumber}-latitude`] = point.latitude;
+                        req.session.data[`single-site-coordinates-point-${point.pointNumber}-longitude`] = point.longitude;
+                    });
+                }
+            }
+        }
+        
+        // Pass site data to template
+        templateData.convertedSite = site;
+    }
+    
+    res.render(version + section + 'manual-entry-single-site/review-site-details', templateData);
 });
 
 // Single Site Review Site Details - POST route
@@ -2488,22 +2543,26 @@ router.post('/' + version + section + 'manual-entry-single-site/review-site-deta
         }
     }
     
-    // Initialize batch if it doesn't exist (for single site this creates a "batch of 1")
-    if (!getCurrentBatch(req.session)) {
-        initializeBatch(req.session, 'manual');
+    // Check if this is a converted single site (has batch) vs true single site
+    const currentBatch = getCurrentBatch(req.session);
+    const isConvertedSite = currentBatch && currentBatch.sites && currentBatch.sites.length === 1;
+    
+    if (isConvertedSite) {
+        // CONVERTED SINGLE SITE MODE: Redirect to "Your sites" page
+        req.session.data['exempt-information-3-status'] = "in-progress"; // Still needs name completion
+        res.redirect('../site-details-added');
+    } else {
+        // TRUE SINGLE SITE MODE: Store data in session only (no batches until conversion)
+        // Mark the single site as completed - this tells the task list we have a completed single site
+        req.session.data['exempt-information-3-status'] = "completed";
+        req.session.data['single-site-completed'] = true;
+        
+        // DO NOT clear session data - we need it for the review page
+        // DO NOT create batches - single sites use session data only until conversion
+        
+        // Return to task list
+        res.redirect('../task-list');
     }
-    
-    // Add the site to the batch
-    addSiteToBatch(req.session, siteData);
-    
-    // Clear all single-site session data
-    const keysToDelete = Object.keys(req.session.data).filter(key => key.startsWith('single-site-'));
-    keysToDelete.forEach(key => {
-        delete req.session.data[key];
-    });
-    
-    // Return to task list
-    res.redirect('../task-list');
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////
