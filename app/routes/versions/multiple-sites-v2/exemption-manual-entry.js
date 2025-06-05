@@ -315,7 +315,14 @@ router.post('/' + version + section + 'manual-entry/does-your-project-involve-mo
             res.redirect('site-name?site=1');
             break;
         case "No":
-            res.redirect('../stop');
+            // Initialize a new batch for single-site manual entry
+            const singleSiteBatchId = initializeBatch(req.session, 'manual-entry-single-site');
+            req.session.data['currentBatchId'] = singleSiteBatchId;
+            
+            // Clear any previous manual entry session data to ensure fresh start
+            clearManualEntrySessionData(req.session, 1);
+            
+            res.redirect('../manual-entry-single-site/activity-dates');
             break;
         default:
             res.redirect('does-your-project-involve-more-than-one-site');
@@ -2049,6 +2056,294 @@ router.post('/' + version + section + 'manual-entry/enter-multiple-coordinates-r
     addCompletedSiteToCurrentBatch(req.session, batchRelativePosition);
 
     // Redirect to review page
+    res.redirect('review-site-details');
+});
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Single Site Manual Entry Routes
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+// Single Site Activity Dates - GET route
+router.get('/' + version + section + 'manual-entry-single-site/activity-dates', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['startdateerror'] = "false";
+    req.session.data['enddateerror'] = "false";
+    req.session.data['errors'] = [];
+    
+    res.render(version + section + 'manual-entry-single-site/activity-dates');
+});
+
+// Single Site Activity Dates - POST route
+router.post('/' + version + section + 'manual-entry-single-site/activity-dates-router', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['startdateerror'] = "false";
+    req.session.data['enddateerror'] = "false";
+
+    const startDay = req.session.data['single-site-start-date-date-input-day'];
+    const startMonth = req.session.data['single-site-start-date-date-input-month'];
+    const startYear = req.session.data['single-site-start-date-date-input-year'];
+    const endDay = req.session.data['single-site-end-date-date-input-day'];
+    const endMonth = req.session.data['single-site-end-date-date-input-month'];
+    const endYear = req.session.data['single-site-end-date-date-input-year'];
+
+    let hasErrors = false;
+
+    // Validate start date
+    if (!startDay || !startMonth || !startYear || startDay.trim() === "" || startMonth.trim() === "" || startYear.trim() === "") {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['startdateerror'] = "true";
+        hasErrors = true;
+    }
+
+    // Validate end date
+    if (!endDay || !endMonth || !endYear || endDay.trim() === "" || endMonth.trim() === "" || endYear.trim() === "") {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['enddateerror'] = "true";
+        hasErrors = true;
+    }
+
+    if (hasErrors) {
+        res.redirect('activity-dates');
+        return;
+    }
+
+    // Continue to activity description
+    res.redirect('activity-description');
+});
+
+// Single Site Activity Description - GET route
+router.get('/' + version + section + 'manual-entry-single-site/activity-description', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errors'] = [];
+    
+    res.render(version + section + 'manual-entry-single-site/activity-description');
+});
+
+// Single Site Activity Description - POST route
+router.post('/' + version + section + 'manual-entry-single-site/activity-description-router', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    const activityDescription = req.session.data['single-site-activity-details-text-area'];
+
+    if (!activityDescription || activityDescription.trim() === "") {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        res.redirect('activity-description');
+        return;
+    }
+
+    // Continue to how to enter coordinates
+    res.redirect('how-do-you-want-to-enter-the-coordinates');
+});
+
+// Single Site How to Enter Coordinates - GET route
+router.get('/' + version + section + 'manual-entry-single-site/how-do-you-want-to-enter-the-coordinates', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errors'] = [];
+    
+    res.render(version + section + 'manual-entry-single-site/how-do-you-want-to-enter-the-coordinates');
+});
+
+// Single Site How to Enter Coordinates - POST route
+router.post('/' + version + section + 'manual-entry-single-site/how-do-you-want-to-enter-the-coordinates-router', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errors'] = [];
+    
+    const selection = req.body['single-site-coordinate-entry-method'];
+    
+    if (!selection) {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        req.session.data['errors'].push({ text: "Select how you want to enter the site coordinates", href: "#single-site-coordinate-entry-method" });
+        return res.redirect('how-do-you-want-to-enter-the-coordinates');
+    }
+    
+    // Store the selection
+    req.session.data['single-site-coordinate-entry-method'] = selection;
+    
+    // Continue to coordinate system selection
+    res.redirect('which-coordinate-system');
+});
+
+// Single Site Which Coordinate System - GET route
+router.get('/' + version + section + 'manual-entry-single-site/which-coordinate-system', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errors'] = [];
+    
+    res.render(version + section + 'manual-entry-single-site/which-coordinate-system');
+});
+
+// Single Site Which Coordinate System - POST route
+router.post('/' + version + section + 'manual-entry-single-site/which-coordinate-system-router', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errors'] = [];
+    
+    const selection = req.body['single-site-coordinate-system-radios'];
+    
+    if (!selection) {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        req.session.data['errors'].push({ text: "Select which coordinate system you want to use", href: "#single-site-coordinate-system-radios" });
+        return res.redirect('which-coordinate-system');
+    }
+    
+    // Store the selection
+    req.session.data['single-site-coordinate-system-radios'] = selection;
+    
+    // Branch based on coordinate entry method
+    const coordinateMethod = req.session.data['single-site-coordinate-entry-method'];
+    
+    if (coordinateMethod === "Enter one set of coordinates and a width to create a circular site") {
+        res.redirect('enter-centre-point-coordinates');
+    } else if (coordinateMethod === "Enter multiple sets of coordinates to mark the boundary of the site") {
+        res.redirect('enter-multiple-coordinates');
+    } else {
+        // Fallback - shouldn't happen, but redirect back to method selection
+        res.redirect('how-do-you-want-to-enter-the-coordinates');
+    }
+});
+
+// Single Site Enter Centre Point Coordinates - GET route
+router.get('/' + version + section + 'manual-entry-single-site/enter-centre-point-coordinates', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errortypetwo'] = "false";
+    req.session.data['errors'] = [];
+    
+    res.render(version + section + 'manual-entry-single-site/enter-centre-point-coordinates');
+});
+
+// Single Site Enter Centre Point Coordinates - POST route
+router.post('/' + version + section + 'manual-entry-single-site/enter-centre-point-coordinates-router', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errortypetwo'] = "false";
+    req.session.data['errors'] = [];
+    
+    const latitude = req.session.data['single-site-latitude'];
+    const longitude = req.session.data['single-site-longitude'];
+    
+    let hasErrors = false;
+    
+    // Validate latitude/eastings
+    if (!latitude || latitude.trim() === "") {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        hasErrors = true;
+    }
+    
+    // Validate longitude/northings
+    if (!longitude || longitude.trim() === "") {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypetwo'] = "true";
+        hasErrors = true;
+    }
+    
+    if (hasErrors) {
+        res.redirect('enter-centre-point-coordinates');
+        return;
+    }
+    
+    // Continue to width entry
+    res.redirect('site-width');
+});
+
+// Single Site Width - GET route
+router.get('/' + version + section + 'manual-entry-single-site/site-width', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errors'] = [];
+    
+    res.render(version + section + 'manual-entry-single-site/site-width');
+});
+
+// Single Site Width - POST route
+router.post('/' + version + section + 'manual-entry-single-site/site-width-router', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errors'] = [];
+    
+    const width = req.session.data['single-site-width'];
+    
+    if (!width || width.trim() === "") {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errors'].push({ text: "Enter the width of the circular site in metres", href: "#single-site-width" });
+        return res.redirect('site-width');
+    }
+    
+    // Continue to review page
+    res.redirect('review-site-details');
+});
+
+// Single Site Enter Multiple Coordinates - GET route
+router.get('/' + version + section + 'manual-entry-single-site/enter-multiple-coordinates', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errors'] = [];
+    
+    res.render(version + section + 'manual-entry-single-site/enter-multiple-coordinates');
+});
+
+// Single Site Enter Multiple Coordinates - POST route
+router.post('/' + version + section + 'manual-entry-single-site/enter-multiple-coordinates-router', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errors'] = [];
+    
+    // Validate required points (1, 2, 3)
+    let hasErrors = false;
+    
+    // Loop over points 1-3 (required)
+    for (let i = 1; i <= 3; i++) {
+        const latKey = `single-site-coordinates-point-${i}-latitude`;
+        const longKey = `single-site-coordinates-point-${i}-longitude`;
+        const latVal = req.session.data[latKey];
+        const longVal = req.session.data[longKey];
+
+        const latMissing = !latVal || latVal.trim() === "";
+        const longMissing = !longVal || longVal.trim() === "";
+
+        const pointLabel = i === 1 ? "start and end point" : `point ${i}`;
+
+        // If lat or long is missing, mark as an error
+        if (latMissing || longMissing) {
+            req.session.data['errorthispage'] = "true";
+            hasErrors = true;
+        }
+
+        // Latitude error handling
+        if (latMissing) {
+            req.session.data[`error-${latKey}`] = "true";
+            const coordType = req.session.data['single-site-coordinate-system-radios'] === "OSGB36 (National Grid)" ? "eastings" : "latitude";
+            req.session.data['errors'].push({
+                text: `Enter the ${coordType} of ${pointLabel}`,
+                anchor: latKey
+            });
+        } else {
+            req.session.data[`error-${latKey}`] = "false";
+        }
+
+        // Longitude error handling
+        if (longMissing) {
+            req.session.data[`error-${longKey}`] = "true";
+            const coordType = req.session.data['single-site-coordinate-system-radios'] === "OSGB36 (National Grid)" ? "northings" : "longitude";
+            req.session.data['errors'].push({
+                text: `Enter the ${coordType} of ${pointLabel}`,
+                anchor: longKey
+            });
+        } else {
+            req.session.data[`error-${longKey}`] = "false";
+        }
+    }
+
+    // Redirect to the current page if there are errors, else continue to the next page
+    if (hasErrors) {
+        return res.redirect('enter-multiple-coordinates');
+    }
+
+    // Continue to review page
     res.redirect('review-site-details');
 });
 

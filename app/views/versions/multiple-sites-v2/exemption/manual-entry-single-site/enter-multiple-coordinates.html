@@ -1,0 +1,464 @@
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% extends "../../layouts/exemption.html" %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% include "../../includes/back-link.html" %}
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+    Enter multiple sets of coordinates to mark the boundary of the site
+{% endset %}
+
+{% set point1LatHTML %}
+    {% if data['single-site-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['single-site-coordinate-system-radios'] %}                  
+    Latitude of start and end point
+    {% elif data['single-site-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+    Eastings of the start and end point
+    {% endif %}
+{% endset %}
+
+{% set point1LongHTML %}
+    {% if data['single-site-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['single-site-coordinate-system-radios'] %}
+    Longitude of start and end point
+    {% elif data['single-site-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+    Northings of the start and end point
+    {% endif %}
+{% endset %}
+
+{% set point2LatHTML %}
+    {% if data['single-site-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['single-site-coordinate-system-radios'] %}                 
+    Latitude of point 2
+    {% elif data['single-site-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+    Eastings of point 2
+    {% endif %}
+{% endset %}
+
+{% set point2LongHTML %}
+    {% if data['single-site-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['single-site-coordinate-system-radios'] %}          
+    Longitude of point 2
+    {% elif data['single-site-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+    Northings of point 2
+    {% endif %}
+{% endset %}
+
+{% set point3LatHTML %}
+    {% if data['single-site-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['single-site-coordinate-system-radios'] %}              
+    Latitude of point 3
+    {% elif data['single-site-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+    Eastings of point 3
+    {% endif %}
+{% endset %}
+
+{% set point3LongHTML %}
+{% if data['single-site-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['single-site-coordinate-system-radios'] %}          
+    Longitude of point 3
+    {% elif data['single-site-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+    Northings of point 3
+    {% endif %}
+{% endset %}
+
+{% set point4LatHTML %}
+    {% if data['single-site-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['single-site-coordinate-system-radios'] %}              
+    Latitude of point 4
+    {% elif data['single-site-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+    Eastings of point 4
+    {% endif %}
+{% endset %}
+
+{% set point4LongHTML %}
+{% if data['single-site-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['single-site-coordinate-system-radios'] %}          
+    Longitude of point 4
+    {% elif data['single-site-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+    Northings of point 4
+    {% endif %}
+{% endset %}
+
+{% set point5LatHTML %}
+    {% if data['single-site-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['single-site-coordinate-system-radios'] %}              
+    Latitude of point 5
+    {% elif data['single-site-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+    Eastings of point 5
+    {% endif %}
+{% endset %}
+
+{% set point5LongHTML %}
+{% if data['single-site-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['single-site-coordinate-system-radios'] %}          
+    Longitude of point 5
+    {% elif data['single-site-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+    Northings of point 5
+    {% endif %}
+{% endset %}
+
+{% set point1LatError = "Enter the " + ("eastings" if data['single-site-coordinate-system-radios'] == "OSGB36 (National Grid)" else "latitude") + " of the start and end point" %}
+{% set point1LongError = "Enter the " + ("northings" if data['single-site-coordinate-system-radios'] == "OSGB36 (National Grid)" else "longitude") + " of the start and end point" %}
+{% set point2LatError = "Enter the " + ("eastings" if data['single-site-coordinate-system-radios'] == "OSGB36 (National Grid)" else "latitude") + " of point 2" %}
+{% set point2LongError = "Enter the " + ("northings" if data['single-site-coordinate-system-radios'] == "OSGB36 (National Grid)" else "longitude") + " of point 2" %}
+{% set point3LatError = "Enter the " + ("eastings" if data['single-site-coordinate-system-radios'] == "OSGB36 (National Grid)" else "latitude") + " of point 3" %}
+{% set point3LongError = "Enter the " + ("northings" if data['single-site-coordinate-system-radios'] == "OSGB36 (National Grid)" else "longitude") + " of point 3" %}
+{% set point4LatError = "Enter the " + ("eastings" if data['single-site-coordinate-system-radios'] == "OSGB36 (National Grid)" else "latitude") + " of point 4" %}
+{% set point4LongError = "Enter the " + ("northings" if data['single-site-coordinate-system-radios'] == "OSGB36 (National Grid)" else "longitude") + " of point 4" %}
+{% set point5LatError = "Enter the " + ("eastings" if data['single-site-coordinate-system-radios'] == "OSGB36 (National Grid)" else "latitude") + " of point 5" %}
+{% set point5LongError = "Enter the " + ("northings" if data['single-site-coordinate-system-radios'] == "OSGB36 (National Grid)" else "longitude") + " of point 5" %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {% if  data['errorthispage'] == "true"  %}
+        Error:
+    {% endif %}
+
+    {{ pageHeadingTextHTML }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="multiple-coordinates-column govuk-grid-column-three-quarters">
+
+        <!-- ERROR LOGIC 'error summary' -->
+        {% if data['errorthispage'] == "true" %}
+        <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+            <h2 class="govuk-error-summary__title" id="error-summary-title">
+            There is a problem
+            </h2>
+            <div class="govuk-error-summary__body">
+            <ul class="govuk-list govuk-error-summary__list">
+                {% for error in data['errors'] %}
+                <li>
+                    <a href="#{{ error.anchor }}">{{ error.text }}</a>
+                </li>
+                {% endfor %}
+            </ul>
+            </div>
+        </div>
+        {% endif %}
+        <!--  END OF 'error summary' -->
+
+        <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
+        <h1 class="govuk-heading-l">
+            {{ pageHeadingTextHTML }}
+            {% if data['globalSiteCounter'] and data['globalSiteCounter'] > 1 %}
+            <span class="govuk-caption-l">Site 1</span>
+            {% endif %}
+        </h1>
+        
+        {% if data['single-site-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" %}
+        {% include "../../includes/lat-long-content.html" %}
+        {% elif data['single-site-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+        {% include "../../includes/east-north-content.html" %}
+        {% endif %}
+
+        <!-- go to routes.js for routing  -->
+        <form action="enter-multiple-coordinates-router" method="post" novalidate>
+
+            <fieldset class="govuk-fieldset">
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+                  <h2 class="govuk-fieldset__heading">
+                    Start and end point
+                  </h2>
+                </legend>
+                <div class="govuk-form-group">
+                    {{ govukInput
+                        ({
+                            label:
+                            {
+                                html: point1LatHTML,
+                                classes: "govuk-label",
+                                isPageHeading: false
+                            },
+                            autocomplete: "off",
+                            id: "single-site-coordinates-point-1-latitude",
+                            name: "single-site-coordinates-point-1-latitude",
+                            errorMessage: null if data['error-single-site-coordinates-point-1-latitude'] != "true"
+                                else { html: point1LatError },
+                            value: data['single-site-coordinates-point-1-latitude'],
+                            classes: "govuk-input govuk-!-width-one-half"
+                        })
+                    }}
+                </div>
+                <div class="govuk-form-group">
+                    {{ govukInput
+                        ({
+                            label:
+                            {
+                                html: point1LongHTML,
+                                classes: "govuk-label",
+                                isPageHeading: false
+                            },
+                            autocomplete: "off",
+                            id: "single-site-coordinates-point-1-longitude",
+                            name: "single-site-coordinates-point-1-longitude",
+                            errorMessage: null if data['error-single-site-coordinates-point-1-longitude'] != "true"
+                                else { html: point1LongError },
+                            value: data['single-site-coordinates-point-1-longitude'],
+                            classes: "govuk-input govuk-!-width-one-half"
+                        })
+                    }}
+                </div>
+            </fieldset>
+
+            <fieldset class="govuk-fieldset">
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+                  <h2 class="govuk-fieldset__heading">
+                    Point 2
+                  </h2>
+                </legend>
+                <div class="govuk-form-group">
+                    {{ govukInput
+                        ({
+                            label:
+                            {
+                                html: point2LatHTML,
+                                classes: "govuk-label",
+                                isPageHeading: false
+                            },
+                            autocomplete: "off",
+                            id: "single-site-coordinates-point-2-latitude",
+                            name: "single-site-coordinates-point-2-latitude",
+                            errorMessage: null if data['error-single-site-coordinates-point-2-latitude'] != "true"
+                                else { html: point2LatError },
+                            value: data['single-site-coordinates-point-2-latitude'],
+                            classes: "govuk-input govuk-!-width-one-half"
+                        })
+                    }}
+                </div>
+                <div class="govuk-form-group">
+                    {{ govukInput
+                        ({
+                            label:
+                            {
+                                html: point2LongHTML,
+                                classes: "govuk-label",
+                                isPageHeading: false
+                            },
+                            autocomplete: "off",
+                            id: "single-site-coordinates-point-2-longitude",
+                            name: "single-site-coordinates-point-2-longitude",
+                            errorMessage: null if data['error-single-site-coordinates-point-2-longitude'] != "true"
+                                else { html: point2LongError },
+                            value: data['single-site-coordinates-point-2-longitude'],
+                            classes: "govuk-input govuk-!-width-one-half"
+                        })
+                    }}
+                </div>
+            </fieldset>
+
+            <fieldset class="govuk-fieldset">
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+                  <h2 class="govuk-fieldset__heading">
+                    Point 3
+                  </h2>
+                </legend>
+                <div class="govuk-form-group">
+                    {{ govukInput
+                        ({
+                            label:
+                            {
+                                html: point3LatHTML,
+                                classes: "govuk-label",
+                                isPageHeading: false
+                            },
+                            autocomplete: "off",
+                            id: "single-site-coordinates-point-3-latitude",
+                            name: "single-site-coordinates-point-3-latitude",
+                            errorMessage: null if data['error-single-site-coordinates-point-3-latitude'] != "true"
+                                else { html: point3LatError },
+                            value: data['single-site-coordinates-point-3-latitude'],
+                            classes: "govuk-input govuk-!-width-one-half"
+                        })
+                    }}
+                </div>
+                <div class="govuk-form-group">
+                    {{ govukInput
+                        ({
+                            label:
+                            {
+                                html: point3LongHTML,
+                                classes: "govuk-label",
+                                isPageHeading: false
+                            },
+                            autocomplete: "off",
+                            id: "single-site-coordinates-point-3-longitude",
+                            name: "single-site-coordinates-point-3-longitude",
+                            errorMessage: null if data['error-single-site-coordinates-point-3-longitude'] != "true"
+                                else { html: point3LongError },
+                            value: data['single-site-coordinates-point-3-longitude'],
+                            classes: "govuk-input govuk-!-width-one-half"
+                        })
+                    }}
+                </div>
+            </fieldset>
+
+            <!-- Hidden fieldset 4 - can be made visible -->
+            <fieldset class="govuk-fieldset multi-coords" style="display: none;">
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--s govuk-!-width-one-half" style="float: left;">
+                    Point 4
+                    <a class=" govuk-button govuk-button--secondary remove-button govuk-!-margin-bottom-0" href="#" style="float:right">Remove<span class="govuk-visually-hidden"> point</span></a>
+                </legend>
+                <div class="govuk-form-group" style="clear: both;">
+                      {{ govukInput
+                        ({
+                            label:
+                            {
+                                html: point4LatHTML,
+                                classes: "govuk-label",
+                                isPageHeading: false
+                            },
+                            autocomplete: "off",
+                            id: "single-site-coordinates-point-4-latitude",
+                            name: "single-site-coordinates-point-4-latitude",
+                            value: data['single-site-coordinates-point-4-latitude'],
+                            errorMessage: null if data['error-single-site-coordinates-point-4-latitude'] != "true"
+                                else { html: point4LatError },
+                            classes: "govuk-input govuk-!-width-one-half"
+                        })
+                    }}
+                </div>
+                <div class="govuk-form-group">
+                      {{ govukInput
+                        ({
+                            label:
+                            {
+                                html: point4LongHTML,
+                                classes: "govuk-label",
+                                isPageHeading: false
+                            },
+                            autocomplete: "off",
+                            id: "single-site-coordinates-point-4-longitude",
+                            name: "single-site-coordinates-point-4-longitude",
+                            value: data['single-site-coordinates-point-4-longitude'],
+                            errorMessage: null if data['error-single-site-coordinates-point-4-longitude'] != "true" 
+                                else { html: point4LongError },
+                            classes: "govuk-input govuk-!-width-one-half"
+                        })
+                    }}
+                </div>
+            </fieldset>
+
+            <!-- Hidden fieldset 5 - can be made visible -->
+            <fieldset class="govuk-fieldset multi-coords" style="display: none;">
+                <legend class="govuk-fieldset__legend govuk-fieldset__legend--s govuk-!-width-one-half" style="float: left;">
+                    Point 5
+                    <a class="govuk-button govuk-button--secondary remove-button govuk-!-margin-bottom-0" href="#" style="float:right">Remove<span class="govuk-visually-hidden"> point</span></a>
+                </legend>
+                <div class="govuk-form-group" style="clear: both;">
+                      {{ govukInput
+                        ({
+                            label:
+                            {
+                                html: point5LatHTML,
+                                classes: "govuk-label",
+                                isPageHeading: false
+                            },
+                            autocomplete: "off",
+                            id: "single-site-coordinates-point-5-latitude",
+                            name: "single-site-coordinates-point-5-latitude",
+                            value: data['single-site-coordinates-point-5-latitude'],
+                            errorMessage: null if data['error-single-site-coordinates-point-5-latitude'] != "true"
+                                else { html: point5LatError },
+                            classes: "govuk-input govuk-!-width-one-half"
+                        })
+                    }}
+                </div>
+                <div class="govuk-form-group">
+                    {{ govukInput
+                        ({
+                            label:
+                            {
+                                html: point5LongHTML,
+                                classes: "govuk-label",
+                                isPageHeading: false
+                            },
+                            autocomplete: "off",
+                            id: "single-site-coordinates-point-5-longitude",
+                            name: "single-site-coordinates-point-5-longitude",
+                            value: data['single-site-coordinates-point-5-longitude'],
+                            errorMessage: null if data['error-single-site-coordinates-point-5-longitude'] != "true" 
+                                else { html: point5LongError },
+                            classes: "govuk-input govuk-!-width-one-half"
+                        })
+                    }}
+                </div>
+            </fieldset>
+
+            <p><a href="#" class="add-point-link govuk-button govuk-button--secondary">Add another point</a></p>
+
+            <div class="govuk-button-group">
+                {{ govukButton({
+                  text: "Continue"
+                }) }}
+                <a class="govuk-link govuk-link--no-visited-state" href="../cancel-site-details">Cancel</a>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block pageScripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Get elements
+    const addPointLink = document.querySelector('.add-point-link');
+    const fieldset4 = document.querySelector('fieldset:nth-of-type(4)');
+    const fieldset5 = document.querySelector('fieldset:nth-of-type(5)');
+
+    // Check for existing data and show fieldsets accordingly
+    const point4Lat = document.getElementById('single-site-coordinates-point-4-latitude');
+    const point4Long = document.getElementById('single-site-coordinates-point-4-longitude');
+    const point5Lat = document.getElementById('single-site-coordinates-point-5-latitude');
+    const point5Long = document.getElementById('single-site-coordinates-point-5-longitude');
+
+    // Show fieldset 4 if it has data
+    if (point4Lat && point4Long && (point4Lat.value || point4Long.value)) {
+        fieldset4.style.display = '';
+    }
+
+    // Show fieldset 5 if it has data
+    if (point5Lat && point5Long && (point5Lat.value || point5Long.value)) {
+        fieldset5.style.display = '';
+    }
+    
+    // Add click handler for "Add another point"
+    if (addPointLink) {
+        addPointLink.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // If fieldset 4 is hidden, show it first
+            if (fieldset4 && fieldset4.style.display === 'none') {
+                fieldset4.style.display = '';
+            }
+            // If fieldset 4 is visible but fieldset 5 is hidden, show fieldset 5
+            else if (fieldset5 && fieldset5.style.display === 'none') {
+                fieldset5.style.display = '';
+            }
+        });
+    }
+
+    // Handle remove links
+    const removeLinks = document.querySelectorAll('.govuk-button--secondary[href="#"]');
+    removeLinks.forEach(link => {
+        link.addEventListener('click', function(e) {
+            e.preventDefault();
+            
+            // Find the parent fieldset
+            const fieldset = this.closest('fieldset');
+            if (fieldset) {
+                // Clear input values
+                fieldset.querySelectorAll('input').forEach(input => {
+                    input.value = '';
+                });
+                
+                // Hide the fieldset
+                fieldset.style.display = 'none';
+            }
+        });
+    });
+});
+</script>
+{% endblock %}
+
+<!-- Generated by Copilot --> 
