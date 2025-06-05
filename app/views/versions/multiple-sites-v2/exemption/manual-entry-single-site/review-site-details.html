@@ -1,0 +1,239 @@
+{% extends "../../layouts/exemption.html" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% include "../../includes/back-link.html" %}
+{% endblock %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    Review site details - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        
+        <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
+        <h1 class="govuk-heading-l">Review site details</h1>
+
+        <!-- Number of sites card -->
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">
+                    Number of sites
+                </h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            More than one site
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            No
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="../more-than-one-site?returnTo=review-site-details" class="govuk-link">
+                                Change<span class="govuk-visually-hidden"> more than one site</span>
+                            </a>
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        <!-- Site details card -->
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">
+                    Site details
+                </h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Activity dates
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['single-site-start-date-date-input-day'] and data['single-site-start-date-date-input-month'] and data['single-site-start-date-date-input-year'] %}
+                                {{ data['single-site-start-date-date-input-day'] }} {{ data['single-site-start-date-date-input-month'] | toMonth }} {{ data['single-site-start-date-date-input-year'] }}
+                                {% if data['single-site-end-date-date-input-day'] and data['single-site-end-date-date-input-month'] and data['single-site-end-date-date-input-year'] %}
+                                    to {{ data['single-site-end-date-date-input-day'] }} {{ data['single-site-end-date-date-input-month'] | toMonth }} {{ data['single-site-end-date-date-input-year'] }}
+                                {% endif %}
+                            {% else %}
+                                Not provided
+                            {% endif %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="activity-dates?returnTo=review-site-details" class="govuk-link">
+                                Change<span class="govuk-visually-hidden"> activity dates</span>
+                            </a>
+                        </dd>
+                    </div>
+                    
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Activity description
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ data['single-site-activity-details-text-area'] or "Not provided" }}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="activity-description?returnTo=review-site-details" class="govuk-link">
+                                Change<span class="govuk-visually-hidden"> activity description</span>
+                            </a>
+                        </dd>
+                    </div>
+                    
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Method of providing site location
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['single-site-coordinate-entry-method'] == "Enter one set of coordinates and a width to create a circular site" %}
+                                Manually enter one set of coordinates and a width to create a circular site
+                            {% elif data['single-site-coordinate-entry-method'] == "Enter multiple sets of coordinates to mark the boundary of the site" %}
+                                Manually enter multiple sets of coordinates to mark the boundary of the site
+                            {% else %}
+                                Not provided
+                            {% endif %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="how-do-you-want-to-enter-the-coordinates?returnTo=review-site-details" class="govuk-link">
+                                Change<span class="govuk-visually-hidden"> method of providing site location</span>
+                            </a>
+                        </dd>
+                    </div>
+                    
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Coordinate system
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['single-site-coordinate-system-radios'] %}
+                                {{ data['single-site-coordinate-system-radios'] }}<br>
+                                {% if data['single-site-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" %}
+                                    Latitude and longitude
+                                {% elif data['single-site-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+                                    Eastings and Northings
+                                {% endif %}
+                            {% else %}
+                                Not provided
+                            {% endif %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="which-coordinate-system?returnTo=review-site-details" class="govuk-link">
+                                Change<span class="govuk-visually-hidden"> coordinate system</span>
+                            </a>
+                        </dd>
+                    </div>
+                    
+                    <!-- Coordinates based on entry method -->
+                    {% if data['single-site-coordinate-entry-method'] == "Enter one set of coordinates and a width to create a circular site" %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                {% if data['single-site-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" %}
+                                    Coordinates at centre of site
+                                {% else %}
+                                    Coordinates at centre of site
+                                {% endif %}
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                {% if data['single-site-latitude'] and data['single-site-longitude'] %}
+                                    {{ data['single-site-latitude'] }}, {{ data['single-site-longitude'] }}
+                                {% else %}
+                                    Not provided
+                                {% endif %}
+                            </dd>
+                            <dd class="govuk-summary-list__actions">
+                                <a href="enter-centre-point-coordinates?returnTo=review-site-details" class="govuk-link">
+                                    Change<span class="govuk-visually-hidden"> coordinates at centre of site</span>
+                                </a>
+                            </dd>
+                        </div>
+                        
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Width of circular site
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                {% if data['single-site-width'] %}
+                                    {{ data['single-site-width'] }} metres
+                                {% else %}
+                                    Not provided
+                                {% endif %}
+                            </dd>
+                            <dd class="govuk-summary-list__actions">
+                                <a href="site-width?returnTo=review-site-details" class="govuk-link">
+                                    Change<span class="govuk-visually-hidden"> width of circular site</span>
+                                </a>
+                            </dd>
+                        </div>
+                        
+                    {% elif data['single-site-coordinate-entry-method'] == "Enter multiple sets of coordinates to mark the boundary of the site" %}
+                        {% for i in range(1, 6) %}
+                            {% set latKey = 'single-site-coordinates-point-' + i + '-latitude' %}
+                            {% set longKey = 'single-site-coordinates-point-' + i + '-longitude' %}
+                            {% if data[latKey] and data[longKey] %}
+                                <div class="govuk-summary-list__row{% if i < 5 and data['single-site-coordinates-point-' + (i+1) + '-latitude'] %} govuk-summary-list__row--no-border{% endif %}">
+                                    <dt class="govuk-summary-list__key">
+                                        {% if i == 1 %}
+                                            Start and end points
+                                        {% else %}
+                                            Point {{ i }}
+                                        {% endif %}
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                        {{ data[latKey] }}, {{ data[longKey] }}
+                                    </dd>
+                                    <dd class="govuk-summary-list__actions">
+                                        {% if i == 1 %}
+                                            <a href="enter-multiple-coordinates?returnTo=review-site-details" class="govuk-link">
+                                                Change<span class="govuk-visually-hidden"> coordinates</span>
+                                            </a>
+                                        {% endif %}
+                                    </dd>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                    
+                    <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+                        <dt class="govuk-summary-list__key">
+                            Map view
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                        </dd>
+                        <dd class="govuk-summary-list__actions"></dd>
+                    </div>
+                </dl>
+                
+                {% if data['single-site-coordinate-entry-method'] == "Enter one set of coordinates and a width to create a circular site" %}
+                    <img src="/public/images/worthing-map-circle-copy.jpg" alt="Map showing site location" style="width: 100%;">
+                {% elif data['single-site-coordinate-entry-method'] == "Enter multiple sets of coordinates to mark the boundary of the site" %}
+                    <img src="/public/images/worthing-map-3-points-copy.jpg" alt="Map showing site location" style="width: 100%;">
+                {% else %}
+                    <img src="/public/images/worthing-map-circle-copy.jpg" alt="Map showing site location" style="width: 100%;">
+                {% endif %}
+            </div>
+        </div>
+
+        <form action="review-site-details-router" method="post" novalidate>
+            <div class="govuk-button-group">
+                {{ govukButton({
+                  text: "Save and continue"
+                }) }}
+                <a class="govuk-link govuk-link--no-visited-state" href="../cancel-site-details">Cancel</a>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}
+
+<!-- Generated by Copilot --> 

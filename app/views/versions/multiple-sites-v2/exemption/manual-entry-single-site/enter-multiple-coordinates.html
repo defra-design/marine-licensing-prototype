@@ -151,7 +151,7 @@
         {% endif %}
 
         <!-- go to routes.js for routing  -->
-        <form action="enter-multiple-coordinates-router" method="post" novalidate>
+        <form action="enter-multiple-coordinates-router{% if data['returnTo'] %}?returnTo={{ data['returnTo'] }}{% endif %}" method="post" novalidate>
 
             <fieldset class="govuk-fieldset">
                 <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">

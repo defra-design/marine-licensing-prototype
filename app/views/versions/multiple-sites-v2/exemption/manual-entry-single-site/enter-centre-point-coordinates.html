@@ -78,7 +78,7 @@ Enter the coordinates at the centre point of the site
           </h1> 
         
 
-        <form action="enter-centre-point-coordinates-router" method="post" novalidate>
+        <form action="enter-centre-point-coordinates-router{% if data['returnTo'] %}?returnTo={{ data['returnTo'] }}{% endif %}" method="post" novalidate>
 
             {% call govukFieldset({
                 legend: {

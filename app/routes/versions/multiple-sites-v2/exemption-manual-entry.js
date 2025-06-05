@@ -2070,6 +2070,11 @@ router.get('/' + version + section + 'manual-entry-single-site/activity-dates', 
     req.session.data['enddateerror'] = "false";
     req.session.data['errors'] = [];
     
+    // Pass returnTo parameter to template
+    if (req.query.returnTo) {
+        req.session.data['returnTo'] = req.query.returnTo;
+    }
+    
     res.render(version + section + 'manual-entry-single-site/activity-dates');
 });
 
@@ -2085,6 +2090,8 @@ router.post('/' + version + section + 'manual-entry-single-site/activity-dates-r
     const endDay = req.session.data['single-site-end-date-date-input-day'];
     const endMonth = req.session.data['single-site-end-date-date-input-month'];
     const endYear = req.session.data['single-site-end-date-date-input-year'];
+    
+    const returnTo = req.query.returnTo;
 
     let hasErrors = false;
 
@@ -2103,8 +2110,13 @@ router.post('/' + version + section + 'manual-entry-single-site/activity-dates-r
     }
 
     if (hasErrors) {
-        res.redirect('activity-dates');
+        res.redirect('activity-dates' + (returnTo ? '?returnTo=' + returnTo : ''));
         return;
+    }
+
+    // Check if we're coming from review-site-details page (independent page behavior)
+    if (returnTo === 'review-site-details') {
+        return res.redirect('review-site-details');
     }
 
     // Continue to activity description
@@ -2117,6 +2129,11 @@ router.get('/' + version + section + 'manual-entry-single-site/activity-descript
     req.session.data['errortypeone'] = "false";
     req.session.data['errors'] = [];
     
+    // Pass returnTo parameter to template
+    if (req.query.returnTo) {
+        req.session.data['returnTo'] = req.query.returnTo;
+    }
+    
     res.render(version + section + 'manual-entry-single-site/activity-description');
 });
 
@@ -2126,12 +2143,18 @@ router.post('/' + version + section + 'manual-entry-single-site/activity-descrip
     req.session.data['errortypeone'] = "false";
 
     const activityDescription = req.session.data['single-site-activity-details-text-area'];
+    const returnTo = req.query.returnTo;
 
     if (!activityDescription || activityDescription.trim() === "") {
         req.session.data['errorthispage'] = "true";
         req.session.data['errortypeone'] = "true";
-        res.redirect('activity-description');
+        res.redirect('activity-description' + (returnTo ? '?returnTo=' + returnTo : ''));
         return;
+    }
+
+    // Check if we're coming from review-site-details page (independent page behavior)
+    if (returnTo === 'review-site-details') {
+        return res.redirect('review-site-details');
     }
 
     // Continue to how to enter coordinates
@@ -2144,6 +2167,23 @@ router.get('/' + version + section + 'manual-entry-single-site/how-do-you-want-t
     req.session.data['errortypeone'] = "false";
     req.session.data['errors'] = [];
     
+    // If coming from review page, clear coordinate data to restart the journey
+    if (req.query.returnTo === 'review-site-details') {
+        // Clear coordinate system selection
+        delete req.session.data['single-site-coordinate-system-radios'];
+        
+        // Clear circular site data
+        delete req.session.data['single-site-latitude'];
+        delete req.session.data['single-site-longitude'];
+        delete req.session.data['single-site-width'];
+        
+        // Clear multiple coordinates data
+        for (let i = 1; i <= 5; i++) {
+            delete req.session.data[`single-site-coordinates-point-${i}-latitude`];
+            delete req.session.data[`single-site-coordinates-point-${i}-longitude`];
+        }
+    }
+    
     res.render(version + section + 'manual-entry-single-site/how-do-you-want-to-enter-the-coordinates');
 });
 
@@ -2154,12 +2194,13 @@ router.post('/' + version + section + 'manual-entry-single-site/how-do-you-want-
     req.session.data['errors'] = [];
     
     const selection = req.body['single-site-coordinate-entry-method'];
+    const returnTo = req.query.returnTo;
     
     if (!selection) {
         req.session.data['errorthispage'] = "true";
         req.session.data['errortypeone'] = "true";
         req.session.data['errors'].push({ text: "Select how you want to enter the site coordinates", href: "#single-site-coordinate-entry-method" });
-        return res.redirect('how-do-you-want-to-enter-the-coordinates');
+        return res.redirect('how-do-you-want-to-enter-the-coordinates' + (returnTo ? '?returnTo=' + returnTo : ''));
     }
     
     // Store the selection
@@ -2174,6 +2215,20 @@ router.get('/' + version + section + 'manual-entry-single-site/which-coordinate-
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
     req.session.data['errors'] = [];
+    
+    // If coming from review page, clear coordinate data to restart the journey
+    if (req.query.returnTo === 'review-site-details') {
+        // Clear circular site data
+        delete req.session.data['single-site-latitude'];
+        delete req.session.data['single-site-longitude'];
+        delete req.session.data['single-site-width'];
+        
+        // Clear multiple coordinates data
+        for (let i = 1; i <= 5; i++) {
+            delete req.session.data[`single-site-coordinates-point-${i}-latitude`];
+            delete req.session.data[`single-site-coordinates-point-${i}-longitude`];
+        }
+    }
     
     res.render(version + section + 'manual-entry-single-site/which-coordinate-system');
 });
@@ -2216,6 +2271,11 @@ router.get('/' + version + section + 'manual-entry-single-site/enter-centre-poin
     req.session.data['errortypetwo'] = "false";
     req.session.data['errors'] = [];
     
+    // Pass returnTo parameter to template
+    if (req.query.returnTo) {
+        req.session.data['returnTo'] = req.query.returnTo;
+    }
+    
     res.render(version + section + 'manual-entry-single-site/enter-centre-point-coordinates');
 });
 
@@ -2246,8 +2306,13 @@ router.post('/' + version + section + 'manual-entry-single-site/enter-centre-poi
     }
     
     if (hasErrors) {
-        res.redirect('enter-centre-point-coordinates');
+        res.redirect('enter-centre-point-coordinates' + (req.query.returnTo ? '?returnTo=' + req.query.returnTo : ''));
         return;
+    }
+    
+    // Check if we're coming from review-site-details page (independent page behavior)
+    if (req.query.returnTo === 'review-site-details') {
+        return res.redirect('review-site-details');
     }
     
     // Continue to width entry
@@ -2258,6 +2323,11 @@ router.post('/' + version + section + 'manual-entry-single-site/enter-centre-poi
 router.get('/' + version + section + 'manual-entry-single-site/site-width', function (req, res) {
     req.session.data['errorthispage'] = "false";
     req.session.data['errors'] = [];
+    
+    // Pass returnTo parameter to template
+    if (req.query.returnTo) {
+        req.session.data['returnTo'] = req.query.returnTo;
+    }
     
     res.render(version + section + 'manual-entry-single-site/site-width');
 });
@@ -2272,7 +2342,12 @@ router.post('/' + version + section + 'manual-entry-single-site/site-width-route
     if (!width || width.trim() === "") {
         req.session.data['errorthispage'] = "true";
         req.session.data['errors'].push({ text: "Enter the width of the circular site in metres", href: "#single-site-width" });
-        return res.redirect('site-width');
+        return res.redirect('site-width' + (req.query.returnTo ? '?returnTo=' + req.query.returnTo : ''));
+    }
+    
+    // Check if we're coming from review-site-details page (independent page behavior)
+    if (req.query.returnTo === 'review-site-details') {
+        return res.redirect('review-site-details');
     }
     
     // Continue to review page
@@ -2283,6 +2358,11 @@ router.post('/' + version + section + 'manual-entry-single-site/site-width-route
 router.get('/' + version + section + 'manual-entry-single-site/enter-multiple-coordinates', function (req, res) {
     req.session.data['errorthispage'] = "false";
     req.session.data['errors'] = [];
+    
+    // Pass returnTo parameter to template
+    if (req.query.returnTo) {
+        req.session.data['returnTo'] = req.query.returnTo;
+    }
     
     res.render(version + section + 'manual-entry-single-site/enter-multiple-coordinates');
 });
@@ -2340,11 +2420,90 @@ router.post('/' + version + section + 'manual-entry-single-site/enter-multiple-c
 
     // Redirect to the current page if there are errors, else continue to the next page
     if (hasErrors) {
-        return res.redirect('enter-multiple-coordinates');
+        return res.redirect('enter-multiple-coordinates' + (req.query.returnTo ? '?returnTo=' + req.query.returnTo : ''));
+    }
+
+    // Check if we're coming from review-site-details page (independent page behavior)
+    if (req.query.returnTo === 'review-site-details') {
+        return res.redirect('review-site-details');
     }
 
     // Continue to review page
     res.redirect('review-site-details');
+});
+
+// Single Site Review Site Details - GET route
+router.get('/' + version + section + 'manual-entry-single-site/review-site-details', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errors'] = [];
+    
+    res.render(version + section + 'manual-entry-single-site/review-site-details');
+});
+
+// Single Site Review Site Details - POST route
+router.post('/' + version + section + 'manual-entry-single-site/review-site-details-router', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errors'] = [];
+    
+    // Create site data object from single-site session data
+    const siteData = {
+        activityDates: {
+            startDate: {
+                day: req.session.data['single-site-start-date-date-input-day'],
+                month: req.session.data['single-site-start-date-date-input-month'],
+                year: req.session.data['single-site-start-date-date-input-year']
+            },
+            endDate: {
+                day: req.session.data['single-site-end-date-date-input-day'],
+                month: req.session.data['single-site-end-date-date-input-month'],
+                year: req.session.data['single-site-end-date-date-input-year']
+            }
+        },
+        activityDescription: req.session.data['single-site-activity-details-text-area'],
+        coordinates: {
+            entryMethod: req.session.data['single-site-coordinate-entry-method'],
+            coordinateSystem: req.session.data['single-site-coordinate-system-radios']
+        }
+    };
+    
+    // Add coordinate data based on entry method
+    if (req.session.data['single-site-coordinate-entry-method'] === "Enter one set of coordinates and a width to create a circular site") {
+        siteData.coordinates.centrePoint = {
+            latitude: req.session.data['single-site-latitude'],
+            longitude: req.session.data['single-site-longitude']
+        };
+        siteData.coordinates.width = req.session.data['single-site-width'];
+    } else if (req.session.data['single-site-coordinate-entry-method'] === "Enter multiple sets of coordinates to mark the boundary of the site") {
+        siteData.coordinates.points = [];
+        for (let i = 1; i <= 5; i++) {
+            const lat = req.session.data[`single-site-coordinates-point-${i}-latitude`];
+            const long = req.session.data[`single-site-coordinates-point-${i}-longitude`];
+            if (lat && long) {
+                siteData.coordinates.points.push({
+                    pointNumber: i,
+                    latitude: lat,
+                    longitude: long
+                });
+            }
+        }
+    }
+    
+    // Initialize batch if it doesn't exist (for single site this creates a "batch of 1")
+    if (!getCurrentBatch(req.session)) {
+        initializeBatch(req.session, 'manual');
+    }
+    
+    // Add the site to the batch
+    addSiteToBatch(req.session, siteData);
+    
+    // Clear all single-site session data
+    const keysToDelete = Object.keys(req.session.data).filter(key => key.startsWith('single-site-'));
+    keysToDelete.forEach(key => {
+        delete req.session.data[key];
+    });
+    
+    // Return to task list
+    res.redirect('../task-list');
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////
