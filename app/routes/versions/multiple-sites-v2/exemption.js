@@ -991,6 +991,14 @@ router.get('/' + version + section + 'review-site-details', function (req, res) 
             sites = batch.sites;
         }
     }
+    
+    // IMPORTANT: Check number of sites to determine which review page to show
+    if (sites.length === 1) {
+        // Single site in batch - redirect to single site review page
+        return res.redirect('manual-entry-single-site/review-site-details');
+    }
+    
+    // If we reach here, we have 2+ sites - use multiple sites review page
     res.render(version + section + 'review-site-details', { sites });
 });
 
@@ -1545,6 +1553,11 @@ router.get('/' + version + section + 'site-name', function (req, res) {
         req.session.data['fromReviewSiteDetails'] = 'true';
     }
     
+    // Store the return parameter for redirecting back later
+    if (req.query.return) {
+        req.session.data['return'] = req.query.return;
+    }
+    
     // If we have a site query parameter, set the active site
     if (req.query.site) {
         req.session.data['site'] = req.query.site;
@@ -1571,6 +1584,7 @@ router.post('/' + version + section + 'site-name-router', function (req, res) {
     if (returnSection && req.session.data['sites'] && req.session.data['sites'].length >= 1) {
         // Find the site by global number and update it
         const siteToUpdate = findSiteByGlobalNumber(req.session, globalSiteNumber);
+        
         if (siteToUpdate) {
             siteToUpdate.name = siteName;
             
@@ -1591,6 +1605,11 @@ router.post('/' + version + section + 'site-name-router', function (req, res) {
         
         // Clear the input field
         req.session.data['site-name-text-input'] = '';
+        
+        // Handle special case for single-site review conversion
+        if (returnSection === 'manual-entry-single-site/review-site-details') {
+            return res.redirect('manual-entry-single-site/review-site-details');
+        }
         
         // Redirect back to review-site-details with the anchor
         return res.redirect('review-site-details#' + returnSection);
@@ -1626,6 +1645,11 @@ router.post('/' + version + section + 'site-name-router', function (req, res) {
         return res.redirect('site-activity-description?site=' + siteData.globalNumber);
     }
     else if (returnSection) {
+        // Handle special case for single-site review conversion
+        if (returnSection === 'manual-entry-single-site/review-site-details') {
+            return res.redirect('manual-entry-single-site/review-site-details');
+        }
+        
         // Redirect back to review-site-details with the anchor
         return res.redirect('review-site-details#' + returnSection);
     }
@@ -1848,6 +1872,20 @@ router.post('/' + version + section + 'review-site-details-router', function (re
 // PAGE WITH TABLE OF SITES
 /////////////////////////////////////////////////////////////////////////////////////////////
 
+// GET route for site-details-added - rebuild sites array from batches
+router.get('/' + version + section + 'site-details-added', function (req, res) {
+    // Rebuild the sites array from all batches for display on "Your sites" page
+    const allSites = getAllSites(req.session);
+    
+    if (allSites && allSites.length > 0) {
+        req.session.data['sites'] = allSites;
+    } else {
+        req.session.data['sites'] = [];
+    }
+    
+    res.render(version + section + 'site-details-added');
+});
+
 router.post('/' + version + section + 'site-details-added-router', function (req, res) {
     // Reset error flag
     req.session.data['errorthispage'] = "false";
@@ -2018,6 +2056,138 @@ router.get('/' + version + section + 'cancel-from-review-site-details', function
         // If nothing was saved yet, clear data and return to task list
         clearAllSiteDetails(req.session);
         res.redirect('task-list');
+    }
+});
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// More than one site change functionality (from single-site review page)
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+// GET route for changing number of sites from single-site review
+router.get('/' + version + section + 'more-than-one-site', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    
+    // Pass returnTo parameter to template if provided
+    if (req.query.returnTo) {
+        req.session.data['returnTo'] = req.query.returnTo;
+    }
+    
+    // If coming from single-site review, pre-select "No" to reflect their previous choice
+    if (req.query.returnTo === 'review-site-details') {
+        req.session.data['exemption-multiple-sites-radios'] = 'No';
+    }
+    
+    res.render(version + section + 'multiple-sites-question');
+});
+
+// POST route for handling number of sites change
+router.post('/' + version + section + 'more-than-one-site-router', function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    
+    const selection = req.session.data['exemption-multiple-sites-radios'];
+    
+    // Validate selection
+    if (!selection) {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        return res.redirect('more-than-one-site' + (req.query.returnTo ? '?returnTo=' + req.query.returnTo : ''));
+    }
+    
+    // If coming from single-site review and user selects "Yes" (multiple sites)
+    if (req.query.returnTo === 'review-site-details' && selection === 'Yes') {
+        // CONVERSION: Single site to multiple sites
+        // This is the ONLY place where we create batches for single sites
+        
+        // Create site data object from single-site session data
+        // IMPORTANT: Structure data to match what multiple sites review template expects
+        const siteData = {
+            // Activity dates at site level (not nested in activityDates)
+            startDate: {
+                day: req.session.data['single-site-start-date-date-input-day'],
+                month: req.session.data['single-site-start-date-date-input-month'],
+                year: req.session.data['single-site-start-date-date-input-year']
+            },
+            endDate: {
+                day: req.session.data['single-site-end-date-date-input-day'],
+                month: req.session.data['single-site-end-date-date-input-month'],
+                year: req.session.data['single-site-end-date-date-input-year']
+            },
+            description: req.session.data['single-site-activity-details-text-area'],
+            
+            // Coordinate system at site level (not nested in coordinates)
+            coordinateSystem: req.session.data['single-site-coordinate-system-radios'],
+            
+            // Coordinates object with type property (not entryMethod)
+            coordinates: {},
+            
+            name: undefined  // Single sites don't have names - this makes Site 1 incomplete
+        };
+        
+        // Add coordinate data based on entry method - structure for multiple sites template
+        if (req.session.data['single-site-coordinate-entry-method'] === "Enter one set of coordinates and a width to create a circular site") {
+            siteData.coordinates.type = 'circle';
+            siteData.coordinates.center = {  // Note: 'center' not 'centrePoint'
+                latitude: req.session.data['single-site-latitude'],
+                longitude: req.session.data['single-site-longitude']
+            };
+            siteData.coordinates.width = req.session.data['single-site-width'];
+        } else if (req.session.data['single-site-coordinate-entry-method'] === "Enter multiple sets of coordinates to mark the boundary of the site") {
+            siteData.coordinates.type = 'polygon';
+            siteData.coordinates.points = [];
+            for (let i = 1; i <= 5; i++) {
+                const lat = req.session.data[`single-site-coordinates-point-${i}-latitude`];
+                const long = req.session.data[`single-site-coordinates-point-${i}-longitude`];
+                if (lat && long) {
+                    siteData.coordinates.points.push({
+                        pointNumber: i,
+                        latitude: lat,
+                        longitude: long
+                    });
+                }
+            }
+        }
+        
+        // NOW create the batch and add the site (first time using batch system)
+        // Use 'manual-entry' so it routes to the correct multiple sites review page
+        if (!getCurrentBatch(req.session)) {
+            initializeBatch(req.session, 'manual-entry');
+        }
+        
+        addSiteToBatch(req.session, siteData);
+        
+        // IMPORTANT: Change batch entryMethod from 'manual-entry-single-site' to 'manual-entry' after conversion
+        const createdBatch = getCurrentBatch(req.session);
+        if (createdBatch) {
+            createdBatch.entryMethod = 'manual-entry';
+        }
+        
+        // Set conversion flag and clear single-site mode
+        req.session.data['converted-from-single-site'] = 'true';
+        delete req.session.data['single-site-completed'];
+        
+        // Mark as in-progress (Site 1 needs a name)
+        req.session.data['exempt-information-3-status'] = 'in-progress';
+        
+        // Clear single-site session data since we've moved to batch system
+        const keysToDelete = Object.keys(req.session.data).filter(key => key.startsWith('single-site-'));
+        keysToDelete.forEach(key => {
+            delete req.session.data[key];
+        });
+        
+        // Clear the returnTo parameter
+        delete req.session.data['returnTo'];
+        
+        // Redirect to site-details-added (Your sites page)
+        return res.redirect('site-details-added');
+    }
+    
+    // For other cases, follow the normal flow
+    if (selection === 'Yes') {
+        res.redirect('manual-entry/does-your-project-involve-more-than-one-site');
+    } else {
+        res.redirect('manual-entry/does-your-project-involve-more-than-one-site');
     }
 });
 

@@ -60,7 +60,7 @@ Does your project involve more than one site?
                         {{ pageHeadingTextHTML }}
                     </h1>
 
-        <form action="multiple-sites-question-router" method="post" novalidate>
+        <form action="{% if data['returnTo'] == 'review-site-details' %}more-than-one-site-router{% else %}multiple-sites-question-router{% endif %}{% if data['returnTo'] %}?returnTo={{ data['returnTo'] }}{% endif %}" method="post" novalidate>
 
    
             {{ govukRadios
