@@ -92,6 +92,27 @@ Your sites
                             {% set siteIndex = site.globalNumber or loop.index %}
                             {% set isComplete = true %}
                             
+                            <!-- Determine if this is the first site in its batch -->
+                            {% set isFirstInBatch = true %}
+                            {% set currentBatchId = site.batchId or 'default' %}
+                            {% if not loop.first %}
+                                {% set prevSite = data['sites'][loop.index - 2] %}
+                                {% set prevBatchId = prevSite.batchId or 'default' %}
+                                {% if currentBatchId == prevBatchId %}
+                                    {% set isFirstInBatch = false %}
+                                {% endif %}
+                            {% endif %}
+                            
+                            <!-- Determine if this is the last site in its batch -->
+                            {% set isLastInBatch = true %}
+                            {% if not loop.last %}
+                                {% set nextSite = data['sites'][loop.index] %}
+                                {% set nextBatchId = nextSite.batchId or 'default' %}
+                                {% if currentBatchId == nextBatchId %}
+                                    {% set isLastInBatch = false %}
+                                {% endif %}
+                            {% endif %}
+                            
                             <!-- Determine if site is complete -->
                             {% if not site.name %}
                                 {% set isComplete = false %}
@@ -110,24 +131,26 @@ Your sites
                             {% endif %}
                             
                             <tr class="govuk-table__row">
-                                <td class="govuk-table__cell">Site {{ siteIndex }}</td>
-                                <td class="govuk-table__cell">{{ site.name or "-" }}</td>
-                                <td class="govuk-table__cell">
+                                <td class="govuk-table__cell"{% if not isLastInBatch %} style="border-bottom: none !important;"{% endif %}>Site {{ siteIndex }}</td>
+                                <td class="govuk-table__cell"{% if not isLastInBatch %} style="border-bottom: none !important;"{% endif %}>{{ site.name or "-" }}</td>
+                                <td class="govuk-table__cell"{% if not isLastInBatch %} style="border-bottom: none !important;"{% endif %}>
                                     {% if isComplete %}
                                         Completed
                                     {% else %}
                                         <strong class="govuk-tag govuk-tag--red">Incomplete</strong>
                                     {% endif %}
                                 </td>
-                                <td class="govuk-table__cell">
-                                    {% set reviewUrl = "review-site-details?site=" + siteIndex + "&batchId=" + site.batchId %}
-                                    {% if site.entryMethod == "manual-entry" %}
-                                        {% set reviewUrl = "manual-entry/review-site-details?site=" + siteIndex + "&batchId=" + site.batchId %}
-                                    {% elif site.entryMethod == "manual-entry-single-site" %}
-                                        {% set reviewUrl = "manual-entry-single-site/review-site-details" %}
-                                    {% endif %}
-                                    <a href="{{ reviewUrl }}" class="govuk-link govuk-!-margin-right-3 govuk-link--no-visited-state">Review</a> 
+                                <td class="govuk-table__cell"{% if not isLastInBatch %} style="border-bottom: none !important;"{% endif %}>
                                     <a href="delete-site?site={{ siteIndex }}&return=site-details-added" class="govuk-link govuk-link--no-visited-state">Delete</a>
+                                    {% if isFirstInBatch %}
+                                        {% set reviewUrl = "review-site-details?site=" + siteIndex + "&batchId=" + site.batchId %}
+                                        {% if site.entryMethod == "manual-entry" %}
+                                            {% set reviewUrl = "manual-entry/review-site-details?site=" + siteIndex + "&batchId=" + site.batchId %}
+                                        {% elif site.entryMethod == "manual-entry-single-site" %}
+                                            {% set reviewUrl = "manual-entry-single-site/review-site-details" %}
+                                        {% endif %}
+                                        <a href="{{ reviewUrl }}" class="govuk-link govuk-!-margin-left-3 govuk-link--no-visited-state">Review</a>
+                                    {% endif %}
                                 </td>
                             </tr>
                         {% endfor %}
