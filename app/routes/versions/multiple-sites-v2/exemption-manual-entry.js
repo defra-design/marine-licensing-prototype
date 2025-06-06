@@ -594,6 +594,15 @@ router.post('/' + version + section + 'manual-entry/same-activity-dates-router',
         return res.redirect('review-site-details');
     }
 
+    // Store the selection in batch settings
+    const currentBatch = getCurrentBatch(req.session);
+    if (currentBatch) {
+        if (!currentBatch.settings) {
+            currentBatch.settings = {};
+        }
+        currentBatch.settings.sameActivityDates = selection;
+    }
+
     // Route based on selection
     switch(selection) {
         case "Yes":
@@ -809,6 +818,15 @@ router.post('/' + version + section + 'manual-entry/same-activity-description-ro
         }
         
         return res.redirect('review-site-details');
+    }
+
+    // Store the selection in batch settings
+    const currentBatch = getCurrentBatch(req.session);
+    if (currentBatch) {
+        if (!currentBatch.settings) {
+            currentBatch.settings = {};
+        }
+        currentBatch.settings.sameActivityDescription = selection;
     }
 
     // Route based on selection
@@ -1546,11 +1564,16 @@ router.get('/' + version + section + 'manual-entry/review-site-details', functio
         'manual-same-activity-dates': req.session.data['manual-same-activity-dates'],
         'manual-same-activity-description': req.session.data['manual-same-activity-description']
     });
+    
+    // Get the current batch to pass to template
+    const batchForTemplate = getCurrentBatch(req.session);
+    
     console.log('=== END REVIEW SITE DETAILS DEBUG ===');
     
     res.render(version + section + 'manual-entry/review-site-details', { 
         sites,
-        isActiveEditing
+        isActiveEditing,
+        currentBatch: batchForTemplate
     });
 });
 
