@@ -1146,7 +1146,8 @@ function initializeBatch(session, entryMethod) {
         id: batchId,
         entryMethod: entryMethod,
         createdAt: new Date().toISOString(),
-        sites: []
+        sites: [],
+        startingGlobalNumber: (session.data['globalSiteCounter'] || 0) + 1  // Store the first site number this batch will use
     };
     
     // Initialize batches array if it doesn't exist

@@ -27,27 +27,12 @@ How do you want to enter the site coordinates?
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
-        <!-- Get current site number -->
-        {% set currentSite = data['current-site'] or 1 %}
+        <!-- Get current site number from query parameter first, then session data -->
+        {% set currentSite = (query.site | int) or (data['current-site'] | int) or 1 %}
         {% set siteDataKey = 'manual-coordinate-entry-method' if currentSite == 1 else 'manual-site-' + currentSite + '-coordinate-entry-method' %}
         
-        <!-- For single site batches, just use the current site number -->
-        {% set isSingleSiteBatch = data['manual-multiple-sites'] == 'No' %}
-        {% if isSingleSiteBatch %}
-            {% set displaySiteNumber = currentSite %}
-        {% else %}
-            <!-- Calculate the global site number for display using batch starting position -->
-            {% set currentBatch = null %}
-            {% if data['currentBatchId'] %}
-                {% for batch in data['siteBatches'] %}
-                    {% if batch.id == data['currentBatchId'] %}
-                        {% set currentBatch = batch %}
-                    {% endif %}
-                {% endfor %}
-            {% endif %}
-            {% set batchStartingNumber = currentBatch.startingGlobalNumber if currentBatch else 0 %}
-            {% set displaySiteNumber = (batchStartingNumber | int) + (currentSite | int) %}
-        {% endif %}
+        <!-- The currentSite from URL parameter is already the global site number -->
+        {% set displaySiteNumber = currentSite %}
 
 <!-- ERROR LOGIC 'error summary' -->
 {% if data['errorthispage'] == "true" %}
