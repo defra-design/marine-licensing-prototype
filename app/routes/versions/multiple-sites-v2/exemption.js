@@ -992,13 +992,7 @@ router.get('/' + version + section + 'review-site-details', function (req, res) 
         }
     }
     
-    // IMPORTANT: Check number of sites to determine which review page to show
-    if (sites.length === 1) {
-        // Single site in batch - redirect to single site review page
-        return res.redirect('manual-entry-single-site/review-site-details');
-    }
-    
-    // If we reach here, we have 2+ sites - use multiple sites review page
+    // Use the regular review page for all site counts (single or multiple)
     res.render(version + section + 'review-site-details', { sites });
 });
 
@@ -1606,10 +1600,7 @@ router.post('/' + version + section + 'site-name-router', function (req, res) {
         // Clear the input field
         req.session.data['site-name-text-input'] = '';
         
-        // Handle special case for single-site review conversion
-        if (returnSection === 'manual-entry-single-site/review-site-details') {
-            return res.redirect('manual-entry-single-site/review-site-details');
-        }
+
         
         // Redirect back to review-site-details with the anchor
         return res.redirect('review-site-details#' + returnSection);
@@ -1645,11 +1636,6 @@ router.post('/' + version + section + 'site-name-router', function (req, res) {
         return res.redirect('site-activity-description?site=' + siteData.globalNumber);
     }
     else if (returnSection) {
-        // Handle special case for single-site review conversion
-        if (returnSection === 'manual-entry-single-site/review-site-details') {
-            return res.redirect('manual-entry-single-site/review-site-details');
-        }
-        
         // Redirect back to review-site-details with the anchor
         return res.redirect('review-site-details#' + returnSection);
     }
@@ -2157,7 +2143,7 @@ router.post('/' + version + section + 'more-than-one-site-router', function (req
         
         addSiteToBatch(req.session, siteData);
         
-        // IMPORTANT: Change batch entryMethod from 'manual-entry-single-site' to 'manual-entry' after conversion
+        // Set batch entryMethod to 'manual-entry' for unified processing
         const createdBatch = getCurrentBatch(req.session);
         if (createdBatch) {
             createdBatch.entryMethod = 'manual-entry';
