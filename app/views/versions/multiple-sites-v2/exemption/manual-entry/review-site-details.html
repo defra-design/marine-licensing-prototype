@@ -30,6 +30,14 @@ Review site details
             {{ pageHeadingTextHTML }}
         </h1>
         
+        <!-- Ensure sites variable is properly defined from route context or session fallback -->
+        {% if not sites %}
+            {% set sites = data['sites'] or [] %}
+        {% endif %}
+        
+        <!-- Determine if this is a multiple sites journey based on original user choice -->
+        {% set isMultipleSitesJourney = data['manual-multiple-sites'] == 'Yes' %}
+        
         <!-- Check if all required fields are completed -->
         {% set allComplete = true %}
         
@@ -43,38 +51,49 @@ Review site details
                     {% set allComplete = false %}
                 {% endif %}
                 
-                <!-- Check site-specific dates if required -->
-                {% if sites[0].batchId %}
-                    {% set currentBatch = null %}
-                    {% for batch in data['siteBatches'] %}
-                        {% if batch.id == sites[0].batchId %}
-                            {% set currentBatch = batch %}
+                <!-- Check dates and descriptions based on journey type -->
+                {% if isMultipleSitesJourney %}
+                    <!-- Multiple sites: check if dates/descriptions are required based on batch settings -->
+                    {% if sites[0].batchId %}
+                        {% set currentBatch = null %}
+                        {% for batch in data['siteBatches'] %}
+                            {% if batch.id == sites[0].batchId %}
+                                {% set currentBatch = batch %}
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if currentBatch and currentBatch.settings and currentBatch.settings.sameActivityDates == "No" %}
+                            {% if not site.startDate or not site.startDate.day %}
+                                {% set allComplete = false %}
+                            {% endif %}
                         {% endif %}
-                    {% endfor %}
-                    
-                    {% if currentBatch and currentBatch.settings and currentBatch.settings.sameActivityDates == "No" %}
-                        {% if not site.startDate or not site.startDate.day %}
-                            {% set allComplete = false %}
+                        
+                        {% if currentBatch and currentBatch.settings and currentBatch.settings.sameActivityDescription == "No" %}
+                            {% if not site.description %}
+                                {% set allComplete = false %}
+                            {% endif %}
                         {% endif %}
-                    {% endif %}
-                    
-                    {% if currentBatch and currentBatch.settings and currentBatch.settings.sameActivityDescription == "No" %}
-                        {% if not site.description %}
-                            {% set allComplete = false %}
+                    {% else %}
+                        <!-- Fallback to session data for backwards compatibility -->
+                        {% if data['manual-same-activity-dates'] == "No" %}
+                            {% if not site.startDate or not site.startDate.day %}
+                                {% set allComplete = false %}
+                            {% endif %}
+                        {% endif %}
+                        
+                        {% if data['manual-same-activity-description'] == "No" %}
+                            {% if not site.description %}
+                                {% set allComplete = false %}
+                            {% endif %}
                         {% endif %}
                     {% endif %}
                 {% else %}
-                    <!-- Fallback to session data for backwards compatibility -->
-                    {% if data['manual-same-activity-dates'] == "No" %}
-                        {% if not site.startDate or not site.startDate.day %}
-                            {% set allComplete = false %}
-                        {% endif %}
+                    <!-- Single site: always require dates and description -->
+                    {% if not site.startDate or not site.startDate.day %}
+                        {% set allComplete = false %}
                     {% endif %}
-                    
-                    {% if data['manual-same-activity-description'] == "No" %}
-                        {% if not site.description %}
-                            {% set allComplete = false %}
-                        {% endif %}
+                    {% if not site.description %}
+                        {% set allComplete = false %}
                     {% endif %}
                 {% endif %}
             {% endfor %}
@@ -96,8 +115,10 @@ Review site details
             {% endfor %}
         {% endif %}
         
+
+        
         <!-- Activity details section - only show for multiple sites -->
-        {% if sites and sites.length > 1 %}
+        {% if isMultipleSitesJourney %}
         <div id="activity-details" class="govuk-summary-card">
             <div class="govuk-summary-card__title-wrapper">
                 <h2 class="govuk-summary-card__title">
@@ -126,7 +147,8 @@ Review site details
                         </dd>
                     </div>
                     
-                    {% set showSharedDates = (currentBatch and currentBatch.settings and currentBatch.settings.sameActivityDates == "Yes") or (not currentBatch and data['manual-same-activity-dates'] == "Yes") %}
+                    {% set showSharedDates = (currentBatch and currentBatch.settings and currentBatch.settings.sameActivityDates == "Yes") or (not (currentBatch and currentBatch.settings) and data['manual-same-activity-dates'] == "Yes") %}
+
                     {% if showSharedDates %}
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
@@ -169,7 +191,8 @@ Review site details
                         </dd>
                     </div>
                     
-                    {% set showSharedDescription = (currentBatch and currentBatch.settings and currentBatch.settings.sameActivityDescription == "Yes") or (not currentBatch and data['manual-same-activity-description'] == "Yes") %}
+                    {% set showSharedDescription = (currentBatch and currentBatch.settings and currentBatch.settings.sameActivityDescription == "Yes") or (not (currentBatch and currentBatch.settings) and data['manual-same-activity-description'] == "Yes") %}
+
                     {% if showSharedDescription %}
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
@@ -228,7 +251,13 @@ Review site details
                                 </dd>
                             </div>
                             
-                            {% set showSiteDates = (currentBatch and currentBatch.settings and currentBatch.settings.sameActivityDates == "No") or (not currentBatch and data['manual-same-activity-dates'] == "No") %}
+                            <!-- Activity dates logic -->
+                            {% if isMultipleSitesJourney %}
+                                {% set showSiteDates = (currentBatch and currentBatch.settings and currentBatch.settings.sameActivityDates == "No") or (not (currentBatch and currentBatch.settings) and data['manual-same-activity-dates'] == "No") %}
+                            {% else %}
+                                {% set showSiteDates = true %}
+                            {% endif %}
+
                             {% if showSiteDates %}
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">
@@ -249,7 +278,13 @@ Review site details
                             </div>
                             {% endif %}
                             
-                            {% set showSiteDescription = (currentBatch and currentBatch.settings and currentBatch.settings.sameActivityDescription == "No") or (not currentBatch and data['manual-same-activity-description'] == "No") %}
+                            <!-- Activity description logic -->
+                            {% if isMultipleSitesJourney %}
+                                {% set showSiteDescription = (currentBatch and currentBatch.settings and currentBatch.settings.sameActivityDescription == "No") or (not (currentBatch and currentBatch.settings) and data['manual-same-activity-description'] == "No") %}
+                            {% else %}
+                                {% set showSiteDescription = true %}
+                            {% endif %}
+
                             {% if showSiteDescription %}
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">
@@ -288,7 +323,7 @@ Review site details
                                     {% endif %}
                                 </dd>
                                 <dd class="govuk-summary-list__actions">
-                                    <a href="how-do-you-want-to-enter-the-coordinates?site={{ siteIndex }}&returnTo=review-site-details#site-{{ siteIndex }}-details" class="govuk-link">
+                                    <a href="how-do-you-want-to-enter-the-coordinates?site={{ batchRelativePosition }}&returnTo=review-site-details#site-{{ siteIndex }}-details" class="govuk-link">
                                         Change<span class="govuk-visually-hidden"> method of providing site location</span>
                                     </a>
                                 </dd>
@@ -311,7 +346,7 @@ Review site details
                                     {% endif %}
                                 </dd>
                                 <dd class="govuk-summary-list__actions">
-                                    <a href="which-coordinate-system?site={{ siteIndex }}&returnTo=review-site-details#site-{{ siteIndex }}-details" class="govuk-link">
+                                    <a href="which-coordinate-system?site={{ batchRelativePosition }}&returnTo=review-site-details#site-{{ siteIndex }}-details" class="govuk-link">
                                         Change<span class="govuk-visually-hidden"> coordinate system</span>
                                     </a>
                                 </dd>
@@ -331,7 +366,7 @@ Review site details
                                     {% endif %}
                                 </dd>
                                 <dd class="govuk-summary-list__actions">
-                                    <a href="enter-coordinates?site={{ siteIndex }}&returnTo=review-site-details#site-{{ siteIndex }}-details" class="govuk-link">
+                                    <a href="enter-coordinates?site={{ batchRelativePosition }}&returnTo=review-site-details#site-{{ siteIndex }}-details" class="govuk-link">
                                         {% if site.coordinates.center and site.coordinates.center.latitude and site.coordinates.center.longitude %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> coordinates at centre of site</span>
                                     </a>
                                 </dd>
@@ -349,7 +384,7 @@ Review site details
                                     {% endif %}
                                 </dd>
                                 <dd class="govuk-summary-list__actions">
-                                    <a href="site-width?site={{ siteIndex }}&returnTo=review-site-details#site-{{ siteIndex }}-details" class="govuk-link">
+                                    <a href="site-width?site={{ batchRelativePosition }}&returnTo=review-site-details#site-{{ siteIndex }}-details" class="govuk-link">
                                         {% if site.coordinates.width %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> width of circular site</span>
                                     </a>
                                 </dd>
@@ -371,7 +406,7 @@ Review site details
                                     </dd>
                                     <dd class="govuk-summary-list__actions">
                                         {% if loop.index == 1 %}
-                                            <a href="enter-multiple-coordinates?site={{ siteIndex }}&returnTo=review-site-details#site-{{ siteIndex }}-details" class="govuk-link">
+                                            <a href="enter-multiple-coordinates?site={{ batchRelativePosition }}&returnTo=review-site-details#site-{{ siteIndex }}-details" class="govuk-link">
                                                 Change<span class="govuk-visually-hidden"> coordinates</span>
                                             </a>
                                         {% endif %}
@@ -388,7 +423,7 @@ Review site details
                                     <span class="govuk-tag govuk-tag--red">Incomplete</span>
                                 </dd>
                                 <dd class="govuk-summary-list__actions">
-                                    <a href="enter-multiple-coordinates?site={{ siteIndex }}&returnTo=review-site-details#site-{{ siteIndex }}-details" class="govuk-link">
+                                    <a href="enter-multiple-coordinates?site={{ batchRelativePosition }}&returnTo=review-site-details#site-{{ siteIndex }}-details" class="govuk-link">
                                         Add<span class="govuk-visually-hidden"> coordinates</span>
                                     </a>
                                 </dd>
@@ -418,7 +453,7 @@ Review site details
         {% endif %}
 
         <!-- Add the next site section - only show for multiple sites -->
-        {% if sites and sites.length > 1 %}
+        {% if isMultipleSitesJourney %}
         <div class="govuk-!-margin-bottom-4">
             {{ govukButton({
                 text: "Add the next site",
