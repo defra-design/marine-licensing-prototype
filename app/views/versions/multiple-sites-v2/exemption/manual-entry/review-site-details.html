@@ -35,7 +35,11 @@ Review site details
             {% set sites = data['sites'] or [] %}
         {% endif %}
         
-
+        <!-- Debug: Show sites count -->
+        <!--{{ sites.length or 0 }} sites found-->
+        
+        <!-- Determine if this is a multiple sites journey -->
+        {% set isMultipleSitesJourney = (data['manual-multiple-sites'] == 'Yes') or (sites and sites.length > 1) %}
         
         <!-- Check if all required fields are completed -->
         {% set allComplete = true %}
