@@ -559,16 +559,33 @@ router.post('/' + version + section + 'manual-entry/same-activity-dates-router',
                         year: req.session.data['manual-end-date-date-input-year']
                     };
                     
-                    currentBatch.sites.forEach(site => {
+                    currentBatch.sites.forEach((site, index) => {
                         if (sharedStartDate && sharedStartDate.day) {
                             site.startDate = { ...sharedStartDate };
                             site.endDate = { ...sharedEndDate };
+                            
+                            // Also populate session data fields for each site
+                            const siteNumber = index + 1;
+                            const sitePrefix = siteNumber === 1 ? 'manual-' : `manual-site-${siteNumber}-`;
+                            
+                            req.session.data[sitePrefix + 'start-date-date-input-day'] = sharedStartDate.day;
+                            req.session.data[sitePrefix + 'start-date-date-input-month'] = sharedStartDate.month;
+                            req.session.data[sitePrefix + 'start-date-date-input-year'] = sharedStartDate.year;
+                            
+                            req.session.data[sitePrefix + 'end-date-date-input-day'] = sharedEndDate.day;
+                            req.session.data[sitePrefix + 'end-date-date-input-month'] = sharedEndDate.month;
+                            req.session.data[sitePrefix + 'end-date-date-input-year'] = sharedEndDate.year;
                         }
                     });
                     
                     // Rebuild global sites array
                     req.session.data['sites'] = req.session.data['siteBatches'].flatMap(batch => batch.sites);
                 }
+            }
+            
+            // Preserve existing description setting when updating dates setting
+            if (req.session.data['manual-same-activity-description']) {
+                currentBatch.settings.sameActivityDescription = req.session.data['manual-same-activity-description'];
             }
             
             currentBatch.settings.sameActivityDates = selection;
@@ -767,15 +784,25 @@ router.post('/' + version + section + 'manual-entry/same-activity-description-ro
                 if (currentBatch.sites && currentBatch.sites.length > 0) {
                     const sharedDescription = currentBatch.settings.sharedDescription || req.session.data['manual-activity-details-text-area'];
                     
-                    currentBatch.sites.forEach(site => {
+                    currentBatch.sites.forEach((site, index) => {
                         if (sharedDescription) {
                             site.description = sharedDescription;
+                            
+                            // Also populate session data fields for each site
+                            const siteNumber = index + 1;
+                            const sessionKey = siteNumber === 1 ? 'manual-activity-details-text-area' : `manual-site-${siteNumber}-activity-details-text-area`;
+                            req.session.data[sessionKey] = sharedDescription;
                         }
                     });
                     
                     // Rebuild global sites array
                     req.session.data['sites'] = req.session.data['siteBatches'].flatMap(batch => batch.sites);
                 }
+            }
+            
+            // Preserve existing dates setting when updating description setting
+            if (req.session.data['manual-same-activity-dates']) {
+                currentBatch.settings.sameActivityDates = req.session.data['manual-same-activity-dates'];
             }
             
             currentBatch.settings.sameActivityDescription = selection;
@@ -1721,16 +1748,24 @@ function convertManualSitesToUnifiedFormat(req) {
         } else {
             // Use site-specific dates
             const startDatePrefix = siteNum === 1 ? 'manual-' : `manual-site-${siteNum}-`;
-            siteData.startDate = {
-                day: req.session.data[`${startDatePrefix}start-date-date-input-day`],
-                month: req.session.data[`${startDatePrefix}start-date-date-input-month`],
-                year: req.session.data[`${startDatePrefix}start-date-date-input-year`]
-            };
-            siteData.endDate = {
-                day: req.session.data[`${startDatePrefix}end-date-date-input-day`],
-                month: req.session.data[`${startDatePrefix}end-date-date-input-month`],
-                year: req.session.data[`${startDatePrefix}end-date-date-input-year`]
-            };
+            const sessionStartDay = req.session.data[`${startDatePrefix}start-date-date-input-day`];
+            const sessionEndDay = req.session.data[`${startDatePrefix}end-date-date-input-day`];
+            
+            // Only overwrite existing dates if we have session data, otherwise preserve existing
+            if (sessionStartDay || !existingSite || !existingSite.startDate || !existingSite.startDate.day) {
+                siteData.startDate = {
+                    day: sessionStartDay,
+                    month: req.session.data[`${startDatePrefix}start-date-date-input-month`],
+                    year: req.session.data[`${startDatePrefix}start-date-date-input-year`]
+                };
+            }
+            if (sessionEndDay || !existingSite || !existingSite.endDate || !existingSite.endDate.day) {
+                siteData.endDate = {
+                    day: sessionEndDay,
+                    month: req.session.data[`${startDatePrefix}end-date-date-input-month`],
+                    year: req.session.data[`${startDatePrefix}end-date-date-input-year`]
+                };
+            }
         }
         
         // Handle description - either shared or individual
@@ -1738,7 +1773,12 @@ function convertManualSitesToUnifiedFormat(req) {
             siteData.description = req.session.data['manual-activity-details-text-area'];
         } else {
             const descriptionKey = siteNum === 1 ? 'manual-activity-details-text-area' : `manual-site-${siteNum}-activity-details-text-area`;
-            siteData.description = req.session.data[descriptionKey];
+            const sessionDescription = req.session.data[descriptionKey];
+            
+            // Only overwrite existing description if we have session data, otherwise preserve existing
+            if (sessionDescription || !existingSite || !existingSite.description) {
+                siteData.description = sessionDescription;
+            }
         }
         
         // Add coordinates based on entry method
