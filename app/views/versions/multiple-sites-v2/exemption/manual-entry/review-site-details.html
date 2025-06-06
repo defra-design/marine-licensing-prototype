@@ -35,8 +35,7 @@ Review site details
             {% set sites = data['sites'] or [] %}
         {% endif %}
         
-        <!-- Determine if this is a multiple sites journey based on original user choice -->
-        {% set isMultipleSitesJourney = data['manual-multiple-sites'] == 'Yes' %}
+
         
         <!-- Check if all required fields are completed -->
         {% set allComplete = true %}
@@ -115,7 +114,8 @@ Review site details
             {% endfor %}
         {% endif %}
         
-
+        <!-- Determine if this is a multiple sites journey based on original user choice OR batch data -->
+        {% set isMultipleSitesJourney = (data['manual-multiple-sites'] == 'Yes') or (currentBatch and currentBatch.entryMethod == 'manual-entry' and sites and sites.length > 1) %}
         
         <!-- Activity details section - only show for multiple sites -->
         {% if isMultipleSitesJourney %}

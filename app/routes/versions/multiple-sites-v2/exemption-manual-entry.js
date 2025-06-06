@@ -282,6 +282,9 @@ router.get('/' + version + section + 'manual-entry/does-your-project-involve-mor
     req.session.data['errortypeone'] = "false";
     req.session.data['errors'] = [];
     
+    // Clear the radio selection to ensure fresh start
+    delete req.session.data['manual-multiple-sites'];
+    
     res.render(version + section + 'manual-entry/does-your-project-involve-more-than-one-site');
 });
 
@@ -299,6 +302,9 @@ router.post('/' + version + section + 'manual-entry/does-your-project-involve-mo
         return;
     }
 
+    // Get the next global site number for the URL (used by both Yes and No cases)
+    const nextGlobalSiteNumber = (req.session.data['globalSiteCounter'] || 0) + 1;
+
     // Route based on selection
     switch(selection) {
         case "Yes":
@@ -312,7 +318,7 @@ router.post('/' + version + section + 'manual-entry/does-your-project-involve-mo
             // Set the manual-current-site to 1 (batch-relative, not global)
             req.session.data['manual-current-site'] = 1;
             
-            res.redirect('site-name?site=1');
+            res.redirect('site-name?site=' + nextGlobalSiteNumber);
             break;
         case "No":
             // Initialize a new batch for single site (same as multiple sites, just batch of 1)
@@ -325,7 +331,7 @@ router.post('/' + version + section + 'manual-entry/does-your-project-involve-mo
             // Set the manual-current-site to 1 (batch-relative, not global)
             req.session.data['manual-current-site'] = 1;
             
-            res.redirect('site-name?site=1');
+            res.redirect('site-name?site=' + nextGlobalSiteNumber);
             break;
         default:
             res.redirect('does-your-project-involve-more-than-one-site');
@@ -530,6 +536,44 @@ router.post('/' + version + section + 'manual-entry/same-activity-dates-router',
     // Check if we're coming from review-site-details page
     if (req.session.data['fromReviewSiteDetails'] === 'true') {
         delete req.session.data['fromReviewSiteDetails']; // Clear the flag
+        
+        // Update the current batch settings with the new selection
+        const currentBatch = getCurrentBatch(req.session);
+        if (currentBatch) {
+            if (!currentBatch.settings) {
+                currentBatch.settings = {};
+            }
+            
+            // If switching from "Yes" to "No", copy shared dates to all sites
+            if (currentBatch.settings.sameActivityDates === "Yes" && selection === "No") {
+                // Copy shared dates to all sites in the batch
+                if (currentBatch.sites && currentBatch.sites.length > 0) {
+                    const sharedStartDate = currentBatch.settings.sharedStartDate || {
+                        day: req.session.data['manual-start-date-date-input-day'],
+                        month: req.session.data['manual-start-date-date-input-month'],
+                        year: req.session.data['manual-start-date-date-input-year']
+                    };
+                    const sharedEndDate = currentBatch.settings.sharedEndDate || {
+                        day: req.session.data['manual-end-date-date-input-day'],
+                        month: req.session.data['manual-end-date-date-input-month'],
+                        year: req.session.data['manual-end-date-date-input-year']
+                    };
+                    
+                    currentBatch.sites.forEach(site => {
+                        if (sharedStartDate && sharedStartDate.day) {
+                            site.startDate = { ...sharedStartDate };
+                            site.endDate = { ...sharedEndDate };
+                        }
+                    });
+                    
+                    // Rebuild global sites array
+                    req.session.data['sites'] = req.session.data['siteBatches'].flatMap(batch => batch.sites);
+                }
+            }
+            
+            currentBatch.settings.sameActivityDates = selection;
+        }
+        
         return res.redirect('review-site-details');
     }
 
@@ -709,6 +753,34 @@ router.post('/' + version + section + 'manual-entry/same-activity-description-ro
     // Check if we're coming from review-site-details page
     if (req.session.data['fromReviewSiteDetails'] === 'true') {
         delete req.session.data['fromReviewSiteDetails']; // Clear the flag
+        
+        // Update the current batch settings with the new selection
+        const currentBatch = getCurrentBatch(req.session);
+        if (currentBatch) {
+            if (!currentBatch.settings) {
+                currentBatch.settings = {};
+            }
+            
+            // If switching from "Yes" to "No", copy shared description to all sites
+            if (currentBatch.settings.sameActivityDescription === "Yes" && selection === "No") {
+                // Copy shared description to all sites in the batch
+                if (currentBatch.sites && currentBatch.sites.length > 0) {
+                    const sharedDescription = currentBatch.settings.sharedDescription || req.session.data['manual-activity-details-text-area'];
+                    
+                    currentBatch.sites.forEach(site => {
+                        if (sharedDescription) {
+                            site.description = sharedDescription;
+                        }
+                    });
+                    
+                    // Rebuild global sites array
+                    req.session.data['sites'] = req.session.data['siteBatches'].flatMap(batch => batch.sites);
+                }
+            }
+            
+            currentBatch.settings.sameActivityDescription = selection;
+        }
+        
         return res.redirect('review-site-details');
     }
 

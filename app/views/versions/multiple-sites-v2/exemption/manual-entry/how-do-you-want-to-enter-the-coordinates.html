@@ -46,7 +46,7 @@ How do you want to enter the site coordinates?
                 {% endfor %}
             {% endif %}
             {% set batchStartingNumber = currentBatch.startingGlobalNumber if currentBatch else 0 %}
-            {% set displaySiteNumber = batchStartingNumber + currentSite %}
+            {% set displaySiteNumber = (batchStartingNumber | int) + (currentSite | int) %}
         {% endif %}
 
 <!-- ERROR LOGIC 'error summary' -->
