@@ -31,17 +31,23 @@ How do you want to enter the site coordinates?
         {% set currentSite = data['current-site'] or 1 %}
         {% set siteDataKey = 'manual-coordinate-entry-method' if currentSite == 1 else 'manual-site-' + currentSite + '-coordinate-entry-method' %}
         
-        <!-- Calculate the global site number for display using batch starting position -->
-        {% set currentBatch = null %}
-        {% if data['currentBatchId'] %}
-            {% for batch in data['siteBatches'] %}
-                {% if batch.id == data['currentBatchId'] %}
-                    {% set currentBatch = batch %}
-                {% endif %}
-            {% endfor %}
+        <!-- For single site batches, just use the current site number -->
+        {% set isSingleSiteBatch = data['manual-multiple-sites'] == 'No' %}
+        {% if isSingleSiteBatch %}
+            {% set displaySiteNumber = currentSite %}
+        {% else %}
+            <!-- Calculate the global site number for display using batch starting position -->
+            {% set currentBatch = null %}
+            {% if data['currentBatchId'] %}
+                {% for batch in data['siteBatches'] %}
+                    {% if batch.id == data['currentBatchId'] %}
+                        {% set currentBatch = batch %}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            {% set batchStartingNumber = currentBatch.startingGlobalNumber if currentBatch else 0 %}
+            {% set displaySiteNumber = (batchStartingNumber | int) + (currentSite | int) %}
         {% endif %}
-        {% set batchStartingNumber = currentBatch.startingGlobalNumber if currentBatch else 0 %}
-        {% set displaySiteNumber = batchStartingNumber + currentSite %}
 
 <!-- ERROR LOGIC 'error summary' -->
 {% if data['errorthispage'] == "true" %}
