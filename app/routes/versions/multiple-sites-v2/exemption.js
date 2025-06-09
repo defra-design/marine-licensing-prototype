@@ -1262,16 +1262,36 @@ router.post('/' + version + section + 'upload-file-router', function (req, res) 
         };
     }
     
-    // Check if this is the first file upload or a subsequent one
-    const isFirstUpload = !req.session.data['hasUploadedFile'];
+    // Track upload count to generate different number of sites
+    const uploadCount = (req.session.data['fileUploadCount'] || 0) + 1;
+    req.session.data['fileUploadCount'] = uploadCount;
     
     // Mark that a file has been uploaded
     req.session.data['hasUploadedFile'] = true;
     
     let sites;
     
-    if (isFirstUpload) {
-        // First upload: use 4-site array
+    if (uploadCount === 1) {
+        // First upload: use 1-site array
+        sites = [
+            {
+                name: 'Sediment sample',
+                description: '',
+                startDate: {
+                    day: '',
+                    month: '',
+                    year: ''
+                },
+                endDate: {
+                    day: '',
+                    month: '',
+                    year: ''
+                },
+                mapImage: '/public/images/worthing-map-drawn-copy.jpg'
+            }
+        ];
+    } else if (uploadCount === 2) {
+        // Second upload: use 4-site array (previously first upload)
         sites = [
             {
                 name: 'Sediment sample 1',
@@ -1335,7 +1355,7 @@ router.post('/' + version + section + 'upload-file-router', function (req, res) 
             }
         ];
     } else {
-        // Subsequent uploads: use 2-site array (first 2 sites from the original array)
+        // Third and subsequent uploads: use 2-site array
         sites = [
             {
                 name: 'Brighton sample',
@@ -1373,8 +1393,14 @@ router.post('/' + version + section + 'upload-file-router', function (req, res) 
     // Add each site to the batch
     sites.forEach(site => addSiteToBatch(req.session, site));
     
-    // After uploading file, go to same-activity-dates question
-    res.redirect('same-activity-dates');
+    // After uploading file, route based on number of sites
+    if (sites.length === 1) {
+        // Single site: skip "same for all sites" questions and go directly to site-specific details
+        res.redirect('site-activity-dates?site=1');
+    } else {
+        // Multiple sites: go to same-activity-dates question
+        res.redirect('same-activity-dates');
+    }
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -1732,6 +1758,24 @@ router.post('/' + version + section + 'site-activity-dates-router', function (re
         
         // Save the updated array back to the session
         req.session.data['sites'] = sites;
+        
+        // Also update the site in the current batch
+        const currentBatch = getCurrentBatch(req.session);
+        if (currentBatch && currentBatch.sites) {
+            const batchSite = currentBatch.sites.find(site => site.globalNumber === siteIndex);
+            if (batchSite) {
+                batchSite.startDate = {
+                    day: startDay,
+                    month: startMonth,
+                    year: startYear
+                };
+                batchSite.endDate = {
+                    day: endDay,
+                    month: endMonth,
+                    year: endYear
+                };
+            }
+        }
     }
     
     // Extract the return parameter which contains the section name
@@ -1742,8 +1786,17 @@ router.post('/' + version + section + 'site-activity-dates-router', function (re
         return res.redirect('review-site-details#' + returnSection);
     }
     
-    // Default: return to review-site-details without anchor
-    res.redirect('review-site-details');
+    // Check if this is a single site batch from file upload
+    const currentBatch = getCurrentBatch(req.session);
+    const isSingleSiteBatch = currentBatch && currentBatch.sites && currentBatch.sites.length === 1;
+    
+    if (isSingleSiteBatch && siteIndex === 1) {
+        // Single site: go to activity description next
+        res.redirect('site-activity-description?site=' + siteIndex);
+    } else {
+        // Multiple sites: return to review-site-details without anchor
+        res.redirect('review-site-details');
+    }
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -1788,6 +1841,15 @@ router.post('/' + version + section + 'site-activity-description-router', functi
         
         // Save the updated array back to the session
         req.session.data['sites'] = sites;
+        
+        // Also update the site in the current batch
+        const currentBatch = getCurrentBatch(req.session);
+        if (currentBatch && currentBatch.sites) {
+            const batchSite = currentBatch.sites.find(site => site.globalNumber === siteIndex);
+            if (batchSite) {
+                batchSite.description = description;
+            }
+        }
     }
     
     // Extract the return parameter which contains the section name
@@ -1821,14 +1883,26 @@ router.post('/' + version + section + 'review-site-details-router', function (re
             if (!site.name) {
                 hasSiteIncomplete = true;
             }
-            if (req.session.data['exemption-same-activity-dates-for-sites'] === "No") {
+            
+            if (sites.length === 1) {
+                // Single site: always require dates and description
                 if (!site.startDate || !site.startDate.day) {
                     hasSiteIncomplete = true;
                 }
-            }
-            if (req.session.data['exemption-same-activity-description-for-sites'] === "No") {
                 if (!site.description) {
                     hasSiteIncomplete = true;
+                }
+            } else {
+                // Multiple sites: check conditionally based on "same for all sites" settings
+                if (req.session.data['exemption-same-activity-dates-for-sites'] === "No") {
+                    if (!site.startDate || !site.startDate.day) {
+                        hasSiteIncomplete = true;
+                    }
+                }
+                if (req.session.data['exemption-same-activity-description-for-sites'] === "No") {
+                    if (!site.description) {
+                        hasSiteIncomplete = true;
+                    }
                 }
             }
         }
