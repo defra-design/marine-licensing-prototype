@@ -1396,7 +1396,10 @@ router.post('/' + version + section + 'upload-file-router', function (req, res) 
     // After uploading file, route based on number of sites
     if (sites.length === 1) {
         // Single site: skip "same for all sites" questions and go directly to site-specific details
-        res.redirect('site-activity-dates?site=1');
+        // Use the actual global number of the site, not hardcoded 1
+        const currentBatch = getCurrentBatch(req.session);
+        const siteGlobalNumber = currentBatch && currentBatch.sites[0] ? currentBatch.sites[0].globalNumber : 1;
+        res.redirect('site-activity-dates?site=' + siteGlobalNumber);
     } else {
         // Multiple sites: go to same-activity-dates question
         res.redirect('same-activity-dates');
@@ -1449,19 +1452,36 @@ router.post('/' + version + section + 'same-activity-dates-router', function (re
         case "No":
             // If coming from review page and changing from Yes to No
             if (returnTo === 'review-site-details' && previousSelection === "Yes") {
-                // Clear shared activity dates
+                // Copy shared activity dates to each site before clearing shared data
+                if (currentBatch && currentBatch.settings && currentBatch.sites) {
+                    const sharedStartDate = currentBatch.settings.sharedStartDate;
+                    const sharedEndDate = currentBatch.settings.sharedEndDate;
+                    
+                    // Copy shared dates to each site in the batch
+                    currentBatch.sites.forEach(site => {
+                        if (sharedStartDate && sharedStartDate.day) {
+                            site.startDate = { ...sharedStartDate };
+                        }
+                        if (sharedEndDate && sharedEndDate.day) {
+                            site.endDate = { ...sharedEndDate };
+                        }
+                    });
+                    
+                    // Update global sites array to reflect changes
+                    req.session.data['sites'] = req.session.data['siteBatches'].flatMap(batch => batch.sites);
+                    
+                    // Clear from batch settings after copying
+                    currentBatch.settings.sharedStartDate = {};
+                    currentBatch.settings.sharedEndDate = {};
+                }
+                
+                // Clear shared activity dates from session
                 delete req.session.data['exemption-start-date-date-input-day'];
                 delete req.session.data['exemption-start-date-date-input-month'];
                 delete req.session.data['exemption-start-date-date-input-year'];
                 delete req.session.data['exemption-end-date-date-input-day'];
                 delete req.session.data['exemption-end-date-date-input-month'];
                 delete req.session.data['exemption-end-date-date-input-year'];
-                
-                // Clear from batch settings too
-                if (currentBatch && currentBatch.settings) {
-                    currentBatch.settings.sharedStartDate = {};
-                    currentBatch.settings.sharedEndDate = {};
-                }
                 
                 // Return to review page
                 delete req.session.data['returnTo'];
@@ -1531,13 +1551,26 @@ router.post('/' + version + section + 'same-activity-description-router', functi
         case "No":
             // If coming from review page and changing from Yes to No
             if (returnTo === 'review-site-details' && previousSelection === "Yes") {
-                // Clear shared activity description
-                delete req.session.data['exemption-activity-details-text-area'];
-                
-                // Clear from batch settings too
-                if (currentBatch && currentBatch.settings) {
+                // Copy shared activity description to each site before clearing shared data
+                if (currentBatch && currentBatch.settings && currentBatch.sites) {
+                    const sharedDescription = currentBatch.settings.sharedDescription;
+                    
+                    // Copy shared description to each site in the batch
+                    if (sharedDescription) {
+                        currentBatch.sites.forEach(site => {
+                            site.description = sharedDescription;
+                        });
+                        
+                        // Update global sites array to reflect changes
+                        req.session.data['sites'] = req.session.data['siteBatches'].flatMap(batch => batch.sites);
+                    }
+                    
+                    // Clear from batch settings after copying
                     currentBatch.settings.sharedDescription = null;
                 }
+                
+                // Clear shared activity description from session
+                delete req.session.data['exemption-activity-details-text-area'];
                 
                 // Return to review page
                 delete req.session.data['returnTo'];
@@ -1790,7 +1823,13 @@ router.post('/' + version + section + 'site-activity-dates-router', function (re
     const currentBatch = getCurrentBatch(req.session);
     const isSingleSiteBatch = currentBatch && currentBatch.sites && currentBatch.sites.length === 1;
     
-    if (isSingleSiteBatch && siteIndex === 1) {
+    // For single site batches, check if this site belongs to the current batch
+    let isSiteInCurrentBatch = false;
+    if (isSingleSiteBatch && currentBatch.sites[0]) {
+        isSiteInCurrentBatch = currentBatch.sites[0].globalNumber === siteIndex;
+    }
+    
+    if (isSingleSiteBatch && isSiteInCurrentBatch) {
         // Single site: go to activity description next
         res.redirect('site-activity-description?site=' + siteIndex);
     } else {
