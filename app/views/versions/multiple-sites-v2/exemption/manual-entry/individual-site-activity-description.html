@@ -34,28 +34,13 @@ Activity description
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
-        <!-- Get current site number -->
-        {% set currentSite = data['current-site'] or 1 %}
+        <!-- Get current site number from route data first, then query parameter, then session data -->
+        {% set currentSite = currentSiteFromRoute or (query.site | int) or (data['current-site'] | int) or 1 %}
         {% set siteDataKey = 'manual-activity-details-text-area' if currentSite == 1 else 'manual-site-' + currentSite + '-activity-details-text-area' %}
         {% set siteInputId = 'manual-activity-details-text-area' if currentSite == 1 else 'manual-site-' + currentSite + '-activity-details-text-area' %}
         
-        <!-- For single site batches, just use the current site number -->
-        {% set isSingleSiteBatch = data['manual-multiple-sites'] == 'No' %}
-        {% if isSingleSiteBatch %}
-            {% set displaySiteNumber = currentSite %}
-        {% else %}
-            <!-- Calculate the global site number for display using batch starting position -->
-            {% set currentBatch = null %}
-            {% if data['currentBatchId'] %}
-                {% for batch in data['siteBatches'] %}
-                    {% if batch.id == data['currentBatchId'] %}
-                        {% set currentBatch = batch %}
-                    {% endif %}
-                {% endfor %}
-            {% endif %}
-            {% set batchStartingNumber = currentBatch.startingGlobalNumber if currentBatch else 0 %}
-            {% set displaySiteNumber = batchStartingNumber + currentSite %}
-        {% endif %}
+                <!-- The currentSite from URL parameter is already the global site number -->
+        {% set displaySiteNumber = currentSite %}
 
         <!-- ERROR LOGIC 'error summary' -->
         {% if data['errorthispage'] == "true" %}
