@@ -1272,26 +1272,7 @@ router.post('/' + version + section + 'upload-file-router', function (req, res) 
     let sites;
     
     if (uploadCount === 1) {
-        // First upload: use 1-site array
-        sites = [
-            {
-                name: 'Sediment sample',
-                description: '',
-                startDate: {
-                    day: '',
-                    month: '',
-                    year: ''
-                },
-                endDate: {
-                    day: '',
-                    month: '',
-                    year: ''
-                },
-                mapImage: '/public/images/worthing-map-drawn-copy.jpg'
-            }
-        ];
-    } else if (uploadCount === 2) {
-        // Second upload: use 4-site array (previously first upload)
+        // First upload: use 4-site array
         sites = [
             {
                 name: 'Sediment sample 1',
@@ -1352,6 +1333,25 @@ router.post('/' + version + section + 'upload-file-router', function (req, res) 
                     year: ''
                 },
                 mapImage: '/public/images/worthing-map-5-points-copy.jpg'
+            }
+        ];
+    } else if (uploadCount === 2) {
+        // Second upload: use 1-site array
+        sites = [
+            {
+                name: 'Sediment sample',
+                description: '',
+                startDate: {
+                    day: '',
+                    month: '',
+                    year: ''
+                },
+                endDate: {
+                    day: '',
+                    month: '',
+                    year: ''
+                },
+                mapImage: '/public/images/worthing-map-drawn-copy.jpg'
             }
         ];
     } else {
