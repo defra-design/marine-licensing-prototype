@@ -39,7 +39,9 @@
                 </h1>
             
                 <div id="file-upload-1-hint" class="govuk-hint">
-                    [Hint text if needed]
+                    {% if data['exemption-which-type-of-file-radios'] == "Shapefile" %}
+                      Upload a ZIP file containing all the files for your Shapefile (for example, .shp, .shx and .dbf).
+                    {% endif %}
                   </div>
                 
 			{% from "govuk/components/file-upload/macro.njk" import govukFileUpload %}
