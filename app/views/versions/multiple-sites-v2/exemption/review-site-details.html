@@ -45,17 +45,28 @@ Review site details
                     {% set allComplete = false %}
                 {% endif %}
                 
-                <!-- Check site-specific dates if required -->
-                {% if data['exemption-same-activity-dates-for-sites'] == "No" %}
+                {% if sites.length == 1 %}
+                    <!-- Single site: always require dates and description -->
                     {% if not site.startDate or not site.startDate.day %}
                         {% set allComplete = false %}
                     {% endif %}
-                {% endif %}
-                
-                <!-- Check site-specific descriptions if required -->
-                {% if data['exemption-same-activity-description-for-sites'] == "No" %}
                     {% if not site.description %}
                         {% set allComplete = false %}
+                    {% endif %}
+                {% else %}
+                    <!-- Multiple sites: check conditionally based on "same for all sites" settings -->
+                    <!-- Check site-specific dates if required -->
+                    {% if data['exemption-same-activity-dates-for-sites'] == "No" %}
+                        {% if not site.startDate or not site.startDate.day %}
+                            {% set allComplete = false %}
+                        {% endif %}
+                    {% endif %}
+                    
+                    <!-- Check site-specific descriptions if required -->
+                    {% if data['exemption-same-activity-description-for-sites'] == "No" %}
+                        {% if not site.description %}
+                            {% set allComplete = false %}
+                        {% endif %}
                     {% endif %}
                 {% endif %}
             {% endfor %}
@@ -134,7 +145,8 @@ Review site details
             </div>
         </div>
 
-        <!-- Activity details section -->
+        <!-- Activity details section - only show for multiple sites -->
+        {% if sites and sites.length > 1 %}
         <div id="activity-details" class="govuk-summary-card">
             <div class="govuk-summary-card__title-wrapper">
                 <h2 class="govuk-summary-card__title">
@@ -231,6 +243,7 @@ Review site details
                 </dl>
             </div>
         </div>
+        {% endif %}
 
         <!-- Dynamic Site Details Sections -->
         {% if sites and sites.length > 0 %}
@@ -269,46 +282,86 @@ Review site details
                                 </dd>
                             </div>
                             
-                            {% set showSiteDates = (currentBatch and currentBatch.settings and currentBatch.settings.sameActivityDates == "No") or (not currentBatch and data['exemption-same-activity-dates-for-sites'] == "No") %}
-                            {% if showSiteDates %}
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">
-                                    Activity dates
-                                </dt>
-                                <dd class="govuk-summary-list__value">
-                                    {% if site.startDate and site.startDate.day %}
-                                        {{ site.startDate.day }} {{ site.startDate.month | toMonth }} {{ site.startDate.year }} to {{ site.endDate.day }} {{ site.endDate.month | toMonth }} {{ site.endDate.year }}
-                                    {% else %}
-                                        <span class="govuk-tag govuk-tag--red">Incomplete</span>
-                                    {% endif %}
-                                </dd>
-                                <dd class="govuk-summary-list__actions">
-                                    <a href="site-activity-dates?site={{ siteIndex }}&return=site-{{ siteIndex }}-details#site-{{ siteIndex }}-details" class="govuk-link">
-                                        {% if site.startDate and site.startDate.day %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> Activity dates</span>
-                                    </a>
-                                </dd>
-                            </div>
-                            {% endif %}
-                            
-                            {% set showSiteDescription = (currentBatch and currentBatch.settings and currentBatch.settings.sameActivityDescription == "No") or (not currentBatch and data['exemption-same-activity-description-for-sites'] == "No") %}
-                            {% if showSiteDescription %}
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">
-                                    Activity description
-                                </dt>
-                                <dd class="govuk-summary-list__value">
-                                    {% if site.description %}
-                                        {{ site.description }}
-                                    {% else %}
-                                        <span class="govuk-tag govuk-tag--red">Incomplete</span>
-                                    {% endif %}
-                                </dd>
-                                <dd class="govuk-summary-list__actions">
-                                    <a href="site-activity-description?site={{ siteIndex }}&return=site-{{ siteIndex }}-details#site-{{ siteIndex }}-details" class="govuk-link">
-                                        {% if site.description %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> Activity description</span>
-                                    </a>
-                                </dd>
-                            </div>
+                            {% if sites.length == 1 %}
+                                <!-- Single site: always show activity dates and description -->
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">
+                                        Activity dates
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                        {% if site.startDate and site.startDate.day %}
+                                            {{ site.startDate.day }} {{ site.startDate.month | toMonth }} {{ site.startDate.year }} to {{ site.endDate.day }} {{ site.endDate.month | toMonth }} {{ site.endDate.year }}
+                                        {% else %}
+                                            <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                                        {% endif %}
+                                    </dd>
+                                    <dd class="govuk-summary-list__actions">
+                                        <a href="site-activity-dates?site={{ siteIndex }}&return=site-{{ siteIndex }}-details#site-{{ siteIndex }}-details" class="govuk-link">
+                                            {% if site.startDate and site.startDate.day %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> Activity dates</span>
+                                        </a>
+                                    </dd>
+                                </div>
+                                
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">
+                                        Activity description
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                        {% if site.description %}
+                                            {{ site.description }}
+                                        {% else %}
+                                            <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                                        {% endif %}
+                                    </dd>
+                                    <dd class="govuk-summary-list__actions">
+                                        <a href="site-activity-description?site={{ siteIndex }}&return=site-{{ siteIndex }}-details#site-{{ siteIndex }}-details" class="govuk-link">
+                                            {% if site.description %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> Activity description</span>
+                                        </a>
+                                    </dd>
+                                </div>
+                            {% else %}
+                                <!-- Multiple sites: show conditionally based on "same for all sites" settings -->
+                                {% set showSiteDates = (currentBatch and currentBatch.settings and currentBatch.settings.sameActivityDates == "No") or (not currentBatch and data['exemption-same-activity-dates-for-sites'] == "No") %}
+                                {% if showSiteDates %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">
+                                        Activity dates
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                        {% if site.startDate and site.startDate.day %}
+                                            {{ site.startDate.day }} {{ site.startDate.month | toMonth }} {{ site.startDate.year }} to {{ site.endDate.day }} {{ site.endDate.month | toMonth }} {{ site.endDate.year }}
+                                        {% else %}
+                                            <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                                        {% endif %}
+                                    </dd>
+                                    <dd class="govuk-summary-list__actions">
+                                        <a href="site-activity-dates?site={{ siteIndex }}&return=site-{{ siteIndex }}-details#site-{{ siteIndex }}-details" class="govuk-link">
+                                            {% if site.startDate and site.startDate.day %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> Activity dates</span>
+                                        </a>
+                                    </dd>
+                                </div>
+                                {% endif %}
+                                
+                                {% set showSiteDescription = (currentBatch and currentBatch.settings and currentBatch.settings.sameActivityDescription == "No") or (not currentBatch and data['exemption-same-activity-description-for-sites'] == "No") %}
+                                {% if showSiteDescription %}
+                                <div class="govuk-summary-list__row">
+                                    <dt class="govuk-summary-list__key">
+                                        Activity description
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                        {% if site.description %}
+                                            {{ site.description }}
+                                        {% else %}
+                                            <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                                        {% endif %}
+                                    </dd>
+                                    <dd class="govuk-summary-list__actions">
+                                        <a href="site-activity-description?site={{ siteIndex }}&return=site-{{ siteIndex }}-details#site-{{ siteIndex }}-details" class="govuk-link">
+                                            {% if site.description %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> Activity description</span>
+                                        </a>
+                                    </dd>
+                                </div>
+                                {% endif %}
                             {% endif %}
                             
                             <div class="govuk-summary-list__row">
