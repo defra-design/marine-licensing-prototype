@@ -887,8 +887,10 @@ router.post('/' + version + section + 'delete-site-router', function (req, res) 
     
     // Redirect logic: if this was the last site in the batch and we're coming from review-site-details,
     // redirect to site-details-added instead of review-site-details
-    if (returnTo === 'review-site-details' && batchWillBeEmpty) {
+    if ((returnTo === 'review-site-details' || returnTo === 'manual-entry-review') && batchWillBeEmpty) {
         res.redirect('site-details-added');
+    } else if (returnTo === 'manual-entry-review') {
+        res.redirect('manual-entry/review-site-details#site-' + globalSiteNumber + '-details');
     } else if (returnTo === 'review-site-details') {
         res.redirect('review-site-details#site-' + globalSiteNumber + '-details');
     } else if (returnTo === 'site-details-added') {
