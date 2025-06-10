@@ -865,6 +865,7 @@ router.post('/' + version + section + 'delete-site-router', function (req, res) 
     
     // Find the site by global number
     const siteToDelete = findSiteByGlobalNumber(req.session, globalSiteNumber);
+    let batchWillBeEmpty = false;
     
     if (siteToDelete) {
         // Remove from the batch
@@ -873,6 +874,8 @@ router.post('/' + version + section + 'delete-site-router', function (req, res) 
             if (batch) {
                 const batchSiteIndex = batch.sites.findIndex(s => s.globalNumber === globalSiteNumber);
                 if (batchSiteIndex !== -1) {
+                    // Check if this is the last site in the batch before removing it
+                    batchWillBeEmpty = (batch.sites.length === 1);
                     batch.sites.splice(batchSiteIndex, 1);
                 }
             }
@@ -882,8 +885,13 @@ router.post('/' + version + section + 'delete-site-router', function (req, res) 
         req.session.data['sites'] = req.session.data['siteBatches'].flatMap(batch => batch.sites);
     }
     
-    // Redirect based on the returnTo value
-    if (returnTo === 'review-site-details') {
+    // Redirect logic: if this was the last site in the batch and we're coming from review-site-details,
+    // redirect to site-details-added instead of review-site-details
+    if ((returnTo === 'review-site-details' || returnTo === 'manual-entry-review') && batchWillBeEmpty) {
+        res.redirect('site-details-added');
+    } else if (returnTo === 'manual-entry-review') {
+        res.redirect('manual-entry/review-site-details#site-' + globalSiteNumber + '-details');
+    } else if (returnTo === 'review-site-details') {
         res.redirect('review-site-details#site-' + globalSiteNumber + '-details');
     } else if (returnTo === 'site-details-added') {
         res.redirect('site-details-added');
@@ -2022,7 +2030,13 @@ router.post('/' + version + section + 'site-details-added-router', function (req
     
     // Check if "I've finished adding sites" checkbox is checked
     if (req.session.data['finished-adding-sites'] && req.session.data['finished-adding-sites'].includes('yes')) {
-        if (hasSiteIncomplete) {
+        // Check if there are no sites at all
+        if (sites.length === 0) {
+            // Set error flag if no sites exist and checkbox is checked
+            req.session.data['errorthispage'] = "true";
+            res.redirect('site-details-added');
+            return;
+        } else if (hasSiteIncomplete) {
             // Set error flag if sites are incomplete and checkbox is checked
             req.session.data['errorthispage'] = "true";
             res.redirect('site-details-added');
@@ -2095,11 +2109,8 @@ router.get('/' + version + section + 'cancel-site-details', function (req, res) 
             res.redirect('site-details-added');
         }
     } else {
-        // If not saved, clear all site details data
-        clearAllSiteDetails(req.session);
-        
-        // Redirect to task list
-        res.redirect('task-list');
+        // If not saved, show warning page before clearing data
+        res.redirect('cancel');
     }
 });
 
@@ -2135,11 +2146,8 @@ router.get('/' + version + section + 'cancel-to-review', function (req, res) {
             }
         }
     } else {
-        // If not saved, clear all site details data
-        clearAllSiteDetails(req.session);
-        
-        // Redirect to task list
-        res.redirect('task-list');
+        // If not saved, show warning page before clearing data
+        res.redirect('cancel');
     }
 });
 
@@ -2153,10 +2161,21 @@ router.get('/' + version + section + 'cancel-from-review-site-details', function
         // If details were previously saved, go to site-details-added
         res.redirect('site-details-added');
     } else {
-        // If nothing was saved yet, clear data and return to task list
-        clearAllSiteDetails(req.session);
-        res.redirect('task-list');
+        // If nothing was saved yet, show warning page before clearing data
+        res.redirect('cancel');
     }
+});
+
+// GET route for cancel warning page
+router.get('/' + version + section + 'cancel', function (req, res) {
+    res.render(version + section + 'cancel');
+});
+
+// POST route for cancel confirmation
+router.post('/' + version + section + 'cancel-confirmed', function (req, res) {
+    // Clear all site details data and return to task list
+    clearAllSiteDetails(req.session);
+    res.redirect('task-list');
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////

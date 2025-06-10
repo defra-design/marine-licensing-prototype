@@ -54,11 +54,16 @@ Your sites
         
         <!-- Display error summary if applicable -->
         {% if data['errorthispage'] == "true" %}
+            {% if data['sites'] and data['sites'].length > 0 %}
+                {% set errorText = "To continue, either complete all the sites or uncheck the box and save your changes" %}
+            {% else %}
+                {% set errorText = "To continue, either add a site or uncheck the box and save your changes" %}
+            {% endif %}
             {{ govukErrorSummary({
                 titleText: "There is a problem",
                 errorList: [
                     {
-                        text: "To continue, either complete all the sites or uncheck the box and save your changes",
+                        text: errorText,
                         href: "#finished-adding-sites"
                     }
                 ]
@@ -70,24 +75,26 @@ Your sites
             {{ pageHeadingTextHTML }}
         </h1>
 
-        {{ govukInsetText({
-            html: "You can select 'Save and continue' to keep your progress and return later if any sites are marked <span class='govuk-tag govuk-tag--red govuk-!-margin-bottom-1'>Incomplete</span><br>
-            You must complete all site details before selecting 'I've finished adding sites'."
-        }) }}
+        {% if data['sites'] and data['sites'].length > 0 %}
+            {{ govukInsetText({
+                html: "You can select 'Save and continue' to keep your progress and return later if any sites are marked <span class='govuk-tag govuk-tag--red govuk-!-margin-bottom-1'>Incomplete</span><br>
+                You must complete all site details before selecting 'I've finished adding sites'."
+            }) }}
+        {% endif %}
         
         <div class="govuk-!-margin-bottom-6">
-            <!-- Plain HTML GOV.UK styled table -->
-            <table class="govuk-table govuk-!-margin-bottom-6">
-                <thead class="govuk-table__head">
-                    <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header">Site</th>
-                        <th scope="col" class="govuk-table__header">Site name</th>
-                        <th scope="col" class="govuk-table__header">Status</th>
-                        <th scope="col" class="govuk-table__header">Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="govuk-table__body">
-                    {% if data['sites'] and data['sites'].length > 0 %}
+            {% if data['sites'] and data['sites'].length > 0 %}
+                <!-- Plain HTML GOV.UK styled table -->
+                <table class="govuk-table govuk-!-margin-bottom-6">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header">Site</th>
+                            <th scope="col" class="govuk-table__header">Site name</th>
+                            <th scope="col" class="govuk-table__header">Status</th>
+                            <th scope="col" class="govuk-table__header">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
                         {% for site in data['sites'] %}
                             {% set siteIndex = site.globalNumber or loop.index %}
                             {% set isComplete = true %}
@@ -154,13 +161,11 @@ Your sites
                                 </td>
                             </tr>
                         {% endfor %}
-                    {% else %}
-                        <tr class="govuk-table__row">
-                            <td class="govuk-table__cell" colspan="4">No sites have been added yet.</td>
-                        </tr>
-                    {% endif %}
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="govuk-!-margin-bottom-6">No sites have been added yet.</p>
+            {% endif %}
         </div>
 
         {{ govukButton({
@@ -170,11 +175,18 @@ Your sites
         }) }}
         
         <form action="site-details-added-router" method="post" novalidate>
+            {% if data['errorthispage'] == "true" %}
+                {% if data['sites'] and data['sites'].length > 0 %}
+                    {% set checkboxErrorText = "To continue, either complete all the sites or uncheck the box and save your changes" %}
+                {% else %}
+                    {% set checkboxErrorText = "To continue, either add a site or uncheck the box and save your changes" %}
+                {% endif %}
+            {% endif %}
             {{ govukCheckboxes({
                 idPrefix: "finished-adding-sites",
                 name: "finished-adding-sites",
                 errorMessage: {
-                    text: "To continue, either complete all the sites or uncheck the box and save your changes"
+                    text: checkboxErrorText
                 } if data['errorthispage'] == "true",
                 items: [
                     {
