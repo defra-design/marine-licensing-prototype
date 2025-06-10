@@ -66,7 +66,7 @@ Your projects
 				<th scope="col" class="govuk-table__header" aria-sort="none">Name</th>
 				<th scope="col" class="govuk-table__header" aria-sort="none">Type</th>
 				<th scope="col" class="govuk-table__header" aria-sort="none">Reference</th>
-				<th scope="col" class="govuk-table__header" aria-sort="ascending">Status</th>
+				<th scope="col" class="govuk-table__header" aria-sort="descending">Status</th>
 				<th scope="col" class="govuk-table__header" aria-sort="none">Date submitted</th>
 				<th scope="col" class="govuk-table__header" aria-sort="none">Actions</th>
 			  </tr>
@@ -82,9 +82,9 @@ Your projects
 						EXE/2025/00001
 					</td>
 					
-					<td class="govuk-table__cell" data-sort-value="Submitted">
+					<td class="govuk-table__cell" data-sort-value="Closed">
 						{{ govukTag({
-							text: "Submitted",
+							text: "Closed",
 							classes: "govuk-tag--green"
 						}) }}
 					</td>
@@ -106,9 +106,9 @@ Your projects
 						EXE/2025/00002
 					</td>
 					
-					<td class="govuk-table__cell" data-sort-value="Submitted">
+					<td class="govuk-table__cell" data-sort-value="Closed">
 						{{ govukTag({
-							text: "Submitted",
+							text: "Closed",
 							classes: "govuk-tag--green"
 						}) }}
 					</td>
@@ -130,9 +130,9 @@ Your projects
 						-
 					</td>
 					
-					<td class="govuk-table__cell" data-sort-value="Incomplete">
+					<td class="govuk-table__cell" data-sort-value="Draft">
 						{{ govukTag({
-							text: "Incomplete",
+							text: "Draft",
 							classes: "govuk-tag--red"
 						}) }}
 					</td>
@@ -159,9 +159,9 @@ Your projects
 					</td>
 				
 					{% if data['applicationSubmitted'] == "true" %}	
-						<td class="govuk-table__cell" data-sort-value="Submitted">
+						<td class="govuk-table__cell" data-sort-value="Closed">
 							{{ govukTag({
-								text: "Submitted",
+								text: "Closed",
 								classes: "govuk-tag--green"
 							}) }}
 						</td>
@@ -169,9 +169,9 @@ Your projects
 						{{ "today" | govukDate(truncate=true) }}
 						</td>
 					{% else %}
-						<td class="govuk-table__cell" data-sort-value="Incomplete">
+						<td class="govuk-table__cell" data-sort-value="Draft">
 							{{ govukTag({
-								text: "Incomplete",
+								text: "Draft",
 								classes: "govuk-tag--red"
 							}) }}
 						</td>
