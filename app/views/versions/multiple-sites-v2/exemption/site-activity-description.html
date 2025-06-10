@@ -53,12 +53,11 @@ Activity description
             
 
             <div class="govuk-form-group{% if data['errortypeone'] == "true" %} govuk-form-group--error{% endif %}">
-                <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
+                <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}<span class="govuk-!-display-block">Site {{ data['site'] }}</span></span>
                 
                 <h1 class="govuk-label-wrapper">
                     <label class="govuk-label govuk-label--l" for="site-{{ data['site'] }}-activity-description">
                         Activity description
-                        <span class="govuk-caption-l">Site {{ data['site'] }}</span>
                     </label>
                 </h1>
                 {% if data['errortypeone'] == "true" %}

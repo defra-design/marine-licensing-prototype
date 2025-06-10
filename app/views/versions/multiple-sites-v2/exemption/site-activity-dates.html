@@ -61,13 +61,12 @@ End date
   </div>
 {% endif %}
         <!--  END OF 'error summary' -->
-        <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
+        <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}<span class="govuk-!-display-block">Site {{ data['site'] }}</span></span>
         
         <div class="govuk-form-group">
             <h1 class="govuk-label-wrapper">
                 <label class="govuk-label govuk-label--l">
                     Activity dates
-                    <span class="govuk-caption-l">Site {{ data['site'] }}</span>
                 </label>
             </h1>
             <p>Enter the activity dates for this site. Allow time for potential delays, like consents (for example, a river works licence) or bad weather. If you miss the dates, you'll need to restart the process.</p>

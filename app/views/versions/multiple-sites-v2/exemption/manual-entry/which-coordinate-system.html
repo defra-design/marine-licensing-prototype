@@ -62,10 +62,9 @@ Which coordinate system do you want to use?
         <form action="which-coordinate-system-router{% if currentSite > 1 %}?site={{ currentSite }}{% endif %}" method="post" novalidate>
         
         <div class="govuk-form-group {% if data['errorthispage'] == 'true' %}govuk-form-group--error{% endif %}">
-            <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
+            <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}<span class="govuk-!-display-block">Site {{ displaySiteNumber }}</span></span>
             <h1 class="govuk-heading-l">
                 {{ pageHeadingTextHTML }}
-                <span class="govuk-caption-l">Site {{ displaySiteNumber }}</span>
             </h1>
 
             <details class="govuk-details">
