@@ -2109,11 +2109,8 @@ router.get('/' + version + section + 'cancel-site-details', function (req, res) 
             res.redirect('site-details-added');
         }
     } else {
-        // If not saved, clear all site details data
-        clearAllSiteDetails(req.session);
-        
-        // Redirect to task list
-        res.redirect('task-list');
+        // If not saved, show warning page before clearing data
+        res.redirect('cancel');
     }
 });
 
@@ -2149,11 +2146,8 @@ router.get('/' + version + section + 'cancel-to-review', function (req, res) {
             }
         }
     } else {
-        // If not saved, clear all site details data
-        clearAllSiteDetails(req.session);
-        
-        // Redirect to task list
-        res.redirect('task-list');
+        // If not saved, show warning page before clearing data
+        res.redirect('cancel');
     }
 });
 
@@ -2167,10 +2161,21 @@ router.get('/' + version + section + 'cancel-from-review-site-details', function
         // If details were previously saved, go to site-details-added
         res.redirect('site-details-added');
     } else {
-        // If nothing was saved yet, clear data and return to task list
-        clearAllSiteDetails(req.session);
-        res.redirect('task-list');
+        // If nothing was saved yet, show warning page before clearing data
+        res.redirect('cancel');
     }
+});
+
+// GET route for cancel warning page
+router.get('/' + version + section + 'cancel', function (req, res) {
+    res.render(version + section + 'cancel');
+});
+
+// POST route for cancel confirmation
+router.post('/' + version + section + 'cancel-confirmed', function (req, res) {
+    // Clear all site details data and return to task list
+    clearAllSiteDetails(req.session);
+    res.redirect('task-list');
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////
