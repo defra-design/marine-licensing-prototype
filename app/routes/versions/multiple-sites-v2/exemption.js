@@ -865,6 +865,7 @@ router.post('/' + version + section + 'delete-site-router', function (req, res) 
     
     // Find the site by global number
     const siteToDelete = findSiteByGlobalNumber(req.session, globalSiteNumber);
+    let batchWillBeEmpty = false;
     
     if (siteToDelete) {
         // Remove from the batch
@@ -873,6 +874,8 @@ router.post('/' + version + section + 'delete-site-router', function (req, res) 
             if (batch) {
                 const batchSiteIndex = batch.sites.findIndex(s => s.globalNumber === globalSiteNumber);
                 if (batchSiteIndex !== -1) {
+                    // Check if this is the last site in the batch before removing it
+                    batchWillBeEmpty = (batch.sites.length === 1);
                     batch.sites.splice(batchSiteIndex, 1);
                 }
             }
@@ -882,8 +885,11 @@ router.post('/' + version + section + 'delete-site-router', function (req, res) 
         req.session.data['sites'] = req.session.data['siteBatches'].flatMap(batch => batch.sites);
     }
     
-    // Redirect based on the returnTo value
-    if (returnTo === 'review-site-details') {
+    // Redirect logic: if this was the last site in the batch and we're coming from review-site-details,
+    // redirect to site-details-added instead of review-site-details
+    if (returnTo === 'review-site-details' && batchWillBeEmpty) {
+        res.redirect('site-details-added');
+    } else if (returnTo === 'review-site-details') {
         res.redirect('review-site-details#site-' + globalSiteNumber + '-details');
     } else if (returnTo === 'site-details-added') {
         res.redirect('site-details-added');
