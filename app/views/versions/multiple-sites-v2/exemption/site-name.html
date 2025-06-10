@@ -54,11 +54,10 @@ Site name
             {% endif %}
             
             <div class="govuk-form-group{% if data['errortypeone'] == "true" %} govuk-form-group--error{% endif %}">
-                <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
+                <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}<span class="govuk-!-display-block">Site {{ siteIndex }}</span></span>
                 <h1 class="govuk-label-wrapper">
                     <label class="govuk-label govuk-label--l" for="site-name-text-input">
                         Site name
-                        <span class="govuk-caption-l">Site {{ siteIndex }}</span>
                     </label>
                 </h1>
                 {% if data['errortypeone'] == "true" %}
