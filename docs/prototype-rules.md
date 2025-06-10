@@ -70,20 +70,25 @@ This approach ensures the page remains accessible while allowing the heading to 
 
 ### Caption Placement Rules
 
-**Project-level captions** (like project name): Place above the h1 element
+**Project-level captions with site numbers**: Combine project name and site number in a single caption above the h1 element
 ```nunjucks
-<span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
+<span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}<span class="govuk-!-display-block">Site {{ displaySiteNumber }}</span></span>
 <h1 class="govuk-heading-l">Page heading</h1>
 ```
 
-**Site-specific captions** (like "Site 1", "Site 2"): Place inside the label element after the main heading text
+**For form inputs with labels**:
 ```nunjucks
+<span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}<span class="govuk-!-display-block">Site {{ displaySiteNumber }}</span></span>
 <h1 class="govuk-label-wrapper">
   <label class="govuk-label govuk-label--l" for="input-id">
     {{ pageHeadingTextHTML }}
-    <span class="govuk-caption-l">Site 1</span>
   </label>
 </h1>
 ```
 
-**Never place site-specific captions above the h1** - this creates incorrect visual hierarchy and accessibility issues. 
+**For govukRadios with HTML legends**:
+```nunjucks
+html: '<span class="govuk-caption-l">' + data['exemption-project-name-text-input'] + '<span class="govuk-!-display-block">Site ' + displaySiteNumber + '</span></span>' + pageHeadingTextHTML
+```
+
+This approach improves accessibility and scannability by keeping related information together in the caption area while maintaining clear visual hierarchy. 
