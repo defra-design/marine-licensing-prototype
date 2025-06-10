@@ -463,11 +463,15 @@ Review site details
             </div>
         {% endif %}
 
-        <!-- Add the next site section - only show for multiple sites -->
+        <!-- Add another site section - only show for multiple sites -->
         {% if isMultipleSitesJourney %}
+        <p class="govuk-body">
+            Select 'Add another site' and we'll reuse any answers you've told us are the same. You'll only need to enter what's different.
+        </p>
+        
         <div class="govuk-!-margin-bottom-4">
             {{ govukButton({
-                text: "Add the next site",
+                text: "Add another site",
                 classes: "govuk-button--secondary",
                 attributes: {
                     onclick: "window.location.href='add-next-site-router'"
