@@ -855,6 +855,12 @@
       "nextQuestionRoute": "/exemption/construction"
     },
     {
+      "id": "WO_CON_EXEMPTION_JOURNEY_ARTICLE99",
+      "heading": "Check to see if an exemption applies or notify the MMO about an exempt activity",
+      "text": "Based on the information provided the selected activity is a licensable activity and as such may require a marine licence.<p><p>You are advised to select an appropriate option and continue your check.",
+      "nextQuestionRoute": "/exemption/construction/article99"
+    },
+    {
       "id": "WO_CON_SELF_SERVICE_JOURNEY",
       "heading": "Check to see if the activity is suitable for self-service marine licensing",
       "text": "Based on the information provided the selected activity is a licensable activity and as such may require a marine licence.<p><p>You are advised to select an appropriate option and continue your check.",
@@ -4028,6 +4034,366 @@
         {
           "id": "no",
           "text": "No",
+          "outcomeRoute": "/exemption/licence-not-required-exemption-available-article-25A"
+        }
+      ]
+    },
+    {
+      "route": "/sea/article99",
+      "text": "Where will the activity take place?",
+      "section": "doINeedAMarineLicence",
+      "hint": "Find out more about <a target=\"_blank\" href=\"https://www.gov.uk/guidance/marine-licensing-definitions#mean-high-water-springs\"> mean high water springs (MHWS)</a>, the <a target=\"_blank\" href=\"https://www.gov.uk/guidance/marine-licensing-definitions#normal-tidal-limit\"> normal tidal limit (NTL) </a>, or the MMO's <a target=\"_blank\" href=\"https://www.gov.uk/guidance/marine-licensing-definitions#jurisdiction\">jurisdiction</a>.",
+      "answers": [
+        {
+          "id": "inSea",
+          "text": "In the 'Sea'",
+          "nextQuestionRoute": "/jurisdiction/article99",
+          "hint": "'Sea' includes any area which is <u>submerged</u> at MHWS and the waters of every <u>estuary, river or channel</u> where the tide flows at MHWS tide up to the NTL. Even waters in areas which are closed permanently or intermittently by a lock or other artificial means against the regular action of the tide are included, where seawater flows into or out from the area, either continuously or from time to time."
+        },
+        {
+          "id": "overSea",
+          "text": "Over the 'Sea'",
+          "nextQuestionRoute": "/jurisdiction/article99",
+          "hint": "'Over' the 'Sea' includes a location directly above or overhanging the 'Sea' such as a bridge, open piled structure or cantilever."
+        },
+        {
+          "id": "onOrUnderSea",
+          "text": "On or under the 'Seabed'",
+          "nextQuestionRoute": "/jurisdiction/article99",
+          "hint": "'Seabed' means the ground under the 'Sea' and anything resting on it such as a wreck. It includes the intertidal area of the sea or any river at such time as it is exposed temporarily at low tide."
+        },
+        {
+          "id": "other",
+          "text": "Other",
+          "outcomeRoute": "/exemption/licence-not-required/sea",
+          "hint": "In an area <u>other</u> than those defined above. For example the part of beach <u>above MHWS</u>, the upper extent of a river <u>beyond the NTL</u> and or a land locked body of water such as a lake."
+        }
+      ]
+    },
+    {
+      "route": "/jurisdiction/article99",
+      "text": "In which waters will the activity take place?",
+      "hint": "See an illustration of these 'waters' or find out more about the MMO's <a target=\"_blank\" href=\"https://www.gov.uk/guidance/marine-licensing-definitions#jurisdiction\">jurisdiction</a>.",
+      "section": "doINeedAMarineLicence",
+      "answers": [
+        {
+          "id": "englishWaters",
+          "text": "In English waters",
+          "nextQuestionRoute": "/activity-type/article99",
+          "hint": "'English waters' is the area of 'Sea' within the limits of territorial waters (12 nautical miles) adjacent to the English coastline (the 'inshore' area). This also includes any area of sea beyond the territorial limit (the 'offshore' area), that is within the exclusive economic zone (EEZ) and the UK sector of the continental shelf (up to 200 nautical miles). This excludes the waters of any devolved administration."
+        },
+        {
+          "id": "northernIrishOffshoreWaters",
+          "text": "In Northern Ireland offshore waters",
+          "nextQuestionRoute": "/activity-type",
+          "hint": "'Northern Ireland offshore waters' is the area of 'Sea', adjacent to Northern Ireland beyond the territorial limit, providing it includes the EEZ and the UK sector of the continental shelf (excluding the waters of any other administration)."
+        },
+        {
+          "id": "otherUkWaters",
+          "text": "In other UK waters",
+          "outcomeRoute": "/licence-not-required-devolved",
+          "hint": "'Other UK waters'means the waters of the devolved administrations of Wales, Scotland or Northern Ireland (excluding Northern Ireland offshore waters)."
+        },
+        {
+          "id": "elsewhere",
+          "text": "Somewhere else in the world",
+          "nextQuestionRoute": "/elsewhere-in-the-world/activity-type"
+        }
+      ]
+    },
+    {
+      "route": "/activity-type/article99",
+      "mcmsAppFormMapping": "ACTIVITY_TYPE",
+      "text": "What type of activity will be carried out?",
+      "hint": "HINT: Try to think about what you intend to do at a basic level. For example if you plan to take sediment samples for testing or analysis, the type of activity that will take place is a removal activity. If the activity involves the building of something new, or the maintenance, alteration or improvement of something that already exists, then the activity that will take place is a construction activity.<p> </br> Doing more than one thing? If your project involves multiple activities make sure you check each separately starting with the main or most significant activity.",
+      "section": "doINeedAMarineLicence",
+      "answers": [
+        {
+          "id": "CON",
+          "text": "Construction",
+          "outcomeRoute": "/construction/journey-select/article99",
+          "hint": "Including maintenance, alteration and improvement of works and the laying of cables or pipelines.<br/>Find out more about <a target=\"_blank\" href=\"https://www.gov.uk/guidance/construction-alteration-or-improvement-of-works\">construction, maintenance, alteration and improvement</a>"
+        },
+        {
+          "id": "DEPO",
+          "text": "Deposit",
+          "outcomeRoute": "/deposit/journey-select",
+          "hint": "Including the deliberate disposal, dumping, placing, tipping or unloading of any substance or object.<br/>Find out more about <a target=\"_blank\" href=\"https://www.gov.uk/guidance/deposit-of-substances-and-objects-below-mhws\">deposit activities</a>"
+        },
+        {
+          "id": "REMO",
+          "text": "Removal",
+          "outcomeRoute": "/removal/journey-select",
+          "hint": "Including dredging for the purpose of improving navigation, taking samples for scientific analysis, borrow pits, capital and maintenance dredging, and beach replenishment.<br/>Find out more about <a target=\"_blank\" href=\"https://www.gov.uk/guidance/dredging\">dredging and removal activities</a>"
+        },
+        {
+          "id": "SCUTTLE",
+          "text": "Scuttling",
+          "outcomeRoute": "/scuttling/journey-select",
+          "hint": "Deliberately sinking a vessel or floating container.<br/>Find out more about <a target=\"_blank\" href=\"https://www.gov.uk/guidance/scuttling-vessels\">scuttling</a>"
+        },
+        {
+          "id": "INCINERATION",
+          "text": "Incineration",
+          "outcomeRoute": "/incineration/journey-select",
+          "hint": "Burning substances or objects.<br/>Find out more about <a target=\"_blank\" href=\"https://www.gov.uk/guidance/incineration-of-substances-and-objects\">incineration</a>"
+        }
+      ]
+    },
+    {
+      "route": "/construction/journey-select/article99",
+      "heading": "Marine licence may be required",
+      "text": "<b>Please select the service you require.</b><p><p> Find out more about <a target=\"_blank\" href=\"https://www.gov.uk/guidance/do-i-need-a-marine-licence#exemptions\">exemptions</a>, <a target=\"_blank\" href=\"https://www.gov.uk/guidance/do-i-need-a-marine-licence#self-service\">self-service</a>, or <a target=\"_blank\" href=\"https://www.gov.uk/guidance/do-i-need-a-marine-licence#standard-marine-licence\">standard marine licensing</a>.<p><p>Note: If you select either option 1 or option 2 but it is subsequently determined in the course of the check that the activity does not meet relevant qualifying criteria you will have the opportunity to continue your journey and select a different option once the check is concluded.",
+      "section": "doINeedAMarineLicenceConstruction",
+      "outcomeTypes": [
+        "WO_CON_EXEMPTION_JOURNEY_ARTICLE99",
+        "WO_CON_SELF_SERVICE_JOURNEY",
+        "WO_STANDARD_MLA"
+      ]
+    },
+    {
+      "route": "/exemption/construction/article99",
+      "text": "What is the purpose of your construction activity?",
+      "section": "construction",
+      "mcmsAppFormMapping": "EXE_ACTIVITY_SUBTYPE_CONSTRUCTION",
+      "answers": [
+        {
+          "id": "maintenance",
+          "text": "Maintenance of existing structures and assets",
+          "hint": "'Maintenance' means the upkeep or repair of an existing structure or asset wholly within its existing 3 dimensional boundaries",
+          "nextQuestionRoute": "/exemption/construction/maintenance-alteration"
+        },
+        {
+          "id": "new",
+          "text": "Construction of something new",
+          "hint": "Includes activities undertaken primarily for maintenance purposes where an element of the works extend beyond the existing boundaries of the structure of asset being maintained.", 
+          "nextQuestionRoute": "/exemption/construction/new/article99"
+        }
+      ]
+    },
+    {
+      "route": "/exemption/construction/new/article99",
+      "text": "What does the construction activity relate to?",
+      "section": "construction",
+      "answers": [
+        {
+          "id": "mooringOrNavigation",
+          "text": "Moorings or aids to navigation",
+          "outcomeRoute": "/exemption/construction-exe-not-available-continue"
+        },
+        {
+          "id": "pontoon",
+          "text": "Pontoons",
+          "nextQuestionRoute": "/exemption/construction/new/pontoons/article99"
+        },
+        {
+          "id": "floodEmergency",
+          "text": "Flood or flood risk",
+          "outcomeRoute": "/exemption/construction-exe-not-available-continue"
+        },
+        {
+          "id": "cables",
+          "text": "Cables",
+          "outcomeRoute": "/exemption/construction-exe-not-available-continue"
+        },
+        {
+          "id": "pipelines",
+          "text": "Pipelines",
+          "outcomeRoute": "/exemption/construction-exe-not-available-continue"
+        },
+        {
+          "id": "miscellaneous",
+          "text": "Other",
+          "outcomeRoute": "/exemption/construction-exe-not-available-continue",
+          "hint": "Construction activities for purposes not set out above"
+        }
+      ]
+    },
+    {
+      "route": "/exemption/construction/new/pontoons/article99",
+      "text": "Is the purpose of the activity to provide a pontoon?",
+      "section": "construction",
+      "answers": [
+        {
+          "id": "yes",
+          "text": "Yes",
+          "nextQuestionRoute": "/exemption/construction/new/pontoons/undertaker/article99"
+        },
+        {
+          "id": "no",
+          "text": "No",
+          "outcomeRoute": "/exemption/construction-exe-not-available-continue"
+        }
+      ]
+    },
+    {
+      "route": "/exemption/construction/new/pontoons/undertaker/article99",
+      "text": "Who will carry out the activity?",
+      "section": "construction",
+      "answers": [
+        {
+          "id": "harbourAuthority",
+          "text": "A harbour authority or someone on behalf of a harbour authority",
+          "nextQuestionRoute": "/exemption/construction/new/pontoons/deck/article99"
+        },
+        {
+          "id": "someoneElse",
+          "text": "Someone else",
+          "nextQuestionRoute": "/exemption/construction/new/pontoons/consent/article99"
+        }
+      ]
+    },
+    {
+      "route": "/exemption/construction/new/pontoons/consent/article99",
+      "text": "Does the activity require consent (e.g. a licence) from a harbour authority under local legislation?",
+      "hint": "The permission or agreement of the authority does not constitute consent for these purposes.",
+      "section": "construction",
+      "answers": [
+        {
+          "id": "yes",
+          "text": "Yes",
+          "nextQuestionRoute": "/exemption/construction/new/pontoons/approval/article99"
+        },
+        {
+          "id": "no",
+          "text": "No",
+          "outcomeRoute": "/exemption/construction-exe-not-available-continue"
+        }
+      ]
+    },
+    {
+      "route": "/exemption/construction/new/pontoons/approval/article99",
+      "text": "Has consent been granted?",
+      "section": "construction",
+      "answers": [
+        {
+          "id": "yes",
+          "text": "Yes",
+          "nextQuestionRoute": "/exemption/construction/new/pontoons/deck/article99"
+        },
+        {
+          "id": "no",
+          "text": "No",
+          "outcomeRoute": "/exemption/construction-exe-not-available-continue"
+        }
+      ]
+    },
+    {
+      "route": "/exemption/construction/new/pontoons/deck/article99",
+      "text": "When complete will the deck of the pontoon be an area greater than 30m2?",
+      "hint": "NOTE: If the pontoon will be attached to one or more pontoons already in place the question refers to the total deck area of all pontoons combined.",
+      "section": "construction",
+      "answers": [
+        {
+          "id": "yes",
+          "text": "Yes",
+          "outcomeRoute": "/exemption/construction-exe-not-available-continue"
+        },
+        {
+          "id": "no",
+          "text": "No",
+          "nextQuestionRoute": "/exemption/construction/new/pontoons/quantity/article99"
+        }
+      ]
+    },
+    {
+      "route": "/exemption/construction/new/pontoons/quantity/article99",
+      "text": "In the 6 months prior to the commencement of this activity will 10 or more pontoons have been constructed or deposited at the location?",
+      "section": "construction",
+      "hint": "either by or on behalf of the harbour authority or with the consent required from and granted by the harbour authority",
+      "answers": [
+        {
+          "id": "yes",
+          "text": "Yes",
+          "nextQuestionRoute": "/exemption/removal/scientific-research/samples/obstruction/article99"
+        },
+        {
+          "id": "no",
+          "text": "No",
+          "nextQuestionRoute": "/exemption/removal/scientific-research/samples/obstruction/article99"
+        }
+      ]
+    },
+    {
+      "route": "/exemption/removal/scientific-research/samples/obstruction/article99",
+      "text": "Will the activity cause or be likely to cause an obstruction or danger to navigation?",
+      "section": "removal",
+      "hint": " Find out more about <a target=\"_blank\" href=\"https://www.gov.uk/government/publications/marine-licensing-exempted-activities/marine-licensing-exempted-activities#navigational-risk\"> navigational risk </a> and the steps you can take to ensure your proposal is not one that will cause or be likely to cause and obstruction or danger.",
+      "answers": [
+        {
+          "id": "yes",
+          "text": "Yes",
+          "outcomeRoute": "/exemption/removal-exe-not-available-continue"
+        },
+        {
+          "id": "no",
+          "text": "No",
+          "nextQuestionRoute": "/exemption/removal/scientific-research/samples/mpa/article99"
+        }
+      ]
+    },
+    {
+      "route": "/exemption/removal/scientific-research/samples/mpa/article99",
+      "text": "Will the activity take place in or within 200m of a Marine Protected Area (MPA)?",
+      "section": "removal",
+      "hint": "<p>MPA's are an important part of the marine environment. </p><p>You are responsible for making sure you understand the status of the location where the activity is proposed. </p><p> 'Marine protected areas' mean:<ul><li>Highly Protected Marine Area (HPMA) (designated and candidate)</li><li>Marine Conservation Zones (MCZs) (designated and proposed)</li><li>Special Areas of Conservation (SACs) (designated and candidate)</li><li>Special Protection Areas (SPAs) (designated and potential)</li><li>Ramsar's</li><li>SSSIs</li></ul></p><p> If you are unsure of whether the activity falls within an MPA you should select the appropriate layer in the MMO's <a target=\"_blank\" href=\"https://defra.maps.arcgis.com/apps/webappviewer/index.html?id=28f91021979447d3b43dc83e6e93094c\"> GIS tool </a> to check.",
+      "answers": [
+        {
+          "id": "yes",
+          "text": "Yes",
+          "nextQuestionRoute": "/exemption/removal/scientific-research/samples/mpa-management/article99"
+        },
+        {
+          "id": "no",
+          "text": "No",
+          "outcomeRoute": "/exemption/licence-not-required-exemption-available-article-25A"
+        }
+      ]
+    },
+    {
+      "route": "/exemption/removal/scientific-research/samples/mpa-management/article99",
+      "text": "Is the activity directly connected with or necessary to the management of the Marine Protected Area?",
+      "section": "removal",
+      "answers": [
+        {
+          "id": "yes",
+          "text": "Yes",
+          "outcomeRoute": "/exemption/licence-not-required-exemption-available-article-25A"
+        },
+        {
+          "id": "no",
+          "text": "No",
+          "nextQuestionRoute": "/exemption/removal/scientific-research/samples/lse/article99"
+        }
+      ]
+    },
+    {
+      "route": "/exemption/removal/scientific-research/samples/lse/article99",
+      "text": "Is the activity....",
+      "section": "removal",
+      "hint": "Find out more about <a target=\"_blank\" href=\"https://www.gov.uk/government/publications/marine-licensing-exempted-activities/marine-licensing-exempted-activities#marine-protected-areas\"> marine protected areas </a>.",
+      "answers": [
+        {
+          "id": "europeanSiteSamples",
+          "text": "Likely to have a significant effect on a European site?",
+          "outcomeRoute": "/exemption/removal-exe-not-available-continue",
+          "hint": "either alone or in combination with other plans and projects"
+        },
+        {
+          "id": "ramsarSiteSamples",
+          "text": "Likely to have a significant effect on a Ramsar site?",
+          "outcomeRoute": "/exemption/removal-exe-not-available-continue",
+          "hint": "either alone or in combination with other plans and projects"
+        },
+        {
+          "id": "mczSamples",
+          "text": "Capable of affecting (other than insignificantly), the protected features of a Marine Conservation Zone or Highly Protected Marine Area?",
+          "outcomeRoute": "/exemption/removal-exe-not-available-continue",
+          "hint": "including any ecological or geomorphological process on which the conservation of any protected feature of an MCZ or HPMA is (wholly or in Part) dependant"
+        },
+        {
+          "id": "otherSamples",
+          "text": "Unlikely to have any relevant effect on any sites specified above",
           "outcomeRoute": "/exemption/licence-not-required-exemption-available-article-25A"
         }
       ]
