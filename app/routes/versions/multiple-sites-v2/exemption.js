@@ -2030,7 +2030,13 @@ router.post('/' + version + section + 'site-details-added-router', function (req
     
     // Check if "I've finished adding sites" checkbox is checked
     if (req.session.data['finished-adding-sites'] && req.session.data['finished-adding-sites'].includes('yes')) {
-        if (hasSiteIncomplete) {
+        // Check if there are no sites at all
+        if (sites.length === 0) {
+            // Set error flag if no sites exist and checkbox is checked
+            req.session.data['errorthispage'] = "true";
+            res.redirect('site-details-added');
+            return;
+        } else if (hasSiteIncomplete) {
             // Set error flag if sites are incomplete and checkbox is checked
             req.session.data['errorthispage'] = "true";
             res.redirect('site-details-added');
