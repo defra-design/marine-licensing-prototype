@@ -299,6 +299,79 @@ function clearCoordinateValues(session) {
     }
 }
 
+// Function to clear only the current batch when cancelling from review page
+function clearCurrentBatchOnly(session) {
+    const currentBatchId = session.data['currentBatchId'];
+    
+    if (currentBatchId && session.data['siteBatches']) {
+        // Find and remove the current batch
+        const batchIndex = session.data['siteBatches'].findIndex(batch => batch.id === currentBatchId);
+        if (batchIndex !== -1) {
+            session.data['siteBatches'].splice(batchIndex, 1);
+            
+            // Rebuild the global sites array from remaining batches
+            session.data['sites'] = session.data['siteBatches'].flatMap(batch => batch.sites);
+        }
+    }
+    
+    // Clear current batch related data
+    delete session.data['currentBatchId'];
+    
+    // Clear session data related to the current entry method
+    // Note: We need to be careful here since getCurrentBatch won't work after we removed the batch
+    // So we'll clear both types of session data to be safe
+    clearAllManualEntryData(session);
+    clearAllFileUploadData(session);
+    clearAllLocationData(session);
+    
+    // Clear file upload activity settings
+    delete session.data['exemption-same-activity-dates-for-sites'];
+    delete session.data['previous-activity-dates-selection'];
+    delete session.data['exemption-same-activity-description-for-sites'];
+    delete session.data['previous-activity-description-selection'];
+    delete session.data['exemption-activity-details-text-area'];
+    delete session.data['exemption-start-date-date-input-day'];
+    delete session.data['exemption-start-date-date-input-month'];
+    delete session.data['exemption-start-date-date-input-year'];
+    delete session.data['exemption-end-date-date-input-day'];
+    delete session.data['exemption-end-date-date-input-month'];
+    delete session.data['exemption-end-date-date-input-year'];
+    
+    // Clear manual entry activity settings
+    delete session.data['manual-same-activity-dates'];
+    delete session.data['manual-same-activity-description'];
+    delete session.data['manual-activity-details-text-area'];
+    delete session.data['manual-start-date-date-input-day'];
+    delete session.data['manual-start-date-date-input-month'];
+    delete session.data['manual-start-date-date-input-year'];
+    delete session.data['manual-end-date-date-input-day'];
+    delete session.data['manual-end-date-date-input-month'];
+    delete session.data['manual-end-date-date-input-year'];
+    
+    // Clear coordinate method selection for new batch
+    delete session.data['exemption-how-do-you-want-to-provide-the-coordinates-radios'];
+    
+    // Clear navigation and state flags
+    delete session.data['fromReviewSiteDetails'];
+    delete session.data['current-site'];
+    delete session.data['manual-current-site'];
+    delete session.data['returnTo'];
+    
+    // Update status based on remaining batches
+    if (!session.data['siteBatches'] || session.data['siteBatches'].length === 0) {
+        // No batches remain - reset to not started
+        session.data['exempt-information-3-status'] = 'not-started';
+        delete session.data['siteDetailsSaved'];
+        delete session.data['sites'];
+        delete session.data['siteBatches'];
+        delete session.data['globalSiteCounter'];
+        delete session.data['hasUploadedFile'];
+    } else {
+        // Other batches still exist - keep status as in-progress or completed
+        // Don't change the status as other batches may be saved
+    }
+}
+
 // Function to clear all site details data when cancelling to task list
 function clearAllSiteDetails(session) {
     // Clear batch system data
@@ -2173,8 +2246,8 @@ router.get('/' + version + section + 'cancel', function (req, res) {
 
 // POST route for cancel confirmation
 router.post('/' + version + section + 'cancel-confirmed', function (req, res) {
-    // Clear all site details data and return to task list
-    clearAllSiteDetails(req.session);
+    // Only clear the current batch, not all site details
+    clearCurrentBatchOnly(req.session);
     res.redirect('task-list');
 });
 
