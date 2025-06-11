@@ -1435,9 +1435,22 @@ function createNewSite(session, batchId = null) {
         coordinates: {
             latitude: '',
             longitude: '',
-            format: 'decimal-degrees' // or 'degrees-minutes-seconds'
+            format: 'decimal-degrees', // or 'degrees-minutes-seconds'
+            width: '' // site width for circular/polygon sites
         },
         activityDetails: '',
+        activityDates: {
+            startDate: {
+                day: '',
+                month: '',
+                year: ''
+            },
+            endDate: {
+                day: '',
+                month: '',
+                year: ''
+            }
+        },
         siteArea: '',
         gearType: '',
         vesselDetails: '',
@@ -1530,9 +1543,14 @@ function migrateToUnifiedModel(session) {
                     coordinates: {
                         latitude: existingSite.latitude || '',
                         longitude: existingSite.longitude || '',
-                        format: 'decimal-degrees'
+                        format: 'decimal-degrees',
+                        width: existingSite.width || ''
                     },
                     activityDetails: existingSite.activityDetails || '',
+                    activityDates: {
+                        startDate: existingSite.startDate || { day: '', month: '', year: '' },
+                        endDate: existingSite.endDate || { day: '', month: '', year: '' }
+                    },
                     siteArea: existingSite.siteArea || '',
                     gearType: existingSite.gearType || '',
                     vesselDetails: existingSite.vesselDetails || '',
@@ -1649,6 +1667,45 @@ function validateSiteData(site, fieldName = null) {
                     
                     if (latError) errors.latitude = latError;
                     if (lonError) errors.longitude = lonError;
+                }
+                break;
+                
+            case 'activityDates':
+                // Validate start date
+                const startDate = site.activityDates.startDate;
+                if (!startDate.day || !startDate.month || !startDate.year) {
+                    errors.startDate = 'Start date is required';
+                } else {
+                    const date = new Date(startDate.year, startDate.month - 1, startDate.day);
+                    if (isNaN(date.getTime())) {
+                        errors.startDate = 'Start date is invalid';
+                    }
+                }
+                
+                // Validate end date
+                const endDate = site.activityDates.endDate;
+                if (!endDate.day || !endDate.month || !endDate.year) {
+                    errors.endDate = 'End date is required';
+                } else {
+                    const date = new Date(endDate.year, endDate.month - 1, endDate.day);
+                    if (isNaN(date.getTime())) {
+                        errors.endDate = 'End date is invalid';
+                    }
+                }
+                break;
+                
+            case 'activityDetails':
+                if (!site.activityDetails || site.activityDetails.trim() === '') {
+                    errors.activityDetails = 'Activity details are required';
+                }
+                break;
+                
+            case 'siteWidth':
+                if (site.coordinates.width && site.coordinates.width.trim() !== '') {
+                    const width = parseFloat(site.coordinates.width);
+                    if (isNaN(width) || width <= 0) {
+                        errors.siteWidth = 'Site width must be a positive number';
+                    }
                 }
                 break;
         }

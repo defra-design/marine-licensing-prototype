@@ -601,135 +601,201 @@ router.post('/' + version + section + 'manual-entry/same-activity-dates-router',
     }
 });
 
-// Individual site activity dates - GET route
+// NEW: Unified model individual site activity dates GET route
 router.get('/' + version + section + 'manual-entry/individual-site-activity-dates', function (req, res) {
-    req.session.data['startdateerror'] = "false";
-    req.session.data['enddateerror'] = "false";
-    req.session.data['errors'] = [];
-    
-    // Get site number from query parameter
-    const siteNumber = req.query.site || 1;
-    req.session.data['current-site'] = siteNumber;
-    
-    // Check if we're returning from review-site-details
-    if (req.query.returnTo === 'review-site-details') {
-        req.session.data['fromReviewSiteDetails'] = 'true';
-    }
-    
-    res.render(version + section + 'manual-entry/individual-site-activity-dates');
-});
-
-// Individual site activity dates - POST route
-router.post('/' + version + section + 'manual-entry/individual-site-activity-dates-router', function (req, res) {
-    req.session.data['startdateerror'] = "false";
-    req.session.data['enddateerror'] = "false";
-
-    const siteNumber = req.query.site || req.session.data['current-site'] || 1;
-    const sitePrefix = siteNumber == 1 ? 'manual-' : 'manual-site-' + siteNumber + '-';
-    
-    const startDay = req.session.data[sitePrefix + 'start-date-date-input-day'];
-    const startMonth = req.session.data[sitePrefix + 'start-date-date-input-month'];
-    const startYear = req.session.data[sitePrefix + 'start-date-date-input-year'];
-
-    const endDay = req.session.data[sitePrefix + 'end-date-date-input-day'];
-    const endMonth = req.session.data[sitePrefix + 'end-date-date-input-month'];
-    const endYear = req.session.data[sitePrefix + 'end-date-date-input-year'];
-    
+    const siteParam = req.query.site;
     const returnTo = req.query.returnTo;
-
-    if (!startDay || !startMonth || !startYear) {
-        req.session.data['startdateerror'] = "true";
+    
+    if (!siteParam) {
+        console.log('No site parameter provided for individual activity dates');
+        return res.redirect('/' + version + section + 'manual-entry/site-name');
     }
-
-    if (!endDay || !endMonth || !endYear) {
-        req.session.data['enddateerror'] = "true";
-    }
-
-    if (req.session.data['startdateerror'] === "true" || req.session.data['enddateerror'] === "true") {
-        const redirectUrl = 'individual-site-activity-dates' + (siteNumber > 1 ? '?site=' + siteNumber : '') + (returnTo ? (siteNumber > 1 ? '&' : '?') + 'returnTo=' + returnTo : '');
-        return res.redirect(redirectUrl);
-    }
-
-    // Check if we're coming from review-site-details page
-    if (req.session.data['fromReviewSiteDetails'] === 'true') {
-        delete req.session.data['fromReviewSiteDetails']; // Clear the flag
-        return res.redirect('review-site-details');
-    }
-
-    // Check if this is a single site batch (from "No" answer to multiple sites question)
-    const currentBatch = getCurrentBatch(req.session);
-    const isSingleSiteBatch = currentBatch && currentBatch.entryMethod === 'manual-entry' && 
-                             req.session.data['manual-multiple-sites'] === 'No';
-
-    if (isSingleSiteBatch) {
-        // For single site batches, go directly to individual activity description
-        res.redirect('individual-site-activity-description?site=' + siteNumber);
-        return;
-    }
-
-    // For Site 1 in multiple site batches, continue with normal flow
-    if (siteNumber == 1) {
-        res.redirect('same-activity-description');
+    
+    let site;
+    if (returnTo === 'review-site-details') {
+        // Editing existing site
+        site = findSiteByGlobalNumberUnified(req.session, siteParam);
     } else {
-        // For subsequent sites, check description setting
-        if (req.session.data['manual-same-activity-description'] === "Yes") {
-            // Description is same, go to coordinate entry
-            res.redirect('how-do-you-want-to-enter-the-coordinates?site=' + siteNumber);
-        } else {
-            // Description is different, ask for site-specific description
-            res.redirect('individual-site-activity-description?site=' + siteNumber);
-        }
-    }
-});
-
-// Activity dates - GET route
-router.get('/' + version + section + 'manual-entry/activity-dates', function (req, res) {
-    req.session.data['startdateerror'] = "false";
-    req.session.data['enddateerror'] = "false";
-    req.session.data['errors'] = [];
-    
-    // Check if we're returning from review-site-details
-    if (req.query.returnTo === 'review-site-details') {
-        req.session.data['fromReviewSiteDetails'] = 'true';
+        // Continue with current site
+        const siteId = req.session.data['currentManualEntrySiteId'];
+        site = findSiteById(req.session, siteId);
     }
     
-    res.render(version + section + 'manual-entry/activity-dates');
+    if (!site) {
+        console.log('Site not found for individual activity dates');
+        return res.redirect('/' + version + section + 'manual-entry/site-name');
+    }
+    
+    // Update current site ID for form processing
+    req.session.data['currentManualEntrySiteId'] = site.id;
+    
+    res.render(path.join(version, section, 'manual-entry', 'individual-site-activity-dates'), {
+        data: req.session.data,
+        site: site,
+        isEditing: returnTo === 'review-site-details',
+        errors: site.validationErrors || {}
+    });
 });
 
-// Activity dates - POST route
-router.post('/' + version + section + 'manual-entry/activity-dates-router', function (req, res) {
-    req.session.data['startdateerror'] = "false";
-    req.session.data['enddateerror'] = "false";
-
-    const startDay = req.session.data['manual-start-date-date-input-day'];
-    const startMonth = req.session.data['manual-start-date-date-input-month'];
-    const startYear = req.session.data['manual-start-date-date-input-year'];
-
-    const endDay = req.session.data['manual-end-date-date-input-day'];
-    const endMonth = req.session.data['manual-end-date-date-input-month'];
-    const endYear = req.session.data['manual-end-date-date-input-year'];
-    
+// NEW: Unified model individual site activity dates POST route
+router.post('/' + version + section + 'manual-entry/individual-site-activity-dates-router', function (req, res) {
+    const siteId = req.session.data['currentManualEntrySiteId'];
     const returnTo = req.query.returnTo;
-
-    if (!startDay || !startMonth || !startYear) {
-        req.session.data['startdateerror'] = "true";
+    
+    const startDay = req.body['start-date-day'];
+    const startMonth = req.body['start-date-month'];
+    const startYear = req.body['start-date-year'];
+    
+    const endDay = req.body['end-date-day'];
+    const endMonth = req.body['end-date-month'];
+    const endYear = req.body['end-date-year'];
+    
+    console.log(`Processing individual activity dates for site: ${siteId}`);
+    
+    if (!siteId) {
+        console.log('No current site ID found for individual activity dates');
+        return res.redirect('/' + version + section + 'manual-entry/site-name');
     }
-
-    if (!endDay || !endMonth || !endYear) {
-        req.session.data['enddateerror'] = "true";
+    
+    const site = findSiteById(req.session, siteId);
+    if (!site) {
+        console.log('Site not found for individual activity dates update');
+        return res.redirect('/' + version + section + 'manual-entry/site-name');
     }
-
-    if (req.session.data['startdateerror'] === "true" || req.session.data['enddateerror'] === "true") {
-        return res.redirect('activity-dates' + (returnTo ? '?returnTo=' + returnTo : ''));
+    
+    // Update activity dates in unified model
+    updateSiteField(req.session, siteId, 'activityDates.startDate.day', startDay || '');
+    updateSiteField(req.session, siteId, 'activityDates.startDate.month', startMonth || '');
+    updateSiteField(req.session, siteId, 'activityDates.startDate.year', startYear || '');
+    updateSiteField(req.session, siteId, 'activityDates.endDate.day', endDay || '');
+    updateSiteField(req.session, siteId, 'activityDates.endDate.month', endMonth || '');
+    updateSiteField(req.session, siteId, 'activityDates.endDate.year', endYear || '');
+    
+    // Validate activity dates
+    const isValid = validateSiteData(site, 'activityDates');
+    
+    if (!isValid) {
+        console.log('Individual activity dates validation failed:', site.validationErrors);
+        return res.render(path.join(version, section, 'manual-entry', 'individual-site-activity-dates'), {
+            data: req.session.data,
+            site: site,
+            isEditing: returnTo === 'review-site-details',
+            errors: site.validationErrors
+        });
     }
-
-    // Check if we're coming from review-site-details page
-    if (req.session.data['fromReviewSiteDetails'] === 'true') {
-        delete req.session.data['fromReviewSiteDetails']; // Clear the flag
-        return res.redirect('review-site-details');
+    
+    // Clear date-related errors
+    ['startDate', 'endDate'].forEach(field => {
+        if (site.validationErrors[field]) {
+            delete site.validationErrors[field];
+        }
+    });
+    
+    // Determine next step
+    if (returnTo === 'review-site-details') {
+        res.redirect('/' + version + section + 'review-site-details?site=' + site.globalNumber);
+    } else {
+        // Check if this is a single site batch or continue with flow
+        res.redirect('/' + version + section + 'manual-entry/individual-site-activity-description?site=' + site.globalNumber);
     }
+});
 
-    res.redirect('same-activity-description');
+// NEW: Unified model activity dates GET route
+router.get('/' + version + section + 'manual-entry/activity-dates', function (req, res) {
+    const siteParam = req.query.site;
+    const returnTo = req.query.returnTo;
+    
+    if (!siteParam) {
+        console.log('No site parameter provided for activity dates');
+        return res.redirect('/' + version + section + 'manual-entry/site-name');
+    }
+    
+    let site;
+    if (returnTo === 'review-site-details') {
+        // Editing existing site
+        site = findSiteByGlobalNumberUnified(req.session, siteParam);
+    } else {
+        // Continue with current site
+        const siteId = req.session.data['currentManualEntrySiteId'];
+        site = findSiteById(req.session, siteId);
+    }
+    
+    if (!site) {
+        console.log('Site not found for activity dates');
+        return res.redirect('/' + version + section + 'manual-entry/site-name');
+    }
+    
+    // Update current site ID for form processing
+    req.session.data['currentManualEntrySiteId'] = site.id;
+    
+    res.render(path.join(version, section, 'manual-entry', 'activity-dates'), {
+        data: req.session.data,
+        site: site,
+        isEditing: returnTo === 'review-site-details',
+        errors: site.validationErrors || {}
+    });
+});
+
+// NEW: Unified model activity dates POST route
+router.post('/' + version + section + 'manual-entry/activity-dates-router', function (req, res) {
+    const siteId = req.session.data['currentManualEntrySiteId'];
+    const returnTo = req.query.returnTo;
+    
+    const startDay = req.body['start-date-day'];
+    const startMonth = req.body['start-date-month'];
+    const startYear = req.body['start-date-year'];
+    
+    const endDay = req.body['end-date-day'];
+    const endMonth = req.body['end-date-month'];
+    const endYear = req.body['end-date-year'];
+    
+    console.log(`Processing activity dates for site: ${siteId}`);
+    
+    if (!siteId) {
+        console.log('No current site ID found for activity dates');
+        return res.redirect('/' + version + section + 'manual-entry/site-name');
+    }
+    
+    const site = findSiteById(req.session, siteId);
+    if (!site) {
+        console.log('Site not found for activity dates update');
+        return res.redirect('/' + version + section + 'manual-entry/site-name');
+    }
+    
+    // Update activity dates in unified model
+    updateSiteField(req.session, siteId, 'activityDates.startDate.day', startDay || '');
+    updateSiteField(req.session, siteId, 'activityDates.startDate.month', startMonth || '');
+    updateSiteField(req.session, siteId, 'activityDates.startDate.year', startYear || '');
+    updateSiteField(req.session, siteId, 'activityDates.endDate.day', endDay || '');
+    updateSiteField(req.session, siteId, 'activityDates.endDate.month', endMonth || '');
+    updateSiteField(req.session, siteId, 'activityDates.endDate.year', endYear || '');
+    
+    // Validate activity dates
+    const isValid = validateSiteData(site, 'activityDates');
+    
+    if (!isValid) {
+        console.log('Activity dates validation failed:', site.validationErrors);
+        return res.render(path.join(version, section, 'manual-entry', 'activity-dates'), {
+            data: req.session.data,
+            site: site,
+            isEditing: returnTo === 'review-site-details',
+            errors: site.validationErrors
+        });
+    }
+    
+    // Clear date-related errors
+    ['startDate', 'endDate'].forEach(field => {
+        if (site.validationErrors[field]) {
+            delete site.validationErrors[field];
+        }
+    });
+    
+    // Determine next step
+    if (returnTo === 'review-site-details') {
+        res.redirect('/' + version + section + 'review-site-details?site=' + site.globalNumber);
+    } else {
+        res.redirect('/' + version + section + 'manual-entry/activity-description?site=' + site.globalNumber);
+    }
 });
 
 // Is the activity description the same for every site? - GET route
@@ -828,93 +894,176 @@ router.post('/' + version + section + 'manual-entry/same-activity-description-ro
     }
 });
 
-// Individual site activity description - GET route
+// NEW: Unified model individual site activity description GET route
 router.get('/' + version + section + 'manual-entry/individual-site-activity-description', function (req, res) {
-    req.session.data['errorthispage'] = "false";
-    req.session.data['errortypeone'] = "false";
-    req.session.data['errors'] = [];
+    const siteParam = req.query.site;
+    const returnTo = req.query.returnTo;
     
-    // Get site number from query parameter
-    const siteNumber = req.query.site || 1;
-    req.session.data['current-site'] = siteNumber;
-    
-    // Check if we're returning from review-site-details
-    if (req.query.returnTo === 'review-site-details') {
-        req.session.data['fromReviewSiteDetails'] = 'true';
+    if (!siteParam) {
+        console.log('No site parameter provided for individual activity description');
+        return res.redirect('/' + version + section + 'manual-entry/site-name');
     }
     
-    res.render(version + section + 'manual-entry/individual-site-activity-description', {
-        currentSiteFromRoute: siteNumber
+    let site;
+    if (returnTo === 'review-site-details') {
+        // Editing existing site
+        site = findSiteByGlobalNumberUnified(req.session, siteParam);
+    } else {
+        // Continue with current site
+        const siteId = req.session.data['currentManualEntrySiteId'];
+        site = findSiteById(req.session, siteId);
+    }
+    
+    if (!site) {
+        console.log('Site not found for individual activity description');
+        return res.redirect('/' + version + section + 'manual-entry/site-name');
+    }
+    
+    // Update current site ID for form processing
+    req.session.data['currentManualEntrySiteId'] = site.id;
+    
+    res.render(path.join(version, section, 'manual-entry', 'individual-site-activity-description'), {
+        data: req.session.data,
+        site: site,
+        isEditing: returnTo === 'review-site-details',
+        errors: site.validationErrors || {},
+        currentSiteFromRoute: site.globalNumber
     });
 });
 
-// Individual site activity description - POST route
+// NEW: Unified model individual site activity description POST route
 router.post('/' + version + section + 'manual-entry/individual-site-activity-description-router', function (req, res) {
-    req.session.data['errorthispage'] = "false";
-    req.session.data['errortypeone'] = "false";
-
-    const siteNumber = req.query.site || req.session.data['current-site'] || 1;
-    const siteDataKey = siteNumber == 1 ? 'manual-activity-details-text-area' : 'manual-site-' + siteNumber + '-activity-details-text-area';
-    const description = req.session.data[siteDataKey];
+    const siteId = req.session.data['currentManualEntrySiteId'];
     const returnTo = req.query.returnTo;
-
-    if (!description || description.trim() === "") {
-        req.session.data['errorthispage'] = "true";
-        req.session.data['errortypeone'] = "true";
-        const redirectUrl = 'individual-site-activity-description' + (siteNumber > 1 ? '?site=' + siteNumber : '') + (returnTo ? (siteNumber > 1 ? '&' : '?') + 'returnTo=' + returnTo : '');
-        res.redirect(redirectUrl);
-        return;
+    
+    const description = req.body['activity-details'];
+    
+    console.log(`Processing individual activity description for site: ${siteId}`);
+    
+    if (!siteId) {
+        console.log('No current site ID found for individual activity description');
+        return res.redirect('/' + version + section + 'manual-entry/site-name');
     }
-
-    // Check if we're coming from review-site-details page
-    if (req.session.data['fromReviewSiteDetails'] === 'true') {
-        delete req.session.data['fromReviewSiteDetails']; // Clear the flag
-        return res.redirect('review-site-details');
+    
+    const site = findSiteById(req.session, siteId);
+    if (!site) {
+        console.log('Site not found for individual activity description update');
+        return res.redirect('/' + version + section + 'manual-entry/site-name');
     }
-
-    if (siteNumber == 1) {
-        res.redirect('how-do-you-want-to-enter-the-coordinates');
+    
+    // Update activity description in unified model
+    updateSiteField(req.session, siteId, 'activityDetails', description || '');
+    
+    // Validate activity description
+    const isValid = validateSiteData(site, 'activityDetails');
+    
+    if (!isValid) {
+        console.log('Individual activity description validation failed:', site.validationErrors);
+        return res.render(path.join(version, section, 'manual-entry', 'individual-site-activity-description'), {
+            data: req.session.data,
+            site: site,
+            isEditing: returnTo === 'review-site-details',
+            errors: site.validationErrors,
+            currentSiteFromRoute: site.globalNumber
+        });
+    }
+    
+    // Clear description-related errors
+    if (site.validationErrors.activityDetails) {
+        delete site.validationErrors.activityDetails;
+    }
+    
+    // Determine next step
+    if (returnTo === 'review-site-details') {
+        res.redirect('/' + version + section + 'review-site-details?site=' + site.globalNumber);
     } else {
-        res.redirect('how-do-you-want-to-enter-the-coordinates?site=' + siteNumber);
+        res.redirect('/' + version + section + 'manual-entry/how-do-you-want-to-enter-the-coordinates?site=' + site.globalNumber);
     }
 });
 
-// Activity description - GET route
+// NEW: Unified model activity description GET route
 router.get('/' + version + section + 'manual-entry/activity-description', function (req, res) {
-    req.session.data['errorthispage'] = "false";
-    req.session.data['errortypeone'] = "false";
-    req.session.data['errors'] = [];
+    const siteParam = req.query.site;
+    const returnTo = req.query.returnTo;
     
-    // Check if we're returning from review-site-details
-    if (req.query.returnTo === 'review-site-details') {
-        req.session.data['fromReviewSiteDetails'] = 'true';
+    if (!siteParam) {
+        console.log('No site parameter provided for activity description');
+        return res.redirect('/' + version + section + 'manual-entry/site-name');
     }
     
-    res.render(version + section + 'manual-entry/activity-description');
+    let site;
+    if (returnTo === 'review-site-details') {
+        // Editing existing site
+        site = findSiteByGlobalNumberUnified(req.session, siteParam);
+    } else {
+        // Continue with current site
+        const siteId = req.session.data['currentManualEntrySiteId'];
+        site = findSiteById(req.session, siteId);
+    }
+    
+    if (!site) {
+        console.log('Site not found for activity description');
+        return res.redirect('/' + version + section + 'manual-entry/site-name');
+    }
+    
+    // Update current site ID for form processing
+    req.session.data['currentManualEntrySiteId'] = site.id;
+    
+    res.render(path.join(version, section, 'manual-entry', 'activity-description'), {
+        data: req.session.data,
+        site: site,
+        isEditing: returnTo === 'review-site-details',
+        errors: site.validationErrors || {}
+    });
 });
 
-// Activity description - POST route
+// NEW: Unified model activity description POST route
 router.post('/' + version + section + 'manual-entry/activity-description-router', function (req, res) {
-    req.session.data['errorthispage'] = "false";
-    req.session.data['errortypeone'] = "false";
-
-    const description = req.session.data['manual-activity-details-text-area'];
+    const siteId = req.session.data['currentManualEntrySiteId'];
     const returnTo = req.query.returnTo;
-
-    if (!description || description.trim() === "") {
-        req.session.data['errorthispage'] = "true";
-        req.session.data['errortypeone'] = "true";
-        res.redirect('activity-description' + (returnTo ? '?returnTo=' + returnTo : ''));
-        return;
+    
+    const description = req.body['activity-details'];
+    
+    console.log(`Processing activity description for site: ${siteId}`);
+    
+    if (!siteId) {
+        console.log('No current site ID found for activity description');
+        return res.redirect('/' + version + section + 'manual-entry/site-name');
     }
-
-    // Check if we're coming from review-site-details page
-    if (req.session.data['fromReviewSiteDetails'] === 'true') {
-        delete req.session.data['fromReviewSiteDetails']; // Clear the flag
-        return res.redirect('review-site-details');
+    
+    const site = findSiteById(req.session, siteId);
+    if (!site) {
+        console.log('Site not found for activity description update');
+        return res.redirect('/' + version + section + 'manual-entry/site-name');
     }
-
-    res.redirect('how-do-you-want-to-enter-the-coordinates');
+    
+    // Update activity description in unified model
+    updateSiteField(req.session, siteId, 'activityDetails', description || '');
+    
+    // Validate activity description
+    const isValid = validateSiteData(site, 'activityDetails');
+    
+    if (!isValid) {
+        console.log('Activity description validation failed:', site.validationErrors);
+        return res.render(path.join(version, section, 'manual-entry', 'activity-description'), {
+            data: req.session.data,
+            site: site,
+            isEditing: returnTo === 'review-site-details',
+            errors: site.validationErrors
+        });
+    }
+    
+    // Clear description-related errors
+    if (site.validationErrors.activityDetails) {
+        delete site.validationErrors.activityDetails;
+    }
+    
+    // Determine next step
+    if (returnTo === 'review-site-details') {
+        res.redirect('/' + version + section + 'review-site-details?site=' + site.globalNumber);
+    } else {
+        res.redirect('/' + version + section + 'manual-entry/how-do-you-want-to-enter-the-coordinates?site=' + site.globalNumber);
+    }
 });
 
 // How do you want to enter the coordinates? - GET route
@@ -1325,102 +1474,91 @@ router.post('/' + version + section + 'manual-entry/enter-coordinates-router', f
     }
 });
 
-// Site width - GET route
+// NEW: Unified model site width GET route
 router.get('/' + version + section + 'manual-entry/site-width', function (req, res) {
-    req.session.data['errorthispage'] = "false";
-    req.session.data['errortypeone'] = "false";
-    req.session.data['errors'] = [];
-    
-    // Get site number from query parameter
-    const siteNumber = req.query.site || 1;
+    const siteParam = req.query.site;
     const returnTo = req.query.returnTo;
     
-    // Store returnTo in session for use in POST route
-    if (returnTo) {
-        req.session.data['returnTo'] = returnTo;
+    if (!siteParam) {
+        console.log('No site parameter provided for site width');
+        return res.redirect('/' + version + section + 'manual-entry/site-name');
     }
     
-    // Determine if we're editing an existing site or creating a new one
-    const isEditingExistingSite = returnTo === 'review-site-details';
-    
-    let batchRelativePosition;
-    
-    if (isEditingExistingSite) {
-        // We're editing an existing site - siteNumber is a global number
-        batchRelativePosition = getBatchRelativePosition(req.session, parseInt(siteNumber));
-        
-        // DON'T populate session data when editing - it overwrites fresh changes
-        // The session already has the data from the editing flow
-    } else {
-        // We're creating a new site - siteNumber is a batch-relative number
-        batchRelativePosition = parseInt(siteNumber);
-    }
-    
-    req.session.data['current-site'] = batchRelativePosition;
-    
-    // Check if we're returning from review-site-details
+    let site;
     if (returnTo === 'review-site-details') {
-        req.session.data['fromReviewSiteDetails'] = 'true';
+        // Editing existing site
+        site = findSiteByGlobalNumberUnified(req.session, siteParam);
+    } else {
+        // Continue with current site
+        const siteId = req.session.data['currentManualEntrySiteId'];
+        site = findSiteById(req.session, siteId);
     }
     
-    res.render(version + section + 'manual-entry/site-width');
+    if (!site) {
+        console.log('Site not found for site width');
+        return res.redirect('/' + version + section + 'manual-entry/site-name');
+    }
+    
+    // Update current site ID for form processing
+    req.session.data['currentManualEntrySiteId'] = site.id;
+    
+    res.render(path.join(version, section, 'manual-entry', 'site-width'), {
+        data: req.session.data,
+        site: site,
+        isEditing: returnTo === 'review-site-details',
+        errors: site.validationErrors || {}
+    });
 });
 
-// Site width - POST route
+// NEW: Unified model site width POST route
 router.post('/' + version + section + 'manual-entry/site-width-router', function (req, res) {
-    req.session.data['errorthispage'] = "false";
-    req.session.data['errortypeone'] = "false";
-
-    const siteNumber = parseInt(req.query.site || req.session.data['current-site'] || 1);
-    const returnTo = req.query.returnTo || req.session.data['returnTo'];
-
-    // Determine if we're editing an existing site or creating a new one
-    const isEditingExistingSite = returnTo === 'review-site-details' && findSiteByGlobalNumber(req.session, siteNumber) !== undefined;
+    const siteId = req.session.data['currentManualEntrySiteId'];
+    const returnTo = req.query.returnTo;
     
-    let batchRelativePosition;
-    let sitePrefix;
+    const width = req.body['site-width'];
     
-    if (isEditingExistingSite) {
-        // We're editing an existing site - use global site number for session keys
-        batchRelativePosition = getBatchRelativePosition(req.session, siteNumber);
-        sitePrefix = siteNumber === 1 ? 'manual-' : `manual-site-${siteNumber}-`;
-    } else {
-        // We're creating a new site - siteNumber is a batch-relative number
-        batchRelativePosition = siteNumber;
-        sitePrefix = batchRelativePosition === 1 ? 'manual-' : `manual-site-${batchRelativePosition}-`;
+    console.log(`Processing site width for site: ${siteId}`);
+    
+    if (!siteId) {
+        console.log('No current site ID found for site width');
+        return res.redirect('/' + version + section + 'manual-entry/site-name');
     }
-
-    const width = req.session.data[sitePrefix + 'site-width'];
-
-    // Only check if data is entered (for prototype purposes)
-    if (!width || width.trim() === "") {
-        req.session.data['errorthispage'] = "true";
-        req.session.data['errortypeone'] = "true";
-        const redirectUrl = 'site-width' + (siteNumber > 1 ? '?site=' + siteNumber : '') + (returnTo ? (siteNumber > 1 ? '&' : '?') + 'returnTo=' + returnTo : '');
-        res.redirect(redirectUrl);
-        return;
-    }
-
-    // Clear error
-    req.session.data['errorthispage'] = "false";
-    req.session.data['errortypeone'] = "false";
     
-    // If we're editing an existing site, update the unified format and return to review
-    if (isEditingExistingSite) {
-        // Update the existing site in the unified format with the new data
-        addCompletedSiteToCurrentBatch(req.session, batchRelativePosition);
+    const site = findSiteById(req.session, siteId);
+    if (!site) {
+        console.log('Site not found for site width update');
+        return res.redirect('/' + version + section + 'manual-entry/site-name');
+    }
+    
+    // Update site width in unified model
+    updateSiteField(req.session, siteId, 'coordinates.width', width || '');
+    
+    // Validate site width (only if provided)
+    if (width && width.trim() !== '') {
+        const isValid = validateSiteData(site, 'siteWidth');
         
-        // Clear return flags and return directly to review
-        delete req.session.data['fromReviewSiteDetails'];
-        delete req.session.data['returnTo'];
-        return res.redirect('review-site-details#site-' + siteNumber + '-details');
+        if (!isValid) {
+            console.log('Site width validation failed:', site.validationErrors);
+            return res.render(path.join(version, section, 'manual-entry', 'site-width'), {
+                data: req.session.data,
+                site: site,
+                isEditing: returnTo === 'review-site-details',
+                errors: site.validationErrors
+            });
+        }
     }
-
-    // If we're creating a new site, we need to convert it to unified format now
-    // Convert manual sites to unified format to pick up the newly completed site
-    addCompletedSiteToCurrentBatch(req.session, batchRelativePosition);
-
-    res.redirect('review-site-details');
+    
+    // Clear width-related errors
+    if (site.validationErrors.siteWidth) {
+        delete site.validationErrors.siteWidth;
+    }
+    
+    // Determine next step
+    if (returnTo === 'review-site-details') {
+        res.redirect('/' + version + section + 'review-site-details?site=' + site.globalNumber);
+    } else {
+        res.redirect('/' + version + section + 'manual-entry/review-site-details?site=' + site.globalNumber);
+    }
 });
 
 // Review site details - GET route
