@@ -19,6 +19,7 @@ This document provides step-by-step instructions for implementing the architectu
 - [x] Task 7: Remove Legacy Session-Based Code
 - [x] Task 7.5: Migrate Remaining Legacy Routes
 - [x] Task 7.6: Fix Multi-Site Data Sharing and Form Clearing
+- [ ] Task 7.7: Fix Missing Function Dependencies and Critical Errors
 - [ ] Task 8: Testing and Validation
 - [ ] Task 9: Performance Optimization and Cleanup
 
@@ -1475,6 +1476,208 @@ The multi-site data sharing system is now fully functional and integrated with t
 
 ---
 
+## Task 7.7: Fix Missing Function Dependencies and Critical Errors
+
+### Location
+`app/routes/versions/multiple-sites-v2/exemption-manual-entry.js`
+
+### Background
+**Critical error discovered during manual testing:**
+```
+Error: getCurrentBatch is not defined (line 37)
+```
+
+The Task 7.6 implementation added code that calls `getCurrentBatch(session)` but this function doesn't exist, causing the application to crash when accessing manual entry routes.
+
+### Error Context
+```javascript
+// Line 37 in exemption-manual-entry.js
+function initializeNewSiteWithInheritedData(session, newSite) {
+    const currentBatch = getCurrentBatch(session);  // ← ERROR: Function not defined
+    if (!currentBatch || !currentBatch.settings) {
+        console.log('No batch settings found for data inheritance');
+        return;
+    }
+    // ... rest of function
+}
+```
+
+### Instructions
+
+#### 1. Identify Missing Functions
+
+**Search for undefined function calls:**
+```bash
+# Find calls to functions that might not exist
+grep -n "getCurrentBatch\|findCurrentBatch\|getBatchSettings" app/routes/versions/multiple-sites-v2/exemption-manual-entry.js
+```
+
+#### 2. Fix getCurrentBatch() Function
+
+**Option A: Use existing function from exemption.js**
+Check if `getCurrentBatch()` exists in `exemption.js` and import it:
+
+```javascript
+// At top of exemption-manual-entry.js, check if this exists:
+// If it exists in exemption.js, ensure it's properly exported and imported
+```
+
+**Option B: Create getCurrentBatch() function**
+If the function doesn't exist, create it in exemption-manual-entry.js:
+
+```javascript
+// Add this function to exemption-manual-entry.js
+function getCurrentBatch(session) {
+    console.log('Getting current batch for session');
+    
+    // Check if there's a current batch ID in session
+    const currentBatchId = session.data['currentBatchId'];
+    if (currentBatchId && session.data['siteBatches']) {
+        const batch = session.data['siteBatches'].find(b => b.id === currentBatchId);
+        if (batch) {
+            console.log(`Found current batch: ${batch.id}`);
+            return batch;
+        }
+    }
+    
+    // If no current batch ID, find the most recent batch
+    if (session.data['siteBatches'] && session.data['siteBatches'].length > 0) {
+        const lastBatch = session.data['siteBatches'][session.data['siteBatches'].length - 1];
+        console.log(`Using last batch as current: ${lastBatch.id}`);
+        return lastBatch;
+    }
+    
+    console.log('No current batch found');
+    return null;
+}
+```
+
+**Option C: Alternative approach without getCurrentBatch()**
+Replace the getCurrentBatch() calls with direct session data access:
+
+```javascript
+// Replace this:
+const currentBatch = getCurrentBatch(session);
+if (!currentBatch || !currentBatch.settings) {
+    return;
+}
+
+// With this:
+const sharedSettings = session.data['sharedActivitySettings'] || {};
+if (!Object.keys(sharedSettings).length) {
+    console.log('No shared activity settings found');
+    return;
+}
+
+// Then use sharedSettings instead of currentBatch.settings
+```
+
+#### 3. Fix Related Function Dependencies
+
+**Check for other missing functions that might be called:**
+
+1. **Check imports at top of file:**
+```javascript
+// Ensure all required functions are properly imported
+// Example:
+const { getCurrentBatch, findSiteById, updateSiteField } = require('./exemption.js');
+```
+
+2. **Verify function availability:**
+Check that all functions called in the Task 7.6 code actually exist:
+- `findSiteById()`
+- `updateSiteField()`
+- `createNewSite()`
+- `validateSiteData()`
+
+#### 4. Fix Batch Settings Structure
+
+**Ensure batch.settings structure is properly initialized:**
+
+```javascript
+function ensureBatchSettingsExist(session) {
+    // Make sure current batch has settings object
+    const currentBatchId = session.data['currentBatchId'];
+    if (currentBatchId && session.data['siteBatches']) {
+        const batch = session.data['siteBatches'].find(b => b.id === currentBatchId);
+        if (batch && !batch.settings) {
+            batch.settings = {};
+            console.log(`Initialized settings for batch ${batch.id}`);
+        }
+    }
+}
+```
+
+#### 5. Add Error Handling
+
+**Wrap function calls in try-catch blocks:**
+
+```javascript
+function initializeNewSiteWithInheritedData(session, newSite) {
+    try {
+        console.log(`=== INITIALIZING SITE ${newSite.globalNumber} WITH INHERITED DATA ===`);
+        
+        // Safe function call with error handling
+        const currentBatch = getCurrentBatch ? getCurrentBatch(session) : null;
+        if (!currentBatch || !currentBatch.settings) {
+            console.log('No batch settings found for data inheritance');
+            return;
+        }
+        
+        // ... rest of function
+        
+    } catch (error) {
+        console.error(`Error in initializeNewSiteWithInheritedData: ${error.message}`);
+        console.log('Continuing without data inheritance...');
+    }
+}
+```
+
+### Success Criteria
+- [ ] No "function not defined" errors when accessing manual entry routes
+- [ ] `getCurrentBatch()` function works correctly or is replaced with working alternative
+- [ ] All function dependencies resolved
+- [ ] Error handling prevents crashes from missing functions
+- [ ] Manual entry journey works without errors
+- [ ] Site creation and data inheritance works as intended
+
+### Testing Checklist
+- [ ] **Test 1:** Access `/manual-entry/site-name?site=5` - should load without errors
+- [ ] **Test 2:** Create new manual entry site - should work without crashes
+- [ ] **Test 3:** Complete manual entry form - should submit successfully
+- [ ] **Test 4:** Add second site - should inherit data properly (if sharing enabled)
+- [ ] **Test 5:** Check browser console - no JavaScript errors
+
+### Completion Notes
+**Agent:** [TO BE COMPLETED]
+
+**Root cause identified:**
+[DESCRIBE WHAT CAUSED THE getCurrentBatch ERROR]
+
+**Solution implemented:**
+- [ ] Option A: Imported existing function from exemption.js
+- [ ] Option B: Created new getCurrentBatch() function
+- [ ] Option C: Replaced with alternative approach
+
+**Other issues found and fixed:**
+[LIST ANY OTHER MISSING FUNCTIONS OR DEPENDENCIES]
+
+**Code changes made:**
+[DESCRIBE SPECIFIC CHANGES TO FIX THE ERRORS]
+
+**Testing results:**
+- [ ] Manual entry route loads successfully
+- [ ] Site creation works without errors
+- [ ] Data inheritance works as intended
+- [ ] No console errors during normal flow
+
+**Issues encountered:** [DESCRIBE ANY ADDITIONAL ISSUES]
+
+**Next agent notes for Task 8:**
+[NOTES ABOUT SYSTEM STABILITY AND READINESS FOR TESTING]
+
+---
+
 ## Task 8: Testing and Validation
 
 ### Instructions
@@ -1666,6 +1869,7 @@ function clearSiteCache() {
 - [ ] Task 7: Legacy code removed
 - [ ] Task 7.5: All remaining legacy routes migrated
 - [ ] Task 7.6: Multi-site data sharing and form clearing fixed
+- [ ] Task 7.7: Missing function dependencies fixed
 - [ ] Task 8: Testing completed successfully
 - [ ] Task 9: Performance optimized
 
