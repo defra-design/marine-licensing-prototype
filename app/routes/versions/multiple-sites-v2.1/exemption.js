@@ -96,6 +96,21 @@ router.get('/' + version + section + 'task-list', function (req, res) {
     res.render(version + section + 'task-list');
 });
 
+// Route handler for public-register page
+router.get('/' + version + section + 'public-register', function (req, res) {
+    res.render(version + section + 'public-register');
+});
+
+// Route handler for confirmation page
+router.get('/' + version + section + 'confirmation', function (req, res) {
+    res.render(version + section + 'confirmation');
+});
+
+// Route handler for email page
+router.get('/' + version + section + 'email', function (req, res) {
+    res.render(version + section + 'email');
+});
+
 // Functions for clearing location data
 function clearMapData(session) {
 delete session.data['sites-drawn-coordinates'];
@@ -2259,6 +2274,7 @@ router.get('/' + version + section + 'add-another-site', function (req, res) {
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 router.get('/' + version + section + 'cancel-site-details', function (req, res) {
+    // This route is used by site creation journeys and should go directly to task list with data clearing
     // Check if we're coming from review-site-details page directly
     if (req.session.data['fromReviewSiteDetails'] === 'true') {
         // Return to the review page without clearing data
@@ -2283,8 +2299,9 @@ router.get('/' + version + section + 'cancel-site-details', function (req, res) 
             res.redirect('site-details-added');
         }
     } else {
-        // If not saved, show warning page before clearing data
-        res.redirect('cancel');
+        // Site creation journeys: clear data and go directly to task list (no warning page)
+        clearCurrentBatchOnly(req.session);
+        res.redirect('task-list');
     }
 });
 
@@ -2327,15 +2344,16 @@ router.get('/' + version + section + 'cancel-to-review', function (req, res) {
 
 // Cancel handler specifically from review-site-details page
 router.get('/' + version + section + 'cancel-from-review-site-details', function (req, res) {
-    // If we came from check answers page, return there
+    // Review pages: always show the cancel warning page
+    // If we came from check answers page, return there after confirmation
     if (req.session.data['camefromcheckanswers'] === 'true') {
         req.session.data['camefromcheckanswers'] = false;
         res.redirect('check-answers-multiple-sites');
     } else if (req.session.data['siteDetailsSaved']) {
-        // If details were previously saved, go to site-details-added
+        // If details were previously saved, go to site-details-added after confirmation
         res.redirect('site-details-added');
     } else {
-        // If nothing was saved yet, show warning page before clearing data
+        // Review pages: always show warning page before clearing data
         res.redirect('cancel');
     }
 });
