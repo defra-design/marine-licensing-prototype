@@ -2825,4 +2825,18 @@ function clearDataForFileUploadOnly(session) {
     delete session.data['exemption-activity-details-text-area'];
 }
 
+// Export unified model functions globally for use in exemption-manual-entry.js
+global.initializeUnifiedSiteModel = initializeUnifiedSiteModel;
+global.createNewSite = createNewSite;
+global.generateSiteId = generateSiteId;
+global.findSiteById = findSiteById;
+global.findSiteByGlobalNumberUnified = findSiteByGlobalNumberUnified;
+global.updateSiteField = updateSiteField;
+global.updateSiteCompletionStatus = updateSiteCompletionStatus;
+global.migrateToUnifiedModel = migrateToUnifiedModel;
+global.renumberUnifiedSitesAfterDeletion = renumberUnifiedSitesAfterDeletion;
+global.deleteSiteFromUnifiedModel = deleteSiteFromUnifiedModel;
+global.validateSiteData = validateSiteData;
+global.validateCoordinate = validateCoordinate;
+
 };
