@@ -41,6 +41,137 @@ From previous refactoring attempt:
 - `start-date-date-input-day` etc. field names fixed
 - Form debugging infrastructure added
 
+## Manual Entry Journey Types
+
+Both single and multiple site manual entry journeys use the batch system, but with different navigation flows.
+
+### Decision Point: Does Your Project Involve More Than One Site?
+
+**Route:** `/manual-entry/does-your-project-involve-more-than-one-site`
+**Router:** `does-your-project-involve-more-than-one-site-router`
+
+**Key Behavior:**
+```javascript
+// Both answers create a batch:
+const batchId = initializeBatch(req.session, 'manual-entry');
+
+// Decision stored in session:
+req.session.data['manual-multiple-sites'] = selection; // "Yes" or "No"
+
+// Both go to site-name first:
+res.redirect('site-name?site=' + nextGlobalSiteNumber);
+```
+
+### Single Site Journey (`manual-multiple-sites` = "No")
+
+**Exact Flow:**
+```
+1. Do you need to enter coordinates for more than one site? → No
+2. Site name
+3. Activity dates
+4. Activity description  
+5. How do you want to enter the site coordinates?
+6. Which coordinate system do you want to use?
+7. Then depending on coordinate entry method choice:
+   - Enter the coordinates at the centre point → Enter width → Review site details
+   - Enter multiple sets of coordinates to mark boundary → Review
+```
+
+**Navigation Logic:**
+```javascript
+if (multiSiteChoice === 'No') {
+    // Single site: skip shared questions, go straight to individual dates
+    res.redirect('individual-site-activity-dates?site=' + site.globalNumber);
+}
+```
+
+**Batch Characteristics:**
+- Uses batch system but no `batch.settings` for shared questions
+- Single site in `batch.sites` array
+- Simpler review page logic (always show dates/description)
+
+### Multiple Site Journey (`manual-multiple-sites` = "Yes") 
+
+**Exact Flow:**
+```
+1. Do you need to enter coordinates for more than one site? → Yes
+2. Site name
+3. Are the activity dates the same for every site?
+   → Yes → Activity dates (for all sites)
+   → No → Activity dates (single site)
+4. Is the activity description the same for every site?
+   → Yes → Activity description (for all sites)  
+   → No → Activity description (single site)
+5. How do you want to enter the site coordinates?
+6. Which coordinate system do you want to use?
+7. Then depending on coordinate entry method choice:
+   - Enter the coordinates at the centre point → Enter width → Review site details
+   - Enter multiple sets of coordinates to mark boundary → Review
+```
+
+**Critical "Add Another Site" Behavior:**
+- "Add another site" from Review → Site name for Site 2
+- **Remembers shared settings**: `batch.settings.sameActivityDates` and `batch.settings.sameActivityDescription`
+- **If shared dates/description**: Skip those questions for Site 2, Site 3, etc.
+- **If individual**: Ask for dates/description for each new site
+
+**Navigation Logic:**
+```javascript
+else {
+    // Multiple site: check if shared activity dates question was answered
+    if (!hasSharedActivityDatesAnswer) {
+        res.redirect('same-activity-dates'); // Shared questions flow
+    } else if (currentBatch.settings.sameActivityDates === 'Yes') {
+        res.redirect('activity-dates'); // Shared dates
+    } else {
+        res.redirect('individual-site-activity-dates?site=' + site.globalNumber); // Individual dates
+    }
+}
+```
+
+**Batch Characteristics:**
+- Uses batch system with `batch.settings` for shared questions
+- Multiple sites in `batch.sites` array  
+- Complex review page logic (conditional display based on shared settings)
+- Loop-back behavior when changing shared/individual preferences
+- **Preserves shared settings when adding new sites**
+
+### Critical Insight for Batch Alignment
+
+**The batch system already supports both journeys** - we just need to ensure:
+
+1. **Single site routes work with batch system** (simpler case)
+2. **Multiple site shared questions are preserved** (complex case) 
+3. **Navigation logic based on `manual-multiple-sites` remains intact**
+4. **Review page conditional logic continues working**
+
+**Both journeys already use `initializeBatch()` and store sites in `batch.sites`** - the unified model complexity is the problem, not the batch system itself.
+
+## Correct Templates Reference
+
+**CRITICAL:** Use the correct templates for each step. The current templates in `multiple-sites-v2` are:
+
+### Shared Questions Templates (Multiple Sites Only)
+- `app/views/versions/multiple-sites-v2/exemption/manual-entry/same-activity-dates.html`
+- `app/views/versions/multiple-sites-v2/exemption/manual-entry/same-activity-description.html`
+
+### Shared Data Collection Templates (Multiple Sites Only)
+- `app/views/versions/multiple-sites-v2/exemption/manual-entry/activity-dates.html` - **Shared dates for all sites**
+- `app/views/versions/multiple-sites-v2/exemption/manual-entry/activity-description.html` - **Shared description for all sites**
+
+### Individual Data Collection Templates (Both Journeys)
+- `app/views/versions/multiple-sites-v2/exemption/manual-entry/individual-site-activity-dates.html` - **Individual site dates**
+- `app/views/versions/multiple-sites-v2/exemption/manual-entry/individual-site-activity-description.html` - **Individual site description**
+
+### Template Verification
+If in doubt about correct flows, **reference `multiple-sites-v1.2`** - this version contains the working flows from before refactoring started.
+
+**Key Template Distinctions:**
+- `activity-dates.html` = Shared dates (multiple sites "Yes" to same dates)
+- `individual-site-activity-dates.html` = Individual dates (single site OR multiple sites "No" to same dates)
+- `activity-description.html` = Shared description (multiple sites "Yes" to same description)  
+- `individual-site-activity-description.html` = Individual description (single site OR multiple sites "No" to same description)
+
 ## Implementation Strategy
 
 **Follow the KISS principle**: Keep It Simple, Stupid
@@ -134,10 +265,87 @@ List all functions file upload uses successfully:
 
 ---
 
+## Task 1.5: Analyze Multiple Site Manual Entry Journey
+
+### Purpose
+Document the specific multiple site journey with shared/individual questions that must be preserved when converting to batch system.
+
+### Current Multiple Site Journey
+Based on your mapping, the multiple site manual entry has this flow:
+
+```
+Multiple sites question → Site name → Activity dates → Activity description → 
+Coordinate method → Coordinate system → Coordinates → Width/Multiple coordinates → Review
+```
+
+**But with shared questions that apply to all sites:**
+1. **"Are activity dates the same for every site?"** (Yes/No)
+   - If Yes → Collect shared dates once, apply to all sites
+   - If No → Collect individual dates for each site
+   
+2. **"Is the activity description the same for every site?"** (Yes/No)
+   - If Yes → Collect shared description once, apply to all sites  
+   - If No → Collect individual descriptions for each site
+
+### Current Implementation (Already Working)
+The system already stores these settings in `batch.settings`:
+
+```javascript
+// In same-activity-dates-router:
+currentBatch.settings.sameActivityDates = selection; // "Yes" or "No"
+
+// In same-activity-description-router:  
+currentBatch.settings.sameActivityDescription = selection; // "Yes" or "No"
+
+// Shared data stored in batch.settings:
+currentBatch.settings.sharedStartDate = { day: '', month: '', year: '' };
+currentBatch.settings.sharedEndDate = { day: '', month: '', year: '' };
+currentBatch.settings.sharedDescription = 'Description text';
+```
+
+### Loop-Back Behavior (Must Preserve)
+When user returns from review page and changes settings:
+
+**Scenario 1:** Change "Yes" to "No" (shared to individual)
+- Copy shared data to all individual sites
+- Clear shared data from batch.settings
+- Allow individual editing
+
+**Scenario 2:** Change "No" to "Yes" (individual to shared)  
+- Use first site's data as shared data
+- Clear individual site data
+- Apply shared data to all sites
+
+### Key Insight for Batch Alignment
+**File upload doesn't need this complexity** because it processes all sites at once from a file.
+
+**Manual entry MUST keep this complexity** because it collects data iteratively for multiple sites.
+
+**The batch system already supports this** via `batch.settings` - we just need to ensure it's preserved during conversion.
+
+### Success Criteria
+- [ ] Multiple site journey documented
+- [ ] Shared/individual questions pattern understood
+- [ ] Loop-back behavior requirements identified
+- [ ] Current batch.settings usage documented
+
+### Completion Notes
+**Agent:** [Name]
+
+**Multiple site journey analysis:**
+- [ ] Journey flow documented
+- [ ] Shared questions identified  
+- [ ] Loop-back scenarios mapped
+- [ ] batch.settings usage confirmed
+
+**Critical requirement:** The batch alignment must preserve the shared/individual questions flow that file upload doesn't need.
+
+---
+
 ## Task 2: Convert Manual Entry to Batch System
 
 ### Purpose
-Replace the unified model approach with the proven batch system pattern from file upload.
+Replace the unified model approach with the proven batch system pattern from file upload, **while preserving the shared/individual questions flow that manual entry needs**.
 
 ### Location
 `app/routes/versions/multiple-sites-v2/exemption-manual-entry.js`
@@ -189,9 +397,35 @@ addSiteToBatch(req.session, siteData);
 3. **Update site directly**: `site.fieldName = newValue`
 4. **No unified model calls**: Remove `updateSiteField`, `findSiteById`, etc.
 
-#### 3. Fix Review Page Integration
+#### 3. **PRESERVE** Shared/Individual Questions Routes
 
-The review page should work automatically once manual entry uses batches because it already reads from `getCurrentBatch(req.session).sites`.
+**CRITICAL:** These routes must be kept and updated to work with batch system:
+
+**Routes to PRESERVE and update (not remove):**
+- `same-activity-dates-router` - "Are dates the same for every site?"
+- `same-activity-description-router` - "Are descriptions the same for every site?"  
+- `activity-dates-router` - Shared dates entry
+- `activity-description-router` - Shared description entry
+
+**Update pattern for shared routes:**
+```javascript
+// Store shared settings in batch.settings (already working)
+const currentBatch = getCurrentBatch(req.session);
+if (!currentBatch.settings) currentBatch.settings = {};
+
+// For shared dates:
+currentBatch.settings.sameActivityDates = selection; // "Yes" or "No"
+currentBatch.settings.sharedStartDate = { day: '', month: '', year: '' };
+currentBatch.settings.sharedEndDate = { day: '', month: '', year: '' };
+
+// For shared description:
+currentBatch.settings.sameActivityDescription = selection; // "Yes" or "No"  
+currentBatch.settings.sharedDescription = 'Description text';
+```
+
+#### 4. Fix Review Page Integration
+
+The review page should work automatically once manual entry uses batches because it already reads from `getCurrentBatch(req.session).sites` **and** `batch.settings` for shared data.
 
 **Remove:**
 ```javascript
@@ -199,11 +433,17 @@ The review page should work automatically once manual entry uses batches because
 convertManualSitesToUnifiedFormat(req);
 ```
 
-**Result:**
+**Keep working logic:**
 ```javascript
-// Simple, like file upload
+// Simple, like file upload (already works)
 const batch = getCurrentBatch(req.session);
 const sites = batch ? batch.sites : [];
+
+// Review page already checks batch.settings for shared questions:
+// - batch.settings.sameActivityDates
+// - batch.settings.sameActivityDescription  
+// - batch.settings.sharedStartDate, etc.
+
 res.render('review-site-details', { sites });
 ```
 
@@ -212,6 +452,9 @@ res.render('review-site-details', { sites });
 - [ ] Sites appear on review page
 - [ ] Data structure matches file upload
 - [ ] No unified model function calls
+- [ ] **Shared/individual questions still work**
+- [ ] **Loop-back behavior preserved**
+- [ ] **batch.settings functionality maintained**
 
 ### Completion Notes
 **Agent:** [Name]
@@ -222,6 +465,11 @@ res.render('review-site-details', { sites });
 - [ ] activity-description-router
 - [ ] coordinates-router
 - [ ] site-width-router
+
+**Shared routes preserved:**
+- [ ] same-activity-dates-router
+- [ ] same-activity-description-router
+- [ ] Loop-back behavior working
 
 **Issues encountered:** [List any problems and solutions]
 
