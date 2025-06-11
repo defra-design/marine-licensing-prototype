@@ -59,9 +59,6 @@ Is the activity description the same for every site?
       classes: "govuk-fieldset__legend--l"
     }
   },
-  hint: {
-    text: "If the description is the same for every site, you only need to enter it once."
-  },
   errorMessage: {
     text: errorText1HTML
   } if data['errortypeone'] == "true",
@@ -69,11 +66,17 @@ Is the activity description the same for every site?
     {
       value: "Yes",
       text: "Yes, the description is the same for every site",
+      hint: {
+        text: "You'll only need to enter the description once"
+      },
       checked: data['manual-same-activity-description'] == "Yes"
     },
     {
       value: "No",
       text: "No, at least one site has a different description",
+      hint: {
+        text: "You'll need to enter a description for each site"
+      },
       checked: data['manual-same-activity-description'] == "No"
     }
   ]
