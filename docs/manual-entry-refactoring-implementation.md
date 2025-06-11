@@ -17,6 +17,7 @@ This document provides step-by-step instructions for implementing the architectu
 - [x] Task 5: Migrate Remaining Manual Entry Routes
 - [x] Task 6: Update Templates for New Data Model
 - [x] Task 7: Remove Legacy Session-Based Code
+- [ ] Task 7.5: Migrate Remaining Legacy Routes
 - [ ] Task 8: Testing and Validation
 - [ ] Task 9: Performance Optimization and Cleanup
 
@@ -1060,6 +1061,107 @@ Replace the complex renumbering with simplified unified model renumbering:
 
 ---
 
+## Task 7.5: Migrate Remaining Legacy Routes
+
+### Location
+`app/routes/versions/multiple-sites-v2/exemption-manual-entry.js`
+
+### Background
+During Task 7, it was identified that while the main manual entry routes (site-name, enter-coordinates, activity-dates, activity-description, etc.) have been migrated to the unified model, there are still **legacy routes** that haven't been migrated yet and continue to use the session-based approach.
+
+### Instructions
+**Identify and migrate remaining legacy routes** that are still using session-based data management.
+
+**Routes likely needing migration (based on common patterns):**
+1. **Review and navigation routes** - Any routes that display or navigate between manual entry data
+2. **Validation routes** - Routes that handle validation errors for manual entry
+3. **Completion routes** - Routes that finalize manual entry submissions
+4. **Special case routes** - Any custom routes for edge cases
+
+**Migration Pattern:**
+For each legacy route identified:
+
+1. **Update GET routes:**
+```javascript
+// OLD: Session-based approach
+const siteData = req.session.data['manual-site-name-text-input'];
+
+// NEW: Unified model approach  
+const siteId = req.session.data['currentManualEntrySiteId'];
+const site = findSiteById(req.session, siteId);
+const siteData = site ? site.name : '';
+```
+
+2. **Update POST routes:**
+```javascript
+// OLD: Session key manipulation
+req.session.data[`manual-site-${siteNumber}-field`] = value;
+
+// NEW: Unified model updates
+updateSiteField(req.session, siteId, 'fieldName', value);
+```
+
+3. **Update validation:**
+```javascript
+// OLD: Session-based error flags
+req.session.data['manual-entry-error-flag'] = "true";
+
+// NEW: Site object validation
+const site = findSiteById(req.session, siteId);
+validateSiteData(site, 'fieldName');
+```
+
+**Routes to specifically check:**
+- Any routes with `manual-entry` in their path that weren't covered in Tasks 3-5
+- Routes that handle form validation errors for manual entry
+- Routes that process manual entry data before submission
+- Routes that handle navigation between manual entry steps
+
+**Search Strategy:**
+```bash
+# Find routes that might still use session-based approach
+grep -r "manual-site-.*-" app/routes/versions/multiple-sites-v2/exemption-manual-entry.js
+grep -r "data\['manual-" app/routes/versions/multiple-sites-v2/exemption-manual-entry.js
+```
+
+### Success Criteria
+- [ ] All remaining legacy routes identified and documented
+- [ ] All identified routes migrated to unified model
+- [ ] No session keys with pattern `manual-site-*` remain in route handlers
+- [ ] All routes use unified model functions (`findSiteById`, `updateSiteField`, etc.)
+- [ ] Navigation flow updated to use `site.globalNumber` consistently
+- [ ] Error handling uses unified validation system
+
+### Completion Notes
+**Agent:** [TO BE COMPLETED]
+
+**Legacy routes identified:**
+- [ ] Route 1: [NAME - DESCRIPTION OF WHAT IT DOES]
+- [ ] Route 2: [NAME - DESCRIPTION OF WHAT IT DOES]
+- [ ] [Continue listing...]
+
+**Migration work completed:**
+- [ ] Routes migrated: [NUMBER] routes migrated to unified model
+- [ ] Session key patterns removed: [LIST PATTERNS REMOVED]
+- [ ] Location: [LINE NUMBERS OR FILE SECTIONS]
+
+**Search results:**
+- [ ] Session-based patterns found: [DESCRIBE WHAT WAS FOUND]
+- [ ] Legacy code remaining: [YES/NO - IF YES, EXPLAIN WHY]
+
+**Testing completed:**
+- [ ] All migrated routes tested for functionality
+- [ ] Navigation flow verified
+- [ ] Error handling verified
+- [ ] Data persistence verified
+
+**Issues encountered:** [DESCRIBE ANY ISSUES AND RESOLUTIONS]
+
+**Next agent notes:**
+[IMPORTANT NOTES FOR TASK 8]
+
+---
+
 ## Task 8: Testing and Validation
 
 ### Instructions
@@ -1249,6 +1351,7 @@ function clearSiteCache() {
 - [ ] Task 5: All remaining routes migrated
 - [ ] Task 6: Templates updated
 - [ ] Task 7: Legacy code removed
+- [ ] Task 7.5: All remaining legacy routes migrated
 - [ ] Task 8: Testing completed successfully
 - [ ] Task 9: Performance optimized
 
