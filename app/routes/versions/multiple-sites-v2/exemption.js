@@ -1551,6 +1551,130 @@ function migrateToUnifiedModel(session) {
     console.log('=== MIGRATION COMPLETE ===');
 }
 
+// ===== SITE MANAGEMENT HELPER FUNCTIONS =====
+// Simplified management functions for unified model
+
+// Simplified renumbering for unified model
+function renumberUnifiedSitesAfterDeletion(session, deletedGlobalNumber) {
+    console.log('=== RENUMBERING UNIFIED SITES ===');
+    console.log('Deleted site number:', deletedGlobalNumber);
+    
+    if (!session.data['unifiedSites']) return;
+    
+    // Simple renumbering - just update globalNumber properties
+    session.data['unifiedSites'].forEach(site => {
+        if (site.globalNumber > deletedGlobalNumber) {
+            const oldNumber = site.globalNumber;
+            site.globalNumber--;
+            console.log(`Renumbered site ${site.id} from ${oldNumber} to ${site.globalNumber}`);
+        }
+    });
+    
+    // Update global counter
+    if (session.data['globalSiteCounter']) {
+        session.data['globalSiteCounter']--;
+        console.log('Updated globalSiteCounter to:', session.data['globalSiteCounter']);
+    }
+    
+    // Also update legacy batch data if it exists (during transition period)
+    if (session.data['siteBatches']) {
+        session.data['siteBatches'].forEach(batch => {
+            batch.sites.forEach(site => {
+                if (site.globalNumber > deletedGlobalNumber) {
+                    site.globalNumber--;
+                }
+            });
+        });
+        
+        // Rebuild global sites array from batches
+        session.data['sites'] = session.data['siteBatches'].flatMap(batch => batch.sites);
+    }
+    
+    console.log('=== UNIFIED RENUMBERING COMPLETE ===');
+}
+
+function deleteSiteFromUnifiedModel(session, siteId) {
+    console.log(`=== DELETING SITE FROM UNIFIED MODEL: ${siteId} ===`);
+    
+    if (!session.data['unifiedSites']) {
+        console.log('No unified sites to delete from');
+        return false;
+    }
+    
+    const siteIndex = session.data['unifiedSites'].findIndex(site => site.id === siteId);
+    if (siteIndex === -1) {
+        console.log(`Site not found in unified model: ${siteId}`);
+        return false;
+    }
+    
+    const site = session.data['unifiedSites'][siteIndex];
+    const globalNumber = site.globalNumber;
+    
+    // Remove from unified model
+    session.data['unifiedSites'].splice(siteIndex, 1);
+    console.log(`Removed site ${siteId} (was global number ${globalNumber})`);
+    
+    // Renumber remaining sites
+    renumberUnifiedSitesAfterDeletion(session, globalNumber);
+    
+    return true;
+}
+
+function validateSiteData(site, fieldName = null) {
+    const errors = {};
+    
+    // Validate specific field or all fields
+    const fieldsToValidate = fieldName ? [fieldName] : ['name', 'coordinates'];
+    
+    fieldsToValidate.forEach(field => {
+        switch (field) {
+            case 'name':
+                if (!site.name || site.name.trim() === '') {
+                    errors.name = 'Site name is required';
+                }
+                break;
+                
+            case 'coordinates':
+                if (!site.coordinates.latitude || site.coordinates.latitude.trim() === '') {
+                    errors.latitude = 'Latitude is required';
+                }
+                if (!site.coordinates.longitude || site.coordinates.longitude.trim() === '') {
+                    errors.longitude = 'Longitude is required';
+                }
+                
+                // Validate coordinate format
+                if (site.coordinates.latitude && site.coordinates.longitude) {
+                    const latError = validateCoordinate(site.coordinates.latitude, 'latitude', site.coordinates.format);
+                    const lonError = validateCoordinate(site.coordinates.longitude, 'longitude', site.coordinates.format);
+                    
+                    if (latError) errors.latitude = latError;
+                    if (lonError) errors.longitude = lonError;
+                }
+                break;
+        }
+    });
+    
+    site.validationErrors = { ...site.validationErrors, ...errors };
+    return Object.keys(errors).length === 0;
+}
+
+function validateCoordinate(value, type, format) {
+    if (format === 'decimal-degrees') {
+        const num = parseFloat(value);
+        if (isNaN(num)) return `${type} must be a valid number`;
+        
+        if (type === 'latitude' && (num < -90 || num > 90)) {
+            return 'Latitude must be between -90 and 90 degrees';
+        }
+        if (type === 'longitude' && (num < -180 || num > 180)) {
+            return 'Longitude must be between -180 and 180 degrees';
+        }
+    }
+    // Add DMS validation if needed
+    
+    return null;
+}
+
 // Update the upload file router to use batch handling
 router.post('/' + version + section + 'upload-file-router', function (req, res) {
     req.session.data['siteTitle'] = 'review';
