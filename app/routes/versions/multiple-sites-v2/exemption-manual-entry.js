@@ -1190,46 +1190,40 @@ router.post('/' + version + section + 'manual-entry/which-coordinate-system-rout
     }
 });
 
-// Enter coordinates - GET route  
+// NEW: Unified model coordinates GET route
 router.get('/' + version + section + 'manual-entry/enter-coordinates', function (req, res) {
-    req.session.data['errorthispage'] = "false";
-    req.session.data['errortypeone'] = "false";
-    req.session.data['errortypetwo'] = "false";
-    req.session.data['errors'] = [];
-    
-    // Get site number from query parameter
-    const siteNumber = req.query.site || 1;
+    const siteParam = req.query.site;
     const returnTo = req.query.returnTo;
     
-    // Store returnTo in session for use in POST route
-    if (returnTo) {
-        req.session.data['returnTo'] = returnTo;
+    if (!siteParam) {
+        console.log('No site parameter provided for coordinates');
+        return res.redirect('/' + version + section + 'manual-entry/site-name');
     }
     
-    // Determine if we're editing an existing site or creating a new one
-    const isEditingExistingSite = returnTo === 'review-site-details';
-    
-    let batchRelativePosition;
-    
-    if (isEditingExistingSite) {
-        // We're editing an existing site - siteNumber is a global number
-        batchRelativePosition = getBatchRelativePosition(req.session, parseInt(siteNumber));
-        
-        // DON'T populate session data when editing - it overwrites fresh changes
-        // The session already has the data from the editing flow
-    } else {
-        // We're creating a new site - siteNumber is a batch-relative number
-        batchRelativePosition = parseInt(siteNumber);
-    }
-    
-    req.session.data['current-site'] = batchRelativePosition;
-    
-    // Check if we're returning from review-site-details
+    let site;
     if (returnTo === 'review-site-details') {
-        req.session.data['fromReviewSiteDetails'] = 'true';
+        // Editing existing site
+        site = findSiteByGlobalNumberUnified(req.session, siteParam);
+    } else {
+        // Continue with current site
+        const siteId = req.session.data['currentManualEntrySiteId'];
+        site = findSiteById(req.session, siteId);
     }
     
-    res.render(version + section + 'manual-entry/enter-coordinates');
+    if (!site) {
+        console.log('Site not found for coordinates entry');
+        return res.redirect('/' + version + section + 'manual-entry/site-name');
+    }
+    
+    // Update current site ID for form processing
+    req.session.data['currentManualEntrySiteId'] = site.id;
+    
+    res.render(path.join(version, section, 'manual-entry', 'enter-coordinates'), {
+        data: req.session.data,
+        site: site,
+        isEditing: returnTo === 'review-site-details',
+        errors: site.validationErrors || {}
+    });
 });
 
 // Enter multiple coordinates - GET route
@@ -1273,80 +1267,61 @@ router.get('/' + version + section + 'manual-entry/enter-multiple-coordinates', 
     res.render(version + section + 'manual-entry/enter-multiple-coordinates');
 });
 
-// Enter coordinates - POST route
+// NEW: Unified model coordinates POST route
 router.post('/' + version + section + 'manual-entry/enter-coordinates-router', function (req, res) {
-    req.session.data['errorthispage'] = "false";
-    req.session.data['errortypeone'] = "false";
-    req.session.data['errortypetwo'] = "false";
-
-    const siteNumber = parseInt(req.query.site || req.session.data['current-site'] || 1);
-    const returnTo = req.query.returnTo || req.session.data['returnTo'];
-
-    // Determine if we're editing an existing site or creating a new one
-    const isEditingExistingSite = returnTo === 'review-site-details' && findSiteByGlobalNumber(req.session, siteNumber) !== undefined;
+    const siteId = req.session.data['currentManualEntrySiteId'];
+    const returnTo = req.query.returnTo;
     
-    let batchRelativePosition;
-    let sitePrefix;
-    
-    if (isEditingExistingSite) {
-        // We're editing an existing site - use global site number for session keys
-        batchRelativePosition = getBatchRelativePosition(req.session, siteNumber);
-        sitePrefix = siteNumber === 1 ? 'manual-' : `manual-site-${siteNumber}-`;
-    } else {
-        // We're creating a new site - siteNumber is a batch-relative number
-        batchRelativePosition = siteNumber;
-        sitePrefix = batchRelativePosition === 1 ? 'manual-' : `manual-site-${batchRelativePosition}-`;
+    const site = findSiteById(req.session, siteId);
+    if (!site) {
+        console.log('Site not found for coordinates update');
+        return res.redirect('/' + version + section + 'manual-entry/site-name');
     }
     
-    const latitude = req.session.data[sitePrefix + 'latitude'];
-    const longitude = req.session.data[sitePrefix + 'longitude'];
-
-    if (!latitude || latitude.trim() === "") {
-        req.session.data['errorthispage'] = "true";
-        req.session.data['errortypeone'] = "true";
-    }
-
-    if (!longitude || longitude.trim() === "") {
-        req.session.data['errorthispage'] = "true";
-        req.session.data['errortypetwo'] = "true";
-    }
-
-    if (req.session.data['errorthispage'] === "true") {
-        const redirectUrl = 'enter-coordinates' + (siteNumber > 1 ? '?site=' + siteNumber : '') + (returnTo ? (siteNumber > 1 ? '&' : '?') + 'returnTo=' + returnTo : '');
-        res.redirect(redirectUrl);
-        return;
-    }
-
-    // Check if we should continue to width page or return to review
-    // For circular sites, we should continue to width page unless we're only editing coordinates directly
-    const coordinateMethodKey = batchRelativePosition === 1 ? 'manual-coordinate-entry-method' : `manual-site-${batchRelativePosition}-coordinate-entry-method`;
-    const coordinateMethod = req.session.data[coordinateMethodKey];
-    const isCircularSite = coordinateMethod === "Enter one set of coordinates and a width to create a circular site";
+    // Get coordinates from form (using template's naming convention)
+    const sitePrefix = site.globalNumber === 1 ? 'manual-' : `manual-site-${site.globalNumber}-`;
+    const latitude = req.body[sitePrefix + 'latitude'];
+    const longitude = req.body[sitePrefix + 'longitude'];
+    const format = req.body['coordinate-format'] || 'decimal-degrees';
     
-    // If editing existing site AND it's circular AND we have returnTo, continue to width page
-    // This handles cases where method/system was changed from review page
-    if (isEditingExistingSite && isCircularSite && returnTo === 'review-site-details') {
-        // Continue to width page with returnTo parameter
-        const widthUrl = batchRelativePosition === 1 ? 'site-width?returnTo=review-site-details' : `site-width?site=${batchRelativePosition}&returnTo=review-site-details`;
-        res.redirect(widthUrl);
-    } else if (isEditingExistingSite) {
-        // Direct coordinate edit for non-circular or when no returnTo - return directly to review
-        delete req.session.data['fromReviewSiteDetails'];
-        delete req.session.data['returnTo'];
-        return res.redirect('review-site-details#site-' + siteNumber + '-details');
-    } else {
-        // For new sites, go to width page normally (circular sites only)
-        if (isCircularSite) {
-            if (batchRelativePosition == 1) {
-                res.redirect('site-width');
-            } else {
-                res.redirect('site-width?site=' + batchRelativePosition);
-            }
-        } else {
-            // Non-circular sites go directly to review
-            addCompletedSiteToCurrentBatch(req.session, batchRelativePosition);
-            res.redirect('review-site-details');
+    console.log(`Processing coordinates for site: ${siteId}`);
+    console.log(`Lat: ${latitude}, Lon: ${longitude}, Format: ${format}`);
+    
+    if (!siteId) {
+        console.log('No current site ID found for coordinates');
+        return res.redirect('/' + version + section + 'manual-entry/site-name');
+    }
+    
+    // Update coordinates in unified model
+    updateSiteField(req.session, siteId, 'coordinates.latitude', latitude || '');
+    updateSiteField(req.session, siteId, 'coordinates.longitude', longitude || '');
+    updateSiteField(req.session, siteId, 'coordinates.format', format);
+    
+    // Validate coordinates
+    const isValid = validateSiteData(site, 'coordinates');
+    
+    if (!isValid) {
+        console.log('Coordinates validation failed:', site.validationErrors);
+        return res.render(path.join(version, section, 'manual-entry', 'enter-coordinates'), {
+            data: req.session.data,
+            site: site,
+            isEditing: returnTo === 'review-site-details',
+            errors: site.validationErrors
+        });
+    }
+    
+    // Clear coordinate-related errors
+    ['latitude', 'longitude'].forEach(field => {
+        if (site.validationErrors[field]) {
+            delete site.validationErrors[field];
         }
+    });
+    
+    // Determine next step
+    if (returnTo === 'review-site-details') {
+        res.redirect('/' + version + section + 'review-site-details?site=' + site.globalNumber);
+    } else {
+        res.redirect('/' + version + section + 'manual-entry/activity-details?site=' + site.globalNumber);
     }
 });
 
