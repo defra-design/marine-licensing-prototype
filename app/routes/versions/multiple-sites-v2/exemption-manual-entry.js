@@ -2,43 +2,8 @@
 
 const path = require('path');
 
-// Function to renumber manual entry session data keys after site deletion
-function renumberManualEntrySessionData(session, deletedGlobalNumber) {
-    console.log('=== RENUMBERING MANUAL ENTRY SESSION DATA ===');
-    console.log('Deleted site number:', deletedGlobalNumber);
-    
-    const keysToRename = [];
-    
-    // Find all session keys that need renumbering
-    Object.keys(session.data).forEach(key => {
-        // Match patterns like 'manual-site-3-name-text-input'
-        const match = key.match(/^manual-site-(\d+)-(.+)$/);
-        if (match) {
-            const siteNum = parseInt(match[1]);
-            if (siteNum > deletedGlobalNumber) {
-                keysToRename.push({
-                    oldKey: key,
-                    newKey: `manual-site-${siteNum - 1}-${match[2]}`,
-                    value: session.data[key]
-                });
-                console.log(`Will rename: ${key} -> manual-site-${siteNum - 1}-${match[2]}`);
-            }
-        }
-    });
-    
-    // Rename the keys
-    keysToRename.forEach(({ oldKey, newKey, value }) => {
-        session.data[newKey] = value;
-        delete session.data[oldKey];
-        console.log(`Renamed: ${oldKey} -> ${newKey}`);
-    });
-    
-    console.log(`Renamed ${keysToRename.length} session keys`);
-    console.log('=== SESSION DATA RENUMBERING COMPLETE ===');
-}
-
-// Make renumberManualEntrySessionData available to other files
-global.renumberManualEntrySessionData = renumberManualEntrySessionData;
+// LEGACY CODE REMOVED: renumberManualEntrySessionData function
+// This was replaced by the unified model's renumberUnifiedSitesAfterDeletion function
 
 // Import unified model functions from exemption.js
 const exemptionModule = require('./exemption.js');
@@ -225,121 +190,8 @@ function clearManualEntrySessionData(session, startingSiteNumber) {
     delete session.data['errors'];
 }
 
-// Helper function to populate session data from existing site for editing
-function populateSessionDataFromSite(session, globalSiteNumber, batchRelativePosition) {
-    console.log('=== POPULATE SESSION DATA DEBUG ===');
-    console.log('Input params:', { globalSiteNumber, batchRelativePosition });
-    
-    const siteToEdit = findSiteByGlobalNumber(session, globalSiteNumber);
-    if (!siteToEdit) {
-        console.log('ERROR: Site not found for globalSiteNumber:', globalSiteNumber);
-        return;
-    }
-    
-    console.log('Site found:', {
-        name: siteToEdit.name,
-        globalNumber: siteToEdit.globalNumber,
-        coordinates: siteToEdit.coordinates,
-        coordinateSystem: siteToEdit.coordinateSystem
-    });
-    
-    // AGGRESSIVE CLEARING: Clear ALL coordinate-related session data for ALL sites
-    // This ensures no cross-contamination between site edits
-    
-    // Clear Site 1 data
-    delete session.data['manual-coordinate-entry-method'];
-    delete session.data['manual-coordinate-system-radios'];
-    delete session.data['manual-latitude'];
-    delete session.data['manual-longitude'];
-    delete session.data['manual-site-width'];
-    delete session.data['manual-site-name-text-input'];
-    
-    // Clear Site 1 multiple coordinates
-    for (let i = 1; i <= 5; i++) {
-        delete session.data[`manual-coordinates-point-${i}-latitude`];
-        delete session.data[`manual-coordinates-point-${i}-longitude`];
-    }
-    
-    // Clear all other sites (2-20)
-    for (let siteNum = 2; siteNum <= 20; siteNum++) {
-        delete session.data[`manual-site-${siteNum}-coordinate-entry-method`];
-        delete session.data[`manual-site-${siteNum}-coordinate-system-radios`];
-        delete session.data[`manual-site-${siteNum}-latitude`];
-        delete session.data[`manual-site-${siteNum}-longitude`];
-        delete session.data[`manual-site-${siteNum}-site-width`];
-        delete session.data[`manual-site-${siteNum}-name-text-input`];
-        
-        // Clear multiple coordinates for all other sites
-        for (let i = 1; i <= 5; i++) {
-            delete session.data[`manual-site-${siteNum}-coordinates-point-${i}-latitude`];
-            delete session.data[`manual-site-${siteNum}-coordinates-point-${i}-longitude`];
-        }
-    }
-    
-    console.log('Session data cleared');
-    
-    // Now populate the correct data for the site being edited
-    // KEY FIX: Use batchRelativePosition instead of globalSiteNumber for session keys
-    const actualSiteNumber = batchRelativePosition;
-    const sitePrefix = actualSiteNumber === 1 ? 'manual-' : `manual-site-${actualSiteNumber}-`;
-    
-    console.log('Will populate session keys with prefix:', sitePrefix);
-    
-    // Populate coordinate entry method
-    if (siteToEdit.coordinates) {
-        const entryMethodKey = actualSiteNumber === 1 ? 'manual-coordinate-entry-method' : `manual-site-${actualSiteNumber}-coordinate-entry-method`;
-        
-        if (siteToEdit.coordinates.type === 'circle') {
-            session.data[entryMethodKey] = 'Enter one set of coordinates and a width to create a circular site';
-            console.log(`Set ${entryMethodKey} = circle method`);
-            
-            // Populate circle coordinates
-            if (siteToEdit.coordinates.center) {
-                session.data[`${sitePrefix}latitude`] = siteToEdit.coordinates.center.latitude;
-                session.data[`${sitePrefix}longitude`] = siteToEdit.coordinates.center.longitude;
-                console.log(`Set ${sitePrefix}latitude = ${siteToEdit.coordinates.center.latitude}`);
-                console.log(`Set ${sitePrefix}longitude = ${siteToEdit.coordinates.center.longitude}`);
-            }
-            if (siteToEdit.coordinates.width) {
-                session.data[`${sitePrefix}site-width`] = siteToEdit.coordinates.width;
-                console.log(`Set ${sitePrefix}site-width = ${siteToEdit.coordinates.width}`);
-            }
-        } else if (siteToEdit.coordinates.type === 'polygon') {
-            session.data[entryMethodKey] = 'Enter multiple sets of coordinates to mark the boundary of the site';
-            console.log(`Set ${entryMethodKey} = polygon method`);
-            
-            // Populate polygon coordinates
-            if (siteToEdit.coordinates.points) {
-                siteToEdit.coordinates.points.forEach((point, pointIndex) => {
-                    const pointNum = pointIndex + 1;
-                    session.data[`${sitePrefix}coordinates-point-${pointNum}-latitude`] = point.latitude;
-                    session.data[`${sitePrefix}coordinates-point-${pointNum}-longitude`] = point.longitude;
-                    console.log(`Set ${sitePrefix}coordinates-point-${pointNum}-latitude = ${point.latitude}`);
-                    console.log(`Set ${sitePrefix}coordinates-point-${pointNum}-longitude = ${point.longitude}`);
-                });
-            }
-        }
-    }
-    
-    // Populate coordinate system
-    if (siteToEdit.coordinateSystem) {
-        const coordinateSystemKey = actualSiteNumber === 1 ? 'manual-coordinate-system-radios' : `manual-site-${actualSiteNumber}-coordinate-system-radios`;
-        session.data[coordinateSystemKey] = siteToEdit.coordinateSystem;
-        console.log(`Set ${coordinateSystemKey} = ${siteToEdit.coordinateSystem}`);
-    }
-    
-    // Populate site name
-    const siteNameKey = actualSiteNumber === 1 ? 'manual-site-name-text-input' : `manual-site-${actualSiteNumber}-name-text-input`;
-    if (siteToEdit.name) {
-        session.data[siteNameKey] = siteToEdit.name;
-        console.log(`Set ${siteNameKey} = ${siteToEdit.name}`);
-    }
-    
-    // Set current-site to the batch relative position to ensure forms use correct logic
-    session.data['current-site'] = batchRelativePosition;
-    console.log(`Set current-site = ${batchRelativePosition}`);
-    console.log('=== END POPULATE SESSION DATA DEBUG ===');
-}
+// LEGACY CODE REMOVED: populateSessionDataFromSite function
+// This was replaced by the unified model's site object approach - sites maintain their own data
 
 // Does your project involve more than one site? - GET route
 router.get('/' + version + section + 'manual-entry/does-your-project-involve-more-than-one-site', function (req, res) {

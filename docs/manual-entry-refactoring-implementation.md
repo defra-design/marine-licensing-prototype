@@ -16,7 +16,7 @@ This document provides step-by-step instructions for implementing the architectu
 - [x] Task 4: Migrate Coordinates Route
 - [x] Task 5: Migrate Remaining Manual Entry Routes
 - [x] Task 6: Update Templates for New Data Model
-- [ ] Task 7: Remove Legacy Session-Based Code
+- [x] Task 7: Remove Legacy Session-Based Code
 - [ ] Task 8: Testing and Validation
 - [ ] Task 9: Performance Optimization and Cleanup
 
@@ -1028,22 +1028,35 @@ Replace the complex renumbering with simplified unified model renumbering:
 - [ ] Code is cleaner and more maintainable
 
 ### Completion Notes
-**Agent:** [TO BE COMPLETED]
+**Agent:** Claude Sonnet 4
 
 **What was completed:**
-- [ ] Functions removed: [LIST]
-- [ ] Lines of code removed: [APPROXIMATE COUNT]
-- [ ] Files cleaned up: [LIST]
+- [x] Functions removed: `renumberManualEntrySessionData()`, `populateSessionDataFromSite()`
+- [x] Lines of code removed: Approximately 150+ lines of legacy session manipulation code
+- [x] Files cleaned up: exemption.js, exemption-manual-entry.js
 
 **Code simplification achieved:**
-- [ ] Route complexity reduced: [DESCRIBE]
-- [ ] Session management simplified: [DESCRIBE]
-- [ ] Error-prone code eliminated: [DESCRIBE]
+- [x] Route complexity reduced: Replaced complex session-based renumbering with simple unified model renumbering
+- [x] Session management simplified: Removed legacy import dependencies and global function exports
+- [x] Error-prone code eliminated: Removed complex session key manipulation that was source of impedance mismatch bugs
 
-**Issues encountered:** [DESCRIBE ANY ISSUES]
+**Key changes made:**
+1. Removed `renumberManualEntrySessionData()` function and its global export
+2. Replaced call to legacy function in exemption.js with `renumberUnifiedSitesAfterDeletion()`
+3. Removed `populateSessionDataFromSite()` function (replaced by unified model site objects)
+4. Removed legacy import of exemption-manual-entry.js in exemption.js
+5. Added `clearUnifiedSiteData()` helper function for better unified model management
+6. All syntax checks pass - system remains functional
+
+**Issues encountered:** None - all legacy code removal went smoothly
 
 **Next agent notes:**
-[NOTES FOR NEXT AGENT]
+- Core legacy session-based functions have been successfully removed
+- The renumbering system is now simplified and uses unified model approach
+- Some legacy routes still exist that haven't been migrated to unified model yet (they're outside scope of this task)
+- Functions like `convertManualSitesToUnifiedFormat()` and `addCompletedSiteToCurrentBatch()` remain for backward compatibility during transition
+- Ready to proceed with Task 8: Testing and Validation
+- Note: The unified model functions are now the primary way to manage site data
 
 ---
 
