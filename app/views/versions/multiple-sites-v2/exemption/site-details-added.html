@@ -55,9 +55,9 @@ Your sites
         <!-- Display error summary if applicable -->
         {% if data['errorthispage'] == "true" %}
             {% if data['sites'] and data['sites'].length > 0 %}
-                {% set errorText = "To continue, either complete all the sites or uncheck the box and save your changes" %}
+                {% set errorText = "Complete all site details or clear the 'Finished adding sites' box to save and continue" %}
             {% else %}
-                {% set errorText = "To continue, either add a site or uncheck the box and save your changes" %}
+                {% set errorText = "Add at least one site or clear the 'Finished adding sites' box to save and continue" %}
             {% endif %}
             {{ govukErrorSummary({
                 titleText: "There is a problem",
@@ -90,6 +90,7 @@ Your sites
                         <tr class="govuk-table__row">
                             <th scope="col" class="govuk-table__header">Site</th>
                             <th scope="col" class="govuk-table__header">Site name</th>
+                            <th scope="col" class="govuk-table__header">Source</th>
                             <th scope="col" class="govuk-table__header">Status</th>
                             <th scope="col" class="govuk-table__header">Actions</th>
                         </tr>
@@ -141,6 +142,15 @@ Your sites
                                 <td class="govuk-table__cell"{% if not isLastInBatch %} style="border-bottom: none !important;"{% endif %}>Site {{ siteIndex }}</td>
                                 <td class="govuk-table__cell"{% if not isLastInBatch %} style="border-bottom: none !important;"{% endif %}>{{ site.name or "-" }}</td>
                                 <td class="govuk-table__cell"{% if not isLastInBatch %} style="border-bottom: none !important;"{% endif %}>
+                                    {% if site.entryMethod == "manual-entry" or site.entryMethod == "manual-entry-single-site" %}
+                                        Manual entry
+                                    {% elif site.entryMethod == "file-upload" %}
+                                        File upload
+                                    {% else %}
+                                        -
+                                    {% endif %}
+                                </td>
+                                <td class="govuk-table__cell"{% if not isLastInBatch %} style="border-bottom: none !important;"{% endif %}>
                                     {% if isComplete %}
                                         Completed
                                     {% else %}
@@ -148,16 +158,14 @@ Your sites
                                     {% endif %}
                                 </td>
                                 <td class="govuk-table__cell"{% if not isLastInBatch %} style="border-bottom: none !important;"{% endif %}>
-                                    <a href="delete-site?site={{ siteIndex }}&return=site-details-added" class="govuk-link govuk-link--no-visited-state">Delete</a>
-                                    {% if isFirstInBatch %}
-                                        {% set reviewUrl = "review-site-details?site=" + siteIndex + "&batchId=" + site.batchId %}
-                                        {% if site.entryMethod == "manual-entry" %}
-                                            {% set reviewUrl = "manual-entry/review-site-details?site=" + siteIndex + "&batchId=" + site.batchId %}
-                                        {% elif site.entryMethod == "manual-entry-single-site" %}
-                                            {% set reviewUrl = "manual-entry-single-site/review-site-details" %}
-                                        {% endif %}
-                                        <a href="{{ reviewUrl }}" class="govuk-link govuk-!-margin-left-3 govuk-link--no-visited-state">Review</a>
+                                    {% set reviewUrl = "review-site-details?site=" + siteIndex + "&batchId=" + site.batchId %}
+                                    {% if site.entryMethod == "manual-entry" %}
+                                        {% set reviewUrl = "manual-entry/review-site-details?site=" + siteIndex + "&batchId=" + site.batchId %}
+                                    {% elif site.entryMethod == "manual-entry-single-site" %}
+                                        {% set reviewUrl = "manual-entry-single-site/review-site-details" %}
                                     {% endif %}
+                                    <a href="{{ reviewUrl }}" class="govuk-link govuk-link--no-visited-state">Review</a>
+                                    <a href="delete-site?site={{ siteIndex }}&return=site-details-added" class="govuk-link govuk-!-margin-left-3 govuk-link--no-visited-state">Delete</a>
                                 </td>
                             </tr>
                         {% endfor %}
@@ -177,9 +185,9 @@ Your sites
         <form action="site-details-added-router" method="post" novalidate>
             {% if data['errorthispage'] == "true" %}
                 {% if data['sites'] and data['sites'].length > 0 %}
-                    {% set checkboxErrorText = "To continue, either complete all the sites or uncheck the box and save your changes" %}
+                    {% set checkboxErrorText = "Complete all site details or clear the 'Finished adding sites' box to save and continue" %}
                 {% else %}
-                    {% set checkboxErrorText = "To continue, either add a site or uncheck the box and save your changes" %}
+                    {% set checkboxErrorText = "Add at least one site or clear the 'Finished adding sites' box to save and continue" %}
                 {% endif %}
             {% endif %}
             {{ govukCheckboxes({

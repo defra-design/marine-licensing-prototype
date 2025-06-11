@@ -199,22 +199,58 @@ function clearAllFileUploadData(session) {
     delete session.data['exemption-end-date-date-input-month'];
     delete session.data['exemption-end-date-date-input-year'];
     
-    // Clear activity description settings for file upload
+    // Clear shared activity description for file upload
+    delete session.data['exemption-activity-details-text-area'];
     delete session.data['exemption-same-activity-description-for-sites'];
-    delete session.data['previous-activity-description-selection'];
     
-    // Clear individual site data for file upload
-    for (let i = 1; i <= 4; i++) {
-        delete session.data[`site-${i}-name`];
-        delete session.data[`site-${i}-start-date-day`];
-        delete session.data[`site-${i}-start-date-month`];
-        delete session.data[`site-${i}-start-date-year`];
-        delete session.data[`site-${i}-end-date-day`];
-        delete session.data[`site-${i}-end-date-month`];
-        delete session.data[`site-${i}-end-date-year`];
-        delete session.data[`site-${i}-activity-description`];
-        delete session.data[`site-${i}-map-image`];
+    // Clear any file upload related flags
+    delete session.data['hasUploadedFile'];
+    delete session.data['fileUploadCount'];
+}
+
+// Function to comprehensively clear data when changing file upload choices from review page
+function clearDataForFileUploadChange(session) {
+    // Clear all file upload data
+    clearAllFileUploadData(session);
+    
+    // Clear the current batch and all associated sites
+    const currentBatchId = session.data['currentBatchId'];
+    if (currentBatchId && session.data['siteBatches']) {
+        // Remove the current batch from siteBatches array
+        session.data['siteBatches'] = session.data['siteBatches'].filter(batch => batch.id !== currentBatchId);
+        
+        // Reset the global site counter if this was the only batch
+        if (session.data['siteBatches'].length === 0) {
+            delete session.data['globalSiteCounter'];
+        } else {
+            // Recalculate global site counter based on remaining sites
+            let maxGlobalNumber = 0;
+            session.data['siteBatches'].forEach(batch => {
+                batch.sites.forEach(site => {
+                    if (site.globalNumber > maxGlobalNumber) {
+                        maxGlobalNumber = site.globalNumber;
+                    }
+                });
+            });
+            session.data['globalSiteCounter'] = maxGlobalNumber;
+        }
     }
+    
+    // Clear current batch ID
+    delete session.data['currentBatchId'];
+    
+    // Reset file upload count so we get consistent site generation
+    delete session.data['fileUploadCount'];
+    
+    // Clear coordinate method selection to force user to choose again
+    delete session.data['exemption-how-do-you-want-to-provide-the-coordinates-radios'];
+    
+    // Clear all site-related session flags
+    delete session.data['siteDetailsSaved'];
+    delete session.data['fromReviewSiteDetails'];
+    
+    // Clear any return parameters
+    delete session.data['returnTo'];
 }
 
 // Function to clear all coordinate method session data for fresh start
@@ -1089,11 +1125,16 @@ router.get('/' + version + section + 'how-do-you-want-to-provide-the-coordinates
     req.session.data['errortypeone'] = "false";
     req.session.data['errors'] = [];
     
+    // Check if we need to clear data (coming from review page change links)
+    if (req.query.clearData === 'true') {
+        clearDataForFileUploadChange(req.session);
+    }
+    
     // Check if we're returning from review-site-details
     if (req.query.returnTo === 'review-site-details') {
         req.session.data['fromReviewSiteDetails'] = 'true';
-    } else if (!req.query.returnTo && !req.query.camefromcheckanswers) {
-        // Only clear data if starting a truly new journey (not from check answers or review)
+    } else if (!req.query.returnTo && !req.query.camefromcheckanswers && req.query.clearData !== 'true') {
+        // Only clear data if starting a truly new journey (not from check answers, review, or clearData scenarios)
         req.session.data['siteDetailsSaved'] = false;
         
         // Clear all file upload data for a fresh start
@@ -1161,6 +1202,11 @@ router.get('/' + version + section + 'which-type-of-file', function (req, res) {
     req.session.data['errortypeone'] = "false";
     req.session.data['errors'] = [];
     
+    // Check if we need to clear data (coming from review page change links)
+    if (req.query.clearData === 'true') {
+        clearDataForFileTypeChange(req.session);
+    }
+    
     // Check if we're returning from review-site-details
     if (req.session.data['fromReviewSiteDetails'] === 'true') {
         // Keep the flag
@@ -1209,6 +1255,11 @@ router.get('/' + version + section + 'upload-file', function (req, res) {
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
     req.session.data['errors'] = [];
+    
+    // Check if we need to clear data (coming from review page change links)
+    if (req.query.clearData === 'true') {
+        clearDataForFileUploadOnly(req.session);
+    }
     
     // Check if we're returning from review-site-details
     if (req.session.data['fromReviewSiteDetails'] === 'true') {
@@ -2137,6 +2188,11 @@ router.get('/' + version + section + 'add-another-site', function (req, res) {
     // Instead of clearing all coordinate method data, only clear the method selection
     // This prevents file uploads from wiping manual entry activity settings
     
+    // Clear error states from the previous page (site-details-added)
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errors'] = [];
+    
     // Clear only the coordinate method selection to allow fresh choice
     delete req.session.data['exemption-how-do-you-want-to-provide-the-coordinates-radios'];
     
@@ -2148,6 +2204,9 @@ router.get('/' + version + section + 'add-another-site', function (req, res) {
     delete req.session.data['siteDetailsSaved'];
     delete req.session.data['current-site'];
     delete req.session.data['returnTo'];
+    
+    // Clear the checkbox state from the sites page
+    delete req.session.data['finished-adding-sites'];
     
     // Redirect to coordinate method selection page
     res.redirect('how-do-you-want-to-provide-the-coordinates');
@@ -2383,4 +2442,85 @@ router.post('/' + version + section + 'more-than-one-site-router', function (req
     }
 });
 
+// Function to clear data when changing file type (but keeping coordinate method)
+function clearDataForFileTypeChange(session) {
+    // Clear file type and upload data only
+    delete session.data['exemption-which-type-of-file-radios'];
+    delete session.data['hasUploadedFile'];
+    delete session.data['fileUploadCount'];
+    
+    // Clear the current batch and all associated sites
+    const currentBatchId = session.data['currentBatchId'];
+    if (currentBatchId && session.data['siteBatches']) {
+        session.data['siteBatches'] = session.data['siteBatches'].filter(batch => batch.id !== currentBatchId);
+        
+        if (session.data['siteBatches'].length === 0) {
+            delete session.data['globalSiteCounter'];
+        } else {
+            let maxGlobalNumber = 0;
+            session.data['siteBatches'].forEach(batch => {
+                batch.sites.forEach(site => {
+                    if (site.globalNumber > maxGlobalNumber) {
+                        maxGlobalNumber = site.globalNumber;
+                    }
+                });
+            });
+            session.data['globalSiteCounter'] = maxGlobalNumber;
+        }
+    }
+    
+    delete session.data['currentBatchId'];
+    
+    // Clear activity dates and descriptions
+    delete session.data['exemption-same-activity-dates-for-sites'];
+    delete session.data['exemption-same-activity-description-for-sites'];
+    delete session.data['exemption-start-date-date-input-day'];
+    delete session.data['exemption-start-date-date-input-month'];
+    delete session.data['exemption-start-date-date-input-year'];
+    delete session.data['exemption-end-date-date-input-day'];
+    delete session.data['exemption-end-date-date-input-month'];
+    delete session.data['exemption-end-date-date-input-year'];
+    delete session.data['exemption-activity-details-text-area'];
 }
+
+// Function to clear data when changing uploaded file only (keeping coordinate method and file type)
+function clearDataForFileUploadOnly(session) {
+    // Only clear upload flag and upload count
+    delete session.data['hasUploadedFile'];
+    delete session.data['fileUploadCount'];
+    
+    // Clear the current batch and all associated sites
+    const currentBatchId = session.data['currentBatchId'];
+    if (currentBatchId && session.data['siteBatches']) {
+        session.data['siteBatches'] = session.data['siteBatches'].filter(batch => batch.id !== currentBatchId);
+        
+        if (session.data['siteBatches'].length === 0) {
+            delete session.data['globalSiteCounter'];
+        } else {
+            let maxGlobalNumber = 0;
+            session.data['siteBatches'].forEach(batch => {
+                batch.sites.forEach(site => {
+                    if (site.globalNumber > maxGlobalNumber) {
+                        maxGlobalNumber = site.globalNumber;
+                    }
+                });
+            });
+            session.data['globalSiteCounter'] = maxGlobalNumber;
+        }
+    }
+    
+    delete session.data['currentBatchId'];
+    
+    // Clear activity dates and descriptions
+    delete session.data['exemption-same-activity-dates-for-sites'];
+    delete session.data['exemption-same-activity-description-for-sites'];
+    delete session.data['exemption-start-date-date-input-day'];
+    delete session.data['exemption-start-date-date-input-month'];
+    delete session.data['exemption-start-date-date-input-year'];
+    delete session.data['exemption-end-date-date-input-day'];
+    delete session.data['exemption-end-date-date-input-month'];
+    delete session.data['exemption-end-date-date-input-year'];
+    delete session.data['exemption-activity-details-text-area'];
+}
+
+};

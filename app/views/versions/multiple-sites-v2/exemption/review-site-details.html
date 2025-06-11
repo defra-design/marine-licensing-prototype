@@ -106,11 +106,12 @@ Review site details
                             Upload a file with the coordinates of the site
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="how-do-you-want-to-provide-the-coordinates?returnTo=review-site-details#site-location" class="govuk-link">
+                            <a href="how-do-you-want-to-provide-the-coordinates?returnTo=review-site-details&clearData=true#site-location" class="govuk-link">
                                 Change<span class="govuk-visually-hidden"> method of providing site location</span>
                             </a>
                         </dd>
                     </div>
+                    {% if data['exemption-which-type-of-file-radios'] %}
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
                             File type
@@ -119,11 +120,13 @@ Review site details
                             {{ data['exemption-which-type-of-file-radios'] }}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="which-type-of-file?fromreview=true#site-location" class="govuk-link">
+                            <a href="which-type-of-file?fromreview=true&clearData=true#site-location" class="govuk-link">
                                 Change<span class="govuk-visually-hidden"> file type</span>
                             </a>
                         </dd>
                     </div>
+                    {% endif %}
+                    {% if data['hasUploadedFile'] %}
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
                             File uploaded
@@ -136,11 +139,12 @@ Review site details
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="upload-file?fromreview=true#site-location" class="govuk-link">
+                            <a href="upload-file?fromreview=true&clearData=true#site-location" class="govuk-link">
                                 Change<span class="govuk-visually-hidden"> file uploaded</span>
                             </a>
                         </dd>
                     </div>
+                    {% endif %}
                 </dl>
             </div>
         </div>
