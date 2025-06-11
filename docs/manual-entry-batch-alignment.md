@@ -253,15 +253,168 @@ List all functions file upload uses successfully:
 - [ ] Clear pattern to replicate for manual entry
 
 ### Completion Notes
-**Agent:** [Name]
+**Agent:** Claude Sonnet 4
 
 **File upload pattern analysis:**
-- [ ] Data flow documented
-- [ ] Site structure recorded
-- [ ] Functions identified
+- [x] Data flow documented
+- [x] Site structure recorded  
+- [x] Functions identified
 
 **Key insights:**
-- [List main findings about why file upload works]
+- File upload follows a simple, proven 3-step pattern: initialize batch → create site data → add to batch
+- All site data is stored in batch.sites array with consistent structure
+- Review page reads directly from getCurrentBatch().sites - no complex conversion needed
+- Batch system includes support for shared questions via batch.settings
+- The batch system is already battle-tested and working perfectly
+
+## Detailed Task 1 Analysis Results
+
+### 1. File Upload Data Flow (Lines 1706-1900)
+
+**Complete File Upload Journey:**
+
+```javascript
+// 1. File Upload Route (/upload-file-router)
+router.post('/' + version + section + 'upload-file-router', function (req, res) {
+    // A. Initialize batch
+    const batchId = initializeBatch(req.session, 'file-upload');
+    req.session.data['currentBatchId'] = batchId;
+    
+    // B. Get current batch and store settings
+    const currentBatch = getCurrentBatch(req.session);
+    currentBatch.settings = {
+        sameActivityDates: null,         // Populated later
+        sameActivityDescription: null,   // Populated later  
+        sharedStartDate: {},
+        sharedEndDate: {},
+        sharedDescription: null,
+        fileType: req.session.data['exemption-which-type-of-file-radios']
+    };
+    
+    // C. Create site data objects
+    const sites = [
+        {
+            name: 'Sediment sample 1',
+            description: '',
+            startDate: { day: '', month: '', year: '' },
+            endDate: { day: '', month: '', year: '' },
+            mapImage: '/public/images/worthing-map-drawn-copy.jpg'
+        },
+        // ... more sites
+    ];
+    
+    // D. Add each site to batch
+    sites.forEach(site => addSiteToBatch(req.session, site));
+    
+    // E. Route based on site count
+    if (sites.length === 1) {
+        res.redirect('site-activity-dates?site=' + siteGlobalNumber);
+    } else {
+        res.redirect('same-activity-dates'); // Shared questions
+    }
+});
+
+// 2. Shared Questions Routes (same-activity-dates, same-activity-description)
+// - Store shared preferences in batch.settings
+// - Handle loop-back behavior for review page changes
+
+// 3. Review Route (/review-site-details) 
+router.get('/' + version + section + 'review-site-details', function (req, res) {
+    // Simply reads from batch
+    const batch = getCurrentBatch(req.session);
+    const sites = batch ? batch.sites : [];
+    res.render('review-site-details', { sites }); // ← Works perfectly
+});
+```
+
+### 2. Site Data Structure
+
+**Exact structure file upload uses:**
+
+```javascript
+const siteData = {
+    // Core identification
+    globalNumber: X,                    // Auto-assigned by addSiteToBatch()
+    batchId: 'batch_id',               // Auto-assigned by addSiteToBatch()
+    entryMethod: 'file-upload',        // Auto-assigned by addSiteToBatch()
+    addedAt: '2024-12-19T...',        // Auto-assigned by addSiteToBatch()
+    
+    // Site information
+    name: 'Sediment sample 1',
+    description: '',                   // Individual or from batch.settings.sharedDescription
+    
+    // Activity dates
+    startDate: {
+        day: '',
+        month: '', 
+        year: ''
+    },
+    endDate: {
+        day: '',
+        month: '',
+        year: ''
+    },
+    
+    // File upload specific
+    mapImage: '/public/images/worthing-map-drawn-copy.jpg',
+    
+    // Additional fields that can be added:
+    coordinates: {},
+    // Any other fields manual entry needs...
+};
+```
+
+### 3. Batch System Functions
+
+**Core functions file upload uses successfully:**
+
+```javascript
+// Primary batch functions (lines 1277-1380)
+function initializeBatch(session, entryMethod)     // Creates new batch with unique ID
+function getCurrentBatch(session)                  // Gets active batch by currentBatchId
+function addSiteToBatch(session, siteData)        // Adds site with auto-assigned globalNumber
+function getAllSites(session)                     // Gets sites from all batches
+function findSiteByGlobalNumber(session, globalNumber) // Finds specific site
+
+// Helper functions
+function getSitesByBatch(session, batchId)        // Gets sites for specific batch
+function getBatchRelativePosition(session, globalNumber) // Position within batch
+function renumberSitesAfterDeletion(session, deletedGlobalNumber) // Handles deletion
+```
+
+**Batch Settings Support:**
+```javascript
+// Batch settings structure for shared questions
+currentBatch.settings = {
+    sameActivityDates: "Yes"|"No"|null,
+    sameActivityDescription: "Yes"|"No"|null,
+    sharedStartDate: { day: '', month: '', year: '' },
+    sharedEndDate: { day: '', month: '', year: '' },
+    sharedDescription: 'text'|null,
+    fileType: 'csv'|'kml'|etc  // File upload specific
+};
+```
+
+### 4. Review Page Integration
+
+**How review page works with batch system (lines 1027-1115):**
+
+```javascript
+router.get('/' + version + section + 'review-site-details', function (req, res) {
+    // Simply gets current batch sites
+    const batch = getCurrentBatch(req.session);
+    const sites = batch ? batch.sites : [];
+    
+    // Batch settings automatically available for shared data display
+    // - batch.settings.sameActivityDates
+    // - batch.settings.sameActivityDescription  
+    // - batch.settings.sharedStartDate, sharedEndDate, sharedDescription
+    
+    res.render('review-site-details', { sites });
+});
+```
+
+**Key insight:** Review page already works perfectly with batch system - no conversion needed!
 
 ---
 
@@ -330,15 +483,138 @@ When user returns from review page and changes settings:
 - [ ] Current batch.settings usage documented
 
 ### Completion Notes
-**Agent:** [Name]
+**Agent:** Claude Sonnet 4
 
 **Multiple site journey analysis:**
-- [ ] Journey flow documented
-- [ ] Shared questions identified  
-- [ ] Loop-back scenarios mapped
-- [ ] batch.settings usage confirmed
+- [x] Journey flow documented
+- [x] Shared questions identified  
+- [x] Loop-back scenarios mapped
+- [x] batch.settings usage confirmed
 
 **Critical requirement:** The batch alignment must preserve the shared/individual questions flow that file upload doesn't need.
+
+### Detailed Analysis Results
+
+**1. Current Multiple Site Journey Flow:**
+
+**Decision Point Journey:**
+```
+1. "Does your project involve more than one site?" 
+   └─ Both "Yes" and "No" → Site name (Site 1)
+      └─ IF "No" (Single site) → individual-site-activity-dates 
+      └─ IF "Yes" (Multiple sites) → same-activity-dates (shared questions)
+```
+
+**Multiple Site Shared Questions Flow:**
+```
+Site name → same-activity-dates → [activity-dates OR individual-site-activity-dates] 
+         → same-activity-description → [activity-description OR individual-site-activity-description]
+         → coordinate method → coordinate system → coordinates → review
+```
+
+**2. Current Batch System Integration:**
+
+The multiple site manual entry **already uses the batch system** but with **unified model complexity on top**:
+
+```javascript
+// ALREADY WORKING: Batch initialization
+const batchId = initializeBatch(req.session, 'manual-entry');
+
+// ALREADY WORKING: Batch settings for shared questions
+currentBatch.settings = {
+    sameActivityDates: "Yes"|"No",           // From same-activity-dates route
+    sameActivityDescription: "Yes"|"No",     // From same-activity-description route  
+    sharedStartDate: {day, month, year},     // When sameActivityDates = "Yes"
+    sharedEndDate: {day, month, year},       // When sameActivityDates = "Yes"
+    sharedDescription: "text"                // When sameActivityDescription = "Yes"
+};
+
+// BROKEN: Site creation uses unified model instead of batch
+const site = createNewSite(req.session);    // ❌ Should be addSiteToBatch()
+updateSiteField(req.session, siteId, ...);  // ❌ Should update batch.sites directly
+```
+
+**3. Navigation Logic Based on `manual-multiple-sites`:**
+
+**Single Site (`manual-multiple-sites` = "No"):**
+- Skips shared questions (`same-activity-dates`, `same-activity-description`)
+- Goes directly to individual questions for the single site
+- Flow: Site name → individual-site-activity-dates → individual-site-activity-description → coordinates → review
+
+**Multiple Sites (`manual-multiple-sites` = "Yes"):**  
+- Always asks shared questions first
+- Flow: Site name → same-activity-dates → same-activity-description → individual questions → coordinates → review
+- **Critical**: Shared settings persist when adding Site 2, Site 3, etc.
+
+**4. Loop-Back Behavior (COMPLEX - Must Preserve):**
+
+**From Review Page:**
+- User can change shared/individual preferences via links like `?returnTo=review-site-details`
+- **Scenario A**: Change "Yes" (shared) to "No" (individual)
+  ```javascript
+  // Copy shared data to all existing sites
+  if (selection === "No" && currentBatch.settings.sameActivityDates === "Yes") {
+      const sharedStartDate = currentBatch.settings.sharedStartDate;
+      req.session.data['unifiedSites'].forEach(site => {
+          updateSiteField(req.session, site.id, 'activityDates.startDate', sharedStartDate);
+      });
+  }
+  ```
+- **Scenario B**: Change "No" (individual) to "Yes" (shared)  
+  ```javascript
+  // Use first site's data as shared data, clear individual data
+  ```
+
+**5. Template Structure (CORRECT - Keep These):**
+
+**Shared Questions Templates:** (Multiple sites only)
+- `same-activity-dates.html` - "Are dates the same for every site?"
+- `same-activity-description.html` - "Are descriptions the same for every site?"
+
+**Shared Data Templates:** (Multiple sites "Yes" responses)
+- `activity-dates.html` - Shared dates entry for all sites
+- `activity-description.html` - Shared description entry for all sites
+
+**Individual Data Templates:** (Both single and multiple sites)
+- `individual-site-activity-dates.html` - Individual site dates
+- `individual-site-activity-description.html` - Individual site descriptions
+
+**Review Page Integration:**
+```html
+<!-- Multiple sites section shows shared settings -->
+{% if isMultipleSitesJourney %}
+    <!-- Shows batch.settings.sameActivityDates, batch.settings.sameActivityDescription -->
+    <!-- Shows shared data if applicable -->
+{% endif %}
+
+<!-- Individual site sections -->  
+{% for site in sites %}
+    <!-- Shows individual data based on shared settings -->
+{% endfor %}
+```
+
+**6. Key Insight for Batch Alignment:**
+
+**The batch system already works for multiple site manual entry!** The problems are:
+
+1. **Unified model complexity** - Site creation/updates use unified model instead of direct batch operations
+2. **Data conversion complexity** - Complex functions like `convertManualSitesToUnifiedFormat()` 
+3. **Session data scattered** - Data stored in session instead of centralized in batch
+
+**The shared/individual questions flow is already preserved via `batch.settings`** - we just need to:
+1. Remove unified model site creation (`createNewSite`, `updateSiteField`)
+2. Use direct batch operations (`addSiteToBatch`, update `batch.sites` directly)  
+3. Keep `batch.settings` for shared questions (already working)
+4. Keep loop-back behavior logic (already working)
+
+**7. Critical Preservation Requirements:**
+
+- ✅ `batch.settings.sameActivityDates` and `batch.settings.sameActivityDescription` 
+- ✅ `batch.settings.sharedStartDate`, `sharedEndDate`, `sharedDescription`
+- ✅ Navigation logic based on `manual-multiple-sites` choice
+- ✅ Loop-back behavior from review page
+- ✅ Template conditional logic for shared vs individual display
+- ✅ "Add another site" functionality with inherited shared settings
 
 ---
 
