@@ -1410,6 +1410,147 @@ function renumberSitesAfterDeletion(session, deletedGlobalNumber) {
     console.log('=== RENUMBERING COMPLETE ===');
 }
 
+// ===== NEW UNIFIED DATA MODEL =====
+// Replaces complex session-based manual entry data management
+
+function initializeUnifiedSiteModel(session) {
+    if (!session.data['unifiedSites']) {
+        session.data['unifiedSites'] = [];
+    }
+    console.log('Unified site model initialized');
+}
+
+function createNewSite(session, batchId = null) {
+    const globalNumber = (session.data['globalSiteCounter'] || 0) + 1;
+    
+    const newSite = {
+        id: generateSiteId(),
+        globalNumber: globalNumber,
+        batchId: batchId,
+        createdAt: new Date().toISOString(),
+        source: batchId ? 'file-upload' : 'manual-entry',
+        
+        // Site data fields (replaces session keys)
+        name: '',
+        coordinates: {
+            latitude: '',
+            longitude: '',
+            format: 'decimal-degrees' // or 'degrees-minutes-seconds'
+        },
+        activityDetails: '',
+        siteArea: '',
+        gearType: '',
+        vesselDetails: '',
+        
+        // Validation state
+        isComplete: false,
+        validationErrors: {}
+    };
+    
+    session.data['unifiedSites'].push(newSite);
+    session.data['globalSiteCounter'] = globalNumber;
+    
+    console.log(`Created new site with ID: ${newSite.id}, global number: ${globalNumber}`);
+    return newSite;
+}
+
+function generateSiteId() {
+    return 'site_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+}
+
+function findSiteById(session, siteId) {
+    if (!session.data['unifiedSites']) return null;
+    return session.data['unifiedSites'].find(site => site.id === siteId);
+}
+
+function findSiteByGlobalNumberUnified(session, globalNumber) {
+    if (!session.data['unifiedSites']) return null;
+    return session.data['unifiedSites'].find(site => site.globalNumber === parseInt(globalNumber));
+}
+
+function updateSiteField(session, siteId, fieldPath, value) {
+    const site = findSiteById(session, siteId);
+    if (!site) {
+        console.log(`Site not found: ${siteId}`);
+        return false;
+    }
+    
+    // Handle nested field paths like 'coordinates.latitude'
+    const keys = fieldPath.split('.');
+    let target = site;
+    
+    for (let i = 0; i < keys.length - 1; i++) {
+        if (!target[keys[i]]) {
+            target[keys[i]] = {};
+        }
+        target = target[keys[i]];
+    }
+    
+    target[keys[keys.length - 1]] = value;
+    console.log(`Updated ${fieldPath} for site ${siteId}: ${value}`);
+    
+    // Update completion status
+    updateSiteCompletionStatus(site);
+    return true;
+}
+
+function updateSiteCompletionStatus(site) {
+    // Check if all required fields are completed
+    const required = ['name', 'coordinates.latitude', 'coordinates.longitude'];
+    site.isComplete = required.every(fieldPath => {
+        const keys = fieldPath.split('.');
+        let value = site;
+        for (const key of keys) {
+            value = value[key];
+            if (!value) return false;
+        }
+        return value.trim() !== '';
+    });
+}
+
+// Helper function to migrate existing sites to unified model
+function migrateToUnifiedModel(session) {
+    console.log('=== MIGRATING TO UNIFIED MODEL ===');
+    
+    initializeUnifiedSiteModel(session);
+    
+    // If there are existing sites in batches but not in unified model
+    if (session.data['siteBatches'] && session.data['unifiedSites'].length === 0) {
+        session.data['siteBatches'].forEach(batch => {
+            batch.sites.forEach(existingSite => {
+                const unifiedSite = {
+                    id: generateSiteId(),
+                    globalNumber: existingSite.globalNumber,
+                    batchId: batch.id,
+                    createdAt: new Date().toISOString(),
+                    source: 'file-upload',
+                    
+                    // Migrate existing data
+                    name: existingSite.name || '',
+                    coordinates: {
+                        latitude: existingSite.latitude || '',
+                        longitude: existingSite.longitude || '',
+                        format: 'decimal-degrees'
+                    },
+                    activityDetails: existingSite.activityDetails || '',
+                    siteArea: existingSite.siteArea || '',
+                    gearType: existingSite.gearType || '',
+                    vesselDetails: existingSite.vesselDetails || '',
+                    
+                    isComplete: true, // Assume file upload sites are complete
+                    validationErrors: {}
+                };
+                
+                session.data['unifiedSites'].push(unifiedSite);
+            });
+        });
+        
+        console.log(`Migrated ${session.data['unifiedSites'].length} existing sites to unified model`);
+    }
+    
+    console.log('=== MIGRATION COMPLETE ===');
+}
+
 // Update the upload file router to use batch handling
 router.post('/' + version + section + 'upload-file-router', function (req, res) {
     req.session.data['siteTitle'] = 'review';
