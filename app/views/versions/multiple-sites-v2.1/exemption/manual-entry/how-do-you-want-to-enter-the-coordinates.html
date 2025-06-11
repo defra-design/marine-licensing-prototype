@@ -1,0 +1,174 @@
+{% extends "../../layouts/exemption.html" %}
+
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% include "../../includes/back-link.html" %}
+{% endblock %}
+
+<!-- Set the heading for the page -->
+{% set pageHeadingTextHTML %}
+How do you want to enter the site coordinates?
+{% endset %}
+
+{% set errorText1HTML %}
+    Select how you want to enter the site coordinates
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {% if  data['errorthispage'] == "true"  %}
+        Error:
+    {% endif %}
+
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <!-- Get current site number from query parameter first, then session data -->
+        {% set currentSite = (query.site | int) or (data['current-site'] | int) or 1 %}
+        {% set siteDataKey = 'manual-coordinate-entry-method' if currentSite == 1 else 'manual-site-' + currentSite + '-coordinate-entry-method' %}
+        
+        <!-- The currentSite from URL parameter is already the global site number -->
+        {% set displaySiteNumber = currentSite %}
+
+        <!-- ERROR LOGIC 'error summary' -->
+        {% if data['errorthispage'] == "true" %}
+            {{ govukErrorSummary
+                ({
+                    titleText: "There is a problem",
+                    errorList:
+                    [
+                        {
+                            html: errorText1HTML,
+                            href: "#" + siteDataKey
+                        }
+                    ]
+                })
+            }}
+        {% endif %}
+        <!--  END OF 'error summary' -->
+        
+        <form action="how-do-you-want-to-enter-the-coordinates-router{% if currentSite > 1 %}?site={{ currentSite }}{% endif %}" method="post" novalidate>
+        
+        <div class="govuk-form-group {% if data['errorthispage'] == 'true' %}govuk-form-group--error{% endif %}">
+            <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}<span class="govuk-!-display-block">Site {{ displaySiteNumber }}</span></span>
+            <h1 class="govuk-heading-l">
+                {{ pageHeadingTextHTML }}
+            </h1>
+
+            <details class="govuk-details">
+                <summary class="govuk-details__summary">
+                  <span class="govuk-details__summary-text">
+                    Help with choosing how to enter coordinates
+                  </span>
+                </summary>
+                <div class="govuk-details__text">
+                 <h2 class="govuk-heading-s">For a circular site</h2>
+                  <p>Choose this option if you only know the coordinates at the centre of the site. We'll use the coordinates and width you enter to create a circular area.</p>
+                  <p>Make sure the circle covers the full area where the activity will take place, including any expected movement.</p>
+                  <p>This example shows a 30-metre circular site using a single set of coordinates as the centre point.</p>
+                    
+                  <h2 class="govuk-heading-s">For a site with multiple coordinates</h2>
+                  <p>Choose this option if your site has a clear boundary or defined shape. You'll need to enter coordinates in order, so they join to form a closed shape.</p>
+                  <p>Make sure the shape includes the full area where the activity will take place, including any expected movement.</p>
+                  <p>This example shows a site marked by 4 sets of coordinates to form a square boundary.</p>
+                </div>
+              </details>
+            
+            {% if data['errorthispage'] == "true" %}
+                <p id="{{ siteDataKey }}-error" class="govuk-error-message">
+                    <span class="govuk-visually-hidden">Error:</span> {{ errorText1HTML }}
+                </p>
+            {% endif %}
+
+            {{ govukRadios({
+              idPrefix: siteDataKey,
+              name: siteDataKey,
+              value: data[siteDataKey],
+              fieldset: {
+                legend: {
+                  html: pageHeadingTextHTML,
+                  isPageHeading: false,
+                  classes: "govuk-fieldset__legend--l govuk-visually-hidden"
+                }
+              },
+              items: [
+                {
+                  value: "Enter one set of coordinates and a width to create a circular site",
+                  text: "Enter one set of coordinates and a width to create a circular site",
+                  hint: {
+                    text: "Use this if you only have the centre point of the site"
+                  },
+                  checked: data[siteDataKey] == "Enter one set of coordinates and a width to create a circular site"
+                },
+                {
+                  value: "Enter multiple sets of coordinates to mark the boundary of the site",
+                  text: "Enter multiple sets of coordinates to mark the boundary of the site",
+                  hint: {
+                    text: "Use this if the site is a custom shape with more than one point"
+                  },
+                  checked: data[siteDataKey] == "Enter multiple sets of coordinates to mark the boundary of the site"
+                }
+              ]
+            }) }}
+            
+            </div>
+
+      <div class="govuk-button-group">
+        {{ govukButton({
+          text: "Continue"
+        }) }}
+        <a class="govuk-link govuk-link--no-visited-state" href="../cancel-site-details">Cancel</a>
+    </div>
+
+        </form>
+
+    </div>
+</div>
+
+<!-- ERROR LOGIC  drop down to toggle states  -->
+<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-225px;  ">
+
+    <select style="height:30px;" onchange="window.location.href='?'+this.value">
+
+        <option value="errorthispage=false&errortypeone=false&"
+                {% if (data['errorthispage'] != "true") %}selected{% endif %}
+        >Errors - Off</option>
+
+        <option value="errorthispage=true&errortypeone=true&"
+                {% if (data['errortypeone'] == 'true') %}selected{% endif %}
+        >Error 1 - No selection made</option>
+
+    </select>
+
+</form>
+<!--  END OF ERROR LOGIC -->
+
+<!-- USER TYPE TOGGLE  -->
+<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-225px;  ">
+
+    <select style="height:30px;" onchange="window.location.href='?'+this.value">
+
+        <option value="user=citizen&"
+                {% if  data['user'] != "agent"  %} selected {% endif %}
+        >User type - Individual</option>
+
+        <option value="user=agent&"
+                {% if  data['user'] == "agent"  %} selected {% endif %}
+        >User type - Agent</option>
+
+    </select>
+
+</form>
+<!--  END USER TYPE TOGGLE -->
+
+{% endblock %}
+
+<!-- Generated by Copilot --> 

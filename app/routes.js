@@ -54,6 +54,12 @@ require('./routes/versions/multiple-sites-v2/exemption.js')(router);
 require('./routes/versions/multiple-sites-v2/exemption-manual-entry.js')(router);
 require('./routes/versions/multiple-sites-v2/iat.js')(router);
 
+// Multiple Sites Version V2.1
+require('./routes/versions/multiple-sites-v2.1/check.js')(router);
+require('./routes/versions/multiple-sites-v2.1/exemption.js')(router);
+require('./routes/versions/multiple-sites-v2.1/exemption-manual-entry.js')(router);
+require('./routes/versions/multiple-sites-v2.1/iat.js')(router);
+
 // IAT Version
 require('./routes/versions/iat/check.js')(router);
 require('./routes/versions/iat/exemption.js')(router);
