@@ -876,7 +876,7 @@ router.post('/' + version + section + 'manual-entry/individual-site-activity-des
     console.log('Full form data:', req.body);
     console.log('=== END FORM DEBUG ===');
     
-    const description = req.body['activity-details'];
+    const description = req.body['activity-details-text-area'];
     
     console.log(`Processing individual activity description for site: ${siteId}`);
     console.log(`Extracted description: "${description}"`);
@@ -980,7 +980,7 @@ router.post('/' + version + section + 'manual-entry/activity-description-router'
     console.log('Full form data:', req.body);
     console.log('=== END FORM DEBUG ===');
     
-    const description = req.body['activity-details'];
+    const description = req.body['activity-details-text-area'];
     
     console.log(`Processing activity description for site: ${siteId}`);
     console.log(`Extracted description: "${description}"`);
@@ -1411,9 +1411,17 @@ router.post('/' + version + section + 'manual-entry/site-width-router', function
     const siteId = req.session.data['currentManualEntrySiteId'];
     const returnTo = req.query.returnTo;
     
+    // FIX: Add comprehensive form field debugging
+    console.log('=== SITE WIDTH FORM DEBUG ===');
+    console.log('Route:', req.originalUrl);
+    console.log('Form body received:', Object.keys(req.body));
+    console.log('Full form data:', req.body);
+    console.log('=== END FORM DEBUG ===');
+    
     const width = req.body['site-width'];
     
     console.log(`Processing site width for site: ${siteId}`);
+    console.log(`Extracted width: "${width}"`);
     
     if (!siteId) {
         console.log('No current site ID found for site width');

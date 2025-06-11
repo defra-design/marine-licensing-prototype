@@ -30,18 +30,18 @@ Enter the coordinates at the centre point of the site
         <!-- Get current site information -->
         {% set displaySiteNumber = site.globalNumber %}
         
-        <!-- Setting the smaller secondary headings based on coordinate format -->
+        <!-- Setting the smaller secondary headings based on coordinate system -->
         {% set questionHeadingTextOneHTML %}
-            {% if site.coordinates.format == "degrees-minutes-seconds" %}
-            Latitude
+            {% if site.coordinates.system == "OSGB36 (National Grid)" %}
+            Easting
             {% else %}
             Latitude
             {% endif %}
         {% endset %}
 
         {% set questionHeadingTextTwoHTML %}
-            {% if site.coordinates.format == "degrees-minutes-seconds" %}
-            Longitude
+            {% if site.coordinates.system == "OSGB36 (National Grid)" %}
+            Northing
             {% else %}
             Longitude
             {% endif %}
@@ -83,10 +83,10 @@ Enter the coordinates at the centre point of the site
                 }
               }) %}
               
-              {% if site.coordinates.format != "degrees-minutes-seconds" %}
-              {% include "../../includes/lat-long-content.html" %}
+              {% if site.coordinates.system == "OSGB36 (National Grid)" %}
+              {% include "../../includes/east-north-content.html" %}
               {% else %}
-              {% include "../../includes/dms-content.html" %}
+              {% include "../../includes/lat-long-content.html" %}
               {% endif %}
 
             {{ govukInput

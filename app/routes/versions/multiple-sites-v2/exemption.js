@@ -1665,44 +1665,25 @@ function validateSiteData(site, fieldName = null) {
                 break;
                 
             case 'coordinates':
+                // Only check if fields are empty - this is a prototype
                 if (!site.coordinates.latitude || site.coordinates.latitude.trim() === '') {
                     errors.latitude = 'Latitude is required';
                 }
                 if (!site.coordinates.longitude || site.coordinates.longitude.trim() === '') {
                     errors.longitude = 'Longitude is required';
                 }
-                
-                // Validate coordinate format
-                if (site.coordinates.latitude && site.coordinates.longitude) {
-                    const latError = validateCoordinate(site.coordinates.latitude, 'latitude', site.coordinates.format);
-                    const lonError = validateCoordinate(site.coordinates.longitude, 'longitude', site.coordinates.format);
-                    
-                    if (latError) errors.latitude = latError;
-                    if (lonError) errors.longitude = lonError;
-                }
                 break;
                 
             case 'activityDates':
-                // Validate start date
+                // Only check if required fields are empty
                 const startDate = site.activityDates.startDate;
                 if (!startDate.day || !startDate.month || !startDate.year) {
                     errors.startDate = 'Start date is required';
-                } else {
-                    const date = new Date(startDate.year, startDate.month - 1, startDate.day);
-                    if (isNaN(date.getTime())) {
-                        errors.startDate = 'Start date is invalid';
-                    }
                 }
                 
-                // Validate end date
                 const endDate = site.activityDates.endDate;
                 if (!endDate.day || !endDate.month || !endDate.year) {
                     errors.endDate = 'End date is required';
-                } else {
-                    const date = new Date(endDate.year, endDate.month - 1, endDate.day);
-                    if (isNaN(date.getTime())) {
-                        errors.endDate = 'End date is invalid';
-                    }
                 }
                 break;
                 
@@ -1713,35 +1694,13 @@ function validateSiteData(site, fieldName = null) {
                 break;
                 
             case 'siteWidth':
-                if (site.coordinates.width && site.coordinates.width.trim() !== '') {
-                    const width = parseFloat(site.coordinates.width);
-                    if (isNaN(width) || width <= 0) {
-                        errors.siteWidth = 'Site width must be a positive number';
-                    }
-                }
+                // No validation for site width - optional field in prototype
                 break;
         }
     });
     
     site.validationErrors = { ...site.validationErrors, ...errors };
     return Object.keys(errors).length === 0;
-}
-
-function validateCoordinate(value, type, format) {
-    if (format === 'decimal-degrees') {
-        const num = parseFloat(value);
-        if (isNaN(num)) return `${type} must be a valid number`;
-        
-        if (type === 'latitude' && (num < -90 || num > 90)) {
-            return 'Latitude must be between -90 and 90 degrees';
-        }
-        if (type === 'longitude' && (num < -180 || num > 180)) {
-            return 'Longitude must be between -180 and 180 degrees';
-        }
-    }
-    // Add DMS validation if needed
-    
-    return null;
 }
 
 // Update the upload file router to use batch handling
@@ -2906,7 +2865,6 @@ global.migrateToUnifiedModel = migrateToUnifiedModel;
 global.renumberUnifiedSitesAfterDeletion = renumberUnifiedSitesAfterDeletion;
 global.deleteSiteFromUnifiedModel = deleteSiteFromUnifiedModel;
 global.validateSiteData = validateSiteData;
-global.validateCoordinate = validateCoordinate;
 global.clearUnifiedSiteData = clearUnifiedSiteData;
 
 };
