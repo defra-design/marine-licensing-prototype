@@ -343,6 +343,9 @@ function clearCurrentBatchOnly(session) {
     const currentBatchId = session.data['currentBatchId'];
     
     if (currentBatchId && session.data['siteBatches']) {
+        // Find the current batch before removing it
+        const currentBatch = session.data['siteBatches'].find(batch => batch.id === currentBatchId);
+        
         // Find and remove the current batch
         const batchIndex = session.data['siteBatches'].findIndex(batch => batch.id === currentBatchId);
         if (batchIndex !== -1) {
@@ -350,6 +353,26 @@ function clearCurrentBatchOnly(session) {
             
             // Rebuild the global sites array from remaining batches
             session.data['sites'] = session.data['siteBatches'].flatMap(batch => batch.sites);
+            
+            // BUGFIX: Recalculate global site counter based on remaining sites
+            // This fixes the issue where cancelled manual entry sites weren't being removed from the count
+            console.log('=== GLOBAL SITE COUNTER RECALCULATION ===');
+            console.log('Cancelled batch ID:', currentBatchId);
+            console.log('Remaining batches:', session.data['siteBatches'].length);
+            
+            if (session.data['sites'] && session.data['sites'].length > 0) {
+                // Find the highest global number among remaining sites
+                const maxGlobalNumber = Math.max(...session.data['sites'].map(site => site.globalNumber));
+                console.log('Remaining site global numbers:', session.data['sites'].map(site => site.globalNumber));
+                console.log('Max global number found:', maxGlobalNumber);
+                session.data['globalSiteCounter'] = maxGlobalNumber;
+                console.log('Reset globalSiteCounter to:', maxGlobalNumber, 'after cancelling batch');
+            } else {
+                // No sites remain, reset counter to 0
+                session.data['globalSiteCounter'] = 0;
+                console.log('Reset globalSiteCounter to 0 - no sites remain');
+            }
+            console.log('=== RECALCULATION COMPLETE ===');
         }
     }
     

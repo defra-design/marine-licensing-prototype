@@ -462,7 +462,7 @@ The templates should already work correctly with renumbering, but verify these k
 - [x] Documentation updated
 
 ### Known Issues
-No known issues identified during testing. All functionality working as expected.
+**Fixed in December 2024:** ✅ Global site counter bug when cancelling manual entry batches - When users cancelled from the multiple manual entry flow without saving, the global site counter wasn't being reset, causing subsequent sites to be numbered incorrectly. This has been fixed by adding global counter recalculation to the `clearCurrentBatchOnly` function.
 
 ### Future Improvements
 - Consider adding visual feedback during renumbering operations (loading state)
