@@ -1373,6 +1373,40 @@ function getBatchRelativePosition(session, globalNumber) {
     return siteIndex !== -1 ? siteIndex + 1 : 1;
 }
 
+// Function to renumber all sites after deletion
+function renumberSitesAfterDeletion(session, deletedGlobalNumber) {
+    console.log('=== RENUMBERING SITES AFTER DELETION ===');
+    console.log('Deleted site number:', deletedGlobalNumber);
+    
+    // 1. Renumber sites in all batches
+    if (session.data['siteBatches']) {
+        session.data['siteBatches'].forEach(batch => {
+            console.log('Processing batch:', batch.id);
+            batch.sites.forEach(site => {
+                if (site.globalNumber > deletedGlobalNumber) {
+                    const oldNumber = site.globalNumber;
+                    site.globalNumber--;
+                    console.log(`Renumbered site from ${oldNumber} to ${site.globalNumber}`);
+                }
+            });
+        });
+    }
+    
+    // 2. Rebuild global sites array
+    session.data['sites'] = session.data['siteBatches'].flatMap(batch => batch.sites);
+    
+    // 3. Update global site counter
+    if (session.data['globalSiteCounter']) {
+        session.data['globalSiteCounter']--;
+        console.log('Updated globalSiteCounter to:', session.data['globalSiteCounter']);
+    }
+    
+    // 4. Renumber manual entry session data
+    renumberManualEntrySessionData(session, deletedGlobalNumber);
+    
+    console.log('=== RENUMBERING COMPLETE ===');
+}
+
 // Update the upload file router to use batch handling
 router.post('/' + version + section + 'upload-file-router', function (req, res) {
     req.session.data['siteTitle'] = 'review';
