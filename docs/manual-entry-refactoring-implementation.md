@@ -18,6 +18,7 @@ This document provides step-by-step instructions for implementing the architectu
 - [x] Task 6: Update Templates for New Data Model
 - [x] Task 7: Remove Legacy Session-Based Code
 - [x] Task 7.5: Migrate Remaining Legacy Routes
+- [ ] Task 7.6: Fix Multi-Site Data Sharing and Form Clearing
 - [ ] Task 8: Testing and Validation
 - [ ] Task 9: Performance Optimization and Cleanup
 
@@ -1215,6 +1216,221 @@ The unified model is now the primary system for manual entry, with legacy helper
 
 ---
 
+## Task 7.6: Fix Multi-Site Data Sharing and Form Clearing
+
+### Location
+`app/routes/versions/multiple-sites-v2/exemption-manual-entry.js`
+
+### Background
+**User reported issues during testing:**
+1. **Same activity settings not remembered** - On 2nd site, system doesn't remember whether dates/activities should be the same as 1st site
+2. **Form data not cleared** - Previous form data persists when it shouldn't
+3. **Site numbers are correct** - The main unified model numbering is working ✅
+
+These issues suggest the "same activity" data sharing logic wasn't properly migrated to work with the unified model.
+
+### Problem Analysis
+The issues are likely in these areas:
+
+1. **Data sharing logic** - How activity dates/descriptions are copied from site 1 to site 2+
+2. **Same activity state persistence** - How choices like "same dates" are remembered
+3. **Form clearing logic** - When to clear vs when to populate form fields
+4. **Site-to-site data flow** - How data flows between sites in the unified model
+
+### Instructions
+
+#### 1. Fix Same Activity Data Sharing
+
+**Check the `same-activity-dates` and `same-activity-description` routes:**
+
+```javascript
+// In same-activity-dates POST route, ensure this logic works:
+if (req.body['same-activity-dates'] === 'yes') {
+    // Copy activity dates from first site to all other sites
+    const firstSite = req.session.data['unifiedSites']?.find(site => site.globalNumber === 1);
+    if (firstSite && firstSite.activityDates) {
+        req.session.data['unifiedSites'].forEach(site => {
+            if (site.globalNumber > 1) {
+                site.activityDates = { ...firstSite.activityDates };
+                console.log(`Copied activity dates to site ${site.globalNumber}`);
+            }
+        });
+    }
+    
+    // Store the "same dates" choice for future sites
+    req.session.data['sameActivityDates'] = 'yes';
+} else {
+    req.session.data['sameActivityDates'] = 'no';
+}
+```
+
+#### 2. Fix Form Population Logic
+
+**In form GET routes, check for same activity settings:**
+
+```javascript
+// Example for activity-dates GET route
+router.get('/' + version + section + 'manual-entry/activity-dates', function (req, res) {
+    const siteParam = req.query.site;
+    const returnTo = req.query.returnTo;
+    
+    let site = findSiteFromUnifiedModel(req.session, siteParam, returnTo);
+    
+    // Check if this site should inherit data from site 1
+    if (site.globalNumber > 1 && req.session.data['sameActivityDates'] === 'yes') {
+        const firstSite = req.session.data['unifiedSites']?.find(s => s.globalNumber === 1);
+        if (firstSite && firstSite.activityDates && !site.activityDates.startDate) {
+            // Copy dates from first site if current site doesn't have dates yet
+            site.activityDates = { ...firstSite.activityDates };
+            console.log(`Auto-populated activity dates for site ${site.globalNumber} from site 1`);
+        }
+    }
+    
+    res.render(templatePath, {
+        data: req.session.data,
+        site: site,
+        isEditing: returnTo === 'review-site-details',
+        errors: site.validationErrors || {}
+    });
+});
+```
+
+#### 3. Fix Form Clearing Logic
+
+**Add proper data clearing when starting new sites:**
+
+```javascript
+// When creating a new site, clear session data properly
+function createNewSiteForManualEntry(session) {
+    const newSite = createNewSite(session);
+    
+    // Clear any leftover session data that might interfere
+    clearCurrentSiteSessionData(session);
+    
+    // Set as current site
+    session.data['currentManualEntrySiteId'] = newSite.id;
+    
+    return newSite;
+}
+
+function clearCurrentSiteSessionData(session) {
+    // Clear session data that might persist between sites
+    const keysToClear = [
+        'manual-site-name-text-input',
+        'coordinates-latitude',
+        'coordinates-longitude',
+        'activity-details-text-area',
+        // Add other session keys that should be cleared
+    ];
+    
+    keysToClear.forEach(key => {
+        if (session.data[key]) {
+            delete session.data[key];
+            console.log(`Cleared session key: ${key}`);
+        }
+    });
+}
+```
+
+#### 4. Fix State Persistence
+
+**Ensure same activity choices persist correctly:**
+
+```javascript
+// In site creation/navigation logic
+function initializeNewSiteWithInheritedData(session, newSite) {
+    // Apply same activity settings if they exist
+    if (session.data['sameActivityDates'] === 'yes') {
+        const firstSite = session.data['unifiedSites']?.find(s => s.globalNumber === 1);
+        if (firstSite?.activityDates) {
+            newSite.activityDates = { ...firstSite.activityDates };
+        }
+    }
+    
+    if (session.data['sameActivityDescription'] === 'yes') {
+        const firstSite = session.data['unifiedSites']?.find(s => s.globalNumber === 1);
+        if (firstSite?.activityDetails) {
+            newSite.activityDetails = firstSite.activityDetails;
+        }
+    }
+    
+    console.log(`Initialized site ${newSite.globalNumber} with inherited data`);
+}
+```
+
+#### 5. Debug and Trace Data Flow
+
+**Add comprehensive logging:**
+
+```javascript
+// Add debugging logs to track data flow
+function debugSiteDataFlow(session, siteId, action) {
+    console.log(`=== SITE DATA FLOW DEBUG: ${action} ===`);
+    console.log(`Current site ID: ${siteId}`);
+    console.log(`Same activity dates: ${session.data['sameActivityDates']}`);
+    console.log(`Same activity description: ${session.data['sameActivityDescription']}`);
+    
+    const site = findSiteById(session, siteId);
+    if (site) {
+        console.log(`Site ${site.globalNumber} activity dates:`, site.activityDates);
+        console.log(`Site ${site.globalNumber} activity details:`, site.activityDetails);
+    }
+    
+    console.log('All unified sites:', session.data['unifiedSites']?.map(s => ({
+        id: s.id,
+        globalNumber: s.globalNumber,
+        hasActivityDates: !!s.activityDates?.startDate,
+        hasActivityDetails: !!s.activityDetails
+    })));
+    console.log('=== END DEBUG ===');
+}
+```
+
+### Success Criteria
+- [ ] "Same activity dates" choice remembered across sites
+- [ ] "Same activity description" choice remembered across sites
+- [ ] Activity dates automatically copied to new sites when "same dates" = yes
+- [ ] Activity descriptions automatically copied when "same description" = yes
+- [ ] Form fields properly cleared when starting new site (unless inherited)
+- [ ] No session data contamination between sites
+- [ ] Site numbering remains correct
+- [ ] Navigation flow works correctly
+
+### Testing Checklist
+- [ ] **Test 1:** Create 2 sites, set "same dates" = yes, verify site 2 inherits dates from site 1
+- [ ] **Test 2:** Create 2 sites, set "same dates" = no, verify site 2 starts with blank dates
+- [ ] **Test 3:** Same tests for activity descriptions
+- [ ] **Test 4:** Verify form fields are properly cleared when starting new site
+- [ ] **Test 5:** Edit site 1 dates, verify change propagates to other sites if "same dates" = yes
+
+### Completion Notes
+**Agent:** [TO BE COMPLETED]
+
+**Issues fixed:**
+- [ ] Same activity dates inheritance: [FIXED/ONGOING]
+- [ ] Same activity description inheritance: [FIXED/ONGOING]
+- [ ] Form clearing logic: [FIXED/ONGOING]
+- [ ] Session data contamination: [FIXED/ONGOING]
+
+**Root causes identified:**
+[DESCRIBE WHAT WAS CAUSING THE ISSUES]
+
+**Code changes made:**
+[DESCRIBE SPECIFIC CHANGES]
+
+**Testing results:**
+- [ ] Multi-site flow tested end-to-end
+- [ ] Same activity logic verified
+- [ ] Form clearing verified
+- [ ] Navigation flow verified
+
+**Issues encountered:** [DESCRIBE ANY ISSUES AND RESOLUTIONS]
+
+**Next agent notes:**
+[NOTES FOR TASK 8]
+
+---
+
 ## Task 8: Testing and Validation
 
 ### Instructions
@@ -1405,6 +1621,7 @@ function clearSiteCache() {
 - [ ] Task 6: Templates updated
 - [ ] Task 7: Legacy code removed
 - [ ] Task 7.5: All remaining legacy routes migrated
+- [ ] Task 7.6: Multi-site data sharing and form clearing fixed
 - [ ] Task 8: Testing completed successfully
 - [ ] Task 9: Performance optimized
 
