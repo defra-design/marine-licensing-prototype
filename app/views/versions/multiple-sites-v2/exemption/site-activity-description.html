@@ -65,9 +65,9 @@ Activity description
                         <span class="govuk-visually-hidden">Error:</span> {{ errorText1HTML }}
                     </p>
                 {% endif %}
-                <div id="site-{{ data['site'] }}-activity-description-hint" class="govuk-hint">
-                    Briefly describe what you'll do at this site, how you'll do it, and why. For example, 'Take one seabed sample by grab from a workboat to test sediment'
-                </div>
+                <p>Briefly describe what you'll do at this site, how you'll do it, and why.</p>
+                
+                <p>For example, 'Collect a 0.1 cubic metre seabed sample by day grab from a workboat for particle size analysis'.</p>
                 {% set siteIndex = data['site'] | int or 1 %}
                 {% set activityDescription = '' %}
                 
