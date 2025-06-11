@@ -55,9 +55,9 @@ Your sites
         <!-- Display error summary if applicable -->
         {% if data['errorthispage'] == "true" %}
             {% if data['sites'] and data['sites'].length > 0 %}
-                {% set errorText = "To continue, either complete all the sites or uncheck the box and save your changes" %}
+                {% set errorText = "Complete all site details or clear the 'Finished adding sites' box to save and continue" %}
             {% else %}
-                {% set errorText = "To continue, either add a site or uncheck the box and save your changes" %}
+                {% set errorText = "Add at least one site or clear the 'Finished adding sites' box to save and continue" %}
             {% endif %}
             {{ govukErrorSummary({
                 titleText: "There is a problem",
@@ -185,9 +185,9 @@ Your sites
         <form action="site-details-added-router" method="post" novalidate>
             {% if data['errorthispage'] == "true" %}
                 {% if data['sites'] and data['sites'].length > 0 %}
-                    {% set checkboxErrorText = "To continue, either complete all the sites or uncheck the box and save your changes" %}
+                    {% set checkboxErrorText = "Complete all site details or clear the 'Finished adding sites' box to save and continue" %}
                 {% else %}
-                    {% set checkboxErrorText = "To continue, either add a site or uncheck the box and save your changes" %}
+                    {% set checkboxErrorText = "Add at least one site or clear the 'Finished adding sites' box to save and continue" %}
                 {% endif %}
             {% endif %}
             {{ govukCheckboxes({
