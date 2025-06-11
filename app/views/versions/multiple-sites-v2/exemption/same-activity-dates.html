@@ -11,7 +11,7 @@ Are the activity dates the same for every site?
 {% endset %}
 
 {% set errorText1HTML %}
-    Select yes if the activity dates are the same for every site
+    Select whether the activity dates the same for every site
 {% endset %}
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
@@ -23,45 +23,39 @@ Are the activity dates the same for every site?
     {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
 {% endblock %}
 
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
-
 <!-- ERROR LOGIC 'error summary' -->
 {% if data['errorthispage'] == "true" %}
-  <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
-    <h2 class="govuk-error-summary__title" id="error-summary-title">
-      There is a problem
-    </h2>
-    <div class="govuk-error-summary__body">
-      <ul class="govuk-list govuk-error-summary__list">
-        {% if data['errortypeone'] == "true" %}
-          <li><a href="#exemption-same-activity-dates-for-sites">{{ errorText1HTML }}</a></li>
-        {% endif %}
-      </ul>
-    </div>
-  </div>
+  {{ govukErrorSummary({
+    titleText: "There is a problem",
+    errorList: [
+      {
+        text: errorText1HTML,
+        href: "#exemption-same-activity-dates-for-sites"
+      } if data['errortypeone'] == "true"
+    ]
+  }) }}
 {% endif %}
         <!--  END OF 'error summary' -->
-        <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
-        <form action="same-activity-dates-router" method="post" novalidate>
 
-{% from "govuk/components/radios/macro.njk" import govukRadios %}
+        <form action="same-activity-dates-router" method="post" novalidate>
 
 {{ govukRadios({
   idPrefix: "exemption-same-activity-dates-for-sites",
   name: "exemption-same-activity-dates-for-sites",
   fieldset: {
     legend: {
-      text: pageHeadingTextHTML,
+      html: (('<span class="govuk-caption-l">' + data['exemption-project-name-text-input'] + '</span>') if data['exemption-project-name-text-input']) + pageHeadingTextHTML,
       isPageHeading: true,
       classes: "govuk-fieldset__legend--l"
     }
-  },
-  hint: {
-    text: "If the dates are the same for every site, you only need to enter them once."
   },
   errorMessage: {
     text: errorText1HTML
@@ -70,11 +64,17 @@ Are the activity dates the same for every site?
     {
       value: "Yes",
       text: "Yes, the dates are the same for every site",
+      hint: {
+        text: "You'll only need to enter the dates once"
+      },
       checked: data['exemption-same-activity-dates-for-sites'] == "Yes"
     },
     {
       value: "No",
       text: "No, at least one site has different dates",
+      hint: {
+        text: "You'll add dates for each site on the 'Review site details' page"
+      },
       checked: data['exemption-same-activity-dates-for-sites'] == "No"
     }
   ]

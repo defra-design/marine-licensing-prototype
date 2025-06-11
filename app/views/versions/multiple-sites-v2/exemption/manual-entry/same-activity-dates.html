@@ -11,7 +11,7 @@ Are the activity dates the same for every site?
 {% endset %}
 
 {% set errorText1HTML %}
-    Select whether the activity dates the same for every site?
+    Select whether the activity dates are the same for every site
 {% endset %}
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
@@ -59,9 +59,6 @@ Are the activity dates the same for every site?
       classes: "govuk-fieldset__legend--l"
     }
   },
-  hint: {
-    text: "If the dates are the same for each site you only need to enter them once."
-  },
   errorMessage: {
     text: errorText1HTML
   } if data['errortypeone'] == "true",
@@ -69,11 +66,17 @@ Are the activity dates the same for every site?
     {
       value: "Yes",
       text: "Yes, the dates are the same for every site",
+      hint: {
+        text: "You'll only need to enter the dates once"
+      },
       checked: data['manual-same-activity-dates'] == "Yes"
     },
     {
       value: "No",
       text: "No, at least one site has different dates",
+      hint: {
+        text: "You'll need to enter dates for each site"
+      },
       checked: data['manual-same-activity-dates'] == "No"
     }
   ]
