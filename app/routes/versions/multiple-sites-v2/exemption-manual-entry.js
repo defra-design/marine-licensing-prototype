@@ -30,6 +30,62 @@ function ensureUnifiedModelCompatibility(session) {
     }
 }
 
+// NEW: Initialize new sites with inherited data from batch settings
+function initializeNewSiteWithInheritedData(session, newSite) {
+    console.log(`=== INITIALIZING SITE ${newSite.globalNumber} WITH INHERITED DATA ===`);
+    
+    const currentBatch = getCurrentBatch(session);
+    if (!currentBatch || !currentBatch.settings) {
+        console.log('No batch settings found for data inheritance');
+        return;
+    }
+    
+    // Apply same activity dates if they exist
+    if (currentBatch.settings.sameActivityDates === 'Yes' && currentBatch.settings.sharedStartDate) {
+        newSite.activityDates = {
+            startDate: { ...currentBatch.settings.sharedStartDate },
+            endDate: { ...currentBatch.settings.sharedEndDate }
+        };
+        console.log(`Inherited shared activity dates for site ${newSite.globalNumber}`);
+    }
+    
+    // Apply same activity description if it exists
+    if (currentBatch.settings.sameActivityDescription === 'Yes' && currentBatch.settings.sharedDescription) {
+        newSite.activityDetails = currentBatch.settings.sharedDescription;
+        console.log(`Inherited shared activity description for site ${newSite.globalNumber}`);
+    }
+    
+    console.log(`=== INHERITANCE COMPLETE FOR SITE ${newSite.globalNumber} ===`);
+}
+
+// Helper function to clear session data that might contaminate between sites
+function clearCurrentSiteSessionData(session) {
+    console.log('=== CLEARING CURRENT SITE SESSION DATA ===');
+    
+    // Clear session data that might persist between sites
+    const keysToClear = [
+        'manual-site-name-text-input',
+        'coordinates-latitude',
+        'coordinates-longitude',
+        'activity-details-text-area',
+        'site-width',
+        'coordinate-format',
+        'manual-coordinate-entry-method',
+        'manual-coordinate-system-radios'
+    ];
+    
+    let clearedCount = 0;
+    keysToClear.forEach(key => {
+        if (session.data[key]) {
+            delete session.data[key];
+            clearedCount++;
+            console.log(`Cleared session key: ${key}`);
+        }
+    });
+    
+    console.log(`=== CLEARED ${clearedCount} SESSION KEYS ===`);
+}
+
 module.exports = function (router) {
     let version = "versions/multiple-sites-v2/";
     let section = "exemption/";
@@ -251,6 +307,11 @@ router.get('/' + version + section + 'manual-entry/site-name', function (req, re
         // Creating new site
         site = createNewSite(req.session);
         console.log(`Created new site for manual entry: ${site.id}`);
+        
+        // Auto-populate shared data if this isn't the first site
+        if (site.globalNumber > 1) {
+            initializeNewSiteWithInheritedData(req.session, site);
+        }
     }
     
     // Store current site ID in session for form processing
@@ -517,6 +578,19 @@ router.get('/' + version + section + 'manual-entry/activity-dates', function (re
         return res.redirect('/' + version + section + 'manual-entry/site-name');
     }
     
+    // Check if this site should inherit data from shared settings
+    const currentBatch = getCurrentBatch(req.session);
+    if (currentBatch && currentBatch.settings && currentBatch.settings.sameActivityDates === 'Yes' && currentBatch.settings.sharedStartDate) {
+        // Auto-populate if current site doesn't have dates yet
+        if (!site.activityDates.startDate.day && !site.activityDates.endDate.day) {
+            site.activityDates = {
+                startDate: { ...currentBatch.settings.sharedStartDate },
+                endDate: { ...currentBatch.settings.sharedEndDate }
+            };
+            console.log(`Auto-populated activity dates for site ${site.globalNumber} from shared settings`);
+        }
+    }
+    
     // Update current site ID for form processing
     req.session.data['currentManualEntrySiteId'] = site.id;
     
@@ -561,6 +635,36 @@ router.post('/' + version + section + 'manual-entry/activity-dates-router', func
     updateSiteField(req.session, siteId, 'activityDates.endDate.day', endDay || '');
     updateSiteField(req.session, siteId, 'activityDates.endDate.month', endMonth || '');
     updateSiteField(req.session, siteId, 'activityDates.endDate.year', endYear || '');
+    
+    // Store shared dates in batch settings (for multi-site data sharing)
+    const currentBatch = getCurrentBatch(req.session);
+    if (currentBatch && currentBatch.settings && currentBatch.settings.sameActivityDates === 'Yes') {
+        currentBatch.settings.sharedStartDate = {
+            day: startDay || '',
+            month: startMonth || '',
+            year: startYear || ''
+        };
+        currentBatch.settings.sharedEndDate = {
+            day: endDay || '',
+            month: endMonth || '',
+            year: endYear || ''
+        };
+        
+        // Copy to all existing unified sites
+        if (req.session.data['unifiedSites']) {
+            req.session.data['unifiedSites'].forEach(existingSite => {
+                if (existingSite.source === 'manual-entry') {
+                    updateSiteField(req.session, existingSite.id, 'activityDates.startDate.day', startDay || '');
+                    updateSiteField(req.session, existingSite.id, 'activityDates.startDate.month', startMonth || '');
+                    updateSiteField(req.session, existingSite.id, 'activityDates.startDate.year', startYear || '');
+                    updateSiteField(req.session, existingSite.id, 'activityDates.endDate.day', endDay || '');
+                    updateSiteField(req.session, existingSite.id, 'activityDates.endDate.month', endMonth || '');
+                    updateSiteField(req.session, existingSite.id, 'activityDates.endDate.year', endYear || '');
+                }
+            });
+        }
+        console.log('Stored shared activity dates for all sites');
+    }
     
     // Validate activity dates
     const isValid = validateSiteData(site, 'activityDates');
@@ -780,6 +884,16 @@ router.get('/' + version + section + 'manual-entry/activity-description', functi
         return res.redirect('/' + version + section + 'manual-entry/site-name');
     }
     
+    // Check if this site should inherit description from shared settings
+    const currentBatch = getCurrentBatch(req.session);
+    if (currentBatch && currentBatch.settings && currentBatch.settings.sameActivityDescription === 'Yes' && currentBatch.settings.sharedDescription) {
+        // Auto-populate if current site doesn't have description yet
+        if (!site.activityDetails || site.activityDetails.trim() === '') {
+            site.activityDetails = currentBatch.settings.sharedDescription;
+            console.log(`Auto-populated activity description for site ${site.globalNumber} from shared settings`);
+        }
+    }
+    
     // Update current site ID for form processing
     req.session.data['currentManualEntrySiteId'] = site.id;
     
@@ -813,6 +927,22 @@ router.post('/' + version + section + 'manual-entry/activity-description-router'
     
     // Update activity description in unified model
     updateSiteField(req.session, siteId, 'activityDetails', description || '');
+    
+    // Store shared description in batch settings (for multi-site data sharing)
+    const currentBatch = getCurrentBatch(req.session);
+    if (currentBatch && currentBatch.settings && currentBatch.settings.sameActivityDescription === 'Yes') {
+        currentBatch.settings.sharedDescription = description || '';
+        
+        // Copy to all existing unified sites
+        if (req.session.data['unifiedSites']) {
+            req.session.data['unifiedSites'].forEach(existingSite => {
+                if (existingSite.source === 'manual-entry') {
+                    updateSiteField(req.session, existingSite.id, 'activityDetails', description || '');
+                }
+            });
+        }
+        console.log('Stored shared activity description for all sites');
+    }
     
     // Validate activity description
     const isValid = validateSiteData(site, 'activityDetails');
@@ -1929,6 +2059,12 @@ router.get('/' + version + section + 'manual-entry/add-next-site-router', functi
     // Clear any stale session parameters
     delete req.session.data['returnTo'];
     delete req.session.data['fromReviewSiteDetails'];
+    delete req.session.data['currentManualEntrySiteId'];
+    
+    // Clear session data that might contaminate the new site
+    clearCurrentSiteSessionData(req.session);
+    
+    console.log(`Starting new site ${nextGlobalSiteNumber} - session cleared`);
     
     // Redirect to site name page for the new site
     res.redirect('site-name?site=' + nextGlobalSiteNumber);
