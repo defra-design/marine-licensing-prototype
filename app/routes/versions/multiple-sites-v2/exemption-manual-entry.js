@@ -30,62 +30,6 @@ function ensureUnifiedModelCompatibility(session) {
     }
 }
 
-// NEW: Initialize new sites with inherited data from batch settings
-function initializeNewSiteWithInheritedData(session, newSite) {
-    console.log(`=== INITIALIZING SITE ${newSite.globalNumber} WITH INHERITED DATA ===`);
-    
-    const currentBatch = getCurrentBatch(session);
-    if (!currentBatch || !currentBatch.settings) {
-        console.log('No batch settings found for data inheritance');
-        return;
-    }
-    
-    // Apply same activity dates if they exist
-    if (currentBatch.settings.sameActivityDates === 'Yes' && currentBatch.settings.sharedStartDate) {
-        newSite.activityDates = {
-            startDate: { ...currentBatch.settings.sharedStartDate },
-            endDate: { ...currentBatch.settings.sharedEndDate }
-        };
-        console.log(`Inherited shared activity dates for site ${newSite.globalNumber}`);
-    }
-    
-    // Apply same activity description if it exists
-    if (currentBatch.settings.sameActivityDescription === 'Yes' && currentBatch.settings.sharedDescription) {
-        newSite.activityDetails = currentBatch.settings.sharedDescription;
-        console.log(`Inherited shared activity description for site ${newSite.globalNumber}`);
-    }
-    
-    console.log(`=== INHERITANCE COMPLETE FOR SITE ${newSite.globalNumber} ===`);
-}
-
-// Helper function to clear session data that might contaminate between sites
-function clearCurrentSiteSessionData(session) {
-    console.log('=== CLEARING CURRENT SITE SESSION DATA ===');
-    
-    // Clear session data that might persist between sites
-    const keysToClear = [
-        'manual-site-name-text-input',
-        'coordinates-latitude',
-        'coordinates-longitude',
-        'activity-details-text-area',
-        'site-width',
-        'coordinate-format',
-        'manual-coordinate-entry-method',
-        'manual-coordinate-system-radios'
-    ];
-    
-    let clearedCount = 0;
-    keysToClear.forEach(key => {
-        if (session.data[key]) {
-            delete session.data[key];
-            clearedCount++;
-            console.log(`Cleared session key: ${key}`);
-        }
-    });
-    
-    console.log(`=== CLEARED ${clearedCount} SESSION KEYS ===`);
-}
-
 module.exports = function (router) {
     let version = "versions/multiple-sites-v2/";
     let section = "exemption/";
@@ -249,6 +193,62 @@ function clearManualEntrySessionData(session, startingSiteNumber) {
 // LEGACY CODE REMOVED: populateSessionDataFromSite function
 // This was replaced by the unified model's site object approach - sites maintain their own data
 
+// NEW: Initialize new sites with inherited data from batch settings
+function initializeNewSiteWithInheritedData(session, newSite) {
+    console.log(`=== INITIALIZING SITE ${newSite.globalNumber} WITH INHERITED DATA ===`);
+    
+    const currentBatch = getCurrentBatch(session);
+    if (!currentBatch || !currentBatch.settings) {
+        console.log('No batch settings found for data inheritance');
+        return;
+    }
+    
+    // Apply same activity dates if they exist
+    if (currentBatch.settings.sameActivityDates === 'Yes' && currentBatch.settings.sharedStartDate) {
+        newSite.activityDates = {
+            startDate: { ...currentBatch.settings.sharedStartDate },
+            endDate: { ...currentBatch.settings.sharedEndDate }
+        };
+        console.log(`Inherited shared activity dates for site ${newSite.globalNumber}`);
+    }
+    
+    // Apply same activity description if it exists
+    if (currentBatch.settings.sameActivityDescription === 'Yes' && currentBatch.settings.sharedDescription) {
+        newSite.activityDetails = currentBatch.settings.sharedDescription;
+        console.log(`Inherited shared activity description for site ${newSite.globalNumber}`);
+    }
+    
+    console.log(`=== INHERITANCE COMPLETE FOR SITE ${newSite.globalNumber} ===`);
+}
+
+// Helper function to clear session data that might contaminate between sites
+function clearCurrentSiteSessionData(session) {
+    console.log('=== CLEARING CURRENT SITE SESSION DATA ===');
+    
+    // Clear session data that might persist between sites
+    const keysToClear = [
+        'manual-site-name-text-input',
+        'coordinates-latitude',
+        'coordinates-longitude',
+        'activity-details-text-area',
+        'site-width',
+        'coordinate-format',
+        'manual-coordinate-entry-method',
+        'manual-coordinate-system-radios'
+    ];
+    
+    let clearedCount = 0;
+    keysToClear.forEach(key => {
+        if (session.data[key]) {
+            delete session.data[key];
+            clearedCount++;
+            console.log(`Cleared session key: ${key}`);
+        }
+    });
+    
+    console.log(`=== CLEARED ${clearedCount} SESSION KEYS ===`);
+}
+
 // ===== MIGRATED: Does your project involve more than one site? - GET route =====
 router.get('/' + version + section + 'manual-entry/does-your-project-involve-more-than-one-site', function (req, res) {
     // Initialize unified model
@@ -367,10 +367,41 @@ router.post('/' + version + section + 'manual-entry/site-name-router', function 
     // Determine next step
     if (returnTo === 'review-site-details') {
         // Return to review page
+        console.log(`🔄 Navigation: Returning to review page for site ${site.globalNumber}`);
         res.redirect('/' + version + section + 'review-site-details?site=' + site.globalNumber);
     } else {
-        // Continue to next step in flow
-        res.redirect('/' + version + section + 'manual-entry/enter-coordinates?site=' + site.globalNumber);
+        // FIXED: Continue to proper next step in flow - activity dates, not coordinates
+        // Check if this is a single site or multiple site flow
+        const multiSiteChoice = req.session.data['manual-multiple-sites'];
+        console.log(`🧭 Navigation: Site name complete for site ${site.globalNumber}, multiSiteChoice: ${multiSiteChoice}`);
+        
+        if (multiSiteChoice === 'No') {
+            // Single site flow: go to individual activity dates
+            console.log(`🔀 Navigation: Single site flow → individual-site-activity-dates`);
+            res.redirect('/' + version + section + 'manual-entry/individual-site-activity-dates?site=' + site.globalNumber);
+        } else {
+            // Multiple site flow: check if shared activity dates question was answered
+            const currentBatch = getCurrentBatch(req.session);
+            const hasSharedActivityDatesAnswer = currentBatch && 
+                currentBatch.settings && 
+                currentBatch.settings.sameActivityDates;
+            
+            console.log(`🔀 Navigation: Multiple site flow, hasSharedActivityDatesAnswer: ${hasSharedActivityDatesAnswer}`);
+            
+            if (!hasSharedActivityDatesAnswer) {
+                // Need to ask about shared activity dates first
+                console.log(`🔀 Navigation: Multiple site flow → same-activity-dates (first time)`);
+                res.redirect('/' + version + section + 'manual-entry/same-activity-dates');
+            } else if (currentBatch.settings.sameActivityDates === 'Yes') {
+                // Shared dates - go to activity dates (all sites)
+                console.log(`🔀 Navigation: Multiple site flow → activity-dates (shared dates)`);
+                res.redirect('/' + version + section + 'manual-entry/activity-dates');
+            } else {
+                // Individual dates - go to individual activity dates
+                console.log(`🔀 Navigation: Multiple site flow → individual-site-activity-dates (individual dates)`);
+                res.redirect('/' + version + section + 'manual-entry/individual-site-activity-dates?site=' + site.globalNumber);
+            }
+        }
     }
 });
 
@@ -441,16 +472,20 @@ router.post('/' + version + section + 'manual-entry/same-activity-dates-router',
         return res.redirect('review-site-details');
     }
 
-    // Route based on selection
+    // Route based on selection - FIX: Add site parameter to all redirects
+    const currentSiteId = req.session.data['currentManualEntrySiteId'];
+    const currentSite = findSiteById(req.session, currentSiteId);
+    const siteNumber = currentSite ? currentSite.globalNumber : 1;
+    
     switch(selection) {
         case "Yes":
-            res.redirect('activity-dates');
+            res.redirect('activity-dates?site=' + siteNumber);
             break;
         case "No":
-            res.redirect('individual-site-activity-dates?site=1');
+            res.redirect('individual-site-activity-dates?site=' + siteNumber);
             break;
         default:
-            res.redirect('same-activity-dates');
+            res.redirect('same-activity-dates?site=' + siteNumber);
     }
 });
 
@@ -495,15 +530,23 @@ router.post('/' + version + section + 'manual-entry/individual-site-activity-dat
     const siteId = req.session.data['currentManualEntrySiteId'];
     const returnTo = req.query.returnTo;
     
-    const startDay = req.body['start-date-day'];
-    const startMonth = req.body['start-date-month'];
-    const startYear = req.body['start-date-year'];
+    // FIX: Add comprehensive form field debugging
+    console.log('=== INDIVIDUAL ACTIVITY DATES FORM DEBUG ===');
+    console.log('Route:', req.originalUrl);
+    console.log('Form body received:', Object.keys(req.body));
+    console.log('Full form data:', req.body);
+    console.log('=== END FORM DEBUG ===');
     
-    const endDay = req.body['end-date-day'];
-    const endMonth = req.body['end-date-month'];
-    const endYear = req.body['end-date-year'];
+    const startDay = req.body['start-date-date-input-day'];
+    const startMonth = req.body['start-date-date-input-month'];
+    const startYear = req.body['start-date-date-input-year'];
+    
+    const endDay = req.body['end-date-date-input-day'];
+    const endMonth = req.body['end-date-date-input-month'];
+    const endYear = req.body['end-date-date-input-year'];
     
     console.log(`Processing individual activity dates for site: ${siteId}`);
+    console.log(`Extracted dates - Start: ${startDay}/${startMonth}/${startYear}, End: ${endDay}/${endMonth}/${endYear}`);
     
     if (!siteId) {
         console.log('No current site ID found for individual activity dates');
@@ -607,15 +650,23 @@ router.post('/' + version + section + 'manual-entry/activity-dates-router', func
     const siteId = req.session.data['currentManualEntrySiteId'];
     const returnTo = req.query.returnTo;
     
-    const startDay = req.body['start-date-day'];
-    const startMonth = req.body['start-date-month'];
-    const startYear = req.body['start-date-year'];
+    // FIX: Add comprehensive form field debugging
+    console.log('=== ACTIVITY DATES FORM DEBUG ===');
+    console.log('Route:', req.originalUrl);
+    console.log('Form body received:', Object.keys(req.body));
+    console.log('Full form data:', req.body);
+    console.log('=== END FORM DEBUG ===');
     
-    const endDay = req.body['end-date-day'];
-    const endMonth = req.body['end-date-month'];
-    const endYear = req.body['end-date-year'];
+    const startDay = req.body['start-date-date-input-day'];
+    const startMonth = req.body['start-date-date-input-month'];
+    const startYear = req.body['start-date-date-input-year'];
+    
+    const endDay = req.body['end-date-date-input-day'];
+    const endMonth = req.body['end-date-date-input-month'];
+    const endYear = req.body['end-date-date-input-year'];
     
     console.log(`Processing activity dates for site: ${siteId}`);
+    console.log(`Extracted dates - Start: ${startDay}/${startMonth}/${startYear}, End: ${endDay}/${endMonth}/${endYear}`);
     
     if (!siteId) {
         console.log('No current site ID found for activity dates');
@@ -759,16 +810,20 @@ router.post('/' + version + section + 'manual-entry/same-activity-description-ro
         return res.redirect('review-site-details');
     }
 
-    // Route based on selection
+    // Route based on selection - FIX: Add site parameter to all redirects
+    const currentSiteId = req.session.data['currentManualEntrySiteId'];
+    const currentSite = findSiteById(req.session, currentSiteId);
+    const siteNumber = currentSite ? currentSite.globalNumber : 1;
+    
     switch(selection) {
         case "Yes":
-            res.redirect('activity-description');
+            res.redirect('activity-description?site=' + siteNumber);
             break;
         case "No":
-            res.redirect('individual-site-activity-description?site=1');
+            res.redirect('individual-site-activity-description?site=' + siteNumber);
             break;
         default:
-            res.redirect('same-activity-description');
+            res.redirect('same-activity-description?site=' + siteNumber);
     }
 });
 
@@ -814,9 +869,17 @@ router.post('/' + version + section + 'manual-entry/individual-site-activity-des
     const siteId = req.session.data['currentManualEntrySiteId'];
     const returnTo = req.query.returnTo;
     
+    // FIX: Add comprehensive form field debugging
+    console.log('=== INDIVIDUAL ACTIVITY DESCRIPTION FORM DEBUG ===');
+    console.log('Route:', req.originalUrl);
+    console.log('Form body received:', Object.keys(req.body));
+    console.log('Full form data:', req.body);
+    console.log('=== END FORM DEBUG ===');
+    
     const description = req.body['activity-details'];
     
     console.log(`Processing individual activity description for site: ${siteId}`);
+    console.log(`Extracted description: "${description}"`);
     
     if (!siteId) {
         console.log('No current site ID found for individual activity description');
@@ -910,9 +973,17 @@ router.post('/' + version + section + 'manual-entry/activity-description-router'
     const siteId = req.session.data['currentManualEntrySiteId'];
     const returnTo = req.query.returnTo;
     
+    // FIX: Add comprehensive form field debugging
+    console.log('=== ACTIVITY DESCRIPTION FORM DEBUG ===');
+    console.log('Route:', req.originalUrl);
+    console.log('Form body received:', Object.keys(req.body));
+    console.log('Full form data:', req.body);
+    console.log('=== END FORM DEBUG ===');
+    
     const description = req.body['activity-details'];
     
     console.log(`Processing activity description for site: ${siteId}`);
+    console.log(`Extracted description: "${description}"`);
     
     if (!siteId) {
         console.log('No current site ID found for activity description');
@@ -1242,14 +1313,14 @@ router.post('/' + version + section + 'manual-entry/enter-coordinates-router', f
         return res.redirect('/' + version + section + 'manual-entry/site-name');
     }
     
-    // Get coordinates from form (using template's naming convention)
-    const sitePrefix = site.globalNumber === 1 ? 'manual-' : `manual-site-${site.globalNumber}-`;
-    const latitude = req.body[sitePrefix + 'latitude'];
-    const longitude = req.body[sitePrefix + 'longitude'];
+    // FIXED: Get coordinates from form using correct field names from template
+    const latitude = req.body['coordinates-latitude'];
+    const longitude = req.body['coordinates-longitude'];
     const format = req.body['coordinate-format'] || 'decimal-degrees';
     
-    console.log(`Processing coordinates for site: ${siteId}`);
-    console.log(`Lat: ${latitude}, Lon: ${longitude}, Format: ${format}`);
+    console.log(`📍 Processing coordinates for site: ${siteId}`);
+    console.log(`📍 Form body received:`, req.body);
+    console.log(`📍 Extracted - Lat: ${latitude}, Lon: ${longitude}, Format: ${format}`);
     
     if (!siteId) {
         console.log('No current site ID found for coordinates');
@@ -1285,7 +1356,17 @@ router.post('/' + version + section + 'manual-entry/enter-coordinates-router', f
     if (returnTo === 'review-site-details') {
         res.redirect('/' + version + section + 'review-site-details?site=' + site.globalNumber);
     } else {
-        res.redirect('/' + version + section + 'manual-entry/activity-details?site=' + site.globalNumber);
+        // FIXED: Route based on coordinate entry method
+        if (site.coordinates.type === 'circle') {
+            // Circular site - need to get width
+            res.redirect('/' + version + section + 'manual-entry/site-width?site=' + site.globalNumber);
+        } else if (site.coordinates.type === 'polygon') {
+            // Polygon site - need multiple coordinates (not implemented in this route)
+            res.redirect('/' + version + section + 'manual-entry/enter-multiple-coordinates?site=' + site.globalNumber);
+        } else {
+            // Fallback - assume circular if not set
+            res.redirect('/' + version + section + 'manual-entry/site-width?site=' + site.globalNumber);
+        }
     }
 });
 
