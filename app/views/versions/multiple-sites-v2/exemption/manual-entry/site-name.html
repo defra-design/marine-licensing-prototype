@@ -19,7 +19,7 @@ Site name
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
 {% block pageTitle %}
-    {% if data['errorthispage'] == "true" %}
+    {% if errors.name %}
         Error:
     {% endif %}
 
@@ -30,34 +30,28 @@ Site name
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
-        <!-- Get current site number from query parameter first, then session data -->
-        {% set currentSite = (query.site | int) or (data['current-site'] | int) or 1 %}
-        {% set siteDataKey = 'manual-site-name-text-input' if currentSite == 1 else 'manual-site-' + currentSite + '-name-text-input' %}
-        {% set siteInputId = 'manual-site-name-text-input' if currentSite == 1 else 'manual-site-' + currentSite + '-name-text-input' %}
+        <!-- Get current site information -->
+        {% set displaySiteNumber = site.globalNumber %}
+        {% set siteInputId = 'site-name' %}
         
-        <!-- The currentSite from URL parameter is already the global site number -->
-        {% set displaySiteNumber = currentSite %}
-
 <!-- ERROR LOGIC 'error summary' -->
-{% if data['errorthispage'] == "true" %}
+{% if errors.name %}
   <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
     <h2 class="govuk-error-summary__title" id="error-summary-title">
       There is a problem
     </h2>
     <div class="govuk-error-summary__body">
       <ul class="govuk-list govuk-error-summary__list">
-        {% if data['errortypeone'] == "true" %}
-          <li><a href="#{{ siteInputId }}">{{ errorText1HTML }}</a></li>
-        {% endif %}
+        <li><a href="#{{ siteInputId }}">{{ errors.name }}</a></li>
       </ul>
     </div>
   </div>
 {% endif %}
         <!--  END OF 'error summary' -->
 
-        <form action="site-name-router{% if currentSite > 1 %}?site={{ currentSite }}{% endif %}" method="post" novalidate>
+        <form action="site-name-router{% if query.returnTo %}?returnTo={{ query.returnTo }}{% endif %}" method="post" novalidate>
             
-            <div class="govuk-form-group {% if data['errorthispage'] == 'true' and data['errortypeone'] == 'true' %}govuk-form-group--error{% endif %}">
+            <div class="govuk-form-group {% if errors.name %}govuk-form-group--error{% endif %}">
                 {% if data['exemption-project-name-text-input'] %}
                 <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}<span class="govuk-!-display-block">Site {{ displaySiteNumber }}</span></span>
                 {% endif %}
@@ -67,19 +61,19 @@ Site name
                   </label>
                 </h1>
               
-                {% if data['errorthispage'] == 'true' and data['errortypeone'] == 'true' %}
+                {% if errors.name %}
                   <p id="{{ siteInputId }}-error" class="govuk-error-message">
-                    <span class="govuk-visually-hidden">Error:</span> {{ errorText1HTML }}
+                    <span class="govuk-visually-hidden">Error:</span> {{ errors.name }}
                   </p>
                 {% endif %}
               
                 <input
-                  class="govuk-input govuk-!-width-full {% if data['errorthispage'] == 'true' and data['errortypeone'] == 'true' %}govuk-input--error{% endif %}"
+                  class="govuk-input govuk-!-width-full {% if errors.name %}govuk-input--error{% endif %}"
                   id="{{ siteInputId }}"
-                  name="{{ siteDataKey }}"
+                  name="site-name"
                   type="text"
-                  value="{{ data[siteDataKey] }}"
-                  {% if data['errorthispage'] == 'true' and data['errortypeone'] == 'true' %}aria-describedby="{{ siteInputId }}-error"{% endif %}
+                  value="{{ site.name }}"
+                  {% if errors.name %}aria-describedby="{{ siteInputId }}-error"{% endif %}
                 />
               </div>
             
@@ -98,10 +92,10 @@ Site name
 <form method="post" action="#" class="for4" style="float: left; position: relative; bottom:-225px;">
     <select style="height:30px;" onchange="window.location.href='?'+this.value">
         <option value="errorthispage=false&errortypeone=false&"
-                {% if (data['errorthispage'] != "true") %}selected{% endif %}
+                {% if not errors.name %}selected{% endif %}
         >Errors - Off</option>
         <option value="errorthispage=true&errortypeone=true&"
-                {% if (data['errortypeone'] == 'true') %}selected{% endif %}
+                {% if errors.name %}selected{% endif %}
         >Error 1 - Site name missing</option>
     </select>
 </form>

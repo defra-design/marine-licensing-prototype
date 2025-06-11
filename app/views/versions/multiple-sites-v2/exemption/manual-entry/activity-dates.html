@@ -18,17 +18,9 @@ Start date
 End date
 {% endset %}
 
-{% set errorText1HTML %}
-    Enter the start date
-{% endset %}
-
-{% set errorText2HTML %}
-    Enter the end date
-{% endset %}
-
 <!-- Text that show in the browser tab. Does NOT need changing -->
 {% block pageTitle %}
-    {% if  data['errorthispage'] == "true"  %}
+    {% if errors.startDate or errors.endDate %}
         Error:
     {% endif %}
 
@@ -40,18 +32,18 @@ End date
     <div class="govuk-grid-column-two-thirds">
 
 <!-- ERROR LOGIC 'error summary' -->
-{% if data['startdateerror'] == "true" or data['enddateerror'] == "true" %}
+{% if errors.startDate or errors.endDate %}
   <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
     <h2 class="govuk-error-summary__title" id="error-summary-title">
       There is a problem
     </h2>
     <div class="govuk-error-summary__body">
       <ul class="govuk-list govuk-error-summary__list">
-        {% if data['startdateerror'] == "true" %}
-          <li><a href="#manual-start-date-date-input-day">{{ errorText1HTML }}</a></li>
+        {% if errors.startDate %}
+          <li><a href="#start-date-date-input-day">{{ errors.startDate }}</a></li>
         {% endif %}
-        {% if data['enddateerror'] == "true" %}
-          <li><a href="#manual-end-date-date-input-day">{{ errorText2HTML }}</a></li>
+        {% if errors.endDate %}
+          <li><a href="#end-date-date-input-day">{{ errors.endDate }}</a></li>
         {% endif %}
       </ul>
     </div>
@@ -60,17 +52,21 @@ End date
         <!--  END OF 'error summary' -->
         
         <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
+        
         <h1 class="govuk-heading-l">
             {{ pageHeadingTextHTML }}
-        </h1>
+		</h1>
         <p>Enter the activity dates for all sites. Allow time for potential delays, like consents (for example, a river works licence) or bad weather. If you miss the dates, you'll need to restart the process.</p>
         <p>You can enter a start date from today and begin your activity as soon as you've sent your information.</p>
         
         <form action="activity-dates-router" method="post" novalidate>
 
+{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
 			{{ govukDateInput({
-				idPrefix: "manual-start-date-date-input",
-				namePrefix: "manual-start-date-date-input",
+				idPrefix: "start-date-date-input",
+				namePrefix: "start-date-date-input",
 				fieldset: {
 					legend: {
 						html: question1TextHTML,
@@ -81,18 +77,18 @@ End date
 				hint: {
 					text: "For example, 27 3 2026"
 				},
-				errorMessage: null if data['startdateerror'] != "true"
-							   else { text: errorText1HTML },
+				errorMessage: null if not errors.startDate
+							   else { text: errors.startDate },
 				items: [
-					{ name: "day", classes: "govuk-input--width-2", value: data['manual-start-date-date-input-day'], attributes: { autocomplete: "off", inputmode: "numeric" } },
-					{ name: "month", classes: "govuk-input--width-2", value: data['manual-start-date-date-input-month'], attributes: { autocomplete: "off", inputmode: "numeric" } },
-					{ name: "year", classes: "govuk-input--width-4", value: data['manual-start-date-date-input-year'], attributes: { autocomplete: "off", inputmode: "numeric" } }
+					{ name: "day", classes: "govuk-input--width-2", value: site.activityDates.startDate.day, attributes: { autocomplete: "off", inputmode: "numeric" } },
+					{ name: "month", classes: "govuk-input--width-2", value: site.activityDates.startDate.month, attributes: { autocomplete: "off", inputmode: "numeric" } },
+					{ name: "year", classes: "govuk-input--width-4", value: site.activityDates.startDate.year, attributes: { autocomplete: "off", inputmode: "numeric" } }
 				]
 			}) }}
 
 			{{ govukDateInput({
-				idPrefix: "manual-end-date-date-input",
-				namePrefix: "manual-end-date-date-input",
+				idPrefix: "end-date-date-input",
+				namePrefix: "end-date-date-input",
 				fieldset: {
 					legend: {
 						html: question2TextHTML,
@@ -103,12 +99,12 @@ End date
 				hint: {
 					text: "For example, 27 4 2026"
 				},
-				errorMessage: null if data['enddateerror'] != "true"
-							   else { text: errorText2HTML },
+				errorMessage: null if not errors.endDate
+							   else { text: errors.endDate },
 				items: [
-					{ name: "day", classes: "govuk-input--width-2", value: data['manual-end-date-date-input-day'], attributes: { autocomplete: "off", inputmode: "numeric" } },
-					{ name: "month", classes: "govuk-input--width-2", value: data['manual-end-date-date-input-month'], attributes: { autocomplete: "off", inputmode: "numeric" } },
-					{ name: "year", classes: "govuk-input--width-4", value: data['manual-end-date-date-input-year'], attributes: { autocomplete: "off", inputmode: "numeric" } }
+					{ name: "day", classes: "govuk-input--width-2", value: site.activityDates.endDate.day, attributes: { autocomplete: "off", inputmode: "numeric" } },
+					{ name: "month", classes: "govuk-input--width-2", value: site.activityDates.endDate.month, attributes: { autocomplete: "off", inputmode: "numeric" } },
+					{ name: "year", classes: "govuk-input--width-4", value: site.activityDates.endDate.year, attributes: { autocomplete: "off", inputmode: "numeric" } }
 				]
 			}) }}
 
@@ -130,19 +126,19 @@ End date
     <select style="height:30px;" onchange="window.location.href='?'+this.value">
 
         <option value="errorthispage=false&startdateerror=false&enddateerror=false&"
-                {% if (data['errorthispage'] != "true") %}selected{% endif %}
+                {% if not errors.startDate and not errors.endDate %}selected{% endif %}
         >Errors - Off</option>
 
         <option value="errorthispage=true&startdateerror=true&enddateerror=false&"
-                {% if (data['startdateerror'] == 'true' and data['enddateerror'] != 'true') %}selected{% endif %}
+                {% if errors.startDate and not errors.endDate %}selected{% endif %}
         >Error 1 - Start date missing</option>
 
         <option value="errorthispage=true&startdateerror=false&enddateerror=true&"
-                {% if (data['startdateerror'] != 'true' and data['enddateerror'] == 'true') %}selected{% endif %}
+                {% if not errors.startDate and errors.endDate %}selected{% endif %}
         >Error 2 - End date missing</option>
 
         <option value="errorthispage=true&startdateerror=true&enddateerror=true&"
-                {% if (data['startdateerror'] == 'true' and data['enddateerror'] == 'true') %}selected{% endif %}
+                {% if errors.startDate and errors.endDate %}selected{% endif %}
         >Error 3 - Both dates missing</option>
 
     </select>
