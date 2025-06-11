@@ -1,0 +1,206 @@
+<!-- filepath: /Users/tom/Documents/Prototypes/defra/marine-licensing-prototype/app/views/versions/multiple-sites/exemption/site-details-added.html -->
+{% extends "../layouts/exemption.html" %}
+
+{% block beforeContent %}
+    {% include "../includes/phase-banner.html" %}
+    {% include "../includes/back-link.html" %}
+{% endblock %}
+
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+Your sites
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        {% set hasSiteIncomplete = false %}
+        
+        <!-- Determine if any site is incomplete -->
+        {% for site in [1, 2, 3, 4] %}
+            {% set siteIncomplete = false %}
+            
+            <!-- Check if site name is missing -->
+            {% if not data['site-' + site + '-name'] %}
+                {% set siteIncomplete = true %}
+                {% set hasSiteIncomplete = true %}
+            {% endif %}
+            
+            <!-- Check if site-specific dates are required but incomplete -->
+            {% if data['exemption-same-activity-dates-for-sites'] == "No" %}
+                {% if not data['site-' + site + '-start-date-day'] %}
+                    {% set siteIncomplete = true %}
+                    {% set hasSiteIncomplete = true %}
+                {% endif %}
+            {% endif %}
+            
+            <!-- Check if site-specific descriptions are required but incomplete -->
+            {% if data['exemption-same-activity-description-for-sites'] == "No" %}
+                {% if not data['site-' + site + '-activity-description'] %}
+                    {% set siteIncomplete = true %}
+                    {% set hasSiteIncomplete = true %}
+                {% endif %}
+            {% endif %}
+        {% endfor %}
+        
+        <!-- Display error summary if applicable -->
+        {% if data['errorthispage'] == "true" %}
+            {{ govukErrorSummary({
+                titleText: "There is a problem",
+                errorList: [
+                    {
+                        text: "You must complete all sites before you can save and say you've finished",
+                        href: "#finished-adding-sites"
+                    }
+                ]
+            }) }}
+        {% endif %}
+        
+        <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
+        <h1 class="govuk-heading-l">
+            {{ pageHeadingTextHTML }}
+        </h1>
+        
+        <p class="govuk-body">You can review, delete or add more sites before you continue.</p>
+        
+        <div class="govuk-!-margin-bottom-6">
+            {{ govukTable({
+                classes: "govuk-!-margin-bottom-6",
+                captionClasses: "govuk-table__caption--m",
+                firstCellIsHeader: true,
+                head: [
+                    {
+                        text: "Site"
+                    },
+                    {
+                        text: "Site name"
+                    },
+                    {
+                        text: "Status"
+                    },
+                    {
+                        text: "Actions"
+                    }
+                ],
+                rows: [
+                    [
+                        {
+                            text: "Site 1"
+                        },
+                        {
+                            text: data['site-1-name'] or "-"
+                        },
+                        {
+                            html: (not data['site-1-name'] or 
+                                 (data['exemption-same-activity-dates-for-sites'] == "No" and not data['site-1-start-date-day']) or 
+                                 (data['exemption-same-activity-description-for-sites'] == "No" and not data['site-1-activity-description'])) 
+                                 ? "<span class='govuk-tag govuk-tag--red'>Incomplete</span>" 
+                                 : "Completed"
+                        },
+                        {
+                            html: "<a href='review-site-details#site-1-details' class='govuk-link'>Review</a><br><a href='#' class='govuk-link'>Delete</a>"
+                        }
+                    ],
+                    [
+                        {
+                            text: "Site 2"
+                        },
+                        {
+                            text: data['site-2-name'] or "-"
+                        },
+                        {
+                            html: (not data['site-2-name'] or 
+                                 (data['exemption-same-activity-dates-for-sites'] == "No" and not data['site-2-start-date-day']) or 
+                                 (data['exemption-same-activity-description-for-sites'] == "No" and not data['site-2-activity-description']))
+                                 ? "<span class='govuk-tag govuk-tag--red'>Incomplete</span>"
+                                 : "Completed"
+                        },
+                        {
+                            html: "<a href='review-site-details#site-2-details' class='govuk-link'>Review</a><br><a href='#' class='govuk-link'>Delete</a>"
+                        }
+                    ],
+                    [
+                        {
+                            text: "Site 3"
+                        },
+                        {
+                            text: data['site-3-name'] or "-"
+                        },
+                        {
+                            html: (not data['site-3-name'] or 
+                                 (data['exemption-same-activity-dates-for-sites'] == "No" and not data['site-3-start-date-day']) or 
+                                 (data['exemption-same-activity-description-for-sites'] == "No" and not data['site-3-activity-description']))
+                                 ? "<span class='govuk-tag govuk-tag--red'>Incomplete</span>" 
+                                 : "Completed"
+                        },
+                        {
+                            html: "<a href='review-site-details#site-3-details' class='govuk-link'>Review</a><br><a href='#' class='govuk-link'>Delete</a>"
+                        }
+                    ],
+                    [
+                        {
+                            text: "Site 4"
+                        },
+                        {
+                            text: data['site-4-name'] or "-"
+                        },
+                        {
+                            html: (not data['site-4-name'] or 
+                                 (data['exemption-same-activity-dates-for-sites'] == "No" and not data['site-4-start-date-day']) or 
+                                 (data['exemption-same-activity-description-for-sites'] == "No" and not data['site-4-activity-description']))
+                                 ? "<span class='govuk-tag govuk-tag--red'>Incomplete</span>"
+                                 : "Completed"
+                        },
+                        {
+                            html: "<a href='review-site-details#site-4-details' class='govuk-link'>Review</a><br><a href='#' class='govuk-link'>Delete</a>"
+                        }
+                    ]
+                ]
+            }) }}
+        </div>
+
+        {{ govukButton({
+            text: "Add another site",
+            classes: "govuk-button--secondary govuk-!-margin-bottom-6",
+            href: "#"
+        }) }}
+        
+        <form action="site-details-added-router" method="post" novalidate>
+            {{ govukCheckboxes({
+                idPrefix: "finished-adding-sites",
+                name: "finished-adding-sites",
+                errorMessage: {
+                    text: "You must complete all sites before you can save and say you've finished"
+                } if data['errorthispage'] == "true",
+                items: [
+                    {
+                        value: "yes",
+                        text: "I've finished adding sites",
+                        checked: data['finished-adding-sites'] and data['finished-adding-sites'].includes("yes")
+                    }
+                ]
+            }) }}
+            
+            <div class="govuk-button-group">
+                {{ govukButton({
+                    text: "Save and continue"
+                }) }}
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+<!-- Generated by Copilot -->

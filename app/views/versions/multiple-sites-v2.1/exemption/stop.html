@@ -1,0 +1,32 @@
+{% extends "../layouts/exemption.html" %}
+
+{% block beforeContent %}
+    {% include "../includes/phase-banner.html" %}
+    {% include "../includes/back-link.html" %}
+{% endblock %}
+
+{% set pageName="Journey end" %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+
+    <div class="govuk-grid-column-two-thirds">
+
+
+        <div class="gem-c-title govuk-!-margin-top-0 govuk-!-margin-bottom-8">
+              <h1 class="gem-c-title__text govuk-heading-l">
+                Journey end
+              </h1>
+        </div>
+
+		<ul class="govuk-list govuk-list--spaced">
+			<li><a href="javascript:window.history.back()">Go back to the last page</a></li>
+			<li><a href="/manage-prototype/clear-data">Clear data and start again</a></li>
+		</ul>
+    </div>
+
+
+</div>
+
+{% endblock %}
