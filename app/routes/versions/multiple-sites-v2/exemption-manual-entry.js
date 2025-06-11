@@ -279,10 +279,14 @@ router.post('/' + version + section + 'manual-entry/does-your-project-involve-mo
     res.redirect('site-name?site=' + nextGlobalSiteNumber);
 });
 
-// CONVERTED: Batch system approach for site name
+// CONVERTED: Batch system approach for site name GET route
 router.get('/' + version + section + 'manual-entry/site-name', function (req, res) {
     const siteParam = req.query.site;
     const returnTo = req.query.returnTo;
+    
+    console.log(`=== SITE NAME GET DEBUG ===`);
+    console.log(`Site parameter: ${siteParam}`);
+    console.log(`Return to: ${returnTo}`);
     
     let site = null;
     let isEditing = false;
@@ -295,14 +299,21 @@ router.get('/' + version + section + 'manual-entry/site-name', function (req, re
     }
     
     if (siteParam && returnTo === 'review-site-details') {
-        // Editing existing site - find by global number in batch
+        // EDITING MODE: Find existing site in batch
+        console.log(`🔄 EDITING MODE: Looking for site ${siteParam} in batch`);
         site = currentBatch.sites.find(s => s.globalNumber === parseInt(siteParam));
         isEditing = !!site;
-        console.log(`Editing mode: ${isEditing}, site found: ${!!site}`);
-    }
-    
-    if (!site) {
-        // Creating new site - create site data structure
+        
+        if (!site) {
+            console.log(`❌ ERROR: Site ${siteParam} not found in batch for editing`);
+            // Redirect back to review if site not found
+            return res.redirect('/' + version + section + 'manual-entry/review-site-details');
+        }
+        
+        console.log(`✅ Found existing site for editing: "${site.name}"`);
+    } else {
+        // CREATE MODE: Create new site structure for form
+        console.log(`➕ CREATE MODE: Creating new site structure`);
         const globalNumber = (req.session.data['globalSiteCounter'] || 0) + 1;
         site = {
             name: '',
@@ -313,7 +324,6 @@ router.get('/' + version + section + 'manual-entry/site-name', function (req, re
             globalNumber: globalNumber,
             validationErrors: {}
         };
-        console.log(`Created new site structure for manual entry: global ${globalNumber}`);
         
         // Auto-populate shared data if this isn't the first site
         if (site.globalNumber > 1) {
@@ -325,6 +335,7 @@ router.get('/' + version + section + 'manual-entry/site-name', function (req, re
         data: req.session.data,
         site: site,
         isEditing: isEditing,
+        returnTo: returnTo,
         errors: site.validationErrors || {}
     });
 });
@@ -335,7 +346,11 @@ router.post('/' + version + section + 'manual-entry/site-name-router', function 
     const siteParam = req.query.site;
     const returnTo = req.query.returnTo;
     
-    console.log(`Processing site name: "${siteName}" for site: ${siteParam}`);
+    console.log(`=== SITE NAME ROUTER DEBUG ===`);
+    console.log(`Site name: "${siteName}"`);
+    console.log(`Site parameter: ${siteParam}`);
+    console.log(`Return to: ${returnTo}`);
+    console.log(`Query string: ${req.originalUrl}`);
     
     // Validation
     if (!siteName || siteName.trim() === '') {
@@ -348,6 +363,7 @@ router.post('/' + version + section + 'manual-entry/site-name-router', function 
             data: req.session.data,
             site: site,
             isEditing: returnTo === 'review-site-details',
+            returnTo: returnTo,
             errors: site.validationErrors
         });
     }
@@ -359,16 +375,35 @@ router.post('/' + version + section + 'manual-entry/site-name-router', function 
         return res.redirect('/' + version + section + 'manual-entry/does-your-project-involve-more-than-one-site');
     }
     
+    console.log(`Current batch has ${currentBatch.sites.length} sites`);
+    
     let site;
     
+    // SIMPLIFIED LOGIC: If returnTo=review-site-details, we're ALWAYS editing an existing site
     if (returnTo === 'review-site-details') {
-        // Editing existing site - find and update in batch
+        console.log(`🔄 EDITING MODE: Looking for existing site ${siteParam} in batch`);
+        
+        // Find the existing site in batch
         site = currentBatch.sites.find(s => s.globalNumber === parseInt(siteParam));
-        if (site) {
-            site.name = siteName.trim();
-            console.log(`Updated existing site ${site.globalNumber} name in batch`);
+        
+        if (!site) {
+            console.log(`❌ ERROR: Site ${siteParam} not found in batch when editing from review page!`);
+            console.log(`Available sites:`, currentBatch.sites.map(s => s.globalNumber));
+            // This shouldn't happen - redirect back to review to avoid errors
+            return res.redirect('/' + version + section + 'manual-entry/review-site-details');
         }
+        
+        // Update the existing site's name
+        site.name = siteName.trim();
+        console.log(`✅ Updated existing site ${site.globalNumber} name to: "${site.name}"`);
+        
+        // DIRECT RETURN to review page - no further flow
+        console.log(`🔄 DIRECT RETURN: Redirecting back to review page`);
+        return res.redirect('/' + version + section + 'manual-entry/review-site-details?site=' + site.globalNumber);
+        
     } else {
+        console.log(`➕ CREATE MODE: Adding new site to batch`);
+        
         // Creating new site - add to batch
         site = {
             name: siteName.trim(),
@@ -379,27 +414,18 @@ router.post('/' + version + section + 'manual-entry/site-name-router', function 
         };
         
         addSiteToBatch(req.session, site);
-        console.log(`Added new site to batch: ${site.name}, global number: ${site.globalNumber}`);
-    }
-    
-    // Determine next step
-    if (returnTo === 'review-site-details') {
-        // Return to review page
-        console.log(`🔄 Navigation: Returning to review page for site ${site.globalNumber}`);
-        res.redirect('/' + version + section + 'review-site-details?site=' + site.globalNumber);
-    } else {
-        // FIXED: Continue to proper next step in flow - activity dates, not coordinates
-        // Check if this is a single site or multiple site flow
+        console.log(`✅ Added new site to batch: "${site.name}", global number: ${site.globalNumber}`);
+        
+        // CONTINUE FLOW for new site creation
         const multiSiteChoice = req.session.data['manual-multiple-sites'];
-        console.log(`🧭 Navigation: Site name complete for site ${site.globalNumber}, multiSiteChoice: ${multiSiteChoice}`);
+        console.log(`🧭 Navigation: Site name complete for new site ${site.globalNumber}, multiSiteChoice: ${multiSiteChoice}`);
         
         if (multiSiteChoice === 'No') {
             // Single site flow: go to individual activity dates
             console.log(`🔀 Navigation: Single site flow → individual-site-activity-dates`);
-            res.redirect('/' + version + section + 'manual-entry/individual-site-activity-dates?site=' + site.globalNumber);
+            return res.redirect('/' + version + section + 'manual-entry/individual-site-activity-dates?site=' + site.globalNumber);
         } else {
             // Multiple site flow: check if this is the first site or subsequent site
-            const currentBatch = getCurrentBatch(req.session);
             const hasSharedActivityDatesAnswer = currentBatch && 
                 currentBatch.settings && 
                 currentBatch.settings.sameActivityDates;
@@ -409,7 +435,7 @@ router.post('/' + version + section + 'manual-entry/site-name-router', function 
             if (!hasSharedActivityDatesAnswer) {
                 // First site: ask about shared activity dates
                 console.log(`🔀 Navigation: First site → same-activity-dates`);
-                res.redirect('/' + version + section + 'manual-entry/same-activity-dates');
+                return res.redirect('/' + version + section + 'manual-entry/same-activity-dates');
             } else {
                 // Subsequent site: route based on previous choices
                 if (currentBatch.settings.sameActivityDates === 'Yes') {
@@ -417,20 +443,20 @@ router.post('/' + version + section + 'manual-entry/site-name-router', function 
                     if (!currentBatch.settings.sameActivityDescription) {
                         // Need to ask about shared descriptions first
                         console.log(`🔀 Navigation: Subsequent site, shared dates → same-activity-description`);
-                        res.redirect('/' + version + section + 'manual-entry/same-activity-description');
+                        return res.redirect('/' + version + section + 'manual-entry/same-activity-description');
                     } else if (currentBatch.settings.sameActivityDescription === 'Yes') {
                         // Both shared: skip to coordinates
                         console.log(`🔀 Navigation: Subsequent site, both shared → coordinates`);
-                        res.redirect('/' + version + section + 'manual-entry/how-do-you-want-to-enter-the-coordinates?site=' + site.globalNumber);
+                        return res.redirect('/' + version + section + 'manual-entry/how-do-you-want-to-enter-the-coordinates?site=' + site.globalNumber);
                     } else {
                         // Shared dates, individual descriptions
                         console.log(`🔀 Navigation: Subsequent site, shared dates, individual descriptions → individual-site-activity-description`);
-                        res.redirect('/' + version + section + 'manual-entry/individual-site-activity-description?site=' + site.globalNumber);
+                        return res.redirect('/' + version + section + 'manual-entry/individual-site-activity-description?site=' + site.globalNumber);
                     }
                 } else {
                     // Individual dates chosen: go to individual dates for this site
                     console.log(`🔀 Navigation: Subsequent site, individual dates → individual-site-activity-dates`);
-                    res.redirect('/' + version + section + 'manual-entry/individual-site-activity-dates?site=' + site.globalNumber);
+                    return res.redirect('/' + version + section + 'manual-entry/individual-site-activity-dates?site=' + site.globalNumber);
                 }
             }
         }
@@ -497,7 +523,7 @@ router.post('/' + version + section + 'manual-entry/same-activity-dates-router',
             }
         }
         
-        return res.redirect('review-site-details');
+        return res.redirect('/' + version + section + 'manual-entry/review-site-details');
     }
 
     // Route based on selection - use first site from batch
@@ -542,6 +568,7 @@ router.get('/' + version + section + 'manual-entry/individual-site-activity-date
         data: req.session.data,
         site: site,
         isEditing: returnTo === 'review-site-details',
+        returnTo: returnTo,
         errors: site.validationErrors || {}
     });
 });
@@ -614,6 +641,7 @@ router.post('/' + version + section + 'manual-entry/individual-site-activity-dat
             data: req.session.data,
             site: site,
             isEditing: returnTo === 'review-site-details',
+            returnTo: returnTo,
             errors: site.validationErrors
         });
     }
@@ -625,27 +653,29 @@ router.post('/' + version + section + 'manual-entry/individual-site-activity-dat
         }
     });
     
-    // Determine next step
+    // SIMPLIFIED LOGIC: If returnTo=review-site-details, we're ALWAYS editing an existing site
     if (returnTo === 'review-site-details') {
-        res.redirect('/' + version + section + 'review-site-details?site=' + site.globalNumber);
+        console.log(`🔄 DIRECT RETURN: Redirecting back to review page after activity dates update`);
+        return res.redirect('/' + version + section + 'manual-entry/review-site-details?site=' + site.globalNumber);
+    }
+    
+    // CONTINUE FLOW for new site creation
+    // Check if we need to ask about descriptions
+    const multiSiteChoice = req.session.data['manual-multiple-sites'];
+    if (multiSiteChoice === 'No') {
+        // Single site: always ask individual description
+        res.redirect('/' + version + section + 'manual-entry/individual-site-activity-description?site=' + site.globalNumber);
     } else {
-        // Check if we need to ask about descriptions
-        const multiSiteChoice = req.session.data['manual-multiple-sites'];
-        if (multiSiteChoice === 'No') {
-            // Single site: always ask individual description
-            res.redirect('/' + version + section + 'manual-entry/individual-site-activity-description?site=' + site.globalNumber);
+        // Multiple site: check if description question was answered
+        if (!currentBatch.settings.sameActivityDescription) {
+            // First site: ask about shared descriptions
+            res.redirect('/' + version + section + 'manual-entry/same-activity-description?site=' + site.globalNumber);
+        } else if (currentBatch.settings.sameActivityDescription === 'Yes') {
+            // Shared descriptions: skip to coordinates
+            res.redirect('/' + version + section + 'manual-entry/how-do-you-want-to-enter-the-coordinates?site=' + site.globalNumber);
         } else {
-            // Multiple site: check if description question was answered
-            if (!currentBatch.settings.sameActivityDescription) {
-                // First site: ask about shared descriptions
-                res.redirect('/' + version + section + 'manual-entry/same-activity-description?site=' + site.globalNumber);
-            } else if (currentBatch.settings.sameActivityDescription === 'Yes') {
-                // Shared descriptions: skip to coordinates
-                res.redirect('/' + version + section + 'manual-entry/how-do-you-want-to-enter-the-coordinates?site=' + site.globalNumber);
-            } else {
-                // Individual descriptions: ask for this site
-                res.redirect('/' + version + section + 'manual-entry/individual-site-activity-description?site=' + site.globalNumber);
-            }
+            // Individual descriptions: ask for this site
+            res.redirect('/' + version + section + 'manual-entry/individual-site-activity-description?site=' + site.globalNumber);
         }
     }
 });
@@ -751,7 +781,7 @@ router.post('/' + version + section + 'manual-entry/activity-dates-router', func
     
     // Determine next step
     if (returnTo === 'review-site-details') {
-        res.redirect('/' + version + section + 'review-site-details');
+        res.redirect('/' + version + section + 'manual-entry/review-site-details');
     } else {
         res.redirect('/' + version + section + 'manual-entry/same-activity-description?site=' + siteParam);
     }
@@ -815,7 +845,7 @@ router.post('/' + version + section + 'manual-entry/same-activity-description-ro
             }
         }
         
-        return res.redirect('review-site-details');
+        return res.redirect('/' + version + section + 'manual-entry/review-site-details');
     }
 
     // Route based on selection - use first site from batch
@@ -860,73 +890,55 @@ router.get('/' + version + section + 'manual-entry/individual-site-activity-desc
         data: req.session.data,
         site: site,
         isEditing: returnTo === 'review-site-details',
+        returnTo: returnTo,
         errors: site.validationErrors || {},
         currentSiteFromRoute: site.globalNumber
     });
 });
 
-// CONVERTED: Batch system individual site activity description POST route
+// SIMPLIFIED: Individual site activity description POST route
 router.post('/' + version + section + 'manual-entry/individual-site-activity-description-router', function (req, res) {
     const siteParam = req.query.site;
     const returnTo = req.query.returnTo;
-    
-    // FIX: Add comprehensive form field debugging
-    console.log('=== INDIVIDUAL ACTIVITY DESCRIPTION FORM DEBUG ===');
-    console.log('Route:', req.originalUrl);
-    console.log('Form body received:', Object.keys(req.body));
-    console.log('Full form data:', req.body);
-    console.log('=== END FORM DEBUG ===');
-    
     const description = req.body['activity-details-text-area'];
     
-    console.log(`Processing individual activity description for site: ${siteParam}`);
-    console.log(`Extracted description: "${description}"`);
+    console.log(`=== ACTIVITY DESCRIPTION DEBUG ===`);
+    console.log(`Site: ${siteParam}, returnTo: ${returnTo}, description: "${description}"`);
     
     // Get current batch and find site
     const currentBatch = getCurrentBatch(req.session);
     if (!currentBatch) {
-        console.log('No current batch found');
         return res.redirect('/' + version + section + 'manual-entry/does-your-project-involve-more-than-one-site');
     }
     
     const site = currentBatch.sites.find(s => s.globalNumber === parseInt(siteParam));
     if (!site) {
-        console.log('Site not found for individual activity description update');
         return res.redirect('/' + version + section + 'manual-entry/site-name?site=' + siteParam);
     }
     
-    // Update activity description directly in batch site
-    site.description = description || '';
-    
     // Basic validation
-    let isValid = true;
     if (!description || description.trim() === '') {
-        isValid = false;
-        site.validationErrors = { ...site.validationErrors, description: 'Enter an activity description' };
-    } else {
-        // Clear description errors if validation passes
-        if (site.validationErrors) {
-            delete site.validationErrors.description;
-            delete site.validationErrors.activityDetails;
-        }
-    }
-    
-    if (!isValid) {
-        console.log('Individual activity description validation failed:', site.validationErrors);
+        site.validationErrors = { description: 'Enter an activity description' };
         return res.render(path.join(version, section, 'manual-entry', 'individual-site-activity-description'), {
             data: req.session.data,
             site: site,
             isEditing: returnTo === 'review-site-details',
-            errors: site.validationErrors,
-            currentSiteFromRoute: site.globalNumber
+            returnTo: returnTo,
+            errors: site.validationErrors
         });
     }
     
-    // Determine next step
+    // Update site in batch
+    site.description = description.trim();
+    if (site.validationErrors) delete site.validationErrors.description;
+    
+    // SIMPLE LOGIC: Return to review if editing, otherwise continue flow
     if (returnTo === 'review-site-details') {
-        res.redirect('/' + version + section + 'review-site-details?site=' + site.globalNumber);
+        console.log(`🔄 DIRECT RETURN: Redirecting back to review page`);
+        return res.redirect('/' + version + section + 'manual-entry/review-site-details?site=' + site.globalNumber);
     } else {
-        res.redirect('/' + version + section + 'manual-entry/how-do-you-want-to-enter-the-coordinates?site=' + site.globalNumber);
+        console.log(`➡️ CONTINUE FLOW: Going to coordinates`);
+        return res.redirect('/' + version + section + 'manual-entry/how-do-you-want-to-enter-the-coordinates?site=' + site.globalNumber);
     }
 });
 
@@ -1007,7 +1019,7 @@ router.post('/' + version + section + 'manual-entry/activity-description-router'
     
     // Determine next step
     if (returnTo === 'review-site-details') {
-        res.redirect('/' + version + section + 'review-site-details');
+        res.redirect('/' + version + section + 'manual-entry/review-site-details');
     } else {
         res.redirect('/' + version + section + 'manual-entry/how-do-you-want-to-enter-the-coordinates?site=' + siteParam);
     }
@@ -1042,6 +1054,7 @@ router.get('/' + version + section + 'manual-entry/how-do-you-want-to-enter-the-
         data: req.session.data,
         site: site,
         isEditing: returnTo === 'review-site-details',
+        returnTo: returnTo,
         errors: site.validationErrors || {}
     });
 });
@@ -1076,26 +1089,66 @@ router.post('/' + version + section + 'manual-entry/how-do-you-want-to-enter-the
             errors: site.validationErrors
         });
     }
-    
-    // Update coordinate entry method directly in batch site
-    if (!site.coordinates) site.coordinates = {};
-    site.coordinates.entryMethod = selection;
-    
-    // Set coordinate type based on selection
-    if (selection === "Enter one set of coordinates and a width to create a circular site") {
-        site.coordinates.type = 'circle';
-    } else if (selection === "Enter multiple sets of coordinates to mark the boundary of the site") {
-        site.coordinates.type = 'polygon';
-    }
-    
-    // Clear coordinate-related errors
-    if (site.validationErrors && site.validationErrors.coordinateEntryMethod) {
-        delete site.validationErrors.coordinateEntryMethod;
+
+    // JOURNEY RESTART: Clear subsequent coordinate data when changing method from review page
+    if (returnTo === 'review-site-details') {
+        // Store the previous method to check if it's actually changing
+        const previousMethod = site.coordinates && site.coordinates.entryMethod;
+        
+        if (previousMethod && previousMethod !== selection) {
+            console.log(`🔄 JOURNEY RESTART: Coordinate entry method changed from "${previousMethod}" to "${selection}" - clearing subsequent data`);
+            
+            // Clear ALL coordinate data except the method selection
+            site.coordinates = {
+                entryMethod: selection
+            };
+            
+            // Set coordinate type based on selection (needed for journey routing)
+            if (selection === "Enter one set of coordinates and a width to create a circular site") {
+                site.coordinates.type = 'circle';
+            } else if (selection === "Enter multiple sets of coordinates to mark the boundary of the site") {
+                site.coordinates.type = 'polygon';
+            }
+            
+            // Clear coordinate system selection (force user to choose again)
+            delete site.coordinateSystem;
+            
+            // CRITICAL: Clear session data so coordinate system radio doesn't remain selected
+            const currentSite = parseInt(siteParam);
+            const siteDataKey = 'manual-coordinate-system-radios' + (currentSite === 1 ? '' : '-site-' + currentSite);
+            delete req.session.data[siteDataKey];
+            delete req.session.data['manual-coordinate-system-radios'];
+            
+            console.log(`🧹 Cleared ALL coordinate data AND session data for site ${site.globalNumber} due to method change`);
+            console.log(`🔄 JOURNEY RESTART: User will be taken through coordinate system → coordinates → width (if circular) → review`);
+        } else {
+            // Same method selected, just update without clearing
+            site.coordinates.entryMethod = selection;
+            // Still need to set type for routing
+            if (selection === "Enter one set of coordinates and a width to create a circular site") {
+                site.coordinates.type = 'circle';
+            } else if (selection === "Enter multiple sets of coordinates to mark the boundary of the site") {
+                site.coordinates.type = 'polygon';
+            }
+        }
+    } else {
+        // Normal flow (not from review page)
+        if (!site.coordinates) site.coordinates = {};
+        site.coordinates.entryMethod = selection;
+        // Set coordinate type based on selection
+        if (selection === "Enter one set of coordinates and a width to create a circular site") {
+            site.coordinates.type = 'circle';
+        } else if (selection === "Enter multiple sets of coordinates to mark the boundary of the site") {
+            site.coordinates.type = 'polygon';
+        }
     }
     
     // Determine next step
     if (returnTo === 'review-site-details') {
-        res.redirect('/' + version + section + 'review-site-details?site=' + site.globalNumber);
+        // JOURNEY RESTART: Continue through the journey instead of going directly back to review
+        // This allows the user to complete the restarted coordinate entry journey
+        console.log(`🔄 JOURNEY RESTART: Continuing to coordinate system selection`);
+        res.redirect('/' + version + section + 'manual-entry/which-coordinate-system?site=' + site.globalNumber + '&returnTo=review-site-details');
     } else {
         res.redirect('/' + version + section + 'manual-entry/which-coordinate-system?site=' + site.globalNumber);
     }
@@ -1130,6 +1183,7 @@ router.get('/' + version + section + 'manual-entry/which-coordinate-system', fun
         data: req.session.data,
         site: site,
         isEditing: returnTo === 'review-site-details',
+        returnTo: returnTo,
         errors: site.validationErrors || {}
     });
 });
@@ -1164,13 +1218,57 @@ router.post('/' + version + section + 'manual-entry/which-coordinate-system-rout
             errors: site.validationErrors
         });
     }
+
+    // JOURNEY RESTART: Clear subsequent coordinate data when changing coordinate system from review page
+    if (returnTo === 'review-site-details') {
+        // Store the previous system to check if it's actually changing
+        const previousSystem = site.coordinateSystem || (site.coordinates && site.coordinates.system);
+        
+        if (previousSystem && previousSystem !== selection) {
+            console.log(`🔄 JOURNEY RESTART: Coordinate system changed from "${previousSystem}" to "${selection}" - clearing subsequent data`);
+            
+            // Clear ALL coordinate values but keep type and entry method
+            if (site.coordinates) {
+                const preservedData = {
+                    entryMethod: site.coordinates.entryMethod,
+                    type: site.coordinates.type,
+                    system: selection
+                };
+                
+                // Clear all coordinate values (latitude, longitude, width, points, etc.)
+                site.coordinates = preservedData;
+            }
+            
+            // Update coordinate system
+            site.coordinateSystem = selection;
+            
+            // CRITICAL: Clear session data so coordinate values don't remain in forms
+            const currentSite = parseInt(siteParam);
+            // Clear coordinate session data
+            delete req.session.data['coordinates-latitude'];
+            delete req.session.data['coordinates-longitude'];
+            delete req.session.data['site-width'];
+            // Clear site-specific coordinate data if it exists
+            delete req.session.data[`manual-site-${currentSite}-coordinates-latitude`];
+            delete req.session.data[`manual-site-${currentSite}-coordinates-longitude`];
+            delete req.session.data[`manual-site-${currentSite}-site-width`];
+            
+            console.log(`🧹 Cleared ALL coordinate values AND session data for site ${site.globalNumber} due to system change`);
+            console.log(`🔄 JOURNEY RESTART: User will be taken through coordinates entry → width (if circular) → review`);
+        } else {
+            // Same system selected, just update without clearing
+            if (!site.coordinates) site.coordinates = {};
+            site.coordinates.system = selection;
+            site.coordinateSystem = selection;
+        }
+    } else {
+        // Normal flow (not from review page)
+        if (!site.coordinates) site.coordinates = {};
+        site.coordinates.system = selection;
+        site.coordinateSystem = selection;
+    }
     
-    // Update coordinate system directly in batch site
-    if (!site.coordinates) site.coordinates = {};
-    site.coordinates.system = selection;
-    site.coordinateSystem = selection; // Also store in format expected by template
-    
-    // Set coordinate format based on system
+    // Update coordinate format based on system
     if (selection === 'WGS84 (World Geodetic System 1984)') {
         site.coordinates.format = 'decimal-degrees';
     } else {
@@ -1184,8 +1282,16 @@ router.post('/' + version + section + 'manual-entry/which-coordinate-system-rout
     
     // Determine next step based on coordinate type
     if (returnTo === 'review-site-details') {
-        res.redirect('/' + version + section + 'review-site-details?site=' + site.globalNumber);
+        // JOURNEY RESTART: Continue through the journey to complete all required steps
+        // This is a coordinate system change from review page - user needs to complete the full journey
+        console.log(`🔄 JOURNEY RESTART: Continuing to coordinate entry after system change`);
+        if (site.coordinates && site.coordinates.type === 'polygon') {
+            res.redirect('/' + version + section + 'manual-entry/enter-multiple-coordinates?site=' + site.globalNumber + '&returnTo=review-site-details');
+        } else {
+            res.redirect('/' + version + section + 'manual-entry/enter-coordinates?site=' + site.globalNumber + '&returnTo=review-site-details');
+        }
     } else {
+        // Normal flow - continue through journey
         if (site.coordinates && site.coordinates.type === 'polygon') {
             res.redirect('/' + version + section + 'manual-entry/enter-multiple-coordinates?site=' + site.globalNumber);
         } else {
@@ -1221,6 +1327,7 @@ router.get('/' + version + section + 'manual-entry/enter-coordinates', function 
         data: req.session.data,
         site: site,
         isEditing: returnTo === 'review-site-details',
+        returnTo: returnTo,
         errors: site.validationErrors || {}
     });
 });
@@ -1254,6 +1361,7 @@ router.get('/' + version + section + 'manual-entry/enter-multiple-coordinates', 
         data: req.session.data,
         site: site,
         isEditing: returnTo === 'review-site-details',
+        returnTo: returnTo,
         errors: []
     });
 });
@@ -1314,6 +1422,7 @@ router.post('/' + version + section + 'manual-entry/enter-coordinates-router', f
             data: req.session.data,
             site: site,
             isEditing: returnTo === 'review-site-details',
+            returnTo: returnTo,
             errors: site.validationErrors
         });
     }
@@ -1327,9 +1436,24 @@ router.post('/' + version + section + 'manual-entry/enter-coordinates-router', f
     
     // Determine next step
     if (returnTo === 'review-site-details') {
-        res.redirect('/' + version + section + 'review-site-details?site=' + site.globalNumber);
+        // Check if this is part of a journey restart or an independent coordinate change
+        // If the site doesn't have a width yet and it's a circular site, continue the journey
+        // If it already has a width, this is likely an independent coordinate change
+        if (site.coordinates.type === 'circle' && !site.coordinates.width) {
+            // JOURNEY RESTART: Circular site without width - continue to width page
+            console.log(`🔄 JOURNEY RESTART: Continuing to width page for circular site (no width set)`);
+            res.redirect('/' + version + section + 'manual-entry/site-width?site=' + site.globalNumber + '&returnTo=review-site-details');
+        } else if (site.coordinates.type === 'polygon') {
+            // JOURNEY RESTART: Polygon site - coordinates are complete, return to review
+            console.log(`🔄 JOURNEY RESTART: Polygon coordinates complete, returning to review`);
+            res.redirect('/' + version + section + 'manual-entry/review-site-details?site=' + site.globalNumber);
+        } else {
+            // INDEPENDENT CHANGE: Site already has width or is being edited independently
+            console.log(`🔄 INDEPENDENT CHANGE: Coordinates updated, returning directly to review`);
+            res.redirect('/' + version + section + 'manual-entry/review-site-details?site=' + site.globalNumber);
+        }
     } else {
-        // FIXED: Route based on coordinate entry method
+        // Normal flow - continue through journey (includes width page for circular sites)
         if (site.coordinates.type === 'circle') {
             // Circular site - need to get width
             res.redirect('/' + version + section + 'manual-entry/site-width?site=' + site.globalNumber);
@@ -1370,6 +1494,7 @@ router.get('/' + version + section + 'manual-entry/site-width', function (req, r
         data: req.session.data,
         site: site,
         isEditing: returnTo === 'review-site-details',
+        returnTo: returnTo,
         errors: site.validationErrors || {}
     });
 });
@@ -1426,13 +1551,14 @@ router.post('/' + version + section + 'manual-entry/site-width-router', function
             data: req.session.data,
             site: site,
             isEditing: returnTo === 'review-site-details',
+            returnTo: returnTo,
             errors: site.validationErrors
         });
     }
     
     // Determine next step
     if (returnTo === 'review-site-details') {
-        res.redirect('/' + version + section + 'review-site-details?site=' + site.globalNumber);
+        res.redirect('/' + version + section + 'manual-entry/review-site-details?site=' + site.globalNumber);
     } else {
         res.redirect('/' + version + section + 'manual-entry/review-site-details?site=' + site.globalNumber);
     }
@@ -1722,7 +1848,7 @@ router.post('/' + version + section + 'manual-entry/enter-multiple-coordinates-r
 
     // Determine next step
     if (returnTo === 'review-site-details') {
-        res.redirect('/' + version + section + 'review-site-details?site=' + site.globalNumber);
+        res.redirect('/' + version + section + 'manual-entry/review-site-details?site=' + site.globalNumber);
     } else {
         res.redirect('/' + version + section + 'manual-entry/review-site-details?site=' + site.globalNumber);
     }

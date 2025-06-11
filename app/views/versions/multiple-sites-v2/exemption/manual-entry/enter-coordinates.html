@@ -73,7 +73,7 @@ Enter the coordinates at the centre point of the site
           </h1> 
         
 
-        <form action="enter-coordinates-router?site={{ site.globalNumber }}{% if query.returnTo %}&returnTo={{ query.returnTo }}{% endif %}" method="post" novalidate>
+        <form action="enter-coordinates-router?site={{ site.globalNumber }}{% if returnTo %}&returnTo={{ returnTo }}{% endif %}" method="post" novalidate>
 
             {% call govukFieldset({
                 legend: {

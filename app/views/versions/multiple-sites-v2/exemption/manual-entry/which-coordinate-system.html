@@ -59,7 +59,7 @@ Which coordinate system do you want to use?
         <!--  END OF 'error summary' -->
 
         <!-- go to routes.js for routing  -->
-        <form action="which-coordinate-system-router?site={{ site.globalNumber }}{% if query.returnTo %}&returnTo={{ query.returnTo }}{% endif %}" method="post" novalidate>
+        <form action="which-coordinate-system-router?site={{ site.globalNumber }}{% if returnTo %}&returnTo={{ returnTo }}{% endif %}" method="post" novalidate>
         
         <div class="govuk-form-group {% if data['errorthispage'] == 'true' %}govuk-form-group--error{% endif %}">
             <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}<span class="govuk-!-display-block">Site {{ displaySiteNumber }}</span></span>
