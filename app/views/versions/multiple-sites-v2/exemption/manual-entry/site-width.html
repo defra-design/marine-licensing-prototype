@@ -49,7 +49,7 @@ Enter the width of the circular site in metres
         <!--  END OF 'error summary' -->
 
         <!-- go to routes.js for routing  -->
-        <form action="site-width-router{% if query.returnTo %}?returnTo={{ query.returnTo }}{% endif %}" method="post" novalidate>
+        <form action="site-width-router?site={{ site.globalNumber }}{% if query.returnTo %}&returnTo={{ query.returnTo }}{% endif %}" method="post" novalidate>
 
             {% if errors.siteWidth %}
             <div class="govuk-form-group govuk-form-group--error">

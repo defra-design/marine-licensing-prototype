@@ -55,7 +55,7 @@ How do you want to enter the site coordinates?
         {% endif %}
         <!--  END OF 'error summary' -->
         
-        <form action="how-do-you-want-to-enter-the-coordinates-router{% if currentSite > 1 %}?site={{ currentSite }}{% endif %}" method="post" novalidate>
+        <form action="how-do-you-want-to-enter-the-coordinates-router?site={{ site.globalNumber }}{% if query.returnTo %}&returnTo={{ query.returnTo }}{% endif %}" method="post" novalidate>
         
         <div class="govuk-form-group {% if data['errorthispage'] == 'true' %}govuk-form-group--error{% endif %}">
             <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}<span class="govuk-!-display-block">Site {{ displaySiteNumber }}</span></span>

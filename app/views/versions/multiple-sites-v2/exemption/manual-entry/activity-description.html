@@ -44,7 +44,7 @@ Activity description
         <!--  END OF 'error summary' -->
 
         <!-- go to routes.js for routing  -->
-        <form action="activity-description-router" method="post" novalidate>
+        <form action="activity-description-router?site={{ siteParam }}{% if query.returnTo %}&returnTo={{ query.returnTo }}{% endif %}" method="post" novalidate>
 
             <div class="govuk-form-group {% if errors.activityDetails %}govuk-form-group--error{% endif %}">
                 <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
@@ -70,7 +70,7 @@ Activity description
                   name="activity-details-text-area"
                   rows="8"
                   aria-describedby="activity-details-text-area-hint{% if errors.activityDetails %} activity-details-text-area-error{% endif %}"
-                >{{ site.activityDetails }}</textarea>
+                >{{ site.description }}</textarea>
               </div>
 
               <div class="govuk-button-group">

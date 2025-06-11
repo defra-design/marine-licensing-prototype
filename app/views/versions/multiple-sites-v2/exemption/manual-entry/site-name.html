@@ -49,7 +49,7 @@ Site name
 {% endif %}
         <!--  END OF 'error summary' -->
 
-        <form action="site-name-router{% if query.returnTo %}?returnTo={{ query.returnTo }}{% endif %}" method="post" novalidate>
+        <form action="site-name-router?site={{ site.globalNumber }}{% if query.returnTo %}&returnTo={{ query.returnTo }}{% endif %}" method="post" novalidate>
             
             <div class="govuk-form-group {% if errors.name %}govuk-form-group--error{% endif %}">
                 {% if data['exemption-project-name-text-input'] %}

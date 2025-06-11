@@ -205,16 +205,14 @@ function initializeNewSiteWithInheritedData(session, newSite) {
     
     // Apply same activity dates if they exist
     if (currentBatch.settings.sameActivityDates === 'Yes' && currentBatch.settings.sharedStartDate) {
-        newSite.activityDates = {
-            startDate: { ...currentBatch.settings.sharedStartDate },
-            endDate: { ...currentBatch.settings.sharedEndDate }
-        };
+        newSite.startDate = { ...currentBatch.settings.sharedStartDate };
+        newSite.endDate = { ...currentBatch.settings.sharedEndDate };
         console.log(`Inherited shared activity dates for site ${newSite.globalNumber}`);
     }
     
     // Apply same activity description if it exists
     if (currentBatch.settings.sameActivityDescription === 'Yes' && currentBatch.settings.sharedDescription) {
-        newSite.activityDetails = currentBatch.settings.sharedDescription;
+        newSite.description = currentBatch.settings.sharedDescription;
         console.log(`Inherited shared activity description for site ${newSite.globalNumber}`);
     }
     
@@ -251,8 +249,6 @@ function clearCurrentSiteSessionData(session) {
 
 // ===== MIGRATED: Does your project involve more than one site? - GET route =====
 router.get('/' + version + section + 'manual-entry/does-your-project-involve-more-than-one-site', function (req, res) {
-    // Initialize unified model
-    migrateToUnifiedModel(req.session);
     
     res.render(version + section + 'manual-entry/does-your-project-involve-more-than-one-site', {
         data: req.session.data,
@@ -283,39 +279,47 @@ router.post('/' + version + section + 'manual-entry/does-your-project-involve-mo
     res.redirect('site-name?site=' + nextGlobalSiteNumber);
 });
 
-// NEW: Unified model approach for site name
+// CONVERTED: Batch system approach for site name
 router.get('/' + version + section + 'manual-entry/site-name', function (req, res) {
     const siteParam = req.query.site;
     const returnTo = req.query.returnTo;
     
-    // Initialize unified model
-    if (typeof migrateToUnifiedModel === 'function') {
-        migrateToUnifiedModel(req.session);
-    }
-    
     let site = null;
     let isEditing = false;
     
+    // Get current batch
+    const currentBatch = getCurrentBatch(req.session);
+    if (!currentBatch) {
+        console.log('No current batch found, redirecting to start');
+        return res.redirect('/' + version + section + 'manual-entry/does-your-project-involve-more-than-one-site');
+    }
+    
     if (siteParam && returnTo === 'review-site-details') {
-        // Editing existing site - find by global number
-        site = findSiteByGlobalNumberUnified(req.session, siteParam);
+        // Editing existing site - find by global number in batch
+        site = currentBatch.sites.find(s => s.globalNumber === parseInt(siteParam));
         isEditing = !!site;
         console.log(`Editing mode: ${isEditing}, site found: ${!!site}`);
     }
     
     if (!site) {
-        // Creating new site
-        site = createNewSite(req.session);
-        console.log(`Created new site for manual entry: ${site.id}`);
+        // Creating new site - create site data structure
+        const globalNumber = (req.session.data['globalSiteCounter'] || 0) + 1;
+        site = {
+            name: '',
+            startDate: { day: '', month: '', year: '' },
+            endDate: { day: '', month: '', year: '' },
+            description: '',
+            coordinates: {},
+            globalNumber: globalNumber,
+            validationErrors: {}
+        };
+        console.log(`Created new site structure for manual entry: global ${globalNumber}`);
         
         // Auto-populate shared data if this isn't the first site
         if (site.globalNumber > 1) {
             initializeNewSiteWithInheritedData(req.session, site);
         }
     }
-    
-    // Store current site ID in session for form processing
-    req.session.data['currentManualEntrySiteId'] = site.id;
     
     res.render(path.join(version, section, 'manual-entry', 'site-name'), {
         data: req.session.data,
@@ -325,32 +329,21 @@ router.get('/' + version + section + 'manual-entry/site-name', function (req, re
     });
 });
 
-// NEW: Unified model POST handler for site name
+// CONVERTED: Batch system POST handler for site name
 router.post('/' + version + section + 'manual-entry/site-name-router', function (req, res) {
     const siteName = req.body['site-name'];
-    const siteId = req.session.data['currentManualEntrySiteId'];
+    const siteParam = req.query.site;
     const returnTo = req.query.returnTo;
     
-    console.log(`Processing site name: "${siteName}" for site: ${siteId}`);
+    console.log(`Processing site name: "${siteName}" for site: ${siteParam}`);
     
-    if (!siteId) {
-        console.log('No current site ID found');
-        return res.redirect('/' + version + section + 'manual-entry/site-name');
-    }
-    
-    // Update site in unified model
-    const success = updateSiteField(req.session, siteId, 'name', siteName || '');
-    if (!success) {
-        console.log('Failed to update site name');
-        return res.redirect('/' + version + section + 'manual-entry/site-name');
-    }
-    
-    // Validate the field
-    const site = findSiteById(req.session, siteId);
-    const isValid = validateSiteData(site, 'name');
-    
-    if (!isValid) {
-        console.log('Site name validation failed:', site.validationErrors);
+    // Validation
+    if (!siteName || siteName.trim() === '') {
+        const site = { 
+            globalNumber: siteParam,
+            name: '',
+            validationErrors: { name: 'Enter a site name' }
+        };
         return res.render(path.join(version, section, 'manual-entry', 'site-name'), {
             data: req.session.data,
             site: site,
@@ -359,9 +352,34 @@ router.post('/' + version + section + 'manual-entry/site-name-router', function 
         });
     }
     
-    // Clear any previous errors for this field
-    if (site.validationErrors.name) {
-        delete site.validationErrors.name;
+    // Get current batch
+    const currentBatch = getCurrentBatch(req.session);
+    if (!currentBatch) {
+        console.log('No current batch found');
+        return res.redirect('/' + version + section + 'manual-entry/does-your-project-involve-more-than-one-site');
+    }
+    
+    let site;
+    
+    if (returnTo === 'review-site-details') {
+        // Editing existing site - find and update in batch
+        site = currentBatch.sites.find(s => s.globalNumber === parseInt(siteParam));
+        if (site) {
+            site.name = siteName.trim();
+            console.log(`Updated existing site ${site.globalNumber} name in batch`);
+        }
+    } else {
+        // Creating new site - add to batch
+        site = {
+            name: siteName.trim(),
+            startDate: { day: '', month: '', year: '' },
+            endDate: { day: '', month: '', year: '' },
+            description: '',
+            coordinates: {}
+        };
+        
+        addSiteToBatch(req.session, site);
+        console.log(`Added new site to batch: ${site.name}, global number: ${site.globalNumber}`);
     }
     
     // Determine next step
@@ -380,7 +398,7 @@ router.post('/' + version + section + 'manual-entry/site-name-router', function 
             console.log(`🔀 Navigation: Single site flow → individual-site-activity-dates`);
             res.redirect('/' + version + section + 'manual-entry/individual-site-activity-dates?site=' + site.globalNumber);
         } else {
-            // Multiple site flow: check if shared activity dates question was answered
+            // Multiple site flow: check if this is the first site or subsequent site
             const currentBatch = getCurrentBatch(req.session);
             const hasSharedActivityDatesAnswer = currentBatch && 
                 currentBatch.settings && 
@@ -389,17 +407,31 @@ router.post('/' + version + section + 'manual-entry/site-name-router', function 
             console.log(`🔀 Navigation: Multiple site flow, hasSharedActivityDatesAnswer: ${hasSharedActivityDatesAnswer}`);
             
             if (!hasSharedActivityDatesAnswer) {
-                // Need to ask about shared activity dates first
-                console.log(`🔀 Navigation: Multiple site flow → same-activity-dates (first time)`);
+                // First site: ask about shared activity dates
+                console.log(`🔀 Navigation: First site → same-activity-dates`);
                 res.redirect('/' + version + section + 'manual-entry/same-activity-dates');
-            } else if (currentBatch.settings.sameActivityDates === 'Yes') {
-                // Shared dates - go to activity dates (all sites)
-                console.log(`🔀 Navigation: Multiple site flow → activity-dates (shared dates)`);
-                res.redirect('/' + version + section + 'manual-entry/activity-dates');
             } else {
-                // Individual dates - go to individual activity dates
-                console.log(`🔀 Navigation: Multiple site flow → individual-site-activity-dates (individual dates)`);
-                res.redirect('/' + version + section + 'manual-entry/individual-site-activity-dates?site=' + site.globalNumber);
+                // Subsequent site: route based on previous choices
+                if (currentBatch.settings.sameActivityDates === 'Yes') {
+                    // Shared dates chosen: skip dates, check descriptions
+                    if (!currentBatch.settings.sameActivityDescription) {
+                        // Need to ask about shared descriptions first
+                        console.log(`🔀 Navigation: Subsequent site, shared dates → same-activity-description`);
+                        res.redirect('/' + version + section + 'manual-entry/same-activity-description');
+                    } else if (currentBatch.settings.sameActivityDescription === 'Yes') {
+                        // Both shared: skip to coordinates
+                        console.log(`🔀 Navigation: Subsequent site, both shared → coordinates`);
+                        res.redirect('/' + version + section + 'manual-entry/how-do-you-want-to-enter-the-coordinates?site=' + site.globalNumber);
+                    } else {
+                        // Shared dates, individual descriptions
+                        console.log(`🔀 Navigation: Subsequent site, shared dates, individual descriptions → individual-site-activity-description`);
+                        res.redirect('/' + version + section + 'manual-entry/individual-site-activity-description?site=' + site.globalNumber);
+                    }
+                } else {
+                    // Individual dates chosen: go to individual dates for this site
+                    console.log(`🔀 Navigation: Subsequent site, individual dates → individual-site-activity-dates`);
+                    res.redirect('/' + version + section + 'manual-entry/individual-site-activity-dates?site=' + site.globalNumber);
+                }
             }
         }
     }
@@ -409,8 +441,6 @@ router.post('/' + version + section + 'manual-entry/site-name-router', function 
 
 // Are the activity dates the same for every site? - GET route
 router.get('/' + version + section + 'manual-entry/same-activity-dates', function (req, res) {
-    // Initialize unified model
-    migrateToUnifiedModel(req.session);
     
     const returnTo = req.query.returnTo;
     
@@ -455,16 +485,14 @@ router.post('/' + version + section + 'manual-entry/same-activity-dates-router',
     // If returning from review, handle shared date updates
     if (returnTo === 'review-site-details') {
         if (selection === "No" && currentBatch.settings.sameActivityDates === "Yes") {
-            // Copy shared dates to all unified sites
+            // Copy shared dates to all batch sites
             const sharedStartDate = currentBatch.settings.sharedStartDate;
             const sharedEndDate = currentBatch.settings.sharedEndDate;
             
-            if (sharedStartDate && req.session.data['unifiedSites']) {
-                req.session.data['unifiedSites'].forEach(site => {
-                    if (site.source === 'manual-entry') {
-                        updateSiteField(req.session, site.id, 'activityDates.startDate', sharedStartDate);
-                        updateSiteField(req.session, site.id, 'activityDates.endDate', sharedEndDate);
-                    }
+            if (sharedStartDate && currentBatch.sites) {
+                currentBatch.sites.forEach(site => {
+                    site.startDate = { ...sharedStartDate };
+                    site.endDate = { ...sharedEndDate };
                 });
             }
         }
@@ -472,10 +500,8 @@ router.post('/' + version + section + 'manual-entry/same-activity-dates-router',
         return res.redirect('review-site-details');
     }
 
-    // Route based on selection - FIX: Add site parameter to all redirects
-    const currentSiteId = req.session.data['currentManualEntrySiteId'];
-    const currentSite = findSiteById(req.session, currentSiteId);
-    const siteNumber = currentSite ? currentSite.globalNumber : 1;
+    // Route based on selection - use first site from batch
+    const siteNumber = currentBatch.sites.length > 0 ? currentBatch.sites[0].globalNumber : 1;
     
     switch(selection) {
         case "Yes":
@@ -489,7 +515,7 @@ router.post('/' + version + section + 'manual-entry/same-activity-dates-router',
     }
 });
 
-// NEW: Unified model individual site activity dates GET route
+// CONVERTED: Batch system individual site activity dates GET route
 router.get('/' + version + section + 'manual-entry/individual-site-activity-dates', function (req, res) {
     const siteParam = req.query.site;
     const returnTo = req.query.returnTo;
@@ -499,23 +525,18 @@ router.get('/' + version + section + 'manual-entry/individual-site-activity-date
         return res.redirect('/' + version + section + 'manual-entry/site-name');
     }
     
-    let site;
-    if (returnTo === 'review-site-details') {
-        // Editing existing site
-        site = findSiteByGlobalNumberUnified(req.session, siteParam);
-    } else {
-        // Continue with current site
-        const siteId = req.session.data['currentManualEntrySiteId'];
-        site = findSiteById(req.session, siteId);
+    // Get current batch and find site
+    const currentBatch = getCurrentBatch(req.session);
+    if (!currentBatch) {
+        console.log('No current batch found');
+        return res.redirect('/' + version + section + 'manual-entry/does-your-project-involve-more-than-one-site');
     }
     
+    const site = currentBatch.sites.find(s => s.globalNumber === parseInt(siteParam));
     if (!site) {
         console.log('Site not found for individual activity dates');
-        return res.redirect('/' + version + section + 'manual-entry/site-name');
+        return res.redirect('/' + version + section + 'manual-entry/site-name?site=' + siteParam);
     }
-    
-    // Update current site ID for form processing
-    req.session.data['currentManualEntrySiteId'] = site.id;
     
     res.render(path.join(version, section, 'manual-entry', 'individual-site-activity-dates'), {
         data: req.session.data,
@@ -527,7 +548,7 @@ router.get('/' + version + section + 'manual-entry/individual-site-activity-date
 
 // NEW: Unified model individual site activity dates POST route
 router.post('/' + version + section + 'manual-entry/individual-site-activity-dates-router', function (req, res) {
-    const siteId = req.session.data['currentManualEntrySiteId'];
+    const siteParam = req.query.site;
     const returnTo = req.query.returnTo;
     
     // FIX: Add comprehensive form field debugging
@@ -545,30 +566,47 @@ router.post('/' + version + section + 'manual-entry/individual-site-activity-dat
     const endMonth = req.body['end-date-date-input-month'];
     const endYear = req.body['end-date-date-input-year'];
     
-    console.log(`Processing individual activity dates for site: ${siteId}`);
+    console.log(`Processing individual activity dates for site: ${siteParam}`);
     console.log(`Extracted dates - Start: ${startDay}/${startMonth}/${startYear}, End: ${endDay}/${endMonth}/${endYear}`);
     
-    if (!siteId) {
-        console.log('No current site ID found for individual activity dates');
-        return res.redirect('/' + version + section + 'manual-entry/site-name');
+    // Get current batch and find site
+    const currentBatch = getCurrentBatch(req.session);
+    if (!currentBatch) {
+        console.log('No current batch found');
+        return res.redirect('/' + version + section + 'manual-entry/does-your-project-involve-more-than-one-site');
     }
     
-    const site = findSiteById(req.session, siteId);
+    const site = currentBatch.sites.find(s => s.globalNumber === parseInt(siteParam));
     if (!site) {
         console.log('Site not found for individual activity dates update');
-        return res.redirect('/' + version + section + 'manual-entry/site-name');
+        return res.redirect('/' + version + section + 'manual-entry/site-name?site=' + siteParam);
     }
     
-    // Update activity dates in unified model
-    updateSiteField(req.session, siteId, 'activityDates.startDate.day', startDay || '');
-    updateSiteField(req.session, siteId, 'activityDates.startDate.month', startMonth || '');
-    updateSiteField(req.session, siteId, 'activityDates.startDate.year', startYear || '');
-    updateSiteField(req.session, siteId, 'activityDates.endDate.day', endDay || '');
-    updateSiteField(req.session, siteId, 'activityDates.endDate.month', endMonth || '');
-    updateSiteField(req.session, siteId, 'activityDates.endDate.year', endYear || '');
+    // Update activity dates directly in batch site
+    site.startDate = {
+        day: startDay || '',
+        month: startMonth || '',
+        year: startYear || ''
+    };
+    site.endDate = {
+        day: endDay || '',
+        month: endMonth || '',
+        year: endYear || ''
+    };
     
-    // Validate activity dates
-    const isValid = validateSiteData(site, 'activityDates');
+    // Basic validation
+    let isValid = true;
+    if (!startDay || !startMonth || !startYear || !endDay || !endMonth || !endYear) {
+        isValid = false;
+        site.validationErrors = { ...site.validationErrors, dates: 'Enter complete start and end dates' };
+    } else {
+        // Clear date errors if validation passes
+        if (site.validationErrors) {
+            delete site.validationErrors.dates;
+            delete site.validationErrors.startDate;
+            delete site.validationErrors.endDate;
+        }
+    }
     
     if (!isValid) {
         console.log('Individual activity dates validation failed:', site.validationErrors);
@@ -582,7 +620,7 @@ router.post('/' + version + section + 'manual-entry/individual-site-activity-dat
     
     // Clear date-related errors
     ['startDate', 'endDate'].forEach(field => {
-        if (site.validationErrors[field]) {
+        if (site.validationErrors && site.validationErrors[field]) {
             delete site.validationErrors[field];
         }
     });
@@ -591,71 +629,58 @@ router.post('/' + version + section + 'manual-entry/individual-site-activity-dat
     if (returnTo === 'review-site-details') {
         res.redirect('/' + version + section + 'review-site-details?site=' + site.globalNumber);
     } else {
-        // Check if this is a single site batch or continue with flow
-        res.redirect('/' + version + section + 'manual-entry/individual-site-activity-description?site=' + site.globalNumber);
+        // Check if we need to ask about descriptions
+        const multiSiteChoice = req.session.data['manual-multiple-sites'];
+        if (multiSiteChoice === 'No') {
+            // Single site: always ask individual description
+            res.redirect('/' + version + section + 'manual-entry/individual-site-activity-description?site=' + site.globalNumber);
+        } else {
+            // Multiple site: check if description question was answered
+            if (!currentBatch.settings.sameActivityDescription) {
+                // First site: ask about shared descriptions
+                res.redirect('/' + version + section + 'manual-entry/same-activity-description?site=' + site.globalNumber);
+            } else if (currentBatch.settings.sameActivityDescription === 'Yes') {
+                // Shared descriptions: skip to coordinates
+                res.redirect('/' + version + section + 'manual-entry/how-do-you-want-to-enter-the-coordinates?site=' + site.globalNumber);
+            } else {
+                // Individual descriptions: ask for this site
+                res.redirect('/' + version + section + 'manual-entry/individual-site-activity-description?site=' + site.globalNumber);
+            }
+        }
     }
 });
 
-// NEW: Unified model activity dates GET route
+// CONVERTED: Batch system shared activity dates GET route
 router.get('/' + version + section + 'manual-entry/activity-dates', function (req, res) {
     const siteParam = req.query.site;
     const returnTo = req.query.returnTo;
     
-    if (!siteParam) {
-        console.log('No site parameter provided for activity dates');
-        return res.redirect('/' + version + section + 'manual-entry/site-name');
-    }
-    
-    let site;
-    if (returnTo === 'review-site-details') {
-        // Editing existing site
-        site = findSiteByGlobalNumberUnified(req.session, siteParam);
-    } else {
-        // Continue with current site
-        const siteId = req.session.data['currentManualEntrySiteId'];
-        site = findSiteById(req.session, siteId);
-    }
-    
-    if (!site) {
-        console.log('Site not found for activity dates');
-        return res.redirect('/' + version + section + 'manual-entry/site-name');
-    }
-    
-    // Check if this site should inherit data from shared settings
+    // Get current batch
     const currentBatch = getCurrentBatch(req.session);
-    if (currentBatch && currentBatch.settings && currentBatch.settings.sameActivityDates === 'Yes' && currentBatch.settings.sharedStartDate) {
-        // Auto-populate if current site doesn't have dates yet
-        if (!site.activityDates.startDate.day && !site.activityDates.endDate.day) {
-            site.activityDates = {
-                startDate: { ...currentBatch.settings.sharedStartDate },
-                endDate: { ...currentBatch.settings.sharedEndDate }
-            };
-            console.log(`Auto-populated activity dates for site ${site.globalNumber} from shared settings`);
-        }
+    if (!currentBatch) {
+        console.log('No current batch found for shared activity dates');
+        return res.redirect('/' + version + section + 'manual-entry/does-your-project-involve-more-than-one-site');
     }
     
-    // Update current site ID for form processing
-    req.session.data['currentManualEntrySiteId'] = site.id;
+    // For shared dates, we use the batch settings data, not individual site data
+    const sharedStartDate = currentBatch.settings?.sharedStartDate || { day: '', month: '', year: '' };
+    const sharedEndDate = currentBatch.settings?.sharedEndDate || { day: '', month: '', year: '' };
     
     res.render(path.join(version, section, 'manual-entry', 'activity-dates'), {
         data: req.session.data,
-        site: site,
+        currentBatch: currentBatch,
+        sharedStartDate: sharedStartDate,
+        sharedEndDate: sharedEndDate,
+        siteParam: siteParam,
         isEditing: returnTo === 'review-site-details',
-        errors: site.validationErrors || {}
+        errors: {}
     });
 });
 
-// NEW: Unified model activity dates POST route
+// CONVERTED: Batch system shared activity dates POST route
 router.post('/' + version + section + 'manual-entry/activity-dates-router', function (req, res) {
-    const siteId = req.session.data['currentManualEntrySiteId'];
+    const siteParam = req.query.site;
     const returnTo = req.query.returnTo;
-    
-    // FIX: Add comprehensive form field debugging
-    console.log('=== ACTIVITY DATES FORM DEBUG ===');
-    console.log('Route:', req.originalUrl);
-    console.log('Form body received:', Object.keys(req.body));
-    console.log('Full form data:', req.body);
-    console.log('=== END FORM DEBUG ===');
     
     const startDay = req.body['start-date-date-input-day'];
     const startMonth = req.body['start-date-date-input-month'];
@@ -665,83 +690,70 @@ router.post('/' + version + section + 'manual-entry/activity-dates-router', func
     const endMonth = req.body['end-date-date-input-month'];
     const endYear = req.body['end-date-date-input-year'];
     
-    console.log(`Processing activity dates for site: ${siteId}`);
-    console.log(`Extracted dates - Start: ${startDay}/${startMonth}/${startYear}, End: ${endDay}/${endMonth}/${endYear}`);
+    console.log(`Processing shared activity dates - Start: ${startDay}/${startMonth}/${startYear}, End: ${endDay}/${endMonth}/${endYear}`);
     
-    if (!siteId) {
-        console.log('No current site ID found for activity dates');
-        return res.redirect('/' + version + section + 'manual-entry/site-name');
-    }
-    
-    const site = findSiteById(req.session, siteId);
-    if (!site) {
-        console.log('Site not found for activity dates update');
-        return res.redirect('/' + version + section + 'manual-entry/site-name');
-    }
-    
-    // Update activity dates in unified model
-    updateSiteField(req.session, siteId, 'activityDates.startDate.day', startDay || '');
-    updateSiteField(req.session, siteId, 'activityDates.startDate.month', startMonth || '');
-    updateSiteField(req.session, siteId, 'activityDates.startDate.year', startYear || '');
-    updateSiteField(req.session, siteId, 'activityDates.endDate.day', endDay || '');
-    updateSiteField(req.session, siteId, 'activityDates.endDate.month', endMonth || '');
-    updateSiteField(req.session, siteId, 'activityDates.endDate.year', endYear || '');
-    
-    // Store shared dates in batch settings (for multi-site data sharing)
+    // Get current batch
     const currentBatch = getCurrentBatch(req.session);
-    if (currentBatch && currentBatch.settings && currentBatch.settings.sameActivityDates === 'Yes') {
-        currentBatch.settings.sharedStartDate = {
-            day: startDay || '',
-            month: startMonth || '',
-            year: startYear || ''
-        };
-        currentBatch.settings.sharedEndDate = {
-            day: endDay || '',
-            month: endMonth || '',
-            year: endYear || ''
-        };
-        
-        // Copy to all existing unified sites
-        if (req.session.data['unifiedSites']) {
-            req.session.data['unifiedSites'].forEach(existingSite => {
-                if (existingSite.source === 'manual-entry') {
-                    updateSiteField(req.session, existingSite.id, 'activityDates.startDate.day', startDay || '');
-                    updateSiteField(req.session, existingSite.id, 'activityDates.startDate.month', startMonth || '');
-                    updateSiteField(req.session, existingSite.id, 'activityDates.startDate.year', startYear || '');
-                    updateSiteField(req.session, existingSite.id, 'activityDates.endDate.day', endDay || '');
-                    updateSiteField(req.session, existingSite.id, 'activityDates.endDate.month', endMonth || '');
-                    updateSiteField(req.session, existingSite.id, 'activityDates.endDate.year', endYear || '');
-                }
-            });
-        }
-        console.log('Stored shared activity dates for all sites');
+    if (!currentBatch) {
+        console.log('No current batch found for shared activity dates');
+        return res.redirect('/' + version + section + 'manual-entry/does-your-project-involve-more-than-one-site');
     }
     
-    // Validate activity dates
-    const isValid = validateSiteData(site, 'activityDates');
+    // Basic validation
+    let isValid = true;
+    let errors = {};
+    
+    if (!startDay || !startMonth || !startYear) {
+        isValid = false;
+        errors.startDate = 'Enter a complete start date';
+    }
+    
+    if (!endDay || !endMonth || !endYear) {
+        isValid = false;
+        errors.endDate = 'Enter a complete end date';
+    }
     
     if (!isValid) {
-        console.log('Activity dates validation failed:', site.validationErrors);
         return res.render(path.join(version, section, 'manual-entry', 'activity-dates'), {
             data: req.session.data,
-            site: site,
+            currentBatch: currentBatch,
+            sharedStartDate: { day: startDay || '', month: startMonth || '', year: startYear || '' },
+            sharedEndDate: { day: endDay || '', month: endMonth || '', year: endYear || '' },
+            siteParam: siteParam,
             isEditing: returnTo === 'review-site-details',
-            errors: site.validationErrors
+            errors: errors
         });
     }
     
-    // Clear date-related errors
-    ['startDate', 'endDate'].forEach(field => {
-        if (site.validationErrors[field]) {
-            delete site.validationErrors[field];
-        }
+    // Store shared dates in batch settings
+    if (!currentBatch.settings) {
+        currentBatch.settings = {};
+    }
+    
+    currentBatch.settings.sharedStartDate = {
+        day: startDay || '',
+        month: startMonth || '',
+        year: startYear || ''
+    };
+    currentBatch.settings.sharedEndDate = {
+        day: endDay || '',
+        month: endMonth || '',
+        year: endYear || ''
+    };
+    
+    // Apply shared dates to ALL existing sites in the batch
+    currentBatch.sites.forEach(site => {
+        site.startDate = { ...currentBatch.settings.sharedStartDate };
+        site.endDate = { ...currentBatch.settings.sharedEndDate };
     });
+    
+    console.log('Stored shared activity dates for all sites in batch');
     
     // Determine next step
     if (returnTo === 'review-site-details') {
-        res.redirect('/' + version + section + 'review-site-details?site=' + site.globalNumber);
+        res.redirect('/' + version + section + 'review-site-details');
     } else {
-        res.redirect('/' + version + section + 'manual-entry/activity-description?site=' + site.globalNumber);
+        res.redirect('/' + version + section + 'manual-entry/same-activity-description?site=' + siteParam);
     }
 });
 
@@ -749,8 +761,6 @@ router.post('/' + version + section + 'manual-entry/activity-dates-router', func
 
 // Are the activity descriptions the same for every site? - GET route
 router.get('/' + version + section + 'manual-entry/same-activity-description', function (req, res) {
-    // Initialize unified model
-    migrateToUnifiedModel(req.session);
     
     const returnTo = req.query.returnTo;
     
@@ -795,14 +805,12 @@ router.post('/' + version + section + 'manual-entry/same-activity-description-ro
     // If returning from review, handle shared description updates
     if (returnTo === 'review-site-details') {
         if (selection === "No" && currentBatch.settings.sameActivityDescription === "Yes") {
-            // Copy shared description to all unified sites
+            // Copy shared description to all batch sites
             const sharedDescription = currentBatch.settings.sharedDescription;
             
-            if (sharedDescription && req.session.data['unifiedSites']) {
-                req.session.data['unifiedSites'].forEach(site => {
-                    if (site.source === 'manual-entry') {
-                        updateSiteField(req.session, site.id, 'activityDetails', sharedDescription);
-                    }
+            if (sharedDescription && currentBatch.sites) {
+                currentBatch.sites.forEach(site => {
+                    site.description = sharedDescription;
                 });
             }
         }
@@ -810,10 +818,8 @@ router.post('/' + version + section + 'manual-entry/same-activity-description-ro
         return res.redirect('review-site-details');
     }
 
-    // Route based on selection - FIX: Add site parameter to all redirects
-    const currentSiteId = req.session.data['currentManualEntrySiteId'];
-    const currentSite = findSiteById(req.session, currentSiteId);
-    const siteNumber = currentSite ? currentSite.globalNumber : 1;
+    // Route based on selection - use first site from batch
+    const siteNumber = currentBatch.sites.length > 0 ? currentBatch.sites[0].globalNumber : 1;
     
     switch(selection) {
         case "Yes":
@@ -827,7 +833,7 @@ router.post('/' + version + section + 'manual-entry/same-activity-description-ro
     }
 });
 
-// NEW: Unified model individual site activity description GET route
+// CONVERTED: Batch system individual site activity description GET route
 router.get('/' + version + section + 'manual-entry/individual-site-activity-description', function (req, res) {
     const siteParam = req.query.site;
     const returnTo = req.query.returnTo;
@@ -837,23 +843,18 @@ router.get('/' + version + section + 'manual-entry/individual-site-activity-desc
         return res.redirect('/' + version + section + 'manual-entry/site-name');
     }
     
-    let site;
-    if (returnTo === 'review-site-details') {
-        // Editing existing site
-        site = findSiteByGlobalNumberUnified(req.session, siteParam);
-    } else {
-        // Continue with current site
-        const siteId = req.session.data['currentManualEntrySiteId'];
-        site = findSiteById(req.session, siteId);
+    // Get current batch and find site
+    const currentBatch = getCurrentBatch(req.session);
+    if (!currentBatch) {
+        console.log('No current batch found');
+        return res.redirect('/' + version + section + 'manual-entry/does-your-project-involve-more-than-one-site');
     }
     
+    const site = currentBatch.sites.find(s => s.globalNumber === parseInt(siteParam));
     if (!site) {
         console.log('Site not found for individual activity description');
-        return res.redirect('/' + version + section + 'manual-entry/site-name');
+        return res.redirect('/' + version + section + 'manual-entry/site-name?site=' + siteParam);
     }
-    
-    // Update current site ID for form processing
-    req.session.data['currentManualEntrySiteId'] = site.id;
     
     res.render(path.join(version, section, 'manual-entry', 'individual-site-activity-description'), {
         data: req.session.data,
@@ -864,9 +865,9 @@ router.get('/' + version + section + 'manual-entry/individual-site-activity-desc
     });
 });
 
-// NEW: Unified model individual site activity description POST route
+// CONVERTED: Batch system individual site activity description POST route
 router.post('/' + version + section + 'manual-entry/individual-site-activity-description-router', function (req, res) {
-    const siteId = req.session.data['currentManualEntrySiteId'];
+    const siteParam = req.query.site;
     const returnTo = req.query.returnTo;
     
     // FIX: Add comprehensive form field debugging
@@ -878,25 +879,37 @@ router.post('/' + version + section + 'manual-entry/individual-site-activity-des
     
     const description = req.body['activity-details-text-area'];
     
-    console.log(`Processing individual activity description for site: ${siteId}`);
+    console.log(`Processing individual activity description for site: ${siteParam}`);
     console.log(`Extracted description: "${description}"`);
     
-    if (!siteId) {
-        console.log('No current site ID found for individual activity description');
-        return res.redirect('/' + version + section + 'manual-entry/site-name');
+    // Get current batch and find site
+    const currentBatch = getCurrentBatch(req.session);
+    if (!currentBatch) {
+        console.log('No current batch found');
+        return res.redirect('/' + version + section + 'manual-entry/does-your-project-involve-more-than-one-site');
     }
     
-    const site = findSiteById(req.session, siteId);
+    const site = currentBatch.sites.find(s => s.globalNumber === parseInt(siteParam));
     if (!site) {
         console.log('Site not found for individual activity description update');
-        return res.redirect('/' + version + section + 'manual-entry/site-name');
+        return res.redirect('/' + version + section + 'manual-entry/site-name?site=' + siteParam);
     }
     
-    // Update activity description in unified model
-    updateSiteField(req.session, siteId, 'activityDetails', description || '');
+    // Update activity description directly in batch site
+    site.description = description || '';
     
-    // Validate activity description
-    const isValid = validateSiteData(site, 'activityDetails');
+    // Basic validation
+    let isValid = true;
+    if (!description || description.trim() === '') {
+        isValid = false;
+        site.validationErrors = { ...site.validationErrors, description: 'Enter an activity description' };
+    } else {
+        // Clear description errors if validation passes
+        if (site.validationErrors) {
+            delete site.validationErrors.description;
+            delete site.validationErrors.activityDetails;
+        }
+    }
     
     if (!isValid) {
         console.log('Individual activity description validation failed:', site.validationErrors);
@@ -909,11 +922,6 @@ router.post('/' + version + section + 'manual-entry/individual-site-activity-des
         });
     }
     
-    // Clear description-related errors
-    if (site.validationErrors.activityDetails) {
-        delete site.validationErrors.activityDetails;
-    }
-    
     // Determine next step
     if (returnTo === 'review-site-details') {
         res.redirect('/' + version + section + 'review-site-details?site=' + site.globalNumber);
@@ -922,128 +930,92 @@ router.post('/' + version + section + 'manual-entry/individual-site-activity-des
     }
 });
 
-// NEW: Unified model activity description GET route
+// CONVERTED: Batch system shared activity description GET route
 router.get('/' + version + section + 'manual-entry/activity-description', function (req, res) {
     const siteParam = req.query.site;
     const returnTo = req.query.returnTo;
     
-    if (!siteParam) {
-        console.log('No site parameter provided for activity description');
-        return res.redirect('/' + version + section + 'manual-entry/site-name');
-    }
-    
-    let site;
-    if (returnTo === 'review-site-details') {
-        // Editing existing site
-        site = findSiteByGlobalNumberUnified(req.session, siteParam);
-    } else {
-        // Continue with current site
-        const siteId = req.session.data['currentManualEntrySiteId'];
-        site = findSiteById(req.session, siteId);
-    }
-    
-    if (!site) {
-        console.log('Site not found for activity description');
-        return res.redirect('/' + version + section + 'manual-entry/site-name');
-    }
-    
-    // Check if this site should inherit description from shared settings
+    // Get current batch
     const currentBatch = getCurrentBatch(req.session);
-    if (currentBatch && currentBatch.settings && currentBatch.settings.sameActivityDescription === 'Yes' && currentBatch.settings.sharedDescription) {
-        // Auto-populate if current site doesn't have description yet
-        if (!site.activityDetails || site.activityDetails.trim() === '') {
-            site.activityDetails = currentBatch.settings.sharedDescription;
-            console.log(`Auto-populated activity description for site ${site.globalNumber} from shared settings`);
-        }
+    if (!currentBatch) {
+        console.log('No current batch found for shared activity description');
+        return res.redirect('/' + version + section + 'manual-entry/does-your-project-involve-more-than-one-site');
     }
     
-    // Update current site ID for form processing
-    req.session.data['currentManualEntrySiteId'] = site.id;
+    // For shared description, we use the batch settings data, not individual site data
+    const sharedDescription = currentBatch.settings?.sharedDescription || '';
     
     res.render(path.join(version, section, 'manual-entry', 'activity-description'), {
         data: req.session.data,
-        site: site,
+        currentBatch: currentBatch,
+        sharedDescription: sharedDescription,
+        siteParam: siteParam,
         isEditing: returnTo === 'review-site-details',
-        errors: site.validationErrors || {}
+        errors: {}
     });
 });
 
-// NEW: Unified model activity description POST route
+// CONVERTED: Batch system shared activity description POST route
 router.post('/' + version + section + 'manual-entry/activity-description-router', function (req, res) {
-    const siteId = req.session.data['currentManualEntrySiteId'];
+    const siteParam = req.query.site;
     const returnTo = req.query.returnTo;
-    
-    // FIX: Add comprehensive form field debugging
-    console.log('=== ACTIVITY DESCRIPTION FORM DEBUG ===');
-    console.log('Route:', req.originalUrl);
-    console.log('Form body received:', Object.keys(req.body));
-    console.log('Full form data:', req.body);
-    console.log('=== END FORM DEBUG ===');
     
     const description = req.body['activity-details-text-area'];
     
-    console.log(`Processing activity description for site: ${siteId}`);
-    console.log(`Extracted description: "${description}"`);
+    console.log(`Processing shared activity description: "${description}"`);
     
-    if (!siteId) {
-        console.log('No current site ID found for activity description');
-        return res.redirect('/' + version + section + 'manual-entry/site-name');
-    }
-    
-    const site = findSiteById(req.session, siteId);
-    if (!site) {
-        console.log('Site not found for activity description update');
-        return res.redirect('/' + version + section + 'manual-entry/site-name');
-    }
-    
-    // Update activity description in unified model
-    updateSiteField(req.session, siteId, 'activityDetails', description || '');
-    
-    // Store shared description in batch settings (for multi-site data sharing)
+    // Get current batch
     const currentBatch = getCurrentBatch(req.session);
-    if (currentBatch && currentBatch.settings && currentBatch.settings.sameActivityDescription === 'Yes') {
-        currentBatch.settings.sharedDescription = description || '';
-        
-        // Copy to all existing unified sites
-        if (req.session.data['unifiedSites']) {
-            req.session.data['unifiedSites'].forEach(existingSite => {
-                if (existingSite.source === 'manual-entry') {
-                    updateSiteField(req.session, existingSite.id, 'activityDetails', description || '');
-                }
-            });
-        }
-        console.log('Stored shared activity description for all sites');
+    if (!currentBatch) {
+        console.log('No current batch found for shared activity description');
+        return res.redirect('/' + version + section + 'manual-entry/does-your-project-involve-more-than-one-site');
     }
     
-    // Validate activity description
-    const isValid = validateSiteData(site, 'activityDetails');
+    // Basic validation
+    let isValid = true;
+    let errors = {};
+    
+    if (!description || description.trim() === '') {
+        isValid = false;
+        errors.description = 'Enter an activity description';
+    }
     
     if (!isValid) {
-        console.log('Activity description validation failed:', site.validationErrors);
         return res.render(path.join(version, section, 'manual-entry', 'activity-description'), {
             data: req.session.data,
-            site: site,
+            currentBatch: currentBatch,
+            sharedDescription: description || '',
+            siteParam: siteParam,
             isEditing: returnTo === 'review-site-details',
-            errors: site.validationErrors
+            errors: errors
         });
     }
     
-    // Clear description-related errors
-    if (site.validationErrors.activityDetails) {
-        delete site.validationErrors.activityDetails;
+    // Store shared description in batch settings
+    if (!currentBatch.settings) {
+        currentBatch.settings = {};
     }
+    
+    currentBatch.settings.sharedDescription = description || '';
+    
+    // Apply shared description to ALL existing sites in the batch
+    currentBatch.sites.forEach(site => {
+        site.description = description || '';
+    });
+    
+    console.log('Stored shared activity description for all sites in batch');
     
     // Determine next step
     if (returnTo === 'review-site-details') {
-        res.redirect('/' + version + section + 'review-site-details?site=' + site.globalNumber);
+        res.redirect('/' + version + section + 'review-site-details');
     } else {
-        res.redirect('/' + version + section + 'manual-entry/how-do-you-want-to-enter-the-coordinates?site=' + site.globalNumber);
+        res.redirect('/' + version + section + 'manual-entry/how-do-you-want-to-enter-the-coordinates?site=' + siteParam);
     }
 });
 
 // ===== MIGRATED: coordinate entry method routes to unified model =====
 
-// How do you want to enter the coordinates? - GET route
+// CONVERTED: Batch system coordinate entry method GET route
 router.get('/' + version + section + 'manual-entry/how-do-you-want-to-enter-the-coordinates', function (req, res) {
     const siteParam = req.query.site;
     const returnTo = req.query.returnTo;
@@ -1053,23 +1025,18 @@ router.get('/' + version + section + 'manual-entry/how-do-you-want-to-enter-the-
         return res.redirect('/' + version + section + 'manual-entry/site-name');
     }
     
-    let site;
-    if (returnTo === 'review-site-details') {
-        // Editing existing site
-        site = findSiteByGlobalNumberUnified(req.session, siteParam);
-    } else {
-        // Continue with current site
-        const siteId = req.session.data['currentManualEntrySiteId'];
-        site = findSiteById(req.session, siteId);
+    // Get current batch and find site
+    const currentBatch = getCurrentBatch(req.session);
+    if (!currentBatch) {
+        console.log('No current batch found');
+        return res.redirect('/' + version + section + 'manual-entry/does-your-project-involve-more-than-one-site');
     }
     
+    const site = currentBatch.sites.find(s => s.globalNumber === parseInt(siteParam));
     if (!site) {
         console.log('Site not found for coordinate entry method');
-        return res.redirect('/' + version + section + 'manual-entry/site-name');
+        return res.redirect('/' + version + section + 'manual-entry/site-name?site=' + siteParam);
     }
-    
-    // Update current site ID for form processing
-    req.session.data['currentManualEntrySiteId'] = site.id;
     
     res.render(version + section + 'manual-entry/how-do-you-want-to-enter-the-coordinates', {
         data: req.session.data,
@@ -1079,23 +1046,25 @@ router.get('/' + version + section + 'manual-entry/how-do-you-want-to-enter-the-
     });
 });
 
-// How do you want to enter the coordinates? - POST route
+// CONVERTED: Batch system coordinate entry method POST route
 router.post('/' + version + section + 'manual-entry/how-do-you-want-to-enter-the-coordinates-router', function (req, res) {
-    const siteId = req.session.data['currentManualEntrySiteId'];
+    const siteParam = req.query.site;
     const returnTo = req.query.returnTo;
     const selection = req.body['manual-coordinate-entry-method'];
     
-    console.log(`Processing coordinate entry method for site: ${siteId}, selection: ${selection}`);
+    console.log(`Processing coordinate entry method for site: ${siteParam}, selection: ${selection}`);
     
-    if (!siteId) {
-        console.log('No current site ID found for coordinate entry method');
-        return res.redirect('/' + version + section + 'manual-entry/site-name');
+    // Get current batch and find site
+    const currentBatch = getCurrentBatch(req.session);
+    if (!currentBatch) {
+        console.log('No current batch found');
+        return res.redirect('/' + version + section + 'manual-entry/does-your-project-involve-more-than-one-site');
     }
     
-    const site = findSiteById(req.session, siteId);
+    const site = currentBatch.sites.find(s => s.globalNumber === parseInt(siteParam));
     if (!site) {
         console.log('Site not found for coordinate entry method update');
-        return res.redirect('/' + version + section + 'manual-entry/site-name');
+        return res.redirect('/' + version + section + 'manual-entry/site-name?site=' + siteParam);
     }
     
     if (!selection) {
@@ -1108,18 +1077,19 @@ router.post('/' + version + section + 'manual-entry/how-do-you-want-to-enter-the
         });
     }
     
-    // Update coordinate entry method and clear previous coordinate data
-    updateSiteField(req.session, siteId, 'coordinates.entryMethod', selection);
+    // Update coordinate entry method directly in batch site
+    if (!site.coordinates) site.coordinates = {};
+    site.coordinates.entryMethod = selection;
     
     // Set coordinate type based on selection
     if (selection === "Enter one set of coordinates and a width to create a circular site") {
-        updateSiteField(req.session, siteId, 'coordinates.type', 'circle');
+        site.coordinates.type = 'circle';
     } else if (selection === "Enter multiple sets of coordinates to mark the boundary of the site") {
-        updateSiteField(req.session, siteId, 'coordinates.type', 'polygon');
+        site.coordinates.type = 'polygon';
     }
     
     // Clear coordinate-related errors
-    if (site.validationErrors.coordinateEntryMethod) {
+    if (site.validationErrors && site.validationErrors.coordinateEntryMethod) {
         delete site.validationErrors.coordinateEntryMethod;
     }
     
@@ -1133,7 +1103,7 @@ router.post('/' + version + section + 'manual-entry/how-do-you-want-to-enter-the
 
 // ===== MIGRATED: coordinate system routes to unified model =====
 
-// Which coordinate system? - GET route
+// CONVERTED: Batch system coordinate system GET route
 router.get('/' + version + section + 'manual-entry/which-coordinate-system', function (req, res) {
     const siteParam = req.query.site;
     const returnTo = req.query.returnTo;
@@ -1143,23 +1113,18 @@ router.get('/' + version + section + 'manual-entry/which-coordinate-system', fun
         return res.redirect('/' + version + section + 'manual-entry/site-name');
     }
     
-    let site;
-    if (returnTo === 'review-site-details') {
-        // Editing existing site
-        site = findSiteByGlobalNumberUnified(req.session, siteParam);
-    } else {
-        // Continue with current site
-        const siteId = req.session.data['currentManualEntrySiteId'];
-        site = findSiteById(req.session, siteId);
+    // Get current batch and find site
+    const currentBatch = getCurrentBatch(req.session);
+    if (!currentBatch) {
+        console.log('No current batch found');
+        return res.redirect('/' + version + section + 'manual-entry/does-your-project-involve-more-than-one-site');
     }
     
+    const site = currentBatch.sites.find(s => s.globalNumber === parseInt(siteParam));
     if (!site) {
         console.log('Site not found for coordinate system');
-        return res.redirect('/' + version + section + 'manual-entry/site-name');
+        return res.redirect('/' + version + section + 'manual-entry/site-name?site=' + siteParam);
     }
-    
-    // Update current site ID for form processing
-    req.session.data['currentManualEntrySiteId'] = site.id;
     
     res.render(version + section + 'manual-entry/which-coordinate-system', {
         data: req.session.data,
@@ -1169,23 +1134,25 @@ router.get('/' + version + section + 'manual-entry/which-coordinate-system', fun
     });
 });
 
-// Which coordinate system? - POST route
+// CONVERTED: Batch system coordinate system POST route
 router.post('/' + version + section + 'manual-entry/which-coordinate-system-router', function (req, res) {
-    const siteId = req.session.data['currentManualEntrySiteId'];
+    const siteParam = req.query.site;
     const returnTo = req.query.returnTo;
     const selection = req.body['manual-coordinate-system-radios'];
     
-    console.log(`Processing coordinate system for site: ${siteId}, selection: ${selection}`);
+    console.log(`Processing coordinate system for site: ${siteParam}, selection: ${selection}`);
     
-    if (!siteId) {
-        console.log('No current site ID found for coordinate system');
-        return res.redirect('/' + version + section + 'manual-entry/site-name');
+    // Get current batch and find site
+    const currentBatch = getCurrentBatch(req.session);
+    if (!currentBatch) {
+        console.log('No current batch found');
+        return res.redirect('/' + version + section + 'manual-entry/does-your-project-involve-more-than-one-site');
     }
     
-    const site = findSiteById(req.session, siteId);
+    const site = currentBatch.sites.find(s => s.globalNumber === parseInt(siteParam));
     if (!site) {
         console.log('Site not found for coordinate system update');
-        return res.redirect('/' + version + section + 'manual-entry/site-name');
+        return res.redirect('/' + version + section + 'manual-entry/site-name?site=' + siteParam);
     }
     
     if (!selection) {
@@ -1198,18 +1165,20 @@ router.post('/' + version + section + 'manual-entry/which-coordinate-system-rout
         });
     }
     
-    // Update coordinate system
-    updateSiteField(req.session, siteId, 'coordinates.system', selection);
+    // Update coordinate system directly in batch site
+    if (!site.coordinates) site.coordinates = {};
+    site.coordinates.system = selection;
+    site.coordinateSystem = selection; // Also store in format expected by template
     
     // Set coordinate format based on system
-    if (selection === 'WGS84') {
-        updateSiteField(req.session, siteId, 'coordinates.format', 'decimal-degrees');
+    if (selection === 'WGS84 (World Geodetic System 1984)') {
+        site.coordinates.format = 'decimal-degrees';
     } else {
-        updateSiteField(req.session, siteId, 'coordinates.format', 'degrees-minutes-seconds');
+        site.coordinates.format = 'degrees-minutes-seconds';
     }
     
     // Clear coordinate system errors
-    if (site.validationErrors.coordinateSystem) {
+    if (site.validationErrors && site.validationErrors.coordinateSystem) {
         delete site.validationErrors.coordinateSystem;
     }
     
@@ -1225,7 +1194,7 @@ router.post('/' + version + section + 'manual-entry/which-coordinate-system-rout
     }
 });
 
-// NEW: Unified model coordinates GET route
+// CONVERTED: Batch system coordinates GET route
 router.get('/' + version + section + 'manual-entry/enter-coordinates', function (req, res) {
     const siteParam = req.query.site;
     const returnTo = req.query.returnTo;
@@ -1235,23 +1204,18 @@ router.get('/' + version + section + 'manual-entry/enter-coordinates', function 
         return res.redirect('/' + version + section + 'manual-entry/site-name');
     }
     
-    let site;
-    if (returnTo === 'review-site-details') {
-        // Editing existing site
-        site = findSiteByGlobalNumberUnified(req.session, siteParam);
-    } else {
-        // Continue with current site
-        const siteId = req.session.data['currentManualEntrySiteId'];
-        site = findSiteById(req.session, siteId);
+    // Get current batch and find site
+    const currentBatch = getCurrentBatch(req.session);
+    if (!currentBatch) {
+        console.log('No current batch found');
+        return res.redirect('/' + version + section + 'manual-entry/does-your-project-involve-more-than-one-site');
     }
     
+    const site = currentBatch.sites.find(s => s.globalNumber === parseInt(siteParam));
     if (!site) {
         console.log('Site not found for coordinates entry');
-        return res.redirect('/' + version + section + 'manual-entry/site-name');
+        return res.redirect('/' + version + section + 'manual-entry/site-name?site=' + siteParam);
     }
-    
-    // Update current site ID for form processing
-    req.session.data['currentManualEntrySiteId'] = site.id;
     
     res.render(path.join(version, section, 'manual-entry', 'enter-coordinates'), {
         data: req.session.data,
@@ -1261,79 +1225,88 @@ router.get('/' + version + section + 'manual-entry/enter-coordinates', function 
     });
 });
 
-// Enter multiple coordinates - GET route
+// CONVERTED: Batch system enter multiple coordinates GET route
 router.get('/' + version + section + 'manual-entry/enter-multiple-coordinates', function (req, res) {
-    req.session.data['errorthispage'] = "false";
-    req.session.data['errortypeone'] = "false";
-    req.session.data['errors'] = [];
-    
-    // Get site number from query parameter
-    const siteNumber = req.query.site || 1;
+    const siteParam = req.query.site;
     const returnTo = req.query.returnTo;
     
-    // Store returnTo in session for use in POST route
-    if (returnTo) {
-        req.session.data['returnTo'] = returnTo;
-    }
-    
-    // Determine if we're editing an existing site or creating a new one
-    const isEditingExistingSite = returnTo === 'review-site-details';
-    
-    let batchRelativePosition;
-    
-    if (isEditingExistingSite) {
-        // We're editing an existing site - siteNumber is a global number
-        batchRelativePosition = getBatchRelativePosition(req.session, parseInt(siteNumber));
-        
-        // DON'T populate session data when editing - it overwrites fresh changes
-        // The session already has the data from the editing flow
-    } else {
-        // We're creating a new site - siteNumber is a batch-relative number
-        batchRelativePosition = parseInt(siteNumber);
-    }
-    
-    req.session.data['current-site'] = batchRelativePosition;
-    
-    // Check if we're returning from review-site-details
-    if (returnTo === 'review-site-details') {
-        req.session.data['fromReviewSiteDetails'] = 'true';
-    }
-    
-    res.render(version + section + 'manual-entry/enter-multiple-coordinates');
-});
-
-// NEW: Unified model coordinates POST route
-router.post('/' + version + section + 'manual-entry/enter-coordinates-router', function (req, res) {
-    const siteId = req.session.data['currentManualEntrySiteId'];
-    const returnTo = req.query.returnTo;
-    
-    const site = findSiteById(req.session, siteId);
-    if (!site) {
-        console.log('Site not found for coordinates update');
+    if (!siteParam) {
+        console.log('No site parameter provided for multiple coordinates');
         return res.redirect('/' + version + section + 'manual-entry/site-name');
     }
+    
+    // Get current batch and find site
+    const currentBatch = getCurrentBatch(req.session);
+    if (!currentBatch) {
+        console.log('No current batch found');
+        return res.redirect('/' + version + section + 'manual-entry/does-your-project-involve-more-than-one-site');
+    }
+    
+    const site = currentBatch.sites.find(s => s.globalNumber === parseInt(siteParam));
+    if (!site) {
+        console.log('Site not found for multiple coordinates entry');
+        return res.redirect('/' + version + section + 'manual-entry/site-name?site=' + siteParam);
+    }
+    
+    // Enter multiple coordinates page - no validation errors on initial load
+
+    res.render(version + section + 'manual-entry/enter-multiple-coordinates', {
+        data: req.session.data,
+        site: site,
+        isEditing: returnTo === 'review-site-details',
+        errors: []
+    });
+});
+
+// CONVERTED: Batch system coordinates POST route
+router.post('/' + version + section + 'manual-entry/enter-coordinates-router', function (req, res) {
+    const siteParam = req.query.site;
+    const returnTo = req.query.returnTo;
     
     // FIXED: Get coordinates from form using correct field names from template
     const latitude = req.body['coordinates-latitude'];
     const longitude = req.body['coordinates-longitude'];
     const format = req.body['coordinate-format'] || 'decimal-degrees';
     
-    console.log(`📍 Processing coordinates for site: ${siteId}`);
+    console.log(`📍 Processing coordinates for site: ${siteParam}`);
     console.log(`📍 Form body received:`, req.body);
     console.log(`📍 Extracted - Lat: ${latitude}, Lon: ${longitude}, Format: ${format}`);
     
-    if (!siteId) {
-        console.log('No current site ID found for coordinates');
-        return res.redirect('/' + version + section + 'manual-entry/site-name');
+    // Get current batch and find site
+    const currentBatch = getCurrentBatch(req.session);
+    if (!currentBatch) {
+        console.log('No current batch found');
+        return res.redirect('/' + version + section + 'manual-entry/does-your-project-invoke-more-than-one-site');
     }
     
-    // Update coordinates in unified model
-    updateSiteField(req.session, siteId, 'coordinates.latitude', latitude || '');
-    updateSiteField(req.session, siteId, 'coordinates.longitude', longitude || '');
-    updateSiteField(req.session, siteId, 'coordinates.format', format);
+    const site = currentBatch.sites.find(s => s.globalNumber === parseInt(siteParam));
+    if (!site) {
+        console.log('Site not found for coordinates update');
+        return res.redirect('/' + version + section + 'manual-entry/site-name?site=' + siteParam);
+    }
     
-    // Validate coordinates
-    const isValid = validateSiteData(site, 'coordinates');
+    // Update coordinates directly in batch site
+    if (!site.coordinates) site.coordinates = {};
+    site.coordinates.latitude = latitude || '';
+    site.coordinates.longitude = longitude || '';
+    site.coordinates.format = format;
+    
+    // Also store in format expected by template (for circular sites)
+    if (!site.coordinates.center) site.coordinates.center = {};
+    site.coordinates.center.latitude = latitude || '';
+    site.coordinates.center.longitude = longitude || '';
+    
+    // Basic validation
+    let isValid = true;
+    if (!latitude || !longitude) {
+        isValid = false;
+        site.validationErrors = { ...site.validationErrors, coordinates: 'Enter both latitude and longitude' };
+    } else {
+        // Clear coordinate errors if validation passes
+        if (site.validationErrors) {
+            delete site.validationErrors.coordinates;
+        }
+    }
     
     if (!isValid) {
         console.log('Coordinates validation failed:', site.validationErrors);
@@ -1347,7 +1320,7 @@ router.post('/' + version + section + 'manual-entry/enter-coordinates-router', f
     
     // Clear coordinate-related errors
     ['latitude', 'longitude'].forEach(field => {
-        if (site.validationErrors[field]) {
+        if (site.validationErrors && site.validationErrors[field]) {
             delete site.validationErrors[field];
         }
     });
@@ -1370,7 +1343,7 @@ router.post('/' + version + section + 'manual-entry/enter-coordinates-router', f
     }
 });
 
-// NEW: Unified model site width GET route
+// CONVERTED: Batch system site width GET route
 router.get('/' + version + section + 'manual-entry/site-width', function (req, res) {
     const siteParam = req.query.site;
     const returnTo = req.query.returnTo;
@@ -1380,23 +1353,18 @@ router.get('/' + version + section + 'manual-entry/site-width', function (req, r
         return res.redirect('/' + version + section + 'manual-entry/site-name');
     }
     
-    let site;
-    if (returnTo === 'review-site-details') {
-        // Editing existing site
-        site = findSiteByGlobalNumberUnified(req.session, siteParam);
-    } else {
-        // Continue with current site
-        const siteId = req.session.data['currentManualEntrySiteId'];
-        site = findSiteById(req.session, siteId);
+    // Get current batch and find site
+    const currentBatch = getCurrentBatch(req.session);
+    if (!currentBatch) {
+        console.log('No current batch found');
+        return res.redirect('/' + version + section + 'manual-entry/does-your-project-involve-more-than-one-site');
     }
     
+    const site = currentBatch.sites.find(s => s.globalNumber === parseInt(siteParam));
     if (!site) {
         console.log('Site not found for site width');
-        return res.redirect('/' + version + section + 'manual-entry/site-name');
+        return res.redirect('/' + version + section + 'manual-entry/site-name?site=' + siteParam);
     }
-    
-    // Update current site ID for form processing
-    req.session.data['currentManualEntrySiteId'] = site.id;
     
     res.render(path.join(version, section, 'manual-entry', 'site-width'), {
         data: req.session.data,
@@ -1406,9 +1374,9 @@ router.get('/' + version + section + 'manual-entry/site-width', function (req, r
     });
 });
 
-// NEW: Unified model site width POST route
+// CONVERTED: Batch system site width POST route
 router.post('/' + version + section + 'manual-entry/site-width-router', function (req, res) {
-    const siteId = req.session.data['currentManualEntrySiteId'];
+    const siteParam = req.query.site;
     const returnTo = req.query.returnTo;
     
     // FIX: Add comprehensive form field debugging
@@ -1420,41 +1388,46 @@ router.post('/' + version + section + 'manual-entry/site-width-router', function
     
     const width = req.body['site-width'];
     
-    console.log(`Processing site width for site: ${siteId}`);
+    console.log(`Processing site width for site: ${siteParam}`);
     console.log(`Extracted width: "${width}"`);
     
-    if (!siteId) {
-        console.log('No current site ID found for site width');
-        return res.redirect('/' + version + section + 'manual-entry/site-name');
+    // Get current batch and find site
+    const currentBatch = getCurrentBatch(req.session);
+    if (!currentBatch) {
+        console.log('No current batch found');
+        return res.redirect('/' + version + section + 'manual-entry/does-your-project-involve-more-than-one-site');
     }
     
-    const site = findSiteById(req.session, siteId);
+    const site = currentBatch.sites.find(s => s.globalNumber === parseInt(siteParam));
     if (!site) {
         console.log('Site not found for site width update');
-        return res.redirect('/' + version + section + 'manual-entry/site-name');
+        return res.redirect('/' + version + section + 'manual-entry/site-name?site=' + siteParam);
     }
     
-    // Update site width in unified model
-    updateSiteField(req.session, siteId, 'coordinates.width', width || '');
+    // Update site width directly in batch site
+    if (!site.coordinates) site.coordinates = {};
+    site.coordinates.width = width || '';
     
-    // Validate site width (only if provided)
-    if (width && width.trim() !== '') {
-        const isValid = validateSiteData(site, 'siteWidth');
-        
-        if (!isValid) {
-            console.log('Site width validation failed:', site.validationErrors);
-            return res.render(path.join(version, section, 'manual-entry', 'site-width'), {
-                data: req.session.data,
-                site: site,
-                isEditing: returnTo === 'review-site-details',
-                errors: site.validationErrors
-            });
+    // Basic validation (only if provided)
+    let isValid = true;
+    if (width && width.trim() !== '' && (isNaN(width) || parseFloat(width) <= 0)) {
+        isValid = false;
+        site.validationErrors = { ...site.validationErrors, siteWidth: 'Enter a valid width greater than 0' };
+    } else {
+        // Clear width errors if validation passes
+        if (site.validationErrors && site.validationErrors.siteWidth) {
+            delete site.validationErrors.siteWidth;
         }
     }
     
-    // Clear width-related errors
-    if (site.validationErrors.siteWidth) {
-        delete site.validationErrors.siteWidth;
+    if (!isValid) {
+        console.log('Site width validation failed:', site.validationErrors);
+        return res.render(path.join(version, section, 'manual-entry', 'site-width'), {
+            data: req.session.data,
+            site: site,
+            isEditing: returnTo === 'review-site-details',
+            errors: site.validationErrors
+        });
     }
     
     // Determine next step
@@ -1484,20 +1457,7 @@ router.get('/' + version + section + 'manual-entry/review-site-details', functio
         'manual-activity-details-text-area': req.session.data['manual-activity-details-text-area']
     });
     
-    // Only convert manual entry sites to unified format when we don't have an existing batch
-    // If we already have a batch with sites, preserve it to avoid overwriting edits
-    if (!req.session.data['currentBatchId'] || !getCurrentBatch(req.session)) {
-        console.log('No current batch found, converting manual sites to unified format');
-        convertManualSitesToUnifiedFormat(req);
-    } else {
-        const currentBatch = getCurrentBatch(req.session);
-        if (currentBatch && currentBatch.sites && currentBatch.sites.length > 0) {
-            console.log('Current batch with sites exists, preserving to avoid overwriting edits');
-        } else {
-            console.log('Current batch exists but no sites, converting to pick up any new sites');
-            convertManualSitesToUnifiedFormat(req);
-        }
-    }
+    // REMOVED: Complex conversion function no longer needed - batch system already works correctly
     
     // Get current batch
     const currentBatch = getCurrentBatch(req.session);
@@ -1581,8 +1541,7 @@ router.get('/' + version + section + 'manual-entry/review-site-details', functio
 
 // Review site details - POST route
 router.post('/' + version + section + 'manual-entry/review-site-details-router', function (req, res) {
-    // Convert manual entry sites to unified format when saving to ensure they're in the global sites array
-    convertManualSitesToUnifiedFormat(req);
+    // REMOVED: Complex conversion function no longer needed - batch system already works correctly
     
     // Use the existing current batch for completeness checks
     let hasSiteIncomplete = false;
@@ -1632,514 +1591,6 @@ router.post('/' + version + section + 'manual-entry/review-site-details-router',
     }
 });
 
-// Function to convert manual entry sites to unified format
-function convertManualSitesToUnifiedFormat(req) {
-    console.log('=== CONVERT MANUAL SITES TO UNIFIED FORMAT DEBUG ===');
-    
-    // Get the current site number from session
-    const currentSiteNumber = parseInt(req.session.data['manual-current-site']) || 1;
-    console.log('Current site number from session:', currentSiteNumber);
-    
-    // Only initialize a new batch if we don't already have a current batch
-    let batchId = req.session.data['currentBatchId'];
-    if (!batchId || !getCurrentBatch(req.session)) {
-        console.log('Initializing new batch for manual entry');
-        batchId = initializeBatch(req.session, 'manual-entry');
-        req.session.data['currentBatchId'] = batchId;
-    } else {
-        console.log('Using existing batch:', batchId);
-    }
-    
-    // Get current batch
-    const currentBatch = getCurrentBatch(req.session);
-    if (!currentBatch) {
-        console.log('ERROR: Could not get current batch');
-        return;
-    }
-    
-    console.log('Session activity settings before storing in batch:', {
-        'manual-same-activity-dates': req.session.data['manual-same-activity-dates'],
-        'manual-same-activity-description': req.session.data['manual-same-activity-description'],
-        'manual-start-date-date-input-day': req.session.data['manual-start-date-date-input-day'],
-        'manual-activity-details-text-area': req.session.data['manual-activity-details-text-area']
-    });
-    
-    // Store batch-level settings in the batch metadata
-    // FIXED: Don't overwrite existing batch settings with empty session data
-    if (!currentBatch.settings) {
-        currentBatch.settings = {};
-    }
-    
-    // Only update settings if we have valid session data, otherwise preserve existing
-    if (req.session.data['manual-same-activity-dates']) {
-        currentBatch.settings.sameActivityDates = req.session.data['manual-same-activity-dates'];
-    }
-    if (req.session.data['manual-same-activity-description']) {
-        currentBatch.settings.sameActivityDescription = req.session.data['manual-same-activity-description'];
-    }
-    if (req.session.data['manual-start-date-date-input-day']) {
-        currentBatch.settings.sharedStartDate = {
-            day: req.session.data['manual-start-date-date-input-day'],
-            month: req.session.data['manual-start-date-date-input-month'],
-            year: req.session.data['manual-start-date-date-input-year']
-        };
-    }
-    if (req.session.data['manual-end-date-date-input-day']) {
-        currentBatch.settings.sharedEndDate = {
-            day: req.session.data['manual-end-date-date-input-day'],
-            month: req.session.data['manual-end-date-date-input-month'],
-            year: req.session.data['manual-end-date-date-input-year']
-        };
-    }
-    if (req.session.data['manual-activity-details-text-area']) {
-        currentBatch.settings.sharedDescription = req.session.data['manual-activity-details-text-area'];
-    }
-    
-    console.log('Stored batch settings:', currentBatch.settings);
-    
-    // Calculate the starting global number for this batch
-    const globalSiteCounter = req.session.data['globalSiteCounter'] || 0;
-    let batchStartingNumber = 1;
-    
-    // If we have existing sites, calculate where this batch should start
-    if (currentBatch.sites.length === 0) {
-        // New batch - start from next available global number
-        batchStartingNumber = globalSiteCounter + 1;
-        console.log('New batch, starting from global number:', batchStartingNumber);
-    } else {
-        // Existing batch - find the lowest global number in this batch
-        batchStartingNumber = Math.min(...currentBatch.sites.map(site => site.globalNumber));
-        console.log('Existing batch, starting from lowest global number:', batchStartingNumber);
-    }
-    
-    // Keep track of existing sites by their global number to preserve them
-    const existingSitesByGlobalNumber = {};
-    currentBatch.sites.forEach(site => {
-        existingSitesByGlobalNumber[site.globalNumber] = site;
-    });
-    
-    console.log('Processing sites from', batchStartingNumber, 'to', currentSiteNumber);
-    
-    // Process each potential site number from the starting number to current
-    for (let siteNum = batchStartingNumber; siteNum <= currentSiteNumber; siteNum++) {
-        console.log(`--- Processing site ${siteNum} ---`);
-        
-        // Get correct field names for this site number
-        const siteNameKey = siteNum === 1 ? 'manual-site-name-text-input' : `manual-site-${siteNum}-name-text-input`;
-        const entryMethodKey = siteNum === 1 ? 'manual-coordinate-entry-method' : `manual-site-${siteNum}-coordinate-entry-method`;
-        const coordinateSystemKey = siteNum === 1 ? 'manual-coordinate-system-radios' : `manual-site-${siteNum}-coordinate-system-radios`;
-        const sitePrefix = siteNum === 1 ? 'manual-' : `manual-site-${siteNum}-`;
-        
-        // Only process sites that have a name
-        const siteName = req.session.data[siteNameKey];
-        console.log(`Site ${siteNum} name from ${siteNameKey}:`, siteName);
-        
-        if (!siteName) {
-            console.log(`Skipping site ${siteNum} - no name found`);
-            continue;
-        }
-        
-        console.log(`Site ${siteNum} coordinate data:`, {
-            latitude: req.session.data[`${sitePrefix}latitude`],
-            longitude: req.session.data[`${sitePrefix}longitude`],
-            width: req.session.data[`${sitePrefix}site-width`],
-            coordinateSystem: req.session.data[coordinateSystemKey],
-            entryMethod: req.session.data[entryMethodKey]
-        });
-        
-        // Check if this site already exists in the batch
-        let existingSite = existingSitesByGlobalNumber[siteNum];
-        
-        // Create or update site data object
-        const siteData = existingSite ? { ...existingSite } : {
-            startDate: {},
-            endDate: {},
-            description: ''
-        };
-        
-        // Always update the name and other data from session
-        siteData.name = siteName;
-        
-        // Handle dates - either shared or individual
-        if (req.session.data['manual-same-activity-dates'] === 'Yes') {
-            // Use shared dates
-            siteData.startDate = {
-                day: req.session.data['manual-start-date-date-input-day'],
-                month: req.session.data['manual-start-date-date-input-month'],
-                year: req.session.data['manual-start-date-date-input-year']
-            };
-            siteData.endDate = {
-                day: req.session.data['manual-end-date-date-input-day'],
-                month: req.session.data['manual-end-date-date-input-month'],
-                year: req.session.data['manual-end-date-date-input-year']
-            };
-        } else {
-            // Use site-specific dates
-            const startDatePrefix = siteNum === 1 ? 'manual-' : `manual-site-${siteNum}-`;
-            const sessionStartDay = req.session.data[`${startDatePrefix}start-date-date-input-day`];
-            const sessionEndDay = req.session.data[`${startDatePrefix}end-date-date-input-day`];
-            
-            // Only overwrite existing dates if we have session data, otherwise preserve existing
-            if (sessionStartDay || !existingSite || !existingSite.startDate || !existingSite.startDate.day) {
-                siteData.startDate = {
-                    day: sessionStartDay,
-                    month: req.session.data[`${startDatePrefix}start-date-date-input-month`],
-                    year: req.session.data[`${startDatePrefix}start-date-date-input-year`]
-                };
-            }
-            if (sessionEndDay || !existingSite || !existingSite.endDate || !existingSite.endDate.day) {
-                siteData.endDate = {
-                    day: sessionEndDay,
-                    month: req.session.data[`${startDatePrefix}end-date-date-input-month`],
-                    year: req.session.data[`${startDatePrefix}end-date-date-input-year`]
-                };
-            }
-        }
-        
-        // Handle description - either shared or individual
-        if (req.session.data['manual-same-activity-description'] === 'Yes') {
-            siteData.description = req.session.data['manual-activity-details-text-area'];
-        } else {
-            const descriptionKey = siteNum === 1 ? 'manual-activity-details-text-area' : `manual-site-${siteNum}-activity-details-text-area`;
-            const sessionDescription = req.session.data[descriptionKey];
-            
-            // Only overwrite existing description if we have session data, otherwise preserve existing
-            if (sessionDescription || !existingSite || !existingSite.description) {
-                siteData.description = sessionDescription;
-            }
-        }
-        
-        // Add coordinates based on entry method
-        const entryMethod = req.session.data[entryMethodKey];
-        if (entryMethod === 'Enter one set of coordinates and a width to create a circular site') {
-            siteData.coordinates = {
-                type: 'circle',
-                center: {
-                    latitude: req.session.data[`${sitePrefix}latitude`],
-                    longitude: req.session.data[`${sitePrefix}longitude`]
-                },
-                width: req.session.data[`${sitePrefix}site-width`]
-            };
-            console.log(`Site ${siteNum} set circle coordinates:`, siteData.coordinates);
-        } else if (entryMethod === 'Enter multiple sets of coordinates to mark the boundary of the site') {
-            siteData.coordinates = {
-                type: 'polygon',
-                points: []
-            };
-            // Add up to 5 points
-            for (let i = 1; i <= 5; i++) {
-                const lat = req.session.data[`${sitePrefix}coordinates-point-${i}-latitude`];
-                const lng = req.session.data[`${sitePrefix}coordinates-point-${i}-longitude`];
-                if (lat && lng) {
-                    siteData.coordinates.points.push({
-                        latitude: lat,
-                        longitude: lng
-                    });
-                }
-            }
-            console.log(`Site ${siteNum} set polygon coordinates:`, siteData.coordinates);
-        }
-        
-        // Add coordinate system
-        siteData.coordinateSystem = req.session.data[coordinateSystemKey];
-        
-        // Add map image based on coordinate type
-        if (siteData.coordinates && siteData.coordinates.type === 'circle') {
-            siteData.mapImage = '/public/images/worthing-map-circle-copy.jpg';
-        } else if (siteData.coordinates && siteData.coordinates.type === 'polygon') {
-            const numPoints = siteData.coordinates.points.length;
-            if (numPoints === 5) {
-                siteData.mapImage = '/public/images/worthing-map-5-points-copy.jpg';
-            } else if (numPoints === 4) {
-                siteData.mapImage = '/public/images/worthing-map-4-points-copy.jpg';
-            } else {
-                siteData.mapImage = '/public/images/worthing-map-3-points-copy.jpg';
-            }
-        }
-        
-        console.log(`Site ${siteNum} final data:`, {
-            name: siteData.name,
-            globalNumber: siteData.globalNumber,
-            coordinates: siteData.coordinates,
-            coordinateSystem: siteData.coordinateSystem
-        });
-        
-        // If site already exists, update it in place; otherwise add a new site
-        if (existingSite) {
-            console.log(`Site ${siteNum} already exists, updating in place`);
-            // Update the existing site in the batch
-            const siteIndex = currentBatch.sites.findIndex(s => s.globalNumber === existingSite.globalNumber);
-            if (siteIndex !== -1) {
-                currentBatch.sites[siteIndex] = siteData;
-            }
-        } else {
-            console.log(`Site ${siteNum} is new, adding to batch`);
-            // Add the new site to the batch with the correct global number
-            // Temporarily set the global counter to ensure the correct number is assigned
-            const originalCounter = req.session.data['globalSiteCounter'];
-            req.session.data['globalSiteCounter'] = siteNum - 1;
-            addSiteToBatch(req.session, siteData);
-            // Restore the original counter if it was higher
-            if (originalCounter > req.session.data['globalSiteCounter']) {
-                req.session.data['globalSiteCounter'] = originalCounter;
-            }
-        }
-    }
-    
-    // Rebuild global sites array after batch operations
-    if (req.session.data['siteBatches']) {
-        req.session.data['sites'] = req.session.data['siteBatches'].flatMap(batch => batch.sites);
-    }
-    
-    console.log('Final batch after conversion:', {
-        id: currentBatch.id,
-        sitesCount: currentBatch.sites.length,
-        settings: currentBatch.settings,
-        sites: currentBatch.sites.map(site => ({
-            name: site.name,
-            globalNumber: site.globalNumber,
-            hasCoordinates: !!site.coordinates
-        }))
-    });
-    console.log('=== END CONVERT MANUAL SITES TO UNIFIED FORMAT DEBUG ===');
-}
-
-// Function to add a single newly completed site to the current batch
-function addCompletedSiteToCurrentBatch(session, batchRelativePosition) {
-    const currentBatch = getCurrentBatch(session);
-    if (!currentBatch) {
-        return false;
-    }
-    
-    // Get site data from session first to check if we should proceed
-    const siteNameKey = batchRelativePosition === 1 ? 'manual-site-name-text-input' : `manual-site-${batchRelativePosition}-name-text-input`;
-    const siteName = session.data[siteNameKey];
-    if (!siteName) {
-        return false;
-    }
-    
-    // Check if this site already exists in the batch by name (to avoid duplicates)
-    const existingSiteByName = currentBatch.sites.find(site => site.name === siteName);
-    if (existingSiteByName) {
-        // Site already exists, don't add duplicate - just update it instead
-        const entryMethodKey = batchRelativePosition === 1 ? 'manual-coordinate-entry-method' : `manual-site-${batchRelativePosition}-coordinate-entry-method`;
-        const coordinateSystemKey = batchRelativePosition === 1 ? 'manual-coordinate-system-radios' : `manual-site-${batchRelativePosition}-coordinate-system-radios`;
-        const sitePrefix = batchRelativePosition === 1 ? 'manual-' : `manual-site-${batchRelativePosition}-`;
-        
-        // Update coordinates based on entry method
-        const entryMethod = session.data[entryMethodKey];
-        if (entryMethod === 'Enter one set of coordinates and a width to create a circular site') {
-            existingSiteByName.coordinates = {
-                type: 'circle',
-                center: {
-                    latitude: session.data[`${sitePrefix}latitude`],
-                    longitude: session.data[`${sitePrefix}longitude`]
-                },
-                width: session.data[`${sitePrefix}site-width`]
-            };
-        } else if (entryMethod === 'Enter multiple sets of coordinates to mark the boundary of the site') {
-            existingSiteByName.coordinates = {
-                type: 'polygon',
-                points: []
-            };
-            // Add up to 5 points
-            for (let i = 1; i <= 5; i++) {
-                const lat = session.data[`${sitePrefix}coordinates-point-${i}-latitude`];
-                const lng = session.data[`${sitePrefix}coordinates-point-${i}-longitude`];
-                if (lat && lng) {
-                    existingSiteByName.coordinates.points.push({
-                        latitude: lat,
-                        longitude: lng
-                    });
-                }
-            }
-        }
-        
-        // Update coordinate system
-        existingSiteByName.coordinateSystem = session.data[coordinateSystemKey];
-        
-        // Update map image based on coordinate type
-        if (existingSiteByName.coordinates && existingSiteByName.coordinates.type === 'circle') {
-            existingSiteByName.mapImage = '/public/images/worthing-map-circle-copy.jpg';
-        } else if (existingSiteByName.coordinates && existingSiteByName.coordinates.type === 'polygon') {
-            const numPoints = existingSiteByName.coordinates.points.length;
-            if (numPoints === 5) {
-                existingSiteByName.mapImage = '/public/images/worthing-map-5-points-copy.jpg';
-            } else if (numPoints === 4) {
-                existingSiteByName.mapImage = '/public/images/worthing-map-4-points-copy.jpg';
-            } else {
-                existingSiteByName.mapImage = '/public/images/worthing-map-3-points-copy.jpg';
-            }
-        }
-        
-        // Rebuild global sites array
-        session.data['sites'] = session.data['siteBatches'].flatMap(batch => batch.sites);
-        
-        return true;
-    }
-    
-    // Check if this site already exists in the batch by batch position (alternative check)
-    const existingSite = currentBatch.sites.find(site => {
-        const existingBatchPos = getBatchRelativePosition(session, site.globalNumber);
-        return existingBatchPos === batchRelativePosition;
-    });
-    
-    if (existingSite) {
-        // Site already exists, update it with new data instead of returning false
-        const entryMethodKey = batchRelativePosition === 1 ? 'manual-coordinate-entry-method' : `manual-site-${batchRelativePosition}-coordinate-entry-method`;
-        const coordinateSystemKey = batchRelativePosition === 1 ? 'manual-coordinate-system-radios' : `manual-site-${batchRelativePosition}-coordinate-system-radios`;
-        const sitePrefix = batchRelativePosition === 1 ? 'manual-' : `manual-site-${batchRelativePosition}-`;
-        
-        // Update coordinates based on entry method
-        const entryMethod = session.data[entryMethodKey];
-        if (entryMethod === 'Enter one set of coordinates and a width to create a circular site') {
-            existingSite.coordinates = {
-                type: 'circle',
-                center: {
-                    latitude: session.data[`${sitePrefix}latitude`],
-                    longitude: session.data[`${sitePrefix}longitude`]
-                },
-                width: session.data[`${sitePrefix}site-width`]
-            };
-        } else if (entryMethod === 'Enter multiple sets of coordinates to mark the boundary of the site') {
-            existingSite.coordinates = {
-                type: 'polygon',
-                points: []
-            };
-            // Add up to 5 points
-            for (let i = 1; i <= 5; i++) {
-                const lat = session.data[`${sitePrefix}coordinates-point-${i}-latitude`];
-                const lng = session.data[`${sitePrefix}coordinates-point-${i}-longitude`];
-                if (lat && lng) {
-                    existingSite.coordinates.points.push({
-                        latitude: lat,
-                        longitude: lng
-                    });
-                }
-            }
-        }
-        
-        // Update coordinate system
-        existingSite.coordinateSystem = session.data[coordinateSystemKey];
-        
-        // Update map image based on coordinate type
-        if (existingSite.coordinates && existingSite.coordinates.type === 'circle') {
-            existingSite.mapImage = '/public/images/worthing-map-circle-copy.jpg';
-        } else if (existingSite.coordinates && existingSite.coordinates.type === 'polygon') {
-            const numPoints = existingSite.coordinates.points.length;
-            if (numPoints === 5) {
-                existingSite.mapImage = '/public/images/worthing-map-5-points-copy.jpg';
-            } else if (numPoints === 4) {
-                existingSite.mapImage = '/public/images/worthing-map-4-points-copy.jpg';
-            } else {
-                existingSite.mapImage = '/public/images/worthing-map-3-points-copy.jpg';
-            }
-        }
-        
-        // Rebuild global sites array
-        session.data['sites'] = session.data['siteBatches'].flatMap(batch => batch.sites);
-        
-        return true;
-    }
-
-    // Create site data object for new site
-    const siteData = {
-        name: siteName,
-        startDate: {},
-        endDate: {},
-        description: ''
-    };
-    
-    // Handle dates - either shared or individual
-    if (session.data['manual-same-activity-dates'] === 'Yes') {
-        // Use shared dates
-        siteData.startDate = {
-            day: session.data['manual-start-date-date-input-day'],
-            month: session.data['manual-start-date-date-input-month'],
-            year: session.data['manual-start-date-date-input-year']
-        };
-        siteData.endDate = {
-            day: session.data['manual-end-date-date-input-day'],
-            month: session.data['manual-end-date-date-input-month'],
-            year: session.data['manual-end-date-date-input-year']
-        };
-    } else {
-        // Use site-specific dates
-        const startDatePrefix = batchRelativePosition === 1 ? 'manual-' : `manual-site-${batchRelativePosition}-`;
-        siteData.startDate = {
-            day: session.data[`${startDatePrefix}start-date-date-input-day`],
-            month: session.data[`${startDatePrefix}start-date-date-input-month`],
-            year: session.data[`${startDatePrefix}start-date-date-input-year`]
-        };
-        siteData.endDate = {
-            day: session.data[`${startDatePrefix}end-date-date-input-day`],
-            month: session.data[`${startDatePrefix}end-date-date-input-month`],
-            year: session.data[`${startDatePrefix}end-date-date-input-year`]
-        };
-    }
-    
-    // Handle description - either shared or individual
-    if (session.data['manual-same-activity-description'] === 'Yes') {
-        siteData.description = session.data['manual-activity-details-text-area'];
-    } else {
-        const descriptionKey = batchRelativePosition === 1 ? 'manual-activity-details-text-area' : `manual-site-${batchRelativePosition}-activity-details-text-area`;
-        siteData.description = session.data[descriptionKey];
-    }
-    
-    // Add coordinates based on entry method
-    const entryMethodKey = batchRelativePosition === 1 ? 'manual-coordinate-entry-method' : `manual-site-${batchRelativePosition}-coordinate-entry-method`;
-    const coordinateSystemKey = batchRelativePosition === 1 ? 'manual-coordinate-system-radios' : `manual-site-${batchRelativePosition}-coordinate-system-radios`;
-    const sitePrefix = batchRelativePosition === 1 ? 'manual-' : `manual-site-${batchRelativePosition}-`;
-    
-    const entryMethod = session.data[entryMethodKey];
-    if (entryMethod === 'Enter one set of coordinates and a width to create a circular site') {
-        siteData.coordinates = {
-            type: 'circle',
-            center: {
-                latitude: session.data[`${sitePrefix}latitude`],
-                longitude: session.data[`${sitePrefix}longitude`]
-            },
-            width: session.data[`${sitePrefix}site-width`]
-        };
-    } else if (entryMethod === 'Enter multiple sets of coordinates to mark the boundary of the site') {
-        siteData.coordinates = {
-            type: 'polygon',
-            points: []
-        };
-        // Add up to 5 points
-        for (let i = 1; i <= 5; i++) {
-            const lat = session.data[`${sitePrefix}coordinates-point-${i}-latitude`];
-            const lng = session.data[`${sitePrefix}coordinates-point-${i}-longitude`];
-            if (lat && lng) {
-                siteData.coordinates.points.push({
-                    latitude: lat,
-                    longitude: lng
-                });
-            }
-        }
-    }
-    
-    // Add coordinate system
-    siteData.coordinateSystem = session.data[coordinateSystemKey];
-    
-    // Add map image based on coordinate type
-    if (siteData.coordinates && siteData.coordinates.type === 'circle') {
-        siteData.mapImage = '/public/images/worthing-map-circle-copy.jpg';
-    } else if (siteData.coordinates && siteData.coordinates.type === 'polygon') {
-        const numPoints = siteData.coordinates.points.length;
-        if (numPoints === 5) {
-            siteData.mapImage = '/public/images/worthing-map-5-points-copy.jpg';
-        } else if (numPoints === 4) {
-            siteData.mapImage = '/public/images/worthing-map-4-points-copy.jpg';
-        } else {
-            siteData.mapImage = '/public/images/worthing-map-3-points-copy.jpg';
-        }
-    }
-    
-    // Add the site to the batch using existing function which assigns global number
-    return addSiteToBatch(session, siteData);
-}
-
 // ===== MIGRATED: Add next site - GET route =====
 router.get('/' + version + section + 'manual-entry/add-next-site-router', function (req, res) {
     // Get next global site number
@@ -2159,127 +1610,122 @@ router.get('/' + version + section + 'manual-entry/add-next-site-router', functi
     res.redirect('site-name?site=' + nextGlobalSiteNumber);
 });
 
-// Enter multiple coordinates - POST route
+// CONVERTED: Batch system multiple coordinates POST route
 router.post('/' + version + section + 'manual-entry/enter-multiple-coordinates-router', function (req, res) {
-    // Reset global error states
-    req.session.data['errorthispage'] = "false";
-    req.session.data['errors'] = [];
-
-    const siteNumber = parseInt(req.query.site || req.session.data['current-site'] || 1);
-    const returnTo = req.query.returnTo || req.session.data['returnTo'];
-
-    // Determine if we're editing an existing site or creating a new one
-    const isEditingExistingSite = returnTo === 'review-site-details' && findSiteByGlobalNumber(req.session, siteNumber) !== undefined;
+    const siteParam = req.query.site;
+    const returnTo = req.query.returnTo;
     
-    let batchRelativePosition;
-    let sitePrefix;
-    let systemKey;
-    
-    if (isEditingExistingSite) {
-        // We're editing an existing site - use global site number for session keys
-        batchRelativePosition = getBatchRelativePosition(req.session, siteNumber);
-        sitePrefix = siteNumber === 1 ? 'manual-' : `manual-site-${siteNumber}-`;
-        systemKey = siteNumber === 1 ? 'manual-coordinate-system-radios' : `manual-site-${siteNumber}-coordinate-system-radios`;
-    } else {
-        // We're creating a new site - siteNumber is a batch-relative number
-        batchRelativePosition = siteNumber;
-        sitePrefix = batchRelativePosition === 1 ? 'manual-' : `manual-site-${batchRelativePosition}-`;
-        systemKey = batchRelativePosition === 1 ? 'manual-coordinate-system-radios' : `manual-site-${batchRelativePosition}-coordinate-system-radios`;
+
+
+    // Get current batch and find site
+    const currentBatch = getCurrentBatch(req.session);
+    if (!currentBatch) {
+        console.log('No current batch found');
+        return res.redirect('/' + version + section + 'manual-entry/does-your-project-involve-more-than-one-site');
     }
-    
-    // Get the selected coordinate system
-    const system = req.session.data[systemKey];
+
+    const site = currentBatch.sites.find(s => s.globalNumber === parseInt(siteParam));
+    if (!site) {
+        console.log('Site not found for multiple coordinates update');
+        return res.redirect('/' + version + section + 'manual-entry/site-name?site=' + siteParam);
+    }
+
+    // Extract coordinate points from form data
+    let coordinatePoints = [];
+    let errors = [];
+    let hasError = false;
+
+    // Get coordinate system to determine labels
+    const system = site.coordinateSystem || site.coordinates?.system;
     const usingOSGB36 = system === "OSGB36 (National Grid)";
     const latLabel = usingOSGB36 ? "Eastings" : "Latitude";
     const longLabel = usingOSGB36 ? "Northings" : "Longitude";
 
-    // Loop over points 1-5
+    // Check points 1-5
     for (let i = 1; i <= 5; i++) {
-        const latKey = sitePrefix + `coordinates-point-${i}-latitude`;
-        const longKey = sitePrefix + `coordinates-point-${i}-longitude`;
-        const latVal = req.session.data[latKey];
-        const longVal = req.session.data[longKey];
-
-        const latMissing = !latVal || latVal.trim() === "";
-        const longMissing = !longVal || longVal.trim() === "";
-
+        const latValue = req.body[`coordinates-point-${i}-latitude`];
+        const longValue = req.body[`coordinates-point-${i}-longitude`];
+        
         const pointLabel = i === 1 ? "start and end point" : `point ${i}`;
-
-        // Check visibility for Points 4 & 5 based on flags
-        const visibilityKey = sitePrefix + `coordinates-visible-point-${i}`;
-        const isPointVisible = i <= 3 || req.session.data[visibilityKey] === "true";
-
-        // Skip validation for hidden points with no entered data
-        if (!isPointVisible && (latMissing && longMissing)) {
-            req.session.data[`error-${latKey}`] = "false";
-            req.session.data[`error-${longKey}`] = "false";
-            continue;
-        }
-
-        // If lat or long is missing, mark as an error
-        if (latMissing || longMissing) {
-            req.session.data['errorthispage'] = "true";
-        }
-
-        // Latitude error handling
-        if (latMissing) {
-            req.session.data[`error-${latKey}`] = "true";
-            req.session.data['errors'].push({
-                text: `Enter the ${latLabel.toLowerCase()} of ${pointLabel}`,
-                anchor: `${latKey}`
-            });
-        } else {
-            req.session.data[`error-${latKey}`] = "false";
-        }
-
-        // Longitude error handling
-        if (longMissing) {
-            req.session.data[`error-${longKey}`] = "true";
-            req.session.data['errors'].push({
-                text: `Enter the ${longLabel.toLowerCase()} of ${pointLabel}`,
-                anchor: `${longKey}`
-            });
-        } else {
-            req.session.data[`error-${longKey}`] = "false";
-        }
-    }
-
-    // Copy manual coordinates to the coordinates data structure for display
-    for (let i = 1; i <= 5; i++) {
-        const manualLat = req.session.data[sitePrefix + `coordinates-point-${i}-latitude`];
-        const manualLong = req.session.data[sitePrefix + `coordinates-point-${i}-longitude`];
         
-        if (manualLat) {
-            req.session.data[sitePrefix + `coordinates-point-${i}-latitude`] = manualLat;
-        }
-        if (manualLong) {
-            req.session.data[sitePrefix + `coordinates-point-${i}-longitude`] = manualLong;
-        }
-    }
-
-    // Redirect to the current page if there are errors, else continue to the next page
-    if (req.session.data['errorthispage'] === "true") {
-        const redirectUrl = 'enter-multiple-coordinates' + (siteNumber > 1 ? '?site=' + siteNumber : '') + (returnTo ? (siteNumber > 1 ? '&' : '?') + 'returnTo=' + returnTo : '');
-        return res.redirect(redirectUrl);
-    }
-
-    // If we're editing an existing site, update the unified format and return to review
-    if (isEditingExistingSite) {
-        // Update the existing site in the unified format with the new data
-        addCompletedSiteToCurrentBatch(req.session, batchRelativePosition);
+        // Points 1-3 are required, 4-5 are optional
+        const isRequired = i <= 3;
+        const hasLatitude = latValue && latValue.trim() !== '';
+        const hasLongitude = longValue && longValue.trim() !== '';
         
-        // Clear return flags and return directly to review
-        delete req.session.data['fromReviewSiteDetails'];
-        delete req.session.data['returnTo'];
-        return res.redirect('review-site-details#site-' + siteNumber + '-details');
+        if (isRequired) {
+            // Required points must have both coordinates
+            if (!hasLatitude) {
+                hasError = true;
+                errors.push({
+                    text: `Enter the ${latLabel.toLowerCase()} of ${pointLabel}`,
+                    href: `#coordinates-point-${i}-latitude`
+                });
+            }
+            if (!hasLongitude) {
+                hasError = true;
+                errors.push({
+                    text: `Enter the ${longLabel.toLowerCase()} of ${pointLabel}`,
+                    href: `#coordinates-point-${i}-longitude`
+                });
+            }
+        } else {
+            // Optional points: if one coordinate is provided, both must be provided
+            if ((hasLatitude && !hasLongitude) || (!hasLatitude && hasLongitude)) {
+                hasError = true;
+                errors.push({
+                    text: `Enter both ${latLabel.toLowerCase()} and ${longLabel.toLowerCase()} for ${pointLabel}, or leave both empty`,
+                    href: `#coordinates-point-${i}-latitude`
+                });
+            }
+        }
+        
+        // If we have both coordinates, add to the points array
+        if (hasLatitude && hasLongitude) {
+            coordinatePoints.push({
+                latitude: latValue.trim(),
+                longitude: longValue.trim()
+            });
+        }
     }
 
-    // If we're creating a new site, we need to convert it to unified format now
-    // Convert manual sites to unified format to pick up the newly completed site
-    addCompletedSiteToCurrentBatch(req.session, batchRelativePosition);
+    // If there are validation errors, re-render the form
+    if (hasError) {
+        console.log('Multiple coordinates validation failed:', errors);
+        
+        // Store form data back to site.coordinates.points for re-display (matching template structure)
+        if (!site.coordinates) site.coordinates = {};
+        site.coordinates.points = [];
+        for (let i = 1; i <= 5; i++) {
+            const lat = req.body[`coordinates-point-${i}-latitude`] || '';
+            const long = req.body[`coordinates-point-${i}-longitude`] || '';
+            site.coordinates.points[i-1] = {
+                latitude: lat,
+                longitude: long
+            };
+        }
+        
+        return res.render(version + section + 'manual-entry/enter-multiple-coordinates', {
+            data: req.session.data,
+            site: site,
+            errors: errors,
+            isEditing: returnTo === 'review-site-details'
+        });
+    }
 
-    // Redirect to review page
-    res.redirect('review-site-details');
+    // Update coordinates directly in batch site
+    if (!site.coordinates) site.coordinates = {};
+    site.coordinates.type = 'polygon';
+    site.coordinates.points = coordinatePoints;
+    
+
+
+    // Determine next step
+    if (returnTo === 'review-site-details') {
+        res.redirect('/' + version + section + 'review-site-details?site=' + site.globalNumber);
+    } else {
+        res.redirect('/' + version + section + 'manual-entry/review-site-details?site=' + site.globalNumber);
+    }
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////
