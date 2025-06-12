@@ -31,8 +31,71 @@ This project is a web application built using the GOV.UK Prototype Kit for rapid
 │   ├── views/           # All templates
 │   │   ├── layouts/     # Layout templates
 │   │   ├── components/  # Reusable components
-│   ├── routes.js        # Route definitions
+│   │   └── versions/    # Version-specific views
+│   ├── routes/          # Route definitions
+│   │   └── versions/    # Version-specific routes
+│   └── routes.js        # Main route includes
+├── docs/                # Project documentation
+└── .cursor/rules/       # AI context rules
 ```
+
+## Marine Licensing System Architecture
+
+### Batch System for Site Management
+The prototype uses a **batch system** to manage multiple sites that can be entered via different methods:
+
+```javascript
+// Batch structure - ALWAYS use this pattern for site management
+{
+  id: 'batch_id',
+  entryMethod: 'file-upload' | 'manual-entry',
+  createdAt: timestamp,
+  settings: {
+    sameActivityDates: "Yes" | "No" | null,
+    sameActivityDescription: "Yes" | "No" | null,
+    sharedStartDate: { day: '', month: '', year: '' },
+    sharedEndDate: { day: '', month: '', year: '' },
+    sharedDescription: 'text' | null
+  },
+  sites: [
+    {
+      globalNumber: 1,  // Sequential across ALL batches
+      batchId: 'batch_id',
+      entryMethod: 'file-upload' | 'manual-entry',
+      name: 'Site name',
+      startDate: { day: '', month: '', year: '' },
+      endDate: { day: '', month: '', year: '' },
+      description: 'Activity description',
+      coordinates: {},
+      // ... other site fields
+    }
+  ]
+}
+```
+
+### Core Batch Functions
+**ALWAYS use these functions for site management:**
+
+```javascript
+// Primary batch functions
+initializeBatch(session, entryMethod)          // Creates new batch
+getCurrentBatch(session)                       // Gets active batch
+addSiteToBatch(session, siteData)             // Adds site with auto-assigned globalNumber
+findSiteByGlobalNumber(session, globalNumber) // Finds specific site
+renumberSitesAfterDeletion(session, deletedGlobalNumber) // Handles deletion
+clearCurrentBatchOnly(session)                // Clears only current batch
+
+// Navigation helpers
+setOriginContext(session, origin)             // Tracks where user came from
+updateReviewState(session, action)            // Tracks review page state
+determineUserState(session)                   // Determines cancel behavior state
+```
+
+### Site Numbering Rules
+- **Global numbering**: Sites numbered sequentially across ALL batches (1, 2, 3, 4...)
+- **Batch-relative**: Position within specific batch (1st in batch, 2nd in batch...)
+- **Renumbering**: When site deleted, all higher-numbered sites automatically renumber down
+- **Templates**: Always use `site.globalNumber or loop.index` for display
 
 ## Code Standards
 
@@ -94,10 +157,32 @@ Use this approach:
    }) }}
    ```
 
-This approach ensures the page remains accessible while allowing the heading to serve as the form label and maintaining the caption functionality.
+### Caption Placement Rules
+
+**Project-level captions with site numbers**: Combine project name and site number in a single caption above the h1 element
+```nunjucks
+<span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}<span class="govuk-!-display-block">Site {{ displaySiteNumber }}</span></span>
+<h1 class="govuk-heading-l">Page heading</h1>
+```
+
+**For form inputs with labels**:
+```nunjucks
+<span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}<span class="govuk-!-display-block">Site {{ displaySiteNumber }}</span></span>
+<h1 class="govuk-label-wrapper">
+  <label class="govuk-label govuk-label--l" for="input-id">
+    {{ pageHeadingTextHTML }}
+  </label>
+</h1>
+```
+
+**For govukRadios with HTML legends**:
+```nunjucks
+html: '<span class="govuk-caption-l">' + data['exemption-project-name-text-input'] + '<span class="govuk-!-display-block">Site ' + displaySiteNumber + '</span></span>' + pageHeadingTextHTML
+```
 
 ### User Data
 - Persist user answers in `req.session`
+- **Use batch system for site data** - never store sites directly in session
 - Display collected data on "Check your answers" pages
 
 ### Validation & Accessibility
@@ -135,6 +220,48 @@ Use GOV.UK Design System components for:
 - Navigation elements including phase banners
 - Information display (tables, lists, alerts)
 - Progress indicators and loading states
+
+## Routing Patterns
+
+### Route Organization
+- Use modular route files with version and section variables
+- Follow consistent form validation patterns with error flags
+- Implement data clearing functions for complex workflows
+- Use error arrays for accessible error summaries
+
+### Cancel Link Implementation
+**CRITICAL**: Cancel links must follow proper state detection patterns:
+
+```javascript
+// Determine user state for cancel behavior
+const userState = determineUserState(req.session); // 'creation' | 'creation-review' | 'review-not-saved' | 'review-saved'
+const origin = determineOrigin(req.session); // 'task-list' | 'your-sites' | 'check-answers'
+
+// Cancel behavior by state:
+switch(userState) {
+  case 'creation':
+    clearCurrentBatchOnly(req.session);
+    res.redirect('task-list');
+    break;
+  case 'creation-review':
+    res.redirect('review-site-details');
+    break;
+  case 'review-not-saved':
+    res.redirect('cancel'); // Warning page
+    break;
+  case 'review-saved':
+    // Route by origin
+    break;
+}
+```
+
+### Routing Modification Rules
+- **Only modify the specific routing section you are working on** - never change unrelated routes
+- When working on manual entry flows, only modify routes under the "Manual Entry Flow Routes" section
+- When working on main exemption flows, only modify routes in the main exemption section
+- Always verify that your changes are isolated to the intended flow/section
+- Use clear section comments to identify different routing areas (e.g., `//////////////////////////////////////////////////////////////////////////////////////////////`)
+- If unsure which section to modify, ask for clarification before making changes
 
 ## Version Management
 
