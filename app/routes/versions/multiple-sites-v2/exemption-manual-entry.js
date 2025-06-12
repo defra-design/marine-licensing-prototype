@@ -1719,13 +1719,13 @@ router.post('/' + version + section + 'manual-entry/site-width-router', function
     if (!site.coordinates) site.coordinates = {};
     site.coordinates.width = width || '';
     
-    // Basic validation (only if provided)
+    // Simple validation: field is required
     let isValid = true;
-    if (width && width.trim() !== '' && (isNaN(width) || parseFloat(width) <= 0)) {
+    if (!width || width.trim() === '') {
         isValid = false;
-        site.validationErrors = { ...site.validationErrors, siteWidth: 'Enter a valid width greater than 0' };
+        site.validationErrors = { ...site.validationErrors, siteWidth: 'Enter the width of the circular site in metres' };
     } else {
-        // Clear width errors if validation passes
+        // Clear width errors if field has content
         if (site.validationErrors && site.validationErrors.siteWidth) {
             delete site.validationErrors.siteWidth;
         }
