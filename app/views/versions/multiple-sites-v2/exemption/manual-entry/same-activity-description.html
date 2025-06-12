@@ -44,7 +44,7 @@ Is the activity description the same for every site?
 {% endif %}
         <!--  END OF 'error summary' -->
         
-        <form action="same-activity-description-router" method="post" novalidate>
+        <form action="same-activity-description-router{% if returnTo %}?returnTo={{ returnTo }}{% endif %}" method="post" novalidate>
 
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}

@@ -14,16 +14,9 @@
 Enter the width of the circular site in metres
 {% endset %}
 
-<!-- Set the text for each error type -->
-{% set errorTextHTML %}
-    {%  if  data['errorthispage'] == "true"  %}
-    Enter the width of the circular site in metres
-    {%  endif  %}
-{% endset %}
-
 <!-- Text that show in the browser tab. Does NOT need changing -->
 {% block pageTitle %}
-    {% if  data['errorthispage'] == "true"  %}
+    {% if errors.siteWidth %}
         Error:
     {% endif %}
 
@@ -34,23 +27,19 @@ Enter the width of the circular site in metres
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
-        <!-- Get current site number -->
-        {% set currentSite = (query.site | int) or (data['current-site'] | int) or 1 %}
-        {% set sitePrefix = 'manual-' if currentSite == 1 else 'manual-site-' + currentSite + '-' %}
-        
-        <!-- The currentSite from URL parameter is already the global site number -->
-        {% set displaySiteNumber = currentSite %}
-        {% set siteWidthInputId = sitePrefix + 'site-width' %}
+        <!-- Get current site information -->
+        {% set displaySiteNumber = site.globalNumber %}
+        {% set siteWidthInputId = 'site-width' %}
 
         <!-- ERROR LOGIC 'error summary' -->
-        {% if data['errorthispage'] == "true" %}
+        {% if errors.siteWidth %}
             {{ govukErrorSummary
                 ({
                     titleText: "There is a problem",
                     errorList:
                     [
                         {
-                            html: errorTextHTML,
+                            html: errors.siteWidth,
                             href: "#" + siteWidthInputId
                         }
                     ]
@@ -60,9 +49,9 @@ Enter the width of the circular site in metres
         <!--  END OF 'error summary' -->
 
         <!-- go to routes.js for routing  -->
-        <form action="site-width-router{% if currentSite > 1 %}?site={{ currentSite }}{% endif %}" method="post" novalidate>
+        <form action="site-width-router?site={{ site.globalNumber }}{% if returnTo %}&returnTo={{ returnTo }}{% endif %}" method="post" novalidate>
 
-            {% if data['errorthispage'] == "true" %}
+            {% if errors.siteWidth %}
             <div class="govuk-form-group govuk-form-group--error">
             {% else %}
             <div class="govuk-form-group">
@@ -73,9 +62,9 @@ Enter the width of the circular site in metres
                     {{ pageHeadingTextHTML }}
                 </h1>
                 
-                {% if data['errorthispage'] == "true" %}
+                {% if errors.siteWidth %}
                 <p id="{{ siteWidthInputId }}-error" class="govuk-error-message">
-                    <span class="govuk-visually-hidden">Error:</span> {{ errorTextHTML }}
+                    <span class="govuk-visually-hidden">Error:</span> {{ errors.siteWidth }}
                 </p>
                 {% endif %}
                 
@@ -94,12 +83,12 @@ Enter the width of the circular site in metres
 
                         name: siteWidthInputId,
 
-                        value: data[siteWidthInputId],
+                        value: site.coordinates.width,
                         suffix:
                         {
                             text: "metres"
                         },
-                        classes: "govuk-input--width-5" + (" govuk-input--error" if data['errorthispage'] == "true" else ""),
+                        classes: "govuk-input--width-5" + (" govuk-input--error" if errors.siteWidth else ""),
                         
                         formGroup: {
                             classes: "govuk-!-margin-bottom-0"
@@ -121,41 +110,40 @@ Enter the width of the circular site in metres
 </div>
 
 <!-- ERROR LOGIC  drop down to toggle states  -->
-<!-- Best thing to do would be to replace 'errorthispage', 'errortypeone' and 'errortypetwo' with novel name for this page  -->
 <form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-225px;  ">
 
     <select style="height:30px;" onchange="window.location.href='?'+this.value">
 
         <option value="errorthispage=false&errortypeone=false&errortypetwo=false&errortypethree=false&errortypefour=false&errortypefive=false&errortypesix=false&errortypeseven=false&"
-                {% if  data['errorthispage'] != "true"  %}selected{% endif %}
+                {% if not errors.siteWidth %}selected{% endif %}
         >Errors - Off</option>
 
         <option value="errorthispage=true&errortypeone=true&errortypetwo=false&errortypethree=false&errortypefour=false&errortypefive=false&errortypesix=false&errortypeseven=false&"
-                {% if  data['errortypeone'] == 'true'  and  data['errortypetwo'] != 'true'  and  data['errortypethree'] != 'true'  and  data['errortypefour'] != 'true'  and data['errortypefive'] != 'true'  and  data['errortypesix'] != 'true'  and  data['errortypeseven'] != 'true'  %}selected{% endif %}
+                {% if errors.siteWidth %}selected{% endif %}
         >Error 1 - If answer is not a number when it should be</option>
 
         <option value="errorthispage=true&errortypeone=false&errortypetwo=true&errortypethree=false&errortypefour=false&errortypefive=false&errortypesix=false&errortypeseven=false&"
-                {% if  data['errortypeone'] != 'true'  and  data['errortypetwo'] == 'true'  and  data['errortypethree'] != 'true'  and  data['errortypefour'] != 'true'   and data['errortypefive'] != 'true'  and  data['errortypesix'] != 'true'  and  data['errortypeseven'] != 'true'  %}selected{% endif %}
+                {% if errors.siteWidth %}selected{% endif %}
         >Error 2 - If answer is not a whole number</option>
 
         <option value="errorthispage=true&errortypeone=false&errortypetwo=false&errortypethree=true&errortypefour=false&errortypefive=false&errortypesix=false&errortypeseven=false&"
-                {% if  data['errortypeone'] != 'true'  and  data['errortypetwo'] != 'true'  and  data['errortypethree'] == 'true'  and  data['errortypefour'] != 'true'   and data['errortypefive'] != 'true'  and  data['errortypesix'] != 'true'  and  data['errortypeseven'] != 'true'  %}selected{% endif %}
+                {% if errors.siteWidth %}selected{% endif %}
         >Error 3 - If answer (number) is 0</option>
 
         <option value="errorthispage=true&errortypeone=false&errortypetwo=false&errortypethree=false&errortypefour=true&errortypefive=false&errortypesix=false&errortypeseven=false&"
-                {% if  data['errortypeone'] != 'true'  and  data['errortypetwo'] != 'true'  and  data['errortypethree'] != 'true'  and  data['errortypefour'] == 'true'  and  data['errortypefive'] != 'true'  and  data['errortypesix'] != 'true'  and  data['errortypeseven'] != 'true'  %}selected{% endif %}
+                {% if errors.siteWidth %}selected{% endif %}
         >Error 4 - If answer (number) is less than 0 (negative)</option>
 
         <option value="errorthispage=true&errortypeone=false&errortypetwo=false&errortypethree=false&errortypefour=false&errortypefive=true&errortypesix=false&errortypeseven=false&"
-                {% if  data['errortypeone'] != 'true'  and  data['errortypetwo'] != 'true'  and  data['errortypethree'] != 'true'  and  data['errortypefour'] != 'true'  and  data['errortypefive'] == 'true'  and  data['errortypesix'] != 'true'  and  data['errortypeseven'] != 'true'  %}selected{% endif %}
+                {% if errors.siteWidth %}selected{% endif %}
         >Error 5 - If answer (number) is too low</option>
 
         <option value="errorthispage=true&errortypeone=false&errortypetwo=false&errortypethree=false&errortypefour=false&errortypefive=true&errortypesix=false&errortypeseven=false&"
-                {% if  data['errortypeone'] != 'true'  and  data['errortypetwo'] != 'true'  and  data['errortypethree'] != 'true'  and  data['errortypefour'] != 'true'  and  data['errortypefive'] != 'true'  and  data['errortypesix'] == 'true'  and  data['errortypeseven'] != 'true'  %}selected{% endif %}
+                {% if errors.siteWidth %}selected{% endif %}
         >Error 6 - If answer (number) is too high</option>
 
         <option value="errorthispage=true&errortypeone=false&errortypetwo=false&errortypethree=false&errortypefour=false&errortypefive=true&errortypesix=false&errortypeseven=true&"
-                {% if  data['errortypeone'] != 'true'  and  data['errortypetwo'] != 'true'  and  data['errortypethree'] != 'true'  and  data['errortypefour'] != 'true'  and  data['errortypefive'] != 'true'  and  data['errortypesix'] != 'true'  and  data['errortypeseven'] == 'true'  %}selected{% endif %}
+                {% if errors.siteWidth %}selected{% endif %}
         >Error 7 - If answer must be between 2 numbers</option>
 
     </select>

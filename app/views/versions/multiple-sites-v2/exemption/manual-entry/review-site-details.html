@@ -334,7 +334,7 @@ Review site details
                                     {% endif %}
                                 </dd>
                                 <dd class="govuk-summary-list__actions">
-                                    <a href="how-do-you-want-to-enter-the-coordinates?site={{ batchRelativePosition }}&returnTo=review-site-details#site-{{ siteIndex }}-details" class="govuk-link">
+                                    <a href="how-do-you-want-to-enter-the-coordinates?site={{ siteIndex }}&returnTo=review-site-details&clearData=true#site-{{ siteIndex }}-details" class="govuk-link">
                                         Change<span class="govuk-visually-hidden"> method of providing site location</span>
                                     </a>
                                 </dd>
@@ -357,7 +357,7 @@ Review site details
                                     {% endif %}
                                 </dd>
                                 <dd class="govuk-summary-list__actions">
-                                    <a href="which-coordinate-system?site={{ batchRelativePosition }}&returnTo=review-site-details#site-{{ siteIndex }}-details" class="govuk-link">
+                                    <a href="which-coordinate-system?site={{ siteIndex }}&returnTo=review-site-details&clearData=true#site-{{ siteIndex }}-details" class="govuk-link">
                                         Change<span class="govuk-visually-hidden"> coordinate system</span>
                                     </a>
                                 </dd>
@@ -377,7 +377,7 @@ Review site details
                                     {% endif %}
                                 </dd>
                                 <dd class="govuk-summary-list__actions">
-                                    <a href="enter-coordinates?site={{ batchRelativePosition }}&returnTo=review-site-details#site-{{ siteIndex }}-details" class="govuk-link">
+                                    <a href="enter-coordinates?site={{ siteIndex }}&returnTo=review-site-details#site-{{ siteIndex }}-details" class="govuk-link">
                                         {% if site.coordinates.center and site.coordinates.center.latitude and site.coordinates.center.longitude %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> coordinates at centre of site</span>
                                     </a>
                                 </dd>
@@ -395,7 +395,7 @@ Review site details
                                     {% endif %}
                                 </dd>
                                 <dd class="govuk-summary-list__actions">
-                                    <a href="site-width?site={{ batchRelativePosition }}&returnTo=review-site-details#site-{{ siteIndex }}-details" class="govuk-link">
+                                    <a href="site-width?site={{ siteIndex }}&returnTo=review-site-details#site-{{ siteIndex }}-details" class="govuk-link">
                                         {% if site.coordinates.width %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> width of circular site</span>
                                     </a>
                                 </dd>
@@ -417,7 +417,7 @@ Review site details
                                     </dd>
                                     <dd class="govuk-summary-list__actions">
                                         {% if loop.index == 1 %}
-                                            <a href="enter-multiple-coordinates?site={{ batchRelativePosition }}&returnTo=review-site-details#site-{{ siteIndex }}-details" class="govuk-link">
+                                            <a href="enter-multiple-coordinates?site={{ siteIndex }}&returnTo=review-site-details#site-{{ siteIndex }}-details" class="govuk-link">
                                                 Change<span class="govuk-visually-hidden"> coordinates</span>
                                             </a>
                                         {% endif %}
@@ -434,7 +434,7 @@ Review site details
                                     <span class="govuk-tag govuk-tag--red">Incomplete</span>
                                 </dd>
                                 <dd class="govuk-summary-list__actions">
-                                    <a href="enter-multiple-coordinates?site={{ batchRelativePosition }}&returnTo=review-site-details#site-{{ siteIndex }}-details" class="govuk-link">
+                                    <a href="enter-multiple-coordinates?site={{ siteIndex }}&returnTo=review-site-details#site-{{ siteIndex }}-details" class="govuk-link">
                                         Add<span class="govuk-visually-hidden"> coordinates</span>
                                     </a>
                                 </dd>
@@ -453,7 +453,25 @@ Review site details
                             </div>
                         </dl>
                         
-                        <img src="{{ site.mapImage or '/public/images/worthing-map-drawn-copy.jpg' }}" alt="Map showing site {{ siteIndex }} location" width="100%" />
+                        {% set mapImageSrc = site.mapImage %}
+                        {% if not mapImageSrc %}
+                            {% if site.coordinates and site.coordinates.type == "circle" %}
+                                {% set mapImageSrc = '/public/images/worthing-map-square-copy.jpg' %}
+                            {% elif site.coordinates and site.coordinates.type == "polygon" and site.coordinates.points %}
+                                {% if site.coordinates.points.length == 3 %}
+                                    {% set mapImageSrc = '/public/images/worthing-map-3-points-copy.jpg' %}
+                                {% elif site.coordinates.points.length == 4 %}
+                                    {% set mapImageSrc = '/public/images/worthing-map-4-points-copy.jpg' %}
+                                {% elif site.coordinates.points.length >= 5 %}
+                                    {% set mapImageSrc = '/public/images/worthing-map-5-points-copy.jpg' %}
+                                {% else %}
+                                    {% set mapImageSrc = '/public/images/worthing-map-drawn-copy.jpg' %}
+                                {% endif %}
+                            {% else %}
+                                {% set mapImageSrc = '/public/images/worthing-map-drawn-copy.jpg' %}
+                            {% endif %}
+                        {% endif %}
+                        <img src="{{ mapImageSrc }}" alt="Map showing site {{ siteIndex }} location" width="100%" />
                     </div>
                 </div>
             {% endfor %}
