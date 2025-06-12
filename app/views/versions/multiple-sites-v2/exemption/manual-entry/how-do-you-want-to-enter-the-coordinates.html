@@ -70,16 +70,20 @@ How do you want to enter the site coordinates?
                   </span>
                 </summary>
                 <div class="govuk-details__text">
-                 <h2 class="govuk-heading-s">For a circular site</h2>
+                  <h2 class="govuk-heading-s">For a circular site</h2>
                   <p>Choose this option if you only know the coordinates at the centre of the site. We'll use the coordinates and width you enter to create a circular area.</p>
                   <p>Make sure the circle covers the full area where the activity will take place, including any expected movement.</p>
                   <p>This example shows a 30-metre circular site using a single set of coordinates as the centre point.</p>
-                    
+                  
+                  <img src="/public/images/map-circle-example.jpg" alt="Example map showing a circular site marked with a centre point and 30-metre radius" width="100%" class="govuk-!-margin-bottom-6" />
+                  
                   <h2 class="govuk-heading-s">For a site with multiple coordinates</h2>
                   <p>Choose this option if your site has a clear boundary or defined shape. You'll need to enter coordinates in order, so they join to form a closed shape.</p>
                   <p>Make sure the shape includes the full area where the activity will take place, including any expected movement.</p>
                   <p>This example shows a site marked by 4 sets of coordinates to form a square boundary.</p>
-                </div>
+                  
+                  <img src="/public/images/map-polygon-example.jpg" alt="Example map showing a square site boundary marked with 4 coordinate points" width="100%" />
+              </div>
               </details>
             
             {% if data['errorthispage'] == "true" %}
