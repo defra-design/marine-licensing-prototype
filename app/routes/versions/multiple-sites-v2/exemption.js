@@ -1017,8 +1017,18 @@ router.post('/' + version + section + 'delete-site-router', function (req, res) 
 
 // When returning to site-details from task list, initialize the flow
 router.get('/' + version + section + 'site-details', function (req, res) {
+    // Set origin context - this is always from task list
+    setOriginContext(req.session, 'task-list');
+    
     // Set the flag to false when starting the site details journey
     req.session.data['siteDetailsSaved'] = false;
+    
+    // Initialize review state for new journey
+    req.session.data['reviewPageVisited'] = false;
+    req.session.data['reviewPageSaved'] = false;
+    req.session.data['isEditingFromReview'] = false;
+    
+    logCancelState(req.session, 'site-details GET - new journey start');
     
     // Render the page
     res.render(version + section + 'site-details');
@@ -1026,10 +1036,21 @@ router.get('/' + version + section + 'site-details', function (req, res) {
 
 // Route handler for review-site-details
 router.get('/' + version + section + 'review-site-details', function (req, res) {
-    // If we have the camefromcheckanswers query parameter, set the flag
+    // Set origin context based on how user arrived
     if (req.query.camefromcheckanswers === 'true') {
+        setOriginContext(req.session, 'check-answers');
         req.session.data['camefromcheckanswers'] = 'true';
+    } else if (req.query.batchId) {
+        setOriginContext(req.session, 'your-sites');
+    } else if (req.query.origin) {
+        // Explicit origin parameter
+        setOriginContext(req.session, req.query.origin);
     }
+    // Note: If no origin specified, preserve existing context
+    
+    // Track review page visit
+    updateReviewState(req.session, 'visited');
+    
     // If we have a site query parameter, set the active site
     if (req.query.site) {
         req.session.data['site'] = req.query.site;
@@ -1037,6 +1058,8 @@ router.get('/' + version + section + 'review-site-details', function (req, res) 
     // If we have a batchId query parameter, set it as current batch
     if (req.query.batchId) {
         req.session.data['currentBatchId'] = req.query.batchId;
+        // Mark that user is editing a previously saved batch
+        updateReviewState(req.session, 'saved');
     }
     
     // If we're reviewing a specific batch, populate session data from batch settings
@@ -1133,10 +1156,22 @@ router.get('/' + version + section + 'how-do-you-want-to-provide-the-coordinates
         clearDataForFileUploadChange(req.session);
     }
     
-    // Check if we're returning from review-site-details
+    // Track origin and review state
     if (req.query.returnTo === 'review-site-details') {
         req.session.data['fromReviewSiteDetails'] = 'true';
+        updateReviewState(req.session, 'editing');
+        logCancelState(req.session, 'coordinates page - editing from review');
     } else if (!req.query.returnTo && !req.query.camefromcheckanswers && req.query.clearData !== 'true') {
+        // Starting a new journey - set task list origin if not already set
+        if (!req.session.data['cancelOrigin']) {
+            setOriginContext(req.session, 'task-list');
+        }
+        
+        // Initialize review state for new journey
+        req.session.data['reviewPageVisited'] = false;
+        req.session.data['reviewPageSaved'] = false;
+        req.session.data['isEditingFromReview'] = false;
+        
         // Only clear data if starting a truly new journey (not from check answers, review, or clearData scenarios)
         req.session.data['siteDetailsSaved'] = false;
         
@@ -1148,6 +1183,8 @@ router.get('/' + version + section + 'how-do-you-want-to-provide-the-coordinates
         
         // Clear current batch ID so we can start a fresh batch
         delete req.session.data['currentBatchId'];
+        
+        logCancelState(req.session, 'coordinates page - new journey');
     }
     
     res.render(version + section + 'how-do-you-want-to-provide-the-coordinates');
@@ -1405,6 +1442,144 @@ function renumberSitesAfterDeletion(session, deletedGlobalNumber) {
     }
     
     console.log('=== RENUMBERING COMPLETE ===');
+}
+
+// ==============================================================================================
+// CANCEL FUNCTIONALITY - STATE DETECTION SYSTEM
+// ==============================================================================================
+
+/**
+ * Determines the current user state for cancel behavior
+ * @param {Object} session - Express session object
+ * @returns {String} - 'creation' | 'creation-review' | 'review-not-saved' | 'review-saved'
+ */
+function determineUserState(session) {
+    const reviewVisited = session.data['reviewPageVisited'];
+    const reviewSaved = session.data['reviewPageSaved'];
+    const isEditing = session.data['isEditingFromReview'];
+    
+    logCancelState(session, 'determineUserState');
+    
+    if (!reviewVisited) {
+        console.log('🔍 State Detection: CREATION (review page not visited)');
+        return 'creation'; // Pages before review page reached
+    }
+    
+    if (reviewVisited && isEditing && !reviewSaved) {
+        console.log('🔍 State Detection: CREATION-REVIEW (editing from review, not saved)');
+        return 'creation-review'; // Back from review for editing, not yet saved
+    }
+    
+    if (reviewVisited && !reviewSaved) {
+        console.log('🔍 State Detection: REVIEW-NOT-SAVED (on review page, first time, not saved)');
+        return 'review-not-saved'; // On review page, first time, not saved
+    }
+    
+    if (reviewVisited && reviewSaved) {
+        console.log('🔍 State Detection: REVIEW-SAVED (review page previously saved, now editing)');
+        return 'review-saved'; // Review page previously saved, now editing
+    }
+    
+    console.log('🔍 State Detection: CREATION (fallback)');
+    return 'creation'; // Fallback
+}
+
+/**
+ * Determines where the user originally came from
+ * @param {Object} session - Express session object  
+ * @returns {String} - 'task-list' | 'your-sites' | 'check-answers' | 'direct'
+ */
+function determineOrigin(session) {
+    const origin = session.data['cancelOrigin'] || 'task-list';
+    console.log('🔍 Origin Detection:', origin);
+    return origin;
+}
+
+/**
+ * Sets the origin context when user enters the flow
+ * @param {Object} session - Express session object
+ * @param {String} origin - Origin identifier
+ */
+function setOriginContext(session, origin) {
+    console.log('📍 Setting Origin Context:', origin);
+    session.data['cancelOrigin'] = origin;
+    
+    // Clear any conflicting navigation flags when setting new origin
+    if (origin === 'task-list') {
+        delete session.data['camefromcheckanswers'];
+        delete session.data['fromReviewSiteDetails'];
+    }
+    
+    logCancelState(session, 'setOriginContext - ' + origin);
+}
+
+/**
+ * Tracks review page state changes
+ * @param {Object} session - Express session object
+ * @param {String} action - 'visited' | 'saved' | 'editing'
+ */
+function updateReviewState(session, action) {
+    console.log('📝 Updating Review State:', action);
+    
+    switch(action) {
+        case 'visited':
+            session.data['reviewPageVisited'] = true;
+            // Don't change saved or editing state when just visiting
+            break;
+            
+        case 'saved':
+            session.data['reviewPageVisited'] = true;
+            session.data['reviewPageSaved'] = true;
+            session.data['isEditingFromReview'] = false; // Clear editing state after save
+            break;
+            
+        case 'editing':
+            // User clicked change link from review page
+            session.data['reviewPageVisited'] = true;
+            session.data['isEditingFromReview'] = true;
+            // Don't change saved state - preserve existing value
+            break;
+    }
+    
+    logCancelState(session, 'updateReviewState - ' + action);
+}
+
+/**
+ * Comprehensive state logging for debugging
+ * @param {Object} session - Express session object
+ * @param {String} context - Current page/action context
+ */
+function logCancelState(session, context) {
+    if (process.env.NODE_ENV !== 'production') { // Only log in development
+        console.log('🚨 ================== CANCEL STATE DEBUG ==================');
+        console.log('📍 Context:', context);
+        console.log('🎯 Current State Flags:');
+        console.log('   - cancelOrigin:', session.data['cancelOrigin']);
+        console.log('   - reviewPageVisited:', session.data['reviewPageVisited']);
+        console.log('   - reviewPageSaved:', session.data['reviewPageSaved']);
+        console.log('   - isEditingFromReview:', session.data['isEditingFromReview']);
+        console.log('   - currentBatchId:', session.data['currentBatchId']);
+        
+        console.log('🏗️  Legacy Flags (for transition):');
+        console.log('   - fromReviewSiteDetails:', session.data['fromReviewSiteDetails']);
+        console.log('   - siteDetailsSaved:', session.data['siteDetailsSaved']);
+        console.log('   - camefromcheckanswers:', session.data['camefromcheckanswers']);
+        console.log('   - returnTo:', session.data['returnTo']);
+        
+        console.log('📊 Batch Information:');
+        const currentBatch = getCurrentBatch(session);
+        if (currentBatch) {
+            console.log('   - Current Batch ID:', currentBatch.id);
+            console.log('   - Entry Method:', currentBatch.entryMethod);
+            console.log('   - Site Count:', currentBatch.sites ? currentBatch.sites.length : 0);
+        } else {
+            console.log('   - No current batch');
+        }
+        
+        console.log('🔍 Determined State:', determineUserState(session));
+        console.log('📍 Determined Origin:', determineOrigin(session));
+        console.log('🚨 =====================================================');
+    }
 }
 
 // Unified model functions removed - using batch system exclusively
@@ -2123,6 +2298,10 @@ router.post('/' + version + section + 'review-site-details-router', function (re
     }
     req.session.data['siteDetailsSaved'] = true;
     delete req.session.data['fromReviewSiteDetails'];
+    
+    // Track that review page has been saved
+    updateReviewState(req.session, 'saved');
+    logCancelState(req.session, 'review-site-details POST - sites saved');
     
     // Clear currentBatchId so we can start fresh next time
     delete req.session.data['currentBatchId'];

@@ -249,6 +249,17 @@ function clearCurrentSiteSessionData(session) {
 
 // ===== MIGRATED: Does your project involve more than one site? - GET route =====
 router.get('/' + version + section + 'manual-entry/does-your-project-involve-more-than-one-site', function (req, res) {
+    // Set origin context if starting new journey (usually from task list)
+    if (!req.session.data['cancelOrigin']) {
+        setOriginContext(req.session, 'task-list');
+    }
+    
+    // Initialize review state for new manual entry journey
+    req.session.data['reviewPageVisited'] = false;
+    req.session.data['reviewPageSaved'] = false;
+    req.session.data['isEditingFromReview'] = false;
+    
+    logCancelState(req.session, 'manual entry - does-your-project-involve-more-than-one-site GET');
     
     res.render(version + section + 'manual-entry/does-your-project-involve-more-than-one-site', {
         data: req.session.data,
@@ -303,6 +314,10 @@ router.get('/' + version + section + 'manual-entry/site-name', function (req, re
         console.log(`🔄 EDITING MODE: Looking for site ${siteParam} in batch`);
         site = currentBatch.sites.find(s => s.globalNumber === parseInt(siteParam));
         isEditing = !!site;
+        
+        // Track that user is editing from review page
+        updateReviewState(req.session, 'editing');
+        logCancelState(req.session, 'manual entry - site-name GET - editing from review');
         
         if (!site) {
             console.log(`❌ ERROR: Site ${siteParam} not found in batch for editing`);
@@ -1631,10 +1646,21 @@ router.get('/' + version + section + 'manual-entry/review-site-details', functio
     req.session.data['errorthispage'] = "false";
     req.session.data['errors'] = [];
     
-    // If we have a batchId query parameter, set it as current batch
+    // Handle origin and state tracking
     if (req.query.batchId) {
         req.session.data['currentBatchId'] = req.query.batchId;
         console.log('Set currentBatchId from query:', req.query.batchId);
+        
+        // Set origin context for saved batch review
+        setOriginContext(req.session, 'your-sites');
+        
+        // Mark that user is reviewing a previously saved batch
+        updateReviewState(req.session, 'saved');
+        logCancelState(req.session, 'manual entry - review-site-details GET - saved batch from your sites');
+    } else {
+        // Track review page visit for active journey
+        updateReviewState(req.session, 'visited');
+        logCancelState(req.session, 'manual entry - review-site-details GET - active journey');
     }
     
     console.log('Current session activity settings:', {
@@ -1766,6 +1792,11 @@ router.post('/' + version + section + 'manual-entry/review-site-details-router',
     
     // Mark the task as completed and clear the current batch ID so we can start fresh next time
     req.session.data['siteDetailsSaved'] = true;
+    
+    // Track that review page has been saved
+    updateReviewState(req.session, 'saved');
+    logCancelState(req.session, 'manual entry - review-site-details POST - sites saved');
+    
     delete req.session.data['currentBatchId'];
     
     // Check if we came from check answers page
