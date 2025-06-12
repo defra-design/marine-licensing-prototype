@@ -1582,6 +1582,152 @@ function logCancelState(session, context) {
     }
 }
 
+/**
+ * Enhanced batch clearing with comprehensive error handling and state management
+ * @param {Object} session - Express session object
+ */
+function clearCurrentBatchSafely(session) {
+    const currentBatchId = session.data['currentBatchId'];
+    
+    logCancelState(session, 'clearCurrentBatchSafely - entry');
+    
+    if (!currentBatchId) {
+        console.log('ℹ️ No current batch to clear - this is normal for direct URL access');
+        // Still clear session data in case there's orphaned data
+        clearBatchSessionData(session);
+        updateTaskStatusAfterClear(session);
+        return;
+    }
+    
+    // Validate batch exists before attempting removal
+    if (!session.data['siteBatches']) {
+        console.log('⚠️ No siteBatches array found - initializing empty array');
+        session.data['siteBatches'] = [];
+        delete session.data['currentBatchId'];
+        clearBatchSessionData(session);
+        updateTaskStatusAfterClear(session);
+        return;
+    }
+    
+    // Find and remove the current batch
+    const batchIndex = session.data['siteBatches'].findIndex(batch => batch.id === currentBatchId);
+    if (batchIndex !== -1) {
+        const removedBatch = session.data['siteBatches'][batchIndex];
+        console.log('🗑️ Removing batch:', removedBatch.id, 'with', removedBatch.sites.length, 'sites');
+        
+        session.data['siteBatches'].splice(batchIndex, 1);
+        
+        // Rebuild the global sites array from remaining batches
+        const remainingSites = session.data['siteBatches'].flatMap(batch => batch.sites);
+        session.data['sites'] = remainingSites;
+        
+        // Recalculate global site counter
+        if (remainingSites.length > 0) {
+            const maxGlobalNumber = Math.max(...remainingSites.map(site => site.globalNumber));
+            session.data['globalSiteCounter'] = maxGlobalNumber;
+            console.log('📊 Updated global site counter to:', maxGlobalNumber);
+        } else {
+            delete session.data['globalSiteCounter'];
+            console.log('📊 No sites remain - cleared global site counter');
+        }
+    } else {
+        console.log('⚠️ Current batch ID not found in siteBatches array - possible data inconsistency');
+        // Clear the invalid batch ID
+        delete session.data['currentBatchId'];
+    }
+    
+    // Clear current batch related data
+    delete session.data['currentBatchId'];
+    
+    // Clear all session data related to current batch creation
+    clearBatchSessionData(session);
+    
+    // Update task status based on remaining batches
+    updateTaskStatusAfterClear(session);
+    
+    logCancelState(session, 'clearCurrentBatchSafely - completed');
+}
+
+/**
+ * Clear session data related to batch creation and editing
+ * @param {Object} session - Express session object
+ */
+function clearBatchSessionData(session) {
+    // Clear entry method session data for both manual and file upload
+    clearAllManualEntryData(session);
+    clearAllFileUploadData(session);
+    clearAllLocationData(session);
+    
+    // Clear file upload activity settings
+    delete session.data['exemption-same-activity-dates-for-sites'];
+    delete session.data['previous-activity-dates-selection'];
+    delete session.data['exemption-same-activity-description-for-sites'];
+    delete session.data['previous-activity-description-selection'];
+    delete session.data['exemption-activity-details-text-area'];
+    delete session.data['exemption-start-date-date-input-day'];
+    delete session.data['exemption-start-date-date-input-month'];
+    delete session.data['exemption-start-date-date-input-year'];
+    delete session.data['exemption-end-date-date-input-day'];
+    delete session.data['exemption-end-date-date-input-month'];
+    delete session.data['exemption-end-date-date-input-year'];
+    
+    // Clear manual entry activity settings
+    delete session.data['manual-same-activity-dates'];
+    delete session.data['manual-same-activity-description'];
+    delete session.data['manual-activity-details-text-area'];
+    delete session.data['manual-start-date-date-input-day'];
+    delete session.data['manual-start-date-date-input-month'];
+    delete session.data['manual-start-date-date-input-year'];
+    delete session.data['manual-end-date-date-input-day'];
+    delete session.data['manual-end-date-date-input-month'];
+    delete session.data['manual-end-date-date-input-year'];
+    
+    // Clear coordinate method selection for new batch
+    delete session.data['exemption-how-do-you-want-to-provide-the-coordinates-radios'];
+    
+    // Clear navigation and legacy state flags
+    delete session.data['fromReviewSiteDetails'];
+    delete session.data['current-site'];
+    delete session.data['manual-current-site'];
+    delete session.data['returnTo'];
+    
+    // Clear error states
+    delete session.data['errorthispage'];
+    delete session.data['errortypeone'];
+    delete session.data['errortypetwo'];
+    delete session.data['errors'];
+    delete session.data['startdateerror'];
+    delete session.data['enddateerror'];
+    
+    console.log('🧹 Cleared batch session data');
+}
+
+/**
+ * Update task status after clearing batches
+ * @param {Object} session - Express session object
+ */
+function updateTaskStatusAfterClear(session) {
+    if (!session.data['siteBatches'] || session.data['siteBatches'].length === 0) {
+        // No batches remain - reset to not started
+        session.data['exempt-information-3-status'] = 'not-started';
+        delete session.data['siteDetailsSaved'];
+        delete session.data['sites'];
+        delete session.data['siteBatches'];
+        delete session.data['hasUploadedFile'];
+        console.log('📋 Reset task status to not-started - no batches remain');
+    } else {
+        // Other batches still exist - determine status from remaining batches
+        const hasSavedBatches = session.data['siteBatches'].some(batch => batch.saved);
+        if (hasSavedBatches) {
+            session.data['exempt-information-3-status'] = 'completed';
+            console.log('📋 Maintained completed status - other saved batches exist');
+        } else {
+            session.data['exempt-information-3-status'] = 'in-progress';
+            console.log('📋 Set status to in-progress - unsaved batches exist');
+        }
+    }
+}
+
 // Unified model functions removed - using batch system exclusively
 
 // Update the upload file router to use batch handling
@@ -2481,89 +2627,91 @@ router.get('/' + version + section + 'add-another-site', function (req, res) {
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////
-// Cancel actions
+// Cancel actions - NEW STATE-BASED SYSTEM
 /////////////////////////////////////////////////////////////////////////////////////////////
 
+/**
+ * Main cancel route handler - uses new state detection system
+ * Replaces cancel-site-details, cancel-to-review, and cancel-from-review-site-details
+ */
 router.get('/' + version + section + 'cancel-site-details', function (req, res) {
-    // Check if we're coming from review-site-details page directly
-    if (req.session.data['fromReviewSiteDetails'] === 'true') {
-        // Return to the review page without clearing data
-        delete req.session.data['fromReviewSiteDetails'];
-        
-        // Determine which review page to return to based on current batch type
-        const currentBatch = getCurrentBatch(req.session);
-        if (currentBatch && currentBatch.entryMethod === 'manual-entry') {
-            res.redirect('manual-entry/review-site-details');
-        } else {
-            res.redirect('review-site-details');
-        }
-    }
-    // Check if site details have been saved previously
-    else if (req.session.data['siteDetailsSaved']) {
-        // If we came from check answers page, return there
-        if (req.session.data['camefromcheckanswers'] === 'true') {
-            req.session.data['camefromcheckanswers'] = false;
-            res.redirect('check-answers-multiple-sites');
-        } else {
-            // Otherwise return to site details added page
-            res.redirect('site-details-added');
-        }
-    } else {
-        // If not saved, show warning page before clearing data
-        res.redirect('cancel');
-    }
-});
-
-// Cancel handler for returning to review-site-details without clearing data
-// Used when editing details from the review page
-router.get('/' + version + section + 'cancel-to-review', function (req, res) {
-    // Check if we're coming from review-site-details page directly
-    if (req.session.data['fromReviewSiteDetails'] === 'true') {
-        // Return to the review page without clearing data
-        delete req.session.data['fromReviewSiteDetails'];
-        
-        // Determine which review page to return to based on current batch type
-        const currentBatch = getCurrentBatch(req.session);
-        if (currentBatch && currentBatch.entryMethod === 'manual-entry') {
-            res.redirect('manual-entry/review-site-details');
-        } else {
-            res.redirect('review-site-details');
-        }
-    }
-    // Check if site details have been saved previously
-    else if (req.session.data['siteDetailsSaved']) {
-        // If we came from check answers page, return there
-        if (req.session.data['camefromcheckanswers'] === 'true') {
-            req.session.data['camefromcheckanswers'] = false;
-            res.redirect('check-answers-multiple-sites');
-        } else {
-            // Return to the appropriate review page without clearing data
+    const userState = determineUserState(req.session);
+    const origin = determineOrigin(req.session);
+    
+    logCancelState(req.session, 'cancel-site-details entry - userState: ' + userState + ', origin: ' + origin);
+    
+    switch(userState) {
+        case 'creation':
+            // State 1: Creation pages - clear current batch and return to task list
+            logCancelState(req.session, 'CREATION STATE: Clearing current batch and returning to task list');
+            clearCurrentBatchSafely(req.session);
+            // Clear state tracking variables for fresh start
+            req.session.data['reviewPageVisited'] = false;
+            req.session.data['reviewPageSaved'] = false;
+            req.session.data['isEditingFromReview'] = false;
+            res.redirect('task-list');
+            break;
+            
+        case 'creation-review':
+            // State 2: Creation review pages - return to review page without clearing data
+            logCancelState(req.session, 'CREATION-REVIEW STATE: Returning to review page without clearing data');
+            // Clear editing flag to indicate user is back on review page
+            req.session.data['isEditingFromReview'] = false;
+            
+            // Determine which review page to return to based on current batch type
             const currentBatch = getCurrentBatch(req.session);
             if (currentBatch && currentBatch.entryMethod === 'manual-entry') {
                 res.redirect('manual-entry/review-site-details');
             } else {
                 res.redirect('review-site-details');
             }
-        }
-    } else {
-        // If not saved, show warning page before clearing data
-        res.redirect('cancel');
+            break;
+            
+        case 'review-not-saved':
+            // State 3: Review page not saved - show cancel warning page
+            logCancelState(req.session, 'REVIEW-NOT-SAVED STATE: Showing cancel warning page');
+            res.redirect('cancel');
+            break;
+            
+        case 'review-saved':
+            // State 4: Review page saved - route based on origin or show warning page
+            logCancelState(req.session, 'REVIEW-SAVED STATE: Routing based on origin: ' + origin);
+            
+            if (origin === 'your-sites') {
+                // Return to Your Sites page
+                res.redirect('site-details-added');
+            } else if (origin === 'check-answers') {
+                // Return to Check Answers page
+                // Clear the navigation flag
+                req.session.data['camefromcheckanswers'] = false;
+                res.redirect('check-answers-multiple-sites');
+            } else {
+                // For task-list origin or direct access, show warning page
+                res.redirect('cancel');
+            }
+            break;
+            
+        default:
+            // Error handling - fallback to warning page
+            logCancelState(req.session, 'ERROR: Unknown user state, falling back to warning page');
+            console.error('Unknown user state in cancel-site-details:', userState);
+            res.redirect('cancel');
+            break;
     }
 });
 
-// Cancel handler specifically from review-site-details page
+/**
+ * Legacy cancel routes - redirect to main handler for backward compatibility
+ * These will be updated in Task 4 when templates are updated
+ */
+router.get('/' + version + section + 'cancel-to-review', function (req, res) {
+    logCancelState(req.session, 'cancel-to-review - redirecting to main handler');
+    res.redirect('cancel-site-details');
+});
+
 router.get('/' + version + section + 'cancel-from-review-site-details', function (req, res) {
-    // If we came from check answers page, return there
-    if (req.session.data['camefromcheckanswers'] === 'true') {
-        req.session.data['camefromcheckanswers'] = false;
-        res.redirect('check-answers-multiple-sites');
-    } else if (req.session.data['siteDetailsSaved']) {
-        // If details were previously saved, go to site-details-added
-        res.redirect('site-details-added');
-    } else {
-        // If nothing was saved yet, show warning page before clearing data
-        res.redirect('cancel');
-    }
+    logCancelState(req.session, 'cancel-from-review-site-details - redirecting to main handler');
+    res.redirect('cancel-site-details');
 });
 
 // GET route for cancel warning page
@@ -2571,10 +2719,24 @@ router.get('/' + version + section + 'cancel', function (req, res) {
     res.render(version + section + 'cancel');
 });
 
-// POST route for cancel confirmation
+// POST route for cancel confirmation - enhanced with state management
 router.post('/' + version + section + 'cancel-confirmed', function (req, res) {
-    // Only clear the current batch, not all site details
-    clearCurrentBatchOnly(req.session);
+    logCancelState(req.session, 'cancel-confirmed - user confirmed cancellation');
+    
+    // Clear the current batch safely with enhanced error handling
+    clearCurrentBatchSafely(req.session);
+    
+    // Clear cancel-related state tracking for fresh start
+    delete req.session.data['cancelOrigin'];
+    req.session.data['reviewPageVisited'] = false;
+    req.session.data['reviewPageSaved'] = false;
+    req.session.data['isEditingFromReview'] = false;
+    
+    // Clear any legacy navigation flags
+    delete req.session.data['fromReviewSiteDetails'];
+    delete req.session.data['camefromcheckanswers'];
+    
+    logCancelState(req.session, 'cancel-confirmed - redirecting to task-list');
     res.redirect('task-list');
 });
 

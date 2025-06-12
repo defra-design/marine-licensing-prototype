@@ -1962,19 +1962,23 @@ router.post('/' + version + section + 'manual-entry/enter-multiple-coordinates-r
 // These redirect to the main cancel handlers in the parent exemption routes
 /////////////////////////////////////////////////////////////////////////////////////////////
 
+/**
+ * Manual entry cancel route handlers - redirect to main state-based handler
+ * These maintain backward compatibility while using the new cancel system
+ */
 router.get('/' + version + section + 'manual-entry/cancel-site-details', function (req, res) {
-    // Redirect to the main cancel handler
+    logCancelState(req.session, 'manual-entry/cancel-site-details - redirecting to main handler');
     res.redirect('../cancel-site-details');
 });
 
 router.get('/' + version + section + 'manual-entry/cancel-to-review', function (req, res) {
-    // Redirect to the main cancel handler
-    res.redirect('../cancel-to-review');
+    logCancelState(req.session, 'manual-entry/cancel-to-review - redirecting to main handler');
+    res.redirect('../cancel-site-details');
 });
 
 router.get('/' + version + section + 'manual-entry/cancel-from-review-site-details', function (req, res) {
-    // Redirect to the main cancel handler
-    res.redirect('../cancel-from-review-site-details');
+    logCancelState(req.session, 'manual-entry/cancel-from-review-site-details - redirecting to main handler');
+    res.redirect('../cancel-site-details');
 });
 
 }
