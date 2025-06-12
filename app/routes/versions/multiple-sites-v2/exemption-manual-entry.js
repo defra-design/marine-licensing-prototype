@@ -425,6 +425,14 @@ router.get('/' + version + section + 'manual-entry/site-name', function (req, re
             validationErrors: {}
         };
         
+        // SPECIAL CASE: If this is a subsequent site (batch already has sites), 
+        // treat as "creation-review" so cancel returns to review page
+        if (currentBatch && currentBatch.sites && currentBatch.sites.length > 0) {
+            console.log(`🔄 SUBSEQUENT SITE: Site ${globalNumber} - setting creation-review state`);
+            updateReviewState(req.session, 'editing');
+            logCancelState(req.session, 'manual entry - site-name GET - subsequent site creation (will return to review on cancel)');
+        }
+        
         // Auto-populate shared data if this isn't the first site
         if (site.globalNumber > 1) {
             initializeNewSiteWithInheritedData(req.session, site);
@@ -497,9 +505,9 @@ router.post('/' + version + section + 'manual-entry/site-name-router', function 
         site.name = siteName.trim();
         console.log(`✅ Updated existing site ${site.globalNumber} name to: "${site.name}"`);
         
-        // DIRECT RETURN to review page - no further flow
-        console.log(`🔄 DIRECT RETURN: Redirecting back to review page`);
-        return res.redirect('/' + version + section + 'manual-entry/review-site-details?site=' + site.globalNumber);
+        // DIRECT RETURN to review page with anchor - no further flow
+        console.log(`🔄 DIRECT RETURN: Redirecting back to review page with anchor`);
+        return res.redirect('/' + version + section + 'manual-entry/review-site-details?site=' + site.globalNumber + '#site-' + site.globalNumber + '-details');
         
     } else {
         console.log(`➕ CREATE MODE: Adding new site to batch`);
@@ -689,6 +697,14 @@ router.get('/' + version + section + 'manual-entry/individual-site-activity-date
         return res.redirect('/' + version + section + 'manual-entry/site-name?site=' + siteParam);
     }
     
+    // SPECIAL CASE: If this is a subsequent site being created (not editing from review), 
+    // set creation-review state so cancel returns to review page
+    if (returnTo !== 'review-site-details' && parseInt(siteParam) > 1) {
+        console.log(`🔄 SUBSEQUENT SITE: Activity dates for site ${siteParam} - setting creation-review state`);
+        updateReviewState(req.session, 'editing');
+        logCancelState(req.session, 'manual entry - individual-site-activity-dates GET - subsequent site creation');
+    }
+    
     res.render(path.join(version, section, 'manual-entry', 'individual-site-activity-dates'), {
         data: req.session.data,
         site: site,
@@ -780,8 +796,8 @@ router.post('/' + version + section + 'manual-entry/individual-site-activity-dat
     
     // SIMPLIFIED LOGIC: If returnTo=review-site-details, we're ALWAYS editing an existing site
     if (returnTo === 'review-site-details') {
-        console.log(`🔄 DIRECT RETURN: Redirecting back to review page after activity dates update`);
-        return res.redirect('/' + version + section + 'manual-entry/review-site-details?site=' + site.globalNumber);
+        console.log(`🔄 DIRECT RETURN: Redirecting back to review page after activity dates update with anchor`);
+        return res.redirect('/' + version + section + 'manual-entry/review-site-details?site=' + site.globalNumber + '#site-' + site.globalNumber + '-details');
     }
     
     // CONTINUE FLOW for new site creation
@@ -1083,8 +1099,8 @@ router.post('/' + version + section + 'manual-entry/individual-site-activity-des
     
     // SIMPLE LOGIC: Return to review if editing, otherwise continue flow
     if (returnTo === 'review-site-details') {
-        console.log(`🔄 DIRECT RETURN: Redirecting back to review page`);
-        return res.redirect('/' + version + section + 'manual-entry/review-site-details?site=' + site.globalNumber);
+        console.log(`🔄 DIRECT RETURN: Redirecting back to review page with anchor`);
+        return res.redirect('/' + version + section + 'manual-entry/review-site-details?site=' + site.globalNumber + '#site-' + site.globalNumber + '-details');
     } else {
         console.log(`➡️ CONTINUE FLOW: Going to coordinates`);
         return res.redirect('/' + version + section + 'manual-entry/how-do-you-want-to-enter-the-coordinates?site=' + site.globalNumber);
@@ -1205,6 +1221,11 @@ router.get('/' + version + section + 'manual-entry/how-do-you-want-to-enter-the-
     if (returnTo === 'review-site-details') {
         updateReviewState(req.session, 'editing');
         logCancelState(req.session, 'manual entry - how-do-you-want-to-enter-the-coordinates GET - editing from review');
+    } else if (parseInt(siteParam) > 1) {
+        // SUBSEQUENT SITE: Set creation-review state so cancel returns to review page
+        console.log(`🔄 SUBSEQUENT SITE: Coordinates for site ${siteParam} - setting creation-review state`);
+        updateReviewState(req.session, 'editing');
+        logCancelState(req.session, 'manual entry - how-do-you-want-to-enter-the-coordinates GET - subsequent site creation');
     }
     
     res.render(version + section + 'manual-entry/how-do-you-want-to-enter-the-coordinates', {
@@ -1340,6 +1361,11 @@ router.get('/' + version + section + 'manual-entry/which-coordinate-system', fun
     if (returnTo === 'review-site-details') {
         updateReviewState(req.session, 'editing');
         logCancelState(req.session, 'manual entry - which-coordinate-system GET - editing from review');
+    } else if (parseInt(siteParam) > 1) {
+        // SUBSEQUENT SITE: Set creation-review state so cancel returns to review page
+        console.log(`🔄 SUBSEQUENT SITE: Coordinate system for site ${siteParam} - setting creation-review state`);
+        updateReviewState(req.session, 'editing');
+        logCancelState(req.session, 'manual entry - which-coordinate-system GET - subsequent site creation');
     }
     
     res.render(version + section + 'manual-entry/which-coordinate-system', {
@@ -1490,6 +1516,11 @@ router.get('/' + version + section + 'manual-entry/enter-coordinates', function 
     if (returnTo === 'review-site-details') {
         updateReviewState(req.session, 'editing');
         logCancelState(req.session, 'manual entry - enter-coordinates GET - editing from review');
+    } else if (parseInt(siteParam) > 1) {
+        // SUBSEQUENT SITE: Set creation-review state so cancel returns to review page
+        console.log(`🔄 SUBSEQUENT SITE: Enter coordinates for site ${siteParam} - setting creation-review state`);
+        updateReviewState(req.session, 'editing');
+        logCancelState(req.session, 'manual entry - enter-coordinates GET - subsequent site creation');
     }
     
     res.render(path.join(version, section, 'manual-entry', 'enter-coordinates'), {
@@ -1528,6 +1559,11 @@ router.get('/' + version + section + 'manual-entry/enter-multiple-coordinates', 
     if (returnTo === 'review-site-details') {
         updateReviewState(req.session, 'editing');
         logCancelState(req.session, 'manual entry - enter-multiple-coordinates GET - editing from review');
+    } else if (parseInt(siteParam) > 1) {
+        // SUBSEQUENT SITE: Set creation-review state so cancel returns to review page
+        console.log(`🔄 SUBSEQUENT SITE: Multiple coordinates for site ${siteParam} - setting creation-review state`);
+        updateReviewState(req.session, 'editing');
+        logCancelState(req.session, 'manual entry - enter-multiple-coordinates GET - subsequent site creation');
     }
     
     // Enter multiple coordinates page - no validation errors on initial load
@@ -1620,12 +1656,12 @@ router.post('/' + version + section + 'manual-entry/enter-coordinates-router', f
             res.redirect('/' + version + section + 'manual-entry/site-width?site=' + site.globalNumber + '&returnTo=review-site-details');
         } else if (site.coordinates.type === 'polygon') {
             // JOURNEY RESTART: Polygon site - coordinates are complete, return to review
-            console.log(`🔄 JOURNEY RESTART: Polygon coordinates complete, returning to review`);
-            res.redirect('/' + version + section + 'manual-entry/review-site-details?site=' + site.globalNumber);
+            console.log(`🔄 JOURNEY RESTART: Polygon coordinates complete, returning to review with anchor`);
+            res.redirect('/' + version + section + 'manual-entry/review-site-details?site=' + site.globalNumber + '#site-' + site.globalNumber + '-details');
         } else {
             // INDEPENDENT CHANGE: Site already has width or is being edited independently
-            console.log(`🔄 INDEPENDENT CHANGE: Coordinates updated, returning directly to review`);
-            res.redirect('/' + version + section + 'manual-entry/review-site-details?site=' + site.globalNumber);
+            console.log(`🔄 INDEPENDENT CHANGE: Coordinates updated, returning directly to review with anchor`);
+            res.redirect('/' + version + section + 'manual-entry/review-site-details?site=' + site.globalNumber + '#site-' + site.globalNumber + '-details');
         }
     } else {
         // Normal flow - continue through journey (includes width page for circular sites)
@@ -1674,6 +1710,11 @@ router.get('/' + version + section + 'manual-entry/site-width', function (req, r
     if (returnTo === 'review-site-details') {
         updateReviewState(req.session, 'editing');
         logCancelState(req.session, 'manual entry - site-width GET - editing from review');
+    } else if (parseInt(siteParam) > 1) {
+        // SUBSEQUENT SITE: Set creation-review state so cancel returns to review page
+        console.log(`🔄 SUBSEQUENT SITE: Site width for site ${siteParam} - setting creation-review state`);
+        updateReviewState(req.session, 'editing');
+        logCancelState(req.session, 'manual entry - site-width GET - subsequent site creation');
     }
     
     res.render(path.join(version, section, 'manual-entry', 'site-width'), {
@@ -1749,9 +1790,9 @@ router.post('/' + version + section + 'manual-entry/site-width-router', function
     
     // Determine next step
     if (returnTo === 'review-site-details') {
-        res.redirect('/' + version + section + 'manual-entry/review-site-details?site=' + site.globalNumber);
+        res.redirect('/' + version + section + 'manual-entry/review-site-details?site=' + site.globalNumber + '#site-' + site.globalNumber + '-details');
     } else {
-        res.redirect('/' + version + section + 'manual-entry/review-site-details?site=' + site.globalNumber);
+        res.redirect('/' + version + section + 'manual-entry/review-site-details?site=' + site.globalNumber + '#site-' + site.globalNumber + '-details');
     }
 });
 
@@ -2079,9 +2120,9 @@ router.post('/' + version + section + 'manual-entry/enter-multiple-coordinates-r
 
     // Determine next step
     if (returnTo === 'review-site-details') {
-        res.redirect('/' + version + section + 'manual-entry/review-site-details?site=' + site.globalNumber);
+        res.redirect('/' + version + section + 'manual-entry/review-site-details?site=' + site.globalNumber + '#site-' + site.globalNumber + '-details');
     } else {
-        res.redirect('/' + version + section + 'manual-entry/review-site-details?site=' + site.globalNumber);
+        res.redirect('/' + version + section + 'manual-entry/review-site-details?site=' + site.globalNumber + '#site-' + site.globalNumber + '-details');
     }
 });
 
