@@ -1212,6 +1212,8 @@ router.post('/' + version + section + 'how-do-you-want-to-provide-the-coordinate
             // Clear file upload data if it exists
             delete req.session.data['exemption-which-type-of-file-radios'];
             delete req.session.data['kml-file-upload'];
+            // Clear the radio button that causes browser caching issues
+            req.session.data['manual-multiple-sites'] = '';
             break;
         case "Upload a file with the coordinates of the site":
             // Clear manual entry data if it exists
