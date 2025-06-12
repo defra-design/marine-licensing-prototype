@@ -15,7 +15,7 @@ Activity description
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
 {% block pageTitle %}
-    {% if errors.activityDetails %}
+    {% if errors.description %}
         Error:
     {% endif %}
 
@@ -31,14 +31,14 @@ Activity description
         {% set siteInputId = 'activity-details-text-area' %}
 
         <!-- ERROR LOGIC 'error summary' -->
-        {% if errors.activityDetails %}
+        {% if errors.description %}
             {{ govukErrorSummary
                 ({
                     titleText: "There is a problem",
                     errorList:
                     [
                         {
-                            html: errors.activityDetails,
+                            html: errors.description,
                             href: "#" + siteInputId
                         }
                     ]
@@ -50,7 +50,7 @@ Activity description
         <!-- go to routes.js for routing  -->
         <form action="individual-site-activity-description-router?site={{ site.globalNumber }}{% if returnTo %}&returnTo={{ returnTo }}{% endif %}" method="post" novalidate>
 
-            <div class="govuk-form-group {% if errors.activityDetails %}govuk-form-group--error{% endif %}">
+            <div class="govuk-form-group {% if errors.description %}govuk-form-group--error{% endif %}">
                 <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}<span class="govuk-!-display-block">Site {{ displaySiteNumber }}</span></span>
                 <h1 class="govuk-label-wrapper">
                   <label class="govuk-label govuk-label--l" for="{{ siteInputId }}">
@@ -62,18 +62,18 @@ Activity description
                 
                 <p>For example, 'Collect a 0.1 cubic metre seabed sample by day grab from a workboat for particle size analysis'.</p>
               
-                {% if errors.activityDetails %}
+                {% if errors.description %}
                   <p id="{{ siteInputId }}-error" class="govuk-error-message">
-                    <span class="govuk-visually-hidden">Error:</span> {{ errors.activityDetails }}
+                    <span class="govuk-visually-hidden">Error:</span> {{ errors.description }}
                   </p>
                 {% endif %}
               
                 <textarea
-                  class="govuk-textarea {% if errors.activityDetails %}govuk-textarea--error{% endif %}"
+                  class="govuk-textarea {% if errors.description %}govuk-textarea--error{% endif %}"
                   id="{{ siteInputId }}"
                   name="activity-details-text-area"
                   rows="8"
-                  aria-describedby="{{ siteInputId }}-hint{% if errors.activityDetails %} {{ siteInputId }}-error{% endif %}"
+                  aria-describedby="{{ siteInputId }}-hint{% if errors.description %} {{ siteInputId }}-error{% endif %}"
                 >{{ site.description }}</textarea>
               </div>
 
@@ -93,11 +93,11 @@ Activity description
     <select style="height:30px;" onchange="window.location.href='?'+this.value">
 
         <option value="errorthispage=false&errortypeone=false&"
-                {% if not errors.activityDetails %}selected{% endif %}
+                {% if not errors.description %}selected{% endif %}
         >Errors - Off</option>
 
         <option value="errorthispage=true&errortypeone=true&"
-                {% if errors.activityDetails %}selected{% endif %}
+                {% if errors.description %}selected{% endif %}
         >Error 1 - No answer entered</option>
 
     </select>

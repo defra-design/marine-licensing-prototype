@@ -28,7 +28,7 @@ Your sites
     <div class="govuk-grid-column-full">
         {% set hasSiteIncomplete = false %}
         
-        <!-- Determine if any site is incomplete using the sites array -->
+        <!-- Determine if any site is incomplete using batch settings -->
         {% if data['sites'] and data['sites'].length > 0 %}
             {% for site in data['sites'] %}
                 <!-- Check if site name is missing -->
@@ -36,17 +36,53 @@ Your sites
                     {% set hasSiteIncomplete = true %}
                 {% endif %}
                 
-                <!-- Check if site-specific dates are required but incomplete -->
-                {% if data['exemption-same-activity-dates-for-sites'] == "No" %}
-                    {% if not site.startDate or not site.startDate.day %}
-                        {% set hasSiteIncomplete = true %}
-                    {% endif %}
+                <!-- Find the batch this site belongs to -->
+                {% set siteBatch = null %}
+                {% if site.batchId and data['siteBatches'] %}
+                    {% for batch in data['siteBatches'] %}
+                        {% if batch.id == site.batchId %}
+                            {% set siteBatch = batch %}
+                        {% endif %}
+                    {% endfor %}
                 {% endif %}
                 
-                <!-- Check if site-specific descriptions are required but incomplete -->
-                {% if data['exemption-same-activity-description-for-sites'] == "No" %}
-                    {% if not site.description %}
-                        {% set hasSiteIncomplete = true %}
+                {% if siteBatch and siteBatch.settings %}
+                    <!-- Use batch-level settings -->
+                    {% if siteBatch.settings.sameActivityDates == "No" %}
+                        {% if not site.startDate or not site.startDate.day %}
+                            {% set hasSiteIncomplete = true %}
+                        {% endif %}
+                    {% endif %}
+                    
+                    {% if siteBatch.settings.sameActivityDescription == "No" %}
+                        {% if not site.description %}
+                            {% set hasSiteIncomplete = true %}
+                        {% endif %}
+                    {% endif %}
+                {% else %}
+                    <!-- Fallback to session data if batch not found -->
+                    {% if site.entryMethod == "manual-entry" %}
+                        {% if data['manual-same-activity-dates'] == "No" %}
+                            {% if not site.startDate or not site.startDate.day %}
+                                {% set hasSiteIncomplete = true %}
+                            {% endif %}
+                        {% endif %}
+                        {% if data['manual-same-activity-description'] == "No" %}
+                            {% if not site.description %}
+                                {% set hasSiteIncomplete = true %}
+                            {% endif %}
+                        {% endif %}
+                    {% else %}
+                        {% if data['exemption-same-activity-dates-for-sites'] == "No" %}
+                            {% if not site.startDate or not site.startDate.day %}
+                                {% set hasSiteIncomplete = true %}
+                            {% endif %}
+                        {% endif %}
+                        {% if data['exemption-same-activity-description-for-sites'] == "No" %}
+                            {% if not site.description %}
+                                {% set hasSiteIncomplete = true %}
+                            {% endif %}
+                        {% endif %}
                     {% endif %}
                 {% endif %}
             {% endfor %}
@@ -121,22 +157,60 @@ Your sites
                                 {% endif %}
                             {% endif %}
                             
-                            <!-- Determine if site is complete -->
-                            {% if not site.name %}
-                                {% set isComplete = false %}
-                            {% endif %}
-                            
-                            {% if data['exemption-same-activity-dates-for-sites'] == "No" %}
-                                {% if not site.startDate or not site.startDate.day %}
-                                    {% set isComplete = false %}
-                                {% endif %}
-                            {% endif %}
-                            
-                            {% if data['exemption-same-activity-description-for-sites'] == "No" %}
-                                {% if not site.description %}
-                                    {% set isComplete = false %}
-                                {% endif %}
-                            {% endif %}
+                                        <!-- Determine if site is complete using batch settings -->
+            {% if not site.name %}
+                {% set isComplete = false %}
+            {% endif %}
+            
+            <!-- Find the batch this site belongs to -->
+            {% set siteBatch = null %}
+            {% if site.batchId and data['siteBatches'] %}
+                {% for batch in data['siteBatches'] %}
+                    {% if batch.id == site.batchId %}
+                        {% set siteBatch = batch %}
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            
+            {% if siteBatch and siteBatch.settings %}
+                <!-- Use batch-level settings -->
+                {% if siteBatch.settings.sameActivityDates == "No" %}
+                    {% if not site.startDate or not site.startDate.day %}
+                        {% set isComplete = false %}
+                    {% endif %}
+                {% endif %}
+                
+                {% if siteBatch.settings.sameActivityDescription == "No" %}
+                    {% if not site.description %}
+                        {% set isComplete = false %}
+                    {% endif %}
+                {% endif %}
+            {% else %}
+                <!-- Fallback to session data if batch not found -->
+                {% if site.entryMethod == "manual-entry" %}
+                    {% if data['manual-same-activity-dates'] == "No" %}
+                        {% if not site.startDate or not site.startDate.day %}
+                            {% set isComplete = false %}
+                        {% endif %}
+                    {% endif %}
+                    {% if data['manual-same-activity-description'] == "No" %}
+                        {% if not site.description %}
+                            {% set isComplete = false %}
+                        {% endif %}
+                    {% endif %}
+                {% else %}
+                    {% if data['exemption-same-activity-dates-for-sites'] == "No" %}
+                        {% if not site.startDate or not site.startDate.day %}
+                            {% set isComplete = false %}
+                        {% endif %}
+                    {% endif %}
+                    {% if data['exemption-same-activity-description-for-sites'] == "No" %}
+                        {% if not site.description %}
+                            {% set isComplete = false %}
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+            {% endif %}
                             
                             <tr class="govuk-table__row">
                                 <td class="govuk-table__cell"{% if not isLastInBatch %} style="border-bottom: none !important;"{% endif %}>Site {{ siteIndex }}</td>

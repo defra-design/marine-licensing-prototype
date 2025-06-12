@@ -499,8 +499,11 @@ router.post('/' + version + section + 'manual-entry/same-activity-dates-router',
         });
     }
 
-    // Store the selection in batch settings
+    // Get current batch and store previous selection before updating
     const currentBatch = getCurrentBatch(req.session);
+    const previousSelection = currentBatch && currentBatch.settings ? currentBatch.settings.sameActivityDates : null;
+    
+    // Store the new selection in batch settings
     if (currentBatch) {
         if (!currentBatch.settings) {
             currentBatch.settings = {};
@@ -510,16 +513,38 @@ router.post('/' + version + section + 'manual-entry/same-activity-dates-router',
 
     // If returning from review, handle shared date updates
     if (returnTo === 'review-site-details') {
-        if (selection === "No" && currentBatch.settings.sameActivityDates === "Yes") {
+        // If changing from Yes to No, copy shared dates to individual sites
+        if (selection === "No" && previousSelection === "Yes") {
             // Copy shared dates to all batch sites
             const sharedStartDate = currentBatch.settings.sharedStartDate;
             const sharedEndDate = currentBatch.settings.sharedEndDate;
             
-            if (sharedStartDate && currentBatch.sites) {
+            if (sharedStartDate && sharedStartDate.day && currentBatch.sites) {
                 currentBatch.sites.forEach(site => {
                     site.startDate = { ...sharedStartDate };
                     site.endDate = { ...sharedEndDate };
                 });
+            }
+            
+            // Clear shared dates from batch settings after copying
+            currentBatch.settings.sharedStartDate = {};
+            currentBatch.settings.sharedEndDate = {};
+        }
+        // If changing from No to Yes, use first site's data as shared data
+        else if (selection === "Yes" && previousSelection === "No") {
+            // Use first site's dates as shared dates
+            if (currentBatch.sites && currentBatch.sites.length > 0) {
+                const firstSite = currentBatch.sites[0];
+                if (firstSite.startDate && firstSite.startDate.day) {
+                    currentBatch.settings.sharedStartDate = { ...firstSite.startDate };
+                    currentBatch.settings.sharedEndDate = { ...firstSite.endDate };
+                    
+                    // Apply shared dates to all sites
+                    currentBatch.sites.forEach(site => {
+                        site.startDate = { ...currentBatch.settings.sharedStartDate };
+                        site.endDate = { ...currentBatch.settings.sharedEndDate };
+                    });
+                }
             }
         }
         
@@ -702,6 +727,7 @@ router.get('/' + version + section + 'manual-entry/activity-dates', function (re
         sharedStartDate: sharedStartDate,
         sharedEndDate: sharedEndDate,
         siteParam: siteParam,
+        returnTo: returnTo,
         isEditing: returnTo === 'review-site-details',
         errors: {}
     });
@@ -750,6 +776,7 @@ router.post('/' + version + section + 'manual-entry/activity-dates-router', func
             sharedStartDate: { day: startDay || '', month: startMonth || '', year: startYear || '' },
             sharedEndDate: { day: endDay || '', month: endMonth || '', year: endYear || '' },
             siteParam: siteParam,
+            returnTo: returnTo,
             isEditing: returnTo === 'review-site-details',
             errors: errors
         });
@@ -823,8 +850,11 @@ router.post('/' + version + section + 'manual-entry/same-activity-description-ro
         });
     }
 
-    // Store the selection in batch settings
+    // Get current batch and store previous selection before updating
     const currentBatch = getCurrentBatch(req.session);
+    const previousSelection = currentBatch && currentBatch.settings ? currentBatch.settings.sameActivityDescription : null;
+    
+    // Store the new selection in batch settings
     if (currentBatch) {
         if (!currentBatch.settings) {
             currentBatch.settings = {};
@@ -834,7 +864,8 @@ router.post('/' + version + section + 'manual-entry/same-activity-description-ro
 
     // If returning from review, handle shared description updates
     if (returnTo === 'review-site-details') {
-        if (selection === "No" && currentBatch.settings.sameActivityDescription === "Yes") {
+        // If changing from Yes to No, copy shared description to individual sites
+        if (selection === "No" && previousSelection === "Yes") {
             // Copy shared description to all batch sites
             const sharedDescription = currentBatch.settings.sharedDescription;
             
@@ -842,6 +873,24 @@ router.post('/' + version + section + 'manual-entry/same-activity-description-ro
                 currentBatch.sites.forEach(site => {
                     site.description = sharedDescription;
                 });
+            }
+            
+            // Clear shared description from batch settings after copying
+            currentBatch.settings.sharedDescription = '';
+        }
+        // If changing from No to Yes, use first site's description as shared description
+        else if (selection === "Yes" && previousSelection === "No") {
+            // Use first site's description as shared description
+            if (currentBatch.sites && currentBatch.sites.length > 0) {
+                const firstSite = currentBatch.sites[0];
+                if (firstSite.description) {
+                    currentBatch.settings.sharedDescription = firstSite.description;
+                    
+                    // Apply shared description to all sites
+                    currentBatch.sites.forEach(site => {
+                        site.description = currentBatch.settings.sharedDescription;
+                    });
+                }
             }
         }
         
@@ -962,6 +1011,7 @@ router.get('/' + version + section + 'manual-entry/activity-description', functi
         currentBatch: currentBatch,
         sharedDescription: sharedDescription,
         siteParam: siteParam,
+        returnTo: returnTo,
         isEditing: returnTo === 'review-site-details',
         errors: {}
     });
@@ -998,6 +1048,7 @@ router.post('/' + version + section + 'manual-entry/activity-description-router'
             currentBatch: currentBatch,
             sharedDescription: description || '',
             siteParam: siteParam,
+            returnTo: returnTo,
             isEditing: returnTo === 'review-site-details',
             errors: errors
         });

@@ -1404,9 +1404,6 @@ function renumberSitesAfterDeletion(session, deletedGlobalNumber) {
         console.log('Updated globalSiteCounter to:', session.data['globalSiteCounter']);
     }
     
-    // 4. Renumber unified sites (replaces legacy session data renumbering)
-    renumberUnifiedSitesAfterDeletion(session, deletedGlobalNumber);
-    
     console.log('=== RENUMBERING COMPLETE ===');
 }
 
@@ -2167,29 +2164,82 @@ router.post('/' + version + section + 'site-details-added-router', function (req
     // Get the sites array
     const sites = req.session.data['sites'] || [];
     
+    console.log('=== SITE DETAILS ADDED COMPLETENESS CHECK DEBUG ===');
+    console.log('Total sites to check:', sites.length);
+    
     // Check each site for completeness
     if (sites.length > 0) {
-        for (const site of sites) {
+        for (let i = 0; i < sites.length; i++) {
+            const site = sites[i];
+            console.log('\n--- Site ' + (i + 1) + ' (Global ' + site.globalNumber + ') ---');
+            console.log('Site data:', JSON.stringify(site, null, 2));
+            console.log('Entry method:', site.entryMethod);
+            console.log('Batch ID:', site.batchId);
+            
             // Check if site name is missing
             if (!site.name) {
+                console.log('❌ Site name missing');
                 hasSiteIncomplete = true;
+            } else {
+                console.log('✅ Site name present:', site.name);
+            }
+            
+            // Determine which settings to use from the site's batch
+            let sameActivityDates, sameActivityDescription;
+            
+            // Find the batch this site belongs to
+            const siteBatch = req.session.data['siteBatches']?.find(batch => batch.id === site.batchId);
+            
+            if (siteBatch && siteBatch.settings) {
+                // Use batch-level settings (the correct approach)
+                sameActivityDates = siteBatch.settings.sameActivityDates;
+                sameActivityDescription = siteBatch.settings.sameActivityDescription;
+                console.log(site.entryMethod + ' site - using batch settings:');
+                console.log('  sameActivityDates:', sameActivityDates);
+                console.log('  sameActivityDescription:', sameActivityDescription);
+            } else {
+                // Fallback to session data if batch not found (shouldn't happen)
+                if (site.entryMethod === 'manual-entry') {
+                    sameActivityDates = req.session.data['manual-same-activity-dates'];
+                    sameActivityDescription = req.session.data['manual-same-activity-description'];
+                } else {
+                    sameActivityDates = req.session.data['exemption-same-activity-dates-for-sites'];
+                    sameActivityDescription = req.session.data['exemption-same-activity-description-for-sites'];
+                }
+                console.log(site.entryMethod + ' site - using fallback session settings:');
+                console.log('  sameActivityDates:', sameActivityDates);
+                console.log('  sameActivityDescription:', sameActivityDescription);
             }
             
             // Check if site-specific dates are required but incomplete
-            if (req.session.data['exemption-same-activity-dates-for-sites'] === "No") {
+            if (sameActivityDates === "No") {
                 if (!site.startDate || !site.startDate.day) {
+                    console.log('❌ Individual activity dates required but missing');
                     hasSiteIncomplete = true;
+                } else {
+                    console.log('✅ Individual activity dates present');
                 }
+            } else {
+                console.log('ℹ️ Shared activity dates - individual dates not required');
             }
             
             // Check if site-specific descriptions are required but incomplete
-            if (req.session.data['exemption-same-activity-description-for-sites'] === "No") {
+            if (sameActivityDescription === "No") {
                 if (!site.description) {
+                    console.log('❌ Individual activity description required but missing');
                     hasSiteIncomplete = true;
+                } else {
+                    console.log('✅ Individual activity description present:', site.description);
                 }
+            } else {
+                console.log('ℹ️ Shared activity description - individual description not required');
             }
         }
     }
+    
+    console.log('\n=== FINAL COMPLETENESS RESULT ===');
+    console.log('Any site incomplete:', hasSiteIncomplete);
+    console.log('=== END COMPLETENESS CHECK DEBUG ===');
     
     // Check if "I've finished adding sites" checkbox is checked
     if (req.session.data['finished-adding-sites'] && req.session.data['finished-adding-sites'].includes('yes')) {

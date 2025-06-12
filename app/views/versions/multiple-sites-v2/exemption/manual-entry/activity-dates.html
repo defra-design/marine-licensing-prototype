@@ -59,7 +59,7 @@ End date
         <p>Enter the activity dates for all sites. Allow time for potential delays, like consents (for example, a river works licence) or bad weather. If you miss the dates, you'll need to restart the process.</p>
         <p>You can enter a start date from today and begin your activity as soon as you've sent your information.</p>
         
-        <form action="activity-dates-router?site={{ siteParam }}{% if query.returnTo %}&returnTo={{ query.returnTo }}{% endif %}" method="post" novalidate>
+        <form action="activity-dates-router?site={{ siteParam }}{% if returnTo %}&returnTo={{ returnTo }}{% endif %}" method="post" novalidate>
 
 {% from "govuk/components/date-input/macro.njk" import govukDateInput %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
@@ -80,9 +80,9 @@ End date
 				errorMessage: null if not errors.startDate
 							   else { text: errors.startDate },
 				items: [
-					{ name: "day", classes: "govuk-input--width-2", value: site.activityDates.startDate.day, attributes: { autocomplete: "off", inputmode: "numeric" } },
-					{ name: "month", classes: "govuk-input--width-2", value: site.activityDates.startDate.month, attributes: { autocomplete: "off", inputmode: "numeric" } },
-					{ name: "year", classes: "govuk-input--width-4", value: site.activityDates.startDate.year, attributes: { autocomplete: "off", inputmode: "numeric" } }
+					{ name: "day", classes: "govuk-input--width-2", value: sharedStartDate.day, attributes: { autocomplete: "off", inputmode: "numeric" } },
+					{ name: "month", classes: "govuk-input--width-2", value: sharedStartDate.month, attributes: { autocomplete: "off", inputmode: "numeric" } },
+					{ name: "year", classes: "govuk-input--width-4", value: sharedStartDate.year, attributes: { autocomplete: "off", inputmode: "numeric" } }
 				]
 			}) }}
 
@@ -102,9 +102,9 @@ End date
 				errorMessage: null if not errors.endDate
 							   else { text: errors.endDate },
 				items: [
-					{ name: "day", classes: "govuk-input--width-2", value: site.activityDates.endDate.day, attributes: { autocomplete: "off", inputmode: "numeric" } },
-					{ name: "month", classes: "govuk-input--width-2", value: site.activityDates.endDate.month, attributes: { autocomplete: "off", inputmode: "numeric" } },
-					{ name: "year", classes: "govuk-input--width-4", value: site.activityDates.endDate.year, attributes: { autocomplete: "off", inputmode: "numeric" } }
+					{ name: "day", classes: "govuk-input--width-2", value: sharedEndDate.day, attributes: { autocomplete: "off", inputmode: "numeric" } },
+					{ name: "month", classes: "govuk-input--width-2", value: sharedEndDate.month, attributes: { autocomplete: "off", inputmode: "numeric" } },
+					{ name: "year", classes: "govuk-input--width-4", value: sharedEndDate.year, attributes: { autocomplete: "off", inputmode: "numeric" } }
 				]
 			}) }}
 
