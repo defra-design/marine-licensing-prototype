@@ -1465,6 +1465,11 @@ router.post('/' + version + section + 'manual-entry/enter-coordinates-router', f
             res.redirect('/' + version + section + 'manual-entry/site-width?site=' + site.globalNumber);
         }
     }
+    
+    // Set mapImage for circular sites (will be finalized when width is set)
+    if (isValid && site.coordinates.type === 'circle') {
+        site.mapImage = '/public/images/worthing-map-square-copy.jpg';
+    }
 });
 
 // CONVERTED: Batch system site width GET route
@@ -1554,6 +1559,11 @@ router.post('/' + version + section + 'manual-entry/site-width-router', function
             returnTo: returnTo,
             errors: site.validationErrors
         });
+    }
+    
+    // Set mapImage for circular sites
+    if (isValid && site.coordinates.type === 'circle') {
+        site.mapImage = '/public/images/worthing-map-square-copy.jpg';
     }
     
     // Determine next step
@@ -1844,7 +1854,18 @@ router.post('/' + version + section + 'manual-entry/enter-multiple-coordinates-r
     site.coordinates.type = 'polygon';
     site.coordinates.points = coordinatePoints;
     
-
+    // Set mapImage based on number of points
+    const numPoints = coordinatePoints.length;
+    if (numPoints === 3) {
+        site.mapImage = '/public/images/worthing-map-3-points-copy.jpg';
+    } else if (numPoints === 4) {
+        site.mapImage = '/public/images/worthing-map-4-points-copy.jpg';
+    } else if (numPoints >= 5) {
+        site.mapImage = '/public/images/worthing-map-5-points-copy.jpg';
+    } else {
+        // Fallback for unexpected number of points
+        site.mapImage = '/public/images/worthing-map-drawn-copy.jpg';
+    }
 
     // Determine next step
     if (returnTo === 'review-site-details') {

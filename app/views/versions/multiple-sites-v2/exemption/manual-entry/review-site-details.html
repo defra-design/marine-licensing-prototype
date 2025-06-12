@@ -453,7 +453,25 @@ Review site details
                             </div>
                         </dl>
                         
-                        <img src="{{ site.mapImage or '/public/images/worthing-map-drawn-copy.jpg' }}" alt="Map showing site {{ siteIndex }} location" width="100%" />
+                        {% set mapImageSrc = site.mapImage %}
+                        {% if not mapImageSrc %}
+                            {% if site.coordinates and site.coordinates.type == "circle" %}
+                                {% set mapImageSrc = '/public/images/worthing-map-square-copy.jpg' %}
+                            {% elif site.coordinates and site.coordinates.type == "polygon" and site.coordinates.points %}
+                                {% if site.coordinates.points.length == 3 %}
+                                    {% set mapImageSrc = '/public/images/worthing-map-3-points-copy.jpg' %}
+                                {% elif site.coordinates.points.length == 4 %}
+                                    {% set mapImageSrc = '/public/images/worthing-map-4-points-copy.jpg' %}
+                                {% elif site.coordinates.points.length >= 5 %}
+                                    {% set mapImageSrc = '/public/images/worthing-map-5-points-copy.jpg' %}
+                                {% else %}
+                                    {% set mapImageSrc = '/public/images/worthing-map-drawn-copy.jpg' %}
+                                {% endif %}
+                            {% else %}
+                                {% set mapImageSrc = '/public/images/worthing-map-drawn-copy.jpg' %}
+                            {% endif %}
+                        {% endif %}
+                        <img src="{{ mapImageSrc }}" alt="Map showing site {{ siteIndex }} location" width="100%" />
                     </div>
                 </div>
             {% endfor %}
