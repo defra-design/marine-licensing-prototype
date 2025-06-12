@@ -247,6 +247,91 @@ function clearCurrentSiteSessionData(session) {
     console.log(`=== CLEARED ${clearedCount} SESSION KEYS ===`);
 }
 
+// ==============================================================================================
+// CANCEL FUNCTIONALITY - STATE DETECTION SYSTEM (copied from exemption.js)
+// ==============================================================================================
+
+/**
+ * Tracks review page state changes
+ * @param {Object} session - Express session object
+ * @param {String} action - 'visited' | 'saved' | 'editing'
+ */
+function updateReviewState(session, action) {
+    console.log('📝 Manual Entry - Updating Review State:', action);
+    
+    switch(action) {
+        case 'visited':
+            session.data['reviewPageVisited'] = true;
+            // Don't change saved or editing state when just visiting
+            break;
+            
+        case 'saved':
+            session.data['reviewPageVisited'] = true;
+            session.data['reviewPageSaved'] = true;
+            session.data['isEditingFromReview'] = false; // Clear editing state after save
+            break;
+            
+        case 'editing':
+            // User clicked change link from review page
+            session.data['reviewPageVisited'] = true;
+            session.data['isEditingFromReview'] = true;
+            // Don't change saved state - preserve existing value
+            break;
+    }
+}
+
+/**
+ * Sets the origin context when user enters the flow
+ * @param {Object} session - Express session object
+ * @param {String} origin - Origin identifier
+ */
+function setOriginContext(session, origin) {
+    console.log('📍 Manual Entry - Setting Origin Context:', origin);
+    session.data['cancelOrigin'] = origin;
+    
+    // Clear any conflicting navigation flags when setting new origin
+    if (origin === 'task-list') {
+        delete session.data['camefromcheckanswers'];
+        delete session.data['fromReviewSiteDetails'];
+    }
+}
+
+/**
+ * Comprehensive state logging for debugging
+ * @param {Object} session - Express session object
+ * @param {String} context - Current page/action context
+ */
+function logCancelState(session, context) {
+    if (process.env.NODE_ENV !== 'production') { // Only log in development
+        console.log('🚨 ============== MANUAL ENTRY CANCEL STATE DEBUG ==============');
+        console.log('📍 Context:', context);
+        console.log('🎯 Current State Flags:');
+        console.log('   - cancelOrigin:', session.data['cancelOrigin']);
+        console.log('   - reviewPageVisited:', session.data['reviewPageVisited']);
+        console.log('   - reviewPageSaved:', session.data['reviewPageSaved']);
+        console.log('   - isEditingFromReview:', session.data['isEditingFromReview']);
+        console.log('   - currentBatchId:', session.data['currentBatchId']);
+        
+        console.log('🏗️  Legacy Flags (for transition):');
+        console.log('   - fromReviewSiteDetails:', session.data['fromReviewSiteDetails']);
+        console.log('   - siteDetailsSaved:', session.data['siteDetailsSaved']);
+        console.log('   - camefromcheckanswers:', session.data['camefromcheckanswers']);
+        console.log('   - returnTo:', session.data['returnTo']);
+        
+        console.log('📊 Batch Information:');
+        const currentBatch = getCurrentBatch(session);
+        if (currentBatch) {
+            console.log('   - Current Batch ID:', currentBatch.id);
+            console.log('   - Entry Method:', currentBatch.entryMethod);
+            console.log('   - Site Count:', currentBatch.sites ? currentBatch.sites.length : 0);
+        } else {
+            console.log('   - No current batch');
+        }
+        
+        console.log('🚨 ========================================================');
+    }
+}
+
 // ===== MIGRATED: Does your project involve more than one site? - GET route =====
 router.get('/' + version + section + 'manual-entry/does-your-project-involve-more-than-one-site', function (req, res) {
     // Set origin context if starting new journey (usually from task list)
@@ -1116,6 +1201,12 @@ router.get('/' + version + section + 'manual-entry/how-do-you-want-to-enter-the-
         return res.redirect('/' + version + section + 'manual-entry/site-name?site=' + siteParam);
     }
     
+    // Track that user is editing from review page if accessed via change link
+    if (returnTo === 'review-site-details') {
+        updateReviewState(req.session, 'editing');
+        logCancelState(req.session, 'manual entry - how-do-you-want-to-enter-the-coordinates GET - editing from review');
+    }
+    
     res.render(version + section + 'manual-entry/how-do-you-want-to-enter-the-coordinates', {
         data: req.session.data,
         site: site,
@@ -1243,6 +1334,12 @@ router.get('/' + version + section + 'manual-entry/which-coordinate-system', fun
     if (!site) {
         console.log('Site not found for coordinate system');
         return res.redirect('/' + version + section + 'manual-entry/site-name?site=' + siteParam);
+    }
+    
+    // Track that user is editing from review page if accessed via change link
+    if (returnTo === 'review-site-details') {
+        updateReviewState(req.session, 'editing');
+        logCancelState(req.session, 'manual entry - which-coordinate-system GET - editing from review');
     }
     
     res.render(version + section + 'manual-entry/which-coordinate-system', {
@@ -1389,6 +1486,12 @@ router.get('/' + version + section + 'manual-entry/enter-coordinates', function 
         return res.redirect('/' + version + section + 'manual-entry/site-name?site=' + siteParam);
     }
     
+    // Track that user is editing from review page if accessed via change link
+    if (returnTo === 'review-site-details') {
+        updateReviewState(req.session, 'editing');
+        logCancelState(req.session, 'manual entry - enter-coordinates GET - editing from review');
+    }
+    
     res.render(path.join(version, section, 'manual-entry', 'enter-coordinates'), {
         data: req.session.data,
         site: site,
@@ -1419,6 +1522,12 @@ router.get('/' + version + section + 'manual-entry/enter-multiple-coordinates', 
     if (!site) {
         console.log('Site not found for multiple coordinates entry');
         return res.redirect('/' + version + section + 'manual-entry/site-name?site=' + siteParam);
+    }
+    
+    // Track that user is editing from review page if accessed via change link
+    if (returnTo === 'review-site-details') {
+        updateReviewState(req.session, 'editing');
+        logCancelState(req.session, 'manual entry - enter-multiple-coordinates GET - editing from review');
     }
     
     // Enter multiple coordinates page - no validation errors on initial load
@@ -1561,6 +1670,12 @@ router.get('/' + version + section + 'manual-entry/site-width', function (req, r
         return res.redirect('/' + version + section + 'manual-entry/site-name?site=' + siteParam);
     }
     
+    // Track that user is editing from review page if accessed via change link
+    if (returnTo === 'review-site-details') {
+        updateReviewState(req.session, 'editing');
+        logCancelState(req.session, 'manual entry - site-width GET - editing from review');
+    }
+    
     res.render(path.join(version, section, 'manual-entry', 'site-width'), {
         data: req.session.data,
         site: site,
@@ -1647,7 +1762,20 @@ router.get('/' + version + section + 'manual-entry/review-site-details', functio
     req.session.data['errors'] = [];
     
     // Handle origin and state tracking
-    if (req.query.batchId) {
+    if (req.query.camefromcheckanswers === 'true') {
+        // User came from Check answers
+        setOriginContext(req.session, 'check-answers');
+        req.session.data['camefromcheckanswers'] = 'true';
+        // If there's also a batchId, this is a saved batch from check answers
+        if (req.query.batchId) {
+            req.session.data['currentBatchId'] = req.query.batchId;
+            updateReviewState(req.session, 'saved');
+            logCancelState(req.session, 'manual entry - review-site-details GET - saved batch from check answers');
+        } else {
+            updateReviewState(req.session, 'visited');
+            logCancelState(req.session, 'manual entry - review-site-details GET - active journey from check answers');
+        }
+    } else if (req.query.batchId) {
         req.session.data['currentBatchId'] = req.query.batchId;
         console.log('Set currentBatchId from query:', req.query.batchId);
         

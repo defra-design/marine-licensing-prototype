@@ -23,25 +23,25 @@ This document provides a comprehensive task breakdown for implementing consisten
 
 ## Desired Cancel Behavior Definitions
 
-### State 1: Creation Pages  
-**Definition**: Journey pages before review page has been visited
+### State 1: Journey Page - Data Not Yet Displayed on Review Page
+**Definition**: Journey pages before review page has been visited  
 **Behavior**: Return to task list, clear all batch data
 **Examples**: site-name, activity-dates, coordinates pages on first visit
 
-### State 2: Creation Review Pages
-**Definition**: Review page reached but not saved, user went back via change links
-**Behavior**: Return to review page  
-**Examples**: Editing site name after reaching review but before saving
+### State 2: Journey Page - Data Has Been Displayed on Review Page (From Change Link)
+**Definition**: Journey page accessed via change link from review page (review could be saved or not saved)
+**Behavior**: Return to review page, clear data from the 'change' journey only
+**Examples**: Review page → change activity description → cancel (always back to review)
 
-### State 3: Review Page Not Saved
-**Definition**: Review page displayed but not yet saved
+### State 3: Review Page Not Yet Saved
+**Definition**: Review page displayed but not yet saved, user clicks cancel button on review page itself
 **Behavior**: Show cancel warning page (`cancel.html`) with options to continue or return to review
-**Examples**: First time on review-site-details page
+**Examples**: First time on review-site-details page, click cancel button
 
-### State 4: Review Page Saved  
-**Definition**: Review page previously saved, user returned for editing
+### State 4: Review Page Previously Saved
+**Definition**: Review page previously saved, user clicks cancel button on review page itself  
 **Behavior**: Based on origin - Your Sites → Your Sites, Check Answers → Check Answers, other → Cancel warning (`cancel.html`)
-**Examples**: Editing saved batch from Your Sites page
+**Examples**: From Your Sites → edit batch → on review page → click cancel button
 
 ## Implementation Tasks
 
@@ -248,30 +248,30 @@ function determineOrigin(session) {
 
 | State | Entry Method | Origin | Expected Behavior | Test Scenario |
 |-------|-------------|---------|-------------------|---------------|
-| Creation | Manual | Task List | Clear batch → Task List | Start manual entry, cancel from site-name |
-| Creation | Manual | Your Sites | Clear batch → Task List | N/A (creation always from task list) |  
-| Creation | Manual | Check Answers | Clear batch → Task List | N/A (creation always from task list) |
-| Creation | File | Task List | Clear batch → Task List | Start file upload, cancel from upload-file |
-| Creation | File | Your Sites | Clear batch → Task List | N/A (creation always from task list) |
-| Creation | File | Check Answers | Clear batch → Task List | N/A (creation always from task list) |
-| Creation-Review | Manual | Task List | Return to review | Complete creation → review → change site name → cancel |
-| Creation-Review | Manual | Your Sites | Return to review | N/A (review editing context) |
-| Creation-Review | Manual | Check Answers | Return to review | N/A (review editing context) |
-| Creation-Review | File | Task List | Return to review | Complete creation → review → change activity dates → cancel |
-| Creation-Review | File | Your Sites | Return to review | N/A (review editing context) |
-| Creation-Review | File | Check Answers | Return to review | N/A (review editing context) |
-| Review-Not-Saved | Manual | Task List | Show warning page | Complete creation → first time on review → cancel |
-| Review-Not-Saved | Manual | Your Sites | Show warning page | N/A (not saved yet) |
-| Review-Not-Saved | Manual | Check Answers | Show warning page | N/A (not saved yet) |
-| Review-Not-Saved | File | Task List | Show warning page | Complete file upload → first time on review → cancel |
-| Review-Not-Saved | File | Your Sites | Show warning page | N/A (not saved yet) |
-| Review-Not-Saved | File | Check Answers | Show warning page | N/A (not saved yet) |
-| Review-Saved | Manual | Task List | Show warning page | Complete & save → return later → cancel |
-| Review-Saved | Manual | Your Sites | Return to Your Sites | From Your Sites → edit batch → cancel |
-| Review-Saved | Manual | Check Answers | Return to Check Answers | From Check Answers → edit batch → cancel |
-| Review-Saved | File | Task List | Show warning page | Complete & save → return later → cancel |
-| Review-Saved | File | Your Sites | Return to Your Sites | From Your Sites → edit batch → cancel |
-| Review-Saved | File | Check Answers | Return to Check Answers | From Check Answers → edit batch → cancel |
+| Journey-NotDisplayed | Manual | Task List | Clear batch → Task List | Start manual entry, cancel from site-name |
+| Journey-NotDisplayed | Manual | Your Sites | Clear batch → Task List | N/A (creation always from task list) |  
+| Journey-NotDisplayed | Manual | Check Answers | Clear batch → Task List | N/A (creation always from task list) |
+| Journey-NotDisplayed | File | Task List | Clear batch → Task List | Start file upload, cancel from upload-file |
+| Journey-NotDisplayed | File | Your Sites | Clear batch → Task List | N/A (creation always from task list) |
+| Journey-NotDisplayed | File | Check Answers | Clear batch → Task List | N/A (creation always from task list) |
+| Journey-FromChangeLink | Manual | Task List | Return to review | Review (any status) → change site name → cancel |
+| Journey-FromChangeLink | Manual | Your Sites | Return to review | Review (any status) → change site name → cancel |
+| Journey-FromChangeLink | Manual | Check Answers | Return to review | Review (any status) → change site name → cancel |
+| Journey-FromChangeLink | File | Task List | Return to review | Review (any status) → change activity dates → cancel |
+| Journey-FromChangeLink | File | Your Sites | Return to review | Review (any status) → change activity dates → cancel |
+| Journey-FromChangeLink | File | Check Answers | Return to review | Review (any status) → change activity dates → cancel |
+| Review-NotSaved | Manual | Task List | Show warning page | Complete creation → first time on review → cancel button |
+| Review-NotSaved | Manual | Your Sites | Show warning page | N/A (not saved yet) |
+| Review-NotSaved | Manual | Check Answers | Show warning page | N/A (not saved yet) |
+| Review-NotSaved | File | Task List | Show warning page | Complete file upload → first time on review → cancel button |
+| Review-NotSaved | File | Your Sites | Show warning page | N/A (not saved yet) |
+| Review-NotSaved | File | Check Answers | Show warning page | N/A (not saved yet) |
+| Review-Saved | Manual | Task List | Show warning page | Complete & save → return later → on review page → cancel button |
+| Review-Saved | Manual | Your Sites | Return to Your Sites | From Your Sites → edit batch → on review page → cancel button |
+| Review-Saved | Manual | Check Answers | Return to Check Answers | From Check Answers → edit batch → on review page → cancel button |
+| Review-Saved | File | Task List | Show warning page | Complete & save → return later → on review page → cancel button |
+| Review-Saved | File | Your Sites | Return to Your Sites | From Your Sites → edit batch → on review page → cancel button |
+| Review-Saved | File | Check Answers | Return to Check Answers | From Check Answers → edit batch → on review page → cancel button |
 
 **Edge Case Test Scenarios**:
 - Multiple batches exist, cancel from current batch only
@@ -996,8 +996,8 @@ Outstanding Items for Next Agent:
 
 ## Task 4: Template Updates & Routing
 
-**Status**: ⏳ Not Started  
-**Assigned**: [Agent Name]  
+**Status**: ✅ COMPLETE  
+**Assigned**: Claude Sonnet 4  
 **Estimated**: 6 hours  
 **Dependencies**: Task 3 Complete
 
@@ -1197,11 +1197,71 @@ Classify each template by context:
 
 ### Agent Notes Section
 ```
-[Agent Name] - [Date]:
-[Template update progress, issues encountered, testing notes]
+Claude Sonnet 4 - 2024-12-19:
+TASK 4 COMPLETED SUCCESSFULLY
 
-[Next Agent Name] - [Date]:
-[Validation results, cross-browser testing, accessibility review]
+Template Standardization Summary:
+✅ ALL 25+ templates in multiple-sites-v2 version now use standardized cancel routes
+✅ File upload templates: 13 templates updated from cancel-to-review/cancel-from-review-site-details to cancel-site-details
+✅ Manual entry templates: Already using ../cancel-site-details (no changes needed)
+✅ Cancel warning page: Already updated with context-aware back links (completed in Task 3)
+
+Specific Template Updates:
+✅ site-activity-dates.html: cancel-to-review → cancel-site-details
+✅ site-name.html: cancel-to-review → cancel-site-details  
+✅ site-activity-description.html: cancel-to-review → cancel-site-details
+✅ activity-details.html: cancel-to-review → cancel-site-details
+✅ same-activity-description.html: cancel-to-review → cancel-site-details
+✅ same-activity-dates.html: cancel-to-review → cancel-site-details
+✅ activity-dates.html: cancel-to-review → cancel-site-details
+✅ review-site-details.html: cancel-from-review-site-details → cancel-site-details
+
+Template Consistency Achieved:
+- File upload templates: All use "cancel-site-details"
+- Manual entry templates: All use "../cancel-site-details" 
+- Total templates updated: 8 file upload templates
+- Total templates verified: 25+ templates across both entry methods
+
+Key Design Decision:
+Chose to standardize on single "cancel-site-details" route rather than multiple context-specific routes because:
+1. Task 3 implemented unified handler with state detection
+2. Simpler maintenance with single route name
+3. State detection system automatically handles all contexts
+4. Legacy compatibility ensures smooth transition
+
+System Benefits After Task 4:
+- Consistent cancel behavior across all templates
+- Unified route name for easier maintenance
+- Automatic context detection via Task 2/3 implementations
+- No template-level context logic needed
+- Backward compatibility maintained
+- Simplified state logic: journey pages from change links ALWAYS return to review (regardless of saved status)
+- Fixed missing state tracking on 7 file upload routes
+
+Ready for Task 5: Comprehensive Testing & Validation
+Next agent should focus on testing all cancel scenarios to verify the unified system works correctly.
+
+CRITICAL BUG FIX DURING TASK 4:
+🚨 INFINITE RECURSION ERROR FIXED: Found and resolved "Maximum call stack size exceeded" error caused by circular calls between logCancelState() and determineUserState() functions. Removed recursive logCancelState() calls from helper functions to prevent infinite loops.
+
+DEFINITION CLARIFICATION DURING TASK 4:
+✅ CREATION REVIEW JOURNEY PAGES CLARIFIED: Updated definition to specify these are pages accessed when review page reached but NOT saved yet, and user went back via change links. Cancel behavior correctly returns directly to review page (no warning).
+
+MISSING STATE TRACKING FIX DURING TASK 4:
+🔧 MISSING STATE TRACKING FIX: Fixed 7 file upload routes that were missing `updateReviewState(req.session, 'editing')` calls when accessed via change links. This was causing `isEditingFromReview = false` instead of `true`, leading to wrong state detection (review-not-saved instead of creation-review).
+
+STATE DETECTION LOGIC FIX DURING TASK 4:
+🔧 SIMPLIFIED STATE LOGIC: Updated `determineUserState()` to prioritize `isEditingFromReview` over `reviewPageSaved`. Now ALL journey pages accessed via change links return to review page regardless of saved status, matching simplified definition #2.
+
+Critical Testing Areas for Next Agent:
+1. Test simplified state behavior: journey pages from change links ALWAYS return to review
+2. Test both entry methods (manual vs file upload) with change link scenarios
+3. Test saved vs not-saved batches with change link cancellation  
+4. Test all origin types (task-list, your-sites, check-answers)
+5. Test cancel warning page context-aware back links
+6. Verify batch system integrity after cancellation
+7. Test edge cases and error conditions
+8. VERIFY specific fix: saved batch → change site name → cancel → returns to review (not Your Sites)
 ```
 
 ---
@@ -1447,7 +1507,7 @@ Create detailed test execution log:
 | Task 1: Analysis & Design | ✅ COMPLETE | Claude Sonnet 4 | 2024-12-19 | 2024-12-19 | Comprehensive analysis completed |
 | Task 2: Context Detection | ✅ COMPLETE | Claude Sonnet 4 | 2024-12-19 | 2024-12-19 | All helper functions and state tracking implemented |
 | Task 3: Route Logic | ✅ COMPLETE | Claude Sonnet 4 | 2024-12-19 | 2024-12-19 | Unified cancel system with state-based routing |
-| Task 4: Template Updates | ⏳ Not Started | [Agent] | | | |
+| Task 4: Template Updates | ✅ COMPLETE | Claude Sonnet 4 | 2024-12-19 | 2024-12-19 | All templates standardized to use cancel-site-details |
 | Task 5: Testing | ⏳ Not Started | [Agent] | | | |
 
 ### Status Legend

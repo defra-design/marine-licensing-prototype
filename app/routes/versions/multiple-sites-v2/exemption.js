@@ -709,6 +709,7 @@ router.get('/' + version + section + 'activity-dates', function (req, res) {
     // Check if we're returning from review-site-details
     if (req.query.returnTo === 'review-site-details') {
         req.session.data['fromReviewSiteDetails'] = 'true';
+        updateReviewState(req.session, 'editing');
     }
     
     res.render(version + section + 'activity-dates');
@@ -728,6 +729,7 @@ router.get('/' + version + section + 'activity-details', function (req, res) {
     // Check if we're returning from review-site-details
     if (req.query.returnTo === 'review-site-details') {
         req.session.data['fromReviewSiteDetails'] = 'true';
+        updateReviewState(req.session, 'editing');
     }
 
     res.render(version + section + 'activity-details');
@@ -1458,16 +1460,15 @@ function determineUserState(session) {
     const reviewSaved = session.data['reviewPageSaved'];
     const isEditing = session.data['isEditingFromReview'];
     
-    logCancelState(session, 'determineUserState');
-    
     if (!reviewVisited) {
         console.log('🔍 State Detection: CREATION (review page not visited)');
         return 'creation'; // Pages before review page reached
     }
     
-    if (reviewVisited && isEditing && !reviewSaved) {
-        console.log('🔍 State Detection: CREATION-REVIEW (editing from review, not saved)');
-        return 'creation-review'; // Back from review for editing, not yet saved
+    // NEW LOGIC: If editing from review (change link), ALWAYS return to review regardless of saved status
+    if (reviewVisited && isEditing) {
+        console.log('🔍 State Detection: CREATION-REVIEW (editing from review via change link)');
+        return 'creation-review'; // Back from review for editing - saved status doesn't matter
     }
     
     if (reviewVisited && !reviewSaved) {
@@ -1476,8 +1477,8 @@ function determineUserState(session) {
     }
     
     if (reviewVisited && reviewSaved) {
-        console.log('🔍 State Detection: REVIEW-SAVED (review page previously saved, now editing)');
-        return 'review-saved'; // Review page previously saved, now editing
+        console.log('🔍 State Detection: REVIEW-SAVED (review page previously saved, not editing)');
+        return 'review-saved'; // Review page previously saved, not editing
     }
     
     console.log('🔍 State Detection: CREATION (fallback)');
@@ -1509,8 +1510,6 @@ function setOriginContext(session, origin) {
         delete session.data['camefromcheckanswers'];
         delete session.data['fromReviewSiteDetails'];
     }
-    
-    logCancelState(session, 'setOriginContext - ' + origin);
 }
 
 /**
@@ -1540,8 +1539,6 @@ function updateReviewState(session, action) {
             // Don't change saved state - preserve existing value
             break;
     }
-    
-    logCancelState(session, 'updateReviewState - ' + action);
 }
 
 /**
@@ -1589,7 +1586,7 @@ function logCancelState(session, context) {
 function clearCurrentBatchSafely(session) {
     const currentBatchId = session.data['currentBatchId'];
     
-    logCancelState(session, 'clearCurrentBatchSafely - entry');
+    console.log('🗑️ clearCurrentBatchSafely - entry - currentBatchId:', currentBatchId);
     
     if (!currentBatchId) {
         console.log('ℹ️ No current batch to clear - this is normal for direct URL access');
@@ -1645,7 +1642,7 @@ function clearCurrentBatchSafely(session) {
     // Update task status based on remaining batches
     updateTaskStatusAfterClear(session);
     
-    logCancelState(session, 'clearCurrentBatchSafely - completed');
+    console.log('🗑️ clearCurrentBatchSafely - completed');
 }
 
 /**
@@ -1990,6 +1987,7 @@ router.get('/' + version + section + 'same-activity-dates', function (req, res) 
     // Check if we're returning from review-site-details
     if (req.query.returnTo === 'review-site-details') {
         req.session.data['fromReviewSiteDetails'] = 'true';
+        updateReviewState(req.session, 'editing');
     }
     
     res.render(version + section + 'same-activity-dates');
@@ -2079,6 +2077,7 @@ router.get('/' + version + section + 'same-activity-description', function (req,
     // Check if we're returning from review-site-details
     if (req.query.returnTo === 'review-site-details') {
         req.session.data['fromReviewSiteDetails'] = 'true';
+        updateReviewState(req.session, 'editing');
     }
     
     res.render(version + section + 'same-activity-description');
@@ -2094,6 +2093,7 @@ router.get('/' + version + section + 'site-name', function (req, res) {
     // Check if we're returning from review-site-details
     if (req.query.return && req.query.return.includes('site-')) {
         req.session.data['fromReviewSiteDetails'] = 'true';
+        updateReviewState(req.session, 'editing');
     }
     
     // Store the return parameter for redirecting back later
@@ -2204,6 +2204,7 @@ router.get('/' + version + section + 'site-activity-dates', function (req, res) 
     // Check if we're returning from review-site-details
     if (req.query.return && req.query.return.includes('site-')) {
         req.session.data['fromReviewSiteDetails'] = 'true';
+        updateReviewState(req.session, 'editing');
     }
     
     // If we have a site query parameter, set the active site
@@ -2337,6 +2338,7 @@ router.get('/' + version + section + 'site-activity-description', function (req,
     // Check if we're returning from review-site-details
     if (req.query.return && req.query.return.includes('site-')) {
         req.session.data['fromReviewSiteDetails'] = 'true';
+        updateReviewState(req.session, 'editing');
     }
     
     // If we have a site query parameter, set the active site
