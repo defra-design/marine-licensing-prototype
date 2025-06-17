@@ -11,7 +11,6 @@
     
 {% endblock %}
 
-
 {% set pageHeadingTextHTML %}
   {% if data['applicationSubmitted'] == "true" %}
     {{ data['exemption-project-name-text-input'] }}
@@ -41,7 +40,6 @@
     <h1 class="govuk-heading-l">
       {{ pageHeadingTextHTML }}
     </h1>
-
 
     {% if data['applicationSubmitted'] == "true" %}
     <!--Don't display Project details at all as the name is the H1-->
@@ -77,7 +75,6 @@
     </div>
     <!-- End of project details -->
     {% endif %}
-
 
     <!-- Start of dates -->
     <div class="govuk-summary-card">
@@ -141,8 +138,7 @@
     </dl>
       </div>
     </div>
-    
-   
+
      <!-- Start of activity details -->
      <div class="govuk-summary-card">
       <div class="govuk-summary-card__title-wrapper">
@@ -228,7 +224,6 @@
        </dd>
      </div>
 
-
     <!-- Show scientific samples scenario details -->
     {% elif data['exemption'] == "sample-notification" %}
       
@@ -259,7 +254,6 @@
         </dd>
       </div>
 
-  
       <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
       <dt class="govuk-summary-list__key">
         Why this activity is exempt
@@ -276,8 +270,7 @@
       </dt>
       <dd class="govuk-summary-list__value">
         <p><a href="/public/downloads/notification-sample-answers.pdf" rel="noreferrer noopener" target="_blank">Download a copy of your answers (PDF)</a></p>  
-        
-          
+
               <p>If you need to change any of your 'Check if you need a marine licence' answers</p>
 
               <ol class="govuk-list govuk-list--number">
@@ -288,7 +281,6 @@
       </dd>
     </div>
 
-        
     {% endif %}
   </dl>
     </div>
@@ -395,7 +387,6 @@
   </dd>
 </div>
 
-
 <div class="govuk-summary-list__row">
   <dt class="govuk-summary-list__key">
     Coordinate system
@@ -496,7 +487,6 @@
 </div>
 </dl>   
 
-
 <!-- Display the correct map depending on the scenario - will default to the pontoon if no data available -->
 {% if (data['exemption'] == "pontoon-approval" or data['exemption'] == "pontoon-notification" or data['exemption'] == "") %}
 <img src="/public/images/pontoon-map-square.jpg" alt="Map view" style="width: 100%;">
@@ -504,7 +494,6 @@
 {% elif data['exemption'] == "sample-notification" %}
 <img src="/public/images/worthing-map-square.jpg" alt="Map view" style="width: 100%;">
 {% endif %}
-
 
 <!-- End of square -->
 
@@ -613,19 +602,13 @@
 <!-- End of entering square or circle coordinates -->
 {% endif %}  
 
-
 <!-- End of enter coordinates manually -->
-
 
 <!-- Closing summary card divs and button - common to all -->
 </div>
 </div>
 
     <!-- End of site details -->
-
-
-
-
 
   <div class="govuk-summary-card">
     <div class="govuk-summary-card__title-wrapper">
@@ -685,9 +668,6 @@
   
 {% endif %}
 
-  
       </form>
-
-
 
 {% endblock %}

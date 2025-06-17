@@ -5,7 +5,6 @@
 {% include "../includes/back-link.html" %}
 {% endblock %}
 
-
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
     Activity description
@@ -19,7 +18,6 @@
     {% endif %}
 {% endset %}
 
-
 <!-- Text that show in the browser tab. Does NOT need changing -->
 {% block pageTitle %}
     {% if  data['errorthispage'] == "true"  %}
@@ -28,8 +26,6 @@
 
     {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
 {% endblock %}
-
-
 
 {% block content %}
 <div class="govuk-grid-row">
@@ -54,7 +50,6 @@
 
         <!-- go to routes.js for routing  -->
         <form action="about-your-activity-router" method="post" novalidate>
-
 
             <div class="govuk-form-group {% if data['errorthispage'] == 'true' and data['errortypeone'] == 'true' %}govuk-form-group--error{% endif %}">
                 <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
@@ -93,10 +88,9 @@
     </div>
 </div>
 
-
 <!-- ERROR LOGIC  drop down to toggle states  -->
 <!-- Best thing to do would be to replace 'errorthispage', 'errortypeone' and 'errortypetwo' with novel name for this page  -->
-<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-225px;  ">
+<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-325px; padding-bottom: 30px;  ">
 
     <select style="height:30px;" onchange="window.location.href='?'+this.value">
 
@@ -113,33 +107,5 @@
 </form>
 <!--  END OF ERROR LOGIC -->
 
-
-<!-- USER TYPE TOGGLE  -->
-<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-225px;  ">
-
-  <select style="height:30px;" onchange="window.location.href='?'+this.value">
-
-    <option value="user=citizen&"
-            {% if  data['user'] != "agent"  %} selected {% endif %}
-    >User type - Individual</option>
-
-    <option value="user=agent&"
-            {% if  data['user'] == "agent"  %} selected {% endif %}
-    >User type - Agent</option>
-
-  </select>
-
-</form>
-<!--  END USER TYPE TOGGLE -->
-
-
-
-
-
-
 {% endblock %}
-
-
-
-
 

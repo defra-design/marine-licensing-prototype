@@ -5,12 +5,10 @@
     {% include "../includes/back-link.html" %}
 {% endblock %}
 
-
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
 Enter multiple sets of coordinates to mark the boundary of the site
 {% endset %}
-
 
 <!-- Set the text for each error type -->
 <!-- Set the text for each error type -->
@@ -19,7 +17,6 @@ Enter multiple sets of coordinates to mark the boundary of the site
       Enter the latitude and longitude coordinates
     {% endif %}
 {% endset %}
-
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
 {% block pageTitle %}
@@ -30,12 +27,9 @@ Enter multiple sets of coordinates to mark the boundary of the site
     {{ pageHeadingTextHTML }}
 {% endblock %}
 
-
-
 {% block content %}
 <div class="govuk-grid-row">
     <div class="multiple-coordinates-column govuk-grid-column-three-quarters">
-
 
         <!-- ERROR LOGIC 'error summary' -->
         {% if data['errorthispage'] == "true" %}
@@ -56,7 +50,6 @@ Enter multiple sets of coordinates to mark the boundary of the site
         {% endif %}
         <!--  END OF 'error summary' -->
 
-
         <h1 class="govuk-heading-l">
             {{ pageHeadingTextHTML }}
         </h1>
@@ -70,7 +63,6 @@ Enter multiple sets of coordinates to mark the boundary of the site
         <p class="govuk-hint">Eastings and northings should only include numbers. For example: 123456</p>
 
         {% endif %}
-        
 
         <!-- go to routes.js for routing  -->
         <form action="enter-multiple-coordinates-router-v1" method="post" novalidate>
@@ -96,7 +88,6 @@ Enter multiple sets of coordinates to mark the boundary of the site
                     </dd>
                 </div>
 
-                
                 <div class="govuk-summary-list__row{% if data['error-coordinates-point-1-latitude'] == 'true' or data['error-coordinates-point-1-longitude'] == 'true' %} coordinate-row-error{% endif %}">
                       <dt class="govuk-summary-list__key govuk-!-font-weight-regular">
                         Start and end point
@@ -311,7 +302,6 @@ Enter multiple sets of coordinates to mark the boundary of the site
 
             <p class="govuk-!-margin-bottom-7"><a href="#" class="add-point-link govuk-link--no-visited-state">Add another point</a></p>
 
-
             <div class="govuk-button-group">
                 {{ govukButton({
                   text: "Save and continue"
@@ -323,10 +313,9 @@ Enter multiple sets of coordinates to mark the boundary of the site
     </div>
 </div>
 
-
 <!-- ERROR LOGIC  drop down to toggle states  -->
 <!-- Best thing to do would be to replace 'errorthispage', 'errortypeone' and 'errortypetwo' with novel name for this page  -->
-<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-225px;  ">
+<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-325px; padding-bottom: 30px;  ">
 
     <select style="height:30px;" onchange="window.location.href='?'+this.value">
 
@@ -355,7 +344,6 @@ Enter multiple sets of coordinates to mark the boundary of the site
 </form>
 
 {% endblock %}
-
 
 {% block pageScripts %}
 <script>
@@ -419,6 +407,4 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 </script>
 {% endblock %}
-
-
 

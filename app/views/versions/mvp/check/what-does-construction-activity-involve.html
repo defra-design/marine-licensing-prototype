@@ -1,11 +1,9 @@
 {% extends "../layouts/main.html" %}
 
-
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
 What does the construction activity involve?
 {% endset %}
-
 
 <!-- Set the text for the error type -->
 {% set errorTextHTML %}
@@ -15,7 +13,6 @@ What does the construction activity involve?
     {% endif %}
 {% endset %}
 
-
 <!-- Text that show in the browser tab. Does NOT need changing -->
 {% block pageTitle %}
     {% if  data['errorthispage'] == "true"  %}
@@ -24,7 +21,6 @@ What does the construction activity involve?
 
     {{ pageHeadingTextHTML }} - {{ data['headerName'] }}
 {% endblock %}
-
 
 {% block content %}
 <div class="govuk-grid-row">
@@ -47,11 +43,9 @@ What does the construction activity involve?
         {% endif %}
         <!--  END OF 'error summary' -->
 
-
         <!-- go to routes.js for routing  -->
         <form action="what-does-construction-activity-involve-router" method="post" novalidate>
 
-            
             <h1 class="govuk-heading-l">
                 {{ pageHeadingTextHTML }}
             </h1>
@@ -114,7 +108,6 @@ What does the construction activity involve?
                 })
             }}
 
-
             {{ govukButton({ text: "Continue" }) }}
 
         </form>
@@ -122,11 +115,8 @@ What does the construction activity involve?
     </div>
 </div>
 
-
-
-
 <!-- ERROR LOGIC  drop down to toggle states  -->
-<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-225px;  ">
+<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-325px; padding-bottom: 30px;  ">
 
     <select style="height:30px;" onchange="window.location.href='?'+this.value">
 
@@ -143,30 +133,5 @@ What does the construction activity involve?
 </form>
 <!--  END OF ERROR LOGIC -->
 
-
-
-<!-- USER TYPE TOGGLE  -->
-<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-225px;  ">
-
-    <select style="height:30px;" onchange="window.location.href='?'+this.value">
-
-        <option value="user=citizen&"
-                {% if  data['user'] != "agent"  %} selected {% endif %}
-        >User type - Individual</option>
-
-        <option value="user=agent&"
-                {% if  data['user'] == "agent"  %} selected {% endif %}
-        >User type - Agent</option>
-
-    </select>
-
-</form>
-<!--  END USER TYPE TOGGLE -->
-
-
-
-
-
 {% endblock %}
-
 

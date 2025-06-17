@@ -1,11 +1,9 @@
 {% extends "../layouts/main.html" %}
 
-
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
 Do you have harbour authority consent to build a pontoon? 
 {% endset %}
-
 
 <!-- Set the text for the error type -->
 {% set errorTextHTML %}
@@ -15,7 +13,6 @@ Do you have harbour authority consent to build a pontoon? 
     {% endif %}
 {% endset %}
 
-
 <!-- Text that show in the browser tab. Does NOT need changing -->
 {% block pageTitle %}
     {% if  data['errorthispage'] == "true"  %}
@@ -24,7 +21,6 @@ Do you have harbour authority consent to build a pontoon? 
 
     {{ pageHeadingTextHTML }} - {{ data['headerName'] }}
 {% endblock %}
-
 
 {% block content %}
 <div class="govuk-grid-row">
@@ -47,11 +43,9 @@ Do you have harbour authority consent to build a pontoon? 
         {% endif %}
         <!--  END OF 'error summary' -->
 
-
         <!-- go to routes.js for routing  -->
         <form action="do-you-have-harbour-authority-consent-router" method="post" novalidate>
 
-            
             <h1 class="govuk-heading-l">
                 {{ pageHeadingTextHTML }}
             </h1>
@@ -97,7 +91,6 @@ Do you have harbour authority consent to build a pontoon? 
                 })
             }}
 
-
             {{ govukButton({ text: "Continue" }) }}
 
         </form>
@@ -105,11 +98,8 @@ Do you have harbour authority consent to build a pontoon? 
     </div>
 </div>
 
-
-
-
 <!-- ERROR LOGIC  drop down to toggle states  -->
-<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-225px;  ">
+<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-325px; padding-bottom: 30px;  ">
 
     <select style="height:30px;" onchange="window.location.href='?'+this.value">
 
@@ -126,30 +116,5 @@ Do you have harbour authority consent to build a pontoon? 
 </form>
 <!--  END OF ERROR LOGIC -->
 
-
-
-<!-- USER TYPE TOGGLE  -->
-<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-225px;  ">
-
-    <select style="height:30px;" onchange="window.location.href='?'+this.value">
-
-        <option value="user=citizen&"
-                {% if  data['user'] != "agent"  %} selected {% endif %}
-        >User type - Individual</option>
-
-        <option value="user=agent&"
-                {% if  data['user'] == "agent"  %} selected {% endif %}
-        >User type - Agent</option>
-
-    </select>
-
-</form>
-<!--  END USER TYPE TOGGLE -->
-
-
-
-
-
 {% endblock %}
-
 
