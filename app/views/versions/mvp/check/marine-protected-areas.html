@@ -1,6 +1,5 @@
 {% extends "../layouts/main.html" %}
 
-
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
 Will the activity take place within 200 metres of a marine protected area (MPA)?
@@ -16,7 +15,6 @@ Will the activity take place within 200 metres of a marine protected area (MPA)?
 Will the removal activity take place within 200 metres of an MPA?
 {% endset %}
 
-
 <!-- Set the text for the error type -->
 {% set errorTextHTML %}
     <!-- Nothing was selected -->
@@ -24,7 +22,6 @@ Will the removal activity take place within 200 metres of an MPA?
     Select whether the removal activity will take place within 200 metres of an MPA 
     {% endif %}
 {% endset %}
-
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
 {% block pageTitle %}
@@ -34,7 +31,6 @@ Will the removal activity take place within 200 metres of an MPA?
 
     {{ pageHeadingTextHTML }} - {{ data['headerName'] }}
 {% endblock %}
-
 
 {% block content %}
 <div class="govuk-grid-row">
@@ -57,15 +53,12 @@ Will the removal activity take place within 200 metres of an MPA?
         {% endif %}
         <!--  END OF 'error summary' -->
 
-
         <!-- go to routes.js for routing  -->
         <form action="marine-protected-areas-router" method="post" novalidate>
 
-            
             <h1 class="govuk-heading-l">
                 {{ pageHeadingTextHTML }}
             </h1>
-
 
             <p>MPAs are designated areas of the sea protected from harmful human activity. Any activity within 200 metres of an MPA may need a marine licence. </p>
 			
@@ -106,7 +99,6 @@ Will the removal activity take place within 200 metres of an MPA?
                 })
             }}
 
-
             {{ govukButton({ text: "Continue" }) }}
 
         </form>
@@ -114,11 +106,8 @@ Will the removal activity take place within 200 metres of an MPA?
     </div>
 </div>
 
-
-
-
 <!-- ERROR LOGIC  drop down to toggle states  -->
-<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-225px;  ">
+<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-325px; padding-bottom: 30px;  ">
 
     <select style="height:30px;" onchange="window.location.href='?'+this.value">
 
@@ -135,30 +124,5 @@ Will the removal activity take place within 200 metres of an MPA?
 </form>
 <!--  END OF ERROR LOGIC -->
 
-
-
-<!-- USER TYPE TOGGLE  -->
-<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-225px;  ">
-
-    <select style="height:30px;" onchange="window.location.href='?'+this.value">
-
-        <option value="user=citizen&"
-                {% if  data['user'] != "agent"  %} selected {% endif %}
-        >User type - Individual</option>
-
-        <option value="user=agent&"
-                {% if  data['user'] == "agent"  %} selected {% endif %}
-        >User type - Agent</option>
-
-    </select>
-
-</form>
-<!--  END USER TYPE TOGGLE -->
-
-
-
-
-
 {% endblock %}
-
 

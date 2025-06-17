@@ -15,8 +15,6 @@
     {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
 {% endblock %}
 
-
-
 {% block head %}
 
     {% block meta %}
@@ -70,7 +68,6 @@
 
 {% endblock %}
 
-
 {% block bodyStart  %}
     <!-- Note the API is 4.29.  Not the older 3.x versions -->
     <script src="https://js.arcgis.com/4.29/"></script>
@@ -99,7 +96,6 @@
             {
                 esriConfig.apiKey = "AAPKedc23daa59aa4eeab0f7386312c93126RlZvJKZdkWMlQEKnl8gAyqZrxlr3Ume2Uu-kErVgL8wpHBP7GpUHr8MdjHRYY_il";
 
-
                 /*  Selecting the two types of maps for users  */
                 /*  IF users seelect satalite the they get that map loaded */
                 /*  IF users select map we show them the full colour detailed Open Street Map */
@@ -113,7 +109,6 @@
                             {% endif %}
                         }
                     );
-
 
                 const view =
                     new MapView(
@@ -134,7 +129,6 @@
                                  zoom: 5, // Zoom level
                             {% endif %}
 
-
                             container: "viewDiv", // Div element of the map
                             constraints:
                             {
@@ -152,8 +146,6 @@
                     }
                 );
 
-
-
                 // Scale bar at the bottom
                 const scaleBar = new ScaleBar
                 (
@@ -163,21 +155,15 @@
                     }
                 );
 
-
-
                 // Add the widget to the bottom left corner of the view
                 view.ui.add(scaleBar,
                 {
                     position: "bottom-left"
                 });
 
-
-
                 // add a GraphicsLayer for the user's sketches
                 const sketchLayer = new GraphicsLayer();
                 view.map.add(sketchLayer);
-
-
 
                 // use SketchViewModel to draw polygons that are used as a filter
                 let sketchGeometry = null;
@@ -219,7 +205,6 @@
                         }
                     },
 
-
                     // Stopping the shape being modified after the user has created it
                     defaultUpdateOptions:
                     {
@@ -230,7 +215,6 @@
                         "toggleToolOnClick": false
                     },
 
-
                     // Setting the interactions to 2D.  ARCgis allows 3D but we have no need for that.
                     defaultCreateOptions:
                     {
@@ -238,10 +222,8 @@
                     }
                 });
 
-
                 // set up the type of shape being drawn
                 var geometryType = null;
-
 
                 // Set the type of shape based on what the user selected
                 {% if data['sites-line-or-polygon-radios'] == "Line" %}
@@ -250,25 +232,20 @@
                     geometryType = "polygon";
                 {% endif %}
 
-
                 // Start a new model with the same geometry type
                 sketchViewModel.create(geometryType);
-
 
                 // Knowing if the drawing has been completed
                 let drawingCompleted = false;
 
-
                 // Creating this array for saving each of the clicked coordinate pairs
                 let stringofcoordinates = [];
-
 
                 // Tooltip black background width set to 180 based on initial text width needed
                 let widthOfTooltipDiv = 180;
 
                 // A variable to count the number of point the user has clicked
                 var verticescount = 0;
-
 
                 // Run whenever the mouse moves on the map
                 view.on("pointer-move", function(event)
@@ -297,7 +274,6 @@
                         customText.style.left = (x - (widthOfTooltipDiv/2 + 10) ) + "px";
                         customText.style.top = (y - 80) + "px";
 
-
                         // Update the coordinates show below the map
                         var point = view.toMap(event);
                         // map needs adjustment from mercator projection to get lat and long
@@ -319,8 +295,6 @@
 
                 });
 
-
-
                 // When the user moves their cursor/mouse off the map
                 view.on("pointer-leave", function(event)
                 {
@@ -336,8 +310,6 @@
                     latitudeText.textContent = "";
                     longitudeText.textContent = "";
                 });
-
-
 
                 // Run whenever a new point is drawn by the user
                 sketchViewModel.on(["create"], (event) =>
@@ -399,8 +371,6 @@
 
                 });
 
-
-
                 // Don't allow the user to update the drawing after they've finished drawing it
                 sketchViewModel.on(["update"], (event) =>
                 {
@@ -412,8 +382,6 @@
                         sketchViewModel.cancel();
                     }
                 });
-
-
 
                 // Connect the start over again button to the remove functionality
                 document.getElementById("clearFilter").addEventListener("click", clearFilter);
@@ -439,8 +407,6 @@
                     // Wipe the record of added points
                     stringofcoordinates = [];
                 }
-
-
 
                 // Removed the most recent point clicked
                 // Undo button
@@ -481,16 +447,12 @@
 
                 }
 
-
-
                 // Zoom in connected to the grey gov button
                 document.getElementById("zoomIn").onclick = zoominmap;
                 function zoominmap()
                 {
                     zoom.zoomIn();
                 }
-
-
 
                 // Zoom out connected to the grey gov button
                 document.getElementById("zoomOut").onclick = zoomoutmap;
@@ -499,14 +461,10 @@
                     zoom.zoomOut();
                 }
 
-
             }
         );
     </script>
 {% endblock %}
-
-
-
 
 {% block content %}
 
@@ -517,7 +475,6 @@
             <h1 class="govuk-heading-l">
                 {{ pageHeadingTextHTML }}
             </h1>
-
 
                 <p class="map-help-desktop">You must draw 3 or more points.<br>To move the map click and drag or use the arrow keys on your keyboard.</p>
 
@@ -536,7 +493,6 @@
                         Tap again or double tap to complete.
                     </div>
                   </details>
-                
 
             <!--  The 4 buttons above the map  -->
             <div class="button-container" style="display: flex; justify-content: space-between;  align-items: center;">
@@ -574,7 +530,6 @@
                         Zoom in
                     </button>
 
-
                     <button type=""
                             class="govuk-button govuk-button--secondary  govuk-!-padding-left-3 "
                             data-module="govuk-button"
@@ -586,21 +541,17 @@
 
             </div>
 
-
             <!--  The div which holds the map  -->
             <div class="govuk-!-margin-bottom-3" id="viewDiv" style="width: 100%; height: 350px;"></div>
-
 
             <!-- The floating tooltip/hint text  -->
             <!-- This does NOT factor in the needs of mobile users  -->
             <div id="customText">Click to start drawing</div>
 
-
             <!-- Shows the latitude and longitude of the mouse while drawing -->
             <!--  Javascript needs updating so it also shows these after drawing -->
             <p>Latitude: <span id="latitudeupdate"></span>
             <br>Longitude: <span id="longitudupdate"></span></p>
-
 
             <form action="review-location" method="post" novalidate >
 
@@ -631,7 +582,5 @@
 
     </div>
 
-
 {% endblock %}
-
 

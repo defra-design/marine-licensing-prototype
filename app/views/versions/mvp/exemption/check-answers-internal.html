@@ -21,7 +21,6 @@
     
 {% endblock %}
 
-
 <!-- Text that show in the browser tab. Does NOT need changing -->
 {% block pageTitle %}
     {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
@@ -166,7 +165,6 @@
   
       <dl class="govuk-summary-list">
 
-        
         <div class="govuk-summary-list__row">
           <dt class="govuk-summary-list__key">
             Description of activity
@@ -197,7 +195,6 @@
           </dd>
         </div>
 
-
         <!-- Show scientific samples scenario details -->
         {% elif data['exemption'] == "sample-notification" %}
           
@@ -222,7 +219,6 @@
 
         {% endif %}
 
-
       {% if data['applicationSubmitted'] == "true" %}
 
       {% else %}
@@ -233,16 +229,12 @@
         <li>restart the process by <a href="#">checking if you need a marine licence</a></li>
       </ul>
       {% endif %}
-      
-      
 
     </dl>
       </div>
     </div>
     <!-- End of activity details -->
 
-    
-   
     <!-- Start of site details -->
 
 <!-- Common to all coordinates -->
@@ -344,7 +336,6 @@
   </dd>
 </div>
 
-
 <div class="govuk-summary-list__row">
   <dt class="govuk-summary-list__key">
     Coordinate system
@@ -445,7 +436,6 @@
 </div>
 </dl>   
 
-
 <!-- Display the correct map depending on the scenario - will default to the pontoon if no data available -->
 {% if (data['exemption'] == "pontoon-approval" or data['exemption'] == "pontoon-notification" or data['exemption'] == "") %}
 <img src="/public/images/pontoon-map-square.jpg" alt="Map view" style="width: 100%;">
@@ -453,7 +443,6 @@
 {% elif data['exemption'] == "sample-notification" %}
 <img src="/public/images/worthing-map-square.jpg" alt="Map view" style="width: 100%;">
 {% endif %}
-
 
 <!-- End of square -->
 
@@ -562,19 +551,13 @@
 <!-- End of entering square or circle coordinates -->
 {% endif %}  
 
-
 <!-- End of enter coordinates manually -->
-
 
 <!-- Closing summary card divs and button - common to all -->
 </div>
 </div>
 
     <!-- End of site details -->
-
-
-
-
 
   <div class="govuk-summary-card">
     <div class="govuk-summary-card__title-wrapper">
@@ -634,7 +617,6 @@
   
 {% endif %}
 
-  
       </form>
 </div>
 </div>

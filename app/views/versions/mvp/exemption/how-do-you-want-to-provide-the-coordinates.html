@@ -5,12 +5,10 @@
     {% include "../includes/back-link.html" %}
 {% endblock %}
 
-
 <!-- Setting the smaller secondary heading lower down the page -->
 {% set pageHeadingTextHTML %}
 How do you want to provide the site location?
 {% endset %}
-
 
 <!-- Set the text for the error type -->
 {% set errorTextHTML %}
@@ -18,7 +16,6 @@ How do you want to provide the site location?
     Select how you want to provide the coordinates
     {% endif %}
 {% endset %}
-
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
 {% block pageTitle %}
@@ -28,7 +25,6 @@ How do you want to provide the site location?
 
     {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
 {% endblock %}
-
 
 {% block content %}
 <div class="govuk-grid-row">
@@ -50,7 +46,6 @@ How do you want to provide the site location?
             }}
         {% endif %}
         <!--  END OF 'error summary' -->
-
 
         <!-- go to routes.js for routing  -->
 
@@ -114,11 +109,8 @@ How do you want to provide the site location?
     </div>
 </div>
 
-
-
-
 <!-- ERROR LOGIC  drop down to toggle states  -->
-<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-225px;  ">
+<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-325px; padding-bottom: 30px;  ">
 
     <select style="height:30px;" onchange="window.location.href='?'+this.value">
 
@@ -135,30 +127,5 @@ How do you want to provide the site location?
 </form>
 <!--  END OF ERROR LOGIC -->
 
-
-
-<!-- USER TYPE TOGGLE  -->
-<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-225px;  ">
-
-    <select style="height:30px;" onchange="window.location.href='?'+this.value">
-
-        <option value="user=citizen&"
-                {% if  data['user'] != "agent"  %} selected {% endif %}
-        >User type - Individual</option>
-
-        <option value="user=agent&"
-                {% if  data['user'] == "agent"  %} selected {% endif %}
-        >User type - Agent</option>
-
-    </select>
-
-</form>
-<!--  END USER TYPE TOGGLE -->
-
-
-
-
-
 {% endblock %}
-
 
