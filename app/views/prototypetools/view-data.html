@@ -1,5 +1,6 @@
 {% extends "layouts/main.html" %}
 
+{% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% block content %}
 <div class="govuk-grid-row">
@@ -9,26 +10,105 @@
       View session data
     </h1>
 
+    <h2 class="govuk-heading-m govuk-!-margin-top-6">
+      Share this prototype state
+    </h2>
+    <p class="govuk-body">
+      Use these tools to share the current state of the prototype with others. The state parameter contains all form data, progress, and settings.
+    </p>
+
+    <div class="govuk-button-group govuk-!-margin-bottom-4">
+      {{ govukButton({
+        text: "Copy parameter and URL",
+        classes: "govuk-button--secondary",
+        attributes: {
+          onclick: "copyFullUrl()"
+        }
+      }) }}
+
+      {{ govukButton({
+        text: "Copy parameter only",
+        classes: "govuk-button--secondary",
+        attributes: {
+          onclick: "copyParameterOnly()"
+        }
+      }) }}
+    </div>
+
+    <div class="govuk-inset-text">
+      <strong>Parameter:</strong><br>
+      <code id="state-parameter" style="word-break: break-all;">?{{ querystring }}</code>
+    </div>
+
+    <h2 class="govuk-heading-m govuk-!-margin-top-9">
+      Raw session data
+    </h2>
 
     <pre class="govuk-!-margin-bottom-9">
          {{data}}
     </pre>
 
+    <script>
+      function copyFullUrl() {
+        const referrer = document.referrer || window.location.origin;
+        const baseUrl = referrer.split('?')[0]; // Remove any existing query params
+        const parameter = document.getElementById('state-parameter').textContent;
+        const fullUrl = baseUrl + parameter;
+        
+        navigator.clipboard.writeText(fullUrl).then(function() {
+          // Show feedback
+          showCopyFeedback('Full URL copied to clipboard');
+        }).catch(function(err) {
+          console.error('Could not copy text: ', err);
+          // Fallback for older browsers
+          fallbackCopy(fullUrl);
+        });
+      }
 
-    <h1 class="govuk-heading-s govuk-!-margin-top-9">
-      Querystring {{ data['gg'] }}
-    </h1>
-    <p>
-      ?{{ querystring }}
-    </p>
+      function copyParameterOnly() {
+        const parameter = document.getElementById('state-parameter').textContent;
+        
+        navigator.clipboard.writeText(parameter).then(function() {
+          // Show feedback
+          showCopyFeedback('Parameter copied to clipboard');
+        }).catch(function(err) {
+          console.error('Could not copy text: ', err);
+          // Fallback for older browsers
+          fallbackCopy(parameter);
+        });
+      }
 
+      function showCopyFeedback(message) {
+        // Create temporary feedback element
+        const feedback = document.createElement('div');
+        feedback.innerHTML = '<div class="govuk-notification-banner govuk-notification-banner--success" role="alert"><div class="govuk-notification-banner__header"><h2 class="govuk-notification-banner__title">Success</h2></div><div class="govuk-notification-banner__content"><p class="govuk-notification-banner__heading">' + message + '</p></div></div>';
+        
+        // Insert at top of page
+        document.body.insertBefore(feedback, document.body.firstChild);
+        
+        // Remove after 3 seconds
+        setTimeout(function() {
+          if (feedback.parentNode) {
+            feedback.parentNode.removeChild(feedback);
+          }
+        }, 3000);
+      }
 
-
-
-
-    <p>
-      <br><br><br><br><br><br>
-    </p>
+      function fallbackCopy(text) {
+        // Fallback for older browsers
+        const textArea = document.createElement('textarea');
+        textArea.value = text;
+        document.body.appendChild(textArea);
+        textArea.select();
+        try {
+          document.execCommand('copy');
+          showCopyFeedback('Copied to clipboard');
+        } catch (err) {
+          console.error('Fallback copy failed: ', err);
+        }
+        document.body.removeChild(textArea);
+      }
+    </script>
 
   </div>
 </div>
