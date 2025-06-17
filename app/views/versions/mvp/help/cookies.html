@@ -1,4 +1,9 @@
-{% extends "layouts/main.html" %}
+{% extends "../layouts/exemption.html" %}
+
+{% block beforeContent %}
+    {% include "../includes/phase-banner.html" %}
+    {% include "../includes/back-link.html" %}
+{% endblock %}
 
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
@@ -7,7 +12,9 @@
 {% block pageTitle %}Cookies on Get permission for marine work{% endblock %}
 
 {% block content %}
-  <h1 class="govuk-heading-l">Cookies on Get permission for marine work</h1>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-l">Cookies on Get permission for marine work</h1>
 
   <p class="govuk-body">Cookies are small files saved on your phone, tablet or computer when you visit a website.</p>
 
@@ -127,4 +134,6 @@
       text: "Save cookie settings"
     }) }}
   </form>
+    </div>
+  </div>
 {% endblock %} 

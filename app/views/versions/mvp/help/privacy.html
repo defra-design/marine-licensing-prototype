@@ -1,9 +1,18 @@
-{% extends "layouts/main.html" %}
+{% extends "../layouts/exemption.html" %}
+
+{% block beforeContent %}
+    {% include "../includes/phase-banner.html" %}
+    {% include "../includes/back-link.html" %}
+{% endblock %}
 
 {% block pageTitle %}Privacy{% endblock %}
 
 {% block content %}
-  <h1 class="govuk-heading-l">Privacy</h1>
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-l">Privacy</h1>
 
-  <p class="govuk-body">[Content TBD]</p>
+      <p class="govuk-body">[Content TBD]</p>
+    </div>
+  </div>
 {% endblock %} 
