@@ -1790,9 +1790,11 @@ router.post('/' + version + section + 'manual-entry/site-width-router', function
     
     // Determine next step
     if (returnTo === 'review-site-details') {
+        // Returning from change link - use anchor to jump to specific site
         res.redirect('/' + version + section + 'manual-entry/review-site-details?site=' + site.globalNumber + '#site-' + site.globalNumber + '-details');
     } else {
-        res.redirect('/' + version + section + 'manual-entry/review-site-details?site=' + site.globalNumber + '#site-' + site.globalNumber + '-details');
+        // Completing site creation - load review page normally at top
+        res.redirect('/' + version + section + 'manual-entry/review-site-details');
     }
 });
 
@@ -2033,6 +2035,13 @@ router.get('/' + version + section + 'manual-entry/add-next-site-router', functi
     // Get next global site number
     const nextGlobalSiteNumber = (req.session.data['globalSiteCounter'] || 0) + 1;
     
+    // EDGE CASE FIX: If batchId is provided (e.g., from back button after saving),
+    // reactivate that batch so the new site gets added to it
+    if (req.query.batchId) {
+        console.log(`🔄 EDGE CASE: Reactivating batch ${req.query.batchId} for site ${nextGlobalSiteNumber}`);
+        req.session.data['currentBatchId'] = req.query.batchId;
+    }
+    
     // Clear any stale session parameters
     delete req.session.data['returnTo'];
     delete req.session.data['fromReviewSiteDetails'];
@@ -2170,9 +2179,11 @@ router.post('/' + version + section + 'manual-entry/enter-multiple-coordinates-r
 
     // Determine next step
     if (returnTo === 'review-site-details') {
+        // Returning from change link - use anchor to jump to specific site
         res.redirect('/' + version + section + 'manual-entry/review-site-details?site=' + site.globalNumber + '#site-' + site.globalNumber + '-details');
     } else {
-        res.redirect('/' + version + section + 'manual-entry/review-site-details?site=' + site.globalNumber + '#site-' + site.globalNumber + '-details');
+        // Completing site creation - load review page normally at top
+        res.redirect('/' + version + section + 'manual-entry/review-site-details');
     }
 });
 
