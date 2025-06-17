@@ -5,7 +5,6 @@
     {% include "../includes/back-link.html" %}
 {% endblock %}
 
-
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
 What are the coordinates of the centre of the square?
@@ -36,12 +35,10 @@ What are the coordinates of the centre of the square?
     {% endif %}
 {% endset %}
 
-
 <!-- Set the text for each error type -->
 {% set errorTextHTML %}
 
 {% endset %}
-
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
 {% block pageTitle %}
@@ -51,8 +48,6 @@ What are the coordinates of the centre of the square?
 
     {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
 {% endblock %}
-
-
 
 {% block content %}
 <div class="govuk-grid-row">
@@ -67,8 +62,7 @@ What are the coordinates of the centre of the square?
     <div class="govuk-error-summary__body">
         <ul class="govuk-list govuk-error-summary__list">
             {% if data['errortypeone'] == "true" %}
-                
-            
+
             {% endif %}
         </ul>
     </div>
@@ -151,16 +145,14 @@ What are the coordinates of the centre of the square?
                 }) }}
             </div>
 
-
         </form>
 
     </div>
 </div>
 
-
 <!-- ERROR LOGIC  drop down to toggle states  -->
 <!-- Best thing to do would be to replace 'errorthispage', 'errortypeone' and 'errortypetwo' with novel name for this page  -->
-<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-225px;  ">
+<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-325px; padding-bottom: 30px;  ">
 
     <select style="height:30px;" onchange="window.location.href='?'+this.value">
 
@@ -176,39 +168,10 @@ What are the coordinates of the centre of the square?
                 {% if  data['errortypeone'] != 'true'  and  data['errortypetwo'] == 'true'  and  data['errortypethree'] != 'true'  and  data['errortypefour'] != 'true'   and data['errortypefive'] != 'true'  and  data['errortypesix'] != 'true'  %}selected{% endif %}
         >Error 2 - No answer entered</option>
 
-
     </select>
 
 </form>
 <!--  END OF ERROR LOGIC -->
 
-
-<!-- USER TYPE TOGGLE  -->
-<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-225px;  ">
-
-  <select style="height:30px;" onchange="window.location.href='?'+this.value">
-
-    <option value="user=citizen&"
-            {% if  data['user'] != "agent"  %} selected {% endif %}
-    >User type - Individual</option>
-
-    <option value="user=agent&"
-            {% if  data['user'] == "agent"  %} selected {% endif %}
-    >User type - Agent</option>
-
-  </select>
-
-</form>
-<!--  END USER TYPE TOGGLE -->
-
-
-
-
-
-
 {% endblock %}
-
-
-
-
 

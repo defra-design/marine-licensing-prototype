@@ -71,7 +71,6 @@ Enter the coordinates at the centre point of the site
         <h1 class="govuk-heading-l">
             {{ pageHeadingTextHTML }}
           </h1> 
-        
 
         <form action="enter-coordinates-router?site={{ site.globalNumber }}{% if returnTo %}&returnTo={{ returnTo }}{% endif %}" method="post" novalidate>
 
@@ -151,7 +150,7 @@ Enter the coordinates at the centre point of the site
 </div>
 
 <!-- ERROR LOGIC  drop down to toggle states  -->
-<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-225px;  ">
+<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-325px; padding-bottom: 30px;  ">
 
     <select style="height:30px;" onchange="window.location.href='?'+this.value">
 
@@ -171,24 +170,6 @@ Enter the coordinates at the centre point of the site
 
 </form>
 <!--  END OF ERROR LOGIC -->
-
-<!-- USER TYPE TOGGLE  -->
-<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-225px;  ">
-
-  <select style="height:30px;" onchange="window.location.href='?'+this.value">
-
-    <option value="user=citizen&"
-            {% if  data['user'] != "agent"  %} selected {% endif %}
-    >User type - Individual</option>
-
-    <option value="user=agent&"
-            {% if  data['user'] == "agent"  %} selected {% endif %}
-    >User type - Agent</option>
-
-  </select>
-
-</form>
-<!--  END USER TYPE TOGGLE -->
 
 {% endblock %}
 

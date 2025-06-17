@@ -5,7 +5,6 @@
     {% include "../includes/back-link.html" %}
 {% endblock %}
 
-
 <!-- Setting the smaller secondary heading lower down the page -->
 {% set pageHeadingTextHTML %}
     {% if data['exemption-which-type-of-file-radios'] == "KML" %}
@@ -20,15 +19,12 @@
     {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
 {% endblock %}
 
-
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
-
         <!-- go to routes.js for routing  -->
         <form action="upload-file-router" method="post" novalidate>
-
 
             <div class="govuk-form-group">
                 <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
@@ -48,8 +44,7 @@
                       Upload a ZIP file containing all the files for your Shapefile (for example, .shp, .shx and .dbf). You can include more than one site.
                     {% endif %}
                   </div>
-                
-                  
+
 			{% from "govuk/components/file-upload/macro.njk" import govukFileUpload %}
 
 			{{ govukFileUpload({
@@ -57,8 +52,7 @@
 			name: "fileUpload1",
             javascript: true
 			}) }}
-            
-           
+
             <div class="govuk-button-group">
                 {{ govukButton({
                   text: "Continue"
@@ -72,7 +66,7 @@
 </div>
 
 <!-- ERROR LOGIC  drop down to toggle states  -->
-<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-225px;  ">
+<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-325px; padding-bottom: 30px;  ">
 
     <select style="height:30px;" onchange="window.location.href='?'+this.value">
 
@@ -89,30 +83,5 @@
 </form>
 <!--  END OF ERROR LOGIC -->
 
-
-
-<!-- USER TYPE TOGGLE  -->
-<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-225px;  ">
-
-    <select style="height:30px;" onchange="window.location.href='?'+this.value">
-
-        <option value="user=citizen&"
-                {% if  data['user'] != "agent"  %} selected {% endif %}
-        >User type - Individual</option>
-
-        <option value="user=agent&"
-                {% if  data['user'] == "agent"  %} selected {% endif %}
-        >User type - Agent</option>
-
-    </select>
-
-</form>
-<!--  END USER TYPE TOGGLE -->
-
-
-
-
-
 {% endblock %}
-
 

@@ -26,7 +26,6 @@ Review site details
 
 {% block content %}
 
-
 <div class="govuk-grid-row">
 
   <div class="govuk-grid-column-full">
@@ -205,11 +204,9 @@ Review site details
   
   <!-- End of it's a circle -->
 
-
   <!-- Start of enter multiple coords -->
   {% elif data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter multiple sets of coordinates to mark the boundary of the site" %}
 
-  
   <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
     <dt class="govuk-summary-list__key">
       Start and end points
@@ -326,11 +323,9 @@ Review site details
 {% endif %}  
 <!-- End of enter coordinates manually -->
 
-    
 <!-- Closing summary card divs and button - common to all -->
    </div>
  </div>
- 
 
     <form action="review-location-router" method="post" novalidate>
       <div class="govuk-button-group">

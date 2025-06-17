@@ -8,7 +8,6 @@
     {% include "../../includes/back-link.html" %}
 {% endblock %}
 
-
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
     Enter multiple sets of coordinates to mark the boundary of the site
@@ -27,7 +26,6 @@
     {% endif %}
 {% endset %}
 
-
 {% set point1LongHTML %}
     {% if coordinateSystem == "WGS84 (World Geodetic System 1984)" or not coordinateSystem %}
     Longitude of start and end point
@@ -35,7 +33,6 @@
     Northings of the start and end point
     {% endif %}
 {% endset %}
-
 
 {% set point2LatHTML %}
     {% if coordinateSystem == "WGS84 (World Geodetic System 1984)" or not coordinateSystem %}                 
@@ -45,7 +42,6 @@
     {% endif %}
 {% endset %}
 
-
 {% set point2LongHTML %}
     {% if coordinateSystem == "WGS84 (World Geodetic System 1984)" or not coordinateSystem %}          
     Longitude of point 2
@@ -53,7 +49,6 @@
     Northings of point 2
     {% endif %}
 {% endset %}
-
 
 {% set point3LatHTML %}
     {% if coordinateSystem == "WGS84 (World Geodetic System 1984)" or not coordinateSystem %}              
@@ -63,7 +58,6 @@
     {% endif %}
 {% endset %}
 
-
 {% set point3LongHTML %}
 {% if coordinateSystem == "WGS84 (World Geodetic System 1984)" or not coordinateSystem %}          
     Longitude of point 3
@@ -71,7 +65,6 @@
     Northings of point 3
     {% endif %}
 {% endset %}
-
 
 {% set point4LatHTML %}
     {% if coordinateSystem == "WGS84 (World Geodetic System 1984)" or not coordinateSystem %}              
@@ -81,7 +74,6 @@
     {% endif %}
 {% endset %}
 
-
 {% set point4LongHTML %}
 {% if coordinateSystem == "WGS84 (World Geodetic System 1984)" or not coordinateSystem %}          
     Longitude of point 4
@@ -90,7 +82,6 @@
     {% endif %}
 {% endset %}
 
-
 {% set point5LatHTML %}
     {% if coordinateSystem == "WGS84 (World Geodetic System 1984)" or not coordinateSystem %}              
     Latitude of point 5
@@ -98,7 +89,6 @@
     Eastings of point 5
     {% endif %}
 {% endset %}
-
 
 {% set point5LongHTML %}
 {% if coordinateSystem == "WGS84 (World Geodetic System 1984)" or not coordinateSystem %}          
@@ -159,7 +149,6 @@
     {% endfor %}
 {% endif %}
 
-
 <!-- Text that show in the browser tab. Does NOT need changing -->
 {% block pageTitle %}
     {% if errors and errors|length > 0 %}
@@ -169,12 +158,9 @@
     {{ pageHeadingTextHTML }}
 {% endblock %}
 
-
-
 {% block content %}
 <div class="govuk-grid-row">
     <div class="multiple-coordinates-column govuk-grid-column-three-quarters">
-
 
         <!-- ERROR LOGIC 'error summary' -->
         {% if errors and errors|length > 0 %}
@@ -200,9 +186,6 @@
             {{ pageHeadingTextHTML }}
         </h1>
 
-
-        
-        
         {% if coordinateSystem == "WGS84 (World Geodetic System 1984)" %}
                         
         {% include "../../includes/lat-long-content.html" %}
@@ -260,7 +243,6 @@
                 </div>
             </fieldset>
 
-
             <fieldset class="govuk-fieldset">
                 <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
                   <h2 class="govuk-fieldset__heading">
@@ -304,7 +286,6 @@
                     }}
                 </div>
             </fieldset>
-
 
             <fieldset class="govuk-fieldset">
                 <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
@@ -358,7 +339,6 @@
                     <a class=" govuk-button govuk-button--secondary remove-button govuk-!-margin-bottom-0" href="#" style="float:right">Remove<span class="govuk-visually-hidden"> point</span></a>
                 </legend>
 
-                
                 <div class="govuk-form-group" style="clear: both;">
                       {{ govukInput
                         ({
@@ -396,8 +376,6 @@
                     }}
                 </div>
             </fieldset>
-
-            
 
             <!-- Hidden fieldset 5 - can be made visible -->
             <fieldset class="govuk-fieldset multi-coords" {% if not query.fromreview %}style="display: none;"{% endif %}>
@@ -447,9 +425,7 @@
                
             </fieldset>
 
-
             <p><a href="#" class="add-point-link govuk-button govuk-button--secondary">Add another point</a></p>
-
 
             <div class="govuk-button-group">
                 {{ govukButton({
@@ -462,10 +438,9 @@
     </div>
 </div>
 
-
 <!-- ERROR LOGIC  drop down to toggle states  -->
 <!-- Best thing to do would be to replace 'errorthispage', 'errortypeone' and 'errortypetwo' with novel name for this page  -->
-<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-225px;  ">
+<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-325px; padding-bottom: 30px;  ">
 
     <select style="height:30px;" onchange="window.location.href='?'+this.value">
 
@@ -494,7 +469,6 @@
 </form>
 
 {% endblock %}
-
 
 {% block pageScripts %}
 <script>

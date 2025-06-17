@@ -13,7 +13,6 @@ This will save you time.
 7. Follow instructions at the top of the 'templates.js'
 -->
 
-
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
 What will be removed?
@@ -32,7 +31,6 @@ What will be removed?
     {% endif %}
 {% endset %}
 
-
 <!-- Text that show in the browser tab. Does NOT need changing -->
 {% block pageTitle %}
     {% if  data['errorthispage'] == "true"  %}
@@ -42,11 +40,9 @@ What will be removed?
     {{ pageHeadingTextHTML }} - {{ data['headerName'] }}
 {% endblock %}
 
-
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-
 
         <!-- ERROR LOGIC 'error summary' -->
         {% if data['errorthispage'] == "true" %}
@@ -64,7 +60,6 @@ What will be removed?
             }}
         {% endif %}
         <!--  END OF 'error summary' -->
-
 
         <!-- go to routes.js for routing  -->
         <form action="what-does-the-scientific-activity-relate-to-router" method="post" novalidate>
@@ -117,9 +112,8 @@ What will be removed?
     </div>
 </div>
 
-
 <!-- ERROR LOGIC  drop down to toggle states  -->
-<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-225px;  ">
+<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-325px; padding-bottom: 30px;  ">
 
     <select style="height:30px;" onchange="window.location.href='?'+this.value">
 
@@ -136,28 +130,5 @@ What will be removed?
 </form>
 <!--  END OF ERROR LOGIC -->
 
-
-
-<!-- USER TYPE TOGGLE  -->
-<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-225px;  ">
-
-    <select style="height:30px;" onchange="window.location.href='?'+this.value">
-
-        <option value="user=citizen&"
-                {% if  data['user'] != "agent"  %} selected {% endif %}
-        >User type - Individual</option>
-
-        <option value="user=agent&"
-                {% if  data['user'] == "agent"  %} selected {% endif %}
-        >User type - Agent</option>
-
-    </select>
-
-</form>
-<!--  END USER TYPE TOGGLE -->
-
-
-
 {% endblock %}
-
 
