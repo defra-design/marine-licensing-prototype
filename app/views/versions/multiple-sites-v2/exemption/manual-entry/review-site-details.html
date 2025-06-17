@@ -488,13 +488,9 @@ Review site details
         </p>
         
         <div class="govuk-!-margin-bottom-4">
-            {{ govukButton({
-                text: "Add another site",
-                classes: "govuk-button--secondary",
-                attributes: {
-                    onclick: "window.location.href='add-next-site-router'"
-                }
-            }) }}
+            <a href="add-next-site-router{% if currentBatch and currentBatch.id %}?batchId={{ currentBatch.id }}{% endif %}" class="govuk-button govuk-button--secondary" data-module="govuk-button">
+                Add another site
+            </a>
         </div>
         {% endif %}
 

@@ -1790,9 +1790,11 @@ router.post('/' + version + section + 'manual-entry/site-width-router', function
     
     // Determine next step
     if (returnTo === 'review-site-details') {
+        // Returning from change link - use anchor to jump to specific site
         res.redirect('/' + version + section + 'manual-entry/review-site-details?site=' + site.globalNumber + '#site-' + site.globalNumber + '-details');
     } else {
-        res.redirect('/' + version + section + 'manual-entry/review-site-details?site=' + site.globalNumber + '#site-' + site.globalNumber + '-details');
+        // Completing site creation - load review page normally at top
+        res.redirect('/' + version + section + 'manual-entry/review-site-details');
     }
 });
 
@@ -1925,15 +1927,59 @@ router.get('/' + version + section + 'manual-entry/review-site-details', functio
 router.post('/' + version + section + 'manual-entry/review-site-details-router', function (req, res) {
     // REMOVED: Complex conversion function no longer needed - batch system already works correctly
     
+    // Get current batch before clearing
+    const currentBatch = getCurrentBatch(req.session);
+    
+    // CRITICAL FIX: Populate batch settings with session data before saving
+    if (currentBatch) {
+        if (!currentBatch.settings) {
+            currentBatch.settings = {};
+        }
+        
+        // Store manual entry session data into batch settings for future completeness checks
+        currentBatch.settings.sameActivityDates = req.session.data['manual-same-activity-dates'];
+        currentBatch.settings.sameActivityDescription = req.session.data['manual-same-activity-description'];
+        
+        // Store shared dates if they exist
+        if (req.session.data['manual-start-date-date-input-day']) {
+            currentBatch.settings.sharedStartDate = {
+                day: req.session.data['manual-start-date-date-input-day'],
+                month: req.session.data['manual-start-date-date-input-month'],
+                year: req.session.data['manual-start-date-date-input-year']
+            };
+        }
+        
+        if (req.session.data['manual-end-date-date-input-day']) {
+            currentBatch.settings.sharedEndDate = {
+                day: req.session.data['manual-end-date-date-input-day'],
+                month: req.session.data['manual-end-date-date-input-month'],
+                year: req.session.data['manual-end-date-date-input-year']
+            };
+        }
+        
+        // Store shared description if it exists
+        if (req.session.data['manual-activity-details-text-area']) {
+            currentBatch.settings.sharedDescription = req.session.data['manual-activity-details-text-area'];
+        }
+        
+        // Mark batch as saved for future status determination
+        currentBatch.saved = true;
+        
+        console.log('✅ Manual entry batch settings populated:', {
+            sameActivityDates: currentBatch.settings.sameActivityDates,
+            sameActivityDescription: currentBatch.settings.sameActivityDescription,
+            hasSharedDates: !!currentBatch.settings.sharedStartDate,
+            hasSharedDescription: !!currentBatch.settings.sharedDescription
+        });
+    }
+    
     // Use the existing current batch for completeness checks
     let hasSiteIncomplete = false;
     let sites = [];
-    if (typeof getCurrentBatch === 'function') {
-        const batch = getCurrentBatch(req.session);
-        if (batch) {
-            sites = batch.sites;
-        }
+    if (currentBatch) {
+        sites = currentBatch.sites;
     }
+    
     if (sites.length > 0) {
         for (const site of sites) {
             if (!site.name) {
@@ -1959,6 +2005,12 @@ router.post('/' + version + section + 'manual-entry/review-site-details-router',
         req.session.data['exempt-information-3-status'] = 'cannot-start';
     }
     
+    // CRITICAL FIX: Rebuild global sites array from all batches after batch settings are populated
+    if (req.session.data['siteBatches']) {
+        req.session.data['sites'] = req.session.data['siteBatches'].flatMap(batch => batch.sites);
+        console.log('🔄 Rebuilt global sites array from all batches, total sites:', req.session.data['sites'].length);
+    }
+    
     // Mark the task as completed and clear the current batch ID so we can start fresh next time
     req.session.data['siteDetailsSaved'] = true;
     
@@ -1982,6 +2034,13 @@ router.post('/' + version + section + 'manual-entry/review-site-details-router',
 router.get('/' + version + section + 'manual-entry/add-next-site-router', function (req, res) {
     // Get next global site number
     const nextGlobalSiteNumber = (req.session.data['globalSiteCounter'] || 0) + 1;
+    
+    // EDGE CASE FIX: If batchId is provided (e.g., from back button after saving),
+    // reactivate that batch so the new site gets added to it
+    if (req.query.batchId) {
+        console.log(`🔄 EDGE CASE: Reactivating batch ${req.query.batchId} for site ${nextGlobalSiteNumber}`);
+        req.session.data['currentBatchId'] = req.query.batchId;
+    }
     
     // Clear any stale session parameters
     delete req.session.data['returnTo'];
@@ -2120,9 +2179,11 @@ router.post('/' + version + section + 'manual-entry/enter-multiple-coordinates-r
 
     // Determine next step
     if (returnTo === 'review-site-details') {
+        // Returning from change link - use anchor to jump to specific site
         res.redirect('/' + version + section + 'manual-entry/review-site-details?site=' + site.globalNumber + '#site-' + site.globalNumber + '-details');
     } else {
-        res.redirect('/' + version + section + 'manual-entry/review-site-details?site=' + site.globalNumber + '#site-' + site.globalNumber + '-details');
+        // Completing site creation - load review page normally at top
+        res.redirect('/' + version + section + 'manual-entry/review-site-details');
     }
 });
 
