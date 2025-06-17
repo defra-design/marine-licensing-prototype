@@ -1326,8 +1326,8 @@ function initializeBatch(session, entryMethod) {
         startingGlobalNumber: (session.data['globalSiteCounter'] || 0) + 1  // Store the first site number this batch will use
     };
     
-    // Initialize batches array if it doesn't exist
-    if (!session.data['siteBatches']) {
+    // Initialize batches array if it doesn't exist or isn't an array
+    if (!Array.isArray(session.data['siteBatches'])) {
         session.data['siteBatches'] = [];
     }
     
