@@ -8,6 +8,55 @@ const router = govukPrototypeKit.requests.setupRouter()
 
 // Add your routes here
 
+// Middleware to automatically restore session state from 'state' query parameter
+router.use('*', function(req, res, next) {
+    if (req.query.state) {
+        try {
+            // Decode base64 and parse JSON
+            const decodedState = Buffer.from(req.query.state, 'base64').toString();
+            const sessionData = JSON.parse(decodedState);
+            
+            // Restore session data
+            Object.assign(req.session.data, sessionData);
+            
+            // Post-restoration processing: ensure batch system is properly initialized
+            if (sessionData.siteBatches && Array.isArray(sessionData.siteBatches)) {
+                // Rebuild the global sites array from all batches
+                const allSites = sessionData.siteBatches.flatMap(batch => batch.sites || []);
+                req.session.data['sites'] = allSites;
+                
+                // Ensure globalSiteCounter is set correctly
+                if (allSites.length > 0) {
+                    const maxGlobalNumber = Math.max(...allSites.map(site => site.globalNumber || 0));
+                    req.session.data['globalSiteCounter'] = maxGlobalNumber;
+                }
+                
+                console.log('✅ Batch system reinitialized with', allSites.length, 'sites');
+            }
+            
+            // Remove the state parameter to clean up URL (redirect without state param)
+            if (Object.keys(req.query).length === 1 && req.query.state) {
+                // If state is the only parameter, redirect to clean URL
+                const cleanUrl = req.originalUrl.split('?')[0];
+                return res.redirect(cleanUrl);
+            } else if (req.query.state) {
+                // If there are other parameters, redirect without just the state param
+                const cleanQuery = Object.keys(req.query)
+                    .filter(key => key !== 'state')
+                    .map(key => `${key}=${encodeURIComponent(req.query[key])}`)
+                    .join('&');
+                const cleanUrl = req.originalUrl.split('?')[0] + (cleanQuery ? '?' + cleanQuery : '');
+                return res.redirect(cleanUrl);
+            }
+            
+            console.log('✅ Session state restored from URL parameter');
+        } catch (error) {
+            console.log('❌ Failed to restore session state from URL parameter:', error.message);
+        }
+    }
+    next();
+});
+
 // Including other routing javascript
 // This single line tells this 'routes.js' file to include the routing from the 'templates.js' and other js files
 require('./routes/templates.js')(router);
@@ -64,11 +113,10 @@ require('./routes/versions/iat/iat.js')(router);
 // Then it opens 'prototypetools/view-data' and passes the session data into that page to be displayed.
 router.get('*/prototype-admin/view-data', function(req, res){
 
-    querystring = '';
-    for ( var key in req.session.data )
-    {
-        querystring += key +'=' + req.session.data[key] + '&';
-    }
+    // Generate base64 encoded state parameter
+    const sessionData = JSON.stringify(req.session.data);
+    const encodedState = Buffer.from(sessionData).toString('base64');
+    querystring = 'state=' + encodedState;
 
     res.render('prototypetools/view-data', { data: JSON.stringify( req.session, null, 2), querystring: querystring } );
 })
@@ -81,11 +129,10 @@ router.get('*/prototype-admin/view-data', function(req, res){
 //  The user can then share the state by sending someone the copied URL.
 router.get('*/prototype-admin/update-session-data', function(req, res){
 
-    var querystringtemp = '';
-    for ( var key in req.session.data )
-    {
-        querystringtemp += key +'=' + req.session.data[key] + '&';
-    }
+    // Generate base64 encoded state parameter
+    const sessionData = JSON.stringify(req.session.data);
+    const encodedState = Buffer.from(sessionData).toString('base64');
+    const querystringtemp = 'state=' + encodedState;
 
     req.session.data['theoutputquerystring'] = "";
     req.session.data['theoutputquerystring'] = "?" + querystringtemp;
