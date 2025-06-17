@@ -1,11 +1,9 @@
 {% extends "../layouts/main.html" %}
 
-
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
 In the 6 months before the activity begins, will the harbour authority have built or approved more than 10 pontoons? 
 {% endset %}
-
 
 <!-- Set the text for the error type -->
 {% set errorTextHTML %}
@@ -15,7 +13,6 @@ In the 6 months before the activity begins, will the harbour authority have buil
     {% endif %}
 {% endset %}
 
-
 <!-- Text that show in the browser tab. Does NOT need changing -->
 {% block pageTitle %}
     {% if  data['errorthispage'] == "true"  %}
@@ -24,7 +21,6 @@ In the 6 months before the activity begins, will the harbour authority have buil
 
     {{ pageHeadingTextHTML }} - {{ data['headerName'] }}
 {% endblock %}
-
 
 {% block content %}
 <div class="govuk-grid-row">
@@ -47,11 +43,9 @@ In the 6 months before the activity begins, will the harbour authority have buil
         {% endif %}
         <!--  END OF 'error summary' -->
 
-
         <!-- go to routes.js for routing  -->
         <form action="10-pontoons-or-more-router" method="post" novalidate>
 
-            
             <h1 class="govuk-heading-l">
                 {{ pageHeadingTextHTML }}
             </h1>
@@ -90,7 +84,6 @@ In the 6 months before the activity begins, will the harbour authority have buil
                 })
             }}
 
-
             {{ govukButton({ text: "Continue" }) }}
 
         </form>
@@ -98,11 +91,8 @@ In the 6 months before the activity begins, will the harbour authority have buil
     </div>
 </div>
 
-
-
-
 <!-- ERROR LOGIC  drop down to toggle states  -->
-<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-225px;  ">
+<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-325px; padding-bottom: 30px;  ">
 
     <select style="height:30px;" onchange="window.location.href='?'+this.value">
 
@@ -119,30 +109,5 @@ In the 6 months before the activity begins, will the harbour authority have buil
 </form>
 <!--  END OF ERROR LOGIC -->
 
-
-
-<!-- USER TYPE TOGGLE  -->
-<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-225px;  ">
-
-    <select style="height:30px;" onchange="window.location.href='?'+this.value">
-
-        <option value="user=citizen&"
-                {% if  data['user'] != "agent"  %} selected {% endif %}
-        >User type - Individual</option>
-
-        <option value="user=agent&"
-                {% if  data['user'] == "agent"  %} selected {% endif %}
-        >User type - Agent</option>
-
-    </select>
-
-</form>
-<!--  END USER TYPE TOGGLE -->
-
-
-
-
-
 {% endblock %}
-
 

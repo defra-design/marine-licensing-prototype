@@ -23,7 +23,6 @@ Review site details
     {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
 {% endblock %}
 
-
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
@@ -71,7 +70,6 @@ Review site details
                 {% endif %}
             {% endfor %}
         {% endif %}
-
 
         {% if not allComplete %}
             {{ govukInsetText({
@@ -399,14 +397,5 @@ Review site details
         </form>
     </div>
 </div>
-
-<!-- USER TYPE TOGGLE  -->
-<form method="post" action="#" class="for4" style="float: left; position: relative; bottom:-225px;">
-    <select style="height:30px;" onchange="window.location.href='?'+this.value">
-        <option value="user=citizen&" {% if data['user'] != "agent" %} selected {% endif %}>User type - Individual</option>
-        <option value="user=agent&" {% if data['user'] == "agent" %} selected {% endif %}>User type - Agent</option>
-    </select>
-</form>
-<!--  END USER TYPE TOGGLE -->
 
 {% endblock %}

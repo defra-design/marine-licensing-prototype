@@ -20,7 +20,6 @@ Public register
 Do you believe the information you have provided should be withheld from the public register?
 {% endset %}
 
-
 <!-- Set the text for the error type -->
 {% set errorTextHTML %}
 {% if data['errortypeone'] == "true" %}
@@ -29,7 +28,6 @@ Select whether there is any information you believe should be withheld from the 
 Provide details of the information that should be withheld
 {% endif %}
 {% endset %}
-
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
 {% block pageTitle %}
@@ -42,7 +40,6 @@ Error:
 
 {% set detailsHtml %}
 {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
-
 
 {{ govukTextarea({
 
@@ -77,7 +74,6 @@ isPageHeading: false
 		}) }}
 		{% endif %}
 		<!-- END OF 'error summary' -->
-
 
 		<!-- go to routes.js for routing  -->
 		<form action="public-register-router" method="post" novalidate>
@@ -128,7 +124,6 @@ isPageHeading: false
 			})
 			}}
 
-
 			<div class="govuk-button-group">
                 {{ govukButton({
                   text: "Save and continue"
@@ -141,11 +136,8 @@ isPageHeading: false
 	</div>
 </div>
 
-
-
-
 <!-- ERROR LOGIC  drop down to toggle states  -->
-<form method="post" action="#" class="for4" style=" float: left; position: relative; bottom:-225px;  ">
+<form method="post" action="#" class="for4" style=" float: left; position: relative; bottom:-325px; padding-bottom: 30px;  ">
 
 	<select style="height:30px;" onchange="window.location.href='?'+this.value">
 
@@ -159,26 +151,5 @@ isPageHeading: false
 
 </form>
 <!--  END OF ERROR LOGIC -->
-
-
-
-<!-- USER TYPE TOGGLE  -->
-<form method="post" action="#" class="for4" style=" float: left; position: relative; bottom:-225px;  ">
-
-	<select style="height:30px;" onchange="window.location.href='?'+this.value">
-
-		<option value="user=citizen&" {% if data['user'] !="agent" %} selected {% endif %}>User type - Individual
-		</option>
-
-		<option value="user=agent&" {% if data['user']=="agent" %} selected {% endif %}>User type - Agent</option>
-
-	</select>
-
-</form>
-<!--  END USER TYPE TOGGLE -->
-
-
-
-
 
 {% endblock %}

@@ -29,7 +29,6 @@ Which waters will the activity take place in?
 	Which waters will the activity take place in?
 {% endset %}
 
-
 <!-- Set the text for the error type -->
 {% set errorTextHTML %}
     <!-- Nothing was selected -->
@@ -37,7 +36,6 @@ Which waters will the activity take place in?
     Select which waters the activity will take place in
     {% endif %}
 {% endset %}
-
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
 {% block pageTitle %}
@@ -47,7 +45,6 @@ Which waters will the activity take place in?
 
     {{ pageHeadingTextHTML }} - {{ data['headerName'] }}
 {% endblock %}
-
 
 {% block content %}
 <div class="govuk-grid-row">
@@ -70,11 +67,9 @@ Which waters will the activity take place in?
         {% endif %}
         <!--  END OF 'error summary' -->
 
-
         <!-- go to routes.js for routing  -->
         <form action="in-which-waters-router" method="post" novalidate>
 
-			
             <h1 class="govuk-heading-l">
                 {{ pageHeadingTextHTML }}
             </h1>
@@ -126,7 +121,6 @@ Which waters will the activity take place in?
                 })
             }}
 
-
             {{ govukButton({ text: "Continue" }) }}
 
         </form>
@@ -134,11 +128,8 @@ Which waters will the activity take place in?
     </div>
 </div>
 
-
-
-
 <!-- ERROR LOGIC  drop down to toggle states  -->
-<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-225px;  ">
+<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-325px; padding-bottom: 30px;  ">
 
     <select style="height:30px;" onchange="window.location.href='?'+this.value">
 
@@ -155,30 +146,5 @@ Which waters will the activity take place in?
 </form>
 <!--  END OF ERROR LOGIC -->
 
-
-
-<!-- USER TYPE TOGGLE  -->
-<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-225px;  ">
-
-    <select style="height:30px;" onchange="window.location.href='?'+this.value">
-
-        <option value="user=citizen&"
-                {% if  data['user'] != "agent"  %} selected {% endif %}
-        >User type - Individual</option>
-
-        <option value="user=agent&"
-                {% if  data['user'] == "agent"  %} selected {% endif %}
-        >User type - Agent</option>
-
-    </select>
-
-</form>
-<!--  END USER TYPE TOGGLE -->
-
-
-
-
-
 {% endblock %}
-
 
