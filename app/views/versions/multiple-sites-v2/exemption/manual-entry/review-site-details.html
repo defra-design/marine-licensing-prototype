@@ -456,7 +456,7 @@ Review site details
                         {% set mapImageSrc = site.mapImage %}
                         {% if not mapImageSrc %}
                             {% if site.coordinates and site.coordinates.type == "circle" %}
-                                {% set mapImageSrc = '/public/images/worthing-map-square-copy.jpg' %}
+                                {% set mapImageSrc = '/public/images/worthing-map-circle-copy.jpg' %}
                             {% elif site.coordinates and site.coordinates.type == "polygon" and site.coordinates.points %}
                                 {% if site.coordinates.points.length == 3 %}
                                     {% set mapImageSrc = '/public/images/worthing-map-3-points-copy.jpg' %}
