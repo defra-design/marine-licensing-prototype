@@ -1679,7 +1679,7 @@ router.post('/' + version + section + 'manual-entry/enter-coordinates-router', f
     
     // Set mapImage for circular sites (will be finalized when width is set)
     if (isValid && site.coordinates.type === 'circle') {
-        site.mapImage = '/public/images/worthing-map-square-copy.jpg';
+        site.mapImage = '/public/images/worthing-map-circle-copy.jpg';
     }
 });
 
@@ -1785,7 +1785,7 @@ router.post('/' + version + section + 'manual-entry/site-width-router', function
     
     // Set mapImage for circular sites
     if (isValid && site.coordinates.type === 'circle') {
-        site.mapImage = '/public/images/worthing-map-square-copy.jpg';
+        site.mapImage = '/public/images/worthing-map-circle-copy.jpg';
     }
     
     // Determine next step
