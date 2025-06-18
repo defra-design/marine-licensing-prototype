@@ -239,6 +239,8 @@
   
   // Center the cookie banner content within the main content area
   .govuk-main-wrapper {
+    padding-top: 0 !important;
+    
     .govuk-width-container {
       max-width: 960px;
       margin: 0 auto;
