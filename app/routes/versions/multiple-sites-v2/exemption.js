@@ -242,7 +242,8 @@ function clearDataForFileUploadChange(session) {
     // Clear current batch ID
     delete session.data['currentBatchId'];
     
-    // Reset file upload count so we get consistent site generation
+    // Reset file upload count for review page changes to get consistent site generation
+    // This function is only called from review page "change" links with clearData=true
     delete session.data['fileUploadCount'];
     
     // Clear coordinate method selection to force user to choose again
@@ -1177,8 +1178,12 @@ router.get('/' + version + section + 'how-do-you-want-to-provide-the-coordinates
         // Only clear data if starting a truly new journey (not from check answers, review, or clearData scenarios)
         req.session.data['siteDetailsSaved'] = false;
         
-        // Clear all file upload data for a fresh start
+        // Clear file upload data for a fresh start BUT preserve fileUploadCount for sequence tracking
+        const preservedUploadCount = req.session.data['fileUploadCount'];
         clearAllFileUploadData(req.session);
+        if (preservedUploadCount) {
+            req.session.data['fileUploadCount'] = preservedUploadCount;
+        }
         
         // Also clear the coordinate method selection so user starts fresh
         delete req.session.data['exemption-how-do-you-want-to-provide-the-coordinates-radios'];
@@ -1654,7 +1659,12 @@ function clearCurrentBatchSafely(session) {
 function clearBatchSessionData(session) {
     // Clear entry method session data for both manual and file upload
     clearAllManualEntryData(session);
+    // Preserve fileUploadCount when clearing batch data to maintain upload sequence
+    const preservedUploadCount = session.data['fileUploadCount'];
     clearAllFileUploadData(session);
+    if (preservedUploadCount) {
+        session.data['fileUploadCount'] = preservedUploadCount;
+    }
     clearAllLocationData(session);
     
     // Clear file upload activity settings
@@ -2881,6 +2891,7 @@ function clearDataForFileTypeChange(session) {
     // Clear file type and upload data only
     delete session.data['exemption-which-type-of-file-radios'];
     delete session.data['hasUploadedFile'];
+    // Reset upload count for review page changes to get consistent site generation
     delete session.data['fileUploadCount'];
     
     // Clear the current batch and all associated sites
@@ -2919,8 +2930,9 @@ function clearDataForFileTypeChange(session) {
 
 // Function to clear data when changing uploaded file only (keeping coordinate method and file type)
 function clearDataForFileUploadOnly(session) {
-    // Only clear upload flag and upload count
+    // Clear upload flag and reset count for review page changes
     delete session.data['hasUploadedFile'];
+    // Reset upload count for review page changes to get consistent site generation
     delete session.data['fileUploadCount'];
     
     // Clear the current batch and all associated sites
