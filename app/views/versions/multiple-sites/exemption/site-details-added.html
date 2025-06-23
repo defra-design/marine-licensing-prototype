@@ -70,24 +70,26 @@ Your sites
             {{ pageHeadingTextHTML }}
         </h1>
 
-        {{ govukInsetText({
-            html: "You can select 'Save and continue' to keep your progress and return later if any sites are marked <span class='govuk-tag govuk-tag--red govuk-!-margin-bottom-1'>Incomplete</span><br>
-            You must complete all site details before selecting 'I've finished adding sites'."
-        }) }}
+        {% if data['sites'] and data['sites'].length > 0 %}
+            {{ govukInsetText({
+                html: "You can select 'Save and continue' to keep your progress and return later if any sites are marked <span class='govuk-tag govuk-tag--red govuk-!-margin-bottom-1'>Incomplete</span><br>
+                You must complete all site details before selecting 'I've finished adding sites'."
+            }) }}
+        {% endif %}
         
         <div class="govuk-!-margin-bottom-6">
-            <!-- Plain HTML GOV.UK styled table -->
-            <table class="govuk-table govuk-!-margin-bottom-6">
-                <thead class="govuk-table__head">
-                    <tr class="govuk-table__row">
-                        <th scope="col" class="govuk-table__header">Site</th>
-                        <th scope="col" class="govuk-table__header">Site name</th>
-                        <th scope="col" class="govuk-table__header">Status</th>
-                        <th scope="col" class="govuk-table__header">Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="govuk-table__body">
-                    {% if data['sites'] and data['sites'].length > 0 %}
+            {% if data['sites'] and data['sites'].length > 0 %}
+                <!-- Plain HTML GOV.UK styled table -->
+                <table class="govuk-table govuk-!-margin-bottom-6">
+                    <thead class="govuk-table__head">
+                        <tr class="govuk-table__row">
+                            <th scope="col" class="govuk-table__header">Site</th>
+                            <th scope="col" class="govuk-table__header">Site name</th>
+                            <th scope="col" class="govuk-table__header">Status</th>
+                            <th scope="col" class="govuk-table__header">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody class="govuk-table__body">
                         {% for site in data['sites'] %}
                             {% set siteIndex = loop.index %}
                             {% set isComplete = true %}
@@ -125,13 +127,11 @@ Your sites
                                 </td>
                             </tr>
                         {% endfor %}
-                    {% else %}
-                        <tr class="govuk-table__row">
-                            <td class="govuk-table__cell" colspan="4">No sites have been added yet.</td>
-                        </tr>
-                    {% endif %}
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+            {% else %}
+                <p class="govuk-!-margin-bottom-6">You have no sites.</p>
+            {% endif %}
         </div>
 
         {{ govukButton({
