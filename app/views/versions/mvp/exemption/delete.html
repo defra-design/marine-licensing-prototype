@@ -23,7 +23,9 @@ Are you sure you want to delete this project?
       {{ pageHeadingTextHTML }}
     </h1>
 
-    <p>{{ data['exemption-project-name-text-input'] }}</p>
+    <div class="govuk-inset-text">
+      {{ data['exemption-project-name-text-input'] }}
+    </div>
  
     <form action="delete-router" method="post" novalidate>
       <div class="govuk-button-group govuk-!-margin-top-7">
