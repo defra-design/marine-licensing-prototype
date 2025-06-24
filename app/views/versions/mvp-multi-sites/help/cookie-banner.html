@@ -1,0 +1,57 @@
+{% extends "../layouts/exemption.html" %}
+
+<!-- Set a variable to identify this specific page -->
+{% set currentPageId = "cookie-banner" %}
+
+{% block header %}
+
+{% endblock %}
+
+{% block pageTitle %}
+Cookie banner - Get permission for marine work
+{% endblock %}
+
+
+{% block beforeContent %}
+
+{% endblock %}
+
+
+{% block content %}
+
+{% from "govuk/components/cookie-banner/macro.njk" import govukCookieBanner %}
+
+{% set html %}
+  <p class="govuk-body">We use some essential cookies to make this service work.</p>
+  <p class="govuk-body">We'd also like to use analytics cookies so we can understand how you use the service and make improvements.</p>
+{% endset %}
+
+{{ govukCookieBanner({
+  ariaLabel: "Cookies on Get permission for marine work",
+  messages: [
+    {
+      headingText: "Cookies on Get permission for marine work",
+      html: html,
+      actions: [
+        {
+          text: "Accept analytics cookies",
+          type: "button"
+        },
+        {
+          text: "Reject analytics cookies",
+          type: "button"
+        },
+        {
+          text: "View cookies",
+          href: "#"
+        }
+      ]
+    }
+  ]
+}) }}
+
+{% endblock %}
+
+{% block footer %}
+ 
+{% endblock %}

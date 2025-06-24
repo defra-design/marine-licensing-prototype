@@ -1,0 +1,47 @@
+{% extends "../layouts/main.html" %}
+
+{% set pageName="Marine licence not required" %}
+
+{% set pageHeadingTextHTML %}
+Based on your answers, you do not need a marine licence
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {% if  data['errorthispage'] == "true"  %}
+        Error:
+    {% endif %}
+
+    {{ pageHeadingTextHTML }} - {{ data['headerName'] }}
+{% endblock %}
+
+{% block content %}
+
+<!-- Setting the heading caption -->
+{% set captionTextHTML %}
+	Check if you need a marine licence
+{% endset %}
+
+<div class="govuk-grid-row">
+
+    <div class="govuk-grid-column-two-thirds">
+
+		<h1 class="govuk-heading-l">
+			Based on your answers, you do not need a marine licence
+		</h1>
+
+		<p>Only activities which take place in the sea, or on or under the seabed may require a marine licence.</p>
+		
+		<p>The definition of 'Sea' under the Marine and Coastal Access Act 2009 is any area submerged at mean high water spring tide, and the waters of every estuary, river or channel, so far as the tide flows at mean high water spring tide.</p>
+		
+		<p>It also includes waters in areas which are closed, such as docks, but where seawater can flow in or out. These areas can be closed permanently or occasionally by a lock or other artificial means, against the regular action of the tide. Seawater can be flowing into or out from the area, either continuously or from time to time.</p>
+
+		<p>If you're unsure whether the information you provided is correct, <a href="https://www.gov.uk/guidance/marine-licensing-definitions">review the guidance on the Marine Management Organisation.s jurisdiction</a> and check again.</p>
+		
+		<p><a href="#">Download a PDF of your answer</a></p>
+
+    </div>
+
+</div>
+
+{% endblock %}
