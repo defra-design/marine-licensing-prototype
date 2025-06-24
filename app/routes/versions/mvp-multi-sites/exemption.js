@@ -2641,9 +2641,13 @@ router.get('/' + version + section + 'add-another-site', function (req, res) {
         const previousEntryMethod = allSites[0].entryMethod;
         
         if (previousEntryMethod === 'file-upload') {
+            // Clear file type radio selection so it's not preselected
+            delete req.session.data['exemption-which-type-of-file-radios'];
             // If they previously uploaded a file, take them to the start of file upload
             res.redirect('which-type-of-file');
         } else if (previousEntryMethod === 'manual-entry' || previousEntryMethod === 'manual-entry-single-site') {
+            // Clear multiple sites radio selection so it's not preselected
+            delete req.session.data['manual-multiple-sites'];
             // If they previously entered manually, take them to the start of manual entry
             res.redirect('manual-entry/does-your-project-involve-more-than-one-site');
         } else {
