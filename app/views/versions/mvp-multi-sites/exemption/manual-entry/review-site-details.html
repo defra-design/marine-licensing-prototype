@@ -1,0 +1,510 @@
+{% extends "../../layouts/exemption.html" %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% include "../../includes/back-link.html" %}
+{% endblock %}
+
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+<!-- Set the heading for the page -->
+{% set pageHeadingTextHTML %}
+Review site details
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {% if  data['errorthispage'] == "true"  %}
+        Error:
+    {% endif %}
+
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
+        <h1 class="govuk-heading-l">
+            {{ pageHeadingTextHTML }}
+        </h1>
+        
+        <!-- Ensure sites variable is properly defined from route context or session fallback -->
+        {% if not sites %}
+            {% set sites = data['sites'] or [] %}
+        {% endif %}
+        
+        <!-- Debug: Show sites count -->
+        <!--{{ sites.length or 0 }} sites found-->
+        
+        <!-- Determine if this is a multiple sites journey -->
+        {% set isMultipleSitesJourney = (data['manual-multiple-sites'] == 'Yes') or (sites and sites.length > 1) %}
+        
+        <!-- Check if all required fields are completed -->
+        {% set allComplete = true %}
+        
+        <!-- Check for sites data -->
+        {% if not sites or sites.length === 0 %}
+            {% set allComplete = false %}
+        {% else %}
+            <!-- Check site-specific required fields -->
+            {% for site in sites %}
+                {% if not site.name %}
+                    {% set allComplete = false %}
+                {% endif %}
+                
+                <!-- Check dates and descriptions based on journey type -->
+                {% if isMultipleSitesJourney %}
+                    <!-- Multiple sites: check if dates/descriptions are required based on batch settings -->
+                    {% if sites[0].batchId %}
+                        {% set currentBatch = null %}
+                        {% for batch in data['siteBatches'] %}
+                            {% if batch.id == sites[0].batchId %}
+                                {% set currentBatch = batch %}
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if currentBatch and currentBatch.settings and currentBatch.settings.sameActivityDates == "No" %}
+                            {% if not site.startDate or not site.startDate.day %}
+                                {% set allComplete = false %}
+                            {% endif %}
+                        {% endif %}
+                        
+                        {% if currentBatch and currentBatch.settings and currentBatch.settings.sameActivityDescription == "No" %}
+                            {% if not site.description %}
+                                {% set allComplete = false %}
+                            {% endif %}
+                        {% endif %}
+                    {% else %}
+                        <!-- Fallback to session data for backwards compatibility -->
+                        {% if data['manual-same-activity-dates'] == "No" %}
+                            {% if not site.startDate or not site.startDate.day %}
+                                {% set allComplete = false %}
+                            {% endif %}
+                        {% endif %}
+                        
+                        {% if data['manual-same-activity-description'] == "No" %}
+                            {% if not site.description %}
+                                {% set allComplete = false %}
+                            {% endif %}
+                        {% endif %}
+                    {% endif %}
+                {% else %}
+                    <!-- Single site: always require dates and description -->
+                    {% if not site.startDate or not site.startDate.day %}
+                        {% set allComplete = false %}
+                    {% endif %}
+                    {% if not site.description %}
+                        {% set allComplete = false %}
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+
+        {% if not allComplete %}
+            {{ govukInsetText({
+                html: "You must complete all sections marked <span class='govuk-tag govuk-tag--red'>Incomplete</span> before you can send your information.<br>You can select 'Save and continue' to keep your progress and return later."
+            }) }}
+        {% endif %}
+        
+        <!-- Get current batch for use throughout template -->
+        {% set currentBatch = null %}
+        {% if sites and sites.length > 0 and sites[0].batchId %}
+            {% for batch in data['siteBatches'] %}
+                {% if batch.id == sites[0].batchId %}
+                    {% set currentBatch = batch %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        
+        <!-- Determine if this is a multiple sites journey based on original user choice OR batch data -->
+        {% set isMultipleSitesJourney = (data['manual-multiple-sites'] == 'Yes') or (currentBatch and currentBatch.entryMethod == 'manual-entry' and sites and sites.length > 1) %}
+        
+        <!-- Activity details section - only show for multiple sites -->
+        {% if isMultipleSitesJourney %}
+        <div id="activity-details" class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">
+                    Activity details
+                </h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Are the activity dates the same for every site?
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if currentBatch and currentBatch.settings and currentBatch.settings.sameActivityDates %}
+                                {{ currentBatch.settings.sameActivityDates }}
+                            {% elif data['manual-same-activity-dates'] %}
+                                {{ data['manual-same-activity-dates'] }}
+                            {% else %}
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                            {% endif %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="same-activity-dates?returnTo=review-site-details#activity-details" class="govuk-link">
+                                Change<span class="govuk-visually-hidden"> activity dates setting</span>
+                            </a>
+                        </dd>
+                    </div>
+                    
+                    {% set showSharedDates = (currentBatch and currentBatch.settings and currentBatch.settings.sameActivityDates == "Yes") or (not (currentBatch and currentBatch.settings) and data['manual-same-activity-dates'] == "Yes") %}
+
+                    {% if showSharedDates %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Activity dates
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if currentBatch and currentBatch.settings and currentBatch.settings.sharedStartDate and currentBatch.settings.sharedStartDate.day %}
+                                {{ currentBatch.settings.sharedStartDate.day }} {{ currentBatch.settings.sharedStartDate.month | toMonth }} {{ currentBatch.settings.sharedStartDate.year }} to {{ currentBatch.settings.sharedEndDate.day }} {{ currentBatch.settings.sharedEndDate.month | toMonth }} {{ currentBatch.settings.sharedEndDate.year }}
+                            {% elif sites and sites[0] and sites[0].startDate and sites[0].startDate.day %}
+                                {{ sites[0].startDate.day }} {{ sites[0].startDate.month | toMonth }} {{ sites[0].startDate.year }} to {{ sites[0].endDate.day }} {{ sites[0].endDate.month | toMonth }} {{ sites[0].endDate.year }}
+                            {% else %}
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                            {% endif %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="activity-dates?returnTo=review-site-details#activity-details" class="govuk-link">
+                                {% if (currentBatch and currentBatch.settings and currentBatch.settings.sharedStartDate and currentBatch.settings.sharedStartDate.day) or (sites and sites[0] and sites[0].startDate and sites[0].startDate.day) %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> activity dates</span>
+                            </a>
+                        </dd>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Is the activity description the same for every site?
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if currentBatch and currentBatch.settings and currentBatch.settings.sameActivityDescription %}
+                                {{ currentBatch.settings.sameActivityDescription }}
+                            {% elif data['manual-same-activity-description'] %}
+                                {{ data['manual-same-activity-description'] }}
+                            {% else %}
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                            {% endif %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="same-activity-description?returnTo=review-site-details#activity-details" class="govuk-link">
+                                Change<span class="govuk-visually-hidden"> activity description setting</span>
+                            </a>
+                        </dd>
+                    </div>
+                    
+                    {% set showSharedDescription = (currentBatch and currentBatch.settings and currentBatch.settings.sameActivityDescription == "Yes") or (not (currentBatch and currentBatch.settings) and data['manual-same-activity-description'] == "Yes") %}
+
+                    {% if showSharedDescription %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Activity description
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if currentBatch and currentBatch.settings and currentBatch.settings.sharedDescription %}
+                                {{ currentBatch.settings.sharedDescription }}
+                            {% elif sites and sites[0] and sites[0].description %}
+                                {{ sites[0].description }}
+                            {% else %}
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                            {% endif %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="activity-description?returnTo=review-site-details#activity-details" class="govuk-link">
+                                {% if (currentBatch and currentBatch.settings and currentBatch.settings.sharedDescription) or (sites and sites[0] and sites[0].description) %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> activity description</span>
+                            </a>
+                        </dd>
+                    </div>
+                    {% endif %}
+                </dl>
+            </div>
+        </div>
+        {% endif %}
+
+        <!-- Dynamic Site Details Sections -->
+        {% if sites and sites.length > 0 %}
+            {% for site in sites %}
+                {% set siteIndex = site.globalNumber or loop.index %}
+                <!-- FIXED: Calculate batch-relative position for backend URLs -->
+                {% set batchRelativePosition = loop.index %}
+                <div id="site-{{ siteIndex }}-details" class="govuk-summary-card">
+                    <div class="govuk-summary-card__title-wrapper">
+                        <h2 class="govuk-summary-card__title">
+                            Site {{ siteIndex }} details
+                        </h2>
+                        <ul class="govuk-summary-card__actions">
+                            <li class="govuk-summary-card__action">
+                                <a class="govuk-link" href="../delete-site?site={{ siteIndex }}&return=manual-entry-review">
+                                    Delete site<span class="govuk-visually-hidden"> {{ siteIndex }}</span>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="govuk-summary-card__content">
+                        <dl class="govuk-summary-list">
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Site name
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    {% if site.name %}
+                                        {{ site.name }}
+                                    {% else %}
+                                        <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                                    {% endif %}
+                                </dd>
+                                <dd class="govuk-summary-list__actions">
+                                    <a href="site-name?site={{ siteIndex }}&returnTo=review-site-details#site-{{ siteIndex }}-details" class="govuk-link">
+                                        {% if site.name %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> site name</span>
+                                    </a>
+                                </dd>
+                            </div>
+                            
+                            <!-- Activity dates logic -->
+                            {% if isMultipleSitesJourney %}
+                                {% set showSiteDates = (currentBatch and currentBatch.settings and currentBatch.settings.sameActivityDates == "No") or (not (currentBatch and currentBatch.settings) and data['manual-same-activity-dates'] == "No") %}
+                            {% else %}
+                                {% set showSiteDates = true %}
+                            {% endif %}
+
+                            {% if showSiteDates %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Activity dates
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    {% if site.startDate and site.startDate.day %}
+                                        {{ site.startDate.day }} {{ site.startDate.month | toMonth }} {{ site.startDate.year }} to {{ site.endDate.day }} {{ site.endDate.month | toMonth }} {{ site.endDate.year }}
+                                    {% else %}
+                                        <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                                    {% endif %}
+                                </dd>
+                                <dd class="govuk-summary-list__actions">
+                                    <a href="individual-site-activity-dates?site={{ siteIndex }}&returnTo=review-site-details#site-{{ siteIndex }}-details" class="govuk-link">
+                                        {% if site.startDate and site.startDate.day %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> activity dates</span>
+                                    </a>
+                                </dd>
+                            </div>
+                            {% endif %}
+                            
+                            <!-- Activity description logic -->
+                            {% if isMultipleSitesJourney %}
+                                {% set showSiteDescription = (currentBatch and currentBatch.settings and currentBatch.settings.sameActivityDescription == "No") or (not (currentBatch and currentBatch.settings) and data['manual-same-activity-description'] == "No") %}
+                            {% else %}
+                                {% set showSiteDescription = true %}
+                            {% endif %}
+
+                            {% if showSiteDescription %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Activity description
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    {% if site.description %}
+                                        {{ site.description }}
+                                    {% else %}
+                                        <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                                    {% endif %}
+                                </dd>
+                                <dd class="govuk-summary-list__actions">
+                                    <a href="individual-site-activity-description?site={{ siteIndex }}&returnTo=review-site-details#site-{{ siteIndex }}-details" class="govuk-link">
+                                        {% if site.description %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> activity description</span>
+                                    </a>
+                                </dd>
+                            </div>
+                            {% endif %}
+                            
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Method of providing site location
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    {% if site.coordinates %}
+                                        {% if site.coordinates.type == "circle" %}
+                                            Manually enter one set of coordinates and a width to create a circular site
+                                        {% elif site.coordinates.type == "polygon" %}
+                                            Manually enter multiple sets of coordinates to mark the boundary of the site
+                                        {% else %}
+                                            Manual coordinate entry
+                                        {% endif %}
+                                    {% else %}
+                                        <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                                    {% endif %}
+                                </dd>
+                                <dd class="govuk-summary-list__actions">
+                                    <a href="how-do-you-want-to-enter-the-coordinates?site={{ siteIndex }}&returnTo=review-site-details&clearData=true#site-{{ siteIndex }}-details" class="govuk-link">
+                                        Change<span class="govuk-visually-hidden"> method of providing site location</span>
+                                    </a>
+                                </dd>
+                            </div>
+                            
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Coordinate system
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    {% if site.coordinateSystem %}
+                                        {{ site.coordinateSystem }}<br>
+                                        {% if site.coordinateSystem == "WGS84 (World Geodetic System 1984)" %}
+                                            Latitude and longitude
+                                        {% elif site.coordinateSystem == "OSGB36 (National Grid)" %}
+                                            Eastings and Northings
+                                        {% endif %}
+                                    {% else %}
+                                        <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                                    {% endif %}
+                                </dd>
+                                <dd class="govuk-summary-list__actions">
+                                    <a href="which-coordinate-system?site={{ siteIndex }}&returnTo=review-site-details&clearData=true#site-{{ siteIndex }}-details" class="govuk-link">
+                                        Change<span class="govuk-visually-hidden"> coordinate system</span>
+                                    </a>
+                                </dd>
+                            </div>
+                            
+                            <!-- Coordinate display based on method -->
+                            {% if site.coordinates and site.coordinates.type == "circle" %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Coordinates at centre of site
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    {% if site.coordinates.center and site.coordinates.center.latitude and site.coordinates.center.longitude %}
+                                        {{ site.coordinates.center.latitude }}, {{ site.coordinates.center.longitude }}
+                                    {% else %}
+                                        <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                                    {% endif %}
+                                </dd>
+                                <dd class="govuk-summary-list__actions">
+                                    <a href="enter-coordinates?site={{ siteIndex }}&returnTo=review-site-details#site-{{ siteIndex }}-details" class="govuk-link">
+                                        {% if site.coordinates.center and site.coordinates.center.latitude and site.coordinates.center.longitude %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> coordinates at centre of site</span>
+                                    </a>
+                                </dd>
+                            </div>
+                            
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Width of circular site
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    {% if site.coordinates.width %}
+                                        {{ site.coordinates.width }} metres
+                                    {% else %}
+                                        <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                                    {% endif %}
+                                </dd>
+                                <dd class="govuk-summary-list__actions">
+                                    <a href="site-width?site={{ siteIndex }}&returnTo=review-site-details#site-{{ siteIndex }}-details" class="govuk-link">
+                                        {% if site.coordinates.width %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> width of circular site</span>
+                                    </a>
+                                </dd>
+                            </div>
+                            
+                            {% elif site.coordinates and site.coordinates.type == "polygon" %}
+                            
+                            {% for point in site.coordinates.points %}
+                                <div class="govuk-summary-list__row{% if not loop.last %} govuk-summary-list__row--no-border{% endif %}">
+                                    <dt class="govuk-summary-list__key">
+                                        {% if loop.index == 1 %}
+                                            Start and end points
+                                        {% else %}
+                                            Point {{ loop.index }}
+                                        {% endif %}
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                        {{ point.latitude }}, {{ point.longitude }}
+                                    </dd>
+                                    <dd class="govuk-summary-list__actions">
+                                        {% if loop.index == 1 %}
+                                            <a href="enter-multiple-coordinates?site={{ siteIndex }}&returnTo=review-site-details#site-{{ siteIndex }}-details" class="govuk-link">
+                                                Change<span class="govuk-visually-hidden"> coordinates</span>
+                                            </a>
+                                        {% endif %}
+                                    </dd>
+                                </div>
+                            {% endfor %}
+                            
+                            {% if not site.coordinates.points or site.coordinates.points.length == 0 %}
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Start and end points
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                    <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                                </dd>
+                                <dd class="govuk-summary-list__actions">
+                                    <a href="enter-multiple-coordinates?site={{ siteIndex }}&returnTo=review-site-details#site-{{ siteIndex }}-details" class="govuk-link">
+                                        Add<span class="govuk-visually-hidden"> coordinates</span>
+                                    </a>
+                                </dd>
+                            </div>
+                            {% endif %}
+                            
+                            {% endif %}
+                            
+                            <div class="govuk-summary-list__row">
+                                <dt class="govuk-summary-list__key">
+                                    Map view
+                                </dt>
+                                <dd class="govuk-summary-list__value">
+                                </dd>
+                                <dd class="govuk-summary-list__actions"></dd>
+                            </div>
+                        </dl>
+                        
+                        {% set mapImageSrc = site.mapImage %}
+                        {% if not mapImageSrc %}
+                            {% if site.coordinates and site.coordinates.type == "circle" %}
+                                {% set mapImageSrc = '/public/images/worthing-map-circle-copy.jpg' %}
+                            {% elif site.coordinates and site.coordinates.type == "polygon" and site.coordinates.points %}
+                                {% if site.coordinates.points.length == 3 %}
+                                    {% set mapImageSrc = '/public/images/worthing-map-3-points-copy.jpg' %}
+                                {% elif site.coordinates.points.length == 4 %}
+                                    {% set mapImageSrc = '/public/images/worthing-map-4-points-copy.jpg' %}
+                                {% elif site.coordinates.points.length >= 5 %}
+                                    {% set mapImageSrc = '/public/images/worthing-map-5-points-copy.jpg' %}
+                                {% else %}
+                                    {% set mapImageSrc = '/public/images/worthing-map-drawn-copy.jpg' %}
+                                {% endif %}
+                            {% else %}
+                                {% set mapImageSrc = '/public/images/worthing-map-drawn-copy.jpg' %}
+                            {% endif %}
+                        {% endif %}
+                        <img src="{{ mapImageSrc }}" alt="Map showing site {{ siteIndex }} location" width="100%" />
+                    </div>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="govuk-inset-text">
+                No sites have been added yet.
+            </div>
+        {% endif %}
+
+        <!-- Add another site section - only show for multiple sites -->
+        {% if isMultipleSitesJourney %}
+        <p class="govuk-body">
+            Select 'Add another site' and we'll reuse any answers you've told us are the same. You'll only need to enter what's different.
+        </p>
+        
+        <div class="govuk-!-margin-bottom-4">
+            <a href="add-next-site-router{% if currentBatch and currentBatch.id %}?batchId={{ currentBatch.id }}{% endif %}" class="govuk-button govuk-button--secondary" data-module="govuk-button">
+                Add another site
+            </a>
+        </div>
+        {% endif %}
+
+        <form action="review-site-details-router" method="post" novalidate>
+            <div class="govuk-button-group">
+                {{ govukButton({
+                    text: "Save and continue"
+                }) }}
+                <a class="govuk-link govuk-link--no-visited-state" href="../cancel-site-details">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
+<!-- Generated by Copilot --> 

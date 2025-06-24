@@ -1,0 +1,139 @@
+{% extends "../layouts/exemption.html" %}
+
+{% block beforeContent %}
+    {% include "../includes/phase-banner.html" %}
+    {% include "../includes/back-link.html" %}
+{% endblock %}
+
+<!-- Setting the smaller secondary heading lower down the page -->
+{% set pageHeadingTextHTML %}
+Which type of file do you want to upload?
+{% endset %}
+
+<!-- Set the text for the error type -->
+{% set errorTextHTML %}
+    <!-- Nothing was selected -->
+    {% if data['errortypeone'] == "true" %}
+    Select which type of file you want to upload
+    {% endif %}
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {% if  data['errorthispage'] == "true"  %}
+        Error:
+    {% endif %}
+
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <!-- ERROR LOGIC 'error summary' -->
+        {% if data['errorthispage'] == "true" %}
+            {{ govukErrorSummary
+                ({
+                    titleText: "There is a problem",
+                    errorList:
+                    [
+                        {
+                            html: errorTextHTML,
+                            href: "#exemption-which-type-of-file-radios"
+                        }
+                    ]
+                })
+            }}
+        {% endif %}
+        <!--  END OF 'error summary' -->
+        <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
+           <h1 class="govuk-heading-l">
+            {{ pageHeadingTextHTML }}
+            </h1> 
+
+            <details class="govuk-details">
+                <summary class="govuk-details__summary">
+                  <span class="govuk-details__summary-text">
+                    Help with file types
+                  </span>
+                </summary>
+                <div class="govuk-details__text">
+                 <h2 class="govuk-heading-s">Shapefile</h2>
+                  <p>A shapefile is a collection of files that store map data. It defines locations, shapes, and other details like names or numbers. Shapefiles are commonly used in geographic information system (GIS) software.</p>
+
+                  <h2 class="govuk-heading-s">KML</h2>
+                  <p>A KML file (Keyhole Markup Language) is used to store map data. It tells mapping programs like Google Earth where to place points, lines, shapes, and other features on a map. KML files are written in XML (Extensible Markup Language), a format that organises data so computers can read it.</p>
+                </div>
+              </details>
+
+        <!-- go to routes.js for routing  -->
+        <form action="which-type-of-file-router" method="post" novalidate>
+
+            {{ govukRadios
+                ({
+                    name: "exemption-which-type-of-file-radios",
+
+                    id: "exemption-which-type-of-file-radios",
+
+                    fieldset:
+                    {
+                        legend:
+                        {
+                            html: pageHeadingTextHTML,
+                            isPageHeading: false,
+                            classes: "govuk-visually-hidden"
+                        }
+                    },
+
+                    errorMessage: null if data['errorthispage'] != "true"
+                                       else { html: errorTextHTML },
+
+                    items:
+                    [
+                        {
+                            value: "Shapefile",
+                            text: "Shapefile",
+                            checked: data['exemption-which-type-of-file-radios'] == "Shapefile"
+                        },
+                        {
+                            value: "KML",
+                            text: "KML",
+                            checked: data['exemption-which-type-of-file-radios'] == "KML"
+                        }
+                    ]
+                })
+            }}
+
+            <div class="govuk-button-group">
+                {{ govukButton({
+                  text: "Continue"
+                }) }}
+                <a class="govuk-link govuk-link--no-visited-state" href="cancel-site-details">Cancel</a>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+<!-- ERROR LOGIC  drop down to toggle states  -->
+<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-325px; padding-bottom: 30px;  ">
+
+    <select style="height:30px;" onchange="window.location.href='?'+this.value">
+
+        <option value="errorthispage=false&errortypeone=false&errortypetwo=false&"
+                {% if (data['errorthispage'] != "true") %}selected{% endif %}
+        >Errors - Off</option>
+
+        <option value="errorthispage=true&errortypeone=true&errortypetwo=false&"
+                {% if (data['errortypeone'] == 'true' and data['errortypetwo'] != 'true')  %}selected{% endif %}
+        >Error 1 - Must select at least one</option>
+
+    </select>
+
+</form>
+<!--  END OF ERROR LOGIC -->
+
+{% endblock %}
+
