@@ -2632,32 +2632,8 @@ router.get('/' + version + section + 'add-another-site', function (req, res) {
     // Clear the checkbox state from the sites page
     delete req.session.data['finished-adding-sites'];
     
-    // NEW FUNCTIONALITY: Check previous entry method and redirect accordingly
-    // Get all existing sites to determine the entry method they used
-    const allSites = getAllSites(req.session);
-    
-    if (allSites.length > 0) {
-        // Use the entry method from the first site (all sites should have the same method)
-        const previousEntryMethod = allSites[0].entryMethod;
-        
-        if (previousEntryMethod === 'file-upload') {
-            // Clear file type radio selection so it's not preselected
-            delete req.session.data['exemption-which-type-of-file-radios'];
-            // If they previously uploaded a file, take them to the start of file upload
-            res.redirect('which-type-of-file');
-        } else if (previousEntryMethod === 'manual-entry' || previousEntryMethod === 'manual-entry-single-site') {
-            // Clear multiple sites radio selection so it's not preselected
-            delete req.session.data['manual-multiple-sites'];
-            // If they previously entered manually, take them to the start of manual entry
-            res.redirect('manual-entry/does-your-project-involve-more-than-one-site');
-        } else {
-            // Fallback to original behavior if entry method is unclear
-            res.redirect('how-do-you-want-to-provide-the-coordinates');
-        }
-    } else {
-        // No existing sites, use original behavior
-        res.redirect('how-do-you-want-to-provide-the-coordinates');
-    }
+    // Redirect to coordinate method selection page
+    res.redirect('how-do-you-want-to-provide-the-coordinates');
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////
