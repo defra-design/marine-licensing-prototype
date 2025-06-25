@@ -188,6 +188,12 @@
 
 /////// End of multiple coordinates styles ///////
 
+@media (min-width: 48em) {
+  .site-batch-actions {
+    padding-top: 4px !important;
+  }
+}
+
 // Responsive styles for site batch headers
 @media (max-width: 48em) {
   .site-batch-header {

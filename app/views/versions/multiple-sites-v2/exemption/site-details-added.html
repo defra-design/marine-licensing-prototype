@@ -104,7 +104,7 @@ Your sites
         </h1>
 
         {% if data['sites'] and data['sites'].length > 0 %}
-            <p class="govuk-body">You can select 'Save and continue' to keep your progress and return later if any sites are marked <span class="govuk-tag govuk-tag--red">Incomplete</span></p>
+            <p class="govuk-body">You can select 'Save and continue' to keep your progress and return later if any sites are marked incomplete.</p>
             <p class="govuk-body govuk-!-margin-bottom-6">You must complete all site details before selecting 'I've finished adding sites'.</p>
         {% endif %}
         
@@ -254,7 +254,7 @@ Your sites
                         {% endif %}
                         
                         <div class="govuk-!-margin-bottom-6 site-batch-header">
-                            <div style="overflow: hidden;" class="site-batch-header-content">
+                            <div style="overflow: hidden; border-bottom: 1px solid #b1b4b6;" class="site-batch-header-content; govuk-!-padding-bottom-2">
                                 <h2 class="govuk-heading-m site-batch-heading" style="float: left; margin-bottom: 10px;">
                                     {{ currentBatchHeading }}
                                     {% if batchComplete %}
