@@ -188,6 +188,39 @@
 
 /////// End of multiple coordinates styles ///////
 
+// Responsive styles for site batch headers
+@media (max-width: 48em) {
+  .site-batch-header {
+    .site-batch-heading {
+      float: none !important;
+    }
+    
+    .site-batch-actions {
+      float: none !important;
+      margin: 15px 0 !important;
+    }
+  }
+}
+
+@media (max-width: 40.0525em) {
+  .site-batch-header {
+    .site-batch-header-content {
+      float: none !important;
+      overflow: visible !important;
+    }
+    
+    .site-batch-heading {
+      float: none !important;
+      margin-bottom: 15px !important;
+    }
+    
+    .site-batch-actions {
+      float: none !important;
+      margin-bottom: 20px !important; // govuk-spacing(7) for spacing after links
+    }
+  }
+}
+
 .govuk-summary-list__actions-list-item:not(:first-child), .govuk-summary-card__action:not(:first-child) {
   border-left: none;
 }
