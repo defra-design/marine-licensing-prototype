@@ -319,7 +319,22 @@
                     Activity description
                   </dt>
                   <dd class="govuk-summary-list__value">
-                    {{ site.description }}
+                    {% set siteBatch = null %}
+                    {% if site.batchId and data['siteBatches'] %}
+                      {% for batch in data['siteBatches'] %}
+                        {% if batch.id == site.batchId %}
+                          {% set siteBatch = batch %}
+                        {% endif %}
+                      {% endfor %}
+                    {% endif %}
+                    
+                    {% if siteBatch and siteBatch.settings and siteBatch.settings.sameActivityDescription == "Yes" and siteBatch.settings.sharedDescription %}
+                      {{ siteBatch.settings.sharedDescription }}
+                    {% elif not siteBatch and data['manual-same-activity-description'] == "Yes" and data['manual-activity-details-text-area'] %}
+                      {{ data['manual-activity-details-text-area'] }}
+                    {% else %}
+                      {{ site.description }}
+                    {% endif %}
                   </dd>
                 </div>
 
@@ -391,7 +406,22 @@
                     Activity description
                   </dt>
                   <dd class="govuk-summary-list__value">
-                    {{ site.description }}
+                    {% set siteBatch = null %}
+                    {% if site.batchId and data['siteBatches'] %}
+                      {% for batch in data['siteBatches'] %}
+                        {% if batch.id == site.batchId %}
+                          {% set siteBatch = batch %}
+                        {% endif %}
+                      {% endfor %}
+                    {% endif %}
+                    
+                    {% if siteBatch and siteBatch.settings and siteBatch.settings.sameActivityDescription == "Yes" and siteBatch.settings.sharedDescription %}
+                      {{ siteBatch.settings.sharedDescription }}
+                    {% elif not siteBatch and data['manual-same-activity-description'] == "Yes" and data['manual-activity-details-text-area'] %}
+                      {{ data['manual-activity-details-text-area'] }}
+                    {% else %}
+                      {{ site.description }}
+                    {% endif %}
                   </dd>
                 </div>
 
@@ -460,7 +490,22 @@
                     Activity description
                   </dt>
                   <dd class="govuk-summary-list__value">
-                    {{ site.description }}
+                    {% set siteBatch = null %}
+                    {% if site.batchId and data['siteBatches'] %}
+                      {% for batch in data['siteBatches'] %}
+                        {% if batch.id == site.batchId %}
+                          {% set siteBatch = batch %}
+                        {% endif %}
+                      {% endfor %}
+                    {% endif %}
+                    
+                    {% if siteBatch and siteBatch.settings and siteBatch.settings.sameActivityDescription == "Yes" and siteBatch.settings.sharedDescription %}
+                      {{ siteBatch.settings.sharedDescription }}
+                    {% elif not siteBatch and data['manual-same-activity-description'] == "Yes" and data['manual-activity-details-text-area'] %}
+                      {{ data['manual-activity-details-text-area'] }}
+                    {% else %}
+                      {{ site.description }}
+                    {% endif %}
                   </dd>
                 </div>
 
