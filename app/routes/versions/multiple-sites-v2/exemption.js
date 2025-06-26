@@ -569,7 +569,7 @@ router.get('/' + version + section + 'single-site-file-upload-start', function (
     clearAllSiteDetails(req.session);
     
     // Set up session for single-site file upload
-    req.session.data['exemption-project-name-text-input'] = 'Single site file upload test';
+    req.session.data['exemption-project-name-text-input'] = 'Worthing sea sample';
     req.session.data['exempt-information-1-status'] = 'completed';
     req.session.data['headerNameExemption'] = 'Apply for a marine licence';
     req.session.data['exemption'] = 'sample-notification';
