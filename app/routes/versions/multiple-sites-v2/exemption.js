@@ -2494,9 +2494,6 @@ router.get('/' + version + section + 'site-details-added', function (req, res) {
 });
 
 router.post('/' + version + section + 'site-details-added-router', function (req, res) {
-    // Reset error flag
-    req.session.data['errorthispage'] = "false";
-    
     // Check if any site is incomplete
     let hasSiteIncomplete = false;
     
@@ -2580,65 +2577,23 @@ router.post('/' + version + section + 'site-details-added-router', function (req
     console.log('Any site incomplete:', hasSiteIncomplete);
     console.log('=== END COMPLETENESS CHECK DEBUG ===');
     
-    // Check if "I've finished adding sites" checkbox is checked
-    if (req.session.data['finished-adding-sites'] && req.session.data['finished-adding-sites'].includes('yes')) {
-        // Check if there are no sites at all
-        if (sites.length === 0) {
-            // Set error flag if no sites exist and checkbox is checked
-            req.session.data['errorthispage'] = "true";
-            res.redirect('site-details-added');
-            return;
-        } else if (hasSiteIncomplete) {
-            // Set error flag if sites are incomplete and checkbox is checked
-            req.session.data['errorthispage'] = "true";
-            res.redirect('site-details-added');
-            return;
-        } else {
-            // Mark the section as completed if all sites are complete
-            req.session.data['exempt-information-3-status'] = 'completed';
-        }
-    } else {
-        // Mark the section as in progress
+    // Automatically set task status based on site completeness
+    if (sites.length === 0) {
+        // No sites exist - set to not started
+        req.session.data['exempt-information-3-status'] = 'not-started';
+    } else if (hasSiteIncomplete) {
+        // Some sites are incomplete - set to in progress
         req.session.data['exempt-information-3-status'] = 'in-progress';
+    } else {
+        // All sites are complete - set to completed
+        req.session.data['exempt-information-3-status'] = 'completed';
     }
     
-    // Redirect to task list if no errors
+    // Always redirect to task list (no more error validation needed)
     res.redirect('task-list');
 });
 
-//////////////////////////////////////////////////////////////////////////////////////////////
-// Add another site - clear all data and start fresh coordinate method selection
-/////////////////////////////////////////////////////////////////////////////////////////////
 
-// Route handler for "Add another site" functionality
-router.get('/' + version + section + 'add-another-site', function (req, res) {
-    // FIXED: Don't clear all data - preserve existing batches
-    // Instead of clearing all coordinate method data, only clear the method selection
-    // This prevents file uploads from wiping manual entry activity settings
-    
-    // Clear error states from the previous page (site-details-added)
-    req.session.data['errorthispage'] = "false";
-    req.session.data['errortypeone'] = "false";
-    req.session.data['errors'] = [];
-    
-    // Clear only the coordinate method selection to allow fresh choice
-    delete req.session.data['exemption-how-do-you-want-to-provide-the-coordinates-radios'];
-    
-    // Clear current batch ID so we can start a fresh batch
-    delete req.session.data['currentBatchId'];
-    
-    // Clear any navigation flags that might interfere
-    delete req.session.data['fromReviewSiteDetails'];
-    delete req.session.data['siteDetailsSaved'];
-    delete req.session.data['current-site'];
-    delete req.session.data['returnTo'];
-    
-    // Clear the checkbox state from the sites page
-    delete req.session.data['finished-adding-sites'];
-    
-    // Redirect to coordinate method selection page
-    res.redirect('how-do-you-want-to-provide-the-coordinates');
-});
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Cancel actions - NEW STATE-BASED SYSTEM
