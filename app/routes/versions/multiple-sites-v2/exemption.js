@@ -1349,6 +1349,12 @@ router.get('/' + version + section + 'upload-file', function (req, res) {
     req.session.data['errortypeone'] = "false";
     req.session.data['errors'] = [];
     
+    // Check for URL parameter to force single site upload
+    if (req.query.sites === '1' || req.query.singleSite === 'true') {
+        // Set upload count to 1 so it becomes 2 after increment, giving us 1 site
+        req.session.data['fileUploadCount'] = 1;
+    }
+    
     // Check if we're returning from review-site-details
     if (req.query.returnTo === 'review-site-details') {
         req.session.data['fromReviewSiteDetails'] = 'true';
