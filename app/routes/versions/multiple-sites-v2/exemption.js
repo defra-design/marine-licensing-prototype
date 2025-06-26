@@ -560,6 +560,32 @@ function clearDataAfterFileUpload(session) {
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////////
+// Single-site file upload journey entry point
+// DIRECT LINK FROM INDEX PAGE FOR 1-SITE FILE UPLOAD TESTING
+//////////////////////////////////////////////////////////////////////////////////////////////
+
+router.get('/' + version + section + 'single-site-file-upload-start', function (req, res) {
+    // Clear all session data for a fresh start
+    clearAllSiteDetails(req.session);
+    
+    // Set up session for single-site file upload
+    req.session.data['exemption-project-name-text-input'] = 'Single site file upload test';
+    req.session.data['exempt-information-1-status'] = 'completed';
+    req.session.data['headerNameExemption'] = 'Apply for a marine licence';
+    req.session.data['exemption'] = 'sample-notification';
+    
+    // Force single-site generation by setting upload count to 1
+    // This will become 2 after increment, triggering 1-site creation
+    req.session.data['fileUploadCount'] = 1;
+    
+    // Set coordinate method to file upload
+    req.session.data['exemption-how-do-you-want-to-provide-the-coordinates-radios'] = 'Upload a file with the coordinates of the site';
+    
+    // Go directly to file type selection
+    res.redirect('which-type-of-file');
+});
+
+//////////////////////////////////////////////////////////////////////////////////////////////
 // Project name start
 // NOT THE ONE IN THE TASK LIST - SEE BELOW FOR THAT ONE
 // TEXT ENTRY
@@ -1348,12 +1374,6 @@ router.get('/' + version + section + 'upload-file', function (req, res) {
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
     req.session.data['errors'] = [];
-    
-    // Check for URL parameter to force single site upload
-    if (req.query.sites === '1' || req.query.singleSite === 'true') {
-        // Set upload count to 1 so it becomes 2 after increment, giving us 1 site
-        req.session.data['fileUploadCount'] = 1;
-    }
     
     // Check if we're returning from review-site-details
     if (req.query.returnTo === 'review-site-details') {
