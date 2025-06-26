@@ -75,6 +75,10 @@ Review site details
             {{ govukInsetText({
                 html: "You must complete all sections marked <span class='govuk-tag govuk-tag--red'>Incomplete</span> before you can send your information.<br><br>You can select 'Save and continue' to keep your progress and return later."
             }) }}
+        {% else %}
+            {{ govukInsetText({
+                html: "You can select 'Save and continue' to keep your progress and return later."
+            }) }}
         {% endif %}
         
         <!-- Get current batch for use throughout template -->
