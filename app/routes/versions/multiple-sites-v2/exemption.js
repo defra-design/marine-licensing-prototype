@@ -1000,9 +1000,14 @@ router.post('/' + version + section + 'delete-site-router', function (req, res) 
         renumberSitesAfterDeletion(req.session, globalSiteNumber);
     }
     
-    // Redirect logic: if this was the last site in the batch and we're coming from review-site-details,
-    // redirect to site-details-added instead of review-site-details
-    if ((returnTo === 'review-site-details' || returnTo === 'manual-entry-review') && batchWillBeEmpty) {
+    // Redirect logic: handle different scenarios based on return location and batch state
+    if (returnTo === 'manual-entry-review' && batchWillBeEmpty) {
+        // Manual entry review with last site deleted - reset to fresh start
+        clearAllSiteDetails(req.session);
+        req.session.data['exempt-information-3-status'] = 'not-started';
+        res.redirect('task-list');
+    } else if (returnTo === 'review-site-details' && batchWillBeEmpty) {
+        // File upload review with last site deleted - go to Your sites page
         res.redirect('site-details-added');
     } else if (returnTo === 'manual-entry-review') {
         res.redirect('manual-entry/review-site-details#site-' + globalSiteNumber + '-details');
