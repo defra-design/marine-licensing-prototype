@@ -102,11 +102,9 @@ Review site details
             {% endfor %}
         {% endif %}
 
-        {% if not allComplete %}
-            {{ govukInsetText({
-                html: "You must complete all sections marked <span class='govuk-tag govuk-tag--red'>Incomplete</span> before you can send your information.<br>You can select 'Save and continue' to keep your progress and return later."
-            }) }}
-        {% endif %}
+        {{ govukInsetText({
+            html: "You can select 'Save and continue' to keep your progress and return later."
+        }) }}
         
         <!-- Get current batch for use throughout template -->
         {% set currentBatch = null %}
@@ -120,6 +118,32 @@ Review site details
         
         <!-- Determine if this is a multiple sites journey based on original user choice OR batch data -->
         {% set isMultipleSitesJourney = (data['manual-multiple-sites'] == 'Yes') or (currentBatch and currentBatch.entryMethod == 'manual-entry' and sites and sites.length > 1) %}
+        
+        <!-- Providing the site location section -->
+        <div id="site-location" class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">
+                    Providing the site location
+                </h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Method of providing site location
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            Enter the coordinates of the site manually
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="../how-do-you-want-to-provide-the-coordinates?returnTo=review-site-details#site-location" class="govuk-link">
+                                Change<span class="govuk-visually-hidden"> method of providing site location</span>
+                            </a>
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
         
         <!-- Activity details section - only show for multiple sites -->
         {% if isMultipleSitesJourney %}
@@ -318,7 +342,7 @@ Review site details
                             
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">
-                                    Method of providing site location
+                                    Method of entering the coordinates
                                 </dt>
                                 <dd class="govuk-summary-list__value">
                                     {% if site.coordinates %}
@@ -335,7 +359,7 @@ Review site details
                                 </dd>
                                 <dd class="govuk-summary-list__actions">
                                     <a href="how-do-you-want-to-enter-the-coordinates?site={{ siteIndex }}&returnTo=review-site-details&clearData=true#site-{{ siteIndex }}-details" class="govuk-link">
-                                        Change<span class="govuk-visually-hidden"> method of providing site location</span>
+                                        Change<span class="govuk-visually-hidden"> method of entering the coordinates</span>
                                     </a>
                                 </dd>
                             </div>

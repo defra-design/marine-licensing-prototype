@@ -1000,9 +1000,14 @@ router.post('/' + version + section + 'delete-site-router', function (req, res) 
         renumberSitesAfterDeletion(req.session, globalSiteNumber);
     }
     
-    // Redirect logic: if this was the last site in the batch and we're coming from review-site-details,
-    // redirect to site-details-added instead of review-site-details
-    if ((returnTo === 'review-site-details' || returnTo === 'manual-entry-review') && batchWillBeEmpty) {
+    // Redirect logic: handle different scenarios based on return location and batch state
+    if (returnTo === 'manual-entry-review' && batchWillBeEmpty) {
+        // Manual entry review with last site deleted - reset to fresh start
+        clearAllSiteDetails(req.session);
+        req.session.data['exempt-information-3-status'] = 'not-started';
+        res.redirect('task-list');
+    } else if (returnTo === 'review-site-details' && batchWillBeEmpty) {
+        // File upload review with last site deleted - go to Your sites page
         res.redirect('site-details-added');
     } else if (returnTo === 'manual-entry-review') {
         res.redirect('manual-entry/review-site-details#site-' + globalSiteNumber + '-details');
@@ -1073,9 +1078,15 @@ router.get('/' + version + section + 'review-site-details', function (req, res) 
             req.session.data['exemption-same-activity-dates-for-sites'] = currentBatch.settings.sameActivityDates;
             req.session.data['exemption-same-activity-description-for-sites'] = currentBatch.settings.sameActivityDescription;
             
-            // Populate file type from batch (for file upload batches)
-            if (currentBatch.settings.fileType) {
-                req.session.data['exemption-which-type-of-file-radios'] = currentBatch.settings.fileType;
+            // Populate file upload data from batch (for file upload batches)
+            if (currentBatch.entryMethod === 'file-upload') {
+                // Set file upload flag
+                req.session.data['hasUploadedFile'] = true;
+                
+                // Set file type if available
+                if (currentBatch.settings.fileType) {
+                    req.session.data['exemption-which-type-of-file-radios'] = currentBatch.settings.fileType;
+                }
             }
             
             // Populate shared dates from batch
@@ -1154,17 +1165,12 @@ router.get('/' + version + section + 'how-do-you-want-to-provide-the-coordinates
     req.session.data['errortypeone'] = "false";
     req.session.data['errors'] = [];
     
-    // Check if we need to clear data (coming from review page change links)
-    if (req.query.clearData === 'true') {
-        clearDataForFileUploadChange(req.session);
-    }
-    
     // Track origin and review state
     if (req.query.returnTo === 'review-site-details') {
         req.session.data['fromReviewSiteDetails'] = 'true';
         updateReviewState(req.session, 'editing');
         logCancelState(req.session, 'coordinates page - editing from review');
-    } else if (!req.query.returnTo && !req.query.camefromcheckanswers && req.query.clearData !== 'true') {
+    } else if (!req.query.returnTo && !req.query.camefromcheckanswers) {
         // Starting a new journey - set task list origin if not already set
         if (!req.session.data['cancelOrigin']) {
             setOriginContext(req.session, 'task-list');
@@ -1175,7 +1181,7 @@ router.get('/' + version + section + 'how-do-you-want-to-provide-the-coordinates
         req.session.data['reviewPageSaved'] = false;
         req.session.data['isEditingFromReview'] = false;
         
-        // Only clear data if starting a truly new journey (not from check answers, review, or clearData scenarios)
+        // Only clear data if starting a truly new journey (not from check answers or review)
         req.session.data['siteDetailsSaved'] = false;
         
         // Clear file upload data for a fresh start BUT preserve fileUploadCount for sequence tracking
@@ -1211,22 +1217,48 @@ router.post('/' + version + section + 'how-do-you-want-to-provide-the-coordinate
         return;
     }
 
-    // Clear data based on selection
-    switch(selection) {
-        case "Enter the coordinates of the site manually":
-            // Clear file upload data if it exists
-            delete req.session.data['exemption-which-type-of-file-radios'];
-            delete req.session.data['kml-file-upload'];
-            // Clear the radio button that causes browser caching issues
-            req.session.data['manual-multiple-sites'] = '';
-            break;
-        case "Upload a file with the coordinates of the site":
-            // Clear manual entry data if it exists
+    // Determine if user is actually changing method (only clear data if they are)
+    const currentBatch = getCurrentBatch(req.session);
+    const currentMethod = currentBatch ? currentBatch.entryMethod : null;
+    const newMethod = selection === "Upload a file with the coordinates of the site" ? "file-upload" : "manual-entry";
+    
+    // Only clear data if user is changing to a different method
+    if (currentMethod && currentMethod !== newMethod) {
+        // User is changing methods - clear current batch and start fresh
+        if (newMethod === "manual-entry") {
+            // Switching to manual entry - clear file upload data and batch
+            clearDataForFileUploadChange(req.session);
+        } else {
+            // Switching to file upload - clear manual entry data and batch
+            clearCurrentBatchSafely(req.session);
             clearAllManualEntryData(req.session);
-            break;
+        }
+    } else if (!currentMethod) {
+        // No current method - this is a fresh start, just clear opposing method data
+        switch(selection) {
+            case "Enter the coordinates of the site manually":
+                // Clear any stale file upload data
+                delete req.session.data['exemption-which-type-of-file-radios'];
+                delete req.session.data['kml-file-upload'];
+                req.session.data['manual-multiple-sites'] = '';
+                break;
+            case "Upload a file with the coordinates of the site":
+                // Clear any stale manual entry data
+                clearAllManualEntryData(req.session);
+                break;
+        }
+    }
+    // If currentMethod === newMethod, don't clear anything - user is staying with same method
+
+    // Check if we're returning to review page
+    if (req.session.data['fromReviewSiteDetails'] === 'true' && currentMethod === newMethod) {
+        // User didn't actually change method - return to review page
+        delete req.session.data['fromReviewSiteDetails'];
+        res.redirect('review-site-details');
+        return;
     }
 
-    // Route based on selection
+    // Route based on selection for new journeys or actual method changes
     switch(selection) {
         case "Enter the coordinates of the site manually":
             res.redirect('manual-entry/does-your-project-involve-more-than-one-site');
@@ -1251,16 +1283,10 @@ router.get('/' + version + section + 'which-type-of-file', function (req, res) {
     req.session.data['errortypeone'] = "false";
     req.session.data['errors'] = [];
     
-    // Check if we need to clear data (coming from review page change links)
-    if (req.query.clearData === 'true') {
-        clearDataForFileTypeChange(req.session);
-    }
-    
     // Check if we're returning from review-site-details
-    if (req.session.data['fromReviewSiteDetails'] === 'true') {
-        // Keep the flag
-    } else if (req.session.data['returnTo'] === 'review-site-details') {
+    if (req.query.returnTo === 'review-site-details') {
         req.session.data['fromReviewSiteDetails'] = 'true';
+        updateReviewState(req.session, 'editing');
     }
     
     res.render(version + section + 'which-type-of-file');
@@ -1280,7 +1306,25 @@ router.post('/' + version + section + 'which-type-of-file-router', function (req
         return;
     }
 
-    // Route based on selection
+    // Check if user is actually changing file type (only clear data if they are)
+    const currentBatch = getCurrentBatch(req.session);
+    const currentFileType = currentBatch && currentBatch.settings ? currentBatch.settings.fileType : null;
+    
+    // Only clear data if user is changing to a different file type
+    if (currentFileType && currentFileType !== selection) {
+        // User is changing file type - clear current batch and start fresh
+        clearDataForFileTypeChange(req.session);
+    }
+    
+    // Check if we're returning to review page with no actual change
+    if (req.session.data['fromReviewSiteDetails'] === 'true' && currentFileType === selection) {
+        // User didn't actually change file type - return to review page
+        delete req.session.data['fromReviewSiteDetails'];
+        res.redirect('review-site-details');
+        return;
+    }
+
+    // Route based on selection for new journeys or actual changes
     switch(selection) {
         case "KML":
             res.redirect('upload-file');
@@ -1305,16 +1349,10 @@ router.get('/' + version + section + 'upload-file', function (req, res) {
     req.session.data['errortypeone'] = "false";
     req.session.data['errors'] = [];
     
-    // Check if we need to clear data (coming from review page change links)
-    if (req.query.clearData === 'true') {
-        clearDataForFileUploadOnly(req.session);
-    }
-    
     // Check if we're returning from review-site-details
-    if (req.session.data['fromReviewSiteDetails'] === 'true') {
-        // Keep the flag
-    } else if (req.session.data['returnTo'] === 'review-site-details') {
+    if (req.query.returnTo === 'review-site-details') {
         req.session.data['fromReviewSiteDetails'] = 'true';
+        updateReviewState(req.session, 'editing');
     }
     
     res.render(version + section + 'upload-file');
@@ -1742,8 +1780,24 @@ function updateTaskStatusAfterClear(session) {
 // Update the upload file router to use batch handling
 router.post('/' + version + section + 'upload-file-router', function (req, res) {
     req.session.data['siteTitle'] = 'review';
-    // Initialize a new batch for file upload
-    const batchId = initializeBatch(req.session, 'file-upload');
+    
+    // Check if we already have a file upload batch (user might be changing file within same file type)
+    const existingBatch = getCurrentBatch(req.session);
+    const hasExistingFileUpload = existingBatch && existingBatch.entryMethod === 'file-upload';
+    
+    let batchId;
+    if (hasExistingFileUpload && req.session.data['fromReviewSiteDetails'] === 'true') {
+        // User is changing the uploaded file but keeping same method - clear existing batch first
+        clearDataForFileUploadOnly(req.session);
+        batchId = initializeBatch(req.session, 'file-upload');
+    } else if (!hasExistingFileUpload) {
+        // No existing file upload batch - create new one
+        batchId = initializeBatch(req.session, 'file-upload');
+    } else {
+        // Keep existing batch
+        batchId = existingBatch.id;
+    }
+    
     req.session.data['currentBatchId'] = batchId;
     
     // Get current batch and store settings
@@ -2494,9 +2548,6 @@ router.get('/' + version + section + 'site-details-added', function (req, res) {
 });
 
 router.post('/' + version + section + 'site-details-added-router', function (req, res) {
-    // Reset error flag
-    req.session.data['errorthispage'] = "false";
-    
     // Check if any site is incomplete
     let hasSiteIncomplete = false;
     
@@ -2580,65 +2631,23 @@ router.post('/' + version + section + 'site-details-added-router', function (req
     console.log('Any site incomplete:', hasSiteIncomplete);
     console.log('=== END COMPLETENESS CHECK DEBUG ===');
     
-    // Check if "I've finished adding sites" checkbox is checked
-    if (req.session.data['finished-adding-sites'] && req.session.data['finished-adding-sites'].includes('yes')) {
-        // Check if there are no sites at all
-        if (sites.length === 0) {
-            // Set error flag if no sites exist and checkbox is checked
-            req.session.data['errorthispage'] = "true";
-            res.redirect('site-details-added');
-            return;
-        } else if (hasSiteIncomplete) {
-            // Set error flag if sites are incomplete and checkbox is checked
-            req.session.data['errorthispage'] = "true";
-            res.redirect('site-details-added');
-            return;
-        } else {
-            // Mark the section as completed if all sites are complete
-            req.session.data['exempt-information-3-status'] = 'completed';
-        }
-    } else {
-        // Mark the section as in progress
+    // Automatically set task status based on site completeness
+    if (sites.length === 0) {
+        // No sites exist - set to not started
+        req.session.data['exempt-information-3-status'] = 'not-started';
+    } else if (hasSiteIncomplete) {
+        // Some sites are incomplete - set to in progress
         req.session.data['exempt-information-3-status'] = 'in-progress';
+    } else {
+        // All sites are complete - set to completed
+        req.session.data['exempt-information-3-status'] = 'completed';
     }
     
-    // Redirect to task list if no errors
+    // Always redirect to task list (no more error validation needed)
     res.redirect('task-list');
 });
 
-//////////////////////////////////////////////////////////////////////////////////////////////
-// Add another site - clear all data and start fresh coordinate method selection
-/////////////////////////////////////////////////////////////////////////////////////////////
 
-// Route handler for "Add another site" functionality
-router.get('/' + version + section + 'add-another-site', function (req, res) {
-    // FIXED: Don't clear all data - preserve existing batches
-    // Instead of clearing all coordinate method data, only clear the method selection
-    // This prevents file uploads from wiping manual entry activity settings
-    
-    // Clear error states from the previous page (site-details-added)
-    req.session.data['errorthispage'] = "false";
-    req.session.data['errortypeone'] = "false";
-    req.session.data['errors'] = [];
-    
-    // Clear only the coordinate method selection to allow fresh choice
-    delete req.session.data['exemption-how-do-you-want-to-provide-the-coordinates-radios'];
-    
-    // Clear current batch ID so we can start a fresh batch
-    delete req.session.data['currentBatchId'];
-    
-    // Clear any navigation flags that might interfere
-    delete req.session.data['fromReviewSiteDetails'];
-    delete req.session.data['siteDetailsSaved'];
-    delete req.session.data['current-site'];
-    delete req.session.data['returnTo'];
-    
-    // Clear the checkbox state from the sites page
-    delete req.session.data['finished-adding-sites'];
-    
-    // Redirect to coordinate method selection page
-    res.redirect('how-do-you-want-to-provide-the-coordinates');
-});
 
 //////////////////////////////////////////////////////////////////////////////////////////////
 // Cancel actions - NEW STATE-BASED SYSTEM

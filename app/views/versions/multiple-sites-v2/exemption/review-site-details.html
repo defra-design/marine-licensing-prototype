@@ -75,6 +75,10 @@ Review site details
             {{ govukInsetText({
                 html: "You must complete all sections marked <span class='govuk-tag govuk-tag--red'>Incomplete</span> before you can send your information.<br><br>You can select 'Save and continue' to keep your progress and return later."
             }) }}
+        {% else %}
+            {{ govukInsetText({
+                html: "You can select 'Save and continue' to keep your progress and return later."
+            }) }}
         {% endif %}
         
         <!-- Get current batch for use throughout template -->
@@ -104,7 +108,7 @@ Review site details
                             Upload a file with the coordinates of the site
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="how-do-you-want-to-provide-the-coordinates?returnTo=review-site-details&clearData=true#site-location" class="govuk-link">
+                            <a href="how-do-you-want-to-provide-the-coordinates?returnTo=review-site-details#site-location" class="govuk-link">
                                 Change<span class="govuk-visually-hidden"> method of providing site location</span>
                             </a>
                         </dd>
@@ -118,7 +122,7 @@ Review site details
                             {{ data['exemption-which-type-of-file-radios'] }}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="which-type-of-file?fromreview=true&clearData=true#site-location" class="govuk-link">
+                            <a href="which-type-of-file?returnTo=review-site-details#site-location" class="govuk-link">
                                 Change<span class="govuk-visually-hidden"> file type</span>
                             </a>
                         </dd>
@@ -137,7 +141,7 @@ Review site details
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="upload-file?fromreview=true&clearData=true#site-location" class="govuk-link">
+                            <a href="upload-file?returnTo=review-site-details#site-location" class="govuk-link">
                                 Change<span class="govuk-visually-hidden"> file uploaded</span>
                             </a>
                         </dd>
@@ -256,13 +260,6 @@ Review site details
                         <h2 class="govuk-summary-card__title">
                             Site {{ siteIndex }} details
                         </h2>
-                        <ul class="govuk-summary-card__actions">
-                            <li class="govuk-summary-card__action">
-                                <a class="govuk-link" href="delete-site?site={{ siteIndex }}&return=review-site-details">
-                                    Delete site<span class="govuk-visually-hidden"> {{ siteIndex }}</span>
-                                </a>
-                            </li>
-                        </ul>
                     </div>
                     <div class="govuk-summary-card__content">
                         <dl class="govuk-summary-list">
