@@ -1078,9 +1078,15 @@ router.get('/' + version + section + 'review-site-details', function (req, res) 
             req.session.data['exemption-same-activity-dates-for-sites'] = currentBatch.settings.sameActivityDates;
             req.session.data['exemption-same-activity-description-for-sites'] = currentBatch.settings.sameActivityDescription;
             
-            // Populate file type from batch (for file upload batches)
-            if (currentBatch.settings.fileType) {
-                req.session.data['exemption-which-type-of-file-radios'] = currentBatch.settings.fileType;
+            // Populate file upload data from batch (for file upload batches)
+            if (currentBatch.entryMethod === 'file-upload') {
+                // Set file upload flag
+                req.session.data['hasUploadedFile'] = true;
+                
+                // Set file type if available
+                if (currentBatch.settings.fileType) {
+                    req.session.data['exemption-which-type-of-file-radios'] = currentBatch.settings.fileType;
+                }
             }
             
             // Populate shared dates from batch
