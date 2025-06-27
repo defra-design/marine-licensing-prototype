@@ -32,20 +32,21 @@ We are simplifying the prototype by:
 
 ## Task 1: Remove "Your Sites" Page and Routes
 
-**Status**: ⏳ Not Started  
+**Status**: ✅ Complete  
 **Estimated**: 2 hours  
 **Dependencies**: None
 
 ### Files to Delete
-- [ ] `app/views/versions/multiple-sites-v2/exemption/site-details-added.html`
+- [x] `app/views/versions/multiple-sites-v2/exemption/site-details-added.html`
 
 ### Routes to Remove from `exemption.js`
-- [ ] `GET /' + version + section + 'site-details-added'` (around line 2565)
-- [ ] `POST /' + version + section + 'site-details-added-router'` (around line 2576)
+- [x] `GET /' + version + section + 'site-details-added'` (around line 2565)
+- [x] `POST /' + version + section + 'site-details-added-router'` (around line 2576)
 
 ### Verification
-- [ ] No remaining references to `site-details-added` in codebase
-- [ ] Deleted routes return 404 errors
+- [x] Route definitions removed from `exemption.js` (remaining redirects to be updated in later tasks)
+- [x] Deleted GET route returns 404 errors
+- [x] HTML file successfully deleted
 
 ---
 
