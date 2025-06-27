@@ -513,7 +513,14 @@ Review site details
             </div>
         {% endif %}
 
-
+        <!-- Add another site button for multiple sites journey -->
+        {% if isMultipleSitesJourney %}
+        <div class="govuk-button-group">
+            <a href="add-next-site-router{% if currentBatch and currentBatch.id %}?batchId={{ currentBatch.id }}{% endif %}" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
+                Add another site
+            </a>
+        </div>
+        {% endif %}
 
         <form action="review-site-details-router" method="post" novalidate>
             <div class="govuk-button-group">
