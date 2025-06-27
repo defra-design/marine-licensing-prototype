@@ -31,9 +31,7 @@ Are you sure you want to cancel without saving?
           text: "Yes, cancel without saving",
           classes: "govuk-button--warning"
         }) }}
-        {% if data['cancelOrigin'] == 'your-sites' %}
-          <a class="govuk-link govuk-link--no-visited-state" href="site-details-added">Go back to 'Your sites'</a>
-        {% elif data['cancelOrigin'] == 'check-answers' %}
+        {% if data['cancelOrigin'] == 'check-answers' %}
           <a class="govuk-link govuk-link--no-visited-state" href="check-answers-multiple-sites">Go back to 'Check answers'</a>
         {% else %}
           <a class="govuk-link govuk-link--no-visited-state" href="review-site-details">Go back to 'Review site details'</a>

@@ -1823,7 +1823,7 @@ router.get('/' + version + section + 'manual-entry/review-site-details', functio
         console.log('Set currentBatchId from query:', req.query.batchId);
         
         // Set origin context for saved batch review
-        setOriginContext(req.session, 'your-sites');
+        setOriginContext(req.session, 'task-list');
         
         // Mark that user is reviewing a previously saved batch
         updateReviewState(req.session, 'saved');

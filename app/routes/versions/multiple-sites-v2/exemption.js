@@ -1075,7 +1075,7 @@ router.get('/' + version + section + 'review-site-details', function (req, res) 
         setOriginContext(req.session, 'check-answers');
         req.session.data['camefromcheckanswers'] = 'true';
     } else if (req.query.batchId) {
-        setOriginContext(req.session, 'your-sites');
+        setOriginContext(req.session, 'task-list');
     } else if (req.query.origin) {
         // Explicit origin parameter
         setOriginContext(req.session, req.query.origin);
@@ -2618,20 +2618,17 @@ router.get('/' + version + section + 'cancel-site-details', function (req, res) 
             break;
             
         case 'review-saved':
-            // State 4: Review page saved - route based on origin or show warning page
+            // State 4: Review page saved - route based on origin (no warning needed since data is already saved)
             logCancelState(req.session, 'REVIEW-SAVED STATE: Routing based on origin: ' + origin);
             
-            if (origin === 'your-sites') {
-                // Return to Your Sites page
-                res.redirect('site-details-added');
-            } else if (origin === 'check-answers') {
+            if (origin === 'check-answers') {
                 // Return to Check Answers page
                 // Clear the navigation flag
                 req.session.data['camefromcheckanswers'] = false;
                 res.redirect('check-answers-multiple-sites');
             } else {
-                // For task-list origin or direct access, show warning page
-                res.redirect('cancel');
+                // For task-list origin, return to task list (no warning needed - data already saved)
+                res.redirect('task-list');
             }
             break;
             

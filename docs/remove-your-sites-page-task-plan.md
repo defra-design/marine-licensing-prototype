@@ -168,7 +168,7 @@ if (req.session.data['camefromcheckanswers'] === 'true') {
 
 ## Task 4: Update Cancel Functionality
 
-**Status**: ⏳ Not Started  
+**Status**: ✅ Complete  
 **Estimated**: 4 hours  
 **Dependencies**: Tasks 1-3 Complete
 
