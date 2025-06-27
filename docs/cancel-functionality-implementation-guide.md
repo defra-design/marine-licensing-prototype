@@ -11,7 +11,7 @@ This document provides a comprehensive task breakdown for implementing consisten
 - **Batch System**: Multiple batches can exist simultaneously 
 - **Session State Management**: Multiple session flags can conflict
 - **Template Scale**: 15+ manual entry templates, 10+ file upload templates
-- **Navigation Context**: Users can arrive from Task List, Your Sites, Check Answers
+- **Navigation Context**: Users can arrive from Task List, Check Answers
 - **Site Count Variations**: Single vs multiple sites have different behaviors
 - **GET/POST Considerations**: Cancel links appear on both form pages and review pages
 
@@ -40,8 +40,8 @@ This document provides a comprehensive task breakdown for implementing consisten
 
 ### State 4: Review Page Previously Saved
 **Definition**: Review page previously saved, user clicks cancel button on review page itself  
-**Behavior**: Based on origin - Your Sites → Your Sites, Check Answers → Check Answers, other → Cancel warning (`cancel.html`)
-**Examples**: From Your Sites → edit batch → on review page → click cancel button
+**Behavior**: Based on origin - Check Answers → Check Answers, other → Cancel warning (`cancel.html`)
+**Examples**: From Check Answers → edit batch → on review page → click cancel button
 
 ## Implementation Tasks
 
@@ -116,7 +116,7 @@ router.get('/' + version + section + 'cancel-site-details', function (req, res) 
         // Return to review without clearing
         // Routes to manual-entry/review-site-details OR review-site-details based on batch type
     } else if (req.session.data['siteDetailsSaved']) {
-        // Saved sites - return to origin (check answers OR site-details-added)
+        // Saved sites - return to origin (check answers OR task list)
     } else {
         // Not saved - show warning page
         res.redirect('cancel');
@@ -134,7 +134,7 @@ router.get('/' + version + section + 'cancel-from-review-site-details', function
     if (req.session.data['camefromcheckanswers'] === 'true') {
         // Return to check answers
     } else if (req.session.data['siteDetailsSaved']) {
-        // Return to site-details-added  
+        // Return to task list  
     } else {
         // Show warning page
         res.redirect('cancel');
@@ -170,7 +170,7 @@ router.get('/' + version + section + 'manual-entry/cancel-from-review-site-detai
 **Current Problems Identified:**
 1. **Inconsistent behavior**: Same logic across different route names (`cancel-site-details` vs `cancel-to-review`)
 2. **Session flag conflicts**: Multiple flags (`fromReviewSiteDetails`, `siteDetailsSaved`, `camefromcheckanswers`) can be set simultaneously
-3. **Missing origin tracking**: No distinction between task-list vs your-sites vs check-answers entry
+3. **Missing origin tracking**: No distinction between task-list vs check-answers entry
 4. **Broken back link**: `javascript:window.history.back()` in cancel.html doesn't work properly
 5. **No review state distinction**: Can't distinguish between first-time review vs saved-edit review
 
@@ -180,7 +180,7 @@ router.get('/' + version + section + 'manual-entry/cancel-from-review-site-detai
 **Required Session Variables**:
 ```javascript
 // Origin tracking - where user came from
-req.session.data['cancelOrigin'] = 'task-list' | 'your-sites' | 'check-answers' | 'direct'
+req.session.data['cancelOrigin'] = 'task-list' | 'check-answers' | 'direct'
 
 // Review state tracking  
 req.session.data['reviewPageVisited'] = true/false
@@ -228,7 +228,7 @@ function determineUserState(session) {
 /**
  * Determines where the user originally came from
  * @param {Object} session - Express session object  
- * @returns {String} - 'task-list' | 'your-sites' | 'check-answers' | 'direct'
+ * @returns {String} - 'task-list' | 'check-answers' | 'direct'
  */
 function determineOrigin(session) {
     return session.data['cancelOrigin'] || 'task-list'; // Default to task-list
@@ -244,33 +244,25 @@ function determineOrigin(session) {
 #### Step 1.4: Test Scenario Matrix
 ✅ **COMPLETED** - Test scenario matrix completed:
 
-**Core Test Matrix (4 states × 2 entry methods × 3 origins = 24 scenarios)**:
+**Core Test Matrix (4 states × 2 entry methods × 2 origins = 16 scenarios)**:
 
 | State | Entry Method | Origin | Expected Behavior | Test Scenario |
 |-------|-------------|---------|-------------------|---------------|
 | Journey-NotDisplayed | Manual | Task List | Clear batch → Task List | Start manual entry, cancel from site-name |
-| Journey-NotDisplayed | Manual | Your Sites | Clear batch → Task List | N/A (creation always from task list) |  
 | Journey-NotDisplayed | Manual | Check Answers | Clear batch → Task List | N/A (creation always from task list) |
 | Journey-NotDisplayed | File | Task List | Clear batch → Task List | Start file upload, cancel from upload-file |
-| Journey-NotDisplayed | File | Your Sites | Clear batch → Task List | N/A (creation always from task list) |
 | Journey-NotDisplayed | File | Check Answers | Clear batch → Task List | N/A (creation always from task list) |
 | Journey-FromChangeLink | Manual | Task List | Return to review | Review (any status) → change site name → cancel |
-| Journey-FromChangeLink | Manual | Your Sites | Return to review | Review (any status) → change site name → cancel |
 | Journey-FromChangeLink | Manual | Check Answers | Return to review | Review (any status) → change site name → cancel |
 | Journey-FromChangeLink | File | Task List | Return to review | Review (any status) → change activity dates → cancel |
-| Journey-FromChangeLink | File | Your Sites | Return to review | Review (any status) → change activity dates → cancel |
 | Journey-FromChangeLink | File | Check Answers | Return to review | Review (any status) → change activity dates → cancel |
 | Review-NotSaved | Manual | Task List | Show warning page | Complete creation → first time on review → cancel button |
-| Review-NotSaved | Manual | Your Sites | Show warning page | N/A (not saved yet) |
 | Review-NotSaved | Manual | Check Answers | Show warning page | N/A (not saved yet) |
 | Review-NotSaved | File | Task List | Show warning page | Complete file upload → first time on review → cancel button |
-| Review-NotSaved | File | Your Sites | Show warning page | N/A (not saved yet) |
 | Review-NotSaved | File | Check Answers | Show warning page | N/A (not saved yet) |
 | Review-Saved | Manual | Task List | Show warning page | Complete & save → return later → on review page → cancel button |
-| Review-Saved | Manual | Your Sites | Return to Your Sites | From Your Sites → edit batch → on review page → cancel button |
 | Review-Saved | Manual | Check Answers | Return to Check Answers | From Check Answers → edit batch → on review page → cancel button |
 | Review-Saved | File | Task List | Show warning page | Complete & save → return later → on review page → cancel button |
-| Review-Saved | File | Your Sites | Return to Your Sites | From Your Sites → edit batch → on review page → cancel button |
 | Review-Saved | File | Check Answers | Return to Check Answers | From Check Answers → edit batch → on review page → cancel button |
 
 **Edge Case Test Scenarios**:
@@ -315,7 +307,7 @@ Current Route Analysis Findings:
 
 State Detection Design:
 - 4 distinct user states identified based on review page interaction
-- Origin tracking system designed for task-list/your-sites/check-answers
+- Origin tracking system designed for task-list/check-answers
 - Session variable structure defined for reliable state detection
 - State machine logic documented for each transition
 
@@ -394,7 +386,7 @@ function determineUserState(session) {
 /**
  * Determines where the user originally came from
  * @param {Object} session - Express session object  
- * @returns {String} - 'task-list' | 'your-sites' | 'check-answers' | 'direct'
+ * @returns {String} - 'task-list' | 'check-answers' | 'direct'
  */
 function determineOrigin(session) {
     const origin = session.data['cancelOrigin'] || 'task-list';
@@ -486,14 +478,14 @@ router.get('/' + version + section + 'site-details', function (req, res) {
 });
 ```
 
-**Your Sites Entry** (line 1027):
+**Task List to Saved Batch Entry** (line 1027):
 ```javascript
 router.get('/' + version + section + 'review-site-details', function (req, res) {
     // Set origin context based on how user arrived
     if (req.query.camefromcheckanswers === 'true') {
         setOriginContext(req.session, 'check-answers');
     } else if (req.query.batchId) {
-        setOriginContext(req.session, 'your-sites');
+        setOriginContext(req.session, 'task-list');
         // Mark that user is editing a previously saved batch
         updateReviewState(req.session, 'saved');
     } else if (req.query.origin) {
@@ -550,10 +542,10 @@ logCancelState(req.session, 'review-site-details POST - sites saved');
 ```javascript
 if (req.query.batchId) {
     // Set origin context for saved batch review
-    setOriginContext(req.session, 'your-sites');
+    setOriginContext(req.session, 'task-list');
     // Mark that user is reviewing a previously saved batch
     updateReviewState(req.session, 'saved');
-    logCancelState(req.session, 'manual entry - review-site-details GET - saved batch from your sites');
+    logCancelState(req.session, 'manual entry - review-site-details GET - saved batch from task list');
 } else {
     // Track review page visit for active journey
     updateReviewState(req.session, 'visited');
@@ -654,7 +646,7 @@ Key Accomplishments:
 
 2. ORIGIN TRACKING IMPLEMENTATION: 6 entry points covered
    - Task list entry (site-details): Always sets 'task-list'
-   - Your sites entry (review-site-details?batchId): Sets 'your-sites'
+   - Task list to saved batch entry (review-site-details?batchId): Sets 'task-list'
    - Check answers entry (review-site-details?camefromcheckanswers): Sets 'check-answers'
    - Coordinate method page: Preserves existing or sets 'task-list'
    - Manual entry starting point: Sets 'task-list' if not already set
@@ -789,9 +781,7 @@ router.get('/' + version + section + 'cancel-saved', function (req, res) {
 <a class="govuk-link govuk-link--no-visited-state" href="javascript:window.history.back()">
 
 <!-- New context-aware back link: -->
-{% if data['cancelOrigin'] == 'your-sites' %}
-  <a class="govuk-link govuk-link--no-visited-state" href="site-details-added">Go back to 'Your sites'</a>
-{% elif data['cancelOrigin'] == 'check-answers' %}
+{% if data['cancelOrigin'] == 'check-answers' %}
   <a class="govuk-link govuk-link--no-visited-state" href="check-answers-multiple-sites">Go back to 'Check answers'</a>
 {% else %}
   <a class="govuk-link govuk-link--no-visited-state" href="review-site-details">Go back to 'Review site details'</a>
@@ -862,7 +852,7 @@ router.get('/' + version + section + 'manual-entry/cancel-site-details', functio
 - [ ] User has multiple saved batches, cancels from current batch
 - [ ] User switches between batches during editing
 - [ ] User deletes sites while editing, causing batch removal
-- [ ] User adds sites to existing batch from Your Sites
+- [ ] User adds sites to existing batch from Task List
 
 #### Site Counter Management
 - [ ] Verify global site counter remains accurate after cancellation
@@ -948,7 +938,7 @@ Implementation Details:
 3. FIXED CANCEL WARNING PAGE (cancel.html):
    - Replaced broken javascript:window.history.back() 
    - Added context-aware back links based on origin
-   - Supports 3 origins: your-sites, check-answers, task-list
+   - Supports 2 origins: check-answers, task-list
    - Maintains proper accessibility and styling
 
 4. LEGACY ROUTE COMPATIBILITY (exemption.js lines 2682-2692):
@@ -1025,7 +1015,7 @@ Classify each template by context:
 - Both: review-site-details (not saved)
 
 **Saved Edit Templates** (use `cancel-saved`):
-- Both: review-site-details (saved), any page accessed from Your Sites
+- Both: review-site-details (saved), any page accessed from Task List with batchId
 
 #### Step 4.2: Template Updates by Category
 
@@ -1115,9 +1105,7 @@ Classify each template by context:
 
 **New context-aware code**:
 ```html
-{% if data['cancelOrigin'] == 'your-sites' %}
-  <a class="govuk-link govuk-link--no-visited-state" href="site-details-added">Go back to 'Your sites'</a>
-{% elif data['cancelOrigin'] == 'check-answers' %}
+{% if data['cancelOrigin'] == 'check-answers' %}
   <a class="govuk-link govuk-link--no-visited-state" href="check-answers-multiple-sites">Go back to 'Check answers'</a>
 {% else %}
   <a class="govuk-link govuk-link--no-visited-state" href="review-site-details">Go back to 'Review site details'</a>
@@ -1138,8 +1126,8 @@ Classify each template by context:
 <!-- Task list entry -->
 <form action="site-details-router?origin=task-list" method="post">
 
-<!-- Your sites entry -->  
-<a href="review-site-details?batchId={{ batch.id }}&origin=your-sites">
+<!-- Task list entry to saved batch -->  
+<a href="review-site-details?batchId={{ batch.id }}&origin=task-list">
 
 <!-- Check answers entry -->
 <a href="review-site-details?camefromcheckanswers=true&origin=check-answers">
@@ -1257,11 +1245,11 @@ Critical Testing Areas for Next Agent:
 1. Test simplified state behavior: journey pages from change links ALWAYS return to review
 2. Test both entry methods (manual vs file upload) with change link scenarios
 3. Test saved vs not-saved batches with change link cancellation  
-4. Test all origin types (task-list, your-sites, check-answers)
+4. Test all origin types (task-list, check-answers)
 5. Test cancel warning page context-aware back links
 6. Verify batch system integrity after cancellation
 7. Test edge cases and error conditions
-8. VERIFY specific fix: saved batch → change site name → cancel → returns to review (not Your Sites)
+8. VERIFY specific fix: saved batch → change site name → cancel → returns to review (not Task List)
 ```
 
 ---
@@ -1299,7 +1287,7 @@ Critical Testing Areas for Next Agent:
 - [ ] Warning page → "Go back to 'Review site details'" → should return to review with data intact
 
 **Manual Entry - Review Saved**:
-- [ ] From Your Sites → edit batch → cancel → should return to Your Sites
+- [ ] From Task List → edit saved batch → cancel → should return to Task List
 - [ ] From Check Answers → edit batch → cancel → should return to Check Answers
 - [ ] From direct link → edit batch → cancel → should show warning page
 
@@ -1310,7 +1298,6 @@ Critical Testing Areas for Next Agent:
 
 **Cancel Warning Page (cancel.html) Specific Tests**:
 - [ ] From task list origin → warning page → "Go back" → should return to review-site-details
-- [ ] From Your Sites origin → warning page → "Go back" → should return to site-details-added
 - [ ] From Check Answers origin → warning page → "Go back" → should return to check-answers-multiple-sites
 - [ ] Warning page → "Yes, cancel without saving" → should clear appropriate data and redirect correctly
 - [ ] Test warning page displays correct content and styling
@@ -1520,7 +1507,8 @@ Create detailed test execution log:
 ---
 
 *Generated by: Claude Sonnet 4*  
-*Document Version: 1.0*  
-*Last Updated: 2024-12-19*
+*Document Version: 1.1*  
+*Last Updated: 2024-12-19*  
+*Updated: 2024-12-19 - Removed "Your Sites" page references per "Remove Your Sites Page" implementation*
 
 <!-- Generated by Copilot --> 
