@@ -67,7 +67,7 @@ Enter the coordinates at the centre point of the site
         {% endif %}
         <!--  END OF 'error summary' -->
 
-        <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}<span class="govuk-!-display-block">Site {{ displaySiteNumber }}</span></span>
+        <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}{% if data['manual-multiple-sites'] == 'Yes' %}<span class="govuk-!-display-block">Site {{ displaySiteNumber }}</span>{% endif %}</span>
         <h1 class="govuk-heading-l">
             {{ pageHeadingTextHTML }}
           </h1> 

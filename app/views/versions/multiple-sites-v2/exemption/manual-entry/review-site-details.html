@@ -50,7 +50,8 @@ Review site details
         {% else %}
             <!-- Check site-specific required fields -->
             {% for site in sites %}
-                {% if not site.name %}
+                <!-- Only require site name for multiple site journeys -->
+                {% if isMultipleSitesJourney and not site.name %}
                     {% set allComplete = false %}
                 {% endif %}
                 
@@ -256,7 +257,11 @@ Review site details
                 <div id="site-{{ siteIndex }}-details" class="govuk-summary-card">
                     <div class="govuk-summary-card__title-wrapper">
                         <h2 class="govuk-summary-card__title">
-                            Site {{ siteIndex }} details
+                            {% if isMultipleSitesJourney %}
+                                Site {{ siteIndex }} details
+                            {% else %}
+                                Site details
+                            {% endif %}
                         </h2>
                         <ul class="govuk-summary-card__actions">
                             <li class="govuk-summary-card__action">
@@ -268,6 +273,8 @@ Review site details
                     </div>
                     <div class="govuk-summary-card__content">
                         <dl class="govuk-summary-list">
+                            <!-- Only show site name for multiple site journeys -->
+                            {% if isMultipleSitesJourney %}
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">
                                     Site name
@@ -285,6 +292,7 @@ Review site details
                                     </a>
                                 </dd>
                             </div>
+                            {% endif %}
                             
                             <!-- Activity dates logic -->
                             {% if isMultipleSitesJourney %}

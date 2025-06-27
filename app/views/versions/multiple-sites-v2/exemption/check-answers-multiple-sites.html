@@ -213,11 +213,18 @@
 
     <!-- Dynamic site cards using a loop -->
     {% if data.sites and data.sites.length > 0 %}
+      <!-- Determine if this is a single site journey -->
+      {% set isSingleSiteJourney = (data['manual-multiple-sites'] == 'No') or (data.sites.length == 1 and data.sites[0].entryMethod == 'manual-entry') %}
+      
       {% for site in data.sites %}
         <div class="govuk-summary-card">
           <div class="govuk-summary-card__title-wrapper">
             <h2 class="govuk-summary-card__title">
-              Site {{ site.globalNumber or loop.index }} details
+              {% if isSingleSiteJourney %}
+                Site details
+              {% else %}
+                Site {{ site.globalNumber or loop.index }} details
+              {% endif %}
             </h2>
             
             {% if data['applicationSubmitted'] != "true" %}
@@ -228,7 +235,7 @@
                 {% if site.entryMethod == "manual-entry" %}
                   {% set changeUrl = "manual-entry/review-site-details?site=" + siteIndex + "&batchId=" + site.batchId + "&camefromcheckanswers=true" %}
                 {% endif %}
-                <a class="govuk-link" href="{{ changeUrl }}">Change<span class="govuk-visually-hidden"> Site {{ siteIndex }} details</span></a>
+                <a class="govuk-link" href="{{ changeUrl }}">Change<span class="govuk-visually-hidden"> {% if isSingleSiteJourney %}Site details{% else %}Site {{ siteIndex }} details{% endif %}</span></a>
               </li>
             </ul>
             {% endif %}
@@ -296,6 +303,8 @@
               <!-- Manual circular sites -->
               {% elif site.entryMethod == 'manual-entry' and site.coordinates and site.coordinates.type == 'circle' %}
 
+                <!-- Only show site name for multiple site journeys -->
+                {% if not isSingleSiteJourney %}
                 <div class="govuk-summary-list__row">
                   <dt class="govuk-summary-list__key">
                     Site name
@@ -304,6 +313,7 @@
                     {{ site.name }}
                   </dd>
                 </div>
+                {% endif %}
 
                 <div class="govuk-summary-list__row">
                   <dt class="govuk-summary-list__key">
@@ -383,6 +393,8 @@
               <!-- Manual polygon sites -->
               {% elif site.entryMethod == 'manual-entry' and site.coordinates and site.coordinates.type == 'polygon' %}
 
+                <!-- Only show site name for multiple site journeys -->
+                {% if not isSingleSiteJourney %}
                 <div class="govuk-summary-list__row">
                   <dt class="govuk-summary-list__key">
                     Site name
@@ -391,6 +403,7 @@
                     {{ site.name }}
                   </dd>
                 </div>
+                {% endif %}
 
                 <div class="govuk-summary-list__row">
                   <dt class="govuk-summary-list__key">
@@ -467,6 +480,8 @@
               <!-- Fallback for any other site types -->
               {% else %}
 
+                <!-- Only show site name for multiple site journeys -->
+                {% if not isSingleSiteJourney %}
                 <div class="govuk-summary-list__row">
                   <dt class="govuk-summary-list__key">
                     Site name
@@ -475,6 +490,7 @@
                     {{ site.name }}
                   </dd>
                 </div>
+                {% endif %}
 
                 <div class="govuk-summary-list__row">
                   <dt class="govuk-summary-list__key">
@@ -542,7 +558,7 @@
                     {% set mapImageSrc = '/public/images/worthing-map-drawn-copy.jpg' %}
                 {% endif %}
             {% endif %}
-            <img src="{{ mapImageSrc }}" alt="Map showing site {{ site.globalNumber or loop.index }} location" style="width: 100%;">
+            <img src="{{ mapImageSrc }}" alt="Map showing {% if isSingleSiteJourney %}site location{% else %}site {{ site.globalNumber or loop.index }} location{% endif %}" style="width: 100%;">
           </div>
         </div>
       {% endfor %}

@@ -370,9 +370,32 @@ router.post('/' + version + section + 'manual-entry/does-your-project-involve-mo
     // Clear any previous manual entry session data
     clearManualEntrySessionData(req.session, 1);
 
-    // Route based on selection - both Yes and No go to site-name with global site number
+    // Route based on selection
     const nextGlobalSiteNumber = (req.session.data['globalSiteCounter'] || 0) + 1;
-    res.redirect('site-name?site=' + nextGlobalSiteNumber);
+    
+    if (selection === 'No') {
+        // Single site flow: Create site without name and skip to activity dates
+        console.log('🔀 Single site flow: Creating site without name and going to activity dates');
+        
+        // Create minimal site object without name for single site journey
+        const site = {
+            name: '', // Empty name for single sites - not displayed or required
+            startDate: { day: '', month: '', year: '' },
+            endDate: { day: '', month: '', year: '' },
+            description: '',
+            coordinates: {}
+        };
+        
+        addSiteToBatch(req.session, site);
+        console.log(`✅ Created single site in batch: global number ${site.globalNumber}`);
+        
+        // Go directly to individual activity dates, skipping site name
+        res.redirect('individual-site-activity-dates?site=' + site.globalNumber);
+    } else {
+        // Multiple site flow: go to site-name as before
+        console.log('🔀 Multiple site flow: Going to site name page');
+        res.redirect('site-name?site=' + nextGlobalSiteNumber);
+    }
 });
 
 // CONVERTED: Batch system approach for site name GET route
@@ -695,6 +718,12 @@ router.get('/' + version + section + 'manual-entry/individual-site-activity-date
     if (!site) {
         console.log('Site not found for individual activity dates');
         return res.redirect('/' + version + section + 'manual-entry/site-name?site=' + siteParam);
+    }
+    
+    // Track that user is editing from review page if accessed via change link
+    if (returnTo === 'review-site-details') {
+        updateReviewState(req.session, 'editing');
+        logCancelState(req.session, 'manual entry - individual-site-activity-dates GET - editing from review');
     }
     
     // SPECIAL CASE: If this is a subsequent site being created (not editing from review), 
@@ -1049,6 +1078,12 @@ router.get('/' + version + section + 'manual-entry/individual-site-activity-desc
     if (!site) {
         console.log('Site not found for individual activity description');
         return res.redirect('/' + version + section + 'manual-entry/site-name?site=' + siteParam);
+    }
+    
+    // Track that user is editing from review page if accessed via change link
+    if (returnTo === 'review-site-details') {
+        updateReviewState(req.session, 'editing');
+        logCancelState(req.session, 'manual entry - individual-site-activity-description GET - editing from review');
     }
     
     res.render(path.join(version, section, 'manual-entry', 'individual-site-activity-description'), {
@@ -1980,22 +2015,42 @@ router.post('/' + version + section + 'manual-entry/review-site-details-router',
         sites = currentBatch.sites;
     }
     
+    // Determine if this is a single site journey - same logic as template
+    const isMultipleSitesJourney = req.session.data['manual-multiple-sites'] === 'Yes';
+    
     if (sites.length > 0) {
         for (const site of sites) {
-            if (!site.name) {
+            // Only require site name for multiple site journeys
+            if (isMultipleSitesJourney && !site.name) {
                 hasSiteIncomplete = true;
             }
-            if (req.session.data['manual-same-activity-dates'] === "No") {
+            
+            // For single sites, always check dates and descriptions
+            // For multiple sites, check based on user choices
+            if (isMultipleSitesJourney) {
+                if (req.session.data['manual-same-activity-dates'] === "No") {
+                    if (!site.startDate || !site.startDate.day) {
+                        hasSiteIncomplete = true;
+                    }
+                }
+                if (req.session.data['manual-same-activity-description'] === "No") {
+                    if (!site.description) {
+                        hasSiteIncomplete = true;
+                    }
+                }
+            } else {
+                // Single site journey: always require dates and description
                 if (!site.startDate || !site.startDate.day) {
                     hasSiteIncomplete = true;
                 }
-            }
-            if (req.session.data['manual-same-activity-description'] === "No") {
                 if (!site.description) {
                     hasSiteIncomplete = true;
                 }
             }
         }
+        
+        console.log(`🔍 Completeness check - isMultipleSitesJourney: ${isMultipleSitesJourney}, hasSiteIncomplete: ${hasSiteIncomplete}`);
+        
         if (hasSiteIncomplete) {
             req.session.data['exempt-information-3-status'] = 'in-progress';
         } else {
