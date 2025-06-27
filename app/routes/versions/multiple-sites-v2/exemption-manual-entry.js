@@ -1823,7 +1823,7 @@ router.get('/' + version + section + 'manual-entry/review-site-details', functio
         console.log('Set currentBatchId from query:', req.query.batchId);
         
         // Set origin context for saved batch review
-        setOriginContext(req.session, 'your-sites');
+        setOriginContext(req.session, 'task-list');
         
         // Mark that user is reviewing a previously saved batch
         updateReviewState(req.session, 'saved');
@@ -2018,6 +2018,12 @@ router.post('/' + version + section + 'manual-entry/review-site-details-router',
     updateReviewState(req.session, 'saved');
     logCancelState(req.session, 'manual entry - review-site-details POST - sites saved');
     
+    // Store batch info for task list navigation
+    if (currentBatch) {
+        req.session.data['lastBatchType'] = currentBatch.entryMethod;
+        req.session.data['lastBatchId'] = currentBatch.id;
+    }
+    
     delete req.session.data['currentBatchId'];
     
     // Check if we came from check answers page
@@ -2025,8 +2031,7 @@ router.post('/' + version + section + 'manual-entry/review-site-details-router',
         req.session.data['camefromcheckanswers'] = false;
         res.redirect('../check-answers-multiple-sites');
     } else {
-        // Redirect to site-details-added (Your sites page)
-        res.redirect('../site-details-added');
+        res.redirect('../task-list');
     }
 });
 

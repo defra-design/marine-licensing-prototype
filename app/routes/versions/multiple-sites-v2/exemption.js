@@ -1032,15 +1032,10 @@ router.post('/' + version + section + 'delete-site-router', function (req, res) 
         clearAllSiteDetails(req.session);
         req.session.data['exempt-information-3-status'] = 'not-started';
         res.redirect('task-list');
-    } else if (returnTo === 'review-site-details' && batchWillBeEmpty) {
-        // File upload review with last site deleted - go to Your sites page
-        res.redirect('site-details-added');
     } else if (returnTo === 'manual-entry-review') {
         res.redirect('manual-entry/review-site-details#site-' + globalSiteNumber + '-details');
     } else if (returnTo === 'review-site-details') {
         res.redirect('review-site-details#site-' + globalSiteNumber + '-details');
-    } else if (returnTo === 'site-details-added') {
-        res.redirect('site-details-added');
     } else if (returnTo === 'check-answers-multiple-sites') {
         res.redirect('check-answers-multiple-sites');
     } else {
@@ -1075,7 +1070,7 @@ router.get('/' + version + section + 'review-site-details', function (req, res) 
         setOriginContext(req.session, 'check-answers');
         req.session.data['camefromcheckanswers'] = 'true';
     } else if (req.query.batchId) {
-        setOriginContext(req.session, 'your-sites');
+        setOriginContext(req.session, 'task-list');
     } else if (req.query.origin) {
         // Explicit origin parameter
         setOriginContext(req.session, req.query.origin);
@@ -2281,8 +2276,8 @@ router.post('/' + version + section + 'site-name-router', function (req, res) {
         return res.redirect('review-site-details#' + returnSection);
     }
     else {
-        // Default: return to site-details-added list
-        return res.redirect('site-details-added');
+        // Default: return to task list
+        return res.redirect('task-list');
     }
 });
 
@@ -2543,6 +2538,13 @@ router.post('/' + version + section + 'review-site-details-router', function (re
     updateReviewState(req.session, 'saved');
     logCancelState(req.session, 'review-site-details POST - sites saved');
     
+    // Store batch info for task list navigation
+    const currentBatch = getCurrentBatch(req.session);
+    if (currentBatch) {
+        req.session.data['lastBatchType'] = currentBatch.entryMethod;
+        req.session.data['lastBatchId'] = currentBatch.id;
+    }
+    
     // Clear currentBatchId so we can start fresh next time
     delete req.session.data['currentBatchId'];
     
@@ -2550,128 +2552,16 @@ router.post('/' + version + section + 'review-site-details-router', function (re
         req.session.data['camefromcheckanswers'] = false;
         res.redirect('check-answers-multiple-sites');
     } else {
-        res.redirect('site-details-added');
+        res.redirect('task-list');
     }
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////
-// Site details added
-// PAGE WITH TABLE OF SITES
+// Site details added - REMOVED
+// This section has been removed as part of "Remove Your Sites Page" task
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-// GET route for site-details-added - rebuild sites array from batches
-router.get('/' + version + section + 'site-details-added', function (req, res) {
-    // Rebuild the sites array from all batches for display on "Your sites" page
-    const allSites = getAllSites(req.session);
-    
-    if (allSites && allSites.length > 0) {
-        req.session.data['sites'] = allSites;
-    } else {
-        req.session.data['sites'] = [];
-    }
-    
-    res.render(version + section + 'site-details-added');
-});
 
-router.post('/' + version + section + 'site-details-added-router', function (req, res) {
-    // Check if any site is incomplete
-    let hasSiteIncomplete = false;
-    
-    // Get the sites array
-    const sites = req.session.data['sites'] || [];
-    
-    console.log('=== SITE DETAILS ADDED COMPLETENESS CHECK DEBUG ===');
-    console.log('Total sites to check:', sites.length);
-    
-    // Check each site for completeness
-    if (sites.length > 0) {
-        for (let i = 0; i < sites.length; i++) {
-            const site = sites[i];
-            console.log('\n--- Site ' + (i + 1) + ' (Global ' + site.globalNumber + ') ---');
-            console.log('Site data:', JSON.stringify(site, null, 2));
-            console.log('Entry method:', site.entryMethod);
-            console.log('Batch ID:', site.batchId);
-            
-            // Check if site name is missing
-            if (!site.name) {
-                console.log('❌ Site name missing');
-                hasSiteIncomplete = true;
-            } else {
-                console.log('✅ Site name present:', site.name);
-            }
-            
-            // Determine which settings to use from the site's batch
-            let sameActivityDates, sameActivityDescription;
-            
-            // Find the batch this site belongs to
-            const siteBatch = req.session.data['siteBatches']?.find(batch => batch.id === site.batchId);
-            
-            if (siteBatch && siteBatch.settings) {
-                // Use batch-level settings (the correct approach)
-                sameActivityDates = siteBatch.settings.sameActivityDates;
-                sameActivityDescription = siteBatch.settings.sameActivityDescription;
-                console.log(site.entryMethod + ' site - using batch settings:');
-                console.log('  sameActivityDates:', sameActivityDates);
-                console.log('  sameActivityDescription:', sameActivityDescription);
-            } else {
-                // Fallback to session data if batch not found (shouldn't happen)
-                if (site.entryMethod === 'manual-entry') {
-                    sameActivityDates = req.session.data['manual-same-activity-dates'];
-                    sameActivityDescription = req.session.data['manual-same-activity-description'];
-                } else {
-                    sameActivityDates = req.session.data['exemption-same-activity-dates-for-sites'];
-                    sameActivityDescription = req.session.data['exemption-same-activity-description-for-sites'];
-                }
-                console.log(site.entryMethod + ' site - using fallback session settings:');
-                console.log('  sameActivityDates:', sameActivityDates);
-                console.log('  sameActivityDescription:', sameActivityDescription);
-            }
-            
-            // Check if site-specific dates are required but incomplete
-            if (sameActivityDates === "No") {
-                if (!site.startDate || !site.startDate.day) {
-                    console.log('❌ Individual activity dates required but missing');
-                    hasSiteIncomplete = true;
-                } else {
-                    console.log('✅ Individual activity dates present');
-                }
-            } else {
-                console.log('ℹ️ Shared activity dates - individual dates not required');
-            }
-            
-            // Check if site-specific descriptions are required but incomplete
-            if (sameActivityDescription === "No") {
-                if (!site.description) {
-                    console.log('❌ Individual activity description required but missing');
-                    hasSiteIncomplete = true;
-                } else {
-                    console.log('✅ Individual activity description present:', site.description);
-                }
-            } else {
-                console.log('ℹ️ Shared activity description - individual description not required');
-            }
-        }
-    }
-    
-    console.log('\n=== FINAL COMPLETENESS RESULT ===');
-    console.log('Any site incomplete:', hasSiteIncomplete);
-    console.log('=== END COMPLETENESS CHECK DEBUG ===');
-    
-    // Automatically set task status based on site completeness
-    if (sites.length === 0) {
-        // No sites exist - set to not started
-        req.session.data['exempt-information-3-status'] = 'not-started';
-    } else if (hasSiteIncomplete) {
-        // Some sites are incomplete - set to in progress
-        req.session.data['exempt-information-3-status'] = 'in-progress';
-    } else {
-        // All sites are complete - set to completed
-        req.session.data['exempt-information-3-status'] = 'completed';
-    }
-    
-    // Always redirect to task list (no more error validation needed)
-    res.redirect('task-list');
-});
 
 
 
@@ -2723,20 +2613,17 @@ router.get('/' + version + section + 'cancel-site-details', function (req, res) 
             break;
             
         case 'review-saved':
-            // State 4: Review page saved - route based on origin or show warning page
+            // State 4: Review page saved - route based on origin (no warning needed since data is already saved)
             logCancelState(req.session, 'REVIEW-SAVED STATE: Routing based on origin: ' + origin);
             
-            if (origin === 'your-sites') {
-                // Return to Your Sites page
-                res.redirect('site-details-added');
-            } else if (origin === 'check-answers') {
+            if (origin === 'check-answers') {
                 // Return to Check Answers page
                 // Clear the navigation flag
                 req.session.data['camefromcheckanswers'] = false;
                 res.redirect('check-answers-multiple-sites');
             } else {
-                // For task-list origin or direct access, show warning page
-                res.redirect('cancel');
+                // For task-list origin, return to task list (no warning needed - data already saved)
+                res.redirect('task-list');
             }
             break;
             
@@ -2909,8 +2796,8 @@ router.post('/' + version + section + 'more-than-one-site-router', function (req
         // Clear the returnTo parameter
         delete req.session.data['returnTo'];
         
-        // Redirect to site-details-added (Your sites page)
-        return res.redirect('site-details-added');
+        // Redirect to task list
+        return res.redirect('task-list');
     }
     
     // For other cases, follow the normal flow

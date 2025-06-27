@@ -64,10 +64,16 @@
 							Site details
 						</a>
 					{% else %}
-						<!-- Multiple sites mode: link to Your sites page -->
-						<a class="govuk-link govuk-task-list__link" href="site-details-added.html" aria-describedby="exempt-information-3-status">
-							Site details
-						</a>
+						<!-- Multiple sites mode: link directly to appropriate review page -->
+						{% if data['lastBatchType'] == 'manual-entry' %}
+							<a class="govuk-link govuk-task-list__link" href="manual-entry/review-site-details?batchId={{ data['lastBatchId'] }}" aria-describedby="exempt-information-3-status">
+								Site details
+							</a>
+						{% else %}
+							<a class="govuk-link govuk-task-list__link" href="review-site-details?batchId={{ data['lastBatchId'] }}" aria-describedby="exempt-information-3-status">
+								Site details
+							</a>
+						{% endif %}
 					{% endif %}
 
 				{% else %}
