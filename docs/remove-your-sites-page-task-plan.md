@@ -274,52 +274,50 @@ setOriginContext(req.session, 'task-list');
 
 ## Task 6: Remove Legacy Single-Site Conversion
 
-**Status**: ⏳ Not Started  
+**Status**: ✅ Complete  
 **Estimated**: 1 hour  
 **Dependencies**: Task 1 Complete
 
-### Remove/Update Single-Site Conversion (`exemption.js` line 2912)
+### Remove/Update Single-Site Conversion
 
-**Current**:
-```javascript
-return res.redirect('site-details-added');
-```
+**Updated Redirects**:
+1. ✅ **Line 2279**: Changed `site-details-added` to `task-list` in site-name fallback
+2. ✅ **Line 2799**: Changed `site-details-added` to `task-list` in single-site conversion
 
-**Options**:
-1. Remove entirely (recommended - legacy functionality)
-2. Change to `res.redirect('task-list');`
+Both legacy redirects now properly route to the task list instead of the removed "Your Sites" page.
 
 ---
 
 ## Task 7: Update Review Page Content
 
-**Status**: ⏳ Not Started  
+**Status**: ✅ Complete  
 **Estimated**: 1 hour  
 **Dependencies**: Task 2 Complete
 
 ### File Upload Review (`review-site-details.html` line 381)
 
-**Current**:
-```html
-<p>Select 'Save and continue' to go to 'Your sites', where you can finish or add more sites.</p>
-```
-
-**New**:
+**Updated**:
 ```html
 <p>Select 'Save and continue' to return to the task list.</p>
 ```
+✅ **Changed** from mentioning "Your sites" to "task list"
 
 ### Manual Entry Review (`manual-entry/review-site-details.html` line 514)
 
-**Remove "Add another site" button**:
+**Removed "Add another site" button**:
 ```html
-<!-- REMOVE THIS ENTIRE SECTION -->
-<div class="govuk-!-margin-bottom-4">
-    <a href="add-next-site-router" class="govuk-button govuk-button--secondary">
-        Add another site
-    </a>
-</div>
+<!-- REMOVED ENTIRE SECTION -->
+<!-- Add another site section - only show for multiple sites -->
+<!-- {% if isMultipleSitesJourney %} -->
+<!-- <p class="govuk-body">Select 'Add another site'...</p> -->
+<!-- <div class="govuk-!-margin-bottom-4"> -->
+<!--     <a href="add-next-site-router" class="govuk-button govuk-button--secondary"> -->
+<!--         Add another site -->
+<!--     </a> -->
+<!-- </div> -->
+<!-- {% endif %} -->
 ```
+✅ **Removed** the entire "Add another site" section and explanatory text
 
 ---
 

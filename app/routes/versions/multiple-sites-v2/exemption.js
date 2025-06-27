@@ -2276,8 +2276,8 @@ router.post('/' + version + section + 'site-name-router', function (req, res) {
         return res.redirect('review-site-details#' + returnSection);
     }
     else {
-        // Default: return to site-details-added list
-        return res.redirect('site-details-added');
+        // Default: return to task list
+        return res.redirect('task-list');
     }
 });
 
@@ -2796,8 +2796,8 @@ router.post('/' + version + section + 'more-than-one-site-router', function (req
         // Clear the returnTo parameter
         delete req.session.data['returnTo'];
         
-        // Redirect to site-details-added (Your sites page)
-        return res.redirect('site-details-added');
+        // Redirect to task list
+        return res.redirect('task-list');
     }
     
     // For other cases, follow the normal flow
