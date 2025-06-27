@@ -58,7 +58,7 @@ How do you want to enter the site coordinates?
         <form action="how-do-you-want-to-enter-the-coordinates-router?site={{ site.globalNumber }}{% if returnTo %}&returnTo={{ returnTo }}{% endif %}" method="post" novalidate>
         
         <div class="govuk-form-group {% if data['errorthispage'] == 'true' %}govuk-form-group--error{% endif %}">
-            <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}<span class="govuk-!-display-block">Site {{ site.globalNumber }}</span></span>
+            <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}{% if data['manual-multiple-sites'] == 'Yes' %}<span class="govuk-!-display-block">Site {{ site.globalNumber }}</span>{% endif %}</span>
             <h1 class="govuk-heading-l">
                 {{ pageHeadingTextHTML }}
             </h1>

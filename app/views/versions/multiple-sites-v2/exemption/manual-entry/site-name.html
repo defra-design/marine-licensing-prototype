@@ -53,7 +53,7 @@ Site name
             
             <div class="govuk-form-group {% if errors.name %}govuk-form-group--error{% endif %}">
                 {% if data['exemption-project-name-text-input'] %}
-                <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}<span class="govuk-!-display-block">Site {{ displaySiteNumber }}</span></span>
+                <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}{% if data['manual-multiple-sites'] == 'Yes' %}<span class="govuk-!-display-block">Site {{ displaySiteNumber }}</span>{% endif %}</span>
                 {% endif %}
                 <h1 class="govuk-label-wrapper">
                   <label class="govuk-label govuk-label--l" for="{{ siteInputId }}">
