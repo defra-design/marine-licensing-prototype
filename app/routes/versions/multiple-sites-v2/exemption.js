@@ -1032,15 +1032,10 @@ router.post('/' + version + section + 'delete-site-router', function (req, res) 
         clearAllSiteDetails(req.session);
         req.session.data['exempt-information-3-status'] = 'not-started';
         res.redirect('task-list');
-    } else if (returnTo === 'review-site-details' && batchWillBeEmpty) {
-        // File upload review with last site deleted - go to Your sites page
-        res.redirect('site-details-added');
     } else if (returnTo === 'manual-entry-review') {
         res.redirect('manual-entry/review-site-details#site-' + globalSiteNumber + '-details');
     } else if (returnTo === 'review-site-details') {
         res.redirect('review-site-details#site-' + globalSiteNumber + '-details');
-    } else if (returnTo === 'site-details-added') {
-        res.redirect('site-details-added');
     } else if (returnTo === 'check-answers-multiple-sites') {
         res.redirect('check-answers-multiple-sites');
     } else {

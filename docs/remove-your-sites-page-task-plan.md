@@ -237,18 +237,18 @@ setOriginContext(req.session, 'task-list');
 
 ## Task 5: Clean Up Dead File Upload Deletion Code
 
-**Status**: ⏳ Not Started  
+**Status**: ✅ Complete  
 **Estimated**: 1 hour  
 **Dependencies**: Task 1 Complete
 
 ### Context
 - **Manual entry deletion works correctly** ✅ (already goes to task list when batch empty)
 - **File upload deletion was removed from UI** ✅ (no delete links in file upload review)
-- **Backend still has dead code** ❌ (handles file upload deletion scenarios that can't happen)
+- **Backend still has dead code** ✅ **REMOVED** (handlers for unreachable deletion scenarios)
 
 ### Delete Site Router (`exemption.js` lines 1032-1042)
 
-**Current Dead Code**:
+**Removed Dead Code**:
 ```javascript
 } else if (returnTo === 'review-site-details' && batchWillBeEmpty) {
     // File upload review with last site deleted - go to Your sites page
@@ -258,18 +258,17 @@ setOriginContext(req.session, 'task-list');
 }
 ```
 
-**Clean Up**:
+**Preserved Working Logic**:
 ```javascript
-// Remove both conditions above - they're unreachable
 // Keep existing manual entry logic (already working):
 // - returnTo === 'manual-entry-review' && batchWillBeEmpty → task-list ✅
 // - returnTo === 'manual-entry-review' → manual-entry/review-site-details ✅
 ```
 
 ### Verification
-- [ ] Manual entry deletion still works (delete site → stays on review or goes to task list if empty)
-- [ ] No broken deletion links in file upload review (there shouldn't be any)
-- [ ] No references to `site-details-added` in deletion logic
+- [x] Manual entry deletion still works (delete site → stays on review or goes to task list if empty)
+- [x] No broken deletion links in file upload review (there shouldn't be any)
+- [x] No references to `site-details-added` in deletion logic
 
 ---
 
