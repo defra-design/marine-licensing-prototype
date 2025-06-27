@@ -47,8 +47,14 @@ Activity description
         <form action="site-activity-description-router" method="post" novalidate>
             <input type="hidden" name="site" value="{{ data['site'] }}" />
 
+            <!-- Determine if this is a single site file upload journey -->
+            {% set isSingleSiteFileUpload = (data['singleSiteFileUpload'] == 'true') or (data['singleSiteFileUpload'] == true) or (data['fileUploadCount'] == '2' and data.sites and data.sites.length == 1) %}
+            
+            <!-- DEBUG: Show current flag values -->
+            <!-- singleSiteFileUpload: {{ data['singleSiteFileUpload'] }}, fileUploadCount: {{ data['fileUploadCount'] }}, sites length: {{ data.sites.length if data.sites else 'no sites' }} -->
+
             <div class="govuk-form-group{% if data['errortypeone'] == "true" %} govuk-form-group--error{% endif %}">
-                <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}<span class="govuk-!-display-block">Site {{ data['site'] }}</span></span>
+                <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}<span class="{% if not isSingleSiteFileUpload %}govuk-!-display-block{% endif %}"{% if isSingleSiteFileUpload %} style="display: none;"{% endif %}>Site {{ data['site'] }}</span></span>
                 
                 <h1 class="govuk-label-wrapper">
                     <label class="govuk-label govuk-label--l" for="site-{{ data['site'] }}-activity-description">

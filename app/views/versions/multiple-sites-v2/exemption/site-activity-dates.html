@@ -58,7 +58,14 @@ End date
   </div>
 {% endif %}
         <!--  END OF 'error summary' -->
-        <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}<span class="govuk-!-display-block">Site {{ data['site'] }}</span></span>
+        
+        <!-- Determine if this is a single site file upload journey -->
+        {% set isSingleSiteFileUpload = (data['singleSiteFileUpload'] == 'true') or (data['singleSiteFileUpload'] == true) or (data['fileUploadCount'] == '2' and data.sites and data.sites.length == 1) %}
+        
+        <!-- DEBUG: Show current flag values -->
+        <!-- singleSiteFileUpload: {{ data['singleSiteFileUpload'] }}, fileUploadCount: {{ data['fileUploadCount'] }}, sites length: {{ data.sites.length if data.sites else 'no sites' }} -->
+        
+        <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}<span class="{% if not isSingleSiteFileUpload %}govuk-!-display-block{% endif %}"{% if isSingleSiteFileUpload %} style="display: none;"{% endif %}>Site {{ data['site'] }}</span></span>
         
         <div class="govuk-form-group">
             <h1 class="govuk-label-wrapper">

@@ -214,7 +214,7 @@
     <!-- Dynamic site cards using a loop -->
     {% if data.sites and data.sites.length > 0 %}
       <!-- Determine if this is a single site journey -->
-      {% set isSingleSiteJourney = (data['manual-multiple-sites'] == 'No') or (data.sites.length == 1 and data.sites[0].entryMethod == 'manual-entry') %}
+      {% set isSingleSiteJourney = (data['manual-multiple-sites'] == 'No') or (data.sites.length == 1 and data.sites[0].entryMethod == 'manual-entry') or (data.sites.length == 1 and data.sites[0].entryMethod == 'file-upload') or (data['singleSiteFileUpload'] == true) %}
       
       {% for site in data.sites %}
         <div class="govuk-summary-card">
@@ -247,6 +247,8 @@
               <!-- File upload sites -->
               {% if site.entryMethod == 'file-upload' %}
                 
+                <!-- Only show site name for multiple site journeys -->
+                {% if not isSingleSiteJourney %}
                 <div class="govuk-summary-list__row">
                   <dt class="govuk-summary-list__key">
                     Site name
@@ -255,6 +257,7 @@
                     {{ site.name }}
                   </dd>
                 </div>
+                {% endif %}
 
                 <div class="govuk-summary-list__row">
                   <dt class="govuk-summary-list__key">
