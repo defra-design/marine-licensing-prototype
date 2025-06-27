@@ -2543,6 +2543,13 @@ router.post('/' + version + section + 'review-site-details-router', function (re
     updateReviewState(req.session, 'saved');
     logCancelState(req.session, 'review-site-details POST - sites saved');
     
+    // Store batch info for task list navigation
+    const currentBatch = getCurrentBatch(req.session);
+    if (currentBatch) {
+        req.session.data['lastBatchType'] = currentBatch.entryMethod;
+        req.session.data['lastBatchId'] = currentBatch.id;
+    }
+    
     // Clear currentBatchId so we can start fresh next time
     delete req.session.data['currentBatchId'];
     
@@ -2550,7 +2557,7 @@ router.post('/' + version + section + 'review-site-details-router', function (re
         req.session.data['camefromcheckanswers'] = false;
         res.redirect('check-answers-multiple-sites');
     } else {
-        res.redirect('site-details-added');
+        res.redirect('task-list');
     }
 });
 
