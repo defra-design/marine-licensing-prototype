@@ -103,9 +103,7 @@ Review site details
             {% endfor %}
         {% endif %}
 
-        {{ govukInsetText({
-            html: "You can select 'Save and continue' to keep your progress and return later."
-        }) }}
+
         
         <!-- Get current batch for use throughout template -->
         {% set currentBatch = null %}
@@ -515,7 +513,9 @@ Review site details
 
         <!-- Add another site button for multiple sites journey -->
         {% if isMultipleSitesJourney %}
-        <div class="govuk-button-group">
+        <p class="govuk-body">You can select 'Save and continue' if you're finished or you want to save your progress and return later.</p>
+        
+        <div class="govuk-button-group govuk-!-margin-bottom-6">
             <a href="add-next-site-router{% if currentBatch and currentBatch.id %}?batchId={{ currentBatch.id }}{% endif %}" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
                 Add another site
             </a>
