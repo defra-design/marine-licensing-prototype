@@ -32,7 +32,7 @@
 		<ul class="govuk-task-list govuk-!-margin-top-7">
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
 			  <div class="govuk-task-list__name-and-hint">
-				<a class="govuk-link govuk-task-list__link" href="project-name.html" aria-describedby="exempt-information-1-status">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="project-name.html" aria-describedby="exempt-information-1-status">
 				  Project name
 				</a>
 			  </div>
@@ -60,17 +60,17 @@
 					<!-- Detect single site vs multiple sites -->
 					{% if data['single-site-completed'] %}
 						<!-- Single site mode: link to single-site review -->
-						<a class="govuk-link govuk-task-list__link" href="manual-entry-single-site/review-site-details" aria-describedby="exempt-information-3-status">
+						<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="manual-entry-single-site/review-site-details" aria-describedby="exempt-information-3-status">
 							Site details
 						</a>
 					{% else %}
 						<!-- Multiple sites mode: link directly to appropriate review page -->
 						{% if data['lastBatchType'] == 'manual-entry' %}
-							<a class="govuk-link govuk-task-list__link" href="manual-entry/review-site-details?batchId={{ data['lastBatchId'] }}" aria-describedby="exempt-information-3-status">
+							<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="manual-entry/review-site-details?batchId={{ data['lastBatchId'] }}" aria-describedby="exempt-information-3-status">
 								Site details
 							</a>
 						{% else %}
-							<a class="govuk-link govuk-task-list__link" href="review-site-details?batchId={{ data['lastBatchId'] }}" aria-describedby="exempt-information-3-status">
+							<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="review-site-details?batchId={{ data['lastBatchId'] }}" aria-describedby="exempt-information-3-status">
 								Site details
 							</a>
 						{% endif %}
@@ -78,7 +78,7 @@
 
 				{% else %}
 
-				<a class="govuk-link govuk-task-list__link" href="site-details.html" aria-describedby="exempt-information-3-status">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="site-details.html" aria-describedby="exempt-information-3-status">
 					Site details
 				  </a>
 				{% endif %}
@@ -104,7 +104,7 @@
 			</li>
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
 			  <div class="govuk-task-list__name-and-hint">
-				<a class="govuk-link govuk-task-list__link" href="public-register" aria-describedby="exempt-information-4-status">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="public-register" aria-describedby="exempt-information-4-status">
 				  Public register
 				</a>
 			  </div>

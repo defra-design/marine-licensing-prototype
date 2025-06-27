@@ -209,6 +209,7 @@ function clearAllFileUploadData(session) {
     // Clear any file upload related flags
     delete session.data['hasUploadedFile'];
     delete session.data['fileUploadCount'];
+    delete session.data['singleSiteFileUpload'];
 }
 
 // Function to comprehensively clear data when changing file upload choices from review page
@@ -577,6 +578,9 @@ router.get('/' + version + section + 'single-site-file-upload-start', function (
     // Force single-site generation by setting upload count to 1
     // This will become 2 after increment, triggering 1-site creation
     req.session.data['fileUploadCount'] = 1;
+    
+    // Set flag specifically for single site file upload journey
+    req.session.data['singleSiteFileUpload'] = true;
     
     // Set coordinate method to file upload
     req.session.data['exemption-how-do-you-want-to-provide-the-coordinates-radios'] = 'Upload a file with the coordinates of the site';

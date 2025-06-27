@@ -34,14 +34,20 @@ Review site details
         <!-- Check if all required fields are completed -->
         {% set allComplete = true %}
         
+        <!-- Determine if this is a single site journey -->
+        {% set isSingleSiteJourney = (data['manual-multiple-sites'] == 'No') or (sites and sites.length == 1 and sites[0].entryMethod == 'manual-entry') or (sites and sites.length == 1 and sites[0].entryMethod == 'file-upload') or (data['singleSiteFileUpload'] == true) %}
+        
         <!-- Check for sites data -->
         {% if not sites or sites.length === 0 %}
             {% set allComplete = false %}
         {% else %}
             <!-- Check site-specific required fields -->
             {% for site in sites %}
-                {% if not site.name %}
-                    {% set allComplete = false %}
+                <!-- Only check site name for non-single-site-file-upload journeys -->
+                {% if not isSingleSiteJourney or site.entryMethod != 'file-upload' %}
+                    {% if not site.name %}
+                        {% set allComplete = false %}
+                    {% endif %}
                 {% endif %}
                 
                 {% if sites.length == 1 %}
@@ -258,11 +264,17 @@ Review site details
                 <div id="site-{{ siteIndex }}-details" class="govuk-summary-card">
                     <div class="govuk-summary-card__title-wrapper">
                         <h2 class="govuk-summary-card__title">
-                            Site {{ siteIndex }} details
+                            {% if isSingleSiteJourney %}
+                                Site details
+                            {% else %}
+                                Site {{ siteIndex }} details
+                            {% endif %}
                         </h2>
                     </div>
                     <div class="govuk-summary-card__content">
                         <dl class="govuk-summary-list">
+                            <!-- Only show site name for non-single-site-file-upload journeys -->
+                            {% if not isSingleSiteJourney or site.entryMethod != 'file-upload' %}
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">
                                     Site name
@@ -280,6 +292,7 @@ Review site details
                                     </a>
                                 </dd>
                             </div>
+                            {% endif %}
                             
                             {% if sites.length == 1 %}
                                 <!-- Single site: always show activity dates and description -->
