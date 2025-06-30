@@ -23,37 +23,36 @@ Is the activity description the same for every site?
     {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
 {% endblock %}
 
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
 <!-- ERROR LOGIC 'error summary' -->
 {% if data['errorthispage'] == "true" %}
-  <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
-    <h2 class="govuk-error-summary__title" id="error-summary-title">
-      There is a problem
-    </h2>
-    <div class="govuk-error-summary__body">
-      <ul class="govuk-list govuk-error-summary__list">
-        {% if data['errortypeone'] == "true" %}
-          <li><a href="#exemption-same-activity-description-for-sites">{{ errorText1HTML }}</a></li>
-        {% endif %}
-      </ul>
-    </div>
-  </div>
+  {{ govukErrorSummary({
+    titleText: "There is a problem",
+    errorList: [
+      {
+        text: errorText1HTML,
+        href: "#exemption-same-activity-description-for-sites"
+      } if data['errortypeone'] == "true"
+    ]
+  }) }}
 {% endif %}
         <!--  END OF 'error summary' -->
-        <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
-        <form action="same-activity-description-router" method="post" novalidate>
 
-{% from "govuk/components/radios/macro.njk" import govukRadios %}
+        <form action="same-activity-description-router" method="post" novalidate>
 
 {{ govukRadios({
   idPrefix: "exemption-same-activity-description-for-sites",
   name: "exemption-same-activity-description-for-sites",
   fieldset: {
     legend: {
-      text: pageHeadingTextHTML,
+      html: (('<span class="govuk-caption-l">' + data['exemption-project-name-text-input'] + '</span>') if data['exemption-project-name-text-input']) + pageHeadingTextHTML,
       isPageHeading: true,
       classes: "govuk-fieldset__legend--l"
     }
@@ -85,7 +84,7 @@ Is the activity description the same for every site?
         {{ govukButton({
           text: "Continue"
         }) }}
-                        <a class="govuk-link govuk-link--no-visited-state" href="cancel-site-details">Cancel</a>
+        <a class="govuk-link govuk-link--no-visited-state" href="cancel-site-details">Cancel</a>
     </div>
 
         </form>
