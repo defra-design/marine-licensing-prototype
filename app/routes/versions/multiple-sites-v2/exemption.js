@@ -1644,9 +1644,9 @@ function restoreMethodSwitchBackup(session) {
         session.data[key] = backup.sessionData[key];
     });
     
-    // Restore review state
+    // Restore review state - but reset saved state so user can cancel with warning
     session.data['reviewPageVisited'] = backup.originalReviewState.reviewPageVisited;
-    session.data['reviewPageSaved'] = backup.originalReviewState.reviewPageSaved;
+    session.data['reviewPageSaved'] = false; // Reset to false so user gets cancel warning
     session.data['isEditingFromReview'] = backup.originalReviewState.isEditingFromReview;
     session.data['cancelOrigin'] = backup.originalReviewState.cancelOrigin;
     
@@ -2946,8 +2946,10 @@ router.post('/' + version + section + 'cancel-confirmed', function (req, res) {
     // Clear any method switch backup (user explicitly confirmed cancellation)
     clearMethodSwitchBackup(req.session);
     
-    // Clear the current batch safely with enhanced error handling
-    clearCurrentBatchSafely(req.session);
+    // ENHANCED FIX: Force complete clear when user explicitly confirms cancellation
+    // This handles the edge case where restored backups might have saved batches
+    // that would otherwise keep the task status as "in-progress"
+    clearAllSiteDetails(req.session);
     
     // Clear cancel-related state tracking for fresh start
     delete req.session.data['cancelOrigin'];
@@ -2959,7 +2961,11 @@ router.post('/' + version + section + 'cancel-confirmed', function (req, res) {
     delete req.session.data['fromReviewSiteDetails'];
     delete req.session.data['camefromcheckanswers'];
     
-    logCancelState(req.session, 'cancel-confirmed - redirecting to task-list');
+    // Ensure task status is properly reset to not-started
+    req.session.data['exempt-information-3-status'] = 'not-started';
+    delete req.session.data['siteDetailsSaved'];
+    
+    logCancelState(req.session, 'cancel-confirmed - complete clear performed, redirecting to task-list');
     res.redirect('task-list');
 });
 
