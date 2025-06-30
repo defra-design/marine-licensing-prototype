@@ -1069,6 +1069,9 @@ router.get('/' + version + section + 'site-details', function (req, res) {
 
 // Route handler for review-site-details
 router.get('/' + version + section + 'review-site-details', function (req, res) {
+    // Validate method switch backup for edge cases
+    validateMethodSwitchBackup(req.session);
+    
     // Set origin context based on how user arrived
     if (req.query.camefromcheckanswers === 'true') {
         setOriginContext(req.session, 'check-answers');
@@ -1229,6 +1232,9 @@ router.get('/' + version + section + 'how-do-you-want-to-provide-the-coordinates
 });
 
 router.post('/' + version + section + 'how-do-you-want-to-provide-the-coordinates-router', function (req, res) {
+    // Validate method switch backup for edge cases
+    validateMethodSwitchBackup(req.session);
+    
     // Turn errors off by default
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
@@ -1682,6 +1688,95 @@ function clearMethodSwitchBackup(session) {
  */
 function hasMethodSwitchBackup(session) {
     return !!session.data['methodSwitchBackup'];
+}
+
+// ==============================================================================================
+// METHOD SWITCH EDGE CASE HANDLING
+// ==============================================================================================
+
+/**
+ * Validates and cleans up stale method switch backups
+ * @param {Object} session - Express session object
+ */
+function validateMethodSwitchBackup(session) {
+    const backup = session.data['methodSwitchBackup'];
+    if (!backup) return;
+    
+    // Check if backup is stale (older than 1 hour)
+    const oneHour = 60 * 60 * 1000;
+    if (Date.now() - backup.timestamp > oneHour) {
+        console.log('🗑️ METHOD SWITCH: Clearing stale backup (older than 1 hour)');
+        delete session.data['methodSwitchBackup'];
+        return;
+    }
+    
+    // Check if backup batch ID conflicts with current batches
+    if (session.data['siteBatches']) {
+        const conflictingBatch = session.data['siteBatches'].find(batch => batch.id === backup.batch.id);
+        if (conflictingBatch) {
+            console.log('🗑️ METHOD SWITCH: Clearing backup due to ID conflict');
+            delete session.data['methodSwitchBackup'];
+        }
+    }
+}
+
+/**
+ * Safe restore function with error recovery
+ * @param {Object} session - Express session object
+ * @returns {String|null} - Redirect URL or null if restore failed
+ */
+function safeRestoreMethodSwitchBackup(session) {
+    try {
+        return restoreMethodSwitchBackup(session);
+    } catch (error) {
+        console.error('🚨 METHOD SWITCH: Error restoring backup:', error);
+        // Clear corrupted backup
+        delete session.data['methodSwitchBackup'];
+        // Fall back to standard cancel behavior
+        return null;
+    }
+}
+
+/**
+ * Cleans up method-specific session variables when switching methods
+ * @param {Object} session - Express session object
+ * @param {String} methodToKeep - 'manual-entry' or 'file-upload' or 'both' or 'none'
+ */
+function cleanupMethodSessionData(session, methodToKeep) {
+    const manualKeys = [
+        'manual-multiple-sites',
+        'manual-same-activity-dates', 
+        'manual-same-activity-description',
+        'manual-start-date-date-input-day',
+        'manual-start-date-date-input-month', 
+        'manual-start-date-date-input-year',
+        'manual-end-date-date-input-day',
+        'manual-end-date-date-input-month',
+        'manual-end-date-date-input-year',
+        'manual-activity-details-text-area'
+    ];
+    
+    const fileKeys = [
+        'exemption-which-type-of-file-radios',
+        'hasUploadedFile',
+        'exemption-same-activity-dates-for-sites',
+        'exemption-same-activity-description-for-sites', 
+        'exemption-start-date-date-input-day',
+        'exemption-start-date-date-input-month',
+        'exemption-start-date-date-input-year',
+        'exemption-end-date-date-input-day',
+        'exemption-end-date-date-input-month', 
+        'exemption-end-date-date-input-year',
+        'exemption-activity-details-text-area'
+    ];
+    
+    if (methodToKeep !== 'manual-entry' && methodToKeep !== 'both') {
+        manualKeys.forEach(key => delete session.data[key]);
+    }
+    
+    if (methodToKeep !== 'file-upload' && methodToKeep !== 'both') {
+        fileKeys.forEach(key => delete session.data[key]);
+    }
 }
 
 // ==============================================================================================
@@ -2659,6 +2754,9 @@ router.post('/' + version + section + 'site-activity-description-router', functi
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 router.post('/' + version + section + 'review-site-details-router', function (req, res) {
+    // Clear any method switch backup - user is committing to file upload method
+    clearMethodSwitchBackup(req.session);
+    
     let hasSiteIncomplete = false;
     let sites = [];
     if (typeof getCurrentBatch === 'function') {
@@ -2746,6 +2844,9 @@ router.post('/' + version + section + 'review-site-details-router', function (re
  * Replaces cancel-site-details, cancel-to-review, and cancel-from-review-site-details
  */
 router.get('/' + version + section + 'cancel-site-details', function (req, res) {
+    // Validate method switch backup for edge cases
+    validateMethodSwitchBackup(req.session);
+    
     const userState = determineUserState(req.session);
     const origin = determineOrigin(req.session);
     
@@ -2754,7 +2855,7 @@ router.get('/' + version + section + 'cancel-site-details', function (req, res) 
     // NEW: Check for method switch backup first
     if (hasMethodSwitchBackup(req.session)) {
         console.log('🔄 METHOD SWITCH: Backup detected during cancel, attempting restore');
-        const redirectUrl = restoreMethodSwitchBackup(req.session);
+        const redirectUrl = safeRestoreMethodSwitchBackup(req.session);
         if (redirectUrl) {
             console.log(`🔄 METHOD SWITCH: Redirecting to restored method at ${redirectUrl}`);
             return res.redirect(redirectUrl);

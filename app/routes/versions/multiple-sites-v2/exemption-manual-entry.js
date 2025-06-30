@@ -332,6 +332,44 @@ function logCancelState(session, context) {
     }
 }
 
+/**
+ * Validates and cleans up stale method switch backups
+ * @param {Object} session - Express session object
+ */
+function validateMethodSwitchBackup(session) {
+    const backup = session.data['methodSwitchBackup'];
+    if (!backup) return;
+    
+    // Check if backup is stale (older than 1 hour)
+    const oneHour = 60 * 60 * 1000;
+    if (Date.now() - backup.timestamp > oneHour) {
+        console.log('🗑️ METHOD SWITCH: Clearing stale backup (older than 1 hour)');
+        delete session.data['methodSwitchBackup'];
+        return;
+    }
+    
+    // Check if backup batch ID conflicts with current batches
+    if (session.data['siteBatches']) {
+        const conflictingBatch = session.data['siteBatches'].find(batch => batch.id === backup.batch.id);
+        if (conflictingBatch) {
+            console.log('🗑️ METHOD SWITCH: Clearing backup due to ID conflict');
+            delete session.data['methodSwitchBackup'];
+        }
+    }
+}
+
+/**
+ * Clears method switch backup when user commits to new method
+ * @param {Object} session - Express session object
+ */
+function clearMethodSwitchBackup(session) {
+    if (session.data['methodSwitchBackup']) {
+        const backup = session.data['methodSwitchBackup'];
+        console.log(`🗑️ METHOD SWITCH: Clearing backup for ${backup.originalMethod} (user committed to new method)`);
+        delete session.data['methodSwitchBackup'];
+    }
+}
+
 // ===== MIGRATED: Does your project involve more than one site? - GET route =====
 router.get('/' + version + section + 'manual-entry/does-your-project-involve-more-than-one-site', function (req, res) {
     const returnTo = req.query.returnTo;
@@ -1927,6 +1965,9 @@ router.post('/' + version + section + 'manual-entry/site-width-router', function
 
 // Review site details - GET route
 router.get('/' + version + section + 'manual-entry/review-site-details', function (req, res) {
+    // Validate method switch backup for edge cases
+    validateMethodSwitchBackup(req.session);
+    
     console.log('=== REVIEW SITE DETAILS DEBUG ===');
     req.session.data['errorthispage'] = "false";
     req.session.data['errors'] = [];
@@ -2052,6 +2093,9 @@ router.get('/' + version + section + 'manual-entry/review-site-details', functio
 
 // Review site details - POST route
 router.post('/' + version + section + 'manual-entry/review-site-details-router', function (req, res) {
+    // Clear any method switch backup - user is committing to manual entry method
+    clearMethodSwitchBackup(req.session);
+    
     // REMOVED: Complex conversion function no longer needed - batch system already works correctly
     
     // Get current batch before clearing
