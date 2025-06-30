@@ -357,11 +357,19 @@ router.post('/' + version + section + 'manual-entry/does-your-project-involve-mo
     const selection = req.body['manual-multiple-sites'];
 
     if (!selection) {
+        // Set error flags that match the template's error handling pattern
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        
         return res.render(version + section + 'manual-entry/does-your-project-involve-more-than-one-site', {
             data: req.session.data,
-            errors: { 'multipleSites': 'Please select whether your project involves more than one site' }
+            errors: {}
         });
     }
+
+    // Clear any error states on successful submission
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
 
     // Initialize a new batch for this manual entry session
     const batchId = initializeBatch(req.session, 'manual-entry');

@@ -334,20 +334,28 @@ function logCancelState(session, context) {
 
 // ===== MIGRATED: Does your project involve more than one site? - GET route =====
 router.get('/' + version + section + 'manual-entry/does-your-project-involve-more-than-one-site', function (req, res) {
+    const returnTo = req.query.returnTo;
+    
     // Set origin context if starting new journey (usually from task list)
-    if (!req.session.data['cancelOrigin']) {
+    if (!req.session.data['cancelOrigin'] && returnTo !== 'review-site-details') {
         setOriginContext(req.session, 'task-list');
     }
     
-    // Initialize review state for new manual entry journey
-    req.session.data['reviewPageVisited'] = false;
-    req.session.data['reviewPageSaved'] = false;
-    req.session.data['isEditingFromReview'] = false;
+    // Initialize review state for new manual entry journey (but not when editing from review)
+    if (returnTo !== 'review-site-details') {
+        req.session.data['reviewPageVisited'] = false;
+        req.session.data['reviewPageSaved'] = false;
+        req.session.data['isEditingFromReview'] = false;
+    } else {
+        // Track that user is editing from review page
+        updateReviewState(req.session, 'editing');
+    }
     
     logCancelState(req.session, 'manual entry - does-your-project-involve-more-than-one-site GET');
     
     res.render(version + section + 'manual-entry/does-your-project-involve-more-than-one-site', {
         data: req.session.data,
+        returnTo: returnTo,
         errors: {}
     });
 });
@@ -355,14 +363,98 @@ router.get('/' + version + section + 'manual-entry/does-your-project-involve-mor
 // ===== MIGRATED: Does your project involve more than one site? - POST route =====
 router.post('/' + version + section + 'manual-entry/does-your-project-involve-more-than-one-site-router', function (req, res) {
     const selection = req.body['manual-multiple-sites'];
+    const returnTo = req.query.returnTo;
 
     if (!selection) {
+        // Set error flags that match the template's error handling pattern
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        
         return res.render(version + section + 'manual-entry/does-your-project-involve-more-than-one-site', {
             data: req.session.data,
-            errors: { 'multipleSites': 'Please select whether your project involves more than one site' }
+            returnTo: returnTo,
+            errors: {}
         });
     }
 
+    // Clear any error states on successful submission
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    // Store the selection in session data
+    req.session.data['manual-multiple-sites'] = selection;
+
+    // If returning from review page, handle change logic
+    if (returnTo === 'review-site-details') {
+        console.log(`🔄 CHANGE FROM REVIEW: Multiple sites choice changed to "${selection}"`);
+        
+        // Get current batch and existing sites
+        const currentBatch = getCurrentBatch(req.session);
+        const existingSites = currentBatch ? currentBatch.sites : [];
+        const previousSelection = req.session.data['manual-multiple-sites'];
+        
+        console.log(`Previous selection: "${previousSelection}", New selection: "${selection}"`);
+        console.log(`Existing sites count: ${existingSites.length}`);
+        
+        if (previousSelection === 'No' && selection === 'Yes') {
+            // SCENARIO 1: Single site → Multiple sites
+            console.log('🔄 SCENARIO: Single site to multiple sites - preserving existing site');
+            
+            if (existingSites.length > 0) {
+                // The existing single site needs to be preserved but may need a name
+                const existingSite = existingSites[0];
+                console.log(`Existing site details:`, {
+                    globalNumber: existingSite.globalNumber,
+                    hasName: !!existingSite.name,
+                    hasStartDate: !!(existingSite.startDate && existingSite.startDate.day),
+                    hasDescription: !!existingSite.description,
+                    hasCoordinates: !!(existingSite.coordinates && Object.keys(existingSite.coordinates).length > 0)
+                });
+                
+                // For multiple sites, the first site needs a name if it doesn't have one
+                if (!existingSite.name || existingSite.name === '') {
+                    console.log('🔄 Site 1 needs a name for multiple site flow - redirecting to site name page');
+                    return res.redirect('site-name?site=' + existingSite.globalNumber + '&returnTo=review-site-details');
+                } else {
+                    console.log('🔄 Site 1 already has a name - returning to review page');
+                    return res.redirect('review-site-details');
+                }
+            } else {
+                console.log('🔄 No existing sites found - starting fresh multiple site flow');
+                const nextGlobalSiteNumber = (req.session.data['globalSiteCounter'] || 0) + 1;
+                return res.redirect('site-name?site=' + nextGlobalSiteNumber);
+            }
+            
+        } else if (previousSelection === 'Yes' && selection === 'No') {
+            // SCENARIO 2: Multiple sites → Single site
+            console.log('🔄 SCENARIO: Multiple sites to single site - keeping first site only');
+            
+            if (existingSites.length > 1) {
+                // Keep only the first site, remove others
+                currentBatch.sites = [existingSites[0]];
+                
+                // Clear the name from the remaining site (single sites don't have names)
+                currentBatch.sites[0].name = '';
+                
+                console.log(`Kept only first site (global number: ${currentBatch.sites[0].globalNumber}), removed ${existingSites.length - 1} other sites`);
+                
+                // Rebuild global sites array
+                if (req.session.data['siteBatches']) {
+                    req.session.data['sites'] = req.session.data['siteBatches'].flatMap(batch => batch.sites);
+                }
+            }
+            
+            console.log('🔄 Single site flow - returning to review page');
+            return res.redirect('review-site-details');
+            
+        } else {
+            // Same selection as before - just return to review
+            console.log('🔄 Same selection as before - returning to review page');
+            return res.redirect('review-site-details');
+        }
+    }
+
+    // Normal flow (new journey, not from review page)
     // Initialize a new batch for this manual entry session
     const batchId = initializeBatch(req.session, 'manual-entry');
     req.session.data['currentBatchId'] = batchId;

@@ -7,11 +7,11 @@
 
 <!-- Set the heading for the page -->
 {% set pageHeadingTextHTML %}
-Do you need to enter coordinates for more than one site?
+Do you need to tell us about more than one site?
 {% endset %}
 
 {% set errorText1HTML %}
-    Select whether you need to enter coordinates for more than one site
+    Select if you need to tell us about more than one site
 {% endset %}
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
@@ -36,7 +36,7 @@ Do you need to enter coordinates for more than one site?
     <div class="govuk-error-summary__body">
       <ul class="govuk-list govuk-error-summary__list">
         {% if data['errortypeone'] == "true" %}
-          <li><a href="#multiple-sites">{{ errorText1HTML }}</a></li>
+          <li><a href="#manual-multiple-sites">{{ errorText1HTML }}</a></li>
         {% endif %}
       </ul>
     </div>
@@ -44,7 +44,7 @@ Do you need to enter coordinates for more than one site?
 {% endif %}
         <!--  END OF 'error summary' -->
         
-        <form action="does-your-project-involve-more-than-one-site-router" method="post" novalidate>
+        <form action="does-your-project-involve-more-than-one-site-router{% if returnTo %}?returnTo={{ returnTo }}{% endif %}" method="post" novalidate>
 
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}

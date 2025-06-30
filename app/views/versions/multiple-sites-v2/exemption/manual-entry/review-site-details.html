@@ -29,81 +29,10 @@ Review site details
         <h1 class="govuk-heading-l">
             {{ pageHeadingTextHTML }}
         </h1>
-        
         <!-- Ensure sites variable is properly defined from route context or session fallback -->
         {% if not sites %}
             {% set sites = data['sites'] or [] %}
         {% endif %}
-        
-        <!-- Debug: Show sites count -->
-        <!--{{ sites.length or 0 }} sites found-->
-        
-        <!-- Determine if this is a multiple sites journey -->
-        {% set isMultipleSitesJourney = (data['manual-multiple-sites'] == 'Yes') or (sites and sites.length > 1) %}
-        
-        <!-- Check if all required fields are completed -->
-        {% set allComplete = true %}
-        
-        <!-- Check for sites data -->
-        {% if not sites or sites.length === 0 %}
-            {% set allComplete = false %}
-        {% else %}
-            <!-- Check site-specific required fields -->
-            {% for site in sites %}
-                <!-- Only require site name for multiple site journeys -->
-                {% if isMultipleSitesJourney and not site.name %}
-                    {% set allComplete = false %}
-                {% endif %}
-                
-                <!-- Check dates and descriptions based on journey type -->
-                {% if isMultipleSitesJourney %}
-                    <!-- Multiple sites: check if dates/descriptions are required based on batch settings -->
-                    {% if sites[0].batchId %}
-                        {% set currentBatch = null %}
-                        {% for batch in data['siteBatches'] %}
-                            {% if batch.id == sites[0].batchId %}
-                                {% set currentBatch = batch %}
-                            {% endif %}
-                        {% endfor %}
-                        
-                        {% if currentBatch and currentBatch.settings and currentBatch.settings.sameActivityDates == "No" %}
-                            {% if not site.startDate or not site.startDate.day %}
-                                {% set allComplete = false %}
-                            {% endif %}
-                        {% endif %}
-                        
-                        {% if currentBatch and currentBatch.settings and currentBatch.settings.sameActivityDescription == "No" %}
-                            {% if not site.description %}
-                                {% set allComplete = false %}
-                            {% endif %}
-                        {% endif %}
-                    {% else %}
-                        <!-- Fallback to session data for backwards compatibility -->
-                        {% if data['manual-same-activity-dates'] == "No" %}
-                            {% if not site.startDate or not site.startDate.day %}
-                                {% set allComplete = false %}
-                            {% endif %}
-                        {% endif %}
-                        
-                        {% if data['manual-same-activity-description'] == "No" %}
-                            {% if not site.description %}
-                                {% set allComplete = false %}
-                            {% endif %}
-                        {% endif %}
-                    {% endif %}
-                {% else %}
-                    <!-- Single site: always require dates and description -->
-                    {% if not site.startDate or not site.startDate.day %}
-                        {% set allComplete = false %}
-                    {% endif %}
-                    {% if not site.description %}
-                        {% set allComplete = false %}
-                    {% endif %}
-                {% endif %}
-            {% endfor %}
-        {% endif %}
-
-
         
         <!-- Get current batch for use throughout template -->
         {% set currentBatch = null %}
@@ -115,8 +44,96 @@ Review site details
             {% endfor %}
         {% endif %}
         
-        <!-- Determine if this is a multiple sites journey based on original user choice OR batch data -->
-        {% set isMultipleSitesJourney = (data['manual-multiple-sites'] == 'Yes') or (currentBatch and currentBatch.entryMethod == 'manual-entry' and sites and sites.length > 1) %}
+        <!-- Determine if this is a multiple sites journey -->
+        {% if data['manual-multiple-sites'] == 'Yes' %}
+            {% set isMultipleSitesJourney = true %}
+        {% else %}
+            {% set isMultipleSitesJourney = false %}
+        {% endif %}
+        
+        <!-- FIXED COMPLETENESS LOGIC -->
+        {% set allComplete = true %}
+        
+        <!-- Run the completeness logic without debug output -->
+        <!-- Step 1: Check manual-multiple-sites setting -->
+        {% if not data['manual-multiple-sites'] %}
+            {% set allComplete = false %}
+        {% endif %}
+        
+        <!-- Step 2: Check sites data -->
+        {% if not sites or sites.length === 0 %}
+            {% set allComplete = false %}
+        {% else %}
+            <!-- Step 3: Check site-specific fields -->
+            {% for site in sites %}
+                {% if isMultipleSitesJourney %}
+                    <!-- Multiple sites: require site name -->
+                    {% if not site.name %}
+                        {% set allComplete = false %}
+                    {% endif %}
+                {% endif %}
+                
+                <!-- Check coordinates -->
+                {% if not site.coordinates or not site.coordinateSystem %}
+                    {% set allComplete = false %}
+                {% endif %}
+                
+                <!-- Check dates and descriptions based on journey type -->
+                {% if not isMultipleSitesJourney %}
+                    <!-- Single site: always require dates and description -->
+                    {% if not site.startDate or not site.startDate.day %}
+                        {% set allComplete = false %}
+                    {% endif %}
+                    {% if not site.description %}
+                        {% set allComplete = false %}
+                    {% endif %}
+                {% else %}
+                    <!-- Multiple sites: check based on shared settings -->
+                    {% if data['manual-same-activity-dates'] == "No" %}
+                        {% if not site.startDate or not site.startDate.day %}
+                            {% set allComplete = false %}
+                        {% endif %}
+                    {% endif %}
+                    
+                    {% if data['manual-same-activity-description'] == "No" %}
+                        {% if not site.description %}
+                            {% set allComplete = false %}
+                        {% endif %}
+                    {% endif %}
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        
+        <!-- Step 4: Check multiple sites shared settings -->
+        {% if isMultipleSitesJourney %}
+            {% if not data['manual-same-activity-dates'] %}
+                {% set allComplete = false %}
+            {% else %}
+                {% if data['manual-same-activity-dates'] == "Yes" %}
+                    {% if not sites or not sites[0] or not sites[0].startDate or not sites[0].startDate.day %}
+                        {% set allComplete = false %}
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+            
+            {% if not data['manual-same-activity-description'] %}
+                {% set allComplete = false %}
+            {% else %}
+                {% if data['manual-same-activity-description'] == "Yes" %}
+                    {% if not sites or not sites[0] or not sites[0].description %}
+                        {% set allComplete = false %}
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+        {% endif %}
+
+        {% if not allComplete %}
+            {{ govukInsetText({
+                html: "You must complete all sections marked <span class='govuk-tag govuk-tag--red'>Incomplete</span> before you can send your information."
+            }) }}
+        {% endif %}
+
+        
         
         <!-- Providing the site location section -->
         <div id="site-location" class="govuk-summary-card">
@@ -137,6 +154,23 @@ Review site details
                         <dd class="govuk-summary-list__actions">
                             <a href="../how-do-you-want-to-provide-the-coordinates?returnTo=review-site-details#site-location" class="govuk-link">
                                 Change<span class="govuk-visually-hidden"> method of providing site location</span>
+                            </a>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            More than one site
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['manual-multiple-sites'] %}
+                                {{ data['manual-multiple-sites'] }}
+                            {% else %}
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                            {% endif %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="does-your-project-involve-more-than-one-site?returnTo=review-site-details#site-location" class="govuk-link">
+                                {% if data['manual-multiple-sites'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> more than one site setting</span>
                             </a>
                         </dd>
                     </div>
@@ -294,7 +328,9 @@ Review site details
                             
                             <!-- Activity dates logic -->
                             {% if isMultipleSitesJourney %}
-                                {% set showSiteDates = (currentBatch and currentBatch.settings and currentBatch.settings.sameActivityDates == "No") or (not (currentBatch and currentBatch.settings) and data['manual-same-activity-dates'] == "No") %}
+                                <!-- Show individual site dates unless user explicitly said "Yes" to shared dates -->
+                                {% set saidYesToSharedDates = (currentBatch and currentBatch.settings and currentBatch.settings.sameActivityDates == "Yes") or data['manual-same-activity-dates'] == "Yes" %}
+                                {% set showSiteDates = not saidYesToSharedDates %}
                             {% else %}
                                 {% set showSiteDates = true %}
                             {% endif %}
@@ -321,7 +357,9 @@ Review site details
                             
                             <!-- Activity description logic -->
                             {% if isMultipleSitesJourney %}
-                                {% set showSiteDescription = (currentBatch and currentBatch.settings and currentBatch.settings.sameActivityDescription == "No") or (not (currentBatch and currentBatch.settings) and data['manual-same-activity-description'] == "No") %}
+                                <!-- Show individual site descriptions unless user explicitly said "Yes" to shared descriptions -->
+                                {% set saidYesToSharedDescriptions = (currentBatch and currentBatch.settings and currentBatch.settings.sameActivityDescription == "Yes") or data['manual-same-activity-description'] == "Yes" %}
+                                {% set showSiteDescription = not saidYesToSharedDescriptions %}
                             {% else %}
                                 {% set showSiteDescription = true %}
                             {% endif %}

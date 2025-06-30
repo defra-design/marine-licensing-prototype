@@ -34,23 +34,38 @@ Review site details
         <!-- Check if all required fields are completed -->
         {% set allComplete = true %}
         
-        <!-- Determine if this is a single site journey -->
-        {% set isSingleSiteJourney = (data['manual-multiple-sites'] == 'No') or (sites and sites.length == 1 and sites[0].entryMethod == 'manual-entry') or (sites and sites.length == 1 and sites[0].entryMethod == 'file-upload') or (data['singleSiteFileUpload'] == true) %}
+        <!-- Run the completeness logic without debug output -->
+        <!-- Step 1: Determine journey type -->
+        {% if data['manual-multiple-sites'] == 'Yes' %}
+            {% set isMultipleSitesJourney = true %}
+        {% elif data['manual-multiple-sites'] == 'No' %}
+            {% set isMultipleSitesJourney = false %}
+        {% elif sites and sites.length == 1 and sites[0].entryMethod == 'file-upload' and not data['manual-multiple-sites'] %}
+            {% set isMultipleSitesJourney = false %}
+        {% elif data['singleSiteFileUpload'] == true %}
+            {% set isMultipleSitesJourney = false %}
+        {% else %}
+            {% set isMultipleSitesJourney = true %}
+        {% endif %}
         
-        <!-- Check for sites data -->
+        <!-- Step 2: Sites validation -->
         {% if not sites or sites.length === 0 %}
             {% set allComplete = false %}
         {% else %}
-            <!-- Check site-specific required fields -->
             {% for site in sites %}
-                <!-- Only check site name for non-single-site-file-upload journeys -->
-                {% if not isSingleSiteJourney or site.entryMethod != 'file-upload' %}
+                <!-- Check site name requirement -->
+                {% if isMultipleSitesJourney %}
+                    {% if not site.name %}
+                        {% set allComplete = false %}
+                    {% endif %}
+                {% elif site.entryMethod != 'file-upload' %}
                     {% if not site.name %}
                         {% set allComplete = false %}
                     {% endif %}
                 {% endif %}
                 
-                {% if sites.length == 1 %}
+                <!-- Check dates and descriptions -->
+                {% if not isMultipleSitesJourney %}
                     <!-- Single site: always require dates and description -->
                     {% if not site.startDate or not site.startDate.day %}
                         {% set allComplete = false %}
@@ -59,15 +74,12 @@ Review site details
                         {% set allComplete = false %}
                     {% endif %}
                 {% else %}
-                    <!-- Multiple sites: check conditionally based on "same for all sites" settings -->
-                    <!-- Check site-specific dates if required -->
+                    <!-- Multiple sites: check based on shared settings -->
                     {% if data['exemption-same-activity-dates-for-sites'] == "No" %}
                         {% if not site.startDate or not site.startDate.day %}
                             {% set allComplete = false %}
                         {% endif %}
                     {% endif %}
-                    
-                    <!-- Check site-specific descriptions if required -->
                     {% if data['exemption-same-activity-description-for-sites'] == "No" %}
                         {% if not site.description %}
                             {% set allComplete = false %}
@@ -76,14 +88,37 @@ Review site details
                 {% endif %}
             {% endfor %}
         {% endif %}
+        
+        <!-- Step 3: Multiple sites shared settings validation -->
+        {% if isMultipleSitesJourney and sites and sites.length > 1 %}
+            <!-- Check shared dates setting is answered -->
+            {% if not data['exemption-same-activity-dates-for-sites'] %}
+                {% set allComplete = false %}
+            {% else %}
+                <!-- If shared dates, check shared dates are provided -->
+                {% if data['exemption-same-activity-dates-for-sites'] == "Yes" %}
+                    {% if not data['exemption-start-date-date-input-day'] and not (currentBatch and currentBatch.settings and currentBatch.settings.sharedStartDate and currentBatch.settings.sharedStartDate.day) %}
+                        {% set allComplete = false %}
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+            
+            <!-- Check shared description setting is answered -->
+            {% if not data['exemption-same-activity-description-for-sites'] %}
+                {% set allComplete = false %}
+            {% else %}
+                <!-- If shared description, check shared description is provided -->
+                {% if data['exemption-same-activity-description-for-sites'] == "Yes" %}
+                    {% if not data['exemption-activity-details-text-area'] and not (currentBatch and currentBatch.settings and currentBatch.settings.sharedDescription) %}
+                        {% set allComplete = false %}
+                    {% endif %}
+                {% endif %}
+            {% endif %}
+        {% endif %}
 
         {% if not allComplete %}
             {{ govukInsetText({
                 html: "You must complete all sections marked <span class='govuk-tag govuk-tag--red'>Incomplete</span> before you can send your information.<br><br>You can select 'Save and continue' to save your progress and return later."
-            }) }}
-        {% else %}
-            {{ govukInsetText({
-                html: "You can select 'Save and continue' to save your progress and return later."
             }) }}
         {% endif %}
         
@@ -264,7 +299,7 @@ Review site details
                 <div id="site-{{ siteIndex }}-details" class="govuk-summary-card">
                     <div class="govuk-summary-card__title-wrapper">
                         <h2 class="govuk-summary-card__title">
-                            {% if isSingleSiteJourney %}
+                            {% if not isMultipleSitesJourney %}
                                 Site details
                             {% else %}
                                 Site {{ siteIndex }} details
@@ -274,7 +309,7 @@ Review site details
                     <div class="govuk-summary-card__content">
                         <dl class="govuk-summary-list">
                             <!-- Only show site name for non-single-site-file-upload journeys -->
-                            {% if not isSingleSiteJourney or site.entryMethod != 'file-upload' %}
+                            {% if isMultipleSitesJourney or site.entryMethod != 'file-upload' %}
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">
                                     Site name
