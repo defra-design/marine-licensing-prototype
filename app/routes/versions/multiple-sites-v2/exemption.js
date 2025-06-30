@@ -1069,6 +1069,9 @@ router.get('/' + version + section + 'site-details', function (req, res) {
 
 // Route handler for review-site-details
 router.get('/' + version + section + 'review-site-details', function (req, res) {
+    // Validate method switch backup for edge cases
+    validateMethodSwitchBackup(req.session);
+    
     // Set origin context based on how user arrived
     if (req.query.camefromcheckanswers === 'true') {
         setOriginContext(req.session, 'check-answers');
@@ -1229,6 +1232,9 @@ router.get('/' + version + section + 'how-do-you-want-to-provide-the-coordinates
 });
 
 router.post('/' + version + section + 'how-do-you-want-to-provide-the-coordinates-router', function (req, res) {
+    // Validate method switch backup for edge cases
+    validateMethodSwitchBackup(req.session);
+    
     // Turn errors off by default
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
@@ -1249,6 +1255,9 @@ router.post('/' + version + section + 'how-do-you-want-to-provide-the-coordinate
     
     // Only clear data if user is changing to a different method
     if (currentMethod && currentMethod !== newMethod) {
+        // Create backup before clearing
+        createMethodSwitchBackup(req.session, `switching from ${currentMethod} to ${newMethod}`);
+        
         // User is changing methods - clear current batch and start fresh
         if (newMethod === "manual-entry") {
             // Switching to manual entry - clear file upload data and batch
@@ -1514,6 +1523,260 @@ function renumberSitesAfterDeletion(session, deletedGlobalNumber) {
     }
     
     console.log('=== RENUMBERING COMPLETE ===');
+}
+
+// ==============================================================================================
+// METHOD SWITCH DATA PRESERVATION SYSTEM
+// ==============================================================================================
+
+/**
+ * Creates a backup of current batch and session data before method switching
+ * @param {Object} session - Express session object
+ * @param {String} reason - Reason for backup (for debugging)
+ */
+function createMethodSwitchBackup(session, reason) {
+    const currentBatch = getCurrentBatch(session);
+    if (!currentBatch) {
+        console.log(`🔄 METHOD SWITCH: No current batch to backup for ${reason}`);
+        return;
+    }
+    
+    console.log(`🔄 METHOD SWITCH: Creating backup for ${reason}, batch ${currentBatch.id}`);
+    
+    // Create deep copy backup
+    session.data['methodSwitchBackup'] = {
+        reason: reason,
+        timestamp: Date.now(),
+        originalMethod: currentBatch.entryMethod,
+        batch: JSON.parse(JSON.stringify(currentBatch)), // Deep copy
+        sessionData: captureMethodSessionData(session, currentBatch.entryMethod),
+        originalReviewState: {
+            reviewPageVisited: session.data['reviewPageVisited'],
+            reviewPageSaved: session.data['reviewPageSaved'],
+            isEditingFromReview: session.data['isEditingFromReview'],
+            cancelOrigin: session.data['cancelOrigin']
+        }
+    };
+    
+    console.log(`✅ METHOD SWITCH: Backup created for ${currentBatch.entryMethod} method`);
+}
+
+/**
+ * Captures session data specific to a method for backup
+ * @param {Object} session - Express session object  
+ * @param {String} method - 'manual-entry' or 'file-upload'
+ * @returns {Object} - Captured session data
+ */
+function captureMethodSessionData(session, method) {
+    const captured = {};
+    
+    if (method === 'manual-entry') {
+        // Capture manual entry session data
+        const manualKeys = [
+            'manual-multiple-sites',
+            'manual-same-activity-dates', 
+            'manual-same-activity-description',
+            'manual-start-date-date-input-day',
+            'manual-start-date-date-input-month', 
+            'manual-start-date-date-input-year',
+            'manual-end-date-date-input-day',
+            'manual-end-date-date-input-month',
+            'manual-end-date-date-input-year',
+            'manual-activity-details-text-area'
+        ];
+        
+        manualKeys.forEach(key => {
+            if (session.data[key] !== undefined) {
+                captured[key] = session.data[key];
+            }
+        });
+    } else if (method === 'file-upload') {
+        // Capture file upload session data
+        const fileKeys = [
+            'exemption-which-type-of-file-radios',
+            'hasUploadedFile',
+            'exemption-same-activity-dates-for-sites',
+            'exemption-same-activity-description-for-sites', 
+            'exemption-start-date-date-input-day',
+            'exemption-start-date-date-input-month',
+            'exemption-start-date-date-input-year',
+            'exemption-end-date-date-input-day',
+            'exemption-end-date-date-input-month', 
+            'exemption-end-date-date-input-year',
+            'exemption-activity-details-text-area'
+        ];
+        
+        fileKeys.forEach(key => {
+            if (session.data[key] !== undefined) {
+                captured[key] = session.data[key];
+            }
+        });
+    }
+    
+    return captured;
+}
+
+/**
+ * Restores backed up method data and returns user to original review page
+ * @param {Object} session - Express session object
+ * @returns {String|null} - Redirect URL or null if no backup
+ */
+function restoreMethodSwitchBackup(session) {
+    const backup = session.data['methodSwitchBackup'];
+    if (!backup) {
+        console.log('🔄 METHOD SWITCH: No backup found to restore');
+        return null;
+    }
+    
+    console.log(`🔄 METHOD SWITCH: Restoring backup for ${backup.originalMethod} method`);
+    
+    // Restore the batch to siteBatches array
+    if (!Array.isArray(session.data['siteBatches'])) {
+        session.data['siteBatches'] = [];
+    }
+    
+    // Add restored batch back
+    session.data['siteBatches'].push(backup.batch);
+    session.data['currentBatchId'] = backup.batch.id;
+    
+    // Restore method-specific session data
+    Object.keys(backup.sessionData).forEach(key => {
+        session.data[key] = backup.sessionData[key];
+    });
+    
+    // Restore review state - but reset saved state so user can cancel with warning
+    session.data['reviewPageVisited'] = backup.originalReviewState.reviewPageVisited;
+    session.data['reviewPageSaved'] = false; // Reset to false so user gets cancel warning
+    session.data['isEditingFromReview'] = backup.originalReviewState.isEditingFromReview;
+    session.data['cancelOrigin'] = backup.originalReviewState.cancelOrigin;
+    
+    // Rebuild global sites array
+    session.data['sites'] = session.data['siteBatches'].flatMap(batch => batch.sites);
+    
+    // Determine redirect URL based on original method
+    let redirectUrl;
+    if (backup.originalMethod === 'manual-entry') {
+        redirectUrl = 'manual-entry/review-site-details';
+    } else {
+        redirectUrl = 'review-site-details';
+    }
+    
+    console.log(`✅ METHOD SWITCH: Restored ${backup.originalMethod} method, redirecting to ${redirectUrl}`);
+    
+    // Clear backup after successful restore
+    delete session.data['methodSwitchBackup'];
+    
+    return redirectUrl;
+}
+
+/**
+ * Clears method switch backup when user commits to new method
+ * @param {Object} session - Express session object
+ */
+function clearMethodSwitchBackup(session) {
+    if (session.data['methodSwitchBackup']) {
+        const backup = session.data['methodSwitchBackup'];
+        console.log(`🗑️ METHOD SWITCH: Clearing backup for ${backup.originalMethod} (user committed to new method)`);
+        delete session.data['methodSwitchBackup'];
+    }
+}
+
+/**
+ * Checks if there's a method switch backup available
+ * @param {Object} session - Express session object
+ * @returns {Boolean}
+ */
+function hasMethodSwitchBackup(session) {
+    return !!session.data['methodSwitchBackup'];
+}
+
+// ==============================================================================================
+// METHOD SWITCH EDGE CASE HANDLING
+// ==============================================================================================
+
+/**
+ * Validates and cleans up stale method switch backups
+ * @param {Object} session - Express session object
+ */
+function validateMethodSwitchBackup(session) {
+    const backup = session.data['methodSwitchBackup'];
+    if (!backup) return;
+    
+    // Check if backup is stale (older than 1 hour)
+    const oneHour = 60 * 60 * 1000;
+    if (Date.now() - backup.timestamp > oneHour) {
+        console.log('🗑️ METHOD SWITCH: Clearing stale backup (older than 1 hour)');
+        delete session.data['methodSwitchBackup'];
+        return;
+    }
+    
+    // Check if backup batch ID conflicts with current batches
+    if (session.data['siteBatches']) {
+        const conflictingBatch = session.data['siteBatches'].find(batch => batch.id === backup.batch.id);
+        if (conflictingBatch) {
+            console.log('🗑️ METHOD SWITCH: Clearing backup due to ID conflict');
+            delete session.data['methodSwitchBackup'];
+        }
+    }
+}
+
+/**
+ * Safe restore function with error recovery
+ * @param {Object} session - Express session object
+ * @returns {String|null} - Redirect URL or null if restore failed
+ */
+function safeRestoreMethodSwitchBackup(session) {
+    try {
+        return restoreMethodSwitchBackup(session);
+    } catch (error) {
+        console.error('🚨 METHOD SWITCH: Error restoring backup:', error);
+        // Clear corrupted backup
+        delete session.data['methodSwitchBackup'];
+        // Fall back to standard cancel behavior
+        return null;
+    }
+}
+
+/**
+ * Cleans up method-specific session variables when switching methods
+ * @param {Object} session - Express session object
+ * @param {String} methodToKeep - 'manual-entry' or 'file-upload' or 'both' or 'none'
+ */
+function cleanupMethodSessionData(session, methodToKeep) {
+    const manualKeys = [
+        'manual-multiple-sites',
+        'manual-same-activity-dates', 
+        'manual-same-activity-description',
+        'manual-start-date-date-input-day',
+        'manual-start-date-date-input-month', 
+        'manual-start-date-date-input-year',
+        'manual-end-date-date-input-day',
+        'manual-end-date-date-input-month',
+        'manual-end-date-date-input-year',
+        'manual-activity-details-text-area'
+    ];
+    
+    const fileKeys = [
+        'exemption-which-type-of-file-radios',
+        'hasUploadedFile',
+        'exemption-same-activity-dates-for-sites',
+        'exemption-same-activity-description-for-sites', 
+        'exemption-start-date-date-input-day',
+        'exemption-start-date-date-input-month',
+        'exemption-start-date-date-input-year',
+        'exemption-end-date-date-input-day',
+        'exemption-end-date-date-input-month', 
+        'exemption-end-date-date-input-year',
+        'exemption-activity-details-text-area'
+    ];
+    
+    if (methodToKeep !== 'manual-entry' && methodToKeep !== 'both') {
+        manualKeys.forEach(key => delete session.data[key]);
+    }
+    
+    if (methodToKeep !== 'file-upload' && methodToKeep !== 'both') {
+        fileKeys.forEach(key => delete session.data[key]);
+    }
 }
 
 // ==============================================================================================
@@ -2491,6 +2754,9 @@ router.post('/' + version + section + 'site-activity-description-router', functi
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 router.post('/' + version + section + 'review-site-details-router', function (req, res) {
+    // Clear any method switch backup - user is committing to file upload method
+    clearMethodSwitchBackup(req.session);
+    
     let hasSiteIncomplete = false;
     let sites = [];
     if (typeof getCurrentBatch === 'function') {
@@ -2578,11 +2844,25 @@ router.post('/' + version + section + 'review-site-details-router', function (re
  * Replaces cancel-site-details, cancel-to-review, and cancel-from-review-site-details
  */
 router.get('/' + version + section + 'cancel-site-details', function (req, res) {
+    // Validate method switch backup for edge cases
+    validateMethodSwitchBackup(req.session);
+    
     const userState = determineUserState(req.session);
     const origin = determineOrigin(req.session);
     
     logCancelState(req.session, 'cancel-site-details entry - userState: ' + userState + ', origin: ' + origin);
     
+    // NEW: Check for method switch backup first
+    if (hasMethodSwitchBackup(req.session)) {
+        console.log('🔄 METHOD SWITCH: Backup detected during cancel, attempting restore');
+        const redirectUrl = safeRestoreMethodSwitchBackup(req.session);
+        if (redirectUrl) {
+            console.log(`🔄 METHOD SWITCH: Redirecting to restored method at ${redirectUrl}`);
+            return res.redirect(redirectUrl);
+        }
+    }
+    
+    // EXISTING: Original cancel logic unchanged
     switch(userState) {
         case 'creation':
             // State 1: Creation pages - clear current batch and return to task list
@@ -2663,8 +2943,13 @@ router.get('/' + version + section + 'cancel', function (req, res) {
 router.post('/' + version + section + 'cancel-confirmed', function (req, res) {
     logCancelState(req.session, 'cancel-confirmed - user confirmed cancellation');
     
-    // Clear the current batch safely with enhanced error handling
-    clearCurrentBatchSafely(req.session);
+    // Clear any method switch backup (user explicitly confirmed cancellation)
+    clearMethodSwitchBackup(req.session);
+    
+    // ENHANCED FIX: Force complete clear when user explicitly confirms cancellation
+    // This handles the edge case where restored backups might have saved batches
+    // that would otherwise keep the task status as "in-progress"
+    clearAllSiteDetails(req.session);
     
     // Clear cancel-related state tracking for fresh start
     delete req.session.data['cancelOrigin'];
@@ -2676,7 +2961,11 @@ router.post('/' + version + section + 'cancel-confirmed', function (req, res) {
     delete req.session.data['fromReviewSiteDetails'];
     delete req.session.data['camefromcheckanswers'];
     
-    logCancelState(req.session, 'cancel-confirmed - redirecting to task-list');
+    // Ensure task status is properly reset to not-started
+    req.session.data['exempt-information-3-status'] = 'not-started';
+    delete req.session.data['siteDetailsSaved'];
+    
+    logCancelState(req.session, 'cancel-confirmed - complete clear performed, redirecting to task-list');
     res.redirect('task-list');
 });
 
