@@ -1249,6 +1249,9 @@ router.post('/' + version + section + 'how-do-you-want-to-provide-the-coordinate
     
     // Only clear data if user is changing to a different method
     if (currentMethod && currentMethod !== newMethod) {
+        // Create backup before clearing
+        createMethodSwitchBackup(req.session, `switching from ${currentMethod} to ${newMethod}`);
+        
         // User is changing methods - clear current batch and start fresh
         if (newMethod === "manual-entry") {
             // Switching to manual entry - clear file upload data and batch
@@ -1514,6 +1517,171 @@ function renumberSitesAfterDeletion(session, deletedGlobalNumber) {
     }
     
     console.log('=== RENUMBERING COMPLETE ===');
+}
+
+// ==============================================================================================
+// METHOD SWITCH DATA PRESERVATION SYSTEM
+// ==============================================================================================
+
+/**
+ * Creates a backup of current batch and session data before method switching
+ * @param {Object} session - Express session object
+ * @param {String} reason - Reason for backup (for debugging)
+ */
+function createMethodSwitchBackup(session, reason) {
+    const currentBatch = getCurrentBatch(session);
+    if (!currentBatch) {
+        console.log(`🔄 METHOD SWITCH: No current batch to backup for ${reason}`);
+        return;
+    }
+    
+    console.log(`🔄 METHOD SWITCH: Creating backup for ${reason}, batch ${currentBatch.id}`);
+    
+    // Create deep copy backup
+    session.data['methodSwitchBackup'] = {
+        reason: reason,
+        timestamp: Date.now(),
+        originalMethod: currentBatch.entryMethod,
+        batch: JSON.parse(JSON.stringify(currentBatch)), // Deep copy
+        sessionData: captureMethodSessionData(session, currentBatch.entryMethod),
+        originalReviewState: {
+            reviewPageVisited: session.data['reviewPageVisited'],
+            reviewPageSaved: session.data['reviewPageSaved'],
+            isEditingFromReview: session.data['isEditingFromReview'],
+            cancelOrigin: session.data['cancelOrigin']
+        }
+    };
+    
+    console.log(`✅ METHOD SWITCH: Backup created for ${currentBatch.entryMethod} method`);
+}
+
+/**
+ * Captures session data specific to a method for backup
+ * @param {Object} session - Express session object  
+ * @param {String} method - 'manual-entry' or 'file-upload'
+ * @returns {Object} - Captured session data
+ */
+function captureMethodSessionData(session, method) {
+    const captured = {};
+    
+    if (method === 'manual-entry') {
+        // Capture manual entry session data
+        const manualKeys = [
+            'manual-multiple-sites',
+            'manual-same-activity-dates', 
+            'manual-same-activity-description',
+            'manual-start-date-date-input-day',
+            'manual-start-date-date-input-month', 
+            'manual-start-date-date-input-year',
+            'manual-end-date-date-input-day',
+            'manual-end-date-date-input-month',
+            'manual-end-date-date-input-year',
+            'manual-activity-details-text-area'
+        ];
+        
+        manualKeys.forEach(key => {
+            if (session.data[key] !== undefined) {
+                captured[key] = session.data[key];
+            }
+        });
+    } else if (method === 'file-upload') {
+        // Capture file upload session data
+        const fileKeys = [
+            'exemption-which-type-of-file-radios',
+            'hasUploadedFile',
+            'exemption-same-activity-dates-for-sites',
+            'exemption-same-activity-description-for-sites', 
+            'exemption-start-date-date-input-day',
+            'exemption-start-date-date-input-month',
+            'exemption-start-date-date-input-year',
+            'exemption-end-date-date-input-day',
+            'exemption-end-date-date-input-month', 
+            'exemption-end-date-date-input-year',
+            'exemption-activity-details-text-area'
+        ];
+        
+        fileKeys.forEach(key => {
+            if (session.data[key] !== undefined) {
+                captured[key] = session.data[key];
+            }
+        });
+    }
+    
+    return captured;
+}
+
+/**
+ * Restores backed up method data and returns user to original review page
+ * @param {Object} session - Express session object
+ * @returns {String|null} - Redirect URL or null if no backup
+ */
+function restoreMethodSwitchBackup(session) {
+    const backup = session.data['methodSwitchBackup'];
+    if (!backup) {
+        console.log('🔄 METHOD SWITCH: No backup found to restore');
+        return null;
+    }
+    
+    console.log(`🔄 METHOD SWITCH: Restoring backup for ${backup.originalMethod} method`);
+    
+    // Restore the batch to siteBatches array
+    if (!Array.isArray(session.data['siteBatches'])) {
+        session.data['siteBatches'] = [];
+    }
+    
+    // Add restored batch back
+    session.data['siteBatches'].push(backup.batch);
+    session.data['currentBatchId'] = backup.batch.id;
+    
+    // Restore method-specific session data
+    Object.keys(backup.sessionData).forEach(key => {
+        session.data[key] = backup.sessionData[key];
+    });
+    
+    // Restore review state
+    session.data['reviewPageVisited'] = backup.originalReviewState.reviewPageVisited;
+    session.data['reviewPageSaved'] = backup.originalReviewState.reviewPageSaved;
+    session.data['isEditingFromReview'] = backup.originalReviewState.isEditingFromReview;
+    session.data['cancelOrigin'] = backup.originalReviewState.cancelOrigin;
+    
+    // Rebuild global sites array
+    session.data['sites'] = session.data['siteBatches'].flatMap(batch => batch.sites);
+    
+    // Determine redirect URL based on original method
+    let redirectUrl;
+    if (backup.originalMethod === 'manual-entry') {
+        redirectUrl = 'manual-entry/review-site-details';
+    } else {
+        redirectUrl = 'review-site-details';
+    }
+    
+    console.log(`✅ METHOD SWITCH: Restored ${backup.originalMethod} method, redirecting to ${redirectUrl}`);
+    
+    // Clear backup after successful restore
+    delete session.data['methodSwitchBackup'];
+    
+    return redirectUrl;
+}
+
+/**
+ * Clears method switch backup when user commits to new method
+ * @param {Object} session - Express session object
+ */
+function clearMethodSwitchBackup(session) {
+    if (session.data['methodSwitchBackup']) {
+        const backup = session.data['methodSwitchBackup'];
+        console.log(`🗑️ METHOD SWITCH: Clearing backup for ${backup.originalMethod} (user committed to new method)`);
+        delete session.data['methodSwitchBackup'];
+    }
+}
+
+/**
+ * Checks if there's a method switch backup available
+ * @param {Object} session - Express session object
+ * @returns {Boolean}
+ */
+function hasMethodSwitchBackup(session) {
+    return !!session.data['methodSwitchBackup'];
 }
 
 // ==============================================================================================
