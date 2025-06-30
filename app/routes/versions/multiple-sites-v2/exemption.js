@@ -2751,6 +2751,17 @@ router.get('/' + version + section + 'cancel-site-details', function (req, res) 
     
     logCancelState(req.session, 'cancel-site-details entry - userState: ' + userState + ', origin: ' + origin);
     
+    // NEW: Check for method switch backup first
+    if (hasMethodSwitchBackup(req.session)) {
+        console.log('🔄 METHOD SWITCH: Backup detected during cancel, attempting restore');
+        const redirectUrl = restoreMethodSwitchBackup(req.session);
+        if (redirectUrl) {
+            console.log(`🔄 METHOD SWITCH: Redirecting to restored method at ${redirectUrl}`);
+            return res.redirect(redirectUrl);
+        }
+    }
+    
+    // EXISTING: Original cancel logic unchanged
     switch(userState) {
         case 'creation':
             // State 1: Creation pages - clear current batch and return to task list
@@ -2830,6 +2841,9 @@ router.get('/' + version + section + 'cancel', function (req, res) {
 // POST route for cancel confirmation - enhanced with state management
 router.post('/' + version + section + 'cancel-confirmed', function (req, res) {
     logCancelState(req.session, 'cancel-confirmed - user confirmed cancellation');
+    
+    // Clear any method switch backup (user explicitly confirmed cancellation)
+    clearMethodSwitchBackup(req.session);
     
     // Clear the current batch safely with enhanced error handling
     clearCurrentBatchSafely(req.session);
