@@ -203,7 +203,7 @@ Review site details
                         </dd>
                         <dd class="govuk-summary-list__actions">
                             <a href="same-activity-dates?returnTo=review-site-details#activity-details" class="govuk-link">
-                                Change<span class="govuk-visually-hidden"> activity dates setting</span>
+                                {% if (currentBatch and currentBatch.settings and currentBatch.settings.sameActivityDates) or data['manual-same-activity-dates'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> activity dates setting</span>
                             </a>
                         </dd>
                     </div>
@@ -247,7 +247,7 @@ Review site details
                         </dd>
                         <dd class="govuk-summary-list__actions">
                             <a href="same-activity-description?returnTo=review-site-details#activity-details" class="govuk-link">
-                                Change<span class="govuk-visually-hidden"> activity description setting</span>
+                                {% if (currentBatch and currentBatch.settings and currentBatch.settings.sameActivityDescription) or data['manual-same-activity-description'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> activity description setting</span>
                             </a>
                         </dd>
                     </div>

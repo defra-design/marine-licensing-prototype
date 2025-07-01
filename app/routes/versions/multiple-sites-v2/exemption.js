@@ -1344,18 +1344,20 @@ router.post('/' + version + section + 'which-type-of-file-router', function (req
     const currentBatch = getCurrentBatch(req.session);
     const currentFileType = currentBatch && currentBatch.settings ? currentBatch.settings.fileType : null;
     
-    // Only clear data if user is changing to a different file type
-    if (currentFileType && currentFileType !== selection) {
-        // User is changing file type - clear current batch and start fresh
-        clearDataForFileTypeChange(req.session);
-    }
-    
     // Check if we're returning to review page with no actual change
     if (req.session.data['fromReviewSiteDetails'] === 'true' && currentFileType === selection) {
         // User didn't actually change file type - return to review page
         delete req.session.data['fromReviewSiteDetails'];
         res.redirect('review-site-details');
         return;
+    }
+    
+    // Only clear data if user is changing to a different file type
+    if (currentFileType && currentFileType !== selection) {
+        // User is changing file type - clear current batch and start fresh
+        clearDataForFileTypeChange(req.session);
+        // IMPORTANT: Restore the new file type selection after clearing
+        req.session.data['exemption-which-type-of-file-radios'] = selection;
     }
 
     // Route based on selection for new journeys or actual changes
