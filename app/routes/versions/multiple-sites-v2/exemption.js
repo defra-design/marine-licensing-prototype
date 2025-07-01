@@ -952,8 +952,13 @@ router.get('/' + version + section + 'home', function (req, res) {
         req.session.data['deleteProject'] = 'false';
     }
     
-    // Render the home page
-    res.render(version + section + 'home');
+    // Pass the URL parameter directly to the template for immediate effect
+    const deleteProjectsParam = req.query['delete-projects'] === 'true';
+    
+    // Render the home page with additional context
+    res.render(version + section + 'home', {
+        deleteProjectsParam: deleteProjectsParam
+    });
 });
 
 // Manual site name router

@@ -1,5 +1,7 @@
 {% extends "../layouts/exemption.html" %}
 
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+
 <!-- Set a variable to identify this specific page -->
 {% set currentPageId = "home" %}
 
@@ -53,7 +55,11 @@ Your projects
 			{{ pageHeadingTextHTML }}
 		</h1>
 
-		{% if  data['deleteProject'] == "true"  %}
+		{% set isDeleteProject = data['deleteProject'] == "true" or deleteProjectsParam %}
+		{% set isTowerBridgeDeleted = data['towerBridgeProjectDeleted'] == "true" %}
+		{% set isUserProjectDeleted = data['userProjectDeleted'] == "true" %}
+
+		{% if isDeleteProject %}
 
 		<p>You currently have no projects.</p>
 
@@ -93,7 +99,6 @@ Your projects
 						<a href="#" class="govuk-link--no-visited-state">View details</a>
 					</td>
 				</tr>
-				{% set hasProjects = true %}
 				{% endif %}
 
 				{% if not isDeleteProject %}
@@ -117,7 +122,6 @@ Your projects
 						<a href="#" class="govuk-link--no-visited-state">View details</a>
 					</td>
 				</tr>
-				{% set hasProjects = true %}
 				{% endif %}
 
 				{% if not isTowerBridgeDeleted and not isDeleteProject %}
@@ -141,10 +145,9 @@ Your projects
 						<a href="#" class="govuk-link--no-visited-state govuk-!-margin-right-4">Continue</a> <a href="delete?project=tower-bridge" class="govuk-link--no-visited-state">Delete</a>
 					</td>
 				</tr>
-				{% set hasProjects = true %}
 				{% endif %}
 
-				{% if not isUserProjectDeleted and not isDeleteProject %}
+				{% if not isUserProjectDeleted and not isDeleteProject and data['exemption-project-name-text-input'] %}
 				<tr class="govuk-table__row">
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">{{ data['exemption-project-name-text-input'] }}</th>
 					<td class="govuk-table__cell">
@@ -190,7 +193,6 @@ Your projects
 						</td>
 					{% endif %}
 				</tr>
-				{% set hasProjects = true %}
 				{% endif %}			  
 			</tbody>
 		</table>
