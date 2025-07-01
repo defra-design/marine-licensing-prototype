@@ -59,7 +59,11 @@ End date
         <h1 class="govuk-heading-l">
             {{ pageHeadingTextHTML }}
 		</h1>
+        {% if data['manual-multiple-sites'] == 'Yes' %}
+        <p>Enter the activity dates for this site. Allow time for potential delays, like consents (for example, a river works licence) or bad weather. If you miss the dates, you'll need to restart the process.</p>
+        {% else %}
         <p>Enter the activity dates. Allow time for potential delays, like consents (for example, a river works licence) or bad weather. If you miss the dates, you'll need to restart the process.</p>
+        {% endif %}
         <p>You can enter a start date from today and begin your activity as soon as you've sent your information.</p>
         
         <form action="individual-site-activity-dates-router?site={{ site.globalNumber }}{% if returnTo %}&returnTo={{ returnTo }}{% endif %}" method="post" novalidate>
