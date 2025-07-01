@@ -419,80 +419,135 @@ router.post('/' + version + section + 'manual-entry/does-your-project-involve-mo
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
 
-    // Store the selection in session data
-    req.session.data['manual-multiple-sites'] = selection;
-
-    // If returning from review page, handle change logic
+    // If returning from review page, handle change logic BEFORE updating session data
     if (returnTo === 'review-site-details') {
         console.log(`🔄 CHANGE FROM REVIEW: Multiple sites choice changed to "${selection}"`);
         
         // Get current batch and existing sites
         const currentBatch = getCurrentBatch(req.session);
         const existingSites = currentBatch ? currentBatch.sites : [];
+        
+        // CRITICAL FIX: Get previous selection BEFORE updating session data
         const previousSelection = req.session.data['manual-multiple-sites'];
         
         console.log(`Previous selection: "${previousSelection}", New selection: "${selection}"`);
         console.log(`Existing sites count: ${existingSites.length}`);
         
-        if (previousSelection === 'No' && selection === 'Yes') {
+        // Store the selection in session data AFTER capturing previous value
+        req.session.data['manual-multiple-sites'] = selection;
+        
+        // SIMPLIFIED LOGIC: Just check current state, not previous state
+        if (selection === 'Yes' && existingSites.length > 0) {
             // SCENARIO 1: Single site → Multiple sites
-            console.log('🔄 SCENARIO: Single site to multiple sites - preserving existing site');
+            console.log('🔄 SCENARIO: Single site to multiple sites - going to review page');
             
-            if (existingSites.length > 0) {
-                // The existing single site needs to be preserved but may need a name
-                const existingSite = existingSites[0];
-                console.log(`Existing site details:`, {
-                    globalNumber: existingSite.globalNumber,
-                    hasName: !!existingSite.name,
-                    hasStartDate: !!(existingSite.startDate && existingSite.startDate.day),
-                    hasDescription: !!existingSite.description,
-                    hasCoordinates: !!(existingSite.coordinates && Object.keys(existingSite.coordinates).length > 0)
-                });
-                
-                // For multiple sites, the first site needs a name if it doesn't have one
-                if (!existingSite.name || existingSite.name === '') {
-                    console.log('🔄 Site 1 needs a name for multiple site flow - redirecting to site name page');
-                    return res.redirect('site-name?site=' + existingSite.globalNumber + '&returnTo=review-site-details');
-                } else {
-                    console.log('🔄 Site 1 already has a name - returning to review page');
-                    return res.redirect('review-site-details');
-                }
-            } else {
-                console.log('🔄 No existing sites found - starting fresh multiple site flow');
-                const nextGlobalSiteNumber = (req.session.data['globalSiteCounter'] || 0) + 1;
-                return res.redirect('site-name?site=' + nextGlobalSiteNumber);
+            const existingSite = existingSites[0];
+            console.log(`Existing site details:`, {
+                globalNumber: existingSite.globalNumber,
+                hasName: !!existingSite.name,
+                hasStartDate: !!(existingSite.startDate && existingSite.startDate.day),
+                hasDescription: !!existingSite.description,
+                hasCoordinates: !!(existingSite.coordinates && Object.keys(existingSite.coordinates).length > 0)
+            });
+            
+            // Clear multi-site activity settings so they show as "Incomplete" with "Add" links
+            console.log('🔄 Clearing multi-site activity settings for fresh start');
+            delete req.session.data['manual-same-activity-dates'];
+            delete req.session.data['manual-same-activity-description'];
+            delete req.session.data['manual-start-date-date-input-day'];
+            delete req.session.data['manual-start-date-date-input-month'];
+            delete req.session.data['manual-start-date-date-input-year'];
+            delete req.session.data['manual-end-date-date-input-day'];
+            delete req.session.data['manual-end-date-date-input-month'];
+            delete req.session.data['manual-end-date-date-input-year'];
+            delete req.session.data['manual-activity-details-text-area'];
+            
+            // Also clear any batch settings that might cause confusion
+            if (currentBatch && currentBatch.settings) {
+                delete currentBatch.settings.sameActivityDates;
+                delete currentBatch.settings.sameActivityDescription;
+                delete currentBatch.settings.sharedStartDate;
+                delete currentBatch.settings.sharedEndDate;
+                delete currentBatch.settings.sharedDescription;
             }
             
-        } else if (previousSelection === 'Yes' && selection === 'No') {
+            console.log('🔄 Going directly to review page - incomplete fields will show with Add links');
+            return res.redirect('review-site-details');
+            
+        } else if (selection === 'No' && existingSites.length > 1) {
             // SCENARIO 2: Multiple sites → Single site
             console.log('🔄 SCENARIO: Multiple sites to single site - keeping first site only');
+            console.log('=== DEBUGGING MULTIPLE TO SINGLE CONVERSION ===');
+            
+            // Debug: Show current state before changes
+            console.log('BEFORE CONVERSION:');
+            console.log('- Existing sites count:', existingSites.length);
+            console.log('- Sites in current batch:', currentBatch.sites.map(s => ({ globalNumber: s.globalNumber, name: s.name })));
+            console.log('- All batches:', req.session.data['siteBatches'] ? req.session.data['siteBatches'].map(b => ({ id: b.id, sitesCount: b.sites.length })) : 'none');
+            console.log('- Global sites array length:', req.session.data['sites'] ? req.session.data['sites'].length : 'none');
+            console.log('- Global site counter:', req.session.data['globalSiteCounter']);
             
             if (existingSites.length > 1) {
-                // Keep only the first site, remove others
-                currentBatch.sites = [existingSites[0]];
+                // Store the first site to keep
+                const siteToKeep = existingSites[0];
+                const sitesToRemove = existingSites.slice(1); // All sites except the first
+                
+                console.log(`\nCONVERSION PROCESS:`);
+                console.log(`- Keeping site ${siteToKeep.globalNumber} (${siteToKeep.name})`);
+                console.log(`- Removing ${sitesToRemove.length} sites:`, sitesToRemove.map(s => ({ globalNumber: s.globalNumber, name: s.name })));
                 
                 // Clear the name from the remaining site (single sites don't have names)
-                currentBatch.sites[0].name = '';
+                console.log(`- Clearing name from remaining site (was: "${siteToKeep.name}")`);
+                siteToKeep.name = '';
                 
-                console.log(`Kept only first site (global number: ${currentBatch.sites[0].globalNumber}), removed ${existingSites.length - 1} other sites`);
+                // Update the batch to only contain the first site
+                console.log(`- Updating batch to contain only first site`);
+                currentBatch.sites = [siteToKeep];
                 
-                // Rebuild global sites array
-                if (req.session.data['siteBatches']) {
-                    req.session.data['sites'] = req.session.data['siteBatches'].flatMap(batch => batch.sites);
+                // For each removed site, call renumberSitesAfterDeletion to properly handle global numbering
+                // Process removals in reverse order of global numbers to maintain correct renumbering
+                const sortedSitesToRemove = sitesToRemove.sort((a, b) => b.globalNumber - a.globalNumber);
+                console.log(`- Sites to remove (sorted by global number desc):`, sortedSitesToRemove.map(s => s.globalNumber));
+                
+                for (const removedSite of sortedSitesToRemove) {
+                    console.log(`\n- REMOVING site ${removedSite.globalNumber} and renumbering...`);
+                    console.log(`  Before renumbering - globalSiteCounter: ${req.session.data['globalSiteCounter']}`);
+                    console.log(`  Before renumbering - total sites: ${req.session.data['sites'] ? req.session.data['sites'].length : 0}`);
+                    
+                    // Call the renumbering function
+                    renumberSitesAfterDeletion(req.session, removedSite.globalNumber);
+                    
+                    console.log(`  After renumbering - globalSiteCounter: ${req.session.data['globalSiteCounter']}`);
+                    console.log(`  After renumbering - total sites: ${req.session.data['sites'] ? req.session.data['sites'].length : 0}`);
+                    console.log(`  After renumbering - remaining site globalNumber: ${siteToKeep.globalNumber}`);
                 }
+                
+                console.log(`\nAFTER CONVERSION:`);
+                console.log('- Current batch sites:', currentBatch.sites.map(s => ({ globalNumber: s.globalNumber, name: s.name })));
+                console.log('- All batches:', req.session.data['siteBatches'] ? req.session.data['siteBatches'].map(b => ({ id: b.id, sitesCount: b.sites.length, sites: b.sites.map(s => s.globalNumber) })) : 'none');
+                console.log('- Global sites array:', req.session.data['sites'] ? req.session.data['sites'].map(s => ({ globalNumber: s.globalNumber, batchId: s.batchId })) : 'none');
+                console.log('- Global site counter:', req.session.data['globalSiteCounter']);
+                
+                console.log(`\n✅ Successfully converted to single site. Remaining site global number: ${siteToKeep.globalNumber}`);
+            } else {
+                console.log('- Only one site exists, no removal needed');
             }
             
+            console.log('=== END DEBUGGING MULTIPLE TO SINGLE CONVERSION ===');
             console.log('🔄 Single site flow - returning to review page');
             return res.redirect('review-site-details');
             
         } else {
-            // Same selection as before - just return to review
-            console.log('🔄 Same selection as before - returning to review page');
+            // Other cases - just return to review
+            console.log('🔄 No changes needed - returning to review page');
             return res.redirect('review-site-details');
         }
     }
 
     // Normal flow (new journey, not from review page)
+    // Store the selection in session data for new journeys
+    req.session.data['manual-multiple-sites'] = selection;
+    
     // Initialize a new batch for this manual entry session
     const batchId = initializeBatch(req.session, 'manual-entry');
     req.session.data['currentBatchId'] = batchId;
@@ -2073,7 +2128,27 @@ router.get('/' + version + section + 'manual-entry/review-site-details', functio
         }
     }
     
+    console.log('=== REVIEW PAGE TEMPLATE DATA DEBUG ===');
     console.log('Final sites to render:', sites.length);
+    console.log('Sites details for template:', sites.map(s => ({ 
+        globalNumber: s.globalNumber, 
+        name: s.name, 
+        batchId: s.batchId,
+        hasStartDate: !!(s.startDate && s.startDate.day),
+        hasDescription: !!s.description,
+        hasCoordinates: !!(s.coordinates && Object.keys(s.coordinates).length > 0)
+    })));
+    console.log('Current batch ID:', req.session.data['currentBatchId']);
+    console.log('All batches in session:', req.session.data['siteBatches'] ? req.session.data['siteBatches'].map(b => ({
+        id: b.id,
+        sitesCount: b.sites.length,
+        sites: b.sites.map(s => ({ globalNumber: s.globalNumber, name: s.name }))
+    })) : 'none');
+    console.log('Global sites array:', req.session.data['sites'] ? req.session.data['sites'].map(s => ({ 
+        globalNumber: s.globalNumber, 
+        batchId: s.batchId 
+    })) : 'none');
+    console.log('Manual multiple sites setting:', req.session.data['manual-multiple-sites']);
     console.log('Final session activity settings for template:', {
         'manual-same-activity-dates': req.session.data['manual-same-activity-dates'],
         'manual-same-activity-description': req.session.data['manual-same-activity-description']
@@ -2081,7 +2156,13 @@ router.get('/' + version + section + 'manual-entry/review-site-details', functio
     
     // Get the current batch to pass to template
     const batchForTemplate = getCurrentBatch(req.session);
+    console.log('Batch for template:', batchForTemplate ? {
+        id: batchForTemplate.id,
+        sitesCount: batchForTemplate.sites.length,
+        sites: batchForTemplate.sites.map(s => s.globalNumber)
+    } : 'none');
     
+    console.log('=== END REVIEW PAGE TEMPLATE DATA DEBUG ===');
     console.log('=== END REVIEW SITE DETAILS DEBUG ===');
     
     res.render(version + section + 'manual-entry/review-site-details', { 
@@ -2407,4 +2488,35 @@ router.get('/' + version + section + 'manual-entry/cancel-from-review-site-detai
     res.redirect('../cancel-site-details');
 });
 
+// Function to renumber all sites after deletion
+function renumberSitesAfterDeletion(session, deletedGlobalNumber) {
+    console.log('=== RENUMBERING SITES AFTER DELETION ===');
+    console.log('Deleted site number:', deletedGlobalNumber);
+    
+    // 1. Renumber sites in all batches
+    if (session.data['siteBatches']) {
+        session.data['siteBatches'].forEach(batch => {
+            console.log('Processing batch:', batch.id);
+            batch.sites.forEach(site => {
+                if (site.globalNumber > deletedGlobalNumber) {
+                    const oldNumber = site.globalNumber;
+                    site.globalNumber--;
+                    console.log(`Renumbered site from ${oldNumber} to ${site.globalNumber}`);
+                }
+            });
+        });
+    }
+    
+    // 2. Rebuild global sites array
+    session.data['sites'] = session.data['siteBatches'].flatMap(batch => batch.sites);
+    
+    // 3. Update global site counter
+    if (session.data['globalSiteCounter']) {
+        session.data['globalSiteCounter']--;
+        console.log('Updated globalSiteCounter to:', session.data['globalSiteCounter']);
+    }
+    
+    console.log('=== RENUMBERING COMPLETE ===');
 }
+
+};
