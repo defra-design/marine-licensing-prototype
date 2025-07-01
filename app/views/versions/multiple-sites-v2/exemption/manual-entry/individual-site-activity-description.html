@@ -58,7 +58,11 @@ Activity description
                   </label>
                 </h1>
               
+                {% if data['manual-multiple-sites'] == 'Yes' %}
+                <p>Briefly describe what you'll do at this site, how you'll do it, and why.</p>
+                {% else %}
                 <p>Briefly describe what you'll do, how you'll do it, and why.</p>
+                {% endif %}
                 
                 <p>For example, 'Collect a 0.1 cubic metre seabed sample by day grab from a workboat for particle size analysis'.</p>
               
