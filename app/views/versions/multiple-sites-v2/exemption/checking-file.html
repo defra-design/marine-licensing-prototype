@@ -7,6 +7,22 @@ Checking your file – GOV.UK
 {% block head %}
 {{ super() }}
 <meta http-equiv="refresh" content="2;url=/versions/multiple-sites-v2/exemption/{{ data['checkingFileRedirect'] or 'same-activity-dates' }}">
+<style>
+  .spinner {
+    margin: 0 auto 2rem auto;
+    width: 80px;
+    height: 80px;
+    border: 15px solid #b1b4b6;
+    border-top: 15px solid #1d70b8; /* GOV.UK blue */
+    border-radius: 50%;
+    animation: spin 2s linear infinite;
+  }
+  
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }  
+  </style>
 {% endblock %}
 
 {% block beforeContent %}
@@ -15,23 +31,6 @@ Checking your file – GOV.UK
 
 {% block content %}
 
-<style>
-
-.spinner {
-  margin: 0 auto 2rem auto;
-  width: 80px;
-  height: 80px;
-  border: 15px solid #b1b4b6;
-  border-top: 15px solid #1d70b8; /* GOV.UK blue */
-  border-radius: 50%;
-  animation: spin 2s linear infinite;
-}
-
-@keyframes spin {
-  0% { transform: rotate(0deg); }
-  100% { transform: rotate(360deg); }
-}  
-</style>
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-full govuk-!-text-align-centre govuk-!-padding-top-2">
 
