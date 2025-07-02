@@ -2240,17 +2240,32 @@ router.post('/' + version + section + 'upload-file-router', function (req, res) 
     // Add each site to the batch
     sites.forEach(site => addSiteToBatch(req.session, site));
     
-    // After uploading file, route based on number of sites
+    // Determine where to go after checking file based on number of sites
     if (sites.length === 1) {
         // Single site: skip "same for all sites" questions and go directly to site-specific details
         // Use the actual global number of the site, not hardcoded 1
         const currentBatch = getCurrentBatch(req.session);
         const siteGlobalNumber = currentBatch && currentBatch.sites[0] ? currentBatch.sites[0].globalNumber : 1;
-        res.redirect('site-activity-dates?site=' + siteGlobalNumber);
+        req.session.data['checkingFileRedirect'] = 'site-activity-dates?site=' + siteGlobalNumber;
     } else {
         // Multiple sites: go to same-activity-dates question
-        res.redirect('same-activity-dates');
+        req.session.data['checkingFileRedirect'] = 'same-activity-dates';
     }
+    
+    // After uploading file, go to checking page first
+    res.redirect('checking-file');
+});
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Checking file page - clean up redirect data after page is served
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+router.get('/' + version + section + 'checking-file', function (req, res) {
+    res.render(version + section + 'checking-file');
+    
+    // Clean up the redirect data after serving the page
+    // The meta refresh uses the data at render time, so it's safe to delete immediately
+    delete req.session.data['checkingFileRedirect'];
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////

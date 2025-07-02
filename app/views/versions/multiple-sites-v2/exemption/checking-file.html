@@ -4,6 +4,11 @@
 Checking your file – GOV.UK
 {% endblock %}
 
+{% block head %}
+{{ super() }}
+<meta http-equiv="refresh" content="2;url=/versions/multiple-sites-v2/exemption/{{ data['checkingFileRedirect'] or 'same-activity-dates' }}">
+{% endblock %}
+
 {% block beforeContent %}
 
 {% endblock %}
