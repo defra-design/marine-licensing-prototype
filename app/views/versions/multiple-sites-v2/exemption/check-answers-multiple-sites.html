@@ -400,6 +400,133 @@
     </div>
     {% endif %}
 
+    <!-- Providing site location card - only for manual entry multiple sites -->
+    {% if hasManualEntrySites and not isSingleSiteJourney %}
+    <div class="govuk-summary-card">
+      <div class="govuk-summary-card__title-wrapper">
+        <h2 class="govuk-summary-card__title">
+          Providing the site location
+        </h2>
+        {% if data['applicationSubmitted'] != "true" %}
+        <ul class="govuk-summary-card__actions">
+          <li class="govuk-summary-card__action">
+            <a class="govuk-link" href="manual-entry/review-site-details?batchId={{ manualEntryBatchId }}&camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Providing the site location</span></a>
+          </li>
+        </ul>
+        {% endif %}
+      </div>
+      <div class="govuk-summary-card__content">
+        <dl class="govuk-summary-list">
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Method of providing site location
+            </dt>
+            <dd class="govuk-summary-list__value">
+              Enter the coordinates of the site manually
+            </dd>
+          </div>
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              More than one site
+            </dt>
+            <dd class="govuk-summary-list__value">
+              {{ data['manual-multiple-sites'] or "Yes" }}
+            </dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+
+    <!-- Activity details card - only for manual entry multiple sites -->
+    <div class="govuk-summary-card">
+      <div class="govuk-summary-card__title-wrapper">
+        <h2 class="govuk-summary-card__title">
+          Activity details
+        </h2>
+        {% if data['applicationSubmitted'] != "true" %}
+        <ul class="govuk-summary-card__actions">
+          <li class="govuk-summary-card__action">
+            <a class="govuk-link" href="manual-entry/review-site-details?batchId={{ manualEntryBatchId }}&camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Activity details</span></a>
+          </li>
+        </ul>
+        {% endif %}
+      </div>
+      <div class="govuk-summary-card__content">
+        <dl class="govuk-summary-list">
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Are the activity dates the same for every site?
+            </dt>
+            <dd class="govuk-summary-list__value">
+              {% set manualEntryBatch = null %}
+              {% if manualEntryBatchId and data['siteBatches'] %}
+                {% for batch in data['siteBatches'] %}
+                  {% if batch.id == manualEntryBatchId %}
+                    {% set manualEntryBatch = batch %}
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
+              {% if manualEntryBatch and manualEntryBatch.settings and manualEntryBatch.settings.sameActivityDates %}
+                {{ manualEntryBatch.settings.sameActivityDates }}
+              {% elif data['manual-same-activity-dates'] %}
+                {{ data['manual-same-activity-dates'] }}
+              {% else %}
+                Yes
+              {% endif %}
+            </dd>
+          </div>
+          
+          {% set showSharedDates = (manualEntryBatch and manualEntryBatch.settings and manualEntryBatch.settings.sameActivityDates == "Yes") or (not manualEntryBatch and data['manual-same-activity-dates'] == "Yes") %}
+          {% if showSharedDates %}
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Activity dates
+            </dt>
+            <dd class="govuk-summary-list__value">
+              {% if manualEntryBatch and manualEntryBatch.settings and manualEntryBatch.settings.sharedStartDate and manualEntryBatch.settings.sharedStartDate.day %}
+                {{ manualEntryBatch.settings.sharedStartDate.day }} {{ monthNames[manualEntryBatch.settings.sharedStartDate.month - 1] }} {{ manualEntryBatch.settings.sharedStartDate.year }} to {{ manualEntryBatch.settings.sharedEndDate.day }} {{ monthNames[manualEntryBatch.settings.sharedEndDate.month - 1] }} {{ manualEntryBatch.settings.sharedEndDate.year }}
+              {% elif data['manual-start-date-date-input-day'] %}
+                {{ data['manual-start-date-date-input-day'] }} {{ monthNames[data['manual-start-date-date-input-month'] - 1] }} {{ data['manual-start-date-date-input-year'] }} to {{ data['manual-end-date-date-input-day'] }} {{ monthNames[data['manual-end-date-date-input-month'] - 1] }} {{ data['manual-end-date-date-input-year'] }}
+              {% endif %}
+            </dd>
+          </div>
+          {% endif %}
+          
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Is the activity description the same for every site?
+            </dt>
+            <dd class="govuk-summary-list__value">
+              {% if manualEntryBatch and manualEntryBatch.settings and manualEntryBatch.settings.sameActivityDescription %}
+                {{ manualEntryBatch.settings.sameActivityDescription }}
+              {% elif data['manual-same-activity-description'] %}
+                {{ data['manual-same-activity-description'] }}
+              {% else %}
+                Yes
+              {% endif %}
+            </dd>
+          </div>
+          
+          {% set showSharedDescription = (manualEntryBatch and manualEntryBatch.settings and manualEntryBatch.settings.sameActivityDescription == "Yes") or (not manualEntryBatch and data['manual-same-activity-description'] == "Yes") %}
+          {% if showSharedDescription %}
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Activity description
+            </dt>
+            <dd class="govuk-summary-list__value">
+              {% if manualEntryBatch and manualEntryBatch.settings and manualEntryBatch.settings.sharedDescription %}
+                {{ manualEntryBatch.settings.sharedDescription }}
+              {% elif data['manual-activity-details-text-area'] %}
+                {{ data['manual-activity-details-text-area'] }}
+              {% endif %}
+            </dd>
+          </div>
+          {% endif %}
+        </dl>
+      </div>
+    </div>
+    {% endif %}
+
     <!-- Dynamic site cards using a loop -->
     {% if data.sites and data.sites.length > 0 %}
       
@@ -485,28 +612,20 @@
                 </div>
                 {% endif %}
 
+                <!-- Only show activity dates if they are different for each site OR if single site -->
+                {% if isSingleSiteJourney or (siteBatch and siteBatch.settings and siteBatch.settings.sameActivityDates == "No") or (not siteBatch and data['manual-same-activity-dates'] == "No") %}
                 <div class="govuk-summary-list__row">
                   <dt class="govuk-summary-list__key">
                     Activity dates
                   </dt>
                   <dd class="govuk-summary-list__value">
-                    {% set siteBatch = null %}
-                    {% if site.batchId and data['siteBatches'] %}
-                      {% for batch in data['siteBatches'] %}
-                        {% if batch.id == site.batchId %}
-                          {% set siteBatch = batch %}
-                        {% endif %}
-                      {% endfor %}
-                    {% endif %}
-                    
-                    {% if siteBatch and siteBatch.settings and siteBatch.settings.sameActivityDates == "Yes" and siteBatch.settings.sharedStartDate %}
-                      {{ siteBatch.settings.sharedStartDate.day }} {{ monthNames[siteBatch.settings.sharedStartDate.month - 1] }} {{ siteBatch.settings.sharedStartDate.year }} to {{ siteBatch.settings.sharedEndDate.day }} {{ monthNames[siteBatch.settings.sharedEndDate.month - 1] }} {{ siteBatch.settings.sharedEndDate.year }}
-                    {% else %}
-                      {{ site.startDate.day }} {{ monthNames[site.startDate.month - 1] }} {{ site.startDate.year }} to {{ site.endDate.day }} {{ monthNames[site.endDate.month - 1] }} {{ site.endDate.year }}
-                    {% endif %}
+                    {{ site.startDate.day }} {{ monthNames[site.startDate.month - 1] }} {{ site.startDate.year }} to {{ site.endDate.day }} {{ monthNames[site.endDate.month - 1] }} {{ site.endDate.year }}
                   </dd>
                 </div>
+                {% endif %}
 
+                <!-- Only show activity description if they are different for each site OR if single site -->
+                {% if isSingleSiteJourney or (siteBatch and siteBatch.settings and siteBatch.settings.sameActivityDescription == "No") or (not siteBatch and data['manual-same-activity-description'] == "No") %}
                 <div class="govuk-summary-list__row">
                   <dt class="govuk-summary-list__key">
                     Activity description
@@ -530,6 +649,7 @@
                     {% endif %}
                   </dd>
                 </div>
+                {% endif %}
 
                 <div class="govuk-summary-list__row">
                   <dt class="govuk-summary-list__key">
@@ -588,42 +708,35 @@
                 </div>
                 {% endif %}
 
+                <!-- Get siteBatch for condition checks -->
+                {% set siteBatch = null %}
+                {% if site.batchId and data['siteBatches'] %}
+                  {% for batch in data['siteBatches'] %}
+                    {% if batch.id == site.batchId %}
+                      {% set siteBatch = batch %}
+                    {% endif %}
+                  {% endfor %}
+                {% endif %}
+
+                <!-- Only show activity dates if they are different for each site OR if single site -->
+                {% if isSingleSiteJourney or (siteBatch and siteBatch.settings and siteBatch.settings.sameActivityDates == "No") or (not siteBatch and data['manual-same-activity-dates'] == "No") %}
                 <div class="govuk-summary-list__row">
                   <dt class="govuk-summary-list__key">
                     Activity dates
                   </dt>
                   <dd class="govuk-summary-list__value">
-                    {% set siteBatch = null %}
-                    {% if site.batchId and data['siteBatches'] %}
-                      {% for batch in data['siteBatches'] %}
-                        {% if batch.id == site.batchId %}
-                          {% set siteBatch = batch %}
-                        {% endif %}
-                      {% endfor %}
-                    {% endif %}
-                    
-                    {% if siteBatch and siteBatch.settings and siteBatch.settings.sameActivityDates == "Yes" and siteBatch.settings.sharedStartDate %}
-                      {{ siteBatch.settings.sharedStartDate.day }} {{ monthNames[siteBatch.settings.sharedStartDate.month - 1] }} {{ siteBatch.settings.sharedStartDate.year }} to {{ siteBatch.settings.sharedEndDate.day }} {{ monthNames[siteBatch.settings.sharedEndDate.month - 1] }} {{ siteBatch.settings.sharedEndDate.year }}
-                    {% else %}
-                      {{ site.startDate.day }} {{ monthNames[site.startDate.month - 1] }} {{ site.startDate.year }} to {{ site.endDate.day }} {{ monthNames[site.endDate.month - 1] }} {{ site.endDate.year }}
-                    {% endif %}
+                    {{ site.startDate.day }} {{ monthNames[site.startDate.month - 1] }} {{ site.startDate.year }} to {{ site.endDate.day }} {{ monthNames[site.endDate.month - 1] }} {{ site.endDate.year }}
                   </dd>
                 </div>
+                {% endif %}
 
+                <!-- Only show activity description if they are different for each site OR if single site -->
+                {% if isSingleSiteJourney or (siteBatch and siteBatch.settings and siteBatch.settings.sameActivityDescription == "No") or (not siteBatch and data['manual-same-activity-description'] == "No") %}
                 <div class="govuk-summary-list__row">
                   <dt class="govuk-summary-list__key">
                     Activity description
                   </dt>
                   <dd class="govuk-summary-list__value">
-                    {% set siteBatch = null %}
-                    {% if site.batchId and data['siteBatches'] %}
-                      {% for batch in data['siteBatches'] %}
-                        {% if batch.id == site.batchId %}
-                          {% set siteBatch = batch %}
-                        {% endif %}
-                      {% endfor %}
-                    {% endif %}
-                    
                     {% if siteBatch and siteBatch.settings and siteBatch.settings.sameActivityDescription == "Yes" and siteBatch.settings.sharedDescription %}
                       {{ siteBatch.settings.sharedDescription }}
                     {% elif not siteBatch and data['manual-same-activity-description'] == "Yes" and data['manual-activity-details-text-area'] %}
@@ -633,6 +746,7 @@
                     {% endif %}
                   </dd>
                 </div>
+                {% endif %}
 
                 <div class="govuk-summary-list__row">
                   <dt class="govuk-summary-list__key">
@@ -688,42 +802,35 @@
                 </div>
                 {% endif %}
 
+                <!-- Get siteBatch for condition checks -->
+                {% set siteBatch = null %}
+                {% if site.batchId and data['siteBatches'] %}
+                  {% for batch in data['siteBatches'] %}
+                    {% if batch.id == site.batchId %}
+                      {% set siteBatch = batch %}
+                    {% endif %}
+                  {% endfor %}
+                {% endif %}
+
+                <!-- Only show activity dates if they are different for each site OR if single site -->
+                {% if isSingleSiteJourney or (siteBatch and siteBatch.settings and siteBatch.settings.sameActivityDates == "No") or (not siteBatch and data['manual-same-activity-dates'] == "No") %}
                 <div class="govuk-summary-list__row">
                   <dt class="govuk-summary-list__key">
                     Activity dates
                   </dt>
                   <dd class="govuk-summary-list__value">
-                    {% set siteBatch = null %}
-                    {% if site.batchId and data['siteBatches'] %}
-                      {% for batch in data['siteBatches'] %}
-                        {% if batch.id == site.batchId %}
-                          {% set siteBatch = batch %}
-                        {% endif %}
-                      {% endfor %}
-                    {% endif %}
-                    
-                    {% if siteBatch and siteBatch.settings and siteBatch.settings.sameActivityDates == "Yes" and siteBatch.settings.sharedStartDate %}
-                      {{ siteBatch.settings.sharedStartDate.day }} {{ monthNames[siteBatch.settings.sharedStartDate.month - 1] }} {{ siteBatch.settings.sharedStartDate.year }} to {{ siteBatch.settings.sharedEndDate.day }} {{ monthNames[siteBatch.settings.sharedEndDate.month - 1] }} {{ siteBatch.settings.sharedEndDate.year }}
-                    {% else %}
-                      {{ site.startDate.day }} {{ monthNames[site.startDate.month - 1] }} {{ site.startDate.year }} to {{ site.endDate.day }} {{ monthNames[site.endDate.month - 1] }} {{ site.endDate.year }}
-                    {% endif %}
+                    {{ site.startDate.day }} {{ monthNames[site.startDate.month - 1] }} {{ site.startDate.year }} to {{ site.endDate.day }} {{ monthNames[site.endDate.month - 1] }} {{ site.endDate.year }}
                   </dd>
                 </div>
+                {% endif %}
 
+                <!-- Only show activity description if they are different for each site OR if single site -->
+                {% if isSingleSiteJourney or (siteBatch and siteBatch.settings and siteBatch.settings.sameActivityDescription == "No") or (not siteBatch and data['manual-same-activity-description'] == "No") %}
                 <div class="govuk-summary-list__row">
                   <dt class="govuk-summary-list__key">
                     Activity description
                   </dt>
                   <dd class="govuk-summary-list__value">
-                    {% set siteBatch = null %}
-                    {% if site.batchId and data['siteBatches'] %}
-                      {% for batch in data['siteBatches'] %}
-                        {% if batch.id == site.batchId %}
-                          {% set siteBatch = batch %}
-                        {% endif %}
-                      {% endfor %}
-                    {% endif %}
-                    
                     {% if siteBatch and siteBatch.settings and siteBatch.settings.sameActivityDescription == "Yes" and siteBatch.settings.sharedDescription %}
                       {{ siteBatch.settings.sharedDescription }}
                     {% elif not siteBatch and data['manual-same-activity-description'] == "Yes" and data['manual-activity-details-text-area'] %}
@@ -733,6 +840,7 @@
                     {% endif %}
                   </dd>
                 </div>
+                {% endif %}
 
               {% endif %}
 
