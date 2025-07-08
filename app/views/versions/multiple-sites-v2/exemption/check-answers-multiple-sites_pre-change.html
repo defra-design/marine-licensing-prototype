@@ -211,132 +211,6 @@
     </div>
     <!-- End of project summary section -->
 
-    <!-- Check if we have file upload sites to show additional cards -->
-    {% set hasFileUploadSites = false %}
-    {% if data.sites and data.sites.length > 0 %}
-      {% for site in data.sites %}
-        {% if site.entryMethod == 'file-upload' %}
-          {% set hasFileUploadSites = true %}
-        {% endif %}
-      {% endfor %}
-    {% endif %}
-
-    <!-- Providing site location card - only for file upload sites -->
-    {% if hasFileUploadSites %}
-    <div class="govuk-summary-card">
-      <div class="govuk-summary-card__title-wrapper">
-        <h2 class="govuk-summary-card__title">
-          Providing the site location
-        </h2>
-        {% if data['applicationSubmitted'] != "true" %}
-        <ul class="govuk-summary-card__actions">
-          <li class="govuk-summary-card__action">
-            <a class="govuk-link" href="review-site-details?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Providing the site location</span></a>
-          </li>
-        </ul>
-        {% endif %}
-      </div>
-      <div class="govuk-summary-card__content">
-        <dl class="govuk-summary-list">
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-              Method of providing site location
-            </dt>
-            <dd class="govuk-summary-list__value">
-              Upload a file with the coordinates of the site
-            </dd>
-          </div>
-          {% if data['exemption-which-type-of-file-radios'] %}
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-              File type
-            </dt>
-            <dd class="govuk-summary-list__value">
-              {{ data['exemption-which-type-of-file-radios'] }}
-            </dd>
-          </div>
-          {% endif %}
-          {% if data['hasUploadedFile'] %}
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-              File uploaded
-            </dt>
-            <dd class="govuk-summary-list__value">
-              {% if data['exemption-which-type-of-file-radios'] == "KML" %}
-                se-coast-sample-sites-coordinates.kml
-              {% else %}
-                se-coast-sample-sites-coordinates.zip
-              {% endif %}
-            </dd>
-          </div>
-          {% endif %}
-        </dl>
-      </div>
-    </div>
-
-    <!-- Activity details card - only for file upload sites with multiple sites -->
-    {% set isMultipleSiteFileUpload = hasFileUploadSites and data.sites.length > 1 %}
-    {% if isMultipleSiteFileUpload %}
-    <div class="govuk-summary-card">
-      <div class="govuk-summary-card__title-wrapper">
-        <h2 class="govuk-summary-card__title">
-          Activity details
-        </h2>
-        {% if data['applicationSubmitted'] != "true" %}
-        <ul class="govuk-summary-card__actions">
-          <li class="govuk-summary-card__action">
-            <a class="govuk-link" href="review-site-details?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Activity details</span></a>
-          </li>
-        </ul>
-        {% endif %}
-      </div>
-      <div class="govuk-summary-card__content">
-        <dl class="govuk-summary-list">
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-              Are the activity dates the same for every site?
-            </dt>
-            <dd class="govuk-summary-list__value">
-              {{ data['exemption-same-activity-dates-for-sites'] or "Yes" }}
-            </dd>
-          </div>
-          
-          {% if data['exemption-same-activity-dates-for-sites'] == "Yes" %}
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-              Activity dates
-            </dt>
-            <dd class="govuk-summary-list__value">
-              {{ data['exemption-start-date-date-input-day'] }} {{ monthNames[data['exemption-start-date-date-input-month'] - 1] }} {{ data['exemption-start-date-date-input-year'] }} to {{ data['exemption-end-date-date-input-day'] }} {{ monthNames[data['exemption-end-date-date-input-month'] - 1] }} {{ data['exemption-end-date-date-input-year'] }}
-            </dd>
-          </div>
-          {% endif %}
-          
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-              Is the activity description the same for every site?
-            </dt>
-            <dd class="govuk-summary-list__value">
-              {{ data['exemption-same-activity-description-for-sites'] or "Yes" }}
-            </dd>
-          </div>
-          
-          {% if data['exemption-same-activity-description-for-sites'] == "Yes" %}
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-              Activity description
-            </dt>
-            <dd class="govuk-summary-list__value">
-              {{ data['exemption-activity-details-text-area'] }}
-            </dd>
-          </div>
-          {% endif %}
-        </dl>
-      </div>
-    </div>
-    {% endif %}
-    {% endif %}
-
     <!-- Dynamic site cards using a loop -->
     {% if data.sites and data.sites.length > 0 %}
       <!-- Determine if this is a single site journey -->
@@ -385,29 +259,49 @@
                 </div>
                 {% endif %}
 
-                <!-- Only show activity dates if they are different for each site OR if single site -->
-                {% if isSingleSiteJourney or data['exemption-same-activity-dates-for-sites'] == "No" %}
                 <div class="govuk-summary-list__row">
                   <dt class="govuk-summary-list__key">
                     Activity dates
                   </dt>
                   <dd class="govuk-summary-list__value">
-                    {{ site.startDate.day }} {{ monthNames[site.startDate.month - 1] }} {{ site.startDate.year }} to {{ site.endDate.day }} {{ monthNames[site.endDate.month - 1] }} {{ site.endDate.year }}
+                    {% if data['exemption-same-activity-dates-for-sites'] == "Yes" %}
+                      {{ data['exemption-start-date-date-input-day'] }} {{ monthNames[data['exemption-start-date-date-input-month'] - 1] }} {{ data['exemption-start-date-date-input-year'] }} to {{ data['exemption-end-date-date-input-day'] }} {{ monthNames[data['exemption-end-date-date-input-month'] - 1] }} {{ data['exemption-end-date-date-input-year'] }}
+                    {% else %}
+                      {{ site.startDate.day }} {{ monthNames[site.startDate.month - 1] }} {{ site.startDate.year }} to {{ site.endDate.day }} {{ monthNames[site.endDate.month - 1] }} {{ site.endDate.year }}
+                    {% endif %}
                   </dd>
                 </div>
-                {% endif %}
 
-                <!-- Only show activity description if they are different for each site OR if single site -->
-                {% if isSingleSiteJourney or data['exemption-same-activity-description-for-sites'] == "No" %}
                 <div class="govuk-summary-list__row">
                   <dt class="govuk-summary-list__key">
                     Activity description
                   </dt>
                   <dd class="govuk-summary-list__value">
-                    {{ site.description }}
+                    {% if data['exemption-same-activity-description-for-sites'] == "Yes" %}
+                      {{ data['exemption-activity-details-text-area'] }}
+                    {% else %}
+                      {{ site.description }}
+                    {% endif %}
                   </dd>
                 </div>
-                {% endif %}
+
+                <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key">
+                    Method of providing site location
+                  </dt>
+                  <dd class="govuk-summary-list__value">
+                    Upload a file with the coordinates of the site
+                  </dd>
+                </div>
+
+                <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key">
+                    File uploaded
+                  </dt>
+                  <dd class="govuk-summary-list__value">
+                    se-coast-sample-sites-coordinates.zip
+                  </dd>
+                </div>
 
               <!-- Manual circular sites -->
               {% elif site.entryMethod == 'manual-entry' and site.coordinates and site.coordinates.type == 'circle' %}
