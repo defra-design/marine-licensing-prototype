@@ -53,6 +53,16 @@ Activity description
             <!-- DEBUG: Show current flag values -->
             <!-- singleSiteFileUpload: {{ data['singleSiteFileUpload'] }}, fileUploadCount: {{ data['fileUploadCount'] }}, sites length: {{ data.sites.length if data.sites else 'no sites' }} -->
 
+			<!-- Get current batch for fallback data -->
+			{% set currentBatch = null %}
+			{% if sites and sites.length > 0 and sites[0].batchId %}
+				{% for batch in data['siteBatches'] %}
+					{% if batch.id == sites[0].batchId %}
+						{% set currentBatch = batch %}
+					{% endif %}
+				{% endfor %}
+			{% endif %}
+
             <div class="govuk-form-group{% if data['errortypeone'] == "true" %} govuk-form-group--error{% endif %}">
                 <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}<span class="{% if not isSingleSiteFileUpload %}govuk-!-display-block{% endif %}"{% if isSingleSiteFileUpload %} style="display: none;"{% endif %}>Site {{ data['site'] }}</span></span>
                 
@@ -74,8 +84,15 @@ Activity description
                 
                 {% if site and site.description %}
                     {% set activityDescription = site.description %}
-                {% else %}
+                {% elif data['site-' + data['site'] + '-activity-description'] %}
                     {% set activityDescription = data['site-' + data['site'] + '-activity-description'] %}
+                {% else %}
+                    <!-- Fallback to shared batch values when transitioning from shared to individual -->
+                    {% if currentBatch and currentBatch.settings and currentBatch.settings.sharedDescription %}
+                        {% set activityDescription = currentBatch.settings.sharedDescription %}
+                    {% elif data['exemption-activity-details-text-area'] %}
+                        {% set activityDescription = data['exemption-activity-details-text-area'] %}
+                    {% endif %}
                 {% endif %}
                 
                 <textarea class="govuk-textarea{% if data['errortypeone'] == "true" %} govuk-textarea--error{% endif %}" 
