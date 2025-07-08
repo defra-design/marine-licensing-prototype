@@ -223,6 +223,14 @@
 
     <!-- Providing site location card - only for file upload sites -->
     {% if hasFileUploadSites %}
+    <!-- Get the first file upload site's batchId for change links -->
+    {% set fileUploadBatchId = null %}
+    {% for site in data.sites %}
+      {% if site.entryMethod == 'file-upload' and site.batchId and not fileUploadBatchId %}
+        {% set fileUploadBatchId = site.batchId %}
+      {% endif %}
+    {% endfor %}
+    
     <div class="govuk-summary-card">
       <div class="govuk-summary-card__title-wrapper">
         <h2 class="govuk-summary-card__title">
@@ -231,7 +239,7 @@
         {% if data['applicationSubmitted'] != "true" %}
         <ul class="govuk-summary-card__actions">
           <li class="govuk-summary-card__action">
-            <a class="govuk-link" href="review-site-details?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Providing the site location</span></a>
+            <a class="govuk-link" href="review-site-details?batchId={{ fileUploadBatchId }}&camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Providing the site location</span></a>
           </li>
         </ul>
         {% endif %}
@@ -285,7 +293,7 @@
         {% if data['applicationSubmitted'] != "true" %}
         <ul class="govuk-summary-card__actions">
           <li class="govuk-summary-card__action">
-            <a class="govuk-link" href="review-site-details?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Activity details</span></a>
+            <a class="govuk-link" href="review-site-details?batchId={{ fileUploadBatchId }}&camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Activity details</span></a>
           </li>
         </ul>
         {% endif %}
@@ -337,10 +345,63 @@
     {% endif %}
     {% endif %}
 
+    <!-- Check if we have manual entry sites to show additional cards -->
+    {% set hasManualEntrySites = false %}
+    {% set manualEntryBatchId = null %}
+    {% if data.sites and data.sites.length > 0 %}
+      {% for site in data.sites %}
+        {% if site.entryMethod == 'manual-entry' %}
+          {% set hasManualEntrySites = true %}
+          {% if site.batchId and not manualEntryBatchId %}
+            {% set manualEntryBatchId = site.batchId %}
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+
+    <!-- Determine if this is a single site journey (define early for use in manual entry cards) -->
+    {% set isSingleSiteJourney = (data['manual-multiple-sites'] == 'No') or (data.sites.length == 1 and data.sites[0].entryMethod == 'manual-entry') or (data.sites.length == 1 and data.sites[0].entryMethod == 'file-upload') or (data['singleSiteFileUpload'] == true) %}
+
+    <!-- Providing site location card - only for manual entry single sites -->
+    {% if hasManualEntrySites and isSingleSiteJourney %}
+    <div class="govuk-summary-card">
+      <div class="govuk-summary-card__title-wrapper">
+        <h2 class="govuk-summary-card__title">
+          Providing the site location
+        </h2>
+        {% if data['applicationSubmitted'] != "true" %}
+        <ul class="govuk-summary-card__actions">
+          <li class="govuk-summary-card__action">
+            <a class="govuk-link" href="manual-entry/review-site-details?batchId={{ manualEntryBatchId }}&camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Providing the site location</span></a>
+          </li>
+        </ul>
+        {% endif %}
+      </div>
+      <div class="govuk-summary-card__content">
+        <dl class="govuk-summary-list">
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Method of providing site location
+            </dt>
+            <dd class="govuk-summary-list__value">
+              Enter the coordinates of the site manually
+            </dd>
+          </div>
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              More than one site
+            </dt>
+            <dd class="govuk-summary-list__value">
+              {{ data['manual-multiple-sites'] or "No" }}
+            </dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+    {% endif %}
+
     <!-- Dynamic site cards using a loop -->
     {% if data.sites and data.sites.length > 0 %}
-      <!-- Determine if this is a single site journey -->
-      {% set isSingleSiteJourney = (data['manual-multiple-sites'] == 'No') or (data.sites.length == 1 and data.sites[0].entryMethod == 'manual-entry') or (data.sites.length == 1 and data.sites[0].entryMethod == 'file-upload') or (data['singleSiteFileUpload'] == true) %}
       
       {% for site in data.sites %}
         <div class="govuk-summary-card">
