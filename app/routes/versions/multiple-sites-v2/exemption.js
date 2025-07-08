@@ -2587,8 +2587,24 @@ router.get('/' + version + section + 'site-activity-dates', function (req, res) 
     if (req.query.site) {
         req.session.data['site'] = req.query.site;
     }
+
+    // Get current batch and sites for template data
+    const currentBatch = getCurrentBatch(req.session);
+    let sites = [];
+    if (currentBatch) {
+        sites = currentBatch.sites;
+    }
+
+    // Find the specific site being edited
+    const siteParam = req.query.site || req.session.data['site'];
+    const site = sites.find(s => s.globalNumber === parseInt(siteParam));
     
-    res.render(version + section + 'site-activity-dates');
+    res.render(version + section + 'site-activity-dates', {
+        data: req.session.data,
+        sites: sites,
+        currentBatch: currentBatch,
+        site: site
+    });
 });
 
 // POST handler for site-activity-dates
@@ -2721,8 +2737,24 @@ router.get('/' + version + section + 'site-activity-description', function (req,
     if (req.query.site) {
         req.session.data['site'] = req.query.site;
     }
+
+    // Get current batch and sites for template data
+    const currentBatch = getCurrentBatch(req.session);
+    let sites = [];
+    if (currentBatch) {
+        sites = currentBatch.sites;
+    }
+
+    // Find the specific site being edited
+    const siteParam = req.query.site || req.session.data['site'];
+    const site = sites.find(s => s.globalNumber === parseInt(siteParam));
     
-    res.render(version + section + 'site-activity-description');
+    res.render(version + section + 'site-activity-description', {
+        data: req.session.data,
+        sites: sites,
+        currentBatch: currentBatch,
+        site: site
+    });
 });
 
 // POST handler for site-activity-description

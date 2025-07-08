@@ -80,6 +80,16 @@ End date
         <form action="site-activity-dates-router" method="post" novalidate>
             <input type="hidden" name="site" value="{{ data['site'] }}" />
 
+			<!-- Get current batch for fallback data -->
+			{% set currentBatch = null %}
+			{% if sites and sites.length > 0 and sites[0].batchId %}
+				{% for batch in data['siteBatches'] %}
+					{% if batch.id == sites[0].batchId %}
+						{% set currentBatch = batch %}
+					{% endif %}
+				{% endfor %}
+			{% endif %}
+
 			{% set siteIndex = data['site'] | int or 1 %}
 			{% set startDay = '' %}
 			{% set startMonth = '' %}
@@ -89,10 +99,21 @@ End date
 				{% set startDay = site.startDate.day %}
 				{% set startMonth = site.startDate.month %}
 				{% set startYear = site.startDate.year %}
-			{% else %}
+			{% elif data["site-" + data['site'] + "-start-date-day"] %}
 				{% set startDay = data["site-" + data['site'] + "-start-date-day"] %}
 				{% set startMonth = data["site-" + data['site'] + "-start-date-month"] %}
 				{% set startYear = data["site-" + data['site'] + "-start-date-year"] %}
+			{% else %}
+				<!-- Fallback to shared batch values when transitioning from shared to individual -->
+				{% if currentBatch and currentBatch.settings and currentBatch.settings.sharedStartDate and currentBatch.settings.sharedStartDate.day %}
+					{% set startDay = currentBatch.settings.sharedStartDate.day %}
+					{% set startMonth = currentBatch.settings.sharedStartDate.month %}
+					{% set startYear = currentBatch.settings.sharedStartDate.year %}
+				{% elif data['exemption-start-date-date-input-day'] %}
+					{% set startDay = data['exemption-start-date-date-input-day'] %}
+					{% set startMonth = data['exemption-start-date-date-input-month'] %}
+					{% set startYear = data['exemption-start-date-date-input-year'] %}
+				{% endif %}
 			{% endif %}
 
 			{{ govukDateInput({
@@ -125,10 +146,21 @@ End date
 				{% set endDay = site.endDate.day %}
 				{% set endMonth = site.endDate.month %}
 				{% set endYear = site.endDate.year %}
-			{% else %}
+			{% elif data["site-" + data['site'] + "-end-date-day"] %}
 				{% set endDay = data["site-" + data['site'] + "-end-date-day"] %}
 				{% set endMonth = data["site-" + data['site'] + "-end-date-month"] %}
 				{% set endYear = data["site-" + data['site'] + "-end-date-year"] %}
+			{% else %}
+				<!-- Fallback to shared batch values when transitioning from shared to individual -->
+				{% if currentBatch and currentBatch.settings and currentBatch.settings.sharedEndDate and currentBatch.settings.sharedEndDate.day %}
+					{% set endDay = currentBatch.settings.sharedEndDate.day %}
+					{% set endMonth = currentBatch.settings.sharedEndDate.month %}
+					{% set endYear = currentBatch.settings.sharedEndDate.year %}
+				{% elif data['exemption-end-date-date-input-day'] %}
+					{% set endDay = data['exemption-end-date-date-input-day'] %}
+					{% set endMonth = data['exemption-end-date-date-input-month'] %}
+					{% set endYear = data['exemption-end-date-date-input-year'] %}
+				{% endif %}
 			{% endif %}
 			
 			{{ govukDateInput({
