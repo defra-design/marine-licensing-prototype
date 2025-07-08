@@ -121,9 +121,11 @@ Review site details
                 html: "You must complete all sections marked <span class='govuk-tag govuk-tag--red'>Incomplete</span> before you can send your information.<br><br>You can select 'Save and continue' to keep your progress and return later."
             }) }}
         {% else %}
+            {% if data['camefromcheckanswers'] != 'true' %}
             {{ govukInsetText({
                 html: "You can select 'Save and continue' to keep your progress and return later."
             }) }}
+            {% endif %}
         {% endif %}
         
         <!-- Get current batch for use throughout template -->
