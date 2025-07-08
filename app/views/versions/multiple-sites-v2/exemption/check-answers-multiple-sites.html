@@ -323,7 +323,20 @@
                     Activity dates
                   </dt>
                   <dd class="govuk-summary-list__value">
-                    {{ site.startDate.day }} {{ monthNames[site.startDate.month - 1] }} {{ site.startDate.year }} to {{ site.endDate.day }} {{ monthNames[site.endDate.month - 1] }} {{ site.endDate.year }}
+                    {% set siteBatch = null %}
+                    {% if site.batchId and data['siteBatches'] %}
+                      {% for batch in data['siteBatches'] %}
+                        {% if batch.id == site.batchId %}
+                          {% set siteBatch = batch %}
+                        {% endif %}
+                      {% endfor %}
+                    {% endif %}
+                    
+                    {% if siteBatch and siteBatch.settings and siteBatch.settings.sameActivityDates == "Yes" and siteBatch.settings.sharedStartDate %}
+                      {{ siteBatch.settings.sharedStartDate.day }} {{ monthNames[siteBatch.settings.sharedStartDate.month - 1] }} {{ siteBatch.settings.sharedStartDate.year }} to {{ siteBatch.settings.sharedEndDate.day }} {{ monthNames[siteBatch.settings.sharedEndDate.month - 1] }} {{ siteBatch.settings.sharedEndDate.year }}
+                    {% else %}
+                      {{ site.startDate.day }} {{ monthNames[site.startDate.month - 1] }} {{ site.startDate.year }} to {{ site.endDate.day }} {{ monthNames[site.endDate.month - 1] }} {{ site.endDate.year }}
+                    {% endif %}
                   </dd>
                 </div>
 
@@ -413,7 +426,20 @@
                     Activity dates
                   </dt>
                   <dd class="govuk-summary-list__value">
-                    {{ site.startDate.day }} {{ monthNames[site.startDate.month - 1] }} {{ site.startDate.year }} to {{ site.endDate.day }} {{ monthNames[site.endDate.month - 1] }} {{ site.endDate.year }}
+                    {% set siteBatch = null %}
+                    {% if site.batchId and data['siteBatches'] %}
+                      {% for batch in data['siteBatches'] %}
+                        {% if batch.id == site.batchId %}
+                          {% set siteBatch = batch %}
+                        {% endif %}
+                      {% endfor %}
+                    {% endif %}
+                    
+                    {% if siteBatch and siteBatch.settings and siteBatch.settings.sameActivityDates == "Yes" and siteBatch.settings.sharedStartDate %}
+                      {{ siteBatch.settings.sharedStartDate.day }} {{ monthNames[siteBatch.settings.sharedStartDate.month - 1] }} {{ siteBatch.settings.sharedStartDate.year }} to {{ siteBatch.settings.sharedEndDate.day }} {{ monthNames[siteBatch.settings.sharedEndDate.month - 1] }} {{ siteBatch.settings.sharedEndDate.year }}
+                    {% else %}
+                      {{ site.startDate.day }} {{ monthNames[site.startDate.month - 1] }} {{ site.startDate.year }} to {{ site.endDate.day }} {{ monthNames[site.endDate.month - 1] }} {{ site.endDate.year }}
+                    {% endif %}
                   </dd>
                 </div>
 
@@ -500,7 +526,20 @@
                     Activity dates
                   </dt>
                   <dd class="govuk-summary-list__value">
-                    {{ site.startDate.day }} {{ monthNames[site.startDate.month - 1] }} {{ site.startDate.year }} to {{ site.endDate.day }} {{ monthNames[site.endDate.month - 1] }} {{ site.endDate.year }}
+                    {% set siteBatch = null %}
+                    {% if site.batchId and data['siteBatches'] %}
+                      {% for batch in data['siteBatches'] %}
+                        {% if batch.id == site.batchId %}
+                          {% set siteBatch = batch %}
+                        {% endif %}
+                      {% endfor %}
+                    {% endif %}
+                    
+                    {% if siteBatch and siteBatch.settings and siteBatch.settings.sameActivityDates == "Yes" and siteBatch.settings.sharedStartDate %}
+                      {{ siteBatch.settings.sharedStartDate.day }} {{ monthNames[siteBatch.settings.sharedStartDate.month - 1] }} {{ siteBatch.settings.sharedStartDate.year }} to {{ siteBatch.settings.sharedEndDate.day }} {{ monthNames[siteBatch.settings.sharedEndDate.month - 1] }} {{ siteBatch.settings.sharedEndDate.year }}
+                    {% else %}
+                      {{ site.startDate.day }} {{ monthNames[site.startDate.month - 1] }} {{ site.startDate.year }} to {{ site.endDate.day }} {{ monthNames[site.endDate.month - 1] }} {{ site.endDate.year }}
+                    {% endif %}
                   </dd>
                 </div>
 
