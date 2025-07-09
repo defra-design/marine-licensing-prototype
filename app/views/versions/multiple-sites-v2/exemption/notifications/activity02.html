@@ -1,0 +1,640 @@
+{% extends "../../layouts/exemption.html" %}
+
+{% block header %}
+{% from "govuk/components/header/macro.njk" import govukHeader %}
+{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
+
+{{ govukHeader({
+  classes: "govuk-header--full-width-border"
+}) }}
+{{ govukServiceNavigation({
+  serviceName: "Get permission for marine work"
+}) }}
+{% endblock %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+{% endblock %}
+
+
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageHeadingTextHTML %}
+  {% if data['applicationSubmitted'] == "true" %}
+    {{ data['exemption-project-name-text-input'] }}
+  {% else %}
+  EXE/2025/00005 – Exempt activity – Worthing dive sites marker buoys	
+  {% endif %}
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-full">
+  
+	  
+		<!-- Caption but no reference-->
+		<span class="govuk-caption-l">EXE/2025/00005 – Exempt activity</span>
+	  
+	  
+	  <h1 class="govuk-heading-l">
+		
+	
+		Worthing dive sites marker buoys
+	
+  
+	  </h1>
+  
+	  <!-- Applicant details section -->
+	  <div class="govuk-summary-card">
+		<div class="govuk-summary-card__title-wrapper">
+		  <h2 class="govuk-summary-card__title">
+			Applicant details
+		  </h2>
+		</div>
+
+		<div class="govuk-summary-card__content">
+		  <dl class="govuk-summary-list">
+			<div class="govuk-summary-list__row">
+			  <dt class="govuk-summary-list__key">
+				Name
+			  </dt>
+			  <dd class="govuk-summary-list__value">
+				Joe Bloggs
+			  </dd>
+			</div>
+
+			<div class="govuk-summary-list__row">
+			  <dt class="govuk-summary-list__key">
+				Email address
+			  </dt>
+			  <dd class="govuk-summary-list__value">
+				joe.bloggs@email.com
+			  </dd>
+			</div>
+
+			<div class="govuk-summary-list__row">
+			  <dt class="govuk-summary-list__key">
+				Telephone number
+			  </dt>
+			  <dd class="govuk-summary-list__value">
+				0777 7777 777
+			  </dd>
+			</div>
+
+			<div class="govuk-summary-list__row">
+			  <dt class="govuk-summary-list__key">
+				Address
+			  </dt>
+			  <dd class="govuk-summary-list__value">
+				1 The Parade<br>
+				Southtown<br>
+				Southernshire<br>
+				SO1 1AA
+			  </dd>
+			</div>
+		  </dl>
+		</div>
+	  </div>
+	  <!-- End of applicant details section -->
+
+	  <!-- Project summary section -->
+	  <div class="govuk-summary-card">
+		<div class="govuk-summary-card__title-wrapper">
+		  <h2 class="govuk-summary-card__title">
+			Project summary
+		  </h2>
+		</div>
+  
+		<div class="govuk-summary-card__content">
+		  <dl class="govuk-summary-list">
+  
+			<div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+		  <dt class="govuk-summary-list__key">
+			Type of activity
+		  </dt>
+		  <dd class="govuk-summary-list__value">
+			Deposit of a substance or object
+		  </dd>
+		</div>
+  
+		<div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+		  <dt class="govuk-summary-list__key">
+			The purpose of the activity
+		  </dt>
+		  <dd class="govuk-summary-list__value">
+			Markers, moorings and aids to navigation
+		  </dd>
+		</div>
+  
+		<div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+		  <dt class="govuk-summary-list__key">
+			What the activity involves
+		  </dt>
+		  <dd class="govuk-summary-list__value">
+			Placing a marker that will be in place for longer than 24 hours but less than 28 days
+		  </dd>
+		</div>
+	  <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+		<dt class="govuk-summary-list__key">
+			The applicant's answers from 'Check if you need a marine licence'  
+		</dt>
+		<dd class="govuk-summary-list__value">
+		  <p><a href="/public/downloads/notification-sample-answers.pdf" rel="noreferrer noopener" target="_blank">Download a copy of their answers (PDF)</a></p>  
+		</dd>
+	  </div>
+	  <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+		<dt class="govuk-summary-list__key">
+		  Why this activity is exempt
+		</dt>
+		<dd class="govuk-summary-list__value">
+			Based on the applicant's answers, their activity is exempt under <a href="https://www.legislation.gov.uk/uksi/2011/409/article/26A" rel="noreferrer noopener" target="_blank">Article 26A of the Marine Licensing (Exempted Activities) Order 2011 (opens in new tab)</a> 
+		</dd>
+  
+	  </div>
+		  </dl>
+		</div>
+	  </div>
+	  <!-- End of project summary section -->
+  
+	  <!-- Providing site location card - only for file upload sites -->
+    
+    <!-- Get the first file upload site's batchId for change links -->
+    
+    
+      
+        
+      
+    
+      
+    
+      
+    
+      
+    
+    
+    <div class="govuk-summary-card">
+		<div class="govuk-summary-card__title-wrapper">
+		  <h2 class="govuk-summary-card__title">
+			Providing the site location
+		  </h2>
+		  
+		  <ul class="govuk-summary-card__actions">
+			<li class="govuk-summary-card__action">
+			  <a class="govuk-link" href="review-site-details?batchId=1751989695211&camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Providing the site location</span></a>
+			</li>
+		  </ul>
+		  
+		</div>
+		<div class="govuk-summary-card__content">
+		  <dl class="govuk-summary-list">
+			<div class="govuk-summary-list__row">
+			  <dt class="govuk-summary-list__key">
+				Method of providing site location
+			  </dt>
+			  <dd class="govuk-summary-list__value">
+				Upload a file with the coordinates of the site
+			  </dd>
+			</div>
+			
+			<div class="govuk-summary-list__row">
+			  <dt class="govuk-summary-list__key">
+				File type
+			  </dt>
+			  <dd class="govuk-summary-list__value">
+				Shapefile
+			  </dd>
+			</div>
+			
+			
+			<div class="govuk-summary-list__row">
+			  <dt class="govuk-summary-list__key">
+				File uploaded
+			  </dt>
+			  <dd class="govuk-summary-list__value">
+				
+				  worthing-dive-sites-coordinates.zip
+				
+			  </dd>
+			</div>
+			
+		  </dl>
+		</div>
+	  </div>
+  
+	  <!-- Activity details card - only for file upload sites with multiple sites -->
+	  
+	  
+	  <div class="govuk-summary-card">
+		<div class="govuk-summary-card__title-wrapper">
+		  <h2 class="govuk-summary-card__title">
+			Activity details
+		  </h2>
+		  
+		  <ul class="govuk-summary-card__actions">
+			<li class="govuk-summary-card__action">
+			  <a class="govuk-link" href="review-site-details?batchId=1751989695211&camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Activity details</span></a>
+			</li>
+		  </ul>
+		  
+		</div>
+		<div class="govuk-summary-card__content">
+		  <dl class="govuk-summary-list">
+			<div class="govuk-summary-list__row">
+			  <dt class="govuk-summary-list__key">
+				Are the activity dates the same for every site?
+			  </dt>
+			  <dd class="govuk-summary-list__value">
+				No
+			  </dd>
+			</div>
+			
+			
+			
+			<div class="govuk-summary-list__row">
+			  <dt class="govuk-summary-list__key">
+				Is the activity description the same for every site?
+			  </dt>
+			  <dd class="govuk-summary-list__value">
+				No
+			  </dd>
+			</div>
+			
+			
+		  </dl>
+		</div>
+	  </div>
+	  
+	  
+  
+	  <!-- Check if we have manual entry sites to show additional cards -->
+	  
+	  
+	  
+		
+		  
+		
+		  
+		
+		  
+		
+		  
+		
+	  
+  
+	  <!-- Determine if this is a single site journey (define early for use in manual entry cards) -->
+	  
+  
+	  <!-- Providing site location card - only for manual entry single sites -->
+	  
+  
+	  <!-- Providing site location card - only for manual entry multiple sites -->
+	  
+  
+	  <!-- Dynamic site cards using a loop -->
+	  
+		
+		
+		  <div class="govuk-summary-card">
+			<div class="govuk-summary-card__title-wrapper">
+			  <h2 class="govuk-summary-card__title">
+				
+				  Site details
+				
+			  </h2>
+			  
+			  
+			  <ul class="govuk-summary-card__actions">
+				<li class="govuk-summary-card__action">
+				  
+				  
+				  
+				  <a class="govuk-link" href="review-site-details?site=1&amp;batchId=1751989695211&amp;camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Site details</span></a>
+				</li>
+			  </ul>
+			  
+			</div>
+  
+			<div class="govuk-summary-card__content">
+			  <dl class="govuk-summary-list">
+				
+				<!-- File upload sites -->
+				
+				  
+				  <!-- Only show site name for multiple site journeys -->
+				  
+  
+				  <!-- Only show activity dates if they are different for each site OR if single site -->
+				  
+				  <div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+					  Activity dates
+					</dt>
+					<dd class="govuk-summary-list__value">
+					  1 July 2025 to 8 July 2025
+					</dd>
+				  </div>
+				  
+  
+				  <!-- Only show activity description if they are different for each site OR if single site -->
+				  
+				  <div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+					  Activity description
+					</dt>
+					<dd class="govuk-summary-list__value">
+					  Place 2 mooring buoys using a small workboat to mark a dive site
+					</dd>
+				  </div>
+				  
+  
+				<!-- Manual circular sites -->
+				
+  
+			  </dl>
+  
+			  <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
+  
+			  <dl class="govuk-summary-list">
+				<div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+				  <dt class="govuk-summary-list__key">
+					Map view
+				  </dt>
+				  <dd></dd>
+				</div>
+			  </dl>
+  
+			  
+			  
+			  <img src="/public/images/worthing-map-drawn-copy.jpg" alt="Map showing site location" style="width: 100%;">
+			</div>
+		  </div>
+		
+		  <div class="govuk-summary-card">
+			<div class="govuk-summary-card__title-wrapper">
+			  <h2 class="govuk-summary-card__title">
+				
+				  Site details
+				
+			  </h2>
+			  
+			  
+			  <ul class="govuk-summary-card__actions">
+				<li class="govuk-summary-card__action">
+				  
+				  
+				  
+				  <a class="govuk-link" href="review-site-details?site=2&amp;batchId=1751989695211&amp;camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Site details</span></a>
+				</li>
+			  </ul>
+			  
+			</div>
+  
+			<div class="govuk-summary-card__content">
+			  <dl class="govuk-summary-list">
+				
+				<!-- File upload sites -->
+				
+				  
+				  <!-- Only show site name for multiple site journeys -->
+				  
+  
+				  <!-- Only show activity dates if they are different for each site OR if single site -->
+				  
+				  <div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+					  Activity dates
+					</dt>
+					<dd class="govuk-summary-list__value">
+					  1 July 2025 to 8 July 2025
+					</dd>
+				  </div>
+				  
+  
+				  <!-- Only show activity description if they are different for each site OR if single site -->
+				  
+				  <div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+					  Activity description
+					</dt>
+					<dd class="govuk-summary-list__value">
+					  Place 2 mooring buoys using a small workboat to mark a dive site
+					</dd>
+				  </div>
+				  
+  
+				<!-- Manual circular sites -->
+				
+  
+			  </dl>
+  
+			  <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
+  
+			  <dl class="govuk-summary-list">
+				<div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+				  <dt class="govuk-summary-list__key">
+					Map view
+				  </dt>
+				  <dd></dd>
+				</div>
+			  </dl>
+  
+			  
+			  
+			  <img src="/public/images/worthing-map-square-copy.jpg" alt="Map showing site location" style="width: 100%;">
+			</div>
+		  </div>
+		
+		  <div class="govuk-summary-card">
+			<div class="govuk-summary-card__title-wrapper">
+			  <h2 class="govuk-summary-card__title">
+				
+				  Site details
+				
+			  </h2>
+			  
+			  
+			  <ul class="govuk-summary-card__actions">
+				<li class="govuk-summary-card__action">
+				  
+				  
+				  
+				  <a class="govuk-link" href="review-site-details?site=3&amp;batchId=1751989695211&amp;camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Site details</span></a>
+				</li>
+			  </ul>
+			  
+			</div>
+  
+			<div class="govuk-summary-card__content">
+			  <dl class="govuk-summary-list">
+				
+				<!-- File upload sites -->
+				
+				  
+				  <!-- Only show site name for multiple site journeys -->
+				  
+  
+				  <!-- Only show activity dates if they are different for each site OR if single site -->
+				  
+				  <div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+					  Activity dates
+					</dt>
+					<dd class="govuk-summary-list__value">
+					  8 July 2025 to 15 July 2025
+					</dd>
+				  </div>
+				  
+  
+				  <!-- Only show activity description if they are different for each site OR if single site -->
+				  
+				  <div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+					  Activity description
+					</dt>
+					<dd class="govuk-summary-list__value">
+					  Place 3 mooring buoys using a small workboat to mark a dive site
+					</dd>
+				  </div>
+				  
+  
+				<!-- Manual circular sites -->
+				
+  
+			  </dl>
+  
+			  <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
+  
+			  <dl class="govuk-summary-list">
+				<div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+				  <dt class="govuk-summary-list__key">
+					Map view
+				  </dt>
+				  <dd></dd>
+				</div>
+			  </dl>
+  
+			  
+			  
+			  <img src="/public/images/worthing-map-4-points-copy.jpg" alt="Map showing site location" style="width: 100%;">
+			</div>
+		  </div>
+		
+		  <div class="govuk-summary-card">
+			<div class="govuk-summary-card__title-wrapper">
+			  <h2 class="govuk-summary-card__title">
+				
+				  Site details
+				
+			  </h2>
+			  
+			  
+			  <ul class="govuk-summary-card__actions">
+				<li class="govuk-summary-card__action">
+				  
+				  
+				  
+				  <a class="govuk-link" href="review-site-details?site=4&amp;batchId=1751989695211&amp;camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Site details</span></a>
+				</li>
+			  </ul>
+			  
+			</div>
+  
+			<div class="govuk-summary-card__content">
+			  <dl class="govuk-summary-list">
+				
+				<!-- File upload sites -->
+				
+				  
+				  <!-- Only show site name for multiple site journeys -->
+				  
+  
+				  <!-- Only show activity dates if they are different for each site OR if single site -->
+				  
+				  <div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+					  Activity dates
+					</dt>
+					<dd class="govuk-summary-list__value">
+					  8 July 2025 to 15 July 2025
+					</dd>
+				  </div>
+				  
+  
+				  <!-- Only show activity description if they are different for each site OR if single site -->
+				  
+				  <div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+					  Activity description
+					</dt>
+					<dd class="govuk-summary-list__value">
+					  Place 5 mooring buoys using a small workboat to mark a dive site
+					</dd>
+				  </div>
+				  
+  
+				<!-- Manual circular sites -->
+				
+  
+			  </dl>
+  
+			  <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
+  
+			  <dl class="govuk-summary-list">
+				<div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+				  <dt class="govuk-summary-list__key">
+					Map view
+				  </dt>
+				  <dd></dd>
+				</div>
+			  </dl>
+  
+			  
+			  
+			  <img src="/public/images/worthing-map-5-points-copy.jpg" alt="Map showing site location" style="width: 100%;">
+			</div>
+		  </div>
+		
+	  
+	  <!-- End of dynamic site cards -->
+  
+	  <!-- Public register section -->
+	  <div class="govuk-summary-card">
+		<div class="govuk-summary-card__title-wrapper">
+		  <h2 class="govuk-summary-card__title">
+			Public register
+		  </h2>
+		  
+		  <ul class="govuk-summary-card__actions">
+			<li class="govuk-summary-card__action">
+			  <a class="govuk-link" href="public-register?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Information withheld from public register</span></a>
+			</li>
+		  </ul>
+		  
+		</div>
+  
+		<div class="govuk-summary-card__content">
+		  <dl class="govuk-summary-list">
+			<div class="govuk-summary-list__row">
+			  <dt class="govuk-summary-list__key">
+				Information withheld from public register
+			  </dt>
+			  <dd class="govuk-summary-list__value">
+				No
+			  </dd>
+			</div>
+  
+			
+		  </dl>
+		</div>
+	  </div>
+  
+
+{% endblock %}
+<!-- Generated by Copilot -->
