@@ -21,11 +21,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% set pageHeadingTextHTML %}
-  {% if data['applicationSubmitted'] == "true" %}
-    {{ data['exemption-project-name-text-input'] }}
-  {% else %}
   EXE/2025/00005 – Exempt activity – Worthing dive sites marker buoys	
-  {% endif %}
 {% endset %}
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
@@ -129,7 +125,7 @@
 			The purpose of the activity
 		  </dt>
 		  <dd class="govuk-summary-list__value">
-			Markers, moorings and aids to navigation
+			Temporary markers
 		  </dd>
 		</div>
   
@@ -146,7 +142,7 @@
 			The applicant's answers from 'Check if you need a marine licence'  
 		</dt>
 		<dd class="govuk-summary-list__value">
-		  <p><a href="/public/downloads/notification-sample-answers.pdf" rel="noreferrer noopener" target="_blank">Download a copy of their answers (PDF)</a></p>  
+		  <p><a href="/public/downloads/exemption-buoys-answers.pdf" rel="noreferrer noopener" target="_blank">Download a copy of their answers (PDF)</a></p>  
 		</dd>
 	  </div>
 	  <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
