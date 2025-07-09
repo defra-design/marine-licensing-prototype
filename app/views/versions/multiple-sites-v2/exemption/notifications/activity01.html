@@ -21,11 +21,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% set pageHeadingTextHTML %}
-  {% if data['applicationSubmitted'] == "true" %}
-    {{ data['exemption-project-name-text-input'] }}
-  {% else %}
   EXE/2025/00004 – Exempt activity – South coast sea samples	
-  {% endif %}
 {% endset %}
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
