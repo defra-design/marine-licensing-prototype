@@ -102,6 +102,7 @@ require('./routes/versions/multiple-sites-v2/check.js')(router);
 require('./routes/versions/multiple-sites-v2/exemption.js')(router);
 require('./routes/versions/multiple-sites-v2/exemption-manual-entry.js')(router);
 require('./routes/versions/multiple-sites-v2/iat.js')(router);
+require('./routes/versions/multiple-sites-v2/iat-improved.js')(router);
 
 // MVP Multi Sites Version
 require('./routes/versions/mvp-multi-sites/check.js')(router);
