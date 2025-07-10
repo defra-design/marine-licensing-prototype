@@ -64,7 +64,17 @@ You need to provide more information, but you do not need a marine licence
 
 		<p>You'll also need a Defra account to send this information. Sign in or create one using Government Gateway. You can set up a Government Gateway account in the next step if needed.</p>
 
-		<a href="../exemption/sign-in.html" class="govuk-button" role="button">Continue to the new service</a>
+		<h3 class="govuk-heading-s">Choose your journey</h3>
+		
+		<div class="govuk-!-margin-bottom-4">
+			<a href="../exemption/sign-in.html" class="govuk-button" role="button">Continue to the new service</a>
+			<p class="govuk-body-s govuk-!-margin-top-2">Uses the current content and question flow</p>
+		</div>
+
+		<div class="govuk-!-margin-bottom-4">
+			<a href="../exemption/sign-in.html?improved=true" class="govuk-button govuk-button--secondary" role="button">Continue to the new service (improved content)</a>
+			<p class="govuk-body-s govuk-!-margin-top-2">Uses improved content and question flow for testing</p>
+		</div>
 
 		<p>
 			{% if data['exemption'] == "pontoon-approval" %}
