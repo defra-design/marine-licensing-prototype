@@ -9,8 +9,8 @@
     "@govuk-prototype-kit/task-list": "2.0.0",
     "@ministryofjustice/frontend": "5.1.3",
     "@x-govuk/govuk-prototype-filters": "2.0.0",
-    "govuk-frontend": "^5.10.0",
-    "govuk-prototype-kit": "^13.16.2",
+    "govuk-frontend": "5.11.1",
+    "govuk-prototype-kit": "13.17.0",
     "hmrc-frontend": "6.59.0",
     "jquery": "3.7.1"
   }
