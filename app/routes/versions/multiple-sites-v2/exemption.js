@@ -3238,6 +3238,45 @@ function clearDataForFileUploadOnly(session) {
     delete session.data['exemption-activity-details-text-area'];
 }
 
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Help pages
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+// GET route for cookies page
+router.get('/' + version + 'help/cookies', function (req, res) {
+    // Clear error states
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    
+    // Set default analytics cookies selection if not already set
+    if (!req.session.data['analytics-cookies']) {
+        req.session.data['analytics-cookies'] = 'no';
+    }
+    
+    // Render the page
+    res.render(version + 'help/cookies');
+    
+    // Clear the banner flag after rendering so it doesn't show on refresh
+    if (req.session.data['cookieSettingsSaved'] === 'true') {
+        delete req.session.data['cookieSettingsSaved'];
+    }
+});
+
+// POST route for cookies page - handle form submission
+router.post('/' + version + 'help/cookies', function (req, res) {
+    // Get the selection from the form
+    const selection = req.body['analytics-cookies'];
+    
+    // Save the selection
+    req.session.data['analytics-cookies'] = selection;
+    
+    // Set flag to show the success banner
+    req.session.data['cookieSettingsSaved'] = 'true';
+    
+    // Redirect back to the same page to show the banner
+    res.redirect('/' + version + 'help/cookies');
+});
+
 // Unified model global exports removed - using batch system exclusively
 
 };
