@@ -386,14 +386,14 @@ Review site details
                             
                             <div class="govuk-summary-list__row">
                                 <dt class="govuk-summary-list__key">
-                                    Method of entering the coordinates
+                                    Single or multiple sets of coordinates
                                 </dt>
                                 <dd class="govuk-summary-list__value">
                                     {% if site.coordinates %}
                                         {% if site.coordinates.type == "circle" %}
-                                            Manually enter one set of coordinates and a width to create a circular site
+                                            Enter one set of coordinates and a width to create a circular site
                                         {% elif site.coordinates.type == "polygon" %}
-                                            Manually enter multiple sets of coordinates to mark the boundary of the site
+                                            Enter multiple sets of coordinates to mark the boundary of the site
                                         {% else %}
                                             Manual coordinate entry
                                         {% endif %}
@@ -403,7 +403,7 @@ Review site details
                                 </dd>
                                 <dd class="govuk-summary-list__actions">
                                     <a href="how-do-you-want-to-enter-the-coordinates?site={{ siteIndex }}&returnTo=review-site-details&clearData=true#site-{{ siteIndex }}-details" class="govuk-link">
-                                        Change<span class="govuk-visually-hidden"> method of entering the coordinates</span>
+                                        Change<span class="govuk-visually-hidden"> single or multiple sets of coordinates</span>
                                     </a>
                                 </dd>
                             </div>
