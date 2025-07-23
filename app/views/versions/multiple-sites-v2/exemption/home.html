@@ -88,10 +88,10 @@ Your projects
 						EXE/2025/00001
 					</td>
 					
-					<td class="govuk-table__cell" data-sort-value="Closed">
+					<td class="govuk-table__cell" data-sort-value="002">
 						{{ govukTag({
-							text: "Closed",
-							classes: "govuk-tag--green"
+							text: "Scheduled",
+							classes: "govuk-tag"
 						}) }}
 					</td>
 					<td class="govuk-table__cell" data-sort-value="250512">12 May 2025</td>
@@ -103,7 +103,7 @@ Your projects
 
 				{% if not isDeleteProject %}
 				<tr class="govuk-table__row">
-					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Tynemouth - replacement of single pile</th>
+					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Tynemouth pile replacement</th>
 					<td class="govuk-table__cell">
 						Exempt activity notification
 					</td>
@@ -111,13 +111,59 @@ Your projects
 						EXE/2025/00002
 					</td>
 					
-					<td class="govuk-table__cell" data-sort-value="Closed">
+					<td class="govuk-table__cell" data-sort-value="004">
 						{{ govukTag({
-							text: "Closed",
+							text: "Active",
 							classes: "govuk-tag--green"
 						}) }}
 					</td>
 					<td class="govuk-table__cell" data-sort-value="250422">22 Apr 2025</td>
+					<td class="govuk-table__cell" data-sort-value="View details">	
+						<a href="#" class="govuk-link--no-visited-state">View details</a>
+					</td>
+				</tr>
+				{% endif %}
+
+				{% if not isDeleteProject %}
+				<tr class="govuk-table__row">
+					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">King Point Marina mooring piles removal</th>
+					<td class="govuk-table__cell">
+						Exempt activity notification
+					</td>
+					<td class="govuk-table__cell" data-sort-value="003">
+						EXE/2025/00003
+					</td>
+					
+					<td class="govuk-table__cell" data-sort-value="003">
+						{{ govukTag({
+							text: "Finished",
+							classes: "govuk-tag--grey"
+						}) }}
+					</td>
+					<td class="govuk-table__cell" data-sort-value="250212">12 Feb 2025</td>
+					<td class="govuk-table__cell" data-sort-value="View details">	
+						<a href="#" class="govuk-link--no-visited-state">View details</a>
+					</td>
+				</tr>
+				{% endif %}
+
+				{% if not isDeleteProject %}
+				<tr class="govuk-table__row">
+					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Fibre optic cable system route survey</th>
+					<td class="govuk-table__cell">
+						Exempt activity notification
+					</td>
+					<td class="govuk-table__cell" data-sort-value="004">
+						EXE/2025/00004
+					</td>
+					
+					<td class="govuk-table__cell" data-sort-value="004">
+						{{ govukTag({
+							text: "Active",
+							classes: "govuk-tag--green"
+						}) }}
+					</td>
+					<td class="govuk-table__cell" data-sort-value="250706">7 Jun 2025</td>
 					<td class="govuk-table__cell" data-sort-value="View details">	
 						<a href="#" class="govuk-link--no-visited-state">View details</a>
 					</td>
@@ -134,7 +180,7 @@ Your projects
 						-
 					</td>
 					
-					<td class="govuk-table__cell" data-sort-value="Draft">
+					<td class="govuk-table__cell" data-sort-value="001">
 						{{ govukTag({
 							text: "Draft",
 							classes: "govuk-tag--light-blue"
@@ -153,26 +199,31 @@ Your projects
 					<td class="govuk-table__cell">
 						Exempt activity notification
 					</td>
-					<td class="govuk-table__cell" data-sort-value="004">
-						{% if data['applicationSubmitted'] == "true" %}	
-						EXE/2025/00003
-						{% else %}
-						-
-						{% endif %}
+
+					
+
+					{% if data['applicationSubmitted'] == "true" %}
+					<td class="govuk-table__cell" data-sort-value="005">
+						EXE/2025/00005
 					</td>
+					{% else %}
+					<td class="govuk-table__cell" data-sort-value="-">
+						-
+					</td>
+					{% endif %}
 				
 					{% if data['applicationSubmitted'] == "true" %}	
-						<td class="govuk-table__cell" data-sort-value="Closed">
+						<td class="govuk-table__cell" data-sort-value="002">
 							{{ govukTag({
-								text: "Closed",
-								classes: "govuk-tag--green"
+								text: "Scheduled",
+								classes: "govuk-tag--blue"
 							}) }}
 						</td>
-						<td class="govuk-table__cell" data-sort-value="250516">
+						<td class="govuk-table__cell" data-sort-value="250716">
 						{{ "today" | govukDate(truncate=true) }}
 						</td>
 					{% else %}
-						<td class="govuk-table__cell" data-sort-value="Draft">
+						<td class="govuk-table__cell" data-sort-value="001">
 							{{ govukTag({
 								text: "Draft",
 								classes: "govuk-tag--light-blue"
