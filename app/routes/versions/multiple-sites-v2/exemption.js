@@ -3249,7 +3249,8 @@ router.get('/' + version + 'help/cookies', function (req, res) {
     req.session.data['errortypeone'] = "false";
     
     // Set default analytics cookies selection if not already set
-    if (!req.session.data['analytics-cookies']) {
+    // Use explicit check for undefined to ensure 'no' is always set as default
+    if (req.session.data['analytics-cookies'] === undefined || req.session.data['analytics-cookies'] === null) {
         req.session.data['analytics-cookies'] = 'no';
     }
     

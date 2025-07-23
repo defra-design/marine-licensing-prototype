@@ -19,7 +19,7 @@
       {% if data['cookieSettingsSaved'] == 'true' %}
         {% set html %}
           <h3 class="govuk-notification-banner__heading">
-            Your cookie settings have been saved
+            Your cookie settings were saved.
           </h3>
         {% endset %}
         
@@ -137,12 +137,12 @@
         {
           value: "yes",
           text: "Yes",
-          checked: data['analytics-cookies'] == "yes"
+          checked: data['analytics-cookies'] === "yes"
         },
         {
           value: "no",
           text: "No",
-          checked: data['analytics-cookies'] == "no"
+          checked: data['analytics-cookies'] === "no"
         }
       ]
     }) }}
