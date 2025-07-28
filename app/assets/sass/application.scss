@@ -293,6 +293,52 @@ body.page-cookie-banner {
   background-color: white !important;
 }
 
+/* Organisation Switcher Component
+------------------------------------------------------------------- */
 
+.app-organisation-switcher {
+  /* Create the full-width bottom border */
+  border-bottom: 1px solid #b1b4b6; /* govuk-colour("border") */
+}
 
+/* By default, on mobile, the link appears below the name.
+   Typography is now handled by GOV.UK utility classes in the HTML. */
+
+.app-organisation-switcher__name {
+     display: block; 
+     margin-top: 10px;
+     margin-bottom: 0;
+   }
+
+.app-organisation-switcher__link {
+  display: block; 
+  margin-bottom: 12px;
+}
+
+/* Add space between the name and the link */
+.app-organisation-switcher__link {
+  margin-left: 0; 
+  margin-top: 5px;
+}
+
+/* At the specified breakpoint (e.g., tablet and wider) */
+@media (min-width: 40.0525em) {
+  /* Display the name and link on the same line */
+  .app-organisation-switcher__name,
+  .app-organisation-switcher__link {
+    display: inline-block;
+    vertical-align: baseline;
+    margin-bottom: 12px;
+  }
+  
+  /* Add space between the name and the link */
+  .app-organisation-switcher__link {
+    margin-left: 6px;
+  }
+}
+/* Align the nav to the righ
+.govuk-service-navigation__list {
+  justify-content: flex-end;
+} 
+*/
 
