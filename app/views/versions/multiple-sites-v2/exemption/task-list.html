@@ -1,12 +1,13 @@
 {% extends "../layouts/exemption.html" %}
 
 {% block beforeContent %}
-	  	{% include "../includes/phase-banner.html" %}
+    {% include "../includes/phase-banner.html" %}
+    {{ super() }}
 {% endblock %}
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-{{ data['exemption-project-name-text-input'] }}
+Your project
 {% endset %}
 
 <!-- Text that show in the browser tab. Does NOT need changing -->

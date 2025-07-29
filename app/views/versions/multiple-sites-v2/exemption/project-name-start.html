@@ -14,9 +14,7 @@
 
 {% block beforeContent %}
     {% include "../includes/phase-banner.html" %}
-    {% if data['organisation-name'] %}
-        {% include "../includes/organisation-switcher.html" %}
-    {% endif %}
+    {{ super() }}
 {% endblock %}
 
 <!-- Setting the big main heading at the top of the page -->

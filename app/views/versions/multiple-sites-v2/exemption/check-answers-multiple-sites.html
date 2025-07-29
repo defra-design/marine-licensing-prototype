@@ -81,6 +81,7 @@
 
 {% block beforeContent %}
     {% include "../includes/phase-banner.html" %}
+    {{ super() }}
     
     {% if data['applicationSubmitted'] == "true" %}
     {% include "../includes/back-link.html" %}

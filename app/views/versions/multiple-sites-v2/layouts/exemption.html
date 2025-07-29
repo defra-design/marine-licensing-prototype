@@ -36,6 +36,12 @@ https://prototype-kit.service.gov.uk/docs/how-to-use-layouts
 
 {% endblock %}
 
+{% block beforeContent %}
+    {% if data['organisation-name'] %}
+        {% include "../includes/organisation-switcher.html" %}
+    {% endif %}
+{% endblock %}
+
 {% block footer %}
  {{ govukFooter({
    meta: {
