@@ -48,8 +48,8 @@ Sign in using Government Gateway
 		</div>
 	   </div>
 	   <h1 class="govuk-heading-xl">Sign in using Government Gateway</h1>
-	   <form action="/login/signin/creds" method="POST" id="loginForm">
-		<input type="hidden" name="tes" value="csrfToken,user_id,password,profile:4696801541267158548::GUQJJs3H3Oca84Pp5NNXDTck2yTzTQqSa2EjwbwAt89uKPd9M13EKVI9qOpW2WH6O7RyVca2jeyHyXfprY0bdw=="> <input type="hidden" name="csrfToken" value="6e8bfabf2cc75f26a203612c17b7fed4162b49bd-1741195401772-3a27bab2ea969069249a9420">
+	   <form action="sign-in-router" method="POST" id="loginForm">
+		<input type="hidden" name="tes" value="csrfToken,user_id,password,profile:4696801541267158548::GUQJJs3Oca84Pp5NNXDTck2yTzTQqSa2EjwbwAt89uKPd9M13EKVI9qOpW2WH6O7RyVca2jeyHyXfprY0bdw=="> <input type="hidden" name="csrfToken" value="6e8bfabf2cc75f26a203612c17b7fed4162b49bd-1741195401772-3a27bab2ea969069249a9420">
 		<div class="govuk-form-group">
 		 <label for="user_id" class="govuk-label"> Government Gateway user ID </label>
 		 <div class="govuk-hint" id="user_id-hint">
@@ -64,22 +64,10 @@ Sign in using Government Gateway
 		 </div>
 		</div>
 
-		{% if data['goto'] == "home" %}
-
 		{{ govukButton({
-			text: "Sign in",
-			href: "home.html"
+			text: "Sign in"
 		}) }}
-
-		{% else %}
-
-		{{ govukButton({
-			text: "Sign in",
-			href: "project-name-start.html"
-		}) }}
-
-		{% endif %}	
-
+		
 		<script src="/assets/javascripts/device-profile.js"></script>
 	   </form>
 	   <h2 class="govuk-heading-m">New users of Government Gateway</h2>

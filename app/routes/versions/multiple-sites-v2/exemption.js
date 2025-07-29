@@ -88,7 +88,39 @@ router.get('/' + version + section + 'sign-in', function (req, res) {
     if (req.query.article) {
         req.session.data['exemption-article'] = req.query.article;
     }
+    // if a user is an org user then store it in the session
+    if (req.query.user_type === 'organisation') {
+        req.session.data['user_type'] = 'organisation';
+    }
     res.render(version + section + 'sign-in');
+});
+
+// sign-in router
+router.post('/' + version + section + 'sign-in-router', function (req, res) {
+    // if a user is an org user then redirect to select an org
+    if (req.session.data['user_type'] === 'organisation') {
+        res.redirect('organisation-selector');
+    } else {
+        // Redirect to the project name page
+        res.redirect('project-name-start');
+    }
+});
+
+// organisation selector router
+router.post('/' + version + section + 'organisation-selector-router', function (req, res) {
+    // Turn off errors by default
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    // Check if the radio button is selected
+    if (req.session.data['organisation-name'] === undefined) {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        res.redirect('organisation-selector');
+    } else {
+        // Redirect to the project name page
+        res.redirect('project-name-start');
+    }
 });
 
 // Functions for clearing location data
@@ -343,6 +375,7 @@ function clearCoordinateValues(session) {
 // Function to clear only the current batch when cancelling from review page
 function clearCurrentBatchOnly(session) {
     const currentBatchId = session.data['currentBatchId'];
+    delete session.data['user_type'];
     
     if (currentBatchId && session.data['siteBatches']) {
         // Find and remove the current batch
@@ -420,6 +453,7 @@ function clearAllSiteDetails(session) {
     delete session.data['sites'];
     delete session.data['currentBatchId'];
     delete session.data['globalSiteCounter'];
+    delete session.data['user_type'];
     
     // Clear file upload tracking
     delete session.data['hasUploadedFile'];
@@ -1925,6 +1959,7 @@ function logCancelState(session, context) {
  */
 function clearCurrentBatchSafely(session) {
     const currentBatchId = session.data['currentBatchId'];
+    delete session.data['user_type'];
     
     console.log('🗑️ clearCurrentBatchSafely - entry - currentBatchId:', currentBatchId);
     
@@ -2996,6 +3031,7 @@ router.get('/' + version + section + 'cancel', function (req, res) {
 // POST route for cancel confirmation - enhanced with state management
 router.post('/' + version + section + 'cancel-confirmed', function (req, res) {
     logCancelState(req.session, 'cancel-confirmed - user confirmed cancellation');
+    delete session.data['user_type'];
     
     // Clear any method switch backup (user explicitly confirmed cancellation)
     clearMethodSwitchBackup(req.session);
