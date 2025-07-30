@@ -381,6 +381,8 @@ router.get('/' + version + section + 'manual-entry/does-your-project-involve-mor
     
     // Initialize review state for new manual entry journey (but not when editing from review)
     if (returnTo !== 'review-site-details') {
+        // Set flag to indicate user is in site details journey
+        req.session.data['inSiteDetailsJourney'] = true;
         req.session.data['reviewPageVisited'] = false;
         req.session.data['reviewPageSaved'] = false;
         req.session.data['isEditingFromReview'] = false;
@@ -2297,6 +2299,9 @@ router.post('/' + version + section + 'manual-entry/review-site-details-router',
     }
     
     delete req.session.data['currentBatchId'];
+    
+    // Clear site details journey flag as journey is completed
+    delete req.session.data['inSiteDetailsJourney'];
     
     // Check if we came from check answers page
     if (req.session.data['camefromcheckanswers'] === 'true') {

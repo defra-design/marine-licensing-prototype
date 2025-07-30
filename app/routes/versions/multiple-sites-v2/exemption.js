@@ -1134,6 +1134,9 @@ router.get('/' + version + section + 'site-details', function (req, res) {
     // Set origin context - this is always from task list
     setOriginContext(req.session, 'task-list');
     
+    // Set flag to indicate user is in site details journey
+    req.session.data['inSiteDetailsJourney'] = true;
+    
     // Set the flag to false when starting the site details journey
     req.session.data['siteDetailsSaved'] = false;
     
@@ -2949,6 +2952,9 @@ router.post('/' + version + section + 'review-site-details-router', function (re
     // Clear currentBatchId so we can start fresh next time
     delete req.session.data['currentBatchId'];
     
+    // Clear site details journey flag as journey is completed
+    delete req.session.data['inSiteDetailsJourney'];
+    
     if (req.session.data['camefromcheckanswers'] === 'true') {
         req.session.data['camefromcheckanswers'] = false;
         res.redirect('check-answers-multiple-sites');
@@ -3085,6 +3091,7 @@ router.post('/' + version + section + 'cancel-confirmed', function (req, res) {
     
     // Clear cancel-related state tracking for fresh start
     delete req.session.data['cancelOrigin'];
+    delete req.session.data['inSiteDetailsJourney'];
     req.session.data['reviewPageVisited'] = false;
     req.session.data['reviewPageSaved'] = false;
     req.session.data['isEditingFromReview'] = false;
@@ -3422,6 +3429,33 @@ router.post('/' + version + section + 'organisation-selector-autocomplete-router
                 res.redirect('project-name-start');
             }
         }
+    }
+});
+
+// Change organisation warning page route
+router.get('/' + version + section + 'change-organisation-warning', function (req, res) {
+    res.render(version + section + 'change-organisation-warning');
+});
+
+// Change organisation confirmation route
+router.post('/' + version + section + 'change-organisation-confirmed', function (req, res) {
+    // Clear current batch and state tracking data
+    clearCurrentBatchSafely(req.session);
+    
+    // Clear site details journey flag and other state tracking variables
+    delete req.session.data['inSiteDetailsJourney'];
+    delete req.session.data['reviewPageVisited'];
+    delete req.session.data['reviewPageSaved'];
+    delete req.session.data['isEditingFromReview'];
+    
+    // Set changing organisation flag
+    req.session.data['changing-organisation'] = 'true';
+    
+    // Redirect to appropriate organisation selector based on component type
+    if (req.session.data['component_type'] === 'autocomplete') {
+        res.redirect('organisation-selector-autocomplete');
+    } else {
+        res.redirect('organisation-selector');
     }
 });
 
