@@ -256,21 +256,67 @@ The prototype supports two distinct user journeys: an **individual user journey*
 
 - The organisation journey is initiated by adding the query parameter `user_type=organisation` to the start link in `index.html`.
 - This sets `req.session.data['user_type'] = 'organisation'`, which is used to differentiate the user type throughout the session.
+- An optional `component_type=autocomplete` parameter can be added to test the autocomplete version of organisation selection.
+
+**Component Types:**
+
+The organisation selector supports two UI components:
+- **Radio buttons** (default): Traditional radio button selection - `organisation-selector`
+- **Autocomplete**: Searchable dropdown with accessible autocomplete - `organisation-selector-autocomplete`
 
 **Flow:**
 
-1.  **Sign-in:** The `sign-in-router` checks for `req.session.data['user_type']`. If it's an organisation user, they are redirected to the `organisation-selector` page.
-2.  **Organisation Selection:** The user selects an organisation from a list. The selected organisation is stored in `req.session.data['organisation-name']`.
-3.  **Organisation Switcher:** On subsequent pages, the `organisation-switcher.html` component is displayed, showing the selected organisation and allowing the user to change it. This component is conditionally included in templates based on the presence of `req.session.data['organisation-name']`.
+1.  **Sign-in:** The `sign-in-router` checks for `req.session.data['user_type']`. If it's an organisation user, they are redirected to either:
+    - `organisation-selector` (radio buttons - default)
+    - `organisation-selector-autocomplete` (if `component_type=autocomplete`)
+
+2.  **Organisation Selection:** The user selects an organisation from a list (radio buttons) or searchable autocomplete. The selected organisation is stored in `req.session.data['organisation-name']`.
+
+3.  **Organisation Switcher:** On subsequent pages, the `organisation-switcher.html` component is displayed, showing the selected organisation and allowing the user to change it. The component conditionally links to the appropriate selector based on `req.session.data['component_type']`.
+
+**Two Scenarios:**
+
+- **Scenario 1** (Initial sign-in): No service navigation, no back link, no organisation switcher component
+- **Scenario 2** (Changing organisation): With service navigation, back link, and organisation switcher component
 
 **Session Data:**
 
 - `req.session.data['user_type']`:  `'organisation'` or `undefined`. Determines the user journey.
 - `req.session.data['organisation-name']`: Stores the name of the selected organisation.
+- `req.session.data['component_type']`: `'autocomplete'` or `undefined`. Determines which UI component to use.
+- `req.session.data['changing-organisation']`: `'true'` when user is switching organisations (Scenario 2).
+
+**Routing Patterns:**
+
+```javascript
+// Sign-in router - redirects based on component type
+if (req.session.data['user_type'] === 'organisation') {
+    if (req.session.data['component_type'] === 'autocomplete') {
+        res.redirect('organisation-selector-autocomplete');
+    } else {
+        res.redirect('organisation-selector');
+    }
+}
+
+// Organisation switcher - conditional links
+{% if data['component_type'] === 'autocomplete' %}
+    <a href="organisation-selector-autocomplete?change=true">Change organisation</a>
+{% else %}
+    <a href="organisation-selector?change=true">Change organisation</a>
+{% endif %}
+```
+
+**Autocomplete Implementation:**
+
+The autocomplete version uses:
+- **accessible-autocomplete** library from CDN
+- **Hidden input field** (`organisation-name`) for form submission
+- **JavaScript handlers** for `onConfirm` and manual typing
+- **Same error handling** and validation as radio button version
 
 **Cancellation:**
 
-- The `user_type` and `organisation-name` session variables are cleared in the `clearAllSiteDetails`, `clearCurrentBatchOnly` and `clearCurrentBatchSafely` functions to ensure a clean state when a user cancels their journey.
+- The `user_type`, `organisation-name`, `component_type`, and `changing-organisation` session variables are cleared in the `clearAllSiteDetails`, `clearCurrentBatchOnly` and `clearCurrentBatchSafely` functions to ensure a clean state when a user cancels their journey.
 
 ### Routing Modification Rules
 - **Only modify the specific routing section you are working on** - never change unrelated routes
