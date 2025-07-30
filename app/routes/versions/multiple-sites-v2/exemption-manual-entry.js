@@ -2493,6 +2493,11 @@ router.get('/' + version + section + 'manual-entry/cancel-from-review-site-detai
     res.redirect('../cancel-site-details');
 });
 
+// Redirect manual entry change organisation warning to parent level
+router.get('/' + version + section + 'manual-entry/change-organisation-warning', function (req, res) {
+    res.redirect('../change-organisation-warning');
+});
+
 // Function to renumber all sites after deletion
 function renumberSitesAfterDeletion(session, deletedGlobalNumber) {
     console.log('=== RENUMBERING SITES AFTER DELETION ===');

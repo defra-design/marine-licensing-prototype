@@ -3439,14 +3439,33 @@ router.get('/' + version + section + 'change-organisation-warning', function (re
 
 // Change organisation confirmation route
 router.post('/' + version + section + 'change-organisation-confirmed', function (req, res) {
-    // Clear current batch and state tracking data
-    clearCurrentBatchSafely(req.session);
+    // Check if review page has been saved to determine clearing strategy
+    const reviewPageSaved = req.session.data['reviewPageSaved'];
+    
+    if (reviewPageSaved) {
+        // Review page was saved - preserve saved data, only clear current journey
+        console.log('🔄 CHANGE ORG: Review page was saved, preserving data');
+        clearCurrentBatchSafely(req.session);
+    } else {
+        // Review page not saved - complete clear like cancel functionality
+        console.log('🔄 CHANGE ORG: Review page not saved, performing complete clear');
+        clearMethodSwitchBackup(req.session);
+        clearAllSiteDetails(req.session);
+        
+        // Reset task status to not-started
+        req.session.data['exempt-information-3-status'] = 'not-started';
+        delete req.session.data['siteDetailsSaved'];
+    }
     
     // Clear site details journey flag and other state tracking variables
     delete req.session.data['inSiteDetailsJourney'];
     delete req.session.data['reviewPageVisited'];
     delete req.session.data['reviewPageSaved'];
     delete req.session.data['isEditingFromReview'];
+    
+    // Clear any legacy navigation flags
+    delete req.session.data['fromReviewSiteDetails'];
+    delete req.session.data['camefromcheckanswers'];
     
     // Set changing organisation flag
     req.session.data['changing-organisation'] = 'true';
