@@ -148,6 +148,8 @@ router.post('/' + version + section + 'organisation-selector-router', function (
     } else {
         // If the user is changing their organisation, redirect to the home page
         if (req.session.data['changing-organisation'] === 'true') {
+            // Toggle the alternative project view
+            req.session.data['alternativeProjectView'] = req.session.data['alternativeProjectView'] === 'true' ? 'false' : 'true';
             // Reset the flag
             delete req.session.data['changing-organisation'];
             res.redirect('home');
@@ -3415,6 +3417,8 @@ router.post('/' + version + section + 'organisation-selector-autocomplete-router
     } else {
         // If the user is changing their organisation, redirect to the home page
         if (req.session.data['changing-organisation'] === 'true') {
+            // Toggle the alternative project view
+            req.session.data['alternativeProjectView'] = req.session.data['alternativeProjectView'] === 'true' ? 'false' : 'true';
             // Reset the flag
             delete req.session.data['changing-organisation'];
             res.redirect('home');

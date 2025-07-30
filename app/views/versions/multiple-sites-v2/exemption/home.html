@@ -64,6 +64,7 @@ Projects
 		{% set isDeleteProject = data['deleteProject'] == "true" or deleteProjectsParam %}
 		{% set isTowerBridgeDeleted = data['towerBridgeProjectDeleted'] == "true" %}
 		{% set isUserProjectDeleted = data['userProjectDeleted'] == "true" %}
+		{% set isAlternativeView = data['alternativeProjectView'] == "true" %}
 
 		{% if isDeleteProject %}
 
@@ -84,7 +85,7 @@ Projects
 			  </tr>
 			</thead>
 			<tbody class="govuk-table__body">
-				{% if not isDeleteProject %}
+				{% if not isDeleteProject and not isAlternativeView %}
 				<tr class="govuk-table__row">
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Westhaven Bay pipe maintenance</th>
 					<td class="govuk-table__cell">
@@ -107,7 +108,30 @@ Projects
 				</tr>
 				{% endif %}
 
-				{% if not isDeleteProject %}
+				{% if not isDeleteProject and isAlternativeView %}
+				<tr class="govuk-table__row">
+					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Scientific fieldwork Mousehole Harbour</th>
+					<td class="govuk-table__cell">
+						Exempt activity notification
+					</td>
+					<td class="govuk-table__cell" data-sort-value="012">
+						EXE/2025/00012
+					</td>
+					
+					<td class="govuk-table__cell" data-sort-value="002">
+						{{ govukTag({
+							text: "Scheduled",
+							classes: "govuk-tag"
+						}) }}
+					</td>
+					<td class="govuk-table__cell" data-sort-value="250712">12 Jul 2025</td>
+					<td class="govuk-table__cell" data-sort-value="View details">	
+						<a href="#" class="govuk-link--no-visited-state">View details</a>
+					</td>
+				</tr>
+				{% endif %}
+
+				{% if not isDeleteProject and not isAlternativeView %}
 				<tr class="govuk-table__row">
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Tynemouth pile replacement</th>
 					<td class="govuk-table__cell">
@@ -130,7 +154,30 @@ Projects
 				</tr>
 				{% endif %}
 
-				{% if not isDeleteProject %}
+				{% if not isDeleteProject and isAlternativeView %}
+				<tr class="govuk-table__row">
+					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Replacement of pontoon Hammersmith Rowing Club</th>
+					<td class="govuk-table__cell">
+						Exempt activity notification
+					</td>
+					<td class="govuk-table__cell" data-sort-value="015">
+						EXE/2025/00015
+					</td>
+					
+					<td class="govuk-table__cell" data-sort-value="001">
+						{{ govukTag({
+							text: "Active",
+							classes: "govuk-tag--green"
+						}) }}
+					</td>
+					<td class="govuk-table__cell" data-sort-value="250319">19 Mar 2025</td>
+					<td class="govuk-table__cell" data-sort-value="View details">	
+						<a href="#" class="govuk-link--no-visited-state">View details</a>
+					</td>
+				</tr>
+				{% endif %}
+
+				{% if not isDeleteProject and not isAlternativeView %}
 				<tr class="govuk-table__row">
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">King Point Marina mooring piles removal</th>
 					<td class="govuk-table__cell">
@@ -153,7 +200,7 @@ Projects
 				</tr>
 				{% endif %}
 
-				{% if not isDeleteProject %}
+				{% if not isDeleteProject and not isAlternativeView %}
 				<tr class="govuk-table__row">
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Fibre optic cable system route survey</th>
 					<td class="govuk-table__cell">
@@ -176,7 +223,7 @@ Projects
 				</tr>
 				{% endif %}
 
-				{% if not isTowerBridgeDeleted and not isDeleteProject %}
+				{% if not isTowerBridgeDeleted and not isDeleteProject and not isAlternativeView %}
 				<tr class="govuk-table__row">
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Tower Bridge refurbishment</th>
 					<td class="govuk-table__cell">
@@ -199,7 +246,7 @@ Projects
 				</tr>
 				{% endif %}
 
-				{% if not isUserProjectDeleted and not isDeleteProject and data['exemption-project-name-text-input'] %}
+				{% if not isUserProjectDeleted and not isDeleteProject and not isAlternativeView and data['exemption-project-name-text-input'] %}
 				<tr class="govuk-table__row">
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">{{ data['exemption-project-name-text-input'] }}</th>
 					<td class="govuk-table__cell">
