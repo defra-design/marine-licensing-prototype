@@ -92,6 +92,15 @@ router.get('/' + version + section + 'sign-in', function (req, res) {
     if (req.query.user_type === 'organisation') {
         req.session.data['user_type'] = 'organisation';
     }
+    // Store goto parameter if provided (for sign-out -> sign-in flow)
+    if (req.query.goto) {
+        req.session.data['goto'] = req.query.goto;
+    }
+    
+    // Clear organisation data when user signs in (including when they sign out and come back)
+    delete req.session.data['organisation-name'];
+    delete req.session.data['changing-organisation'];
+    
     res.render(version + section + 'sign-in');
 });
 
@@ -103,8 +112,15 @@ router.post('/' + version + section + 'sign-in-router', function (req, res) {
         delete req.session.data['changing-organisation'];
         res.redirect('organisation-selector');
     } else {
-        // Redirect to the project name page
-        res.redirect('project-name-start');
+        // Check if user came from sign-out (goto=home parameter)
+        if (req.session.data['goto'] === 'home') {
+            // Clear the goto parameter and redirect to home
+            delete req.session.data['goto'];
+            res.redirect('home');
+        } else {
+            // Redirect to the project name page for new users
+            res.redirect('project-name-start');
+        }
     }
 });
 
@@ -126,8 +142,15 @@ router.post('/' + version + section + 'organisation-selector-router', function (
             delete req.session.data['changing-organisation'];
             res.redirect('home');
         } else {
-            // Redirect to the project name page for new users
-            res.redirect('project-name-start');
+            // Check if user came from sign-out (goto=home parameter)
+            if (req.session.data['goto'] === 'home') {
+                // Clear the goto parameter and redirect to home
+                delete req.session.data['goto'];
+                res.redirect('home');
+            } else {
+                // Redirect to the project name page for new users
+                res.redirect('project-name-start');
+            }
         }
     }
 });
@@ -3327,7 +3350,8 @@ router.post('/' + version + 'help/cookies', function (req, res) {
 
 router.get('/' + version + section + 'organisation-selector', function (req, res) {
     // If the user is changing their organisation, set a flag in the session
-    if (req.query.change === 'true') {
+    const isChangingOrg = req.query.change === 'true';
+    if (isChangingOrg) {
         req.session.data['changing-organisation'] = 'true';
     }
 
@@ -3342,7 +3366,8 @@ router.get('/' + version + section + 'organisation-selector', function (req, res
     const organisations = allOrganisations.filter(org => org.value !== currentOrganisation);
 
     res.render(version + section + 'organisation-selector', {
-        organisations: organisations
+        organisations: organisations,
+        changingOrganisation: isChangingOrg
     });
 });
 

@@ -3,7 +3,7 @@
 {% block header %}
   {% from "govuk/components/header/macro.njk" import govukHeader %}
   {% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
-  {% if data['changing-organisation'] === 'true' %}
+  {% if changingOrganisation or data['changing-organisation'] === 'true' %}
     {{ govukHeader({
       classes: "govuk-header--full-width-border"
     }) }}
@@ -36,7 +36,7 @@
 
 {% block beforeContent %}
     {% include "../includes/phase-banner.html" %}
-    {% if data['changing-organisation'] === 'true' %}
+    {% if changingOrganisation or data['changing-organisation'] === 'true' %}
       {% include "../includes/organisation-switcher.html" %}
       <a href="javascript:history.back()" class="govuk-back-link">Back</a>
     {% endif %}
