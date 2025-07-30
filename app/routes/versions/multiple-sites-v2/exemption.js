@@ -3366,10 +3366,10 @@ router.get('/' + version + section + 'organisation-selector', function (req, res
     }
 
     const allOrganisations = [
+        {value: "Brighton Marina Operations", text: "Brighton Marina Operations"},
+        {value: "Grimsby Fish Dock Enterprise", text: "Grimsby Fish Dock Enterprise"},
         {value: "North East Wind Farms", text: "North East Wind Farms"},
-        {value: "Plymouth Port Services", text: "Plymouth Port Services"},
-        {value: "Portsmouth Wind Farm", text: "Portsmouth Wind Farm"},
-        {value: "Southampton Marina", text: "Southampton Marina"}
+        {value: "Ramsgate Marina", text: "Ramsgate Marina"}
     ];
 
     const currentOrganisation = req.session.data['organisation-name'];
