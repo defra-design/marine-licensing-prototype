@@ -88,7 +88,71 @@ router.get('/' + version + section + 'sign-in', function (req, res) {
     if (req.query.article) {
         req.session.data['exemption-article'] = req.query.article;
     }
+    // if a user is an org user then store it in the session
+    if (req.query.user_type === 'organisation') {
+        req.session.data['user_type'] = 'organisation';
+    }
+    // Store goto parameter if provided (for sign-out -> sign-in flow)
+    if (req.query.goto) {
+        req.session.data['goto'] = req.query.goto;
+    }
+    
+    // Clear organisation data when user signs in (including when they sign out and come back)
+    delete req.session.data['organisation-name'];
+    delete req.session.data['changing-organisation'];
+    
     res.render(version + section + 'sign-in');
+});
+
+// sign-in router
+router.post('/' + version + section + 'sign-in-router', function (req, res) {
+    // if a user is an org user then redirect to select an org
+    if (req.session.data['user_type'] === 'organisation') {
+        // Clear the flag to ensure this is treated as a new selection
+        delete req.session.data['changing-organisation'];
+        res.redirect('organisation-selector');
+    } else {
+        // Check if user came from sign-out (goto=home parameter)
+        if (req.session.data['goto'] === 'home') {
+            // Clear the goto parameter and redirect to home
+            delete req.session.data['goto'];
+            res.redirect('home');
+        } else {
+            // Redirect to the project name page for new users
+            res.redirect('project-name-start');
+        }
+    }
+});
+
+// organisation selector router
+router.post('/' + version + section + 'organisation-selector-router', function (req, res) {
+    // Turn off errors by default
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    // Check if the radio button is selected
+    if (req.session.data['organisation-name'] === undefined) {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        res.redirect('organisation-selector');
+    } else {
+        // If the user is changing their organisation, redirect to the home page
+        if (req.session.data['changing-organisation'] === 'true') {
+            // Reset the flag
+            delete req.session.data['changing-organisation'];
+            res.redirect('home');
+        } else {
+            // Check if user came from sign-out (goto=home parameter)
+            if (req.session.data['goto'] === 'home') {
+                // Clear the goto parameter and redirect to home
+                delete req.session.data['goto'];
+                res.redirect('home');
+            } else {
+                // Redirect to the project name page for new users
+                res.redirect('project-name-start');
+            }
+        }
+    }
 });
 
 // Functions for clearing location data
@@ -343,6 +407,7 @@ function clearCoordinateValues(session) {
 // Function to clear only the current batch when cancelling from review page
 function clearCurrentBatchOnly(session) {
     const currentBatchId = session.data['currentBatchId'];
+    delete session.data['user_type'];
     
     if (currentBatchId && session.data['siteBatches']) {
         // Find and remove the current batch
@@ -420,6 +485,7 @@ function clearAllSiteDetails(session) {
     delete session.data['sites'];
     delete session.data['currentBatchId'];
     delete session.data['globalSiteCounter'];
+    delete session.data['user_type'];
     
     // Clear file upload tracking
     delete session.data['hasUploadedFile'];
@@ -1925,6 +1991,7 @@ function logCancelState(session, context) {
  */
 function clearCurrentBatchSafely(session) {
     const currentBatchId = session.data['currentBatchId'];
+    delete session.data['user_type'];
     
     console.log('🗑️ clearCurrentBatchSafely - entry - currentBatchId:', currentBatchId);
     
@@ -2996,6 +3063,7 @@ router.get('/' + version + section + 'cancel', function (req, res) {
 // POST route for cancel confirmation - enhanced with state management
 router.post('/' + version + section + 'cancel-confirmed', function (req, res) {
     logCancelState(req.session, 'cancel-confirmed - user confirmed cancellation');
+    delete session.data['user_type'];
     
     // Clear any method switch backup (user explicitly confirmed cancellation)
     clearMethodSwitchBackup(req.session);
@@ -3279,5 +3347,28 @@ router.post('/' + version + 'help/cookies', function (req, res) {
 });
 
 // Unified model global exports removed - using batch system exclusively
+
+router.get('/' + version + section + 'organisation-selector', function (req, res) {
+    // If the user is changing their organisation, set a flag in the session
+    const isChangingOrg = req.query.change === 'true';
+    if (isChangingOrg) {
+        req.session.data['changing-organisation'] = 'true';
+    }
+
+    const allOrganisations = [
+        {value: "North East Wind Farms", text: "North East Wind Farms"},
+        {value: "Plymouth Port Services", text: "Plymouth Port Services"},
+        {value: "Portsmouth Wind Farm", text: "Portsmouth Wind Farm"},
+        {value: "Southampton Marina", text: "Southampton Marina"}
+    ];
+
+    const currentOrganisation = req.session.data['organisation-name'];
+    const organisations = allOrganisations.filter(org => org.value !== currentOrganisation);
+
+    res.render(version + section + 'organisation-selector', {
+        organisations: organisations,
+        changingOrganisation: isChangingOrg
+    });
+});
 
 };

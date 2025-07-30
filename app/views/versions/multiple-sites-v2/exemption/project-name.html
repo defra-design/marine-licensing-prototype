@@ -1,8 +1,9 @@
 {% extends "../layouts/exemption.html" %}
 
 {% block beforeContent %}
-{% include "../includes/phase-banner.html" %}
-{% include "../includes/back-link.html" %}
+    {% include "../includes/phase-banner.html" %}
+    {{ super() }}
+    {% include "../includes/back-link.html" %}
 {% endblock %}
 
 {% from "govuk/components/input/macro.njk" import govukInput %}

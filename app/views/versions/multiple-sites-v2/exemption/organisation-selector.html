@@ -1,18 +1,55 @@
-{% extends "../../layouts/exemption.html" %}
+{% extends "../layouts/exemption.html" %}
+
+{% block header %}
+  {% from "govuk/components/header/macro.njk" import govukHeader %}
+  {% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
+  {% if changingOrganisation or data['changing-organisation'] === 'true' %}
+    {{ govukHeader({
+      classes: "govuk-header--full-width-border"
+    }) }}
+    {{ govukServiceNavigation({
+      serviceName: "Get permission for marine work",
+      navigation: [
+        {
+          href: "home",
+          text: "Projects"
+        },
+        {
+          href: "#",
+          text: "Defra account"
+        },
+        {
+          href: "sign-in",
+          text: "Sign out"
+        }
+      ]
+    }) }}
+  {% else %}
+    {{ govukHeader({
+      classes: "govuk-header--full-width-border"
+    }) }}
+    {{ govukServiceNavigation({
+      serviceName: "Get permission for marine work"
+    }) }}
+  {% endif %}
+{% endblock %}
 
 {% block beforeContent %}
-    {% include "../../includes/phase-banner.html" %}
-    {{ super() }}
-    {% include "../../includes/back-link.html" %}
+    {% include "../includes/phase-banner.html" %}
+    {% if changingOrganisation or data['changing-organisation'] === 'true' %}
+      {% include "../includes/organisation-switcher.html" %}
+      <a href="javascript:history.back()" class="govuk-back-link">Back</a>
+    {% endif %}
 {% endblock %}
+
 
 <!-- Set the heading for the page -->
 {% set pageHeadingTextHTML %}
-Do you need to tell us about more than one site?
+Select an organisation
 {% endset %}
 
 {% set errorText1HTML %}
-    Select if you need to tell us about more than one site
+    Select an organisation
 {% endset %}
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
@@ -37,7 +74,7 @@ Do you need to tell us about more than one site?
     <div class="govuk-error-summary__body">
       <ul class="govuk-list govuk-error-summary__list">
         {% if data['errortypeone'] == "true" %}
-          <li><a href="#manual-multiple-sites">{{ errorText1HTML }}</a></li>
+          <li><a href="#organisation-selector">{{ errorText1HTML }}</a></li>
         {% endif %}
       </ul>
     </div>
@@ -45,22 +82,19 @@ Do you need to tell us about more than one site?
 {% endif %}
         <!--  END OF 'error summary' -->
         
-        <form action="does-your-project-involve-more-than-one-site-router{% if returnTo %}?returnTo={{ returnTo }}{% endif %}" method="post" novalidate>
+        <form action="organisation-selector-router" method="post" novalidate>
 
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% set legendHTML %}
-{% if data['exemption-project-name-text-input'] %}
-<span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
-{% endif %}
 {{ pageHeadingTextHTML }}
 {% endset %}
 
 {{ govukRadios({
-  idPrefix: "manual-multiple-sites",
-  name: "manual-multiple-sites",
-  value: data['manual-multiple-sites'],
+  idPrefix: "organisation-selector",
+  name: "organisation-name",
+  value: data['organisation-name'],
   fieldset: {
     legend: {
       html: legendHTML,
@@ -68,16 +102,7 @@ Do you need to tell us about more than one site?
       classes: "govuk-fieldset__legend--l"
     }
   },
-  items: [
-    {
-      value: "Yes",
-      text: "Yes"
-    },
-    {
-      value: "No",
-      text: "No"
-    }
-  ],
+  items: organisations,
   errorMessage: {
     text: errorText1HTML
   } if data['errortypeone'] == "true"
@@ -87,7 +112,6 @@ Do you need to tell us about more than one site?
         {{ govukButton({
           text: "Continue"
         }) }}
-        <a class="govuk-link govuk-link--no-visited-state" href="../cancel-site-details">Cancel</a>
     </div>
 
         </form>

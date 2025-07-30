@@ -17,7 +17,7 @@
   navigation: [
     {
       href: "home",
-      text: "Projects home",
+      text: "Projects",
 	  active: true
     },
     {
@@ -35,11 +35,12 @@
 
 {% block beforeContent %}
 	  	{% include "../includes/phase-banner.html" %}
+    {{ super() }}
 {% endblock %}
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-Your projects
+Projects
 {% endset %}
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
