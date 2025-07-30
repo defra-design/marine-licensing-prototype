@@ -92,6 +92,10 @@ router.get('/' + version + section + 'sign-in', function (req, res) {
     if (req.query.user_type === 'organisation') {
         req.session.data['user_type'] = 'organisation';
     }
+    // Store component type if provided (for autocomplete vs radio button selection)
+    if (req.query.component_type) {
+        req.session.data['component_type'] = req.query.component_type;
+    }
     // Store goto parameter if provided (for sign-out -> sign-in flow)
     if (req.query.goto) {
         req.session.data['goto'] = req.query.goto;
@@ -110,7 +114,13 @@ router.post('/' + version + section + 'sign-in-router', function (req, res) {
     if (req.session.data['user_type'] === 'organisation') {
         // Clear the flag to ensure this is treated as a new selection
         delete req.session.data['changing-organisation'];
-        res.redirect('organisation-selector');
+        
+        // Redirect to autocomplete version if component_type is set to autocomplete
+        if (req.session.data['component_type'] === 'autocomplete') {
+            res.redirect('organisation-selector-autocomplete');
+        } else {
+            res.redirect('organisation-selector');
+        }
     } else {
         // Check if user came from sign-out (goto=home parameter)
         if (req.session.data['goto'] === 'home') {
@@ -3369,6 +3379,50 @@ router.get('/' + version + section + 'organisation-selector', function (req, res
         organisations: organisations,
         changingOrganisation: isChangingOrg
     });
+});
+
+// organisation selector autocomplete route
+router.get('/' + version + section + 'organisation-selector-autocomplete', function (req, res) {
+    // If the user is changing their organisation, set a flag in the session
+    const isChangingOrg = req.query.change === 'true';
+    if (isChangingOrg) {
+        req.session.data['changing-organisation'] = 'true';
+    }
+
+    res.render(version + section + 'organisation-selector-autocomplete', {
+        changingOrganisation: isChangingOrg
+    });
+});
+
+// organisation selector autocomplete router
+router.post('/' + version + section + 'organisation-selector-autocomplete-router', function (req, res) {
+    // Turn off errors by default
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    // Check if the autocomplete value is selected
+    if (!req.session.data['organisation-name'] || req.session.data['organisation-name'].trim() === '') {
+        req.session.data['errorthispage'] = "true";
+        req.session.data['errortypeone'] = "true";
+        res.redirect('organisation-selector-autocomplete');
+    } else {
+        // If the user is changing their organisation, redirect to the home page
+        if (req.session.data['changing-organisation'] === 'true') {
+            // Reset the flag
+            delete req.session.data['changing-organisation'];
+            res.redirect('home');
+        } else {
+            // Check if user came from sign-out (goto=home parameter)
+            if (req.session.data['goto'] === 'home') {
+                // Clear the goto parameter and redirect to home
+                delete req.session.data['goto'];
+                res.redirect('home');
+            } else {
+                // Redirect to the project name page for new users
+                res.redirect('project-name-start');
+            }
+        }
+    }
 });
 
 };

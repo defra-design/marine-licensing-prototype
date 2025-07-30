@@ -41,6 +41,13 @@ window.GOVUKPrototypeKit.documentReady(() => {
     // Initialize autocomplete if the container exists on the page
     const autocompleteContainer = document.querySelector('#my-autocomplete-container')
     if (autocompleteContainer) {
+      // Create a hidden input to store the selected value
+      const hiddenInput = document.createElement('input')
+      hiddenInput.type = 'hidden'
+      hiddenInput.name = 'organisation-name'
+      hiddenInput.id = 'organisation-name-hidden'
+      autocompleteContainer.parentNode.appendChild(hiddenInput)
+      
       accessibleAutocomplete({
         element: autocompleteContainer,
         id: 'my-autocomplete',
@@ -48,8 +55,22 @@ window.GOVUKPrototypeKit.documentReady(() => {
         minLength: 1,
         showAllValues: true,
         confirmOnBlur: false,
-        autoselect: true
+        autoselect: true,
+        onConfirm: function(value) {
+          // Update the hidden input with the selected value
+          hiddenInput.value = value || ''
+        }
       })
+      
+      // Also handle manual typing by updating the hidden input on input change
+      setTimeout(() => {
+        const autocompleteInput = document.querySelector('#my-autocomplete')
+        if (autocompleteInput) {
+          autocompleteInput.addEventListener('input', function(e) {
+            hiddenInput.value = e.target.value || ''
+          })
+        }
+      }, 100)
     }
   } else {
     console.error('accessibleAutocomplete is not available')
