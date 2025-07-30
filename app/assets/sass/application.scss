@@ -423,3 +423,40 @@ body.page-cookie-banner {
 } 
 */
 
+// Page header with button component
+.page-header-with-button {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 20px; // govuk-spacing(4)
+}
+
+.page-header-title {
+  margin-bottom: 0 !important; // Remove default heading margin
+  flex: 1;
+}
+
+.page-header-button {
+  margin-bottom: 0 !important; // Remove default button margin
+  flex-shrink: 0;
+}
+
+// Mobile responsive behavior
+@media (max-width: 40.0525em) {
+  .page-header-with-button {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 15px; // govuk-spacing(3) for mobile
+  }
+  
+  .page-header-title {
+    margin-bottom: 0 !important;
+  }
+  
+  .page-header-button {
+    align-self: stretch; // Full width on mobile
+    text-align: center;
+  }
+}
+
