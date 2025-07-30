@@ -1,10 +1,12 @@
 {% extends "../layouts/exemption.html" %}
 
 {% block beforeContent %}
-
-{% include "../includes/phase-banner.html" %}
-
+    {% include "../includes/phase-banner.html" %}
+    {{ super() }}
 {% endblock %}
+
+{% from "govuk/components/panel/macro.njk" import govukPanel %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% block content %}
 
