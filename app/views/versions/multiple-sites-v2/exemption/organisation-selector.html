@@ -1,20 +1,47 @@
 {% extends "../layouts/exemption.html" %}
 
 {% block header %}
-{% from "govuk/components/header/macro.njk" import govukHeader %}
-{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
-
-{{ govukHeader({
-  classes: "govuk-header--full-width-border"
-}) }}
-{{ govukServiceNavigation({
-  serviceName: "Get permission for marine work"
-}) }}
+  {% from "govuk/components/header/macro.njk" import govukHeader %}
+  {% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
+  {% if data['changing-organisation'] === 'true' %}
+    {{ govukHeader({
+      classes: "govuk-header--full-width-border"
+    }) }}
+    {{ govukServiceNavigation({
+      serviceName: "Get permission for marine work",
+      navigation: [
+        {
+          href: "home",
+          text: "Projects"
+        },
+        {
+          href: "#",
+          text: "Defra account"
+        },
+        {
+          href: "sign-in",
+          text: "Sign out"
+        }
+      ]
+    }) }}
+  {% else %}
+    {{ govukHeader({
+      classes: "govuk-header--full-width-border"
+    }) }}
+    {{ govukServiceNavigation({
+      serviceName: "Get permission for marine work"
+    }) }}
+  {% endif %}
 {% endblock %}
 
 {% block beforeContent %}
     {% include "../includes/phase-banner.html" %}
+    {% if data['changing-organisation'] === 'true' %}
+      {% include "../includes/organisation-switcher.html" %}
+      <a href="javascript:history.back()" class="govuk-back-link">Back</a>
+    {% endif %}
 {% endblock %}
+
 
 <!-- Set the heading for the page -->
 {% set pageHeadingTextHTML %}
@@ -75,24 +102,7 @@ Select an organisation
       classes: "govuk-fieldset__legend--l"
     }
   },
-  items: [
-    {
-      value: "North East Wind Farms",
-      text: "North East Wind Farms"
-    },
-    {
-      value: "Plymouth Port Services",
-      text: "Plymouth Port Services"
-    },
-    {
-      value: "Portsmouth Wind Farm",
-      text: "Portsmouth Wind Farm"
-    },
-    {
-      value: "Southampton Marina",
-      text: "Southampton Marina"
-    }
-  ],
+  items: organisations,
   errorMessage: {
     text: errorText1HTML
   } if data['errortypeone'] == "true"

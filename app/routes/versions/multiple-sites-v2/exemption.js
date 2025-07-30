@@ -99,6 +99,8 @@ router.get('/' + version + section + 'sign-in', function (req, res) {
 router.post('/' + version + section + 'sign-in-router', function (req, res) {
     // if a user is an org user then redirect to select an org
     if (req.session.data['user_type'] === 'organisation') {
+        // Clear the flag to ensure this is treated as a new selection
+        delete req.session.data['changing-organisation'];
         res.redirect('organisation-selector');
     } else {
         // Redirect to the project name page
@@ -118,8 +120,15 @@ router.post('/' + version + section + 'organisation-selector-router', function (
         req.session.data['errortypeone'] = "true";
         res.redirect('organisation-selector');
     } else {
-        // Redirect to the project name page
-        res.redirect('project-name-start');
+        // If the user is changing their organisation, redirect to the home page
+        if (req.session.data['changing-organisation'] === 'true') {
+            // Reset the flag
+            delete req.session.data['changing-organisation'];
+            res.redirect('home');
+        } else {
+            // Redirect to the project name page for new users
+            res.redirect('project-name-start');
+        }
     }
 });
 
@@ -3315,5 +3324,26 @@ router.post('/' + version + 'help/cookies', function (req, res) {
 });
 
 // Unified model global exports removed - using batch system exclusively
+
+router.get('/' + version + section + 'organisation-selector', function (req, res) {
+    // If the user is changing their organisation, set a flag in the session
+    if (req.query.change === 'true') {
+        req.session.data['changing-organisation'] = 'true';
+    }
+
+    const allOrganisations = [
+        {value: "North East Wind Farms", text: "North East Wind Farms"},
+        {value: "Plymouth Port Services", text: "Plymouth Port Services"},
+        {value: "Portsmouth Wind Farm", text: "Portsmouth Wind Farm"},
+        {value: "Southampton Marina", text: "Southampton Marina"}
+    ];
+
+    const currentOrganisation = req.session.data['organisation-name'];
+    const organisations = allOrganisations.filter(org => org.value !== currentOrganisation);
+
+    res.render(version + section + 'organisation-selector', {
+        organisations: organisations
+    });
+});
 
 };
