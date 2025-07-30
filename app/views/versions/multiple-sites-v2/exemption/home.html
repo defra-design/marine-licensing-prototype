@@ -52,9 +52,14 @@ Projects
 
 <div class="govuk-grid-row">
 	<div class="govuk-grid-column-full">
-		<h1 class="govuk-heading-l">
-			{{ pageHeadingTextHTML }}
-		</h1>
+		<div class="page-header-with-button govuk-!-margin-bottom-6">
+			<h1 class="govuk-heading-l page-header-title">
+				{{ pageHeadingTextHTML }}
+			</h1>
+			<a href="/versions/multiple-sites-v2/start-improved" role="button" draggable="false" class="govuk-button govuk-button--secondary page-header-button" data-module="govuk-button">
+				Create new project
+			</a>
+		</div>
 
 		{% set isDeleteProject = data['deleteProject'] == "true" or deleteProjectsParam %}
 		{% set isTowerBridgeDeleted = data['towerBridgeProjectDeleted'] == "true" %}

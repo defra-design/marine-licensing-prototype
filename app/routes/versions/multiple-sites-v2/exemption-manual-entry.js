@@ -381,6 +381,8 @@ router.get('/' + version + section + 'manual-entry/does-your-project-involve-mor
     
     // Initialize review state for new manual entry journey (but not when editing from review)
     if (returnTo !== 'review-site-details') {
+        // Set flag to indicate user is in site details journey
+        req.session.data['inSiteDetailsJourney'] = true;
         req.session.data['reviewPageVisited'] = false;
         req.session.data['reviewPageSaved'] = false;
         req.session.data['isEditingFromReview'] = false;
@@ -2298,6 +2300,9 @@ router.post('/' + version + section + 'manual-entry/review-site-details-router',
     
     delete req.session.data['currentBatchId'];
     
+    // Clear site details journey flag as journey is completed
+    delete req.session.data['inSiteDetailsJourney'];
+    
     // Check if we came from check answers page
     if (req.session.data['camefromcheckanswers'] === 'true') {
         req.session.data['camefromcheckanswers'] = false;
@@ -2486,6 +2491,11 @@ router.get('/' + version + section + 'manual-entry/cancel-to-review', function (
 router.get('/' + version + section + 'manual-entry/cancel-from-review-site-details', function (req, res) {
     logCancelState(req.session, 'manual-entry/cancel-from-review-site-details - redirecting to main handler');
     res.redirect('../cancel-site-details');
+});
+
+// Redirect manual entry change organisation warning to parent level
+router.get('/' + version + section + 'manual-entry/change-organisation-warning', function (req, res) {
+    res.redirect('../change-organisation-warning');
 });
 
 // Function to renumber all sites after deletion

@@ -1,6 +1,24 @@
 <div class="app-organisation-switcher">
 	<span class="govuk-body-s govuk-!-font-weight-bold app-organisation-switcher__name">{{ data['organisation-name'] }}</span>
-	<a class="govuk-link app-organisation-switcher__link govuk-link--no-visited-state" href="organisation-selector?change=true">
-		Change organisation
-	</a>
+	{% if data['component_type'] === 'autocomplete' %}
+		{% if data['inSiteDetailsJourney'] %}
+			<a class="govuk-link app-organisation-switcher__link govuk-link--no-visited-state" href="change-organisation-warning">
+				Change organisation
+			</a>
+		{% else %}
+			<a class="govuk-link app-organisation-switcher__link govuk-link--no-visited-state" href="organisation-selector-autocomplete?change=true">
+				Change organisation
+			</a>
+		{% endif %}
+	{% else %}
+		{% if data['inSiteDetailsJourney'] %}
+			<a class="govuk-link app-organisation-switcher__link govuk-link--no-visited-state" href="change-organisation-warning">
+				Change organisation
+			</a>
+		{% else %}
+			<a class="govuk-link app-organisation-switcher__link govuk-link--no-visited-state" href="organisation-selector?change=true">
+				Change organisation
+			</a>
+		{% endif %}
+	{% endif %}
 </div>
