@@ -1158,6 +1158,9 @@ router.get('/' + version + section + 'review-site-details', function (req, res) 
     // Validate method switch backup for edge cases
     validateMethodSwitchBackup(req.session);
     
+    // Set journey flag - user is in site details journey when on review page
+    req.session.data['inSiteDetailsJourney'] = true;
+    
     // Set origin context based on how user arrived
     if (req.query.camefromcheckanswers === 'true') {
         setOriginContext(req.session, 'check-answers');
@@ -1264,7 +1267,10 @@ router.get('/' + version + section + 'review-site-details', function (req, res) 
     }
     
     // Use the regular review page for all site counts (single or multiple)
-    res.render(version + section + 'review-site-details', { sites });
+    res.render(version + section + 'review-site-details', { 
+        sites,
+        data: req.session.data 
+    });
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -2954,13 +2960,16 @@ router.post('/' + version + section + 'review-site-details-router', function (re
     // Clear currentBatchId so we can start fresh next time
     delete req.session.data['currentBatchId'];
     
-    // Clear site details journey flag as journey is completed
-    delete req.session.data['inSiteDetailsJourney'];
+    // Note: Keep inSiteDetailsJourney flag - user still in site details section until they go to task list
     
     if (req.session.data['camefromcheckanswers'] === 'true') {
         req.session.data['camefromcheckanswers'] = false;
+        // Clear journey flag when leaving site details section
+        delete req.session.data['inSiteDetailsJourney'];
         res.redirect('check-answers-multiple-sites');
     } else {
+        // Clear journey flag when leaving site details section  
+        delete req.session.data['inSiteDetailsJourney'];
         res.redirect('task-list');
     }
 });
@@ -3081,7 +3090,7 @@ router.get('/' + version + section + 'cancel', function (req, res) {
 // POST route for cancel confirmation - enhanced with state management
 router.post('/' + version + section + 'cancel-confirmed', function (req, res) {
     logCancelState(req.session, 'cancel-confirmed - user confirmed cancellation');
-    delete session.data['user_type'];
+    delete req.session.data['user_type'];
     
     // Clear any method switch backup (user explicitly confirmed cancellation)
     clearMethodSwitchBackup(req.session);
