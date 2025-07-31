@@ -389,66 +389,6 @@
       {{ pageHeadingTextHTML }}
     </h1>
 
-    <!-- Applicant details card - only for organisation users -->
-    {% if data['user_type'] === 'organisation' %}
-    <div class="govuk-summary-card">
-      <div class="govuk-summary-card__title-wrapper">
-        <h2 class="govuk-summary-card__title">
-          Applicant details
-        </h2>
-      </div>
-      <div class="govuk-summary-card__content">
-        <dl class="govuk-summary-list">
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-              Organisation
-            </dt>
-            <dd class="govuk-summary-list__value">
-              <p>{{ data['organisation-name'] }}</p>
-              {% if data['applicationSubmitted'] != "true" %}
-              <p class="govuk-hint">To change the organisation you'll need to:</p>
-
-              <ul class="govuk-list--bullet govuk-hint">
-                <li>delete this project from the <a href="home" class="govuk-link--no-visited-state">projects page</a></li>
-                <li>change organisation</li>
-                <li>start again and <a href="/versions/multiple-sites-v2/check/start-improved">check if you need a marine licence</a></li>
-              </ul>
-              {% endif %}
-            </dd>
-          </div>
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-              Telephone number
-            </dt>
-            <dd class="govuk-summary-list__value">
-              {{ currentOrgDetails.phone }}
-            </dd>
-          </div>
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-              Email address
-            </dt>
-            <dd class="govuk-summary-list__value">
-              {{ currentOrgDetails.email }}@email.co.uk
-            </dd>
-          </div>
-          <div class="govuk-summary-list__row">
-            <dt class="govuk-summary-list__key">
-              Address
-            </dt>
-            <dd class="govuk-summary-list__value">
-              {{ currentOrgDetails.address.line1 }}<br>
-              {{ currentOrgDetails.address.line2 }}<br>
-              {{ currentOrgDetails.address.town }}<br>
-              {{ currentOrgDetails.address.postcode }}
-            </dd>
-          </div>
-        </dl>
-      </div>
-    </div>
-    {% endif %}
-    <!-- End of applicant details section -->
-
     <!-- Project summary section -->
     <div class="govuk-summary-card">
       <div class="govuk-summary-card__title-wrapper">
@@ -523,9 +463,10 @@
         <p><a href="/public/downloads/notification-sample-answers.pdf" rel="noreferrer noopener" target="_blank">Download a copy of your answers (PDF)</a></p>  
         
           {% if data['applicationSubmitted'] != "true" %}
-              <p class="govuk-hint">If you need to change any of your 'Check if you need a marine licence' answers:</p>
+          <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+          <p>If you need to change any of your 'Check if you need a marine licence' answers:</p>
 
-              <ol class="govuk-list govuk-list--number govuk-hint">
+              <ol class="govuk-list govuk-list--number">
                 <li>Delete this project from <a href="home" class="govuk-link--no-visited-state">the projects page</a>.</li>
                 <li>Restart the process by <a href="/versions/mvp/check/start">checking if you need a marine licence</a>.</li>
               </ol>
@@ -537,6 +478,69 @@
       </div>
     </div>
     <!-- End of project summary section -->
+
+    <!-- Applicant details card - only for organisation users -->
+    {% if data['user_type'] === 'organisation' %}
+    <div class="govuk-summary-card">
+      <div class="govuk-summary-card__title-wrapper">
+        <h2 class="govuk-summary-card__title">
+          Applicant details
+        </h2>
+      </div>
+      <div class="govuk-summary-card__content">
+        <dl class="govuk-summary-list">
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Organisation
+            </dt>
+            <dd class="govuk-summary-list__value">
+              <p>{{ data['organisation-name'] }}</p>
+              {% if data['applicationSubmitted'] != "true" %}
+              <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+              <p>To change the organisation you'll need to:</p>
+
+              <ul class="govuk-list--bullet">
+                <li>delete this project from the <a href="home" class="govuk-link--no-visited-state">projects page</a></li>
+                <li>change organisation</li>
+                <li>start again and <a href="/versions/multiple-sites-v2/check/start-improved">check if you need a marine licence</a></li>
+              </ul>
+              {% endif %}
+            </dd>
+          </div>
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Telephone number
+            </dt>
+            <dd class="govuk-summary-list__value">
+              {{ currentOrgDetails.phone }}
+            </dd>
+          </div>
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Email address
+            </dt>
+            <dd class="govuk-summary-list__value">
+              {{ currentOrgDetails.email }}@email.co.uk
+            </dd>
+          </div>
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Address
+            </dt>
+            <dd class="govuk-summary-list__value">
+              {{ currentOrgDetails.address.line1 }}<br>
+              {{ currentOrgDetails.address.line2 }}<br>
+              {{ currentOrgDetails.address.town }}<br>
+              {{ currentOrgDetails.address.postcode }}
+            </dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+    {% endif %}
+    <!-- End of applicant details section -->
+
+    
 
     <!-- Check if we have file upload sites to show additional cards -->
     {% set hasFileUploadSites = false %}
