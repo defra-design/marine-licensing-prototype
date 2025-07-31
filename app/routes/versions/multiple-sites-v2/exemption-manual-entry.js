@@ -2025,6 +2025,9 @@ router.get('/' + version + section + 'manual-entry/review-site-details', functio
     // Validate method switch backup for edge cases
     validateMethodSwitchBackup(req.session);
     
+    // Set journey flag - user is in site details journey when on review page
+    req.session.data['inSiteDetailsJourney'] = true;
+    
     console.log('=== REVIEW SITE DETAILS DEBUG ===');
     req.session.data['errorthispage'] = "false";
     req.session.data['errors'] = [];
@@ -2170,7 +2173,8 @@ router.get('/' + version + section + 'manual-entry/review-site-details', functio
     res.render(version + section + 'manual-entry/review-site-details', { 
         sites,
         isActiveEditing,
-        currentBatch: batchForTemplate
+        currentBatch: batchForTemplate,
+        data: req.session.data
     });
 });
 
@@ -2300,14 +2304,17 @@ router.post('/' + version + section + 'manual-entry/review-site-details-router',
     
     delete req.session.data['currentBatchId'];
     
-    // Clear site details journey flag as journey is completed
-    delete req.session.data['inSiteDetailsJourney'];
+    // Note: Keep inSiteDetailsJourney flag - user still in site details section until they go to task list
     
     // Check if we came from check answers page
     if (req.session.data['camefromcheckanswers'] === 'true') {
         req.session.data['camefromcheckanswers'] = false;
+        // Clear journey flag when leaving site details section
+        delete req.session.data['inSiteDetailsJourney'];
         res.redirect('../check-answers-multiple-sites');
     } else {
+        // Clear journey flag when leaving site details section
+        delete req.session.data['inSiteDetailsJourney'];
         res.redirect('../task-list');
     }
 });
@@ -2496,6 +2503,11 @@ router.get('/' + version + section + 'manual-entry/cancel-from-review-site-detai
 // Redirect manual entry change organisation warning to parent level
 router.get('/' + version + section + 'manual-entry/change-organisation-warning', function (req, res) {
     res.redirect('../change-organisation-warning');
+});
+
+// Add redirect for change organisation confirmed from manual entry paths
+router.post('/' + version + section + 'manual-entry/change-organisation-confirmed', function (req, res) {
+    res.redirect('../change-organisation-confirmed');
 });
 
 // Function to renumber all sites after deletion
