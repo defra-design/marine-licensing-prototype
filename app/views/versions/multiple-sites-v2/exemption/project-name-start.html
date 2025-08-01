@@ -14,8 +14,10 @@
 
 {% block beforeContent %}
     {% include "../includes/phase-banner.html" %}
-    {% set hideOrgChangeLink = false %}
-    {% include "../includes/organisation-switcher.html" %}
+    {% if data['user_type'] === 'organisation' %}
+        {% set hideOrgChangeLink = false %}
+        {% include "../includes/organisation-switcher.html" %}
+    {% endif %}
 {% endblock %}
 
 <!-- Setting the big main heading at the top of the page -->

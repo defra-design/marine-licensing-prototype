@@ -985,6 +985,9 @@ router.post('/' + version + section + 'check-answers-router', function (req, res
 
 // Add route handler for check-answers-multiple-sites page
 router.get('/' + version + section + 'check-answers-multiple-sites', function (req, res) {
+    // Clear site details journey flag - user has left site details section
+    delete req.session.data['inSiteDetailsJourney'];
+    
     // Ensure the site details are marked as saved when reaching check answers
     req.session.data['siteDetailsSaved'] = true;
     
@@ -1017,6 +1020,9 @@ router.post('/' + version + section + 'delete-router', function (req, res) {
 
 // Home page initialization - ensure project deletion flags are properly set
 router.get('/' + version + section + 'home', function (req, res) {
+    // Clear site details journey flag - user has left site details section
+    delete req.session.data['inSiteDetailsJourney'];
+    
     // Initialize flags if they don't exist already
     if (req.session.data['userProjectDeleted'] === undefined) {
         req.session.data['userProjectDeleted'] = 'false';
