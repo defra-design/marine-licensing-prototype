@@ -2228,7 +2228,7 @@ router.post('/' + version + section + 'upload-file-router', function (req, res) 
                     month: '',
                     year: ''
                 },
-                mapImage: '/public/images/worthing-map-drawn-copy.jpg'
+                mapImage: '/public/images/map-drawn.jpg'
             },
             {
                 name: 'Sediment sample 2',
@@ -2243,7 +2243,7 @@ router.post('/' + version + section + 'upload-file-router', function (req, res) 
                     month: '',
                     year: ''
                 },
-                mapImage: '/public/images/worthing-map-square-copy.jpg'
+                mapImage: '/public/images/map-square.jpg'
             },
             {
                 name: 'Sediment sample 3',
@@ -2258,7 +2258,7 @@ router.post('/' + version + section + 'upload-file-router', function (req, res) 
                     month: '',
                     year: ''
                 },
-                mapImage: '/public/images/worthing-map-4-points-copy.jpg'
+                mapImage: '/public/images/map-4-points.jpg'
             },
             {
                 name: 'Sediment sample 4',
@@ -2273,7 +2273,7 @@ router.post('/' + version + section + 'upload-file-router', function (req, res) 
                     month: '',
                     year: ''
                 },
-                mapImage: '/public/images/worthing-map-5-points-copy.jpg'
+                mapImage: '/public/images/map-5-points.jpg'
             }
         ];
     } else if (uploadCount === 2) {
@@ -2292,7 +2292,7 @@ router.post('/' + version + section + 'upload-file-router', function (req, res) 
                     month: '',
                     year: ''
                 },
-                mapImage: '/public/images/worthing-map-drawn-copy.jpg'
+                mapImage: '/public/images/map-drawn.jpg'
             }
         ];
     } else {
@@ -2311,7 +2311,7 @@ router.post('/' + version + section + 'upload-file-router', function (req, res) 
                     month: '',
                     year: ''
                 },
-                mapImage: '/public/images/worthing-map-drawn-copy.jpg'
+                mapImage: '/public/images/map-drawn.jpg'
             },
             {
                 name: 'Worthing sample',
@@ -2326,7 +2326,7 @@ router.post('/' + version + section + 'upload-file-router', function (req, res) 
                     month: '',
                     year: ''
                 },
-                mapImage: '/public/images/worthing-map-square-copy.jpg'
+                mapImage: '/public/images/map-square.jpg'
             }
         ];
     }

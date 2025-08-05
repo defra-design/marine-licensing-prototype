@@ -419,16 +419,16 @@ Review site details
                             {% endif %}
                             
                             <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">
+                                <dt class="govuk-summary-list__key map-label">
                                     Map view
                                 </dt>
                                 <dd class="govuk-summary-list__value">
+                                    <img src="{{ site.mapImage or '/public/images/map-drawn.jpg' }}" alt="Map showing site {{ siteIndex }} location" />
                                 </dd>
-                                <dd class="govuk-summary-list__actions"></dd>
                             </div>
                         </dl>
                         
-                        <img src="{{ site.mapImage or '/public/images/worthing-map-drawn-copy.jpg' }}" alt="Map showing site {{ siteIndex }} location" width="100%" />
+                        
                     </div>
                 </div>
             {% endfor %}
