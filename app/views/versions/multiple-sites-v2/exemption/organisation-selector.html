@@ -45,7 +45,7 @@
 
 <!-- Set the heading for the page -->
 {% set pageHeadingTextHTML %}
-Which organisation is this project for?
+Select the organisation this work is for
 {% endset %}
 
 {% set errorText1HTML %}
@@ -101,6 +101,9 @@ Which organisation is this project for?
       isPageHeading: true,
       classes: "govuk-fieldset__legend--l"
     }
+  },
+  hint: {
+    text: "You can change the organisation later from the Projects page."
   },
   items: organisations,
   errorMessage: {
