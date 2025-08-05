@@ -15,7 +15,6 @@
 {% block beforeContent %}
     {% include "../includes/phase-banner.html" %}
     {% if data['user_type'] === 'organisation' %}
-        {% set hideOrgChangeLink = false %}
         {% include "../includes/organisation-switcher.html" %}
     {% endif %}
 {% endblock %}
