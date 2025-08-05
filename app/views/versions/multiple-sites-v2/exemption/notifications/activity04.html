@@ -21,7 +21,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% set pageHeadingTextHTML %}
-  EXE/2025/00005 – Exempt activity – South coast sea samples	
+  EXE/2025/00007 – Exempt activity – King Point Marina mooring piles removal	
 {% endset %}
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
@@ -36,15 +36,11 @@
   
 	  
 		<!-- Caption but no reference-->
-		<span class="govuk-caption-l">EXE/2025/00005</span>
+		<span class="govuk-caption-l">EXE/2025/00007</span>
 	  
 	  
 	  <h1 class="govuk-heading-l">
-		
-	
-	  South coast sea samples
-	
-  
+		King Point Marina mooring piles removal
 	  </h1>
 
 	  <!-- Application details section -->
@@ -71,7 +67,7 @@
 				Reference number
 			  </dt>
 			  <dd class="govuk-summary-list__value">
-				EXE/2025/00005
+				EXE/2025/00006
 			  </dd>
 			</div>
 
@@ -99,11 +95,20 @@
 		<div class="govuk-summary-card__content">
 		  <dl class="govuk-summary-list">
 			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+				  Organisation
+				</dt>
+				<dd class="govuk-summary-list__value">
+					North East Windfarms
+				</dd>
+			  </div>
+			
+			<div class="govuk-summary-list__row">
 			  <dt class="govuk-summary-list__key">
 				Name
 			  </dt>
 			  <dd class="govuk-summary-list__value">
-				Joe Bloggs
+				Jane Smith
 			  </dd>
 			</div>
 
@@ -112,7 +117,7 @@
 				Email address
 			  </dt>
 			  <dd class="govuk-summary-list__value">
-				joe.bloggs@email.com
+				northeastwindfarms@email.co.uk
 			  </dd>
 			</div>
 
@@ -121,19 +126,19 @@
 				Telephone number
 			  </dt>
 			  <dd class="govuk-summary-list__value">
-				0777 7777 777
+				0191 234 5678
 			  </dd>
 			</div>
 
 			<div class="govuk-summary-list__row">
 			  <dt class="govuk-summary-list__key">
-				Address
+				Registered ddress
 			  </dt>
 			  <dd class="govuk-summary-list__value">
-				1 The Parade<br>
-				Southtown<br>
-				Southernshire<br>
-				SO1 1AA
+				Unit 1<br>
+				Sea View Estate<br>
+				Tynemouth<br>
+				NE30 1NN
 			  </dd>
 			</div>
 		  </dl>
@@ -166,7 +171,7 @@
 			What the activity involves
 		  </dt>
 		  <dd class="govuk-summary-list__value">
-			Scientific research
+			Markers, moorings or aids to navigation
 		  </dd>
 		</div>-->
   
@@ -175,7 +180,7 @@
 			The purpose of the activity
 		  </dt>
 		  <dd class="govuk-summary-list__value">
-			Samples for testing and analysis
+			Moorings or aids to navigation
 		  </dd>
 		</div>
 	  <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
@@ -183,7 +188,7 @@
 			The applicant's answers from 'Check if you need a marine licence'  
 		</dt>
 		<dd class="govuk-summary-list__value">
-		  <p><a href="/public/downloads/notification-sample-answers.pdf" rel="noreferrer noopener" target="_blank">Download a copy of their answers (PDF)</a></p>  
+		  <p><a href="/public/downloads/exemption-pilemoorings-answers.pdf" rel="noreferrer noopener" target="_blank">Download a copy of their answers (PDF)</a></p>  
 		</dd>
 	  </div>
 	  <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
@@ -191,7 +196,7 @@
 		  Why this activity is exempt
 		</dt>
 		<dd class="govuk-summary-list__value">
-			Based on the applicant's answers, their activity is exempt under <a href="https://www.legislation.gov.uk/uksi/2011/409/article/17A" rel="noreferrer noopener" target="_blank">Article 17A of the Marine Licensing (Exempted Activities) Order 2011 (opens in new tab)</a> 
+			Based on the applicant's answers, their activity is exempt under <a href="https://www.legislation.gov.uk/uksi/2011/409/article/25" rel="noreferrer noopener" target="_blank">Article 25 of the Marine Licensing (Exempted Activities) Order 2011 (opens in new tab)</a> 
 		</dd>
   
 	  </div>
@@ -200,52 +205,13 @@
 	  </div>
 	  <!-- End of project summary section -->
   
-	  <!-- Check if we have file upload sites to show additional cards -->
-	  
-	  
-		
-		  
-		
-		  
-		
-	  
-  
-	  <!-- Providing site location card - only for file upload sites -->
-	  
-  
-	  <!-- Check if we have manual entry sites to show additional cards -->
-	  
-	  
-	  
-		
-		  
-			
-			
-			  
-			
-		  
-		
-		  
-			
-			
-		  
-		
-	  
-  
-	  <!-- Determine if this is a single site journey (define early for use in manual entry cards) -->
-	  
-  
 	  <!-- Providing site location card - only for manual entry single sites -->
-	  
-  
-	  <!-- Providing site location card - only for manual entry multiple sites -->
-	  
+    
 	  <div class="govuk-summary-card">
 		<div class="govuk-summary-card__title-wrapper">
 		  <h2 class="govuk-summary-card__title">
 			Providing the site location
 		  </h2>
-		  
 		  
 		</div>
 		<div class="govuk-summary-card__content">
@@ -258,71 +224,20 @@
 				Enter the coordinates of the site manually
 			  </dd>
 			</div>
+			<div class="govuk-summary-list__row">
+			  <dt class="govuk-summary-list__key">
+				More than one site
+			  </dt>
+			  <dd class="govuk-summary-list__value">
+				No
+			  </dd>
+			</div>
 		  </dl>
 		</div>
 	  </div>
+	  
   
-	  <!-- Activity details card - only for manual entry multiple sites -->
-	  <div class="govuk-summary-card">
-		<div class="govuk-summary-card__title-wrapper">
-		  <h2 class="govuk-summary-card__title">
-			Activity details
-		  </h2>
-		  
-		  
-		</div>
-		<div class="govuk-summary-card__content">
-		  <dl class="govuk-summary-list">
-			<div class="govuk-summary-list__row">
-			  <dt class="govuk-summary-list__key">
-				Are the activity dates the same for every site?
-			  </dt>
-			  <dd class="govuk-summary-list__value">
-				  Yes
-			  </dd>
-			</div>
-			
-			
-			
-			<div class="govuk-summary-list__row">
-			  <dt class="govuk-summary-list__key">
-				Activity dates
-			  </dt>
-			  <dd class="govuk-summary-list__value">
-				
-				  6 August 2025 to 10 August 2025
-				
-			  </dd>
-			</div>
-			
-			
-			<div class="govuk-summary-list__row">
-			  <dt class="govuk-summary-list__key">
-				Is the activity description the same for every site?
-			  </dt>
-			  <dd class="govuk-summary-list__value">
-				
-				  Yes
-				
-			  </dd>
-			</div>
-			
-			
-			
-			<div class="govuk-summary-list__row">
-			  <dt class="govuk-summary-list__key">
-				Activity description
-			  </dt>
-			  <dd class="govuk-summary-list__value">
-				
-				  Collect a 0.1 cubic metre seabed sample by day grab from a workboat for particle size analysis
-				
-			  </dd>
-			</div>
-			
-		  </dl>
-		</div>
-	  </div>
+	  <!-- Providing site location card - only for manual entry multiple sites -->
 	  
   
 	  <!-- Dynamic site cards using a loop -->
@@ -333,10 +248,9 @@
 			<div class="govuk-summary-card__title-wrapper">
 			  <h2 class="govuk-summary-card__title">
 				
-				  Site 1 details
+				  Site details
 				
 			  </h2>
-			  
 			  
 			  
 			</div>
@@ -349,20 +263,41 @@
   
 				  <!-- Only show site name for multiple site journeys -->
 				  
-				  <div class="govuk-summary-list__row">
-					<dt class="govuk-summary-list__key">
-					  Site name
-					</dt>
-					<dd class="govuk-summary-list__value">
-					  Worthing sample
-					</dd>
-				  </div>
+  
+				  <!-- Get siteBatch for condition checks -->
+				  
+				  
+					
+					  
+						
+					  
+					
 				  
   
 				  <!-- Only show activity dates if they are different for each site OR if single site -->
 				  
+				  <div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+					  Activity dates
+					</dt>
+					<dd class="govuk-summary-list__value">
+					  18 September 2025 to 22 October 2025
+					</dd>
+				  </div>
+				  
   
 				  <!-- Only show activity description if they are different for each site OR if single site -->
+				  
+				  <div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+					  Activity description
+					</dt>
+					<dd class="govuk-summary-list__value">
+					  
+						Remove 8 mooring piles in King Point Marina by crane barge to create space for pontoons
+					  
+					</dd>
+				  </div>
 				  
   
 				  <div class="govuk-summary-list__row">
@@ -370,7 +305,7 @@
 					  Method of entering the coordinates
 					</dt>
 					<dd class="govuk-summary-list__value">
-					  Manually enter one set of coordinates and a width to create a circular site
+					  Manually enter multiple sets of coordinates to mark the boundary of the site
 					</dd>
 				  </div>
   
@@ -387,25 +322,53 @@
 					</dd>
 				  </div>
   
-				  <div class="govuk-summary-list__row">
-					<dt class="govuk-summary-list__key">
-					  Coordinates at centre of site
-					</dt>
-					<dd class="govuk-summary-list__value">
-					  50.800994, -0.371437
-					</dd>
-				  </div>
+				  
+					<div class="govuk-summary-list__row">
+					  <dt class="govuk-summary-list__key">
+						
+						  Start and end points
+						
+					  </dt>
+					  <dd class="govuk-summary-list__value">
+						50.365859, -4.133983
+					  </dd>
+					</div>
+				  
+					<div class="govuk-summary-list__row">
+					  <dt class="govuk-summary-list__key">
+						
+						  Point 2
+						
+					  </dt>
+					  <dd class="govuk-summary-list__value">
+						50.365917, -4.133481
+					  </dd>
+					</div>
+				  
+					<div class="govuk-summary-list__row">
+					  <dt class="govuk-summary-list__key">
+						
+						  Point 3
+						
+					  </dt>
+					  <dd class="govuk-summary-list__value">
+						50.365733, -4.133493
+					  </dd>
+					</div>
+				  
+					<div class="govuk-summary-list__row">
+					  <dt class="govuk-summary-list__key">
+						
+						  Point 4
+						
+					  </dt>
+					  <dd class="govuk-summary-list__value">
+						50.365783, -4.134008
+					  </dd>
+					</div>
+				  
   
-				  <div class="govuk-summary-list__row">
-					<dt class="govuk-summary-list__key">
-					  Width of circular site
-					</dt>
-					<dd class="govuk-summary-list__value">
-					  25 metres
-					</dd>
-				  </div>
-  
-				<!-- Manual polygon sites -->
+				<!-- Fallback for any other site types -->
 				
   
 				<div class="govuk-summary-list__row">
@@ -413,98 +376,7 @@
                     Map view
                   </dt>
                   <dd class="govuk-summary-list__value">
-                    <img src="/public/images/map-circle.jpg" alt="Map showing site 1 location">
-                  </dd>
-                </div>
-			  </dl>
-			</div>
-		  </div>
-		
-		  <div class="govuk-summary-card">
-			<div class="govuk-summary-card__title-wrapper">
-			  <h2 class="govuk-summary-card__title">
-				
-				  Site 2 details
-				
-			  </h2>
-			  
-			  
-			  
-			</div>
-  
-			<div class="govuk-summary-card__content">
-			  <dl class="govuk-summary-list">
-				
-				<!-- File upload sites -->
-				
-  
-				  <!-- Only show site name for multiple site journeys -->
-				  
-				  <div class="govuk-summary-list__row">
-					<dt class="govuk-summary-list__key">
-					  Site name
-					</dt>
-					<dd class="govuk-summary-list__value">
-					  Brighton sample
-					</dd>
-				  </div>
-				  
-  
-				  <!-- Only show activity dates if they are different for each site OR if single site -->
-				  
-  
-				  <!-- Only show activity description if they are different for each site OR if single site -->
-				  
-  
-				  <div class="govuk-summary-list__row">
-					<dt class="govuk-summary-list__key">
-					  Method of entering the coordinates
-					</dt>
-					<dd class="govuk-summary-list__value">
-					  Manually enter one set of coordinates and a width to create a circular site
-					</dd>
-				  </div>
-  
-				  <div class="govuk-summary-list__row">
-					<dt class="govuk-summary-list__key">
-					  Coordinate system
-					</dt>
-					<dd class="govuk-summary-list__value">
-					  WGS84 (World Geodetic System 1984)
-					  <br>
-					  
-						Latitude and longitude
-					  
-					</dd>
-				  </div>
-  
-				  <div class="govuk-summary-list__row">
-					<dt class="govuk-summary-list__key">
-					  Coordinates at centre of site
-					</dt>
-					<dd class="govuk-summary-list__value">
-					  50.811008, -0.141790
-					</dd>
-				  </div>
-  
-				  <div class="govuk-summary-list__row">
-					<dt class="govuk-summary-list__key">
-					  Width of circular site
-					</dt>
-					<dd class="govuk-summary-list__value">
-					  25 metres
-					</dd>
-				  </div>
-  
-				<!-- Manual polygon sites -->
-				
-  
-				<div class="govuk-summary-list__row">
-                  <dt class="govuk-summary-list__key map-label">
-                    Map view
-                  </dt>
-                  <dd class="govuk-summary-list__value">
-                    <img src="/public/images/map-circle.jpg" alt="Map showing site 2 location">
+                    <img src="/public/images/map-polygon-example.jpg" alt="Map showing site location">
                   </dd>
                 </div>
 			  </dl>
@@ -520,7 +392,6 @@
 		  <h2 class="govuk-summary-card__title">
 			Public register
 		  </h2>
-		  
 		  
 		</div>
   

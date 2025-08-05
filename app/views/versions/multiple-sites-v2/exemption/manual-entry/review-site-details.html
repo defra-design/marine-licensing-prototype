@@ -513,36 +513,34 @@ Review site details
                             {% endif %}
                             
                             <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key">
+                                <dt class="govuk-summary-list__key map-label">
                                     Map view
                                 </dt>
                                 <dd class="govuk-summary-list__value">
+                                    {% set mapImageSrc = site.mapImage %}
+                                    {% if not mapImageSrc %}
+                                        {% if site.coordinates and site.coordinates.type == "circle" %}
+                                            {% set mapImageSrc = '/public/images/map-circle.jpg' %}
+                                        {% elif site.coordinates and site.coordinates.type == "polygon" and site.coordinates.points %}
+                                            {% if site.coordinates.points.length == 3 %}
+                                                {% set mapImageSrc = '/public/images/map-3-points.jpg' %}
+                                            {% elif site.coordinates.points.length == 4 %}
+                                                {% set mapImageSrc = '/public/images/map-4-points.jpg' %}
+                                            {% elif site.coordinates.points.length >= 5 %}
+                                                {% set mapImageSrc = '/public/images/map-5-points.jpg' %}
+                                            {% else %}
+                                                {% set mapImageSrc = '/public/images/map-drawn.jpg' %}
+                                            {% endif %}
+                                        {% else %}
+                                            {% set mapImageSrc = '/public/images/map-drawn.jpg' %}
+                                        {% endif %}
+                                    {% endif %}
+                                    <img src="{{ mapImageSrc }}" alt="Map showing site {{ siteIndex }} location" width="100%" />
                                 </dd>
-                                <dd class="govuk-summary-list__actions"></dd>
                             </div>
 
 
                         </dl>
-                        
-                        {% set mapImageSrc = site.mapImage %}
-                        {% if not mapImageSrc %}
-                            {% if site.coordinates and site.coordinates.type == "circle" %}
-                                {% set mapImageSrc = '/public/images/worthing-map-circle-copy.jpg' %}
-                            {% elif site.coordinates and site.coordinates.type == "polygon" and site.coordinates.points %}
-                                {% if site.coordinates.points.length == 3 %}
-                                    {% set mapImageSrc = '/public/images/worthing-map-3-points-copy.jpg' %}
-                                {% elif site.coordinates.points.length == 4 %}
-                                    {% set mapImageSrc = '/public/images/worthing-map-4-points-copy.jpg' %}
-                                {% elif site.coordinates.points.length >= 5 %}
-                                    {% set mapImageSrc = '/public/images/worthing-map-5-points-copy.jpg' %}
-                                {% else %}
-                                    {% set mapImageSrc = '/public/images/worthing-map-drawn-copy.jpg' %}
-                                {% endif %}
-                            {% else %}
-                                {% set mapImageSrc = '/public/images/worthing-map-drawn-copy.jpg' %}
-                            {% endif %}
-                        {% endif %}
-                        <img src="{{ mapImageSrc }}" alt="Map showing site {{ siteIndex }} location" width="100%" />
                     </div>
                 </div>
             {% endfor %}

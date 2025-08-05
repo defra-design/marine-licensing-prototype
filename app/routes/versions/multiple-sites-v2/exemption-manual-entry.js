@@ -2161,6 +2161,14 @@ router.get('/' + version + section + 'manual-entry/review-site-details', functio
     
     // Get the current batch to pass to template
     const batchForTemplate = getCurrentBatch(req.session);
+
+    // Clear stale map images to force re-evaluation in the template
+    if (batchForTemplate && batchForTemplate.sites) {
+        batchForTemplate.sites.forEach(site => {
+            delete site.mapImage;
+        });
+    }
+
     console.log('Batch for template:', batchForTemplate ? {
         id: batchForTemplate.id,
         sitesCount: batchForTemplate.sites.length,
