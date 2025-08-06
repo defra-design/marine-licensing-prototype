@@ -53,9 +53,12 @@ Projects
 <div class="govuk-grid-row">
 	<div class="govuk-grid-column-full">
 		<div class="page-header-with-button govuk-!-margin-bottom-6">
-			<h1 class="govuk-heading-l page-header-title">
-				{{ pageHeadingTextHTML }}
-			</h1>
+			<div class="page-header-text-container">
+				<span class="govuk-caption-l">{{ data['organisation-name'] }}</span>
+				<h1 class="govuk-heading-l page-header-title">
+					{{ pageHeadingTextHTML }}
+				</h1>
+			</div>
 			<a href="/versions/multiple-sites-v2/start-improved" role="button" draggable="false" class="govuk-button govuk-button--secondary page-header-button" data-module="govuk-button">
 				Create new project
 			</a>
