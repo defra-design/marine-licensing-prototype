@@ -15,41 +15,45 @@
 {% endblock %}
 
 {% block content %}
-  <!-- Error summary -->
-  {% if data['errorthispage'] == "true" %}
-    {{ govukErrorSummary({
-      titleText: "There is a problem",
-      errorList: [
-        {
-          text: "Select an option",
-          href: "#" + inputName
-        }
-      ]
-    }) }}
-  {% endif %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <!-- Error summary -->
+      {% if data['errorthispage'] == "true" %}
+        {{ govukErrorSummary({
+          titleText: "There is a problem",
+          errorList: [
+            {
+              text: "Select an option",
+              href: "#" + inputName
+            }
+          ]
+        }) }}
+      {% endif %}
 
-  <form method="post" novalidate>
+      <form method="post" novalidate>
 
-    {{ govukRadios({
-      idPrefix: inputName,
-      name: inputName,
-      fieldset: {
-        legend: {
-          html: (('<span class="govuk-caption-l">' + caption + '</span>') if caption else '') + h1,
-          isPageHeading: true,
-          classes: "govuk-fieldset__legend--l"
-        }
-      },
-      hint: {
-        html: hintHtml
-      } if hintHtml,
-      items: radios,
-      errorMessage: {
-        text: "Select an option"
-      } if data['errortypeone'] == "true"
-    }) }}
+        {{ govukRadios({
+          idPrefix: inputName,
+          name: inputName,
+          fieldset: {
+            legend: {
+              html: (('<span class="govuk-caption-l">' + caption + '</span>') if caption else '') + h1,
+              isPageHeading: true,
+              classes: "govuk-fieldset__legend--l"
+            }
+          },
+          hint: {
+            html: hintHtml
+          } if hintHtml,
+          items: radios,
+          errorMessage: {
+            text: "Select an option"
+          } if data['errortypeone'] == "true"
+        }) }}
 
-    {{ govukButton({ text: "Continue" }) }}
+        {{ govukButton({ text: "Continue" }) }}
 
-  </form>
+      </form>
+    </div>
+  </div>
 {% endblock %}
