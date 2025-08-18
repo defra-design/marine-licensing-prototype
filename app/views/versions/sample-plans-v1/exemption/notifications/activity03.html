@@ -1,0 +1,412 @@
+{% extends "../../layouts/exemption.html" %}
+
+{% block header %}
+{% from "govuk/components/header/macro.njk" import govukHeader %}
+{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
+
+{{ govukHeader({
+  classes: "govuk-header--full-width-border"
+}) }}
+{{ govukServiceNavigation({
+  serviceName: "Get permission for marine work"
+}) }}
+{% endblock %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+{% endblock %}
+
+
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageHeadingTextHTML %}
+  EXE/2025/00006 – Exempt activity – King Point Marina mooring piles removal	
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-full">
+  
+	  
+		<!-- Caption but no reference-->
+		<span class="govuk-caption-l">EXE/2025/00006</span>
+	  
+	  
+	  <h1 class="govuk-heading-l">
+		King Point Marina mooring piles removal
+	  </h1>
+
+	  <!-- Application details section -->
+	  <div class="govuk-summary-card">
+		<div class="govuk-summary-card__title-wrapper">
+		  <h2 class="govuk-summary-card__title">
+			Application details
+		  </h2>
+		</div>
+
+		<div class="govuk-summary-card__content">
+		  <dl class="govuk-summary-list">
+			<div class="govuk-summary-list__row">
+			  <dt class="govuk-summary-list__key">
+				Application type
+			  </dt>
+			  <dd class="govuk-summary-list__value">
+				Exempt activity notification
+			  </dd>
+			</div>
+
+			<div class="govuk-summary-list__row">
+			  <dt class="govuk-summary-list__key">
+				Reference number
+			  </dt>
+			  <dd class="govuk-summary-list__value">
+				EXE/2025/00006
+			  </dd>
+			</div>
+
+			<div class="govuk-summary-list__row">
+			  <dt class="govuk-summary-list__key">
+				Date submitted
+			  </dt>
+			  <dd class="govuk-summary-list__value">
+				9 July 2025
+			  </dd>
+			</div>
+		  </dl>
+		</div>
+	  </div>
+	  <!-- End of application details section -->
+  
+	  <!-- Applicant details section -->
+	  <div class="govuk-summary-card">
+		<div class="govuk-summary-card__title-wrapper">
+		  <h2 class="govuk-summary-card__title">
+			Applicant details
+		  </h2>
+		</div>
+
+		<div class="govuk-summary-card__content">
+		  <dl class="govuk-summary-list">
+			<div class="govuk-summary-list__row">
+			  <dt class="govuk-summary-list__key">
+				Name
+			  </dt>
+			  <dd class="govuk-summary-list__value">
+				James Jones
+			  </dd>
+			</div>
+
+			<div class="govuk-summary-list__row">
+			  <dt class="govuk-summary-list__key">
+				Email address
+			  </dt>
+			  <dd class="govuk-summary-list__value">
+				james.jones@email.com
+			  </dd>
+			</div>
+
+			<div class="govuk-summary-list__row">
+			  <dt class="govuk-summary-list__key">
+				Telephone number
+			  </dt>
+			  <dd class="govuk-summary-list__value">
+				0777 9876 123
+			  </dd>
+			</div>
+
+			<div class="govuk-summary-list__row">
+			  <dt class="govuk-summary-list__key">
+				Address
+			  </dt>
+			  <dd class="govuk-summary-list__value">
+				101 Sea View Road<br>
+				Seasidehampton<br>
+				Seasideshire<br>
+				S38 1SS
+			  </dd>
+			</div>
+		  </dl>
+		</div>
+	  </div>
+	  <!-- End of applicant details section -->
+
+	  <!-- Project summary section -->
+	  <div class="govuk-summary-card">
+		<div class="govuk-summary-card__title-wrapper">
+		  <h2 class="govuk-summary-card__title">
+			Project summary
+		  </h2>
+		</div>
+  
+		<div class="govuk-summary-card__content">
+		  <dl class="govuk-summary-list">
+  
+			<div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+		  <dt class="govuk-summary-list__key">
+			Type of activity
+		  </dt>
+		  <dd class="govuk-summary-list__value">
+			Removal of a substance or object
+		  </dd>
+		</div>
+  
+		<!--<div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+		  <dt class="govuk-summary-list__key">
+			What the activity involves
+		  </dt>
+		  <dd class="govuk-summary-list__value">
+			Markers, moorings or aids to navigation
+		  </dd>
+		</div>-->
+  
+		<div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+		  <dt class="govuk-summary-list__key">
+			The purpose of the activity
+		  </dt>
+		  <dd class="govuk-summary-list__value">
+			Moorings or aids to navigation
+		  </dd>
+		</div>
+	  <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+		<dt class="govuk-summary-list__key">
+			The applicant's answers from 'Check if you need a marine licence'  
+		</dt>
+		<dd class="govuk-summary-list__value">
+		  <p><a href="/public/downloads/exemption-pilemoorings-answers.pdf" rel="noreferrer noopener" target="_blank">Download a copy of their answers (PDF)</a></p>  
+		</dd>
+	  </div>
+	  <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+		<dt class="govuk-summary-list__key">
+		  Why this activity is exempt
+		</dt>
+		<dd class="govuk-summary-list__value">
+			Based on the applicant's answers, their activity is exempt under <a href="https://www.legislation.gov.uk/uksi/2011/409/article/25" rel="noreferrer noopener" target="_blank">Article 25 of the Marine Licensing (Exempted Activities) Order 2011 (opens in new tab)</a> 
+		</dd>
+  
+	  </div>
+		  </dl>
+		</div>
+	  </div>
+	  <!-- End of project summary section -->
+  
+	  <!-- Providing site location card - only for manual entry single sites -->
+    
+	  <div class="govuk-summary-card">
+		<div class="govuk-summary-card__title-wrapper">
+		  <h2 class="govuk-summary-card__title">
+			Providing the site location
+		  </h2>
+		  
+		</div>
+		<div class="govuk-summary-card__content">
+		  <dl class="govuk-summary-list">
+			<div class="govuk-summary-list__row">
+			  <dt class="govuk-summary-list__key">
+				Method of providing site location
+			  </dt>
+			  <dd class="govuk-summary-list__value">
+				Enter the coordinates of the site manually
+			  </dd>
+			</div>
+			<div class="govuk-summary-list__row">
+			  <dt class="govuk-summary-list__key">
+				More than one site
+			  </dt>
+			  <dd class="govuk-summary-list__value">
+				No
+			  </dd>
+			</div>
+		  </dl>
+		</div>
+	  </div>
+	  
+  
+	  <!-- Providing site location card - only for manual entry multiple sites -->
+	  
+  
+	  <!-- Dynamic site cards using a loop -->
+	  
+		
+		
+		  <div class="govuk-summary-card">
+			<div class="govuk-summary-card__title-wrapper">
+			  <h2 class="govuk-summary-card__title">
+				
+				  Site details
+				
+			  </h2>
+			  
+			  
+			</div>
+  
+			<div class="govuk-summary-card__content">
+			  <dl class="govuk-summary-list">
+				
+				<!-- File upload sites -->
+				
+  
+				  <!-- Only show site name for multiple site journeys -->
+				  
+  
+				  <!-- Get siteBatch for condition checks -->
+				  
+				  
+					
+					  
+						
+					  
+					
+				  
+  
+				  <!-- Only show activity dates if they are different for each site OR if single site -->
+				  
+				  <div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+					  Activity dates
+					</dt>
+					<dd class="govuk-summary-list__value">
+					  18 September 2025 to 22 October 2025
+					</dd>
+				  </div>
+				  
+  
+				  <!-- Only show activity description if they are different for each site OR if single site -->
+				  
+				  <div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+					  Activity description
+					</dt>
+					<dd class="govuk-summary-list__value">
+					  
+						Remove 8 mooring piles in King Point Marina by crane barge to create space for pontoons
+					  
+					</dd>
+				  </div>
+				  
+  
+				  <div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+					  Method of entering the coordinates
+					</dt>
+					<dd class="govuk-summary-list__value">
+					  Manually enter multiple sets of coordinates to mark the boundary of the site
+					</dd>
+				  </div>
+  
+				  <div class="govuk-summary-list__row">
+					<dt class="govuk-summary-list__key">
+					  Coordinate system
+					</dt>
+					<dd class="govuk-summary-list__value">
+					  WGS84 (World Geodetic System 1984)
+					  <br>
+					  
+						Latitude and longitude
+					  
+					</dd>
+				  </div>
+  
+				  
+					<div class="govuk-summary-list__row">
+					  <dt class="govuk-summary-list__key">
+						
+						  Start and end points
+						
+					  </dt>
+					  <dd class="govuk-summary-list__value">
+						50.365859, -4.133983
+					  </dd>
+					</div>
+				  
+					<div class="govuk-summary-list__row">
+					  <dt class="govuk-summary-list__key">
+						
+						  Point 2
+						
+					  </dt>
+					  <dd class="govuk-summary-list__value">
+						50.365917, -4.133481
+					  </dd>
+					</div>
+				  
+					<div class="govuk-summary-list__row">
+					  <dt class="govuk-summary-list__key">
+						
+						  Point 3
+						
+					  </dt>
+					  <dd class="govuk-summary-list__value">
+						50.365733, -4.133493
+					  </dd>
+					</div>
+				  
+					<div class="govuk-summary-list__row">
+					  <dt class="govuk-summary-list__key">
+						
+						  Point 4
+						
+					  </dt>
+					  <dd class="govuk-summary-list__value">
+						50.365783, -4.134008
+					  </dd>
+					</div>
+				  
+  
+				<!-- Fallback for any other site types -->
+				
+  
+				<div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key map-label">
+                    Map view
+                  </dt>
+                  <dd class="govuk-summary-list__value">
+                    <img src="/public/images/map-polygon-example.jpg" alt="Map showing site location">
+                  </dd>
+                </div>
+			  </dl>
+			</div>
+		  </div>
+		
+	  
+	  <!-- End of dynamic site cards -->
+  
+	  <!-- Public register section -->
+	  <div class="govuk-summary-card">
+		<div class="govuk-summary-card__title-wrapper">
+		  <h2 class="govuk-summary-card__title">
+			Public register
+		  </h2>
+		  
+		</div>
+  
+		<div class="govuk-summary-card__content">
+		  <dl class="govuk-summary-list">
+			<div class="govuk-summary-list__row">
+			  <dt class="govuk-summary-list__key">
+				Information withheld from public register
+			  </dt>
+			  <dd class="govuk-summary-list__value">
+				No
+			  </dd>
+			</div>
+  
+			
+		  </dl>
+		</div>
+	  </div>
+  
+	  
+	  
+	</div>
+  </div>
+  
+
+{% endblock %}
+<!-- Generated by Copilot -->

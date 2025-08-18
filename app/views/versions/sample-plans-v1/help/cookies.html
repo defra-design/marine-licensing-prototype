@@ -1,0 +1,156 @@
+{% extends "../layouts/exemption.html" %}
+
+{% block beforeContent %}
+    {% include "../includes/phase-banner.html" %}
+    {% include "../includes/back-link.html" %}
+{% endblock %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+
+{% block pageTitle %}Cookies on Get permission for marine work{% endblock %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+      {% if data['cookieSettingsSaved'] == 'true' %}
+        {% set html %}
+        <p class="govuk-notification-banner__heading">
+          Your cookie preferences were saved. <a class="govuk-notification-banner__link" href="#">Go back to the previous page</a>.
+        </p>
+        {% endset %}
+        
+        {{ govukNotificationBanner({
+          html: html,
+          type: "success"
+        }) }}
+      {% endif %}
+
+      <h1 class="govuk-heading-xl">Cookies on Get permission for marine work</h1>
+
+  <p class="govuk-body">Cookies are small files saved on your phone, tablet or computer when you visit a website.</p>
+
+  <p class="govuk-body">We use cookies to make this site work and collect information about how you use our service.</p>
+
+  <h2 class="govuk-heading-l">Essential cookies</h2>
+
+  <p class="govuk-body">Essential cookies keep your information secure while you use this service. We do not need to ask permission to use them.</p>
+
+  {{ govukTable({
+    head: [
+      {
+        text: "Name"
+      },
+      {
+        text: "Purpose"
+      },
+      {
+        text: "Expires"
+      }
+    ],
+    rows: [
+      [
+        {
+          text: "Cookie 1"
+        },
+        {
+          text: "Plain language description of cookie purpose"
+        },
+        {
+          text: "Cookie duration"
+        }
+      ],
+      [
+        {
+          text: "Cookie 2"
+        },
+        {
+          text: "Plain language description of cookie purpose"
+        },
+        {
+          text: "Cookie duration"
+        }
+      ]
+    ]
+  }) }}
+
+  <h2 class="govuk-heading-l">Analytics cookies (optional)</h2>
+
+  <p class="govuk-body">With your permission, we use Google Analytics to collect data about how you use this service. This information helps us to improve our service.</p>
+
+  <p class="govuk-body">Google is not allowed to use or share our analytics data with anyone.</p>
+
+  {{ govukTable({
+    head: [
+      {
+        text: "Name"
+      },
+      {
+        text: "Purpose"
+      },
+      {
+        text: "Expires"
+      }
+    ],
+    rows: [
+      [
+        {
+          text: "_ga"
+        },
+        {
+          text: "Checks if you have visited before so we can count how many people use the service."
+        },
+        {
+          text: "2 years"
+        }
+      ],
+      [
+        {
+          text: "_ga_<container-id>"
+        },
+        {
+          text: "Collects information about how you use the service so we can make it better."
+        },
+        {
+          text: "2 years"
+        }
+      ]
+    ]
+  }) }}
+
+  <h2 class="govuk-heading-l">Change your cookie settings</h2>
+
+  <form method="post">
+    {{ govukRadios({
+      name: "analytics-cookies",
+      fieldset: {
+        legend: {
+          text: "Do you want to accept analytics cookies?",
+          isPageHeading: false,
+          classes: "govuk-fieldset__legend--m"
+        }
+      },
+      items: [
+        {
+          value: "yes",
+          text: "Yes",
+          checked: data['analytics-cookies'] === "yes"
+        },
+        {
+          value: "no",
+          text: "No",
+          checked: data['analytics-cookies'] === "no"
+        }
+      ]
+    }) }}
+
+    {{ govukButton({
+      text: "Save cookie settings"
+    }) }}
+  </form>
+    </div>
+  </div>
+{% endblock %} 

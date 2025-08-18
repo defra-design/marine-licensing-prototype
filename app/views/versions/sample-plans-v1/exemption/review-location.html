@@ -1,0 +1,339 @@
+{% extends "../layouts/exemption.html" %}
+
+{% block beforeContent %}
+    {% include "../includes/phase-banner.html" %}
+    {% include "../includes/back-link.html" %}
+{% endblock %}
+
+{% set pageHeadingTextHTML %}
+
+{% if data['siteTitle'] == "review" or not data['siteTitle'] %}
+  Review site details
+{% elif data['siteTitle'] == "view" %}
+Review site details
+{% endif %}
+
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {% if  data['errorthispage'] == "true"  %}
+        Error:
+    {% endif %}
+
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+
+  <div class="govuk-grid-column-full">
+    <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
+    <h1 class="govuk-heading-l">
+      {{ pageHeadingTextHTML }}
+    </h1>
+
+    <!-- Common to all coordinates -->
+    <div class="govuk-summary-card">
+      <div class="govuk-summary-card__title-wrapper">
+        <h2 class="govuk-summary-card__title">
+          Site details
+        </h2>
+      </div>
+      <div class="govuk-summary-card__content">
+        <dl class="govuk-summary-list">
+
+    <!-- End of common to all coordinates-->
+
+    <!-- Start of upload file -->
+    {% if data['exemption-how-do-you-want-to-provide-the-coordinates-radios'] == "Upload a file with the coordinates of the site"  %}
+
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">
+        Method of providing site location
+      </dt>
+      <dd class="govuk-summary-list__value">
+        {{ data['exemption-how-do-you-want-to-provide-the-coordinates-radios'] }}
+      </dd>
+      <dd class="govuk-summary-list__actions">
+        <a class="govuk-link" href="how-do-you-want-to-provide-the-coordinates?fromreview=true">Change<span class="govuk-visually-hidden"> How do you want to provide the coordinates?</span></a>
+      </dd>
+    </div>
+
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">
+        File type
+      </dt>
+      <dd class="govuk-summary-list__value">
+        {{ data['exemption-which-type-of-file-radios'] }}
+      </dd>
+      <dd class="govuk-summary-list__actions">
+        <a class="govuk-link" href="which-type-of-file?fromreview=true">Change<span class="govuk-visually-hidden"> File type</span></a>
+      </div>
+
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">
+        File uploaded
+      </dt>
+      <dd class="govuk-summary-list__value">
+        {% if data['exemption-which-type-of-file-radios'] == "KML" %}
+          coordinates.kml
+        {% elif data['exemption-which-type-of-file-radios'] == "Shapefile" %}
+          coordinates.shp
+        {% endif %}
+      </dd>
+      <dd class="govuk-summary-list__actions">
+        <a class="govuk-link" href="upload-file?fromreview=true">Change<span class="govuk-visually-hidden"> File uploaded</span></a>
+      </dd>
+    </div>
+
+    </dl>
+
+    <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
+
+    <dl class="govuk-summary-list">
+
+    <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+      <dt class="govuk-summary-list__key">
+        Map view
+      </dt>
+      <dd class="govuk-summary-list__value">
+        
+      </dd>
+    </div>
+    </dl>  
+
+    <!-- Display the correct map depending on the scenario - will default to the pontoon if no data available -->
+    {% if (data['exemption'] == "pontoon-approval" or data['exemption'] == "pontoon-notification" or data['exemption'] == "") %}
+    <img src="/public/images/pontoon-map-4-points.jpg" alt="Map view" style="width: 100%;">
+
+    {% elif data['exemption'] == "sample-notification" %}
+    <img src="/public/images/worthing-map-5-points.jpg" alt="Map view" style="width: 100%;">
+    {% endif %}
+
+    </div>
+    </div>
+
+    {% endif %}
+    <!-- End of upload file -->
+
+    <!-- Start of enter coordinates manually -->
+
+    {% if data['exemption-how-do-you-want-to-provide-the-coordinates-radios'] == "Enter the coordinates of the site manually"  %}
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">
+        Method of providing site location
+      </dt>
+      <dd class="govuk-summary-list__value">
+            Manually <span style="text-transform: lowercase;">{{ data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] }}</span>
+      </dd>
+      <dd class="govuk-summary-list__actions">
+        <a class="govuk-link" href="how-do-you-want-to-provide-the-coordinates">Change<span class="govuk-visually-hidden"> Method of providing site location</span></a>
+      </dd>
+    </div>
+
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">Coordinate system
+      </dt>
+      <dd class="govuk-summary-list__value">
+        {{ data['exemption-what-coordinate-system-radios'] }}<br> 
+        {% if data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter multiple sets of coordinates to mark the boundary of the site" or
+        data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter one set of coordinates and a width to create a circular site" or
+        data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter the centre point of a square and its width" %}
+          
+        {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['exemption-what-coordinate-system-radios'] %} Latitude and longitude
+        
+        {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %} Eastings and Northings
+
+        {% endif %}
+         
+        {% endif %}
+      </dd>
+      <dd class="govuk-summary-list__actions">
+        <a class="govuk-link" href="what-coordinate-system.html">Change<span class="govuk-visually-hidden"> Which coordinate system do you want to use?</span></a>
+      </dd>
+    </div>
+
+    <!-- Start of it's a circle -->
+    {% if data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter one set of coordinates and a width to create a circular site" %}
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">
+        Coordinates at centre of site
+      </dt>
+      <dd class="govuk-summary-list__value">
+       {{ data['exemption-enter-the-coordinates-at-the-centre-point-latitude-text-input'] }}, {{ data['exemption-enter-the-coordinates-at-the-centre-point-longitude-text-input'] }}
+      </dd>
+      <dd class="govuk-summary-list__actions">
+        <a class="govuk-link" href="enter-the-coordinates-at-the-centre-point?fromreview=true">Change<span class="govuk-visually-hidden"> Change</span></a>
+      </dd>
+    </div>
+    <div class="govuk-summary-list__row">
+      <dt class="govuk-summary-list__key">
+        Width of circular site
+      </dt>
+      <dd class="govuk-summary-list__value">
+        {{ data['exemption-width-of-site-number-input'] }} metres
+      </dd>
+      <dd class="govuk-summary-list__actions">
+        <a class="govuk-link" href="width-of-site?fromreview=true">Change<span class="govuk-visually-hidden"> Width of site</span></a>
+      </dd>
+    </div>
+  </dl>
+  <hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
+  
+  <dl class="govuk-summary-list">
+
+    <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+      <dt class="govuk-summary-list__key">
+        Map view
+      </dt>
+      <dd class="govuk-summary-list__value">
+        
+      </dd>
+    </div>
+  </dl>   
+
+  <!-- Display the correct map depending on the scenario - will default to the pontoon if no data available -->
+  {% if (data['exemption'] == "pontoon-approval" or data['exemption'] == "pontoon-notification" or data['exemption'] == "") %}
+  <img src="/public/images/pontoon-map-circle.jpg" alt="Map view" style="width: 100%;">
+
+  {% elif data['exemption'] == "sample-notification" %}
+  <img src="/public/images/worthing-map-circle.jpg" alt="Map view" style="width: 100%;">
+  {% endif %}
+  
+  <!-- End of it's a circle -->
+
+  <!-- Start of enter multiple coords -->
+  {% elif data['exemption-how-do-you-want-to-enter-the-coordinates-radios'] == "Enter multiple sets of coordinates to mark the boundary of the site" %}
+
+  <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+    <dt class="govuk-summary-list__key">
+      Start and end points
+    </dt>
+    <dd class="govuk-summary-list__value">
+      {{ data['coordinates-point-1-latitude'] }}, {{ data['coordinates-point-1-longitude'] }} 
+    </dd>
+    <dd class="govuk-summary-list__actions">
+      <a class="govuk-link" href="enter-multiple-coordinates?fromreview=true">Change<span class="govuk-visually-hidden"> coordinates</span></a>
+    </dd>
+  </div>
+
+  <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+    <dt class="govuk-summary-list__key">
+      Point 2
+    </dt>
+    <dd class="govuk-summary-list__value">
+      {{ data['coordinates-point-2-latitude'] }}, {{ data['coordinates-point-2-longitude'] }}
+    </dd>
+    <dd class="govuk-summary-list__actions">
+
+    </dd>
+  </div>
+
+  <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+    <dt class="govuk-summary-list__key">
+      Point 3
+    </dt>
+    <dd class="govuk-summary-list__value">
+      {{ data['coordinates-point-3-latitude'] }}, {{ data['coordinates-point-3-longitude'] }}
+    </dd>
+    <dd class="govuk-summary-list__actions">
+
+    </dd>
+  </div>
+
+  <!-- Only display Point 4 if data was entered -->
+  {% if data['coordinates-point-4-latitude'] and data['coordinates-point-4-longitude'] %}
+  <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+    <dt class="govuk-summary-list__key">
+      Point 4
+    </dt>
+    <dd class="govuk-summary-list__value">
+      {{ data['coordinates-point-4-latitude'] }}, {{ data['coordinates-point-4-longitude'] }}
+    </dd>
+    <dd class="govuk-summary-list__actions">
+
+    </dd>
+  </div>
+  {% endif %}
+
+  <!-- Only display Point 5 if data was entered -->
+  {% if data['coordinates-point-5-latitude'] and data['coordinates-point-5-longitude'] %}
+  <div class="govuk-summary-list__row">
+    <dt class="govuk-summary-list__key">
+      Point 5
+    </dt>
+    <dd class="govuk-summary-list__value">
+      {{ data['coordinates-point-5-latitude'] }}, {{ data['coordinates-point-5-longitude'] }}
+    </dd>
+    <dd class="govuk-summary-list__actions">
+    
+    </dd>
+  </div>
+  {% endif %}
+</dl>
+
+<hr class="govuk-section-break govuk-section-break--s govuk-section-break--visible">
+
+<dl class="govuk-summary-list">
+
+  <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+    <dt class="govuk-summary-list__key">
+      Map view
+    </dt>
+    <dd class="govuk-summary-list__value">
+      
+    </dd>
+  </div>
+</dl>  
+
+<!-- Display the correct map depending on the scenario - will default to the pontoon if no data available -->
+{% if (data['exemption'] == "pontoon-approval" or data['exemption'] == "pontoon-notification" or data['exemption'] == "") %}
+  <!-- Display the correct map depending on how many points are shown -->
+  {% if data['coordinates-point-4-latitude'] and data['coordinates-point-4-longitude'] %}
+  {% if data['coordinates-point-5-latitude'] and data['coordinates-point-5-longitude'] %}
+      <img src="/public/images/pontoon-map-5-points.jpg" alt="Map view" style="width: 100%;">
+  {% else %}
+      <img src="/public/images/pontoon-map-4-points.jpg" alt="Map view" style="width: 100%;">
+  {% endif %}
+  {% else %}
+  <img src="/public/images/pontoon-map-3-points.jpg" alt="Map view" style="width: 100%;">
+  {% endif %}
+
+{% elif data['exemption'] == "sample-notification" %}
+  <!-- Display the correct map depending on how many points are shown -->
+  {% if data['coordinates-point-4-latitude'] and data['coordinates-point-4-longitude'] %}
+  {% if data['coordinates-point-5-latitude'] and data['coordinates-point-5-longitude'] %}
+      <img src="/public/images/worthing-map-5-points.jpg" alt="Map view" style="width: 100%;">
+  {% else %}
+      <img src="/public/images/worthing-map-4-points.jpg" alt="Map view" style="width: 100%;">
+  {% endif %}
+  {% else %}
+  <img src="/public/images/worthing-map-3-points.jpg" alt="Map view" style="width: 100%;">
+  {% endif %}
+{% endif %}
+
+{% endif %}
+<!-- End of enter multiple coords -->
+  
+  </div>
+  </div>
+  <!-- End of entering square or circle coordinates -->
+{% endif %}  
+<!-- End of enter coordinates manually -->
+
+<!-- Closing summary card divs and button - common to all -->
+   </div>
+ </div>
+
+    <form action="review-location-router" method="post" novalidate>
+      <div class="govuk-button-group">
+        {{ govukButton({
+          text: "Save and continue"
+        }) }}
+        <a class="govuk-link govuk-link--no-visited-state" href="#">Cancel</a>
+    </div>
+    </form>
+
+{% endblock %}
