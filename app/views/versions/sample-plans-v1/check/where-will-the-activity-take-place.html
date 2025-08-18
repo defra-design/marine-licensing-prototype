@@ -1,0 +1,150 @@
+{% extends "../layouts/main.html" %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+Where will the activity take place?  
+{% endset %}
+
+<!-- Setting the heading caption -->
+{% set captionTextHTML %}
+	Check if you need a marine licence
+{% endset %}
+
+<!-- Setting the smaller secondary heading lower down the page -->
+{% set questionHeadingTextHTML %}
+Will the activity take place in the sea, over the sea, or on or under the seabed?
+{% endset %}
+
+<!-- Set the text for the error type -->
+{% set errorTextHTML %}
+    <!-- Nothing was selected -->
+    {% if data['errortypeone'] == "true" %}
+    Select where the activity will take place  
+    {% endif %}
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {% if  data['errorthispage'] == "true"  %}
+        Error:
+    {% endif %}
+
+    {{ pageHeadingTextHTML }} - {{ data['headerName'] }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <!-- ERROR LOGIC 'error summary' -->
+        {% if data['errorthispage'] == "true" %}
+            {{ govukErrorSummary
+                ({
+                    titleText: "There is a problem",
+                    errorList:
+                    [
+                        {
+                            html: errorTextHTML,
+                            href: "#check-where-will-the-activity-take-place-radios"
+                        }
+                    ]
+                })
+            }}
+        {% endif %}
+        <!--  END OF 'error summary' -->
+
+        <!-- go to routes.js for routing  -->
+        <form action="where-will-the-activity-take-place-router" method="post" novalidate>
+
+            <h1 class="govuk-heading-l">
+                {{ pageHeadingTextHTML }}
+            </h1>
+
+            <p>Find out more about <a href="https://www.gov.uk/guidance/marine-licensing-definitions" target="_blank" rel="noreferrer noopener">mean high water springs (opens in new tab)</a></p>
+
+            {{ govukRadios
+                ({
+                    name: "check-where-will-the-activity-take-place-radios",
+
+                    id: "check-where-will-the-activity-take-place-radios",
+
+                    fieldset:
+                    {
+                        legend:
+                        {
+                            html: questionHeadingTextHTML,
+                            isPageHeading: false,
+                            classes: "govuk-fieldset__legend--m govuk-visually-hidden"
+                        }
+                    },
+
+                    errorMessage: null if data['errorthispage'] != "true"
+                                       else { html: errorTextHTML },
+
+                    items:
+                    [
+                        {
+                            value: "In or over the sea",
+                            text: "In or over the sea",
+                            checked: data['check-where-will-the-activity-take-place-radios'] == "In or over the sea",
+                            hint: {
+                                text: "The sea includes any area submerged at mean high water springs"
+                              }
+                        },
+                        {
+                            value: "On or under the seabed",
+                            text: "On or under the seabed",
+                            checked: data['check-where-will-the-activity-take-place-radios'] == "On or under the seabed"
+                        },
+                        {
+                            value: "In a river, estuary, or channel, up to the normal tidal limit at mean high water spring tide",
+                            text: "In a river, estuary, or channel, up to the normal tidal limit at mean high water spring tide",
+                            checked: data['check-where-will-the-activity-take-place-radios'] == "In a river, estuary, or channel, up to the normal tidal limit at mean high water spring tide"
+                        },
+                        {
+                            value: "Waters in a closed area, such as a dock, where seawater can flow in or out",
+                            text: "Waters in a closed area, such as a dock, where seawater can flow in or out",
+                            checked: data['check-where-will-the-activity-take-place-radios'] == "Waters in a closed area, such as a dock, where seawater can flow in or out"
+                        },
+                        {
+                            divider: "or"
+                          },
+                        {
+                            value: "Somewhere else",
+                            text: "Somewhere else",
+                            checked: data['check-where-will-the-activity-take-place-radios'] == "Somewhere else",
+                            hint: {
+                                text: "For example, the part of beach above mean high water springs, or a land locked body of water, such as a lake"
+                              }
+                        }
+                    ]
+                })
+            }}
+
+            {{ govukButton({ text: "Continue" }) }}
+
+        </form>
+
+    </div>
+</div>
+
+<!-- ERROR LOGIC  drop down to toggle states  -->
+<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-325px; padding-bottom: 30px;  ">
+
+    <select style="height:30px;" onchange="window.location.href='?'+this.value">
+
+        <option value="errorthispage=false&errortypeone=false&errortypetwo=false&"
+                {% if (data['errorthispage'] != "true") %}selected{% endif %}
+        >Errors - Off</option>
+
+        <option value="errorthispage=true&errortypeone=true&errortypetwo=false&"
+                {% if (data['errortypeone'] == 'true' and data['errortypetwo'] != 'true')  %}selected{% endif %}
+        >Error 1 - Must select at least one</option>
+
+    </select>
+
+</form>
+<!--  END OF ERROR LOGIC -->
+
+{% endblock %}
+

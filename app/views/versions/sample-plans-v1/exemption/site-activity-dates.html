@@ -1,0 +1,228 @@
+{% extends "../layouts/exemption.html" %}
+
+{% block beforeContent %}
+    {% include "../includes/phase-banner.html" %}
+    {{ super() }}
+    {% include "../includes/back-link.html" %}
+{% endblock %}
+
+<!-- Set the heading for the page -->
+{% set pageHeadingTextHTML %}
+Activity dates
+{% endset %}
+
+{% set question1TextHTML %}
+Start date
+{% endset %}
+
+{% set question2TextHTML %}
+End date
+{% endset %}
+
+{% set errorText1HTML %}
+    Enter the start date
+{% endset %}
+
+{% set errorText2HTML %}
+    Enter the end date
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {% if  data['errorthispage'] == "true"  %}
+        Error:
+    {% endif %}
+
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+<!-- ERROR LOGIC 'error summary' -->
+{% if data['startdateerror'] == "true" or data['enddateerror'] == "true" %}
+  <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+    <h2 class="govuk-error-summary__title" id="error-summary-title">
+      There is a problem
+    </h2>
+    <div class="govuk-error-summary__body">
+      <ul class="govuk-list govuk-error-summary__list">
+        {% if data['startdateerror'] == "true" %}
+          <li><a href="#site-{{ data['site'] }}-start-date-day">{{ errorText1HTML }}</a></li>
+        {% endif %}
+        {% if data['enddateerror'] == "true" %}
+          <li><a href="#site-{{ data['site'] }}-end-date-day">{{ errorText2HTML }}</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+{% endif %}
+        <!--  END OF 'error summary' -->
+        
+        <!-- Determine if this is a single site file upload journey -->
+        {% set isSingleSiteFileUpload = (data['singleSiteFileUpload'] == 'true') or (data['singleSiteFileUpload'] == true) or (data['fileUploadCount'] == '2' and data.sites and data.sites.length == 1) %}
+        
+        <!-- DEBUG: Show current flag values -->
+        <!-- singleSiteFileUpload: {{ data['singleSiteFileUpload'] }}, fileUploadCount: {{ data['fileUploadCount'] }}, sites length: {{ data.sites.length if data.sites else 'no sites' }} -->
+        
+        <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}<span class="{% if not isSingleSiteFileUpload %}govuk-!-display-block{% endif %}"{% if isSingleSiteFileUpload %} style="display: none;"{% endif %}>Site {{ data['site'] }}</span></span>
+        
+        <div class="govuk-form-group">
+            <h1 class="govuk-label-wrapper">
+                <label class="govuk-label govuk-label--l">
+                    Activity dates
+                </label>
+            </h1>
+            <p>Enter the activity dates{% if not isSingleSiteFileUpload %} for this site{% endif %}. Allow time for potential delays, like consents (for example, a river works licence) or bad weather. If you miss the dates, you'll need to restart the process.</p>
+            <p>You can enter a start date from today and begin your activity as soon as you've sent your information.</p>
+        </div>
+
+        <form action="site-activity-dates-router" method="post" novalidate>
+            <input type="hidden" name="site" value="{{ data['site'] }}" />
+
+			<!-- Get current batch for fallback data -->
+			{% set currentBatch = null %}
+			{% if sites and sites.length > 0 and sites[0].batchId %}
+				{% for batch in data['siteBatches'] %}
+					{% if batch.id == sites[0].batchId %}
+						{% set currentBatch = batch %}
+					{% endif %}
+				{% endfor %}
+			{% endif %}
+
+			{% set siteIndex = data['site'] | int or 1 %}
+			{% set startDay = '' %}
+			{% set startMonth = '' %}
+			{% set startYear = '' %}
+			
+			{% if site and site.startDate %}
+				{% set startDay = site.startDate.day %}
+				{% set startMonth = site.startDate.month %}
+				{% set startYear = site.startDate.year %}
+			{% elif data["site-" + data['site'] + "-start-date-day"] %}
+				{% set startDay = data["site-" + data['site'] + "-start-date-day"] %}
+				{% set startMonth = data["site-" + data['site'] + "-start-date-month"] %}
+				{% set startYear = data["site-" + data['site'] + "-start-date-year"] %}
+			{% else %}
+				<!-- Fallback to shared batch values when transitioning from shared to individual -->
+				{% if currentBatch and currentBatch.settings and currentBatch.settings.sharedStartDate and currentBatch.settings.sharedStartDate.day %}
+					{% set startDay = currentBatch.settings.sharedStartDate.day %}
+					{% set startMonth = currentBatch.settings.sharedStartDate.month %}
+					{% set startYear = currentBatch.settings.sharedStartDate.year %}
+				{% elif data['exemption-start-date-date-input-day'] %}
+					{% set startDay = data['exemption-start-date-date-input-day'] %}
+					{% set startMonth = data['exemption-start-date-date-input-month'] %}
+					{% set startYear = data['exemption-start-date-date-input-year'] %}
+				{% endif %}
+			{% endif %}
+
+			{{ govukDateInput({
+				idPrefix: "site-" + data['site'] + "-start-date",
+				namePrefix: "site-" + data['site'] + "-start-date",
+				fieldset: {
+					legend: {
+						html: question1TextHTML,
+						isPageHeading: false,
+						classes: "govuk-fieldset__legend--s"
+					}
+				},
+				hint: {
+					text: "For example, 27 7 2026"
+				},
+				errorMessage: null if data['startdateerror'] != "true"
+							   else { text: errorText1HTML },
+				items: [
+					{ name: "day", classes: "govuk-input--width-2", value: startDay, attributes: { autocomplete: "off", inputmode: "numeric" } },
+					{ name: "month", classes: "govuk-input--width-2", value: startMonth, attributes: { autocomplete: "off", inputmode: "numeric" } },
+					{ name: "year", classes: "govuk-input--width-4", value: startYear, attributes: { autocomplete: "off", inputmode: "numeric" } }
+				]
+			}) }}
+
+			{% set endDay = '' %}
+			{% set endMonth = '' %}
+			{% set endYear = '' %}
+			
+			{% if site and site.endDate %}
+				{% set endDay = site.endDate.day %}
+				{% set endMonth = site.endDate.month %}
+				{% set endYear = site.endDate.year %}
+			{% elif data["site-" + data['site'] + "-end-date-day"] %}
+				{% set endDay = data["site-" + data['site'] + "-end-date-day"] %}
+				{% set endMonth = data["site-" + data['site'] + "-end-date-month"] %}
+				{% set endYear = data["site-" + data['site'] + "-end-date-year"] %}
+			{% else %}
+				<!-- Fallback to shared batch values when transitioning from shared to individual -->
+				{% if currentBatch and currentBatch.settings and currentBatch.settings.sharedEndDate and currentBatch.settings.sharedEndDate.day %}
+					{% set endDay = currentBatch.settings.sharedEndDate.day %}
+					{% set endMonth = currentBatch.settings.sharedEndDate.month %}
+					{% set endYear = currentBatch.settings.sharedEndDate.year %}
+				{% elif data['exemption-end-date-date-input-day'] %}
+					{% set endDay = data['exemption-end-date-date-input-day'] %}
+					{% set endMonth = data['exemption-end-date-date-input-month'] %}
+					{% set endYear = data['exemption-end-date-date-input-year'] %}
+				{% endif %}
+			{% endif %}
+			
+			{{ govukDateInput({
+				idPrefix: "site-" + data['site'] + "-end-date",
+				namePrefix: "site-" + data['site'] + "-end-date",
+				fieldset: {
+					legend: {
+						html: question2TextHTML,
+						isPageHeading: false,
+						classes: "govuk-fieldset__legend--s"
+					}
+				},
+				hint: {
+					text: "For example, 27 8 2026"
+				},
+				errorMessage: null if data['enddateerror'] != "true"
+							   else { text: errorText2HTML },
+				items: [
+					{ name: "day", classes: "govuk-input--width-2", value: endDay, attributes: { autocomplete: "off", inputmode: "numeric" } },
+					{ name: "month", classes: "govuk-input--width-2", value: endMonth, attributes: { autocomplete: "off", inputmode: "numeric" } },
+					{ name: "year", classes: "govuk-input--width-4", value: endYear, attributes: { autocomplete: "off", inputmode: "numeric" } }
+				]
+			}) }}
+
+      <div class="govuk-button-group">
+        {{ govukButton({
+          text: "Continue"
+        }) }}
+                        <a class="govuk-link govuk-link--no-visited-state" href="cancel-site-details">Cancel</a>
+    </div>
+
+        </form>
+
+    </div>
+</div>
+
+<!-- ERROR LOGIC  drop down to toggle states  -->
+<!-- Best thing to do would be to replace 'errorthispage', 'errortypeone' and 'errortypetwo' with novel name for this page  -->
+<form method="post"  action="#" class="for4" style=" float: left; position: relative; bottom:-325px; padding-bottom: 30px;  ">
+
+    <select style="height:30px;" onchange="window.location.href='?'+this.value">
+
+        <option value="startdateerror=false&enddateerror=false&"
+              {% if (data['startdateerror'] != "true") and (data['enddateerror'] != "true") %}selected{% endif %}
+        >Default</option>
+
+        <!-- DATE EMPTY FIELDS   -->
+        <option value="startdateerror=true&enddateerror=false&"
+              {% if data['startdateerror'] == 'true' and data['enddateerror'] != 'true' %}selected{% endif %}
+        >Error - No start date</option>
+
+        <option value="startdateerror=false&enddateerror=true&"
+              {% if data['startdateerror'] != 'true' and data['enddateerror'] == 'true' %}selected{% endif %}
+        >Error - No end date</option>
+
+        <option value="startdateerror=true&enddateerror=true&"
+              {% if data['startdateerror'] == 'true' and data['enddateerror'] == 'true' %}selected{% endif %}
+        >Error - No dates</option>
+    </select>
+
+</form>
+<!--  END OF ERROR LOGIC -->
+
+{% endblock %}

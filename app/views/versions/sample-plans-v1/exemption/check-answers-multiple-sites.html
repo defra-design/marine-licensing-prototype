@@ -1,0 +1,1269 @@
+{% extends "../layouts/exemption.html" %}
+
+{# Set up month names array for date conversion #}
+{% set monthNames = [
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December'
+] %}
+
+{# Set up activity information based on article #}
+{% set activityData = {
+  '13': {
+    'type': 'Construction of works',
+    'purpose': 'Infrastructure development',
+    'involves': 'Building marine structures',
+    'url': 'https://www.legislation.gov.uk/uksi/2011/409/article/13'
+  },
+  '17': {
+    'type': 'Removal of a substance or object',
+    'purpose': 'Scientific research',
+    'involves': 'Samples for testing and analysis',
+    'url': 'https://www.legislation.gov.uk/uksi/2011/409/article/17'
+  },
+  '17A': {
+    'type': 'Removal of a substance or object',
+    'purpose': 'Scientific research',
+    'involves': 'Samples for testing and analysis',
+    'url': 'https://www.legislation.gov.uk/uksi/2011/409/article/17A'
+  },
+  '17B': {
+    'type': 'Deposit of a substance or object',
+    'purpose': 'Scientific research',
+    'involves': 'Marine monitoring equipment',
+    'url': 'https://www.legislation.gov.uk/uksi/2011/409/article/17B'
+  },
+  '18A': {
+    'type': 'Construction of works',
+    'purpose': 'Scientific research',
+    'involves': 'Temporary research installations',
+    'url': 'https://www.legislation.gov.uk/uksi/2011/409/article/18A'
+  },
+  '20': {
+    'type': 'Construction of works',
+    'purpose': 'Emergency works',
+    'involves': 'Emergency repairs and safety measures',
+    'url': 'https://www.legislation.gov.uk/uksi/2011/409/article/20'
+  },
+  '21': {
+    'type': 'Dredging',
+    'purpose': 'Navigation maintenance',
+    'involves': 'Channel maintenance and deepening',
+    'url': 'https://www.legislation.gov.uk/uksi/2011/409/article/21'
+  },
+  '25': {
+    'type': 'Deposit of a substance or object',
+    'purpose': 'Habitat enhancement',
+    'involves': 'Marine habitat restoration materials',
+    'url': 'https://www.legislation.gov.uk/uksi/2011/409/article/25'
+  },
+  '25A': {
+    'type': 'Construction of works',
+    'purpose': 'Marine infrastructure',
+    'involves': 'Pontoons and marine structures',
+    'url': 'https://www.legislation.gov.uk/uksi/2011/409/article/25A'
+  },
+  '34': {
+    'type': 'Construction of works',
+    'purpose': 'Emergency works',
+    'involves': 'Emergency coastal protection works',
+    'url': 'https://www.legislation.gov.uk/uksi/2011/409/article/34'
+  },
+  '35': {
+    'type': 'Removal of a substance or object',
+    'purpose': 'Environmental protection',
+    'involves': 'Removal of marine debris and pollutants',
+    'url': 'https://www.legislation.gov.uk/uksi/2011/409/article/35'
+  }
+} %}
+
+{% set currentArticle = data['exemption-article'] or '17A' %}
+{% set currentActivity = activityData[currentArticle] or activityData['17A'] %}
+
+{# Set up organisation details mapping #}
+{% set organisationDetails = {
+  'Belfast Harbour Authority': {
+    'email': 'belfastharbour',
+    'phone': '028 9055 4422',
+    'address': {
+      'line1': 'Harbour Office',
+      'line2': 'Corporation Square',
+      'town': 'Belfast',
+      'postcode': 'BE1 2AB'
+    }
+  },
+  'Blackpool Marina Services': {
+    'email': 'blackpoolmarina',
+    'phone': '01253 623636',
+    'address': {
+      'line1': 'Marina Building',
+      'line2': 'South Shore',
+      'town': 'Blackpool',
+      'postcode': 'BL4 1DH'
+    }
+  },
+  'Brighton Marina Operations': {
+    'email': 'brightonmarina',
+    'phone': '01273 819919',
+    'address': {
+      'line1': 'Unit 12',
+      'line2': 'Marina Business Centre', 
+      'town': 'Brighton',
+      'postcode': 'BR1 2HA'
+    }
+  },
+  'Bristol Port Company': {
+    'email': 'bristolport',
+    'phone': '0117 982 0000',
+    'address': {
+      'line1': 'Port Office',
+      'line2': 'Avonmouth Docks',
+      'town': 'Bristol',
+      'postcode': 'BR11 9DQ'
+    }
+  },
+  'Cowes Yacht Services': {
+    'email': 'cowesyacht',
+    'phone': '01983 294914',
+    'address': {
+      'line1': 'Yacht Haven',
+      'line2': 'High Street',
+      'town': 'Cowes',
+      'postcode': 'CO31 7BD'
+    }
+  },
+  'Dover Port Authority': {
+    'email': 'doverport',
+    'phone': '01304 240400',
+    'address': {
+      'line1': 'Harbour House',
+      'line2': 'Marine Parade',
+      'town': 'Dover',
+      'postcode': 'DO16 1QJ'
+    }
+  },
+  'Falmouth Marina Group': {
+    'email': 'falmouthmarina',
+    'phone': '01326 316620',
+    'address': {
+      'line1': 'Marina Office',
+      'line2': 'North Parade',
+      'town': 'Falmouth',
+      'postcode': 'FA11 1LP'
+    }
+  },
+  'Great Yarmouth Port Company': {
+    'email': 'greatyarmouthport',
+    'phone': '01493 335500',
+    'address': {
+      'line1': 'Port Authority',
+      'line2': 'South Quay',
+      'town': 'Great Yarmouth',
+      'postcode': 'GR30 2QH'
+    }
+  },
+  'Grimsby Fish Dock Enterprise': {
+    'email': 'grimsbyfishdock',
+    'phone': '01472 359200',
+    'address': {
+      'line1': 'Dock Office',
+      'line2': 'Fish Dock Road',
+      'town': 'Grimsby',
+      'postcode': 'GR31 3HU'
+    }
+  },
+  'Harwich Haven Authority': {
+    'email': 'harwichhaven',
+    'phone': '01255 243030',
+    'address': {
+      'line1': 'Haven House',
+      'line2': 'Navyard Wharf',
+      'town': 'Harwich',
+      'postcode': 'HA20 3AU'
+    }
+  },
+  'Hull Marina Management': {
+    'email': 'hullmarina',
+    'phone': '01482 609955',
+    'address': {
+      'line1': 'Marina Office',
+      'line2': 'Humber Street',
+      'town': 'Hull',
+      'postcode': 'HU1 1TU'
+    }
+  },
+  'Ipswich Marina Services': {
+    'email': 'ipswichmarina',
+    'phone': '01473 236644',
+    'address': {
+      'line1': 'Neptune Marina',
+      'line2': 'Wherstead Road',
+      'town': 'Ipswich',
+      'postcode': 'IP2 8NJ'
+    }
+  },
+  'Liverpool Marine Operations': {
+    'email': 'liverpoolmarine',
+    'phone': '0151 949 6000',
+    'address': {
+      'line1': 'Maritime Centre',
+      'line2': 'Pier Head',
+      'town': 'Liverpool',
+      'postcode': 'LI3 1DG'
+    }
+  },
+  'London Gateway Port': {
+    'email': 'londongateway',
+    'phone': '01375 648484',
+    'address': {
+      'line1': 'Gateway House',
+      'line2': 'Stanford Road',
+      'town': 'London',
+      'postcode': 'LO17 9FG'
+    }
+  },
+  'Lowestoft Port Services': {
+    'email': 'lowestoftport',
+    'phone': '01502 572286',
+    'address': {
+      'line1': 'Port Office',
+      'line2': 'Commercial Road',
+      'town': 'Lowestoft',
+      'postcode': 'LO32 1HG'
+    }
+  },
+  'Newcastle Port Authority': {
+    'email': 'newcastleport',
+    'phone': '0191 455 2671',
+    'address': {
+      'line1': 'Port Authority',
+      'line2': 'Tyne Commission Quay',
+      'town': 'Newcastle',
+      'postcode': 'NE1 3DX'
+    }
+  },
+  'Norfolk Marine Services': {
+    'email': 'norfolkmarine',
+    'phone': '01603 727327',
+    'address': {
+      'line1': 'Marine House',
+      'line2': 'Riverside Road',
+      'town': 'Norfolk',
+      'postcode': 'NO4 1AX'
+    }
+  },
+  'North East Wind Farms': {
+    'email': 'northeastwindfarms',
+    'phone': '0191 234 5678',
+    'address': {
+      'line1': 'Unit 1',
+      'line2': 'Sea View Estate',
+      'town': 'Tynemouth',
+      'postcode': 'TY30 1NN'
+    }
+  },
+  'Plymouth Port Services': {
+    'email': 'plymouthport',
+    'phone': '01752 665544',
+    'address': {
+      'line1': 'Port Office',
+      'line2': 'The Barbican',
+      'town': 'Plymouth',
+      'postcode': 'PL4 0DX'
+    }
+  },
+  'Poole Harbour Commissioners': {
+    'email': 'pooleharbour',
+    'phone': '01202 440200',
+    'address': {
+      'line1': 'Harbour Office',
+      'line2': 'Poole Quay',
+      'town': 'Poole',
+      'postcode': 'PO15 2JF'
+    }
+  },
+  'Portsmouth Wind Farm': {
+    'email': 'portsmouthwindfarm',
+    'phone': '023 9229 8294',
+    'address': {
+      'line1': 'Wind Farm House',
+      'line2': 'Gunwharf Quays',
+      'town': 'Portsmouth',
+      'postcode': 'PO1 3TZ'
+    }
+  },
+  'Ramsgate Marina': {
+    'email': 'ramsgatemarina',
+    'phone': '01843 572100',
+    'address': {
+      'line1': 'Marina Office',
+      'line2': 'Royal Harbour',
+      'town': 'Ramsgate',
+      'postcode': 'RA11 1PE'
+    }
+  },
+  'Scarborough Marina': {
+    'email': 'scarboroughmarina',
+    'phone': '01723 373530',
+    'address': {
+      'line1': 'Marina Office',
+      'line2': 'West Pier',
+      'town': 'Scarborough',
+      'postcode': 'SC12 3HU'
+    }
+  },
+  'Southampton Marina': {
+    'email': 'southamptonmarina',
+    'phone': '023 8022 9385',
+    'address': {
+      'line1': 'Ocean Village',
+      'line2': 'Marina Way',
+      'town': 'Southampton',
+      'postcode': 'SO14 3QT'
+    }
+  },
+  'Tees Port Authority': {
+    'email': 'teesport',
+    'phone': '01642 877000',
+    'address': {
+      'line1': 'Port House',
+      'line2': 'Tees Dock',
+      'town': 'Middlesbrough',
+      'postcode': 'MI66 6UX'
+    }
+  },
+  'Whitby Marine Services': {
+    'email': 'whitbymarine',
+    'phone': '01947 602354',
+    'address': {
+      'line1': 'Harbour Office',
+      'line2': 'Pier Road',
+      'town': 'Whitby',
+      'postcode': 'WH21 5ET'
+    }
+  }
+} %}
+
+{% set currentOrgDetails = organisationDetails[data['organisation-name']] or organisationDetails['North East Wind Farms'] %}
+
+{% block beforeContent %}
+    {% include "../includes/phase-banner.html" %}
+    {{ super() }}
+    
+    {% if data['applicationSubmitted'] == "true" %}
+    {% include "../includes/back-link.html" %}
+    {% else %}
+    <a class="govuk-back-link" href="task-list.html" style="margin-bottom: 0;">Go back to your project</a>
+    {% endif %}
+    
+{% endblock %}
+
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageHeadingTextHTML %}
+  {% if data['applicationSubmitted'] == "true" %}
+    {{ data['exemption-project-name-text-input'] }}
+  {% else %}
+    Check your answers before sending your information
+  {% endif %}
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+
+    {% if data['applicationSubmitted'] == "true" %}
+      <span class="govuk-caption-l">	EXE/2025/00005 – Exempt activity notification</span>
+    {% else %}
+      <!-- Caption but no reference-->
+      <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
+    {% endif %}
+    
+    <h1 class="govuk-heading-l">
+      {{ pageHeadingTextHTML }}
+    </h1>
+
+    <!-- Project summary section -->
+    <div class="govuk-summary-card">
+      <div class="govuk-summary-card__title-wrapper">
+        <h2 class="govuk-summary-card__title">
+          Project summary
+        </h2>
+      </div>
+
+      <div class="govuk-summary-card__content">
+        <dl class="govuk-summary-list">
+
+          {% if data['applicationSubmitted'] == "true" %}
+          <!-- Don't display Project name if already submitted as it is now the H1-->
+          {% else %}
+
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Project name
+            </dt>
+            <dd class="govuk-summary-list__value">
+              {{ data['exemption-project-name-text-input'] }}
+            </dd>
+            {% if data['applicationSubmitted'] != "true" %}
+            <dd class="govuk-summary-list__actions">
+              <a class="govuk-link" href="project-name.html?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Project name</span></a>
+            </dd>
+            {% endif %}
+          </div>
+          {% endif %}
+
+          <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+        <dt class="govuk-summary-list__key">
+          Type of activity
+        </dt>
+        <dd class="govuk-summary-list__value">
+          {{ currentActivity.type }}
+        </dd>
+      </div>
+
+      <!--<div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+        <dt class="govuk-summary-list__key">
+          What the activity involves
+        </dt>
+        <dd class="govuk-summary-list__value">
+          {{ currentActivity.purpose }}
+        </dd>
+      </div>-->
+
+      <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+        <dt class="govuk-summary-list__key">
+          The purpose of the activity
+        </dt>
+        <dd class="govuk-summary-list__value">
+          {{ currentActivity.involves }}
+        </dd>
+      </div>
+      <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+      <dt class="govuk-summary-list__key">
+        Why this activity is exempt
+      </dt>
+      <dd class="govuk-summary-list__value">
+        Based on your answers from 'Check if you need a marine licence', your activity is exempt under <a href="{{ currentActivity.url }}" rel="noreferrer noopener" target="_blank">Article {{ currentArticle }} of the Marine Licensing (Exempted Activities) Order 2011 (opens in new tab)</a> 
+      </dd>
+
+    </div>
+
+    <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+      <dt class="govuk-summary-list__key">
+        Your answers from 'Check if you need a marine licence'  
+      </dt>
+      <dd class="govuk-summary-list__value">
+        <p><a href="/public/downloads/notification-sample-answers.pdf" rel="noreferrer noopener" target="_blank">Download a copy of your answers (PDF)</a></p>  
+        
+          {% if data['applicationSubmitted'] != "true" %}
+          <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+          <p>If you need to change any of your 'Check if you need a marine licence' answers:</p>
+
+              <ol class="govuk-list govuk-list--number">
+                <li>Delete this project from the <a href="home" class="govuk-link--no-visited-state">Projects page</a>.</li>
+                <li>Select 'Create new project' to start again.</li>
+              </ol>
+          {% endif %}
+
+      </dd>
+    </div>
+        </dl>
+      </div>
+    </div>
+    <!-- End of project summary section -->
+
+    <!-- Applicant details card - only for organisation users -->
+    {% if data['user_type'] === 'organisation' %}
+    <div class="govuk-summary-card">
+      <div class="govuk-summary-card__title-wrapper">
+        <h2 class="govuk-summary-card__title">
+          Applicant details
+        </h2>
+      </div>
+      <div class="govuk-summary-card__content">
+        <dl class="govuk-summary-list">
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Organisation
+            </dt>
+            <dd class="govuk-summary-list__value">
+              <p>{{ data['organisation-name'] }}</p>
+              {% if data['applicationSubmitted'] != "true" %}
+              <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+              <p>To change the organisation for this exempt activity:</p>
+
+              <ol class="govuk-list--number">
+                <li>Delete this project from the <a href="home" class="govuk-link--no-visited-state">Projects page</a>.</li>
+                <li>Select 'Change organisation', then choose an organisation.</li>
+                <li>Select 'Create new project' to start again.</li>
+              </ol>
+              {% endif %}
+            </dd>
+          </div>
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Email address
+            </dt>
+            <dd class="govuk-summary-list__value">
+              {{ currentOrgDetails.email }}@email.co.uk
+            </dd>
+          </div>
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Telephone number
+            </dt>
+            <dd class="govuk-summary-list__value">
+              {{ currentOrgDetails.phone }}
+            </dd>
+          </div>
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Registered ddress
+            </dt>
+            <dd class="govuk-summary-list__value">
+              {{ currentOrgDetails.address.line1 }}<br>
+              {{ currentOrgDetails.address.line2 }}<br>
+              {{ currentOrgDetails.address.town }}<br>
+              {{ currentOrgDetails.address.postcode }}
+            </dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+    {% endif %}
+    <!-- End of applicant details section -->
+
+    
+
+    <!-- Check if we have file upload sites to show additional cards -->
+    {% set hasFileUploadSites = false %}
+    {% if data.sites and data.sites.length > 0 %}
+      {% for site in data.sites %}
+        {% if site.entryMethod == 'file-upload' %}
+          {% set hasFileUploadSites = true %}
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+
+    <!-- Providing site location card - only for file upload sites -->
+    {% if hasFileUploadSites %}
+    <!-- Get the first file upload site's batchId for change links -->
+    {% set fileUploadBatchId = null %}
+    {% for site in data.sites %}
+      {% if site.entryMethod == 'file-upload' and site.batchId and not fileUploadBatchId %}
+        {% set fileUploadBatchId = site.batchId %}
+      {% endif %}
+    {% endfor %}
+    
+    <div class="govuk-summary-card">
+      <div class="govuk-summary-card__title-wrapper">
+        <h2 class="govuk-summary-card__title">
+          Providing the site location
+        </h2>
+        {% if data['applicationSubmitted'] != "true" %}
+        <ul class="govuk-summary-card__actions">
+          <li class="govuk-summary-card__action">
+            <a class="govuk-link" href="review-site-details?batchId={{ fileUploadBatchId }}&camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Providing the site location</span></a>
+          </li>
+        </ul>
+        {% endif %}
+      </div>
+      <div class="govuk-summary-card__content">
+        <dl class="govuk-summary-list">
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Method of providing site location
+            </dt>
+            <dd class="govuk-summary-list__value">
+              Upload a file with the coordinates of the site
+            </dd>
+          </div>
+          {% if data['exemption-which-type-of-file-radios'] %}
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              File type
+            </dt>
+            <dd class="govuk-summary-list__value">
+              {{ data['exemption-which-type-of-file-radios'] }}
+            </dd>
+          </div>
+          {% endif %}
+          {% if data['hasUploadedFile'] %}
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              File uploaded
+            </dt>
+            <dd class="govuk-summary-list__value">
+              {% if data['exemption-which-type-of-file-radios'] == "KML" %}
+                se-coast-sample-sites-coordinates.kml
+              {% else %}
+                se-coast-sample-sites-coordinates.zip
+              {% endif %}
+            </dd>
+          </div>
+          {% endif %}
+        </dl>
+      </div>
+    </div>
+
+    <!-- Activity details card - only for file upload sites with multiple sites -->
+    {% set isMultipleSiteFileUpload = hasFileUploadSites and data.sites.length > 1 %}
+    {% if isMultipleSiteFileUpload %}
+    <div class="govuk-summary-card">
+      <div class="govuk-summary-card__title-wrapper">
+        <h2 class="govuk-summary-card__title">
+          Activity details
+        </h2>
+        {% if data['applicationSubmitted'] != "true" %}
+        <ul class="govuk-summary-card__actions">
+          <li class="govuk-summary-card__action">
+            <a class="govuk-link" href="review-site-details?batchId={{ fileUploadBatchId }}&camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Activity details</span></a>
+          </li>
+        </ul>
+        {% endif %}
+      </div>
+      <div class="govuk-summary-card__content">
+        <dl class="govuk-summary-list">
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Are the activity dates the same for every site?
+            </dt>
+            <dd class="govuk-summary-list__value">
+              {{ data['exemption-same-activity-dates-for-sites'] or "Yes" }}
+            </dd>
+          </div>
+          
+          {% if data['exemption-same-activity-dates-for-sites'] == "Yes" %}
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Activity dates
+            </dt>
+            <dd class="govuk-summary-list__value">
+              {{ data['exemption-start-date-date-input-day'] }} {{ monthNames[data['exemption-start-date-date-input-month'] - 1] }} {{ data['exemption-start-date-date-input-year'] }} to {{ data['exemption-end-date-date-input-day'] }} {{ monthNames[data['exemption-end-date-date-input-month'] - 1] }} {{ data['exemption-end-date-date-input-year'] }}
+            </dd>
+          </div>
+          {% endif %}
+          
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Is the activity description the same for every site?
+            </dt>
+            <dd class="govuk-summary-list__value">
+              {{ data['exemption-same-activity-description-for-sites'] or "Yes" }}
+            </dd>
+          </div>
+          
+          {% if data['exemption-same-activity-description-for-sites'] == "Yes" %}
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Activity description
+            </dt>
+            <dd class="govuk-summary-list__value">
+              {{ data['exemption-activity-details-text-area'] }}
+            </dd>
+          </div>
+          {% endif %}
+        </dl>
+      </div>
+    </div>
+    {% endif %}
+    {% endif %}
+
+    <!-- Check if we have manual entry sites to show additional cards -->
+    {% set hasManualEntrySites = false %}
+    {% set manualEntryBatchId = null %}
+    {% if data.sites and data.sites.length > 0 %}
+      {% for site in data.sites %}
+        {% if site.entryMethod == 'manual-entry' %}
+          {% set hasManualEntrySites = true %}
+          {% if site.batchId and not manualEntryBatchId %}
+            {% set manualEntryBatchId = site.batchId %}
+          {% endif %}
+        {% endif %}
+      {% endfor %}
+    {% endif %}
+
+    <!-- Determine if this is a single site journey (define early for use in manual entry cards) -->
+    {% set isSingleSiteJourney = (data['manual-multiple-sites'] == 'No') or (data.sites.length == 1 and data.sites[0].entryMethod == 'manual-entry') or (data.sites.length == 1 and data.sites[0].entryMethod == 'file-upload') or (data['singleSiteFileUpload'] == true) %}
+
+    <!-- Providing site location card - only for manual entry single sites -->
+    {% if hasManualEntrySites and isSingleSiteJourney %}
+    <div class="govuk-summary-card">
+      <div class="govuk-summary-card__title-wrapper">
+        <h2 class="govuk-summary-card__title">
+          Providing the site location
+        </h2>
+        {% if data['applicationSubmitted'] != "true" %}
+        <ul class="govuk-summary-card__actions">
+          <li class="govuk-summary-card__action">
+            <a class="govuk-link" href="manual-entry/review-site-details?batchId={{ manualEntryBatchId }}&camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Providing the site location</span></a>
+          </li>
+        </ul>
+        {% endif %}
+      </div>
+      <div class="govuk-summary-card__content">
+        <dl class="govuk-summary-list">
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Method of providing site location
+            </dt>
+            <dd class="govuk-summary-list__value">
+              Enter the coordinates of the site manually
+            </dd>
+          </div>
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              More than one site
+            </dt>
+            <dd class="govuk-summary-list__value">
+              {{ data['manual-multiple-sites'] or "No" }}
+            </dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Providing site location card - only for manual entry multiple sites -->
+    {% if hasManualEntrySites and not isSingleSiteJourney %}
+    <div class="govuk-summary-card">
+      <div class="govuk-summary-card__title-wrapper">
+        <h2 class="govuk-summary-card__title">
+          Providing the site location
+        </h2>
+        {% if data['applicationSubmitted'] != "true" %}
+        <ul class="govuk-summary-card__actions">
+          <li class="govuk-summary-card__action">
+            <a class="govuk-link" href="manual-entry/review-site-details?batchId={{ manualEntryBatchId }}&camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Providing the site location</span></a>
+          </li>
+        </ul>
+        {% endif %}
+      </div>
+      <div class="govuk-summary-card__content">
+        <dl class="govuk-summary-list">
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Method of providing site location
+            </dt>
+            <dd class="govuk-summary-list__value">
+              Enter the coordinates of the site manually
+            </dd>
+          </div>
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              More than one site
+            </dt>
+            <dd class="govuk-summary-list__value">
+              {{ data['manual-multiple-sites'] or "Yes" }}
+            </dd>
+          </div>
+        </dl>
+      </div>
+    </div>
+
+    <!-- Activity details card - only for manual entry multiple sites -->
+    <div class="govuk-summary-card">
+      <div class="govuk-summary-card__title-wrapper">
+        <h2 class="govuk-summary-card__title">
+          Activity details
+        </h2>
+        {% if data['applicationSubmitted'] != "true" %}
+        <ul class="govuk-summary-card__actions">
+          <li class="govuk-summary-card__action">
+            <a class="govuk-link" href="manual-entry/review-site-details?batchId={{ manualEntryBatchId }}&camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Activity details</span></a>
+          </li>
+        </ul>
+        {% endif %}
+      </div>
+      <div class="govuk-summary-card__content">
+        <dl class="govuk-summary-list">
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Are the activity dates the same for every site?
+            </dt>
+            <dd class="govuk-summary-list__value">
+              {% set manualEntryBatch = null %}
+              {% if manualEntryBatchId and data['siteBatches'] %}
+                {% for batch in data['siteBatches'] %}
+                  {% if batch.id == manualEntryBatchId %}
+                    {% set manualEntryBatch = batch %}
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
+              {% if manualEntryBatch and manualEntryBatch.settings and manualEntryBatch.settings.sameActivityDates %}
+                {{ manualEntryBatch.settings.sameActivityDates }}
+              {% elif data['manual-same-activity-dates'] %}
+                {{ data['manual-same-activity-dates'] }}
+              {% else %}
+                Yes
+              {% endif %}
+            </dd>
+          </div>
+          
+          {% set showSharedDates = (manualEntryBatch and manualEntryBatch.settings and manualEntryBatch.settings.sameActivityDates == "Yes") or (not manualEntryBatch and data['manual-same-activity-dates'] == "Yes") %}
+          {% if showSharedDates %}
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Activity dates
+            </dt>
+            <dd class="govuk-summary-list__value">
+              {% if manualEntryBatch and manualEntryBatch.settings and manualEntryBatch.settings.sharedStartDate and manualEntryBatch.settings.sharedStartDate.day %}
+                {{ manualEntryBatch.settings.sharedStartDate.day }} {{ monthNames[manualEntryBatch.settings.sharedStartDate.month - 1] }} {{ manualEntryBatch.settings.sharedStartDate.year }} to {{ manualEntryBatch.settings.sharedEndDate.day }} {{ monthNames[manualEntryBatch.settings.sharedEndDate.month - 1] }} {{ manualEntryBatch.settings.sharedEndDate.year }}
+              {% elif data['manual-start-date-date-input-day'] %}
+                {{ data['manual-start-date-date-input-day'] }} {{ monthNames[data['manual-start-date-date-input-month'] - 1] }} {{ data['manual-start-date-date-input-year'] }} to {{ data['manual-end-date-date-input-day'] }} {{ monthNames[data['manual-end-date-date-input-month'] - 1] }} {{ data['manual-end-date-date-input-year'] }}
+              {% endif %}
+            </dd>
+          </div>
+          {% endif %}
+          
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Is the activity description the same for every site?
+            </dt>
+            <dd class="govuk-summary-list__value">
+              {% if manualEntryBatch and manualEntryBatch.settings and manualEntryBatch.settings.sameActivityDescription %}
+                {{ manualEntryBatch.settings.sameActivityDescription }}
+              {% elif data['manual-same-activity-description'] %}
+                {{ data['manual-same-activity-description'] }}
+              {% else %}
+                Yes
+              {% endif %}
+            </dd>
+          </div>
+          
+          {% set showSharedDescription = (manualEntryBatch and manualEntryBatch.settings and manualEntryBatch.settings.sameActivityDescription == "Yes") or (not manualEntryBatch and data['manual-same-activity-description'] == "Yes") %}
+          {% if showSharedDescription %}
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Activity description
+            </dt>
+            <dd class="govuk-summary-list__value">
+              {% if manualEntryBatch and manualEntryBatch.settings and manualEntryBatch.settings.sharedDescription %}
+                {{ manualEntryBatch.settings.sharedDescription }}
+              {% elif data['manual-activity-details-text-area'] %}
+                {{ data['manual-activity-details-text-area'] }}
+              {% endif %}
+            </dd>
+          </div>
+          {% endif %}
+        </dl>
+      </div>
+    </div>
+    {% endif %}
+
+    <!-- Dynamic site cards using a loop -->
+    {% if data.sites and data.sites.length > 0 %}
+      
+      {% for site in data.sites %}
+        <div class="govuk-summary-card">
+          <div class="govuk-summary-card__title-wrapper">
+            <h2 class="govuk-summary-card__title">
+              {% if isSingleSiteJourney %}
+                Site details
+              {% else %}
+                Site {{ site.globalNumber or loop.index }} details
+              {% endif %}
+            </h2>
+            
+            {% if data['applicationSubmitted'] != "true" %}
+            <ul class="govuk-summary-card__actions">
+              <li class="govuk-summary-card__action">
+                {% set siteIndex = site.globalNumber or loop.index %}
+                {% set changeUrl = "review-site-details?site=" + siteIndex + "&batchId=" + site.batchId + "&camefromcheckanswers=true" %}
+                {% if site.entryMethod == "manual-entry" %}
+                  {% set changeUrl = "manual-entry/review-site-details?site=" + siteIndex + "&batchId=" + site.batchId + "&camefromcheckanswers=true" %}
+                {% endif %}
+                <a class="govuk-link" href="{{ changeUrl }}">Change<span class="govuk-visually-hidden"> {% if isSingleSiteJourney %}Site details{% else %}Site {{ siteIndex }} details{% endif %}</span></a>
+              </li>
+            </ul>
+            {% endif %}
+          </div>
+
+          <div class="govuk-summary-card__content">
+            <dl class="govuk-summary-list">
+              
+              <!-- File upload sites -->
+              {% if site.entryMethod == 'file-upload' %}
+                
+                <!-- Only show site name for multiple site journeys -->
+                {% if not isSingleSiteJourney %}
+                <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key">
+                    Site name
+                  </dt>
+                  <dd class="govuk-summary-list__value">
+                    {{ site.name }}
+                  </dd>
+                </div>
+                {% endif %}
+
+                <!-- Only show activity dates if they are different for each site OR if single site -->
+                {% if isSingleSiteJourney or data['exemption-same-activity-dates-for-sites'] == "No" %}
+                <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key">
+                    Activity dates
+                  </dt>
+                  <dd class="govuk-summary-list__value">
+                    {{ site.startDate.day }} {{ monthNames[site.startDate.month - 1] }} {{ site.startDate.year }} to {{ site.endDate.day }} {{ monthNames[site.endDate.month - 1] }} {{ site.endDate.year }}
+                  </dd>
+                </div>
+                {% endif %}
+
+                <!-- Only show activity description if they are different for each site OR if single site -->
+                {% if isSingleSiteJourney or data['exemption-same-activity-description-for-sites'] == "No" %}
+                <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key">
+                    Activity description
+                  </dt>
+                  <dd class="govuk-summary-list__value">
+                    {{ site.description }}
+                  </dd>
+                </div>
+                {% endif %}
+
+              <!-- Manual circular sites -->
+              {% elif site.entryMethod == 'manual-entry' and site.coordinates and site.coordinates.type == 'circle' %}
+
+                <!-- Only show site name for multiple site journeys -->
+                {% if not isSingleSiteJourney %}
+                <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key">
+                    Site name
+                  </dt>
+                  <dd class="govuk-summary-list__value">
+                    {{ site.name }}
+                  </dd>
+                </div>
+                {% endif %}
+
+                <!-- Only show activity dates if they are different for each site OR if single site -->
+                {% if isSingleSiteJourney or (siteBatch and siteBatch.settings and siteBatch.settings.sameActivityDates == "No") or (not siteBatch and data['manual-same-activity-dates'] == "No") %}
+                <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key">
+                    Activity dates
+                  </dt>
+                  <dd class="govuk-summary-list__value">
+                    {{ site.startDate.day }} {{ monthNames[site.startDate.month - 1] }} {{ site.startDate.year }} to {{ site.endDate.day }} {{ monthNames[site.endDate.month - 1] }} {{ site.endDate.year }}
+                  </dd>
+                </div>
+                {% endif %}
+
+                <!-- Only show activity description if they are different for each site OR if single site -->
+                {% if isSingleSiteJourney or (siteBatch and siteBatch.settings and siteBatch.settings.sameActivityDescription == "No") or (not siteBatch and data['manual-same-activity-description'] == "No") %}
+                <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key">
+                    Activity description
+                  </dt>
+                  <dd class="govuk-summary-list__value">
+                    {% set siteBatch = null %}
+                    {% if site.batchId and data['siteBatches'] %}
+                      {% for batch in data['siteBatches'] %}
+                        {% if batch.id == site.batchId %}
+                          {% set siteBatch = batch %}
+                        {% endif %}
+                      {% endfor %}
+                    {% endif %}
+                    
+                    {% if siteBatch and siteBatch.settings and siteBatch.settings.sameActivityDescription == "Yes" and siteBatch.settings.sharedDescription %}
+                      {{ siteBatch.settings.sharedDescription }}
+                    {% elif not siteBatch and data['manual-same-activity-description'] == "Yes" and data['manual-activity-details-text-area'] %}
+                      {{ data['manual-activity-details-text-area'] }}
+                    {% else %}
+                      {{ site.description }}
+                    {% endif %}
+                  </dd>
+                </div>
+                {% endif %}
+
+                <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key">
+                    Single or multiple sets of coordinates
+                  </dt>
+                  <dd class="govuk-summary-list__value">
+                    Enter one set of coordinates and a width to create a circular site
+                  </dd>
+                </div>
+
+                <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key">
+                    Coordinate system
+                  </dt>
+                  <dd class="govuk-summary-list__value">
+                    {{ site.coordinateSystem }}
+                    <br>
+                    {% if site.coordinateSystem == "OSGB36 (National Grid)" %}
+                      Eastings and Northings
+                    {% else %}
+                      Latitude and longitude
+                    {% endif %}
+                  </dd>
+                </div>
+
+                <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key">
+                    Coordinates at centre of site
+                  </dt>
+                  <dd class="govuk-summary-list__value">
+                    {{ site.coordinates.center.latitude }}, {{ site.coordinates.center.longitude }}
+                  </dd>
+                </div>
+
+                <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key">
+                    Width of circular site
+                  </dt>
+                  <dd class="govuk-summary-list__value">
+                    {{ site.coordinates.width }} metres
+                  </dd>
+                </div>
+
+              <!-- Manual polygon sites -->
+              {% elif site.entryMethod == 'manual-entry' and site.coordinates and site.coordinates.type == 'polygon' %}
+
+                <!-- Only show site name for multiple site journeys -->
+                {% if not isSingleSiteJourney %}
+                <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key">
+                    Site name
+                  </dt>
+                  <dd class="govuk-summary-list__value">
+                    {{ site.name }}
+                  </dd>
+                </div>
+                {% endif %}
+
+                <!-- Get siteBatch for condition checks -->
+                {% set siteBatch = null %}
+                {% if site.batchId and data['siteBatches'] %}
+                  {% for batch in data['siteBatches'] %}
+                    {% if batch.id == site.batchId %}
+                      {% set siteBatch = batch %}
+                    {% endif %}
+                  {% endfor %}
+                {% endif %}
+
+                <!-- Only show activity dates if they are different for each site OR if single site -->
+                {% if isSingleSiteJourney or (siteBatch and siteBatch.settings and siteBatch.settings.sameActivityDates == "No") or (not siteBatch and data['manual-same-activity-dates'] == "No") %}
+                <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key">
+                    Activity dates
+                  </dt>
+                  <dd class="govuk-summary-list__value">
+                    {{ site.startDate.day }} {{ monthNames[site.startDate.month - 1] }} {{ site.startDate.year }} to {{ site.endDate.day }} {{ monthNames[site.endDate.month - 1] }} {{ site.endDate.year }}
+                  </dd>
+                </div>
+                {% endif %}
+
+                <!-- Only show activity description if they are different for each site OR if single site -->
+                {% if isSingleSiteJourney or (siteBatch and siteBatch.settings and siteBatch.settings.sameActivityDescription == "No") or (not siteBatch and data['manual-same-activity-description'] == "No") %}
+                <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key">
+                    Activity description
+                  </dt>
+                  <dd class="govuk-summary-list__value">
+                    {% if siteBatch and siteBatch.settings and siteBatch.settings.sameActivityDescription == "Yes" and siteBatch.settings.sharedDescription %}
+                      {{ siteBatch.settings.sharedDescription }}
+                    {% elif not siteBatch and data['manual-same-activity-description'] == "Yes" and data['manual-activity-details-text-area'] %}
+                      {{ data['manual-activity-details-text-area'] }}
+                    {% else %}
+                      {{ site.description }}
+                    {% endif %}
+                  </dd>
+                </div>
+                {% endif %}
+
+                <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key">
+                    Single or multiple sets of coordinates
+                  </dt>
+                  <dd class="govuk-summary-list__value">
+                    Enter multiple sets of coordinates to mark the boundary of the site
+                  </dd>
+                </div>
+
+                <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key">
+                    Coordinate system
+                  </dt>
+                  <dd class="govuk-summary-list__value">
+                    {{ site.coordinateSystem }}
+                    <br>
+                    {% if site.coordinateSystem == "OSGB36 (National Grid)" %}
+                      Eastings and Northings
+                    {% else %}
+                      Latitude and longitude
+                    {% endif %}
+                  </dd>
+                </div>
+
+                {% for point in site.coordinates.points %}
+                  <div class="govuk-summary-list__row">
+                    <dt class="govuk-summary-list__key">
+                      {% if loop.index == 1 %}
+                        Start and end points
+                      {% else %}
+                        Point {{ loop.index }}
+                      {% endif %}
+                    </dt>
+                    <dd class="govuk-summary-list__value">
+                      {{ point.latitude }}, {{ point.longitude }}
+                    </dd>
+                  </div>
+                {% endfor %}
+
+              <!-- Fallback for any other site types -->
+              {% else %}
+
+                <!-- Only show site name for multiple site journeys -->
+                {% if not isSingleSiteJourney %}
+                <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key">
+                    Site name
+                  </dt>
+                  <dd class="govuk-summary-list__value">
+                    {{ site.name }}
+                  </dd>
+                </div>
+                {% endif %}
+
+                <!-- Get siteBatch for condition checks -->
+                {% set siteBatch = null %}
+                {% if site.batchId and data['siteBatches'] %}
+                  {% for batch in data['siteBatches'] %}
+                    {% if batch.id == site.batchId %}
+                      {% set siteBatch = batch %}
+                    {% endif %}
+                  {% endfor %}
+                {% endif %}
+
+                <!-- Only show activity dates if they are different for each site OR if single site -->
+                {% if isSingleSiteJourney or (siteBatch and siteBatch.settings and siteBatch.settings.sameActivityDates == "No") or (not siteBatch and data['manual-same-activity-dates'] == "No") %}
+                <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key">
+                    Activity dates
+                  </dt>
+                  <dd class="govuk-summary-list__value">
+                    {{ site.startDate.day }} {{ monthNames[site.startDate.month - 1] }} {{ site.startDate.year }} to {{ site.endDate.day }} {{ monthNames[site.endDate.month - 1] }} {{ site.endDate.year }}
+                  </dd>
+                </div>
+                {% endif %}
+
+                <!-- Only show activity description if they are different for each site OR if single site -->
+                {% if isSingleSiteJourney or (siteBatch and siteBatch.settings and siteBatch.settings.sameActivityDescription == "No") or (not siteBatch and data['manual-same-activity-description'] == "No") %}
+                <div class="govuk-summary-list__row">
+                  <dt class="govuk-summary-list__key">
+                    Activity description
+                  </dt>
+                  <dd class="govuk-summary-list__value">
+                    {% if siteBatch and siteBatch.settings and siteBatch.settings.sameActivityDescription == "Yes" and siteBatch.settings.sharedDescription %}
+                      {{ siteBatch.settings.sharedDescription }}
+                    {% elif not siteBatch and data['manual-same-activity-description'] == "Yes" and data['manual-activity-details-text-area'] %}
+                      {{ data['manual-activity-details-text-area'] }}
+                    {% else %}
+                      {{ site.description }}
+                    {% endif %}
+                  </dd>
+                </div>
+                {% endif %}
+
+              {% endif %}
+
+              <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key map-label">
+                  Map view
+                </dt>
+                <dd class="govuk-summary-list__value">
+                  {% set mapImageSrc = site.mapImage %}
+                  {% if not mapImageSrc %}
+                      {% if site.entryMethod == 'manual-entry' and site.coordinates and site.coordinates.type == "circle" %}
+                          {% set mapImageSrc = '/public/images/map-circle.jpg' %}
+                      {% elif site.entryMethod == 'manual-entry' and site.coordinates and site.coordinates.type == "polygon" and site.coordinates.points %}
+                          {% if site.coordinates.points.length == 3 %}
+                              {% set mapImageSrc = '/public/images/map-3-points.jpg' %}
+                          {% elif site.coordinates.points.length == 4 %}
+                              {% set mapImageSrc = '/public/images/map-4-points.jpg' %}
+                          {% elif site.coordinates.points.length >= 5 %}
+                              {% set mapImageSrc = '/public/images/map-5-points.jpg' %}
+                          {% else %}
+                              {% set mapImageSrc = '/public/images/map-drawn.jpg' %}
+                          {% endif %}
+                      {% else %}
+                          {% set mapImageSrc = '/public/images/map-drawn.jpg' %}
+                      {% endif %}
+                  {% endif %}
+                  <img src="{{ mapImageSrc }}" alt="Map showing {% if isSingleSiteJourney %}site location{% else %}site {{ site.globalNumber or loop.index }} location{% endif %}">
+                </dd>
+              </div>
+            </dl>
+          </div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <p class="govuk-body">No sites have been added yet.</p>
+    {% endif %}
+    <!-- End of dynamic site cards -->
+
+    <!-- Public register section -->
+    <div class="govuk-summary-card">
+      <div class="govuk-summary-card__title-wrapper">
+        <h2 class="govuk-summary-card__title">
+          Public register
+        </h2>
+        {% if data['applicationSubmitted'] != "true" %}
+        <ul class="govuk-summary-card__actions">
+          <li class="govuk-summary-card__action">
+            <a class="govuk-link" href="public-register?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Information withheld from public register</span></a>
+          </li>
+        </ul>
+        {% endif %}
+      </div>
+
+      <div class="govuk-summary-card__content">
+        <dl class="govuk-summary-list">
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Information withheld from public register
+            </dt>
+            <dd class="govuk-summary-list__value">
+              {{ data['exemption-public-register-radios'] or "No" }}
+            </dd>
+          </div>
+
+          {% if data['exemption-public-register-radios'] == "Yes" %}
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">
+              Why the information should be withheld 
+            </dt>
+            <dd class="govuk-summary-list__value">
+              {{ data['exemption-public-register-text-area'] or "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." }}
+            </dd>
+          </div>
+          {% endif %}
+        </dl>
+      </div>
+    </div>
+
+    {% if data['applicationSubmitted'] == "true" %}
+    <!-- No button if already submitted -->
+    {% else %}
+    <form action="check-answers-router" method="post" novalidate>
+      <h2 class="govuk-heading-m">Now send your information</h2>
+      <p class="govuk-body">By submitting this information you are confirming that, to the best of your knowledge, the details you are providing are correct.</p>
+
+      {{ govukButton({
+        text: "Confirm and send"
+      }) }}
+    </form>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}
+<!-- Generated by Copilot -->
