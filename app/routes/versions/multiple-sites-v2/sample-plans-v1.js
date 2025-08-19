@@ -21,6 +21,10 @@ module.exports = function (router) {
 
   // Project name start page
   router.get(`/versions/${version}/${section}/project-name-start`, function (req, res) {
+    // Clear any existing error flags when user navigates to the page
+    req.session.data['sample-plan-errorthispage'] = "false";
+    req.session.data['sample-plan-errortypeone'] = "false";
+    
     res.render(`versions/${version}/${section}/project-name-start`);
   });
 
