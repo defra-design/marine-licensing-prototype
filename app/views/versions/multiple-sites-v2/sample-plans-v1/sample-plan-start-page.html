@@ -1,0 +1,142 @@
+{% extends "../layouts/exemption.html" %}
+
+{% block beforeContent %}
+    {% include "../includes/phase-banner.html" %}
+    {% if data['user_type'] === 'organisation' %}
+        {% include "../includes/organisation-switcher.html" %}
+    {% endif %}
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+Sample plan start page
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-two-thirds">
+		<span class="govuk-caption-l">{{ data['sample-plan-project-name-text-input'] }}</span>
+		<h1 class="govuk-heading-l">
+			{{ pageHeadingTextHTML }}
+		</h1>
+
+		<h2 class="govuk-heading-m">Before you start</h2>
+
+		<p><a href="https://www.gov.uk/guidance/marine-licensing-sediment-analysis-and-sample-plans" rel="noreferrer noopener" target="_blank" class="govuk-link">Read the guidance on sampling requirements (opens in new tab)</a> before you complete the task list.</p>
+
+		<h2 class="govuk-heading-m">Information you need to provide to get a sample plan</h2>
+
+		<p>You'll need to tell us:</p>
+		<ul class="govuk-list govuk-list--bullet">
+			<li>project name</li>
+			<li>type of activity details of the site where the dredging or disposal will take place</li>
+			<li>if it's a new or existing licence</li>
+			<li>details of the sites where the dredging or disposal will take place</li>
+			<li>what the activity involves, including dredging amounts and depths</li>
+			<li>if it's a new dredging activity or maintenance</li>
+			<li>start and end dates for your activity</li>
+			<li>you agree to the fee estimate</li>
+		</ul>
+
+		<p>When you provide your information you'll need to:</p>
+		<ul class="govuk-list govuk-list--bullet">
+			<li>complete the type of activity before you can start some tasks as depending on your answers you may not need to complete them</li>
+			<li>complete each section before you can send the information</li>
+			<li>save your progress at the end of each section if you need to come back later</li>
+		</ul>
+
+		<ul class="govuk-task-list">
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="project-name-status">
+				  Project name
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="project-name-status">
+				Completed
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="which-activity" aria-describedby="type-of-activity-status">
+				  Type of activity
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="type-of-activity-status">
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="new-or-existing-licence-status">
+				  New or existing licence
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="new-or-existing-licence-status">
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item">
+			  <div class="govuk-task-list__name-and-hint">
+				<div>Site locations and dredging activity</div>
+			  </div>
+			  
+			  <div class="govuk-task-list__status govuk-task-list__status--cannot-start-yet" id="site-locations-status">
+				Cannot start yet
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item">
+			  <div class="govuk-task-list__name-and-hint">
+				<div>Dredging volumes</div>
+			  </div>
+			  
+			  <div class="govuk-task-list__status govuk-task-list__status--cannot-start-yet" id="dredging-volumes-status">
+				Cannot start yet
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item">
+			  <div class="govuk-task-list__name-and-hint">
+				<div>Disposal sites</div>
+			  </div>
+			  
+			  <div class="govuk-task-list__status govuk-task-list__status--cannot-start-yet" id="disposal-sites-status">
+				Cannot start yet
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="fee-estimate-status">
+				  Fee estimate
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="fee-estimate-status">
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+			  </div>
+			</li>
+		</ul>
+
+	</div>
+</div>
+{% endblock %}

@@ -15,6 +15,26 @@ https://prototype-kit.service.gov.uk/docs/how-to-use-layouts
 {{ govukHeader({
   classes: "govuk-header--full-width-border"
 }) }}
+{% if data['isSamplePlansSection'] %}
+{{ govukServiceNavigation({
+  serviceName: "Get a plan for sediment sample analysis",
+  navigation: [
+    {
+      href: "#",
+      text: "Projects"
+    },
+    {
+      href: "#",
+      text: "Defra account",
+      active: false
+    },
+    {
+      href: "#",
+      text: "Sign out"
+    }
+  ]
+}) }}
+{% else %}
 {{ govukServiceNavigation({
   serviceName: "Get permission for marine work",
   navigation: [
@@ -33,6 +53,7 @@ https://prototype-kit.service.gov.uk/docs/how-to-use-layouts
     }
   ]
 }) }}
+{% endif %}
 
 {% endblock %}
 
