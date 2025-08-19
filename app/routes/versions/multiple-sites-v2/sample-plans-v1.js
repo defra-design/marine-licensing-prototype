@@ -87,4 +87,34 @@ module.exports = function (router) {
     res.redirect('sample-plan-start-page');
   });
 
+  // Project name page (for editing from task list)
+  router.get(`/versions/${version}/${section}/project-name`, function (req, res) {
+    // Clear any existing error flags when user navigates to the page
+    req.session.data['sample-plan-errorthispage'] = "false";
+    req.session.data['sample-plan-errortypeone'] = "false";
+    req.session.data['isSamplePlansSection'] = true;
+    
+    res.render(`versions/${version}/${section}/project-name`);
+  });
+
+  // Project name router (POST)
+  router.post(`/versions/${version}/${section}/project-name-router`, function (req, res) {
+    // Reset error flags
+    req.session.data['sample-plan-errorthispage'] = "false";
+    req.session.data['sample-plan-errortypeone'] = "false";
+
+    // Validate project name input
+    const projectName = req.body['sample-plan-project-name-text-input'];
+    
+    if (!projectName || projectName.trim() === '') {
+      req.session.data['sample-plan-errorthispage'] = "true";
+      req.session.data['sample-plan-errortypeone'] = "true";
+      return res.redirect('project-name');
+    }
+
+    // Save the project name and redirect back to task list
+    req.session.data['sample-plan-project-name-text-input'] = projectName;
+    res.redirect('sample-plan-start-page');
+  });
+
 }
