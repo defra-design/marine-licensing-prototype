@@ -72,9 +72,13 @@ Sample plan start page
 			  </div>
 			  
 			  <div class="govuk-task-list__status" id="type-of-activity-status">
+				{% if data['sample-plan-which-activity'] %}
+				Completed
+				{% else %}
 				<strong class="govuk-tag govuk-tag--blue">
 					Not yet started
 				</strong>
+				{% endif %}
 			  </div>
 			</li>
 
@@ -92,6 +96,125 @@ Sample plan start page
 			  </div>
 			</li>
 
+			{% if data['sample-plan-which-activity'] == "Marine disposal only" %}
+			<li class="govuk-task-list__item">
+			  <div class="govuk-task-list__name-and-hint">
+				<div>Site locations and dredging activity</div>
+			  </div>
+			  
+			  <div class="govuk-task-list__status govuk-task-list__status--cannot-start-yet" id="site-locations-status">
+				Not applicable
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item">
+			  <div class="govuk-task-list__name-and-hint">
+				<div>Dredging volumes</div>
+			  </div>
+			  
+			  <div class="govuk-task-list__status govuk-task-list__status--cannot-start-yet" id="dredging-volumes-status">
+				Not applicable
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="disposal-sites-status">
+				  Disposal sites
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="disposal-sites-status">
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+			  </div>
+			</li>
+
+			{% elif data['sample-plan-which-activity'] == "Marine dredging only" %}
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="site-locations-status">
+				  Site locations and dredging activity
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="site-locations-status">
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="dredging-volumes-status">
+				  Dredging volumes
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="dredging-volumes-status">
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item">
+			  <div class="govuk-task-list__name-and-hint">
+				<div>Disposal sites</div>
+			  </div>
+			  
+			  <div class="govuk-task-list__status govuk-task-list__status--cannot-start-yet" id="disposal-sites-status">
+				Not applicable
+			  </div>
+			</li>
+
+			{% elif data['sample-plan-which-activity'] == "Marine dredging and disposal" %}
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="site-locations-status">
+				  Site locations and dredging activity
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="site-locations-status">
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="dredging-volumes-status">
+				  Dredging volumes
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="dredging-volumes-status">
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="disposal-sites-status">
+				  Disposal sites
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="disposal-sites-status">
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+			  </div>
+			</li>
+
+			{% else %}
+			<!-- Default state when no activity is selected -->
 			<li class="govuk-task-list__item">
 			  <div class="govuk-task-list__name-and-hint">
 				<div>Site locations and dredging activity</div>
@@ -121,6 +244,7 @@ Sample plan start page
 				Cannot start yet
 			  </div>
 			</li>
+			{% endif %}
 
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
 			  <div class="govuk-task-list__name-and-hint">
