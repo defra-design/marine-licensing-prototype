@@ -318,6 +318,73 @@ The autocomplete version uses:
 
 - The `user_type`, `organisation-name`, `component_type`, and `changing-organisation` session variables are cleared in the `clearAllSiteDetails`, `clearCurrentBatchOnly` and `clearCurrentBatchSafely` functions to ensure a clean state when a user cancels their journey.
 
+### Sample Plans Journey Pattern
+**CRITICAL**: When adding pages to any `sample-plans-v*` folder or sub-journey (v1, v2, v3, etc.), follow this pattern:
+
+#### Service Name Detection
+All sample plans pages must set a session flag to show the correct service navigation:
+
+```javascript
+// In ALL sample plans route handlers (GET routes):
+router.get('/path/to/sample-plans-page', function (req, res) {
+    req.session.data['isSamplePlansSection'] = true;
+    res.render('path/to/template');
+});
+```
+
+#### Layout Behavior
+- **DO NOT hardcode headers** in sample plans pages
+- Pages should extend `../layouts/exemption.html` like other pages
+- The layout automatically detects `data['isSamplePlansSection']` and shows:
+  - **Service name**: "Get a plan for sediment sample analysis"
+  - **Navigation links**: Projects, Defra account, Sign out (placeholder "#" links)
+
+#### Data Namespace
+All sample plans form data must use unique prefixes to avoid conflicts with exemption journey:
+
+```javascript
+// Sample plans data pattern:
+req.session.data['sample-plan-project-name-text-input'] = value;
+req.session.data['sample-plan-errorthispage'] = "false";
+req.session.data['sample-plan-errortypeone'] = "false";
+
+// NOT exemption patterns:
+// req.session.data['exemption-project-name-text-input'] ❌
+// req.session.data['errorthispage'] ❌
+```
+
+#### Example Route Structure
+```javascript
+module.exports = function (router) {
+  const version = "multiple-sites-v2";
+  const section = "sample-plans-v1"; // or v2, v3, etc.
+
+  router.get(`/versions/${version}/${section}/page-name`, function (req, res) {
+    req.session.data['isSamplePlansSection'] = true; // REQUIRED
+    res.render(`versions/${version}/${section}/page-name`);
+  });
+};
+```
+
+#### Template Structure
+```nunjucks
+{% extends "../layouts/exemption.html" %}
+<!-- NO header block needed - layout handles service detection -->
+
+{% block beforeContent %}
+    {% include "../includes/phase-banner.html" %}
+    <!-- Other beforeContent items -->
+{% endblock %}
+
+<!-- Page content using sample-plan-* data values -->
+```
+
+This pattern ensures:
+- ✅ Correct service navigation appears automatically
+- ✅ No conflicts with exemption journey data
+- ✅ Consistent architecture across all sample plans pages
+- ✅ Easy maintenance and debugging
+
 ### Routing Modification Rules
 - **Only modify the specific routing section you are working on** - never change unrelated routes
 - When working on manual entry flows, only modify routes under the "Manual Entry Flow Routes" section

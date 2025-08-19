@@ -1,0 +1,112 @@
+{% extends "../layouts/exemption.html" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% block beforeContent %}
+    {% include "../includes/phase-banner.html" %}
+    {% if data['user_type'] === 'organisation' %}
+        {% include "../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link" href="javascript:window.history.back()">Back</a>
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+Which activity will the marine licence cover?
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+{% if data['sample-plan-errorthispage'] == "true" %}
+Error:
+{% endif %}
+{{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        {% if data['sample-plan-errorthispage'] == "true" %}
+        {{ govukErrorSummary({
+            titleText: "There is a problem",
+            errorList: [
+                {
+                    text: "Select which activity the marine licence covers",
+                    href: "#sample-plan-which-activity"
+                }
+            ]
+        }) }}
+        {% endif %}
+
+        <!--  END OF 'error summary' -->
+
+        <form action="which-activity-router" method="post" novalidate>
+
+            {{ govukRadios({
+                name: "sample-plan-which-activity",
+                fieldset: {
+                    legend: {
+                        html: (('<span class="govuk-caption-l">' + data['sample-plan-project-name-text-input'] + '</span>') if data['sample-plan-project-name-text-input']) + pageHeadingTextHTML,
+                        isPageHeading: true,
+                        classes: "govuk-fieldset__legend--l"
+                    }
+                },
+                errorMessage: {
+                    text: "Select which activity the marine licence covers"
+                } if data['sample-plan-errortypeone'] == "true",
+                items: [
+                    {
+                        value: "Marine disposal only",
+                        text: "Marine disposal only",
+                        checked: data['sample-plan-which-activity'] == "Marine disposal only"
+                    },
+                    {
+                        value: "Marine dredging only",
+                        text: "Marine dredging only",
+                        checked: data['sample-plan-which-activity'] == "Marine dredging only"
+                    },
+                    {
+                        value: "Marine dredging and disposal",
+                        text: "Marine dredging and disposal",
+                        checked: data['sample-plan-which-activity'] == "Marine dredging and disposal"
+                    }
+                ]
+            }) }}
+
+            <div class="govuk-button-group">
+                {{ govukButton({
+                    text: "Save and continue"
+                }) }}
+
+                <a class="govuk-link" href="javascript:window.history.back()">Cancel</a>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+<!-- ERROR LOGIC  drop down to toggle states  -->
+<!-- Updated to use sample-plan specific data values to avoid conflicts with exemption journey -->
+<form method="post" action="#" class="for4" style=" float: left; position: relative; bottom:-325px; padding-bottom: 30px;  ">
+
+    <select style="height:30px;" onchange="window.location.href='?'+this.value">
+
+        <option
+            value="sample-plan-errorthispage=false&sample-plan-errortypeone=false&sample-plan-errortypetwo=false&sample-plan-errortypethree=false&sample-plan-errortypefour=false&sample-plan-errortypefive=false&sample-plan-errortypesix=false&"
+            {% if data['sample-plan-errorthispage'] !="true" %}selected{% endif %}>Errors - Off</option>
+
+        <option
+            value="sample-plan-errorthispage=true&sample-plan-errortypeone=true&sample-plan-errortypetwo=false&sample-plan-errortypethree=false&sample-plan-errortypefour=false&sample-plan-errortypefive=false&sample-plan-errortypesix=false&"
+            {% if data['sample-plan-errortypeone']=='true' and data['sample-plan-errortypetwo'] !='true' and data['sample-plan-errortypethree'] !='true' and
+            data['sample-plan-errortypefour'] !='true' and data['sample-plan-errortypefive'] !='true' and data['sample-plan-errortypesix'] !='true'
+            %}selected{% endif %}>Error 1 - No answer entered</option>
+
+    </select>
+
+</form>
+<!--  END OF ERROR LOGIC -->
+
+{% endblock %}
