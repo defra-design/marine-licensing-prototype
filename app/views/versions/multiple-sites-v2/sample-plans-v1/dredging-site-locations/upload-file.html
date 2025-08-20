@@ -1,0 +1,72 @@
+{% extends "../../layouts/exemption.html" %}
+
+{% from "govuk/components/file-upload/macro.njk" import govukFileUpload %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% if data['user_type'] === 'organisation' %}
+        {% include "../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+<!-- Setting the smaller secondary heading lower down the page -->
+{% set pageHeadingTextHTML %}
+    {% if data['sample-plan-file-type'] == "kml" %}
+        Upload a KML file
+    {% elif data['sample-plan-file-type'] == "shapefile" %}
+        Upload a shapefile
+    {% endif %}
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <!-- go to routes.js for routing  -->
+        <form action="upload-file-router" method="post" novalidate>
+
+            <div class="govuk-form-group">
+                <span class="govuk-caption-l">{{ data['sample-plan-project-name-text-input'] }}</span>
+                <h1 class="govuk-label-wrapper">
+                  <label class="govuk-label govuk-label--l" for="file-upload-1" id="file-upload-1-label">
+                    {{ pageHeadingTextHTML }}
+                  </label>
+                </h1>
+            
+                <!--<div class="govuk-inset-text">
+                    <strong>Note: This is a prototype.</strong><br>
+                    You don't need to upload a file. Just select <strong>'Continue'</strong> to move to the next step.
+                  </div>-->
+                  
+                <div id="file-upload-1-hint" class="govuk-hint">
+                    {% if data['sample-plan-file-type'] == "shapefile" %}
+                      Upload a ZIP file containing all the files for your shapefile (for example, .shp, .shx and .dbf). You can include more than one site.
+                    {% endif %}
+                </div>
+
+            {{ govukFileUpload({
+                id: "file-upload-1",
+                name: "fileUpload1",
+                javascript: true
+            }) }}
+
+            <div class="govuk-button-group">
+                {{ govukButton({
+                  text: "Continue"
+                }) }}
+                <a class="govuk-link govuk-link--no-visited-state" href="">Cancel</a>
+            </div>
+        </div>
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}
