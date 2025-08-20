@@ -1,6 +1,6 @@
 {% extends "../layouts/exemption.html" %}
 
-{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 
@@ -14,18 +14,7 @@
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-Project name
-{% endset %}
-
-<!-- Set the text for each error type -->
-{% set errorTextHTML %}
-{% if data['sample-plan-errortypeone'] == "true" and data['sample-plan-errortypetwo'] == "true" %}
-Enter both the project title and project background
-{% elif data['sample-plan-errortypeone'] == "true" %}
-Enter a project name
-{% elif data['sample-plan-errortypetwo'] == "true" %}
-Enter the project background
-{% endif %}
+What is the marine licence expiry date?
 {% endset %}
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
@@ -33,7 +22,6 @@ Enter the project background
 {% if data['sample-plan-errorthispage'] == "true" %}
 Error:
 {% endif %}
-
 {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
 {% endblock %}
 
@@ -45,8 +33,8 @@ Error:
             titleText: "There is a problem",
             errorList: [
                 {
-                    text: "Enter a project name",
-                    href: "#sample-plan-project-name-text-input"
+                    text: "Enter the marine licence expiry date",
+                    href: "#sample-plan-licence-expiry-day"
                 }
             ]
         }) }}
@@ -54,26 +42,47 @@ Error:
 
         <!--  END OF 'error summary' -->
 
-        <form action="project-name-router" method="post" novalidate>
+        <form action="existing-licence-expiry-router" method="post" novalidate>
 
-            {{ govukInput({
-            label: 
-            {
-                text: pageHeadingTextHTML,
-                classes: "govuk-label--l",
-                isPageHeading: true
-            },
-            hint: {
-                text: "Enter a name that will help you find the information relating to your sample plan"
-              },
-              
-                autocomplete: "off",
-                id: "sample-plan-project-name-text-input",
-                name: "sample-plan-project-name-text-input",
-                errorMessage: null if data['sample-plan-errortypeone'] != "true"
-                else { text: "Enter a project name" },
-                value: data['sample-plan-project-name-text-input'],
-                classes: "govuk-input--full-width"
+            {{ govukDateInput({
+                id: "sample-plan-licence-expiry",
+                namePrefix: "sample-plan-licence-expiry",
+                fieldset: {
+                    legend: {
+                        html: (('<span class="govuk-caption-l">' + data['sample-plan-project-name-text-input'] + '</span>') if data['sample-plan-project-name-text-input']) + pageHeadingTextHTML,
+                        isPageHeading: true,
+                        classes: "govuk-fieldset__legend--l"
+                    }
+                },
+                hint: {
+                    text: "For example, 31 3 2026"
+                },
+                errorMessage: {
+                    text: "Enter the marine licence expiry date"
+                } if data['sample-plan-errortypeone'] == "true",
+                items: [
+                    {
+                        id: "day",
+                        name: "day",
+                        label: "Day",
+                        value: data['sample-plan-licence-expiry-day'],
+                        classes: "govuk-input--width-2"
+                    },
+                    {
+                        id: "month",
+                        name: "month",
+                        label: "Month",
+                        value: data['sample-plan-licence-expiry-month'],
+                        classes: "govuk-input--width-2"
+                    },
+                    {
+                        id: "year",
+                        name: "year",
+                        label: "Year",
+                        value: data['sample-plan-licence-expiry-year'],
+                        classes: "govuk-input--width-4"
+                    }
+                ]
             }) }}
 
             <div class="govuk-button-group">
@@ -81,7 +90,7 @@ Error:
                     text: "Save and continue"
                 }) }}
 
-                <a class="govuk-link govuk-link--no-visited-state" href="javascript:window.history.back()">Cancel</a>
+                <a class="govuk-link govuk-link--no-visited-state" href="">Cancel</a>
             </div>
 
         </form>
