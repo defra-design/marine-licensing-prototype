@@ -1,0 +1,109 @@
+{% extends "../../layouts/exemption.html" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% if data['user_type'] === 'organisation' %}
+        {% include "../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+Which type of file do you want to upload?
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+{{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        
+        <!-- Error summary -->
+        {% if data['sample-plan-file-type-errorthispage'] == "true" %}
+            {{ govukErrorSummary({
+                titleText: "There is a problem",
+                errorList: [
+                    {
+                        text: "Select which type of file you want to upload",
+                        href: "#sample-plan-file-type"
+                    }
+                ]
+            }) }}
+        {% endif %}
+
+        <form action="which-type-of-file-router" method="post" novalidate>
+            
+            <div class="govuk-form-group {% if data['sample-plan-file-type-errorthispage'] == 'true' %}govuk-form-group--error{% endif %}">
+                <span class="govuk-caption-l">{{ data['sample-plan-project-name-text-input'] }}</span>
+                <h1 class="govuk-heading-l">
+                    {{ pageHeadingTextHTML }}
+                </h1>
+
+                <details class="govuk-details">
+                    <summary class="govuk-details__summary">
+                      <span class="govuk-details__summary-text">
+                        Help with file types
+                      </span>
+                    </summary>
+                    <div class="govuk-details__text">
+                     <h2 class="govuk-heading-s">Shapefile</h2>
+                      <p>A shapefile is a collection of files that store map data. It defines locations, shapes, and other details like names or numbers. Shapefiles are commonly used in geographic information system (GIS) software.</p>
+
+                      <h2 class="govuk-heading-s">KML</h2>
+                      <p>A KML file (Keyhole Markup Language) is used to store map data. It tells mapping programs like Google Earth where to place points, lines, shapes, and other features on a map. KML files are written in XML (Extensible Markup Language), a format that organises data so computers can read it.</p>
+                    </div>
+                </details>
+
+                {% if data['sample-plan-file-type-errorthispage'] == "true" %}
+                  <p id="sample-plan-file-type-error" class="govuk-error-message">
+                    <span class="govuk-visually-hidden">Error:</span> Select which type of file you want to upload
+                  </p>
+                {% endif %}
+
+                {{ govukRadios({
+                    name: "sample-plan-file-type",
+                    id: "sample-plan-file-type",
+                    fieldset: {
+                        legend: {
+                            html: pageHeadingTextHTML,
+                            isPageHeading: false,
+                            classes: "govuk-visually-hidden"
+                        }
+                    },
+                    items: [
+                        {
+                            value: "shapefile",
+                            text: "Shapefile"
+                        },
+                        {
+                            value: "kml",
+                            text: "KML"
+                        }
+                    ],
+                    value: data['sample-plan-file-type'],
+                    errorMessage: null
+                }) }}
+            </div>
+            
+            <div class="govuk-button-group">
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+
+                <a class="govuk-link govuk-link--no-visited-state" href="">Cancel</a>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+{% endblock %}

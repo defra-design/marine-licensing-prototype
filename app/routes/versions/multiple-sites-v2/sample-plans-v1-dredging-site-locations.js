@@ -12,8 +12,56 @@ module.exports = function (router) {
 
   // Before you start router (POST)
   router.post(`/versions/${version}/${section}/${subsection}/before-you-start-router`, function (req, res) {
-    // For now, redirect back to the page since no destination is specified
-    res.redirect('before-you-start');
+    res.redirect('how-do-you-want-to-provide-site-location');
+  });
+
+  // How do you want to provide site location page
+  router.get(`/versions/${version}/${section}/${subsection}/how-do-you-want-to-provide-site-location`, function (req, res) {
+    req.session.data['isSamplePlansSection'] = true;
+    res.render(`versions/${version}/${section}/${subsection}/how-do-you-want-to-provide-site-location`);
+  });
+
+  // How do you want to provide site location router (POST)
+  router.post(`/versions/${version}/${section}/${subsection}/how-do-you-want-to-provide-site-location-router`, function (req, res) {
+    // Clear any previous errors
+    req.session.data['sample-plan-errorthispage'] = "false";
+
+    // Check if option is selected
+    if (!req.session.data['sample-plan-site-location-method']) {
+      req.session.data['sample-plan-errorthispage'] = "true";
+      res.redirect('how-do-you-want-to-provide-site-location');
+      return;
+    }
+
+    // Route based on selection
+    if (req.session.data['sample-plan-site-location-method'] === 'file-upload') {
+      res.redirect('which-type-of-file');
+    } else {
+      // For manual entry - redirect back to same page for now since manual entry is not implemented
+      res.redirect('how-do-you-want-to-provide-site-location');
+    }
+  });
+
+  // Which type of file page
+  router.get(`/versions/${version}/${section}/${subsection}/which-type-of-file`, function (req, res) {
+    req.session.data['isSamplePlansSection'] = true;
+    res.render(`versions/${version}/${section}/${subsection}/which-type-of-file`);
+  });
+
+  // Which type of file router (POST)
+  router.post(`/versions/${version}/${section}/${subsection}/which-type-of-file-router`, function (req, res) {
+    // Clear any previous errors
+    req.session.data['sample-plan-file-type-errorthispage'] = "false";
+
+    // Check if option is selected
+    if (!req.session.data['sample-plan-file-type']) {
+      req.session.data['sample-plan-file-type-errorthispage'] = "true";
+      res.redirect('which-type-of-file');
+      return;
+    }
+
+    // For now, redirect back to same page since file upload functionality is not implemented
+    res.redirect('which-type-of-file');
   });
 
 };
