@@ -107,6 +107,20 @@ module.exports = function (router) {
   router.post(`/versions/${version}/${section}/${subsection}/review-site-details-router`, function (req, res) {
     // Mark that user has visited dredging site locations journey
     req.session.data['has-visited-dredging-site-locations'] = true;
+    
+    // Check if all required fields are completed
+    const site1DredgingComplete = req.session.data['dredging-details-site-1-completed'];
+    const site1HistoryComplete = req.session.data['site-history-site-1-completed'];
+    const site2DredgingComplete = req.session.data['dredging-details-site-2-completed'];
+    const site2HistoryComplete = req.session.data['site-history-site-2-completed'];
+    
+    // Set the overall completion status
+    if (site1DredgingComplete && site1HistoryComplete && site2DredgingComplete && site2HistoryComplete) {
+      req.session.data['dredging-sites-all-complete'] = true;
+    } else {
+      req.session.data['dredging-sites-all-complete'] = false;
+    }
+    
     // Redirect back to task list (sample plan start page)
     res.redirect('../sample-plan-start-page');
   });
@@ -264,6 +278,278 @@ module.exports = function (router) {
 
     // If no errors, mark as completed and redirect to review page
     req.session.data['dredging-details-site-2-completed'] = true;
+    res.redirect('review-site-details');
+  });
+
+  /////////////////////////////////////////////////////////
+  //////// Site history Site 1 page
+  /////////////////////////////////////////////////////////
+  router.get(`/versions/${version}/${section}/${subsection}/site-history-site-1`, function (req, res) {
+    req.session.data['isSamplePlansSection'] = true;
+    
+    // Clear incomplete data if user navigates away and comes back without completing
+    if (!req.session.data['site-history-site-1-completed']) {
+      // Clear any partial form data to ensure fresh start
+      delete req.session.data['site-history-site-1'];
+      delete req.session.data['site-history-site-1-chemicals-manufacturing-details'];
+      delete req.session.data['site-history-site-1-electronics-manufacturing-details'];
+      delete req.session.data['site-history-site-1-major-port-infrastructure-details'];
+      delete req.session.data['site-history-site-1-mining-details'];
+      delete req.session.data['site-history-site-1-oil-processing-details'];
+      delete req.session.data['site-history-site-1-pollution-incidents-details'];
+      delete req.session.data['site-history-site-1-ship-building-details'];
+      delete req.session.data['site-history-site-1-steelworks-details'];
+      delete req.session.data['site-history-site-1-other-details'];
+      // Clear errors
+      delete req.session.data['site-history-site-1-errorthispage'];
+      delete req.session.data['site-history-site-1-error'];
+      delete req.session.data['site-history-site-1-chemicals-manufacturing-details-error'];
+      delete req.session.data['site-history-site-1-electronics-manufacturing-details-error'];
+      delete req.session.data['site-history-site-1-major-port-infrastructure-details-error'];
+      delete req.session.data['site-history-site-1-mining-details-error'];
+      delete req.session.data['site-history-site-1-oil-processing-details-error'];
+      delete req.session.data['site-history-site-1-pollution-incidents-details-error'];
+      delete req.session.data['site-history-site-1-ship-building-details-error'];
+      delete req.session.data['site-history-site-1-steelworks-details-error'];
+      delete req.session.data['site-history-site-1-other-details-error'];
+    }
+    
+    res.render(`versions/${version}/${section}/${subsection}/site-history-site-1`);
+  });
+
+  // Site history Site 1 router (POST)
+  router.post(`/versions/${version}/${section}/${subsection}/site-history-site-1-router`, function (req, res) {
+    // Clear any previous errors
+    req.session.data['site-history-site-1-errorthispage'] = "false";
+    delete req.session.data['site-history-site-1-error'];
+    delete req.session.data['site-history-site-1-chemicals-manufacturing-details-error'];
+    delete req.session.data['site-history-site-1-electronics-manufacturing-details-error'];
+    delete req.session.data['site-history-site-1-major-port-infrastructure-details-error'];
+    delete req.session.data['site-history-site-1-mining-details-error'];
+    delete req.session.data['site-history-site-1-oil-processing-details-error'];
+    delete req.session.data['site-history-site-1-pollution-incidents-details-error'];
+    delete req.session.data['site-history-site-1-ship-building-details-error'];
+    delete req.session.data['site-history-site-1-steelworks-details-error'];
+    delete req.session.data['site-history-site-1-other-details-error'];
+
+    let hasErrors = false;
+
+    // Validate that at least one option is selected
+    if (!req.session.data['site-history-site-1'] || req.session.data['site-history-site-1'].length === 0) {
+      req.session.data['site-history-site-1-error'] = "Select all that apply for the site history";
+      hasErrors = true;
+    } else {
+      // Check each selected option has details provided (except "not-previously-used")
+      const selectedOptions = req.session.data['site-history-site-1'];
+      
+      if (selectedOptions.includes('chemicals-manufacturing')) {
+        if (!req.session.data['site-history-site-1-chemicals-manufacturing-details'] || req.session.data['site-history-site-1-chemicals-manufacturing-details'].trim() === '') {
+          req.session.data['site-history-site-1-chemicals-manufacturing-details-error'] = "Provide details about chemicals manufacturing";
+          hasErrors = true;
+        }
+      }
+      
+      if (selectedOptions.includes('electronics-manufacturing')) {
+        if (!req.session.data['site-history-site-1-electronics-manufacturing-details'] || req.session.data['site-history-site-1-electronics-manufacturing-details'].trim() === '') {
+          req.session.data['site-history-site-1-electronics-manufacturing-details-error'] = "Provide details about electronics manufacturing";
+          hasErrors = true;
+        }
+      }
+      
+      if (selectedOptions.includes('major-port-infrastructure')) {
+        if (!req.session.data['site-history-site-1-major-port-infrastructure-details'] || req.session.data['site-history-site-1-major-port-infrastructure-details'].trim() === '') {
+          req.session.data['site-history-site-1-major-port-infrastructure-details-error'] = "Provide details about major port infrastructure or activity";
+          hasErrors = true;
+        }
+      }
+      
+      if (selectedOptions.includes('mining')) {
+        if (!req.session.data['site-history-site-1-mining-details'] || req.session.data['site-history-site-1-mining-details'].trim() === '') {
+          req.session.data['site-history-site-1-mining-details-error'] = "Provide details about mining";
+          hasErrors = true;
+        }
+      }
+      
+      if (selectedOptions.includes('oil-processing')) {
+        if (!req.session.data['site-history-site-1-oil-processing-details'] || req.session.data['site-history-site-1-oil-processing-details'].trim() === '') {
+          req.session.data['site-history-site-1-oil-processing-details-error'] = "Provide details about oil processing";
+          hasErrors = true;
+        }
+      }
+      
+      if (selectedOptions.includes('pollution-incidents')) {
+        if (!req.session.data['site-history-site-1-pollution-incidents-details'] || req.session.data['site-history-site-1-pollution-incidents-details'].trim() === '') {
+          req.session.data['site-history-site-1-pollution-incidents-details-error'] = "Provide details about pollution incidents";
+          hasErrors = true;
+        }
+      }
+      
+      if (selectedOptions.includes('ship-building')) {
+        if (!req.session.data['site-history-site-1-ship-building-details'] || req.session.data['site-history-site-1-ship-building-details'].trim() === '') {
+          req.session.data['site-history-site-1-ship-building-details-error'] = "Provide details about ship building";
+          hasErrors = true;
+        }
+      }
+      
+      if (selectedOptions.includes('steelworks')) {
+        if (!req.session.data['site-history-site-1-steelworks-details'] || req.session.data['site-history-site-1-steelworks-details'].trim() === '') {
+          req.session.data['site-history-site-1-steelworks-details-error'] = "Provide details about steelworks";
+          hasErrors = true;
+        }
+      }
+      
+      if (selectedOptions.includes('other')) {
+        if (!req.session.data['site-history-site-1-other-details'] || req.session.data['site-history-site-1-other-details'].trim() === '') {
+          req.session.data['site-history-site-1-other-details-error'] = "Provide details about other activities";
+          hasErrors = true;
+        }
+      }
+    }
+
+    if (hasErrors) {
+      req.session.data['site-history-site-1-errorthispage'] = "true";
+      res.redirect('site-history-site-1');
+      return;
+    }
+
+    // If no errors, mark as completed and redirect to review page
+    req.session.data['site-history-site-1-completed'] = true;
+    res.redirect('review-site-details');
+  });
+
+  /////////////////////////////////////////////////////////
+  //////// Site history Site 2 page
+  /////////////////////////////////////////////////////////
+  router.get(`/versions/${version}/${section}/${subsection}/site-history-site-2`, function (req, res) {
+    req.session.data['isSamplePlansSection'] = true;
+    
+    // Clear incomplete data if user navigates away and comes back without completing
+    if (!req.session.data['site-history-site-2-completed']) {
+      // Clear any partial form data to ensure fresh start
+      delete req.session.data['site-history-site-2'];
+      delete req.session.data['site-history-site-2-chemicals-manufacturing-details'];
+      delete req.session.data['site-history-site-2-electronics-manufacturing-details'];
+      delete req.session.data['site-history-site-2-major-port-infrastructure-details'];
+      delete req.session.data['site-history-site-2-mining-details'];
+      delete req.session.data['site-history-site-2-oil-processing-details'];
+      delete req.session.data['site-history-site-2-pollution-incidents-details'];
+      delete req.session.data['site-history-site-2-ship-building-details'];
+      delete req.session.data['site-history-site-2-steelworks-details'];
+      delete req.session.data['site-history-site-2-other-details'];
+      // Clear errors
+      delete req.session.data['site-history-site-2-errorthispage'];
+      delete req.session.data['site-history-site-2-error'];
+      delete req.session.data['site-history-site-2-chemicals-manufacturing-details-error'];
+      delete req.session.data['site-history-site-2-electronics-manufacturing-details-error'];
+      delete req.session.data['site-history-site-2-major-port-infrastructure-details-error'];
+      delete req.session.data['site-history-site-2-mining-details-error'];
+      delete req.session.data['site-history-site-2-oil-processing-details-error'];
+      delete req.session.data['site-history-site-2-pollution-incidents-details-error'];
+      delete req.session.data['site-history-site-2-ship-building-details-error'];
+      delete req.session.data['site-history-site-2-steelworks-details-error'];
+      delete req.session.data['site-history-site-2-other-details-error'];
+    }
+    
+    res.render(`versions/${version}/${section}/${subsection}/site-history-site-2`);
+  });
+
+  // Site history Site 2 router (POST)
+  router.post(`/versions/${version}/${section}/${subsection}/site-history-site-2-router`, function (req, res) {
+    // Clear any previous errors
+    req.session.data['site-history-site-2-errorthispage'] = "false";
+    delete req.session.data['site-history-site-2-error'];
+    delete req.session.data['site-history-site-2-chemicals-manufacturing-details-error'];
+    delete req.session.data['site-history-site-2-electronics-manufacturing-details-error'];
+    delete req.session.data['site-history-site-2-major-port-infrastructure-details-error'];
+    delete req.session.data['site-history-site-2-mining-details-error'];
+    delete req.session.data['site-history-site-2-oil-processing-details-error'];
+    delete req.session.data['site-history-site-2-pollution-incidents-details-error'];
+    delete req.session.data['site-history-site-2-ship-building-details-error'];
+    delete req.session.data['site-history-site-2-steelworks-details-error'];
+    delete req.session.data['site-history-site-2-other-details-error'];
+
+    let hasErrors = false;
+
+    // Validate that at least one option is selected
+    if (!req.session.data['site-history-site-2'] || req.session.data['site-history-site-2'].length === 0) {
+      req.session.data['site-history-site-2-error'] = "Select all that apply for the site history";
+      hasErrors = true;
+    } else {
+      // Check each selected option has details provided (except "not-previously-used")
+      const selectedOptions = req.session.data['site-history-site-2'];
+      
+      if (selectedOptions.includes('chemicals-manufacturing')) {
+        if (!req.session.data['site-history-site-2-chemicals-manufacturing-details'] || req.session.data['site-history-site-2-chemicals-manufacturing-details'].trim() === '') {
+          req.session.data['site-history-site-2-chemicals-manufacturing-details-error'] = "Provide details about chemicals manufacturing";
+          hasErrors = true;
+        }
+      }
+      
+      if (selectedOptions.includes('electronics-manufacturing')) {
+        if (!req.session.data['site-history-site-2-electronics-manufacturing-details'] || req.session.data['site-history-site-2-electronics-manufacturing-details'].trim() === '') {
+          req.session.data['site-history-site-2-electronics-manufacturing-details-error'] = "Provide details about electronics manufacturing";
+          hasErrors = true;
+        }
+      }
+      
+      if (selectedOptions.includes('major-port-infrastructure')) {
+        if (!req.session.data['site-history-site-2-major-port-infrastructure-details'] || req.session.data['site-history-site-2-major-port-infrastructure-details'].trim() === '') {
+          req.session.data['site-history-site-2-major-port-infrastructure-details-error'] = "Provide details about major port infrastructure or activity";
+          hasErrors = true;
+        }
+      }
+      
+      if (selectedOptions.includes('mining')) {
+        if (!req.session.data['site-history-site-2-mining-details'] || req.session.data['site-history-site-2-mining-details'].trim() === '') {
+          req.session.data['site-history-site-2-mining-details-error'] = "Provide details about mining";
+          hasErrors = true;
+        }
+      }
+      
+      if (selectedOptions.includes('oil-processing')) {
+        if (!req.session.data['site-history-site-2-oil-processing-details'] || req.session.data['site-history-site-2-oil-processing-details'].trim() === '') {
+          req.session.data['site-history-site-2-oil-processing-details-error'] = "Provide details about oil processing";
+          hasErrors = true;
+        }
+      }
+      
+      if (selectedOptions.includes('pollution-incidents')) {
+        if (!req.session.data['site-history-site-2-pollution-incidents-details'] || req.session.data['site-history-site-2-pollution-incidents-details'].trim() === '') {
+          req.session.data['site-history-site-2-pollution-incidents-details-error'] = "Provide details about pollution incidents";
+          hasErrors = true;
+        }
+      }
+      
+      if (selectedOptions.includes('ship-building')) {
+        if (!req.session.data['site-history-site-2-ship-building-details'] || req.session.data['site-history-site-2-ship-building-details'].trim() === '') {
+          req.session.data['site-history-site-2-ship-building-details-error'] = "Provide details about ship building";
+          hasErrors = true;
+        }
+      }
+      
+      if (selectedOptions.includes('steelworks')) {
+        if (!req.session.data['site-history-site-2-steelworks-details'] || req.session.data['site-history-site-2-steelworks-details'].trim() === '') {
+          req.session.data['site-history-site-2-steelworks-details-error'] = "Provide details about steelworks";
+          hasErrors = true;
+        }
+      }
+      
+      if (selectedOptions.includes('other')) {
+        if (!req.session.data['site-history-site-2-other-details'] || req.session.data['site-history-site-2-other-details'].trim() === '') {
+          req.session.data['site-history-site-2-other-details-error'] = "Provide details about other activities";
+          hasErrors = true;
+        }
+      }
+    }
+
+    if (hasErrors) {
+      req.session.data['site-history-site-2-errorthispage'] = "true";
+      res.redirect('site-history-site-2');
+      return;
+    }
+
+    // If no errors, mark as completed and redirect to review page
+    req.session.data['site-history-site-2-completed'] = true;
     res.redirect('review-site-details');
   });
 
