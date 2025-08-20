@@ -346,4 +346,65 @@ module.exports = function (router) {
     res.redirect('sample-plan-start-page');
   });
 
+  // Fee estimate page
+  router.get(`/versions/${version}/${section}/fee-estimate`, function (req, res) {
+    // Clear any existing error flags when user navigates to the page
+    req.session.data['sample-plan-errorthispage'] = "false";
+    req.session.data['sample-plan-errortypeone'] = "false";
+    req.session.data['sample-plan-errortypetwo'] = "false";
+    req.session.data['isSamplePlansSection'] = true;
+    
+    res.render(`versions/${version}/${section}/fee-estimate`);
+  });
+
+  // Fee estimate router (POST)
+  router.post(`/versions/${version}/${section}/fee-estimate-router`, function (req, res) {
+    // Reset error flags
+    req.session.data['sample-plan-errorthispage'] = "false";
+    req.session.data['sample-plan-errortypeone'] = "false";
+    req.session.data['sample-plan-errortypetwo'] = "false";
+
+    // Get form data
+    const termsAgreed = req.body['fee-terms-checkbox'];
+    const feeAcceptance = req.body['fee-acceptance'];
+
+    let hasError = false;
+
+    // Validate terms and conditions checkbox
+    if (!termsAgreed) {
+      req.session.data['sample-plan-errorthispage'] = "true";
+      req.session.data['sample-plan-errortypeone'] = "true";
+      hasError = true;
+    }
+
+    // Validate fee acceptance radio button
+    if (!feeAcceptance || feeAcceptance.trim() === '') {
+      req.session.data['sample-plan-errorthispage'] = "true";
+      req.session.data['sample-plan-errortypetwo'] = "true";
+      hasError = true;
+    }
+
+    // If there are validation errors, redirect back to the form
+    if (hasError) {
+      return res.redirect('fee-estimate');
+    }
+
+    // Success case - mark as completed if checkbox agreed and Yes selected
+    if (termsAgreed && feeAcceptance === 'yes') {
+      req.session.data['sample-plan-fee-estimate-completed'] = "true";
+    }
+
+    // Conditional routing based on fee acceptance
+    if (feeAcceptance === 'yes') {
+      res.redirect('sample-plan-start-page');
+    } else if (feeAcceptance === 'no') {
+      // Redirect to a "rejection" page (not yet built)
+      // For now, redirect back to task list
+      res.redirect('sample-plan-start-page');
+    } else {
+      // Fallback
+      res.redirect('sample-plan-start-page');
+    }
+  });
+
 }
