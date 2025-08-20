@@ -84,15 +84,19 @@ Sample plan start page
 
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
 			  <div class="govuk-task-list__name-and-hint">
-				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="new-or-existing-licence-status">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="new-or-existing-licence" aria-describedby="new-or-existing-licence-status">
 				  New or existing licence
 				</a>
 			  </div>
 			  
 			  <div class="govuk-task-list__status" id="new-or-existing-licence-status">
+				{% if data['sample-plan-new-or-existing-licence'] %}
+				Completed
+				{% else %}
 				<strong class="govuk-tag govuk-tag--blue">
 					Not yet started
 				</strong>
+				{% endif %}
 			  </div>
 			</li>
 

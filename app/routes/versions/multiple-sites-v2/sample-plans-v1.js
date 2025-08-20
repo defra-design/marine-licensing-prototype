@@ -117,4 +117,36 @@ module.exports = function (router) {
     res.redirect('sample-plan-start-page');
   });
 
+  // New or existing licence page
+  router.get(`/versions/${version}/${section}/new-or-existing-licence`, function (req, res) {
+    // Clear any existing error flags when user navigates to the page
+    req.session.data['sample-plan-errorthispage'] = "false";
+    req.session.data['sample-plan-errortypeone'] = "false";
+    req.session.data['isSamplePlansSection'] = true;
+    
+    res.render(`versions/${version}/${section}/new-or-existing-licence`);
+  });
+
+  // New or existing licence router (POST)
+  router.post(`/versions/${version}/${section}/new-or-existing-licence-router`, function (req, res) {
+    // Reset error flags
+    req.session.data['sample-plan-errorthispage'] = "false";
+    req.session.data['sample-plan-errortypeone'] = "false";
+
+    // Validate licence type selection
+    const licenceType = req.body['sample-plan-new-or-existing-licence'];
+    
+    if (!licenceType || licenceType.trim() === '') {
+      req.session.data['sample-plan-errorthispage'] = "true";
+      req.session.data['sample-plan-errortypeone'] = "true";
+      return res.redirect('new-or-existing-licence');
+    }
+
+    // Save the licence type selection
+    req.session.data['sample-plan-new-or-existing-licence'] = licenceType;
+    
+    // For now, redirect back to task list - conditional routing will be added later
+    res.redirect('sample-plan-start-page');
+  });
+
 }
