@@ -1,0 +1,291 @@
+{% extends "../../layouts/exemption.html" %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {{ super() }}
+    {% include "../../includes/back-link.html" %}
+{% endblock %}
+
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+<!-- Set the heading for the page -->
+{% set pageHeadingTextHTML %}
+Review site details
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {% if  data['sample-plan-errorthispage'] == "true"  %}
+        Error:
+    {% endif %}
+
+    {{ pageHeadingTextHTML }} - Get a plan for sediment sample analysis
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <span class="govuk-caption-l">{{ data['sample-plan-project-name-text-input'] }}</span>
+        <h1 class="govuk-heading-l">
+            {{ pageHeadingTextHTML }}
+        </h1>
+        
+        <!-- Check if all required fields are completed -->
+        {% set allComplete = false %}
+        
+        <!-- For now, assume incomplete items exist since we haven't implemented the forms yet -->
+        {% if not allComplete %}
+            {{ govukInsetText({
+                html: "You must complete all sections marked <span class='govuk-tag govuk-tag--red'>Incomplete</span> before you can send your information.<br><br>You can select 'Save and continue' to keep your progress and return later."
+            }) }}
+        {% else %}
+            {{ govukInsetText({
+                html: "You can select 'Save and continue' to keep your progress and return later."
+            }) }}
+        {% endif %}
+        
+        <!-- Providing the site location section -->
+        <div id="site-location" class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">
+                    Providing the site location
+                </h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Method of providing site location
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            Upload a file with the coordinates of the site
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="" class="govuk-link">
+                                Change<span class="govuk-visually-hidden"> method of providing site location</span>
+                            </a>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            File type
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['sample-plan-file-type'] == 'kml' %}
+                                KML
+                            {% elif data['sample-plan-file-type'] == 'shapefile' %}
+                                Shapefile
+                            {% else %}
+                                Shapefile
+                            {% endif %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="" class="govuk-link">
+                                Change<span class="govuk-visually-hidden"> file type</span>
+                            </a>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            File uploaded
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['sample-plan-file-type'] == 'kml' %}
+                                dredge-site-coordinates.kml
+                            {% else %}
+                                dredge-site-coordinates.zip
+                            {% endif %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="" class="govuk-link">
+                                Change<span class="govuk-visually-hidden"> file uploaded</span>
+                            </a>
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        <!-- Site 1 details section -->
+        <div id="site-1-details" class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">
+                    Site details
+                </h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Site name
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            Dredge site south
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="" class="govuk-link">
+                                Change<span class="govuk-visually-hidden"> site name</span>
+                            </a>
+                        </dd>
+                    </div>
+                    
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key map-label">
+                            Map view
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            <img src="/public/images/map-5-points.jpg" alt="Map showing site 1 location" />
+                        </dd>
+                    </div>
+
+                    <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+                        <dt class="govuk-summary-list__key">
+                            Type of material being dredged
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="" class="govuk-link">
+                                Add<span class="govuk-visually-hidden"> type of material being dredged</span>
+                            </a>
+                        </dd>
+                    </div>
+
+                    <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+                        <dt class="govuk-summary-list__key">
+                            Proposed method of dredging
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                        </dd>
+                    </div>
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Dredge depth
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                        </dd>
+                    </div>
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Site history
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="" class="govuk-link">
+                                Add<span class="govuk-visually-hidden"> site history</span>
+                            </a>
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        <!-- Site 2 details section -->
+        <div id="site-2-details" class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">
+                    Site 2 details
+                </h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Site name
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            Dredge site west
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="" class="govuk-link">
+                                Change<span class="govuk-visually-hidden"> site name</span>
+                            </a>
+                        </dd>
+                    </div>
+                    
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key map-label">
+                            Map view
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            <img src="/public/images/map-4-points.jpg" alt="Map showing site 2 location" />
+                        </dd>
+                    </div>
+
+                    <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+                        <dt class="govuk-summary-list__key">
+                            Type of material being dredged
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="" class="govuk-link">
+                                Add<span class="govuk-visually-hidden"> type of material being dredged</span>
+                            </a>
+                        </dd>
+                    </div>
+
+                    <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+                        <dt class="govuk-summary-list__key">
+                            Proposed method of dredging
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                        </dd>
+                    </div>
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Dredge depth
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                        </dd>
+                    </div>
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Site history
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="" class="govuk-link">
+                                Add<span class="govuk-visually-hidden"> site history</span>
+                            </a>
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        <form action="review-site-details-router" method="post" novalidate>
+            <div class="govuk-button-group">
+                {{ govukButton({
+                    text: "Save and continue"
+                }) }}
+                <a class="govuk-link govuk-link--no-visited-state" href="">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

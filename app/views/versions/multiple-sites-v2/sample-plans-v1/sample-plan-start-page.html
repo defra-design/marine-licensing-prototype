@@ -134,15 +134,33 @@ Sample plan start page
 			{% elif data['sample-plan-which-activity'] == "Marine dredging only" %}
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
 			  <div class="govuk-task-list__name-and-hint">
-				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="dredging-site-locations/before-you-start" aria-describedby="site-locations-status">
-				  Site locations and dredging activity
-				</a>
+				{% if data['has-visited-dredging-site-locations'] %}
+				  <a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="dredging-site-locations/review-site-details" aria-describedby="site-locations-status">
+					Site locations and dredging activity
+				  </a>
+				{% else %}
+				  <a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="dredging-site-locations/before-you-start" aria-describedby="site-locations-status">
+					Site locations and dredging activity
+				  </a>
+				{% endif %}
 			  </div>
 			  
 			  <div class="govuk-task-list__status" id="site-locations-status">
-				<strong class="govuk-tag govuk-tag--blue">
-					Not yet started
-				</strong>
+				{% if data['has-visited-dredging-site-locations'] %}
+					{% if data['dredging-sites-all-complete'] %}
+						<strong class="govuk-tag">
+							Completed
+						</strong>
+					{% else %}
+						<strong class="govuk-tag govuk-tag--light-blue">
+							In progress
+						</strong>
+					{% endif %}
+				{% else %}
+					<strong class="govuk-tag govuk-tag--blue">
+						Not yet started
+					</strong>
+				{% endif %}
 			  </div>
 			</li>
 
@@ -173,15 +191,33 @@ Sample plan start page
 			{% elif data['sample-plan-which-activity'] == "Marine dredging and disposal" %}
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
 			  <div class="govuk-task-list__name-and-hint">
-				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="dredging-site-locations/before-you-start" aria-describedby="site-locations-status">
-				  Site locations and dredging activity
-				</a>
+				{% if data['has-visited-dredging-site-locations'] %}
+				  <a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="dredging-site-locations/review-site-details" aria-describedby="site-locations-status">
+					Site locations and dredging activity
+				  </a>
+				{% else %}
+				  <a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="dredging-site-locations/before-you-start" aria-describedby="site-locations-status">
+					Site locations and dredging activity
+				  </a>
+				{% endif %}
 			  </div>
 			  
 			  <div class="govuk-task-list__status" id="site-locations-status">
-				<strong class="govuk-tag govuk-tag--blue">
-					Not yet started
-				</strong>
+				{% if data['has-visited-dredging-site-locations'] %}
+					{% if data['dredging-sites-all-complete'] %}
+						<strong class="govuk-tag">
+							Completed
+						</strong>
+					{% else %}
+						<strong class="govuk-tag govuk-tag--light-blue">
+							In progress
+						</strong>
+					{% endif %}
+				{% else %}
+					<strong class="govuk-tag govuk-tag--blue">
+						Not yet started
+					</strong>
+				{% endif %}
 			  </div>
 			</li>
 
