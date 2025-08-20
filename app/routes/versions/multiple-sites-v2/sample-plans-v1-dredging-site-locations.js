@@ -4,7 +4,9 @@ module.exports = function (router) {
   const section = "sample-plans-v1";
   const subsection = "dredging-site-locations";
 
-  // Before you start page
+  /////////////////////////////////////////////////////////
+  //////// Before you start page
+  /////////////////////////////////////////////////////////
   router.get(`/versions/${version}/${section}/${subsection}/before-you-start`, function (req, res) {
     req.session.data['isSamplePlansSection'] = true;
     res.render(`versions/${version}/${section}/${subsection}/before-you-start`);
@@ -15,7 +17,9 @@ module.exports = function (router) {
     res.redirect('how-do-you-want-to-provide-site-location');
   });
 
-  // How do you want to provide site location page
+  /////////////////////////////////////////////////////////
+  //////// How do you want to provide site location page
+  /////////////////////////////////////////////////////////
   router.get(`/versions/${version}/${section}/${subsection}/how-do-you-want-to-provide-site-location`, function (req, res) {
     req.session.data['isSamplePlansSection'] = true;
     res.render(`versions/${version}/${section}/${subsection}/how-do-you-want-to-provide-site-location`);
@@ -42,7 +46,9 @@ module.exports = function (router) {
     }
   });
 
-  // Which type of file page
+  /////////////////////////////////////////////////////////
+  //////// Which type of file page
+  /////////////////////////////////////////////////////////
   router.get(`/versions/${version}/${section}/${subsection}/which-type-of-file`, function (req, res) {
     req.session.data['isSamplePlansSection'] = true;
     res.render(`versions/${version}/${section}/${subsection}/which-type-of-file`);
@@ -60,8 +66,22 @@ module.exports = function (router) {
       return;
     }
 
-    // For now, redirect back to same page since file upload functionality is not implemented
-    res.redirect('which-type-of-file');
+    // Route to upload file page
+    res.redirect('upload-file');
+  });
+
+  /////////////////////////////////////////////////////////
+  //////// Upload file page
+  /////////////////////////////////////////////////////////
+  router.get(`/versions/${version}/${section}/${subsection}/upload-file`, function (req, res) {
+    req.session.data['isSamplePlansSection'] = true;
+    res.render(`versions/${version}/${section}/${subsection}/upload-file`);
+  });
+
+  // Upload file router (POST)
+  router.post(`/versions/${version}/${section}/${subsection}/upload-file-router`, function (req, res) {
+    // For now, redirect back to same page since file processing is not implemented
+    res.redirect('upload-file');
   });
 
 };
