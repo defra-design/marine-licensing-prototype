@@ -96,7 +96,7 @@ Sample plan start page
 			  </div>
 			</li>
 
-			{% if data['sample-plan-which-activity'] == "Marine disposal only" %}
+			{% if data['sample-plan-which-activity'] == "Marine disposal" %}
 			<li class="govuk-task-list__item">
 			  <div class="govuk-task-list__name-and-hint">
 				<div>Site locations and dredging activity</div>
@@ -131,7 +131,7 @@ Sample plan start page
 			  </div>
 			</li>
 
-			{% elif data['sample-plan-which-activity'] == "Marine dredging only" %}
+			{% elif data['sample-plan-which-activity'] == "Marine dredging" %}
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
 			  <div class="govuk-task-list__name-and-hint">
 				{% if data['has-visited-dredging-site-locations'] %}
