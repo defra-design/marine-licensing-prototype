@@ -144,11 +144,31 @@ Review site details
                             Type of material being dredged
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                            {% if data['dredging-details-site-1-completed'] %}
+                                {% set materialTypes = [] %}
+                                {% if data['dredging-details-site-1-material-type'] %}
+                                    {% for type in data['dredging-details-site-1-material-type'] %}
+                                        {% if type == 'capital-dredged-material' %}
+                                            {% set materialTypes = (materialTypes.push('Capital dredged material'), materialTypes) %}
+                                        {% elif type == 'maintenance-dredged-material' %}
+                                            {% set materialTypes = (materialTypes.push('Maintenance dredged material'), materialTypes) %}
+                                        {% elif type == 'non-dredged-sediments' %}
+                                            {% set materialTypes = (materialTypes.push('Non-dredged sediments'), materialTypes) %}
+                                        {% elif type == 'organic-material' %}
+                                            {% set materialTypes = (materialTypes.push('Organic material of natural origin'), materialTypes) %}
+                                        {% elif type == 'other' and data['dredging-details-site-1-material-type-other'] %}
+                                            {% set materialTypes = (materialTypes.push('Other: ' + data['dredging-details-site-1-material-type-other']), materialTypes) %}
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                                {{ materialTypes | join('<br>') | safe if materialTypes.length > 0 else 'Not provided' }}
+                            {% else %}
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                            {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="" class="govuk-link">
-                                Add<span class="govuk-visually-hidden"> type of material being dredged</span>
+                            <a href="dredging-details-site-1" class="govuk-link">
+                                {% if data['dredging-details-site-1-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> type of material being dredged</span>
                             </a>
                         </dd>
                     </div>
@@ -158,7 +178,29 @@ Review site details
                             Proposed method of dredging
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                            {% if data['dredging-details-site-1-completed'] %}
+                                {% set methods = [] %}
+                                {% if data['dredging-details-site-1-method'] %}
+                                    {% for method in data['dredging-details-site-1-method'] %}
+                                        {% if method == 'cutter-suction' %}
+                                            {% set methods = (methods.push('Cutter suction'), methods) %}
+                                        {% elif method == 'grab' %}
+                                            {% set methods = (methods.push('Grab'), methods) %}
+                                        {% elif method == 'plough-bed-levelling' %}
+                                            {% set methods = (methods.push('Plough or bed levelling'), methods) %}
+                                        {% elif method == 'trailer-suction' %}
+                                            {% set methods = (methods.push('Trailer suction'), methods) %}
+                                        {% elif method == 'water-injection-agitation' %}
+                                            {% set methods = (methods.push('Water injection or agitation dredging'), methods) %}
+                                        {% elif method == 'other' and data['dredging-details-site-1-method-other'] %}
+                                            {% set methods = (methods.push('Other: ' + data['dredging-details-site-1-method-other']), methods) %}
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                                {{ methods | join('<br>') | safe if methods.length > 0 else 'Not provided' }}
+                            {% else %}
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                            {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
                         </dd>
@@ -169,7 +211,11 @@ Review site details
                             Dredge depth
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                            {% if data['dredging-details-site-1-completed'] and data['dredging-details-site-1-depth'] %}
+                                {{ data['dredging-details-site-1-depth'] }} metres
+                            {% else %}
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                            {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
                         </dd>
@@ -229,11 +275,31 @@ Review site details
                             Type of material being dredged
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                            {% if data['dredging-details-site-2-completed'] %}
+                                {% set materialTypes = [] %}
+                                {% if data['dredging-details-site-2-material-type'] %}
+                                    {% for type in data['dredging-details-site-2-material-type'] %}
+                                        {% if type == 'capital-dredged-material' %}
+                                            {% set materialTypes = (materialTypes.push('Capital dredged material'), materialTypes) %}
+                                        {% elif type == 'maintenance-dredged-material' %}
+                                            {% set materialTypes = (materialTypes.push('Maintenance dredged material'), materialTypes) %}
+                                        {% elif type == 'non-dredged-sediments' %}
+                                            {% set materialTypes = (materialTypes.push('Non-dredged sediments'), materialTypes) %}
+                                        {% elif type == 'organic-material' %}
+                                            {% set materialTypes = (materialTypes.push('Organic material of natural origin'), materialTypes) %}
+                                        {% elif type == 'other' and data['dredging-details-site-2-material-type-other'] %}
+                                            {% set materialTypes = (materialTypes.push('Other: ' + data['dredging-details-site-2-material-type-other']), materialTypes) %}
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                                {{ materialTypes | join('<br>') | safe if materialTypes.length > 0 else 'Not provided' }}
+                            {% else %}
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                            {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="" class="govuk-link">
-                                Add<span class="govuk-visually-hidden"> type of material being dredged</span>
+                            <a href="dredging-details-site-2" class="govuk-link">
+                                {% if data['dredging-details-site-2-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> type of material being dredged</span>
                             </a>
                         </dd>
                     </div>
@@ -243,7 +309,29 @@ Review site details
                             Proposed method of dredging
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                            {% if data['dredging-details-site-2-completed'] %}
+                                {% set methods = [] %}
+                                {% if data['dredging-details-site-2-method'] %}
+                                    {% for method in data['dredging-details-site-2-method'] %}
+                                        {% if method == 'cutter-suction' %}
+                                            {% set methods = (methods.push('Cutter suction'), methods) %}
+                                        {% elif method == 'grab' %}
+                                            {% set methods = (methods.push('Grab'), methods) %}
+                                        {% elif method == 'plough-bed-levelling' %}
+                                            {% set methods = (methods.push('Plough or bed levelling'), methods) %}
+                                        {% elif method == 'trailer-suction' %}
+                                            {% set methods = (methods.push('Trailer suction'), methods) %}
+                                        {% elif method == 'water-injection-agitation' %}
+                                            {% set methods = (methods.push('Water injection or agitation dredging'), methods) %}
+                                        {% elif method == 'other' and data['dredging-details-site-2-method-other'] %}
+                                            {% set methods = (methods.push('Other: ' + data['dredging-details-site-2-method-other']), methods) %}
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                                {{ methods | join('<br>') | safe if methods.length > 0 else 'Not provided' }}
+                            {% else %}
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                            {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
                         </dd>
@@ -254,7 +342,11 @@ Review site details
                             Dredge depth
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                            {% if data['dredging-details-site-2-completed'] and data['dredging-details-site-2-depth'] %}
+                                {{ data['dredging-details-site-2-depth'] }} metres
+                            {% else %}
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                            {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
                         </dd>
