@@ -35,13 +35,13 @@ Dredging details
             titleText: "There is a problem",
             errorList: [
                 {
-                    text: data['dredging-details-site-1-material-type-error'] or "Select the type of material that will be dredged at this site",
-                    href: "#dredging-details-site-1-material-type" if not data['dredging-details-site-1-material-type-other-error'] else "#dredging-details-site-1-material-type-other"
-                } if data['dredging-details-site-1-material-type-error'],
+                    text: data['dredging-details-site-1-material-type-other-error'] or data['dredging-details-site-1-material-type-error'] or "Select the type of material that will be dredged at this site",
+                    href: "#dredging-details-site-1-material-type-other" if data['dredging-details-site-1-material-type-other-error'] else "#dredging-details-site-1-material-type"
+                } if data['dredging-details-site-1-material-type-error'] or data['dredging-details-site-1-material-type-other-error'],
                 {
-                    text: data['dredging-details-site-1-method-error'] or "Select the proposed method of dredging",
-                    href: "#dredging-details-site-1-method" if not data['dredging-details-site-1-method-other-error'] else "#dredging-details-site-1-method-other"
-                } if data['dredging-details-site-1-method-error'],
+                    text: data['dredging-details-site-1-method-other-error'] or data['dredging-details-site-1-method-error'] or "Select the proposed method of dredging",
+                    href: "#dredging-details-site-1-method-other" if data['dredging-details-site-1-method-other-error'] else "#dredging-details-site-1-method"
+                } if data['dredging-details-site-1-method-error'] or data['dredging-details-site-1-method-other-error'],
                 {
                     text: data['dredging-details-site-1-depth-error'] or "Enter the depth of the dredge in metres",
                     href: "#dredging-details-site-1-depth"
@@ -65,7 +65,7 @@ Dredging details
                 type: "text",
                 classes: "govuk-!-width-full",
                 label: {
-                    text: "Describe the other material"
+                    text: "Describe the material"
                 },
                 value: data['dredging-details-site-1-material-type-other'],
                 errorMessage: {
