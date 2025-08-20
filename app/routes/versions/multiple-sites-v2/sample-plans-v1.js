@@ -3,13 +3,19 @@ module.exports = function (router) {
   const version = "multiple-sites-v2";
   const section = "sample-plans-v1";
 
+  ///////////////////////////////////////////
   // Sample plan information page
+  ///////////////////////////////////////////
+
   router.get(`/versions/${version}/${section}/get-a-plan-for-sediment-sample-analysis`, function (req, res) {
     req.session.data['isSamplePlansSection'] = true;
     res.render(`versions/${version}/${section}/get-a-plan-for-sediment-sample-analysis`);
   });
 
+  ///////////////////////////////////////////
   // Sign-in page
+  ///////////////////////////////////////////
+
   router.get(`/versions/${version}/${section}/sign-in`, function (req, res) {
     req.session.data['isSamplePlansSection'] = true;
     res.render(`versions/${version}/${section}/sign-in`);
@@ -21,7 +27,10 @@ module.exports = function (router) {
     res.redirect('project-name-start');
   });
 
+  ///////////////////////////////////////////
   // Project name start page
+  ///////////////////////////////////////////
+
   router.get(`/versions/${version}/${section}/project-name-start`, function (req, res) {
     // Clear any existing error flags when user navigates to the page
     req.session.data['sample-plan-errorthispage'] = "false";
@@ -51,13 +60,19 @@ module.exports = function (router) {
     res.redirect('sample-plan-start-page');
   });
 
+  ///////////////////////////////////////////
   // Sample plan start page
+  ///////////////////////////////////////////
+
   router.get(`/versions/${version}/${section}/sample-plan-start-page`, function (req, res) {
     req.session.data['isSamplePlansSection'] = true;
     res.render(`versions/${version}/${section}/sample-plan-start-page`);
   });
 
+  ///////////////////////////////////////////
   // Which activity page
+  ///////////////////////////////////////////
+
   router.get(`/versions/${version}/${section}/which-activity`, function (req, res) {
     // Clear any existing error flags when user navigates to the page
     req.session.data['sample-plan-errorthispage'] = "false";
@@ -87,7 +102,10 @@ module.exports = function (router) {
     res.redirect('sample-plan-start-page');
   });
 
+  ///////////////////////////////////////////
   // Project name page (for editing from task list)
+  ///////////////////////////////////////////
+
   router.get(`/versions/${version}/${section}/project-name`, function (req, res) {
     // Clear any existing error flags when user navigates to the page
     req.session.data['sample-plan-errorthispage'] = "false";
@@ -117,7 +135,10 @@ module.exports = function (router) {
     res.redirect('sample-plan-start-page');
   });
 
+  ///////////////////////////////////////////
   // New or existing licence page
+  ///////////////////////////////////////////
+
   router.get(`/versions/${version}/${section}/new-or-existing-licence`, function (req, res) {
     // Clear any existing error flags when user navigates to the page
     req.session.data['sample-plan-errorthispage'] = "false";
@@ -156,7 +177,10 @@ module.exports = function (router) {
     }
   });
 
+  ///////////////////////////////////////////
   // New licence length page
+  ///////////////////////////////////////////
+
   router.get(`/versions/${version}/${section}/new-licence-length`, function (req, res) {
     // Clear any existing error flags when user navigates to the page
     req.session.data['sample-plan-errorthispage'] = "false";
@@ -188,7 +212,10 @@ module.exports = function (router) {
     res.redirect('sample-plan-start-page');
   });
 
+  ///////////////////////////////////////////
   // Existing licence expiry page
+  ///////////////////////////////////////////
+
   router.get(`/versions/${version}/${section}/existing-licence-expiry`, function (req, res) {
     // Clear any existing error flags when user navigates to the page
     req.session.data['sample-plan-errorthispage'] = "false";
@@ -222,7 +249,10 @@ module.exports = function (router) {
     res.redirect('sample-plan-start-page');
   });
 
+  ///////////////////////////////////////////
   // Maximum dredging volume page
+  ///////////////////////////////////////////
+
   router.get(`/versions/${version}/${section}/maximum-dredging-volume`, function (req, res) {
     // Clear any existing error flags when user navigates to the page
     req.session.data['sample-plan-errorthispage'] = "false";
@@ -298,7 +328,10 @@ module.exports = function (router) {
     res.redirect('beneficial-use');
   });
 
+  ///////////////////////////////////////////
   // Beneficial use page
+  ///////////////////////////////////////////
+
   router.get(`/versions/${version}/${section}/beneficial-use`, function (req, res) {
     // Clear any existing error flags when user navigates to the page
     req.session.data['sample-plan-errorthispage'] = "false";
@@ -346,7 +379,10 @@ module.exports = function (router) {
     res.redirect('sample-plan-start-page');
   });
 
+  ///////////////////////////////////////////
   // Fee estimate page
+  ///////////////////////////////////////////
+
   router.get(`/versions/${version}/${section}/fee-estimate`, function (req, res) {
     // Clear any existing error flags when user navigates to the page
     req.session.data['sample-plan-errorthispage'] = "false";
@@ -364,21 +400,17 @@ module.exports = function (router) {
     req.session.data['sample-plan-errortypeone'] = "false";
     req.session.data['sample-plan-errortypetwo'] = "false";
 
-    // Get form data
-    const termsAgreed = req.body['fee-terms-checkbox'];
-    const feeAcceptance = req.body['fee-acceptance'];
-
     let hasError = false;
 
-    // Validate terms and conditions checkbox
-    if (!termsAgreed) {
+    // Validate terms and conditions checkbox (using session data like other working pages)
+    if (!req.session.data['fee-terms-checkbox']) {
       req.session.data['sample-plan-errorthispage'] = "true";
       req.session.data['sample-plan-errortypeone'] = "true";
       hasError = true;
     }
 
-    // Validate fee acceptance radio button
-    if (!feeAcceptance || feeAcceptance.trim() === '') {
+    // Validate fee acceptance radio button (using session data like other working pages)
+    if (!req.session.data['fee-acceptance'] || req.session.data['fee-acceptance'].trim() === '') {
       req.session.data['sample-plan-errorthispage'] = "true";
       req.session.data['sample-plan-errortypetwo'] = "true";
       hasError = true;
@@ -390,17 +422,17 @@ module.exports = function (router) {
     }
 
     // Success case - mark as completed if checkbox agreed and Yes selected
-    if (termsAgreed && feeAcceptance === 'yes') {
+    if (req.session.data['fee-terms-checkbox'] && req.session.data['fee-acceptance'] === 'yes') {
       req.session.data['sample-plan-fee-estimate-completed'] = "true";
     }
 
     // Conditional routing based on fee acceptance
-    if (feeAcceptance === 'yes') {
+    if (req.session.data['fee-acceptance'] === 'yes') {
       res.redirect('sample-plan-start-page');
-    } else if (feeAcceptance === 'no') {
+    } else if (req.session.data['fee-acceptance'] === 'no') {
       // Redirect to a "rejection" page (not yet built)
-      // For now, redirect back to task list
-      res.redirect('sample-plan-start-page');
+      // For now, redirect back to the same page
+      res.redirect('fee-estimate');
     } else {
       // Fallback
       res.redirect('sample-plan-start-page');
