@@ -13,7 +13,7 @@
 
 <!-- Set the heading for the page -->
 {% set pageHeadingTextHTML %}
-Site history
+What is the history of the site?
 {% endset %}
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
@@ -77,13 +77,6 @@ Site history
             ]
         }) }}
         {% endif %}
-
-        <span class="govuk-caption-l">{{ data['sample-plan-project-name-text-input'] }}<span class="govuk-!-display-block">Site 2</span></span>
-        <h1 class="govuk-heading-l">
-            {{ pageHeadingTextHTML }}
-        </h1>
-
-        <p class="govuk-body">This should include the site itself and also the surrounding area.</p>
 
         <form action="site-history-site-2-router" method="post" novalidate>
             
@@ -227,10 +220,13 @@ Site history
                 name: "site-history-site-2",
                 fieldset: {
                     legend: {
-                        text: "Select all that apply",
-                        isPageHeading: false,
-                        classes: "govuk-fieldset__legend--m"
+                        html: '<span class="govuk-caption-l">' + data['sample-plan-project-name-text-input'] + '<span class="govuk-!-display-block">Site 2</span></span>' + pageHeadingTextHTML,
+                        isPageHeading: true,
+                        classes: "govuk-fieldset__legend--l"
                     }
+                },
+                hint: {
+                    text: "Include the site itself, the surrounding area, and select all that apply"
                 },
                 errorMessage: {
                     text: data['site-history-site-2-error']

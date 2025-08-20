@@ -169,7 +169,7 @@ module.exports = function (router) {
     } else if (req.session.data['dredging-details-site-1-material-type'].includes('other')) {
       // Check if "Other" is selected but no description provided
       if (!req.session.data['dredging-details-site-1-material-type-other'] || req.session.data['dredging-details-site-1-material-type-other'].trim() === '') {
-        req.session.data['dredging-details-site-1-material-type-other-error'] = "Enter a description of the material";
+        req.session.data['dredging-details-site-1-material-type-other-error'] = "Enter the other material";
         hasErrors = true;
       }
     }
@@ -181,7 +181,7 @@ module.exports = function (router) {
     } else if (req.session.data['dredging-details-site-1-method'].includes('other')) {
       // Check if "Other" is selected but no description provided
       if (!req.session.data['dredging-details-site-1-method-other'] || req.session.data['dredging-details-site-1-method-other'].trim() === '') {
-        req.session.data['dredging-details-site-1-method-other-error'] = "Enter a description of the method";
+        req.session.data['dredging-details-site-1-method-other-error'] = "Enter the other method";
         hasErrors = true;
       }
     }
@@ -247,7 +247,7 @@ module.exports = function (router) {
     } else if (req.session.data['dredging-details-site-2-material-type'].includes('other')) {
       // Check if "Other" is selected but no description provided
       if (!req.session.data['dredging-details-site-2-material-type-other'] || req.session.data['dredging-details-site-2-material-type-other'].trim() === '') {
-        req.session.data['dredging-details-site-2-material-type-other-error'] = "Enter a description of the material";
+        req.session.data['dredging-details-site-2-material-type-other-error'] = "Enter the other material";
         hasErrors = true;
       }
     }
@@ -259,7 +259,7 @@ module.exports = function (router) {
     } else if (req.session.data['dredging-details-site-2-method'].includes('other')) {
       // Check if "Other" is selected but no description provided
       if (!req.session.data['dredging-details-site-2-method-other'] || req.session.data['dredging-details-site-2-method-other'].trim() === '') {
-        req.session.data['dredging-details-site-2-method-other-error'] = "Enter a description of the method";
+        req.session.data['dredging-details-site-2-method-other-error'] = "Enter the other method";
         hasErrors = true;
       }
     }
