@@ -1,0 +1,107 @@
+{% extends "../layouts/exemption.html" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% block beforeContent %}
+    {% include "../includes/phase-banner.html" %}
+    {% if data['user_type'] === 'organisation' %}
+        {% include "../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link govuk-link--no-visited-state" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+Is any of the dredged material for beneficial use?
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {% if data['sample-plan-errorthispage'] == "true" %}Error: {% endif %}{{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+
+{% if data['sample-plan-errorthispage'] == "true" %}
+{{ govukErrorSummary({
+    titleText: "There is a problem",
+    errorList: [
+        {
+            text: "Select if any of the dredged material is for beneficial use",
+            href: "#sample-plan-beneficial-use"
+        } if data['sample-plan-errortypeone'] == "true",
+        {
+            text: "Enter the proposed beneficial use",
+            href: "#sample-plan-beneficial-use-description"
+        } if data['sample-plan-errortypetwo'] == "true"
+    ]
+}) }}
+{% endif %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <form method="post" action="beneficial-use-router">
+
+            {% set beneficialUseTextarea %}
+                {{ govukTextarea({
+                    id: "sample-plan-beneficial-use-description",
+                    name: "sample-plan-beneficial-use-description",
+                    value: data['sample-plan-beneficial-use-description'],
+                    rows: 5,
+                    label: {
+                        text: "Describe the proposed beneficial use"
+                    },
+                    errorMessage: {
+                        text: "Enter the proposed beneficial use"
+                    } if data['sample-plan-errortypetwo'] == "true"
+                }) }}
+            {% endset %}
+
+            {{ govukRadios({
+                name: "sample-plan-beneficial-use",
+                fieldset: {
+                    legend: {
+                        html: '<span class="govuk-caption-l">Tynemouth sample plan</span>' + pageHeadingTextHTML,
+                        isPageHeading: true,
+                        classes: "govuk-fieldset__legend--l"
+                    }
+                },
+                hint: {
+                    text: "Will the material being disposed of be re-used to benefit the environment"
+                },
+                items: [
+                    {
+                        value: "Yes",
+                        text: "Yes",
+                        conditional: {
+                            html: beneficialUseTextarea
+                        },
+                        checked: checked("sample-plan-beneficial-use", "Yes")
+                    },
+                    {
+                        value: "No",
+                        text: "No",
+                        checked: checked("sample-plan-beneficial-use", "No")
+                    }
+                ],
+                errorMessage: {
+                    text: "Select if any of the dredged material is for beneficial use"
+                } if data['sample-plan-errortypeone'] == "true"
+            }) }}
+
+            <div class="govuk-button-group">
+                {{ govukButton({
+                    text: "Save and continue"
+                }) }}
+
+                <a class="govuk-link govuk-link--no-visited-state" href="">Cancel</a>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+{% endblock %}

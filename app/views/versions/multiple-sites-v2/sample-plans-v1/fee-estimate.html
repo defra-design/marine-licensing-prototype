@@ -1,0 +1,177 @@
+{% extends "../layouts/main.html" %}
+
+{% block beforeContent %}
+	{% include "../includes/phase-banner.html" %} 
+	{% include "../includes/back-link.html" %}
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+Fee estimate
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    Fee estimate - {{ data['headerName'] }}
+{% endblock %}
+
+{% block content %}
+
+{% if data['sample-plan-errorthispage'] == "true" %}
+	<div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" data-module="govuk-error-summary">
+		<h2 class="govuk-error-summary__title" id="error-summary-title">
+			There is a problem
+		</h2>
+		<div class="govuk-error-summary__body">
+			<ul class="govuk-list govuk-error-summary__list">
+				{% if data['sample-plan-errortypeone'] == "true" %}
+					<li>
+						<a href="#fee-terms-checkbox">You must agree to the terms and conditions</a>
+					</li>
+				{% endif %}
+				{% if data['sample-plan-errortypetwo'] == "true" %}
+					<li>
+						<a href="#fee-acceptance">Select if you accept the fee estimate of £3,102.24</a>
+					</li>
+				{% endif %}
+			</ul>
+		</div>
+	</div>
+{% endif %}
+
+<div class="govuk-grid-row">
+
+	<div class="govuk-grid-column-two-thirds">
+
+		<span class="govuk-caption-l">{{ data['sample-plan-project-name-text-input'] }}</span>
+		<h1 class="govuk-heading-l">
+			{{ pageHeadingTextHTML }}
+		</h1>
+
+		<p>This fee is calculated by the estimated number of hours it will take the Marine Management Organisation (MMO) and the Centre for Environment, Fisheries and Aquaculture Science (Cefas) to produce your sample plan.</p>
+
+		<p>You need to agree to this fee estimate before we can send you the plan so you can take samples for analysis.</p>
+
+		<p>Costs for getting samples analysed are separate and not included as part of this estimate. The cost for a marine licence is also separate and varies depending on what the licence is for.</p>
+
+		<p><a href="https://www.gov.uk/government/publications/marine-licensing-fees" rel="noreferrer noopener" target="_blank">Find out information on how marine licensing fees are calculated (opens in new tab)</a>.</p>
+
+	</div>
+
+	<div class="govuk-grid-column-full">
+
+		<table class="govuk-table">
+			<thead class="govuk-table__head">
+				<tr class="govuk-table__row">
+					<th scope="col" class="govuk-table__header">Description</th>
+					<th scope="col" class="govuk-table__header govuk-table__header--numeric">Rate (£)</th>
+					<th scope="col" class="govuk-table__header govuk-table__header--numeric">VAT rate (£)</th>
+					<th scope="col" class="govuk-table__header govuk-table__header--numeric">Hours/Units</th>
+					<th scope="col" class="govuk-table__header govuk-table__header--numeric">Amount (£)</th>
+					<th scope="col" class="govuk-table__header govuk-table__header--numeric">VAT (£)</th>
+					<th scope="col" class="govuk-table__header govuk-table__header--numeric">Total (£)</th>
+				</tr>
+			</thead>
+			<tbody class="govuk-table__body">
+				<tr class="govuk-table__row">
+					<td class="govuk-table__cell">MMO hours</td>
+					<td class="govuk-table__cell govuk-table__cell--numeric">122.00</td>
+					<td class="govuk-table__cell govuk-table__cell--numeric">24.40</td>
+					<td class="govuk-table__cell govuk-table__cell--numeric">12</td>
+					<td class="govuk-table__cell govuk-table__cell--numeric">1464.00</td>
+					<td class="govuk-table__cell govuk-table__cell--numeric">292.80</td>
+					<td class="govuk-table__cell govuk-table__cell--numeric">1756.80</td>
+				</tr>
+				<tr class="govuk-table__row">
+					<td class="govuk-table__cell">Cefas hours</td>
+					<td class="govuk-table__cell govuk-table__cell--numeric">93.43</td>
+					<td class="govuk-table__cell govuk-table__cell--numeric">18.69</td>
+					<td class="govuk-table__cell govuk-table__cell--numeric">12</td>
+					<td class="govuk-table__cell govuk-table__cell--numeric">1121.16</td>
+					<td class="govuk-table__cell govuk-table__cell--numeric">224.28</td>
+					<td class="govuk-table__cell govuk-table__cell--numeric">1345.44</td>
+				</tr>
+				<tr class="govuk-table__row">
+					<td class="govuk-table__cell govuk-!-font-weight-bold">Total cost</td>
+					<td class="govuk-table__cell govuk-table__cell--numeric"></td>
+					<td class="govuk-table__cell govuk-table__cell--numeric"></td>
+					<td class="govuk-table__cell govuk-table__cell--numeric"></td>
+					<td class="govuk-table__cell govuk-table__cell--numeric govuk-!-font-weight-bold">£2585.16</td>
+					<td class="govuk-table__cell govuk-table__cell--numeric govuk-!-font-weight-bold">£517.08</td>
+					<td class="govuk-table__cell govuk-table__cell--numeric govuk-!-font-weight-bold">£3102.24</td>
+				</tr>
+			</tbody>
+		</table>
+
+	</div>
+
+	<div class="govuk-grid-column-two-thirds">
+
+		<form action="fee-estimate-router" method="post">
+
+			<h2 class="govuk-heading-m">Terms and conditions</h2>
+
+			<p>You need to agree to these <a href="https://assets.publishing.service.gov.uk/media/63567839e90e0777b38c5d02/FEES_Terms_and_Conditions.pdf" rel="noreferrer noopener" target="_blank">terms and conditions (opens in new tab)</a>.</p>
+
+			<div class="govuk-form-group {% if data['sample-plan-errorthispage'] == 'true' and data['sample-plan-errortypeone'] == 'true' %}govuk-form-group--error{% endif %}">
+				<fieldset class="govuk-fieldset" {% if data['sample-plan-errorthispage'] == 'true' and data['sample-plan-errortypeone'] == 'true' %}aria-describedby="fee-terms-checkbox-error"{% endif %}>
+					{% if data['sample-plan-errorthispage'] == 'true' and data['sample-plan-errortypeone'] == 'true' %}
+						<p id="fee-terms-checkbox-error" class="govuk-error-message">
+							<span class="govuk-visually-hidden">Error:</span>
+							You must agree to the terms and conditions
+						</p>
+					{% endif %}
+					<div class="govuk-checkboxes" data-module="govuk-checkboxes">
+						<div class="govuk-checkboxes__item">
+							<input class="govuk-checkboxes__input" id="fee-terms-checkbox" name="fee-terms-checkbox" type="checkbox" value="agree" {% if data['fee-terms-checkbox'] == 'agree' %}checked{% endif %}>
+							<label class="govuk-label govuk-checkboxes__label" for="fee-terms-checkbox">
+								I agree to the terms and conditions
+							</label>
+						</div>
+					</div>
+				</fieldset>
+			</div>
+
+			<div class="govuk-form-group {% if data['sample-plan-errorthispage'] == 'true' and data['sample-plan-errortypetwo'] == 'true' %}govuk-form-group--error{% endif %}">
+				<fieldset class="govuk-fieldset" {% if data['sample-plan-errorthispage'] == 'true' and data['sample-plan-errortypetwo'] == 'true' %}aria-describedby="fee-acceptance-error"{% else %}aria-describedby="fee-acceptance-hint"{% endif %}>
+					<legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+						<h2 class="govuk-fieldset__heading">
+							Do you accept the fee estimate of £3,102.24?
+						</h2>
+					</legend>
+					{% if data['sample-plan-errorthispage'] == 'true' and data['sample-plan-errortypetwo'] == 'true' %}
+						<p id="fee-acceptance-error" class="govuk-error-message">
+							<span class="govuk-visually-hidden">Error:</span>
+							Select if you accept the fee estimate of £3,102.24
+						</p>
+					{% endif %}
+					<div class="govuk-radios" data-module="govuk-radios">
+						<div class="govuk-radios__item">
+							<input class="govuk-radios__input" id="fee-acceptance" name="fee-acceptance" type="radio" value="yes" {% if data['fee-acceptance'] == 'yes' %}checked{% endif %}>
+							<label class="govuk-label govuk-radios__label" for="fee-acceptance">
+								Yes
+							</label>
+						</div>
+						<div class="govuk-radios__item">
+							<input class="govuk-radios__input" id="fee-acceptance-2" name="fee-acceptance" type="radio" value="no" {% if data['fee-acceptance'] == 'no' %}checked{% endif %}>
+							<label class="govuk-label govuk-radios__label" for="fee-acceptance-2">
+								No
+							</label>
+						</div>
+					</div>
+				</fieldset>
+			</div>
+
+			<div class="govuk-button-group">
+				<button class="govuk-button" data-module="govuk-button">
+					Save and continue
+				</button>
+				<a class="govuk-link" href="sample-plan-start-page">Cancel</a>
+			</div>
+
+		</form>
+
+	</div>
+
+</div>
+{% endblock %}

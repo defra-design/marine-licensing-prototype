@@ -1,0 +1,192 @@
+{% extends "../layouts/exemption.html" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% block beforeContent %}
+    {% include "../includes/phase-banner.html" %}
+    {% if data['user_type'] === 'organisation' %}
+        {% include "../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link govuk-link--no-visited-state" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+Which maximum dredging volume, in cubic metres, do you want to provide?
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {% if data['sample-plan-errorthispage'] == "true" %}Error: {% endif %}{{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+
+{% if data['sample-plan-errorthispage'] == "true" %}
+{{ govukErrorSummary({
+    titleText: "There is a problem",
+    errorList: [
+        {
+            text: "Select the maximum dredging volume, in cubic metres, you want to provide",
+            href: "#sample-plan-maximum-dredging-volume"
+        } if data['sample-plan-errortypeone'] == "true",
+        {
+            text: "Enter the volume",
+            href: "#sample-plan-total-volume-input"
+        } if data['sample-plan-errortypetwo'] == "true",
+        {
+            text: "Enter the volume",
+            href: "#sample-plan-annual-volume-input"
+        } if data['sample-plan-errortypethree'] == "true",
+        {
+            text: "Enter the volume",
+            href: "#sample-plan-campaign-volume-input"
+        } if data['sample-plan-errortypefour'] == "true"
+    ]
+}) }}
+{% endif %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <form method="post" action="maximum-dredging-volume-router">
+
+            {% set totalVolumeInput %}
+                {{ govukInput({
+                    id: "sample-plan-total-volume-input",
+                    name: "sample-plan-total-volume-input",
+                    value: data['sample-plan-total-volume-input'],
+                    classes: "govuk-input--width-10",
+                    label: {
+                        text: "Enter the volume"
+                    },
+                    suffix: {
+                        text: "m3"
+                    },
+                    errorMessage: {
+                        text: "Enter the volume"
+                    } if data['sample-plan-errortypetwo'] == "true"
+                }) }}
+            {% endset %}
+
+            {% set annualVolumeInput %}
+                {{ govukInput({
+                    id: "sample-plan-annual-volume-input",
+                    name: "sample-plan-annual-volume-input",
+                    value: data['sample-plan-annual-volume-input'],
+                    classes: "govuk-input--width-10",
+                    label: {
+                        text: "Enter the volume"
+                    },
+                    suffix: {
+                        text: "m3"
+                    },
+                    errorMessage: {
+                        text: "Enter the volume"
+                    } if data['sample-plan-errortypethree'] == "true"
+                }) }}
+            {% endset %}
+
+            {% set campaignVolumeInput %}
+                {{ govukInput({
+                    id: "sample-plan-campaign-volume-input",
+                    name: "sample-plan-campaign-volume-input",
+                    value: data['sample-plan-campaign-volume-input'],
+                    classes: "govuk-input--width-10",
+                    label: {
+                        text: "Enter the volume"
+                    },
+                    suffix: {
+                        text: "m3"
+                    },
+                    errorMessage: {
+                        text: "Enter the volume"
+                    } if data['sample-plan-errortypefour'] == "true"
+                }) }}
+            {% endset %}
+
+            {{ govukRadios({
+                name: "sample-plan-maximum-dredging-volume",
+                fieldset: {
+                    legend: {
+                        html: '<span class="govuk-caption-l">Tynemouth sample plan</span>' + pageHeadingTextHTML,
+                        isPageHeading: true,
+                        classes: "govuk-fieldset__legend--l"
+                    }
+                },
+                items: [
+                    {
+                        value: "Total volume of material you plan to dredge over the full licence period",
+                        text: "Total volume of material you plan to dredge over the full licence period",
+                        conditional: {
+                            html: totalVolumeInput
+                        },
+                        checked: checked("sample-plan-maximum-dredging-volume", "Total volume of material you plan to dredge over the full licence period")
+                    },
+                    {
+                        value: "Annual volume of material you plan to dredge",
+                        text: "Annual volume of material you plan to dredge",
+                        conditional: {
+                            html: annualVolumeInput
+                        },
+                        checked: checked("sample-plan-maximum-dredging-volume", "Annual volume of material you plan to dredge")
+                    },
+                    {
+                        value: "The maximum volume of material per dredge campaign",
+                        text: "The maximum volume of material per dredge campaign",
+                        hint: {
+                            text: "A dredge campaign is a single, continuous dredging operation"
+                        },
+                        conditional: {
+                            html: campaignVolumeInput
+                        },
+                        checked: checked("sample-plan-maximum-dredging-volume", "The maximum volume of material per dredge campaign")
+                    }
+                ],
+                errorMessage: {
+                    text: "Select the maximum dredging volume, in cubic metres, you want to provide"
+                } if data['sample-plan-errortypeone'] == "true"
+            }) }}
+
+            <div class="govuk-button-group">
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+
+                <a class="govuk-link govuk-link--no-visited-state" href="">Cancel</a>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+<script>
+// Clear other volume inputs when radio selection changes
+document.addEventListener('DOMContentLoaded', function() {
+    const radioButtons = document.querySelectorAll('input[name="sample-plan-maximum-dredging-volume"]');
+    const totalVolumeInput = document.getElementById('sample-plan-total-volume-input');
+    const annualVolumeInput = document.getElementById('sample-plan-annual-volume-input');
+    const campaignVolumeInput = document.getElementById('sample-plan-campaign-volume-input');
+    
+    radioButtons.forEach(function(radio) {
+        radio.addEventListener('change', function() {
+            if (this.checked) {
+                // Clear all other inputs except the one associated with the selected radio
+                if (this.value !== 'Total volume of material you plan to dredge over the full licence period') {
+                    if (totalVolumeInput) totalVolumeInput.value = '';
+                }
+                if (this.value !== 'Annual volume of material you plan to dredge') {
+                    if (annualVolumeInput) annualVolumeInput.value = '';
+                }
+                if (this.value !== 'The maximum volume of material per dredge campaign') {
+                    if (campaignVolumeInput) campaignVolumeInput.value = '';
+                }
+            }
+        });
+    });
+});
+</script>
+
+{% endblock %}

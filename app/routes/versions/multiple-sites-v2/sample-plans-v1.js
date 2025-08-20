@@ -222,4 +222,189 @@ module.exports = function (router) {
     res.redirect('sample-plan-start-page');
   });
 
+  // Maximum dredging volume page
+  router.get(`/versions/${version}/${section}/maximum-dredging-volume`, function (req, res) {
+    // Clear any existing error flags when user navigates to the page
+    req.session.data['sample-plan-errorthispage'] = "false";
+    req.session.data['sample-plan-errortypeone'] = "false";
+    req.session.data['sample-plan-errortypetwo'] = "false";
+    req.session.data['sample-plan-errortypethree'] = "false";
+    req.session.data['sample-plan-errortypefour'] = "false";
+    req.session.data['isSamplePlansSection'] = true;
+    
+    // Clear dredging volumes completion flag when user starts the journey again
+    req.session.data['sample-plan-dredging-volumes-completed'] = "false";
+    
+    res.render(`versions/${version}/${section}/maximum-dredging-volume`);
+  });
+
+  // Maximum dredging volume router (POST)
+  router.post(`/versions/${version}/${section}/maximum-dredging-volume-router`, function (req, res) {
+    // Reset error flags
+    req.session.data['sample-plan-errorthispage'] = "false";
+    req.session.data['sample-plan-errortypeone'] = "false";
+    req.session.data['sample-plan-errortypetwo'] = "false";
+    req.session.data['sample-plan-errortypethree'] = "false";
+    req.session.data['sample-plan-errortypefour'] = "false";
+
+    // Validate volume selection
+    const volumeSelection = req.body['sample-plan-maximum-dredging-volume'];
+    
+    if (!volumeSelection || volumeSelection.trim() === '') {
+      req.session.data['sample-plan-errorthispage'] = "true";
+      req.session.data['sample-plan-errortypeone'] = "true";
+      return res.redirect('maximum-dredging-volume');
+    }
+
+    // Validate corresponding input field based on selection
+    let hasVolumeError = false;
+    
+    if (volumeSelection === 'Total volume of material you plan to dredge over the full licence period') {
+      const totalVolume = req.body['sample-plan-total-volume-input'];
+      if (!totalVolume || totalVolume.trim() === '') {
+        req.session.data['sample-plan-errorthispage'] = "true";
+        req.session.data['sample-plan-errortypetwo'] = "true";
+        hasVolumeError = true;
+      } else {
+        req.session.data['sample-plan-total-volume-input'] = totalVolume;
+      }
+    } else if (volumeSelection === 'Annual volume of material you plan to dredge') {
+      const annualVolume = req.body['sample-plan-annual-volume-input'];
+      if (!annualVolume || annualVolume.trim() === '') {
+        req.session.data['sample-plan-errorthispage'] = "true";
+        req.session.data['sample-plan-errortypethree'] = "true";
+        hasVolumeError = true;
+      } else {
+        req.session.data['sample-plan-annual-volume-input'] = annualVolume;
+      }
+    } else if (volumeSelection === 'The maximum volume of material per dredge campaign') {
+      const campaignVolume = req.body['sample-plan-campaign-volume-input'];
+      if (!campaignVolume || campaignVolume.trim() === '') {
+        req.session.data['sample-plan-errorthispage'] = "true";
+        req.session.data['sample-plan-errortypefour'] = "true";
+        hasVolumeError = true;
+      } else {
+        req.session.data['sample-plan-campaign-volume-input'] = campaignVolume;
+      }
+    }
+
+    // If there are validation errors, redirect back to the form
+    if (hasVolumeError) {
+      return res.redirect('maximum-dredging-volume');
+    }
+
+    // Save the volume selection and redirect to beneficial use page
+    req.session.data['sample-plan-maximum-dredging-volume'] = volumeSelection;
+    res.redirect('beneficial-use');
+  });
+
+  // Beneficial use page
+  router.get(`/versions/${version}/${section}/beneficial-use`, function (req, res) {
+    // Clear any existing error flags when user navigates to the page
+    req.session.data['sample-plan-errorthispage'] = "false";
+    req.session.data['sample-plan-errortypeone'] = "false";
+    req.session.data['sample-plan-errortypetwo'] = "false";
+    req.session.data['isSamplePlansSection'] = true;
+    
+    res.render(`versions/${version}/${section}/beneficial-use`);
+  });
+
+  // Beneficial use router (POST)
+  router.post(`/versions/${version}/${section}/beneficial-use-router`, function (req, res) {
+    // Reset error flags
+    req.session.data['sample-plan-errorthispage'] = "false";
+    req.session.data['sample-plan-errortypeone'] = "false";
+    req.session.data['sample-plan-errortypetwo'] = "false";
+
+    // Validate beneficial use selection
+    const beneficialUse = req.body['sample-plan-beneficial-use'];
+    
+    if (!beneficialUse || beneficialUse.trim() === '') {
+      req.session.data['sample-plan-errorthispage'] = "true";
+      req.session.data['sample-plan-errortypeone'] = "true";
+      return res.redirect('beneficial-use');
+    }
+
+    // If "Yes" is selected, validate the description
+    if (beneficialUse === 'Yes') {
+      const description = req.body['sample-plan-beneficial-use-description'];
+      if (!description || description.trim() === '') {
+        req.session.data['sample-plan-errorthispage'] = "true";
+        req.session.data['sample-plan-errortypetwo'] = "true";
+        return res.redirect('beneficial-use');
+      }
+      req.session.data['sample-plan-beneficial-use-description'] = description;
+    } else {
+      // Clear description if "No" is selected
+      req.session.data['sample-plan-beneficial-use-description'] = '';
+    }
+
+    // Save the beneficial use selection and mark dredging volumes as completed
+    req.session.data['sample-plan-beneficial-use'] = beneficialUse;
+    req.session.data['sample-plan-dredging-volumes-completed'] = "true";
+    
+    res.redirect('sample-plan-start-page');
+  });
+
+  // Fee estimate page
+  router.get(`/versions/${version}/${section}/fee-estimate`, function (req, res) {
+    // Clear any existing error flags when user navigates to the page
+    req.session.data['sample-plan-errorthispage'] = "false";
+    req.session.data['sample-plan-errortypeone'] = "false";
+    req.session.data['sample-plan-errortypetwo'] = "false";
+    req.session.data['isSamplePlansSection'] = true;
+    
+    res.render(`versions/${version}/${section}/fee-estimate`);
+  });
+
+  // Fee estimate router (POST)
+  router.post(`/versions/${version}/${section}/fee-estimate-router`, function (req, res) {
+    // Reset error flags
+    req.session.data['sample-plan-errorthispage'] = "false";
+    req.session.data['sample-plan-errortypeone'] = "false";
+    req.session.data['sample-plan-errortypetwo'] = "false";
+
+    // Get form data
+    const termsAgreed = req.body['fee-terms-checkbox'];
+    const feeAcceptance = req.body['fee-acceptance'];
+
+    let hasError = false;
+
+    // Validate terms and conditions checkbox
+    if (!termsAgreed) {
+      req.session.data['sample-plan-errorthispage'] = "true";
+      req.session.data['sample-plan-errortypeone'] = "true";
+      hasError = true;
+    }
+
+    // Validate fee acceptance radio button
+    if (!feeAcceptance || feeAcceptance.trim() === '') {
+      req.session.data['sample-plan-errorthispage'] = "true";
+      req.session.data['sample-plan-errortypetwo'] = "true";
+      hasError = true;
+    }
+
+    // If there are validation errors, redirect back to the form
+    if (hasError) {
+      return res.redirect('fee-estimate');
+    }
+
+    // Success case - mark as completed if checkbox agreed and Yes selected
+    if (termsAgreed && feeAcceptance === 'yes') {
+      req.session.data['sample-plan-fee-estimate-completed'] = "true";
+    }
+
+    // Conditional routing based on fee acceptance
+    if (feeAcceptance === 'yes') {
+      res.redirect('sample-plan-start-page');
+    } else if (feeAcceptance === 'no') {
+      // Redirect to a "rejection" page (not yet built)
+      // For now, redirect back to task list
+      res.redirect('sample-plan-start-page');
+    } else {
+      // Fallback
+      res.redirect('sample-plan-start-page');
+    }
+  });
+
 }
