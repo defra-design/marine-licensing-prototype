@@ -1,0 +1,81 @@
+{% extends "../../layouts/exemption.html" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% if data['user_type'] === 'organisation' %}
+        {% include "../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+Site locations and dredging activity
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+{{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        
+        <span class="govuk-caption-l">{{ data['sample-plan-project-name-text-input'] }}</span>
+        <h1 class="govuk-heading-l">
+            {{ pageHeadingTextHTML }}
+        </h1>
+
+      <h2 class="govuk-heading-m">Before you start</h2>
+
+      <p class="govuk-body">
+        <a class="govuk-link" href="https://www.gov.uk/guidance/dredging" target="_blank">Read the guidance on dredging activities (opens in new tab)</a>
+      </p>
+
+      <p class="govuk-body">In the next step, you'll need to tell us the following for every site:</p>
+
+      <ul class="govuk-list govuk-list--bullet">
+        <li>site name</li>
+        <li>exact location of the dredge site</li>
+        <li>type of material being dredged</li>
+        <li>method of dredging</li>
+        <li>depth of dredge</li>
+      </ul>
+
+      <h3 class="govuk-heading-s">Providing site locations</h3>
+
+      <p class="govuk-body">You can provide the site location in 2 ways:</p>
+
+      <ul class="govuk-list govuk-list--bullet">
+        <li>upload a file with the coordinates</li>
+        <li>enter the coordinates manually</li>
+      </ul>
+
+      <h3 class="govuk-heading-s">Projects with multiple sites</h3>
+
+      <p class="govuk-body">You need to give separate location details for each site if your project has multiple sites.</p>
+
+      <p class="govuk-body">If you're uploading a file you need to include all the sites in 1 file.</p>
+
+      <h3 class="govuk-heading-s">Defining the site boundary</h3>
+
+      <p class="govuk-body">The coordinates must mark the full boundary of every site, including space for any movement or small changes in the activity location.</p>
+
+        <form action="before-you-start-router" method="post" novalidate>
+            
+            <div class="govuk-button-group">
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+
+                <a class="govuk-link govuk-link--no-visited-state" href="">Cancel</a>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+{% endblock %}
