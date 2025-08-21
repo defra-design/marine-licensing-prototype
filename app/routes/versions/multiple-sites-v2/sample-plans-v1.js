@@ -471,4 +471,19 @@ module.exports = function (router) {
     }
   });
 
+  ///////////////////////////////////////////
+  // Check answers page
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/check-answers`, function (req, res) {
+    req.session.data['isSamplePlansSection'] = true;
+    res.render(`versions/${version}/${section}/check-answers`);
+  });
+
+  // Check answers router (POST) - for future confirmation page
+  router.post(`/versions/${version}/${section}/check-answers-router`, function (req, res) {
+    // For now, redirect back to the same page as we haven't built confirmation page yet
+    res.redirect('check-answers');
+  });
+
 }

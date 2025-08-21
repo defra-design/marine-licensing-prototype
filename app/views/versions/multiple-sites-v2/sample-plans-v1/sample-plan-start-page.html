@@ -305,6 +305,37 @@ Sample plan start page
 			</li>
 		</ul>
 
+		<!-- Check and send button - only show when all applicable tasks are completed -->
+		{% set allTasksCompleted = false %}
+		
+		<!-- Check if all always-required tasks are completed -->
+		{% if data['sample-plan-which-activity'] and data['sample-plan-new-or-existing-licence'] and data['sample-plan-fee-estimate-completed'] == "true" and data['fee-terms-checkbox'] == "agree" and data['fee-acceptance'] == "yes" %}
+			
+			<!-- Check activity-specific tasks -->
+			{% if data['sample-plan-which-activity'] == "Marine disposal" %}
+				<!-- For disposal only: no additional tasks required beyond fee estimate -->
+				{% set allTasksCompleted = true %}
+			{% elif data['sample-plan-which-activity'] == "Marine dredging" %}
+				<!-- For dredging only: need site locations and dredging volumes -->
+				{% if data['dredging-sites-all-complete'] and data['sample-plan-dredging-volumes-completed'] %}
+					{% set allTasksCompleted = true %}
+				{% endif %}
+			{% elif data['sample-plan-which-activity'] == "Marine dredging and disposal" %}
+				<!-- For dredging and disposal: need site locations and dredging volumes -->
+				{% if data['dredging-sites-all-complete'] and data['sample-plan-dredging-volumes-completed'] %}
+					{% set allTasksCompleted = true %}
+				{% endif %}
+			{% endif %}
+		{% endif %}
+
+		{% if allTasksCompleted %}
+		<div class="govuk-button-group govuk-!-margin-top-7">
+			<a href="check-answers" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
+				Check and send your information
+			</a>
+		</div>
+		{% endif %}
+
 	</div>
 </div>
 {% endblock %}
