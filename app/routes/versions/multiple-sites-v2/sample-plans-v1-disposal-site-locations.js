@@ -5,6 +5,30 @@ module.exports = function (router) {
   const subSection = "disposal-site-locations";
 
   ///////////////////////////////////////////
+  // Find existing disposal site page
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/${subSection}/find-existing-disposal-site`, function (req, res) {
+    req.session.data['isSamplePlansSection'] = true;
+    res.render(`versions/${version}/${section}/${subSection}/find-existing-disposal-site`);
+  });
+
+  // Find existing disposal site router (POST)
+  router.post(`/versions/${version}/${section}/${subSection}/find-existing-disposal-site-router`, function (req, res) {
+    // For now, just save the search criteria but don't perform actual search
+    // Save all the form data
+    req.session.data['disposal-site-code'] = req.body['disposal-site-code'];
+    req.session.data['disposal-site-name'] = req.body['disposal-site-name'];
+    req.session.data['disposal-site-location'] = req.body['disposal-site-location'];
+    req.session.data['marine-area'] = req.body['marine-area'];
+    req.session.data['disposal-site-status'] = req.body['disposal-site-status'];
+    
+    // TODO: Implement search functionality and results page
+    // For now, redirect back to the same page
+    res.redirect('find-existing-disposal-site');
+  });
+
+  ///////////////////////////////////////////
   // Where dispose of material page
   ///////////////////////////////////////////
 
@@ -35,9 +59,16 @@ module.exports = function (router) {
     // Save the disposal selection
     req.session.data['sample-plan-where-dispose-material'] = disposalSelection;
     
-    // TODO: Redirect to next page in disposal flow
-    // For now, redirect back to task list
-    res.redirect('../sample-plan-start-page');
+    // Conditional routing based on selection
+    if (disposalSelection === 'Existing disposal site') {
+      res.redirect('find-existing-disposal-site');
+    } else if (disposalSelection === 'New disposal site') {
+      // TODO: Create and redirect to new disposal site page
+      res.redirect('../sample-plan-start-page');
+    } else {
+      // Fallback
+      res.redirect('../sample-plan-start-page');
+    }
   });
 
 };
