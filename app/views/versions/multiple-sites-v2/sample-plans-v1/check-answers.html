@@ -1,0 +1,77 @@
+{% extends "../layouts/exemption.html" %}
+
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block beforeContent %}
+    {% include "../includes/phase-banner.html" %}
+    {% if data['user_type'] === 'organisation' %}
+        {% include "../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link" href="sample-plan-start-page.html">Go back to sample plan start page</a>
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+Check your answers before sending your information
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <span class="govuk-caption-l">{{ data['sample-plan-project-name-text-input'] }}</span>
+        <h1 class="govuk-heading-l">
+            {{ pageHeadingTextHTML }}
+        </h1>
+
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">Project details</h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                {{ govukSummaryList({
+                    rows: [
+                        {
+                            key: {
+                                text: "Project name"
+                            },
+                            value: {
+                                text: data['sample-plan-project-name-text-input'] if data['sample-plan-project-name-text-input'] else "[user entered data]"
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "project-name",
+                                        text: "Change",
+                                        visuallyHiddenText: "project name"
+                                    }
+                                ]
+                            }
+                        }
+                    ]
+                }) }}
+            </div>
+        </div>
+
+        <h2 class="govuk-heading-m">Now send your information</h2>
+        
+        <p class="govuk-body">By submitting this information you're confirming that, to the best of your knowledge, the details you're providing are correct.</p>
+
+        <form action="check-answers-router" method="post" novalidate>
+            <div class="govuk-button-group">
+                {{ govukButton({
+                    text: "Confirm and send"
+                }) }}
+
+                <a class="govuk-link govuk-link--no-visited-state" href="">Cancel</a>
+            </div>
+        </form>
+
+    </div>
+</div>
+{% endblock %}

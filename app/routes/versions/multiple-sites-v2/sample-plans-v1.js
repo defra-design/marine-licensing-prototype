@@ -471,4 +471,31 @@ module.exports = function (router) {
     }
   });
 
+  ///////////////////////////////////////////
+  // Check answers page
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/check-answers`, function (req, res) {
+    req.session.data['isSamplePlansSection'] = true;
+    res.render(`versions/${version}/${section}/check-answers`);
+  });
+
+  // Check answers router (POST) - submits application and redirects to confirmation
+  router.post(`/versions/${version}/${section}/check-answers-router`, function (req, res) {
+    // Mark the sample plan application as submitted
+    req.session.data['samplePlanApplicationSubmitted'] = "true";
+    
+    // Redirect to confirmation page
+    res.redirect('confirmation');
+  });
+
+  ///////////////////////////////////////////
+  // Confirmation page
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/confirmation`, function (req, res) {
+    req.session.data['isSamplePlansSection'] = true;
+    res.render(`versions/${version}/${section}/confirmation`);
+  });
+
 }
