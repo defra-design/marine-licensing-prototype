@@ -64,7 +64,7 @@ Is any of the dredged material for beneficial use?
                 name: "sample-plan-beneficial-use",
                 fieldset: {
                     legend: {
-                        html: '<span class="govuk-caption-l">Tynemouth sample plan</span>' + pageHeadingTextHTML,
+                        html: (('<span class="govuk-caption-l">' + data['sample-plan-project-name-text-input'] + '</span>') if data['sample-plan-project-name-text-input']) + pageHeadingTextHTML,
                         isPageHeading: true,
                         classes: "govuk-fieldset__legend--l"
                     }

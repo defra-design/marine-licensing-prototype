@@ -111,7 +111,7 @@ Which maximum dredging volume, in cubic metres, do you want to provide?
                 name: "sample-plan-maximum-dredging-volume",
                 fieldset: {
                     legend: {
-                        html: '<span class="govuk-caption-l">Tynemouth sample plan</span>' + pageHeadingTextHTML,
+                        html: (('<span class="govuk-caption-l">' + data['sample-plan-project-name-text-input'] + '</span>') if data['sample-plan-project-name-text-input']) + pageHeadingTextHTML,
                         isPageHeading: true,
                         classes: "govuk-fieldset__legend--l"
                     }
