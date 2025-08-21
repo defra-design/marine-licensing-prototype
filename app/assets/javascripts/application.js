@@ -72,6 +72,57 @@ window.GOVUKPrototypeKit.documentReady(() => {
         }
       }, 100)
     }
+
+    // Marine areas autocomplete for disposal site search
+    const marineAreas = [
+      'Any',
+      'Atlantic',
+      'Bristol Channel',
+      'Eastern Channel',
+      'English Channel',
+      'Hebrides Sea',
+      'Humber',
+      'Irish Sea',
+      'Lundy',
+      'Main Sea',
+      'North Sea',
+      'Thames'
+    ]
+
+    // Initialize marine area autocomplete if the container exists on the page
+    const marineAreaContainer = document.querySelector('#marine-area-autocomplete-container')
+    if (marineAreaContainer) {
+      // Create a hidden input to store the selected value
+      const marineHiddenInput = document.createElement('input')
+      marineHiddenInput.type = 'hidden'
+      marineHiddenInput.name = 'marine-area'
+      marineHiddenInput.id = 'marine-area-hidden'
+      marineAreaContainer.parentNode.appendChild(marineHiddenInput)
+      
+      accessibleAutocomplete({
+        element: marineAreaContainer,
+        id: 'marine-area-autocomplete',
+        source: marineAreas,
+        minLength: 1,
+        showAllValues: true,
+        confirmOnBlur: false,
+        autoselect: true,
+        onConfirm: function(value) {
+          // Update the hidden input with the selected value
+          marineHiddenInput.value = value || ''
+        }
+      })
+      
+      // Also handle manual typing by updating the hidden input on input change
+      setTimeout(() => {
+        const marineAutocompleteInput = document.querySelector('#marine-area-autocomplete')
+        if (marineAutocompleteInput) {
+          marineAutocompleteInput.addEventListener('input', function(e) {
+            marineHiddenInput.value = e.target.value || ''
+          })
+        }
+      }, 100)
+    }
   } else {
     console.error('accessibleAutocomplete is not available')
   }
