@@ -313,7 +313,7 @@
 }
 
 // Page-specific overrides
-.page-home {
+.page-home, .page-sample-plans-projects {
   .govuk-width-container,
   .govuk-header__container,
   .govuk-header__navigation,
@@ -445,6 +445,12 @@ body.page-cookie-banner {
   flex-shrink: 0;
 }
 
+.page-header-buttons {
+  display: flex;
+  gap: 15px; // govuk-spacing(3)
+  flex-shrink: 0;
+}
+
 // Mobile responsive behavior
 @media (max-width: 40.0525em) {
   .page-header-with-button {
@@ -460,6 +466,12 @@ body.page-cookie-banner {
   .page-header-button {
     align-self: stretch; // Full width on mobile
     text-align: center;
+  }
+  
+  .page-header-buttons {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px; // govuk-spacing(2) for mobile
   }
 }
 

@@ -4,6 +4,38 @@ module.exports = function (router) {
   const section = "sample-plans-v1";
 
   ///////////////////////////////////////////
+  // Projects page
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/projects`, function (req, res) {
+    req.session.data['isSamplePlansSection'] = true;
+    res.render(`versions/${version}/${section}/projects`);
+  });
+
+  // Delete project route
+  router.get(`/versions/${version}/${section}/delete`, function (req, res) {
+    const projectToDelete = req.query.project;
+    
+    if (projectToDelete === 'sample-plan-user') {
+      req.session.data['userSamplePlanProjectDeleted'] = "true";
+      // Clear the user's sample plan project data
+      req.session.data['sample-plan-project-name-text-input'] = '';
+      req.session.data['sample-plan-which-activity'] = '';
+      req.session.data['sample-plan-new-or-existing-licence'] = '';
+      req.session.data['sample-plan-dredging-volumes-completed'] = "false";
+      req.session.data['sample-plan-fee-estimate-completed'] = "false";
+    } else if (projectToDelete === 'south-coast') {
+      // Handle deletion of the South coast sample project
+      // Could set a flag to hide this project in the view
+    } else if (projectToDelete === 'my-sample-plan') {
+      // Handle deletion of the My sample plan project
+      // Could set a flag to hide this project in the view
+    }
+    
+    res.redirect('projects');
+  });
+
+  ///////////////////////////////////////////
   // Sample plan information page
   ///////////////////////////////////////////
 
