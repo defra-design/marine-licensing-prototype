@@ -53,6 +53,24 @@ Sample plan start page
 
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
 			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="project-background" aria-describedby="project-background-status">
+				  Project background
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="project-background-status">
+				{% if data['sample-plan-project-background-completed'] %}
+				Completed
+				{% else %}
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+				{% endif %}
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
 				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="which-activity" aria-describedby="type-of-activity-status">
 				  Type of activity
 				</a>
@@ -300,7 +318,7 @@ Sample plan start page
 		{% set allTasksCompleted = false %}
 		
 		<!-- Check if all always-required tasks are completed -->
-		{% if data['sample-plan-which-activity'] and data['sample-plan-new-or-existing-licence'] and data['sample-plan-fee-estimate-completed'] == "true" and data['fee-terms-checkbox'] == "agree" and data['fee-acceptance'] == "yes" %}
+		{% if data['sample-plan-project-background-completed'] and data['sample-plan-which-activity'] and data['sample-plan-new-or-existing-licence'] and data['sample-plan-fee-estimate-completed'] == "true" and data['fee-terms-checkbox'] == "agree" and data['fee-acceptance'] == "yes" %}
 			
 			<!-- Check activity-specific tasks -->
 			{% if data['sample-plan-which-activity'] == "Marine disposal" %}

@@ -1,0 +1,130 @@
+{% extends "../layouts/exemption.html" %}
+
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% block beforeContent %}
+    {% include "../includes/phase-banner.html" %}
+    {% if data['user_type'] === 'organisation' %}
+        {% include "../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link" href="javascript:window.history.back()">Back</a>
+{% endblock %}
+
+{% set pageHeadingTextHTML %}
+    Project background
+{% endset %}
+
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-two-thirds">
+
+    {% if data['sample-plan-errorthispage'] == "true" %}
+        {{ govukErrorSummary({
+            titleText: "There is a problem",
+            errorList: [
+                {
+                    text: "Enter the project background",
+                    href: "#sample-plan-project-background"
+                } if data['sample-plan-errortypeone'] == "true",
+                {
+                    text: "Select if there been any other contact with the MMO in relation to this project",
+                    href: "#sample-plan-other-contact"
+                } if data['sample-plan-errortypetwo'] == "true",
+                {
+                    text: "Enter details",
+                    href: "#sample-plan-other-contact-details"
+                } if data['sample-plan-errortypethree'] == "true"
+            ]
+        }) }}
+    {% endif %}
+
+    <form action="project-background" method="post">
+        
+        {% set labelHTML %}
+            <span class="govuk-caption-l">{{ data['sample-plan-project-name-text-input'] }}</span>
+            {{ pageHeadingTextHTML }}
+        {% endset %}
+
+        {{ govukTextarea({
+            name: "sample-plan-project-background",
+            id: "sample-plan-project-background",
+            label: {
+                html: labelHTML,
+                classes: "govuk-label--l",
+                isPageHeading: true
+            },
+            hint: {
+                text: "Provide a brief background to the project including the need for, and aim of, the project and if it’s part of a larger project. Also include if there have been any previous licences or dredging activity in the area."
+            },
+            value: data['sample-plan-project-background'],
+            errorMessage: {
+                text: "Enter the project background"
+            } if data['sample-plan-errorthispage'] == "true" and data['sample-plan-errortypeone'] == "true"
+        }) }}
+
+        {% set otherContactHTML %}
+            {{ govukTextarea({
+                name: "sample-plan-other-contact-details",
+                id: "sample-plan-other-contact-details",
+                label: {
+                    text: "Provide details"
+                },
+                value: data['sample-plan-other-contact-details'],
+                errorMessage: {
+                    text: "Enter details"
+                } if data['sample-plan-errorthispage'] == "true" and data['sample-plan-errortypethree'] == "true"
+            }) }}
+        {% endset %}
+
+        {{ govukRadios({
+            name: "sample-plan-other-contact",
+            id: "sample-plan-other-contact",
+            fieldset: {
+                legend: {
+                    text: "Has there been any other contact with the Marine Management Organisation (MMO) in relation to this project?",
+                    isPageHeading: false,
+                    classes: "govuk-fieldset__legend--s"
+                }
+            },
+            errorMessage: {
+                text: "Select if there been any other contact with the MMO in relation to this project"
+            } if data['sample-plan-errorthispage'] == "true" and data['sample-plan-errortypetwo'] == "true",
+            items: [
+                {
+                    value: "Yes",
+                    text: "Yes",
+                    conditional: {
+                        html: otherContactHTML
+                    },
+                    checked: true if data['sample-plan-other-contact'] == "Yes"
+                },
+                {
+                    value: "No",
+                    text: "No",
+                    checked: true if data['sample-plan-other-contact'] == "No"
+                }
+            ]
+        }) }}
+
+        <div class="govuk-button-group">
+            {{ govukButton({
+                text: "Save and continue"
+            }) }}
+    
+            <a class="govuk-link govuk-link--no-visited-state" href="">Cancel</a>
+        </div>
+
+    </form>
+    
+    </div>
+</div>
+
+{% endblock %}
