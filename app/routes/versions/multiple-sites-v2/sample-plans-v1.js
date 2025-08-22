@@ -102,6 +102,51 @@ module.exports = function (router) {
   });
 
   ///////////////////////////////////////////
+  // Project background page
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/project-background`, function (req, res) {
+    req.session.data['isSamplePlansSection'] = true;
+    req.session.data['sample-plan-errorthispage'] = "false";
+    req.session.data['sample-plan-errortypeone'] = "false";
+    req.session.data['sample-plan-errortypetwo'] = "false";
+    req.session.data['sample-plan-errortypethree'] = "false";
+    res.render(`versions/${version}/${section}/project-background`);
+  });
+
+  router.post(`/versions/${version}/${section}/project-background`, function (req, res) {
+    const projectBackground = req.body['sample-plan-project-background'];
+    const otherContact = req.body['sample-plan-other-contact'];
+    const otherContactDetails = req.body['sample-plan-other-contact-details'];
+    let hasError = false;
+    
+    if (!projectBackground || projectBackground.trim() === '') {
+      req.session.data['sample-plan-errorthispage'] = "true";
+      req.session.data['sample-plan-errortypeone'] = "true";
+      hasError = true;
+    }
+
+    if (!otherContact) {
+      req.session.data['sample-plan-errorthispage'] = "true";
+      req.session.data['sample-plan-errortypetwo'] = "true";
+      hasError = true;
+    }
+
+    if (otherContact === 'Yes' && (!otherContactDetails || otherContactDetails.trim() === '')) {
+      req.session.data['sample-plan-errorthispage'] = "true";
+      req.session.data['sample-plan-errortypethree'] = "true";
+      hasError = true;
+    }
+
+    if (hasError) {
+      return res.redirect('project-background');
+    }
+
+    req.session.data['sample-plan-project-background-completed'] = "true";
+    res.redirect('sample-plan-start-page');
+  });
+
+  ///////////////////////////////////////////
   // Which activity page
   ///////////////////////////////////////////
 
