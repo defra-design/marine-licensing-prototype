@@ -86,7 +86,7 @@ What is the history of the site?
                 id: "site-history-site-1-chemicals-manufacturing-details",
                 name: "site-history-site-1-chemicals-manufacturing-details",
                 label: {
-                    text: "Provide details"
+                    text: "Include how long ago this activity took place, or if it’s still active, and how close it is to the area"
                 },
                 value: data['site-history-site-1-chemicals-manufacturing-details'],
                 errorMessage: {
@@ -101,7 +101,7 @@ What is the history of the site?
                 id: "site-history-site-1-electronics-manufacturing-details",
                 name: "site-history-site-1-electronics-manufacturing-details",
                 label: {
-                    text: "Provide details"
+                    text: "Include how long ago this activity took place, or if it’s still active, and how close it is to the area"
                 },
                 value: data['site-history-site-1-electronics-manufacturing-details'],
                 errorMessage: {
@@ -116,7 +116,7 @@ What is the history of the site?
                 id: "site-history-site-1-major-port-infrastructure-details",
                 name: "site-history-site-1-major-port-infrastructure-details",
                 label: {
-                    text: "Provide details"
+                    text: "Include how long ago this activity took place, or if it’s still active, and how close it is to the area"
                 },
                 value: data['site-history-site-1-major-port-infrastructure-details'],
                 errorMessage: {
@@ -131,7 +131,7 @@ What is the history of the site?
                 id: "site-history-site-1-mining-details",
                 name: "site-history-site-1-mining-details",
                 label: {
-                    text: "Provide details"
+                    text: "Include how long ago this activity took place, or if it’s still active, and how close it is to the area"
                 },
                 value: data['site-history-site-1-mining-details'],
                 errorMessage: {
@@ -146,7 +146,7 @@ What is the history of the site?
                 id: "site-history-site-1-oil-processing-details",
                 name: "site-history-site-1-oil-processing-details",
                 label: {
-                    text: "Provide details"
+                    text: "Include how long ago this activity took place, or if it’s still active, and how close it is to the area"
                 },
                 value: data['site-history-site-1-oil-processing-details'],
                 errorMessage: {
@@ -161,7 +161,7 @@ What is the history of the site?
                 id: "site-history-site-1-pollution-incidents-details",
                 name: "site-history-site-1-pollution-incidents-details",
                 label: {
-                    text: "Provide details"
+                    text: "Include how long ago this activity took place, or if it’s still active, and how close it is to the area"
                 },
                 value: data['site-history-site-1-pollution-incidents-details'],
                 errorMessage: {
@@ -176,7 +176,7 @@ What is the history of the site?
                 id: "site-history-site-1-ship-building-details",
                 name: "site-history-site-1-ship-building-details",
                 label: {
-                    text: "Provide details"
+                    text: "Include how long ago this activity took place, or if it’s still active, and how close it is to the area"
                 },
                 value: data['site-history-site-1-ship-building-details'],
                 errorMessage: {
@@ -191,7 +191,7 @@ What is the history of the site?
                 id: "site-history-site-1-steelworks-details",
                 name: "site-history-site-1-steelworks-details",
                 label: {
-                    text: "Provide details"
+                    text: "Include how long ago this activity took place, or if it’s still active, and how close it is to the area"
                 },
                 value: data['site-history-site-1-steelworks-details'],
                 errorMessage: {
@@ -206,7 +206,7 @@ What is the history of the site?
                 id: "site-history-site-1-other-details",
                 name: "site-history-site-1-other-details",
                 label: {
-                    text: "Provide details"
+                    text: "Include how long ago this activity took place, or if it’s still active, and how close it is to the area"
                 },
                 value: data['site-history-site-1-other-details'],
                 errorMessage: {
@@ -308,9 +308,9 @@ What is the history of the site?
                         divider: "or"
                     },
                     {
-                        value: "not-previously-used",
-                        text: "Not previously used for anything",
-                        checked: true if data['site-history-site-1'] and "not-previously-used" in data['site-history-site-1']
+                        value: "no-history-industrial-use",
+                        text: "No history of industrial use",
+                        checked: true if data['site-history-site-1'] and "no-history-industrial-use" in data['site-history-site-1']
                     }
                 ]
             }) }}

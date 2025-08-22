@@ -35,9 +35,9 @@ Dredging details
             titleText: "There is a problem",
             errorList: [
                 {
-                    text: data['dredging-details-site-1-material-type-other-error'] or data['dredging-details-site-1-material-type-error'] or "Select the type of material that will be dredged at this site",
-                    href: "#dredging-details-site-1-material-type-other" if data['dredging-details-site-1-material-type-other-error'] else "#dredging-details-site-1-material-type"
-                } if data['dredging-details-site-1-material-type-error'] or data['dredging-details-site-1-material-type-other-error'],
+                    text: data['dredging-details-site-1-material-type-error'] or "Select the type of material that will be dredged at this site",
+                    href: "#dredging-details-site-1-material-type"
+                } if data['dredging-details-site-1-material-type-error'],
                 {
                     text: data['dredging-details-site-1-method-other-error'] or data['dredging-details-site-1-method-error'] or "Select the proposed method of dredging",
                     href: "#dredging-details-site-1-method-other" if data['dredging-details-site-1-method-other-error'] else "#dredging-details-site-1-method"
@@ -58,22 +58,6 @@ Dredging details
         <form action="dredging-details-site-1-router" method="post" novalidate>
             
             <!-- Question 1: What type of material will be dredged at this site? -->
-            {% set materialTypeOtherHtml %}
-            {{ govukInput({
-                id: "dredging-details-site-1-material-type-other",
-                name: "dredging-details-site-1-material-type-other",
-                type: "text",
-                classes: "govuk-!-width-full",
-                label: {
-                    text: "Describe the other material"
-                },
-                value: data['dredging-details-site-1-material-type-other'],
-                errorMessage: {
-                    text: data['dredging-details-site-1-material-type-other-error']
-                } if data['dredging-details-site-1-material-type-other-error']
-            }) }}
-            {% endset -%}
-
             {{ govukCheckboxes({
                 idPrefix: "dredging-details-site-1-material-type",
                 name: "dredging-details-site-1-material-type",
@@ -108,22 +92,12 @@ Dredging details
                         checked: true if data['dredging-details-site-1-material-type'] and "maintenance-dredged-material" in data['dredging-details-site-1-material-type']
                     },
                     {
-                        value: "non-dredged-sediments",
-                        text: "Non-dredged sediments",
-                        checked: true if data['dredging-details-site-1-material-type'] and "non-dredged-sediments" in data['dredging-details-site-1-material-type']
-                    },
-                    {
-                        value: "organic-material",
-                        text: "Organic material of natural origin (for example, seaweed)",
-                        checked: true if data['dredging-details-site-1-material-type'] and "organic-material" in data['dredging-details-site-1-material-type']
-                    },
-                    {
-                        value: "other",
-                        text: "Other",
-                        checked: true if data['dredging-details-site-1-material-type'] and "other" in data['dredging-details-site-1-material-type'],
-                        conditional: {
-                            html: materialTypeOtherHtml
-                        }
+                        value: "remediation-dredged-material",
+                        text: "Remediation (environmental) dredged material",
+                        hint: {
+                            text: "Removal of contaminated or polluted material to protect the environment"
+                        },
+                        checked: true if data['dredging-details-site-1-material-type'] and "remediation-dredged-material" in data['dredging-details-site-1-material-type']
                     }
                 ]
             }) }}
@@ -211,7 +185,7 @@ Dredging details
                     classes: "govuk-label--s"
                 },
                 hint: {
-                    text: "This is calculated by using the current depth of the sea or river bed and how much you need to deepen it by"
+                    text: "This is calculated by using the current depth of the sea or river bed and how much you need to deepen it by, for example if the current depth is 10m chart datum and you're deepening it to 12m chart datum, the dredge depth is 2m of sediment"
                 },
                 suffix: {
                     text: "m"
