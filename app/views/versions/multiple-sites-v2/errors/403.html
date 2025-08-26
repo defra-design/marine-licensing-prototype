@@ -1,0 +1,31 @@
+{% extends "layouts/main.html" %}
+{% set pageTitle = "You need to sign in" %}
+
+{% block content %}
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+
+    <h1 class="govuk-heading-l">You need to sign in</h1>
+
+    <p class="govuk-body">You cannot access this page without signing in.</p>
+
+    <h2 class="govuk-heading-m">What you can do</h2>
+    <ul class="govuk-list govuk-list--bullet">
+      <li><a class="govuk-link" href="#">Sign in with your Government Gateway account</a></li>
+      <li>If you do not have an account, you need to <a class="govuk-link" href="#">create one through Government
+          Gateway</a></li>
+    </ul>
+
+    <h2 class="govuk-heading-m">If you have problems signing in</h2>
+    <p class="govuk-body">Contact us:</p>
+    <ul class="govuk-list govuk-list--bullet">
+      <li>Email: <a class="govuk-link" href="#">info@marinemanagement.org.uk</a></li>
+      <li>Telephone: <a class="govuk-link" href="#">0300 123 1032</a></li>
+    </ul>
+
+    <p class="govuk-body">The helpline is open 9am to 4:30pm, Monday to Thursday, and 9am to 4pm on Friday. For queries
+      outside these times, email us and we will respond the next working day.</p>
+
+  </div>
+</div>
+{% endblock %}
