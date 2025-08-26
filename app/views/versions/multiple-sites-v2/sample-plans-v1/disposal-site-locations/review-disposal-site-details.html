@@ -130,8 +130,8 @@ Review disposal site details
                         <dd class="govuk-summary-list__value">
                             {% if data['disposal-site-material-type-completed'] %}
                                 {% set materialTypes = [] %}
-                                {% if data['disposal-site-material-type'] %}
-                                    {% for type in data['disposal-site-material-type'] %}
+                                {% if data['disposal-details-site-1-material-type'] %}
+                                    {% for type in data['disposal-details-site-1-material-type'] %}
                                         {% if type == 'capital-dredged-material' %}
                                             {% set materialTypes = (materialTypes.push('Capital dredged material'), materialTypes) %}
                                         {% elif type == 'maintenance-dredged-material' %}
@@ -140,8 +140,8 @@ Review disposal site details
                                             {% set materialTypes = (materialTypes.push('Non-dredged sediments'), materialTypes) %}
                                         {% elif type == 'organic-material' %}
                                             {% set materialTypes = (materialTypes.push('Organic material of natural origin'), materialTypes) %}
-                                        {% elif type == 'other' and data['disposal-site-material-type-other'] %}
-                                            {% set materialTypes = (materialTypes.push('Other: ' + data['disposal-site-material-type-other']), materialTypes) %}
+                                        {% elif type == 'other' and data['disposal-details-site-1-material-type-other'] %}
+                                            {% set materialTypes = (materialTypes.push('Other: ' + data['disposal-details-site-1-material-type-other']), materialTypes) %}
                                         {% endif %}
                                     {% endfor %}
                                 {% endif %}
@@ -151,7 +151,7 @@ Review disposal site details
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="" class="govuk-link">
+                            <a href="disposal-details-site-1" class="govuk-link">
                                 {% if data['disposal-site-material-type-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> type of material being disposed</span>
                             </a>
                         </dd>
@@ -164,16 +164,16 @@ Review disposal site details
                         <dd class="govuk-summary-list__value">
                             {% if data['disposal-site-disposal-method-completed'] %}
                                 {% set methods = [] %}
-                                {% if data['disposal-site-disposal-method'] %}
-                                    {% for method in data['disposal-site-disposal-method'] %}
+                                {% if data['disposal-details-site-1-method'] %}
+                                    {% for method in data['disposal-details-site-1-method'] %}
                                         {% if method == 'bottom-dumping' %}
                                             {% set methods = (methods.push('Bottom dumping'), methods) %}
                                         {% elif method == 'side-casting' %}
                                             {% set methods = (methods.push('Side casting'), methods) %}
                                         {% elif method == 'pipeline' %}
-                                            {% set methods = (methods.push('Pipeline'), methods) %}
-                                        {% elif method == 'other' and data['disposal-site-disposal-method-other'] %}
-                                            {% set methods = (methods.push('Other: ' + data['disposal-site-disposal-method-other']), methods) %}
+                                            {% set methods = (methods.push('Pipeline discharge'), methods) %}
+                                        {% elif method == 'other' and data['disposal-details-site-1-method-other'] %}
+                                            {% set methods = (methods.push('Other: ' + data['disposal-details-site-1-method-other']), methods) %}
                                         {% endif %}
                                     {% endfor %}
                                 {% endif %}

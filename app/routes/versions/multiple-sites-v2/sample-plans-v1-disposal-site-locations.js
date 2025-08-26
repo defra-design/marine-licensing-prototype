@@ -170,4 +170,82 @@ module.exports = function (router) {
     res.redirect('../sample-plan-start-page');
   });
 
+  ///////////////////////////////////////////
+  // Disposal details site 1 page
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/${subSection}/disposal-details-site-1`, function (req, res) {
+    req.session.data['isSamplePlansSection'] = true;
+    
+    // Clear any existing error flags when user navigates to the page
+    req.session.data['disposal-details-site-1-errorthispage'] = "false";
+    req.session.data['disposal-details-site-1-material-type-error'] = "";
+    req.session.data['disposal-details-site-1-method-error'] = "";
+    req.session.data['disposal-details-site-1-method-other-error'] = "";
+    req.session.data['disposal-details-site-1-material-type-other-error'] = "";
+    
+    res.render(`versions/${version}/${section}/${subSection}/disposal-details-site-1`);
+  });
+
+  // Disposal details site 1 router (POST)
+  router.post(`/versions/${version}/${section}/${subSection}/disposal-details-site-1-router`, function (req, res) {
+    // Reset error flags
+    req.session.data['disposal-details-site-1-errorthispage'] = "false";
+    req.session.data['disposal-details-site-1-material-type-error'] = "";
+    req.session.data['disposal-details-site-1-method-error'] = "";
+    req.session.data['disposal-details-site-1-method-other-error'] = "";
+    req.session.data['disposal-details-site-1-material-type-other-error'] = "";
+
+    let hasErrors = false;
+
+    // Validate material type selection
+    if (!req.body['disposal-details-site-1-material-type'] || req.body['disposal-details-site-1-material-type'].length === 0) {
+      req.session.data['disposal-details-site-1-material-type-error'] = "Select the type of material that will be disposed at this site";
+      hasErrors = true;
+    } else {
+      // Save the material type selection
+      req.session.data['disposal-details-site-1-material-type'] = req.body['disposal-details-site-1-material-type'];
+      
+      // If "other" is selected, validate the other field
+      if (req.body['disposal-details-site-1-material-type'].includes('other')) {
+        if (!req.body['disposal-details-site-1-material-type-other'] || req.body['disposal-details-site-1-material-type-other'].trim() === '') {
+          req.session.data['disposal-details-site-1-material-type-other-error'] = "Describe the other material type";
+          hasErrors = true;
+        } else {
+          req.session.data['disposal-details-site-1-material-type-other'] = req.body['disposal-details-site-1-material-type-other'];
+        }
+      }
+    }
+
+    // Validate disposal method selection
+    if (!req.body['disposal-details-site-1-method'] || req.body['disposal-details-site-1-method'].length === 0) {
+      req.session.data['disposal-details-site-1-method-error'] = "Select the proposed method of disposal";
+      hasErrors = true;
+    } else {
+      // Save the method selection
+      req.session.data['disposal-details-site-1-method'] = req.body['disposal-details-site-1-method'];
+      
+      // If "other" is selected, validate the other field
+      if (req.body['disposal-details-site-1-method'].includes('other')) {
+        if (!req.body['disposal-details-site-1-method-other'] || req.body['disposal-details-site-1-method-other'].trim() === '') {
+          req.session.data['disposal-details-site-1-method-other-error'] = "Describe the other method";
+          hasErrors = true;
+        } else {
+          req.session.data['disposal-details-site-1-method-other'] = req.body['disposal-details-site-1-method-other'];
+        }
+      }
+    }
+
+    // If there are errors, redirect back to the form
+    if (hasErrors) {
+      req.session.data['disposal-details-site-1-errorthispage'] = "true";
+      return res.redirect('disposal-details-site-1');
+    }
+
+    // Mark as completed and redirect back to review page
+    req.session.data['disposal-site-material-type-completed'] = true;
+    req.session.data['disposal-site-disposal-method-completed'] = true;
+    res.redirect('review-disposal-site-details');
+  });
+
 };
