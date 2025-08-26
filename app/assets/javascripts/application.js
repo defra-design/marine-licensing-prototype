@@ -132,30 +132,30 @@ window.GOVUKPrototypeKit.documentReady(() => {
     // Complete dataset from the provided screenshots - English disposal sites only (MMO jurisdiction)
     const disposalSites = [
       { code: 'DG025', name: 'Dogger Bank Teeside B', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
-      { code: 'DG031', name: 'Dogger Bank A', country: 'ENGLAND', seaArea: 'North Sea', status: 'Closed' },
+      { code: 'DG031', name: 'Dogger Bank A', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
       { code: 'DG032', name: 'Dogger Bank B', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
-      { code: 'DV010', name: 'DOVER', country: 'ENGLAND', seaArea: 'English Channel', status: 'Disused' },
+      { code: 'DV010', name: 'DOVER', country: 'ENGLAND', seaArea: 'English Channel', status: 'Open' },
       { code: 'DV011', name: 'DOVER - EMERGENCY SITE', country: 'ENGLAND', seaArea: 'English Channel', status: 'Open' },
-      { code: 'DV031', name: 'Lydd Ranges', country: 'England', seaArea: 'English Channel', status: 'Closed' },
+      { code: 'DV031', name: 'Lydd Ranges', country: 'England', seaArea: 'English Channel', status: 'Open' },
       { code: 'DV040', name: 'EASTBOURNE', country: 'ENGLAND', seaArea: 'English Channel', status: 'Open' },
-      { code: 'DV046', name: 'Eastbourne Frontage', country: 'ENGLAND', seaArea: 'English Channel', status: 'Disused' },
+      { code: 'DV046', name: 'Eastbourne Frontage', country: 'ENGLAND', seaArea: 'English Channel', status: 'Open' },
       { code: 'HU015', name: 'BRIDLINGTON A', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
-      { code: 'HU020', name: 'HUMBER 4B/HOOK', country: 'ENGLAND', seaArea: 'North Sea', status: 'Closed' },
-      { code: 'HU021', name: 'Humber 4B/Hook Extension', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
-      { code: 'HU030', name: 'HUMBER 4', country: 'ENGLAND', seaArea: 'North Sea', status: 'Disused' },
+      { code: 'HU020', name: 'HUMBER 4B/HOOK', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
+      { code: 'HU021', name: 'Humber 4B/Hook Extension', country: 'ENGLAND', seaArea: 'North Sea', status: 'Closed' },
+      { code: 'HU030', name: 'HUMBER 4', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
       { code: 'HU040', name: 'WHITGIFT BIGHT (RIVER OUSE)', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
-      { code: 'HU041', name: 'GOOLE REACH', country: 'ENGLAND', seaArea: 'North Sea', status: 'Closed' },
-      { code: 'HU056', name: 'Holme Channel Deep', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
-      { code: 'HU060', name: 'HUMBER 3A', country: 'ENGLAND', seaArea: 'North Sea', status: 'Disused' },
+      { code: 'HU041', name: 'GOOLE REACH', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
+      { code: 'HU056', name: 'Holme Channel Deep', country: 'ENGLAND', seaArea: 'North Sea', status: 'Disused' },
+      { code: 'HU060', name: 'HUMBER 3A', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
       { code: 'HU075', name: 'Oldfleet Drain', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
-      { code: 'HU080', name: 'HUMBER 1A', country: 'ENGLAND', seaArea: 'North Sea', status: 'Closed' },
-      { code: 'HU090', name: 'HUMBER 2', country: 'ENGLAND', seaArea: 'North Sea', status: 'Disused' },
+      { code: 'HU080', name: 'HUMBER 1A', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
+      { code: 'HU090', name: 'HUMBER 2', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
       { code: 'HU143', name: 'WEST STONES', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
       { code: 'HU150', name: 'GREAT YARMOUTH', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
       { code: 'HU152', name: 'Wells outer harbour site A', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
       { code: 'HU154', name: 'Wells outer harbour site C', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
       { code: 'HU156', name: 'Well Beneficial use site2', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
-      { code: 'HU157', name: 'Wells Outer Harbour B1', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
+      { code: 'HU157', name: 'Wells Outer Harbour B1', country: 'ENGLAND', seaArea: 'North Sea', status: 'Closed' },
       { code: 'HU159', name: 'Reedham Marina', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
       { code: 'HU170', name: 'BOSTON 7', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
       { code: 'HU205', name: 'Hornsea Disposal Area 1', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
@@ -163,42 +163,103 @@ window.GOVUKPrototypeKit.documentReady(() => {
       { code: 'HU212', name: 'EAOW3', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
       { code: 'HU213', name: 'Norfolk Vanguard ECC 1', country: 'England', seaArea: 'North Sea', status: 'Open' },
       { code: 'LU010', name: 'PADSTOW BAY', country: 'ENGLAND', seaArea: 'Bristol Channel', status: 'Open' },
-      { code: 'LU068', name: 'Clevedon Lake', country: 'ENGLAND', seaArea: 'Lundy', status: 'Open' },
+      { code: 'LU068', name: 'Clevedon Lake', country: 'ENGLAND', seaArea: 'Lundy', status: 'Disused' },
       { code: 'LU070', name: 'PORTISHEAD', country: 'ENGLAND', seaArea: 'Bristol Channel', status: 'Open' },
       { code: 'LU080', name: 'AVONMOUTH (INNER)', country: 'ENGLAND', seaArea: 'Bristol Channel', status: 'Open' },
       { code: 'LU084', name: 'ROYAL PORTBURY PIER', country: 'ENGLAND', seaArea: 'Bristol Channel', status: 'Open' },
       { code: 'LU085', name: 'ROYAL EDWARD ENTRANCE', country: 'ENGLAND', seaArea: 'Bristol Channel', status: 'Open' },
       { code: 'LU163', name: 'Erebus OWF Cable Site 5', country: 'ENGLAND', seaArea: 'Bristol Channel', status: 'Open' },
       { code: 'LU164', name: 'Erebus OWF Cable Site 4', country: 'ENGLAND', seaArea: 'Bristol Channel', status: 'Open' },
-      { code: 'LU165', name: 'Erebus OWF Cable Site 3', country: 'ENGLAND', seaArea: 'Bristol Channel', status: 'Open' },
+      { code: 'LU165', name: 'Erebus OWF Cable Site 3', country: 'ENGLAND', seaArea: 'Bristol Channel', status: 'Closed' },
       { code: 'LU166', name: 'Erebus OWF Cable Site 2', country: 'ENGLAND', seaArea: 'Bristol Channel', status: 'Open' },
       { code: 'LU167', name: 'Erebus OWF Cable Site 1', country: 'ENGLAND', seaArea: 'Bristol Channel', status: 'Open' },
       { code: 'LU193', name: 'Weston Foreshore 3', country: 'ENGLAND', seaArea: 'Bristol Channel', status: 'Open' },
       { code: 'PL031', name: 'RAME HEAD SOUTH', country: 'ENGLAND', seaArea: 'English Channel', status: 'Open' },
-      { code: 'PL035', name: 'Plymouth Deep', country: 'ENGLAND', seaArea: 'English Channel', status: 'Open' },
+      { code: 'PL035', name: 'Plymouth Deep', country: 'ENGLAND', seaArea: 'English Channel', status: 'Disused' },
       { code: 'PL060', name: 'LANTIC BAY', country: 'ENGLAND', seaArea: 'English Channel', status: 'Open' },
       { code: 'PL069', name: 'Truro', country: 'England', seaArea: 'Eastern Channel', status: 'Open' },
       { code: 'PL075', name: 'FALMOUTH BAY (B)', country: 'ENGLAND', seaArea: 'English Channel', status: 'Open' },
       { code: 'PL100', name: 'MOUNTS BAY', country: 'ENGLAND', seaArea: 'English Channel', status: 'Open' },
       { code: 'PO015', name: 'West Cliff Beach', country: 'ENGLAND', seaArea: 'English Channel', status: 'Open' },
       { code: 'PO016', name: 'West Beach', country: 'ENGLAND', seaArea: 'English Channel', status: 'Open' },
-      { code: 'PO026', name: 'Seaton', country: 'England', seaArea: 'North Sea', status: 'Open' },
+      { code: 'PO026', name: 'Seaton', country: 'England', seaArea: 'North Sea', status: 'Closed' },
       { code: 'PO050', name: 'LYME BAY 2', country: 'ENGLAND', seaArea: 'English Channel', status: 'Open' },
-      { code: 'PO070', name: 'SPREY POINT', country: 'ENGLAND', seaArea: 'English Channel', status: 'Open' },
+      { code: 'PO070', name: 'SPREY POINT', country: 'ENGLAND', seaArea: 'English Channel', status: 'Disused' },
       { code: 'PO111', name: 'Deep Water Relocation', country: 'ENGLAND', seaArea: 'English Channel', status: 'Open' },
       { code: 'PO112', name: 'Portland Harbour Deep Water Relocation', country: 'ENGLAND', seaArea: 'English Channel', status: 'Open' },
-      { code: 'TH005', name: 'LOWESTOFT CIRCULAR NORTH', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' }
+      { code: 'TH005', name: 'LOWESTOFT CIRCULAR NORTH', country: 'ENGLAND', seaArea: 'North Sea', status: 'Disused' }
     ]
 
     const resultsPerPage = 20
-    const totalResults = disposalSites.length
-    const totalPages = Math.ceil(totalResults / resultsPerPage)
+    let sortedDisposalSites = [...disposalSites] // Copy for sorting
+    let currentSort = { column: 'code', direction: 'asc' } // Default sort by site code ascending
 
     // Get current page from URL parameter or default to 1
     function getCurrentPage() {
       const urlParams = new URLSearchParams(window.location.search)
       const page = parseInt(urlParams.get('page')) || 1
+      const totalPages = Math.ceil(sortedDisposalSites.length / resultsPerPage)
       return Math.max(1, Math.min(page, totalPages))
+    }
+
+    // Sort the disposal sites array
+    function sortDisposalSites(column, direction) {
+      sortedDisposalSites.sort((a, b) => {
+        let aValue = a[column]
+        let bValue = b[column]
+        
+        // Convert to lowercase for string comparison
+        if (typeof aValue === 'string') aValue = aValue.toLowerCase()
+        if (typeof bValue === 'string') bValue = bValue.toLowerCase()
+        
+        if (direction === 'asc') {
+          return aValue < bValue ? -1 : aValue > bValue ? 1 : 0
+        } else {
+          return aValue > bValue ? -1 : aValue < bValue ? 1 : 0
+        }
+      })
+    }
+
+    // Handle table header clicks for sorting
+    function handleTableSort(column) {
+      // Toggle direction if clicking the same column, otherwise default to ascending
+      if (currentSort.column === column) {
+        currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc'
+      } else {
+        currentSort.column = column
+        currentSort.direction = 'asc'
+      }
+      
+      sortDisposalSites(currentSort.column, currentSort.direction)
+      updateTableHeaders()
+      loadPage(1) // Go back to first page after sorting
+    }
+
+    // Update table headers with sort indicators
+    function updateTableHeaders() {
+      const headers = document.querySelectorAll('#disposal-sites-table thead th')
+      const columnMap = {
+        0: 'code',
+        1: 'name', 
+        2: 'country',
+        3: 'seaArea',
+        4: 'status'
+      }
+
+      headers.forEach((header, index) => {
+        const column = columnMap[index]
+        if (column) {
+          // Clear existing sort attributes
+          header.removeAttribute('aria-sort')
+          
+          // Set new sort state
+          if (currentSort.column === column) {
+            header.setAttribute('aria-sort', currentSort.direction === 'asc' ? 'ascending' : 'descending')
+          } else {
+            header.setAttribute('aria-sort', 'none')
+          }
+        }
+      })
     }
 
     // Update URL with new page parameter
@@ -229,7 +290,7 @@ window.GOVUKPrototypeKit.documentReady(() => {
     function populateTable(page) {
       const startIndex = (page - 1) * resultsPerPage
       const endIndex = startIndex + resultsPerPage
-      const pageResults = disposalSites.slice(startIndex, endIndex)
+      const pageResults = sortedDisposalSites.slice(startIndex, endIndex)
 
       const tableBody = document.getElementById('disposal-sites-table-body')
       tableBody.innerHTML = ''
@@ -244,13 +305,14 @@ window.GOVUKPrototypeKit.documentReady(() => {
           <td class="govuk-table__cell">${site.seaArea}</td>
           <td class="govuk-table__cell">${getStatusTag(site.status)}</td>
           <td class="govuk-table__cell">
-            <a class="govuk-link govuk-!-white-space-nowrap" href="#">Select site</a>
+            <a class="govuk-link govuk-link--no-visited-state govuk-!-white-space-nowrap" href="#">Select site</a>
           </td>
         `
         tableBody.appendChild(row)
       })
 
       // Update results summary
+      const totalResults = sortedDisposalSites.length
       const startResult = startIndex + 1
       const endResult = Math.min(endIndex, totalResults)
       document.getElementById('results-summary').textContent = 
@@ -260,6 +322,7 @@ window.GOVUKPrototypeKit.documentReady(() => {
     // Generate pagination HTML
     function generatePagination(currentPage) {
       const paginationNav = document.getElementById('pagination-nav')
+      const totalPages = Math.ceil(sortedDisposalSites.length / resultsPerPage)
       let paginationHTML = ''
 
       // Previous link (only show if not on first page)
@@ -399,9 +462,33 @@ window.GOVUKPrototypeKit.documentReady(() => {
       window.scrollTo(0, 0)
     }
 
+    // Add click event listeners to table headers for sorting
+    function initializeTableSorting() {
+      const table = document.getElementById('disposal-sites-table')
+      if (table) {
+        const headers = table.querySelectorAll('thead th')
+        const columnMap = ['code', 'name', 'country', 'seaArea', 'status']
+        
+        headers.forEach((header, index) => {
+          const column = columnMap[index]
+          if (column) {
+            // Remove any existing event listeners and add our custom one
+            header.addEventListener('click', (e) => {
+              e.preventDefault()
+              e.stopPropagation()
+              handleTableSort(column)
+            })
+          }
+        })
+      }
+    }
+
     // Initialize page
     const currentPage = getCurrentPage()
+    sortDisposalSites(currentSort.column, currentSort.direction) // Apply initial sort
     populateTable(currentPage)
     generatePagination(currentPage)
+    updateTableHeaders()
+    initializeTableSorting()
   }
 })
