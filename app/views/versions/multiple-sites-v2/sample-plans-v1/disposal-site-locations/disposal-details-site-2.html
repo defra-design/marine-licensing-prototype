@@ -18,7 +18,7 @@ Disposal details
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
 {% block pageTitle %}
-    {% if  data['sample-disposal-details-site-1-errorthispage'] == "true"  %}
+    {% if  data['sample-disposal-details-site-2-errorthispage'] == "true"  %}
         Error:
     {% endif %}
 
@@ -30,33 +30,33 @@ Disposal details
     <div class="govuk-grid-column-two-thirds">
         
         <!-- Error summary -->
-        {% if data['sample-disposal-details-site-1-errorthispage'] == "true" %}
+        {% if data['sample-disposal-details-site-2-errorthispage'] == "true" %}
         {{ govukErrorSummary({
             titleText: "There is a problem",
             errorList: [
                 {
-                    text: data['sample-disposal-details-site-1-material-type-error'] or "Select the type of material that will be disposed at this site",
-                    href: "#sample-disposal-details-site-1-material-type"
-                } if data['sample-disposal-details-site-1-material-type-error'],
+                    text: data['sample-disposal-details-site-2-material-type-error'] or "Select the type of material that will be disposed at this site",
+                    href: "#sample-disposal-details-site-2-material-type"
+                } if data['sample-disposal-details-site-2-material-type-error'],
                 {
-                    text: data['sample-disposal-details-site-1-method-other-error'] or data['sample-disposal-details-site-1-method-error'] or "Select the proposed method of disposal",
-                    href: "#sample-disposal-details-site-1-method-other" if data['sample-disposal-details-site-1-method-other-error'] else "#sample-disposal-details-site-1-method"
-                } if data['sample-disposal-details-site-1-method-error'] or data['sample-disposal-details-site-1-method-other-error']
+                    text: data['sample-disposal-details-site-2-method-other-error'] or data['sample-disposal-details-site-2-method-error'] or "Select the proposed method of disposal",
+                    href: "#sample-disposal-details-site-2-method-other" if data['sample-disposal-details-site-2-method-other-error'] else "#sample-disposal-details-site-2-method"
+                } if data['sample-disposal-details-site-2-method-error'] or data['sample-disposal-details-site-2-method-other-error']
             ]
         }) }}
         {% endif %}
 
-        <span class="govuk-caption-l">{{ data['sample-plan-project-name-text-input'] }}<span class="govuk-!-display-block">{{ data['selected-disposal-site-name'] or 'Disposal site 1' }}</span></span>
+        <span class="govuk-caption-l">{{ data['sample-plan-project-name-text-input'] }}<span class="govuk-!-display-block">{{ data['selected-disposal-site-2-name'] or 'Disposal site 2' }}</span></span>
         <h1 class="govuk-heading-l">
             {{ pageHeadingTextHTML }}
         </h1>
 
-        <form action="sample-disposal-details-site-1-router" method="post" novalidate>
+        <form action="sample-disposal-details-site-2-router" method="post" novalidate>
             
             <!-- Question 1: What type of material will be disposed at this site? -->
             {{ govukCheckboxes({
-                idPrefix: "sample-disposal-details-site-1-material-type",
-                name: "sample-disposal-details-site-1-material-type",
+                idPrefix: "sample-disposal-details-site-2-material-type",
+                name: "sample-disposal-details-site-2-material-type",
                 fieldset: {
                     legend: {
                         text: "What type of material will be disposed at this site?",
@@ -68,8 +68,8 @@ Disposal details
                     text: "Select all that apply"
                 },
                 errorMessage: {
-                    text: data['sample-disposal-details-site-1-material-type-error']
-                } if data['sample-disposal-details-site-1-material-type-error'],
+                    text: data['sample-disposal-details-site-2-material-type-error']
+                } if data['sample-disposal-details-site-2-material-type-error'],
                 items: [
                     {
                         value: "capital-dredged-material",
@@ -77,7 +77,7 @@ Disposal details
                         hint: {
                             text: "Removal of material not previously dredged in the last 10 years, including deepening or widening an existing dredge area"
                         },
-                        checked: true if data['sample-disposal-details-site-1-material-type'] and "capital-dredged-material" in data['sample-disposal-details-site-1-material-type']
+                        checked: true if data['sample-disposal-details-site-2-material-type'] and "capital-dredged-material" in data['sample-disposal-details-site-2-material-type']
                     },
                     {
                         value: "maintenance-dredged-material",
@@ -85,7 +85,7 @@ Disposal details
                         hint: {
                             text: "Routine removal of material from areas previously dredged in the last 10 years, to the same depth as before"
                         },
-                        checked: true if data['sample-disposal-details-site-1-material-type'] and "maintenance-dredged-material" in data['sample-disposal-details-site-1-material-type']
+                        checked: true if data['sample-disposal-details-site-2-material-type'] and "maintenance-dredged-material" in data['sample-disposal-details-site-2-material-type']
                     },
                     {
                         value: "non-dredged-sediments",
@@ -93,7 +93,7 @@ Disposal details
                         hint: {
                             text: "Sediments that have not been dredged from marine environments"
                         },
-                        checked: true if data['sample-disposal-details-site-1-material-type'] and "non-dredged-sediments" in data['sample-disposal-details-site-1-material-type']
+                        checked: true if data['sample-disposal-details-site-2-material-type'] and "non-dredged-sediments" in data['sample-disposal-details-site-2-material-type']
                     },
                     {
                         value: "organic-material",
@@ -101,25 +101,25 @@ Disposal details
                         hint: {
                             text: "For example, seaweed or other naturally occurring organic materials"
                         },
-                        checked: true if data['sample-disposal-details-site-1-material-type'] and "organic-material" in data['sample-disposal-details-site-1-material-type']
+                        checked: true if data['sample-disposal-details-site-2-material-type'] and "organic-material" in data['sample-disposal-details-site-2-material-type']
                     },
                     {
                         value: "other",
                         text: "Other",
-                        checked: true if data['sample-disposal-details-site-1-material-type'] and "other" in data['sample-disposal-details-site-1-material-type'],
+                        checked: true if data['sample-disposal-details-site-2-material-type'] and "other" in data['sample-disposal-details-site-2-material-type'],
                         conditional: {
                             html: govukInput({
-                                id: "sample-disposal-details-site-1-material-type-other",
-                                name: "sample-disposal-details-site-1-material-type-other",
+                                id: "sample-disposal-details-site-2-material-type-other",
+                                name: "sample-disposal-details-site-2-material-type-other",
                                 type: "text",
                                 classes: "govuk-!-width-full",
                                 label: {
                                     text: "Describe the other material type"
                                 },
-                                value: data['sample-disposal-details-site-1-material-type-other'],
+                                value: data['sample-disposal-details-site-2-material-type-other'],
                                 errorMessage: {
-                                    text: data['sample-disposal-details-site-1-material-type-other-error']
-                                } if data['sample-disposal-details-site-1-material-type-other-error']
+                                    text: data['sample-disposal-details-site-2-material-type-other-error']
+                                } if data['sample-disposal-details-site-2-material-type-other-error']
                             })
                         }
                     }
@@ -129,23 +129,23 @@ Disposal details
             <!-- Question 2: What is the proposed method of disposal? -->
             {% set methodOtherHtml %}
             {{ govukInput({
-                id: "sample-disposal-details-site-1-method-other",
-                name: "sample-disposal-details-site-1-method-other",
+                id: "sample-disposal-details-site-2-method-other",
+                name: "sample-disposal-details-site-2-method-other",
                 type: "text",
                 classes: "govuk-!-width-full",
                 label: {
                     text: "Describe the other method"
                 },
-                value: data['sample-disposal-details-site-1-method-other'],
+                value: data['sample-disposal-details-site-2-method-other'],
                 errorMessage: {
-                    text: data['sample-disposal-details-site-1-method-other-error']
-                } if data['sample-disposal-details-site-1-method-other-error']
+                    text: data['sample-disposal-details-site-2-method-other-error']
+                } if data['sample-disposal-details-site-2-method-other-error']
             }) }}
             {% endset -%}
 
             {{ govukCheckboxes({
-                idPrefix: "sample-disposal-details-site-1-method",
-                name: "sample-disposal-details-site-1-method",
+                idPrefix: "sample-disposal-details-site-2-method",
+                name: "sample-disposal-details-site-2-method",
                 fieldset: {
                     legend: {
                         text: "What is the proposed method of disposal?",
@@ -157,8 +157,8 @@ Disposal details
                     text: "Select all that apply"
                 },
                 errorMessage: {
-                    text: data['sample-disposal-details-site-1-method-error']
-                } if data['sample-disposal-details-site-1-method-error'],
+                    text: data['sample-disposal-details-site-2-method-error']
+                } if data['sample-disposal-details-site-2-method-error'],
                 items: [
                     {
                         value: "bottom-dumping",
@@ -166,7 +166,7 @@ Disposal details
                         hint: {
                             text: "Direct discharge of material to the seabed from vessels"
                         },
-                        checked: true if data['sample-disposal-details-site-1-method'] and "bottom-dumping" in data['sample-disposal-details-site-1-method']
+                        checked: true if data['sample-disposal-details-site-2-method'] and "bottom-dumping" in data['sample-disposal-details-site-2-method']
                     },
                     {
                         value: "side-casting",
@@ -174,7 +174,7 @@ Disposal details
                         hint: {
                             text: "Discharge of material to the side during dredging operations"
                         },
-                        checked: true if data['sample-disposal-details-site-1-method'] and "side-casting" in data['sample-disposal-details-site-1-method']
+                        checked: true if data['sample-disposal-details-site-2-method'] and "side-casting" in data['sample-disposal-details-site-2-method']
                     },
                     {
                         value: "pipeline",
@@ -182,12 +182,12 @@ Disposal details
                         hint: {
                             text: "Transport and discharge of material through a pipeline system"
                         },
-                        checked: true if data['sample-disposal-details-site-1-method'] and "pipeline" in data['sample-disposal-details-site-1-method']
+                        checked: true if data['sample-disposal-details-site-2-method'] and "pipeline" in data['sample-disposal-details-site-2-method']
                     },
                     {
                         value: "other",
                         text: "Other",
-                        checked: true if data['sample-disposal-details-site-1-method'] and "other" in data['sample-disposal-details-site-1-method'],
+                        checked: true if data['sample-disposal-details-site-2-method'] and "other" in data['sample-disposal-details-site-2-method'],
                         conditional: {
                             html: methodOtherHtml
                         }
