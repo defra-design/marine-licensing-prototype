@@ -82,6 +82,11 @@ module.exports = function (router) {
     req.session.data['sample-plan-errortypeone'] = "false";
     req.session.data['isSamplePlansSection'] = true;
     
+    // If URL parameter is provided to clear the radio selection
+    if (req.query.hasOwnProperty('sample-plan-where-dispose-material')) {
+      req.session.data['sample-plan-where-dispose-material'] = req.query['sample-plan-where-dispose-material'] || '';
+    }
+    
     res.render(`versions/${version}/${section}/${subSection}/where-dispose-of-material`);
   });
 
@@ -122,24 +127,47 @@ module.exports = function (router) {
   router.get(`/versions/${version}/${section}/${subSection}/review-disposal-site-details`, function (req, res) {
     req.session.data['isSamplePlansSection'] = true;
     
-    // Store selected site data from URL parameters
-    if (req.query.code) {
+    // If URL parameters are provided (coming from site selection), store them and redirect
+    if (req.query.code || req.query.name || req.query.country || req.query.seaArea || req.query.status) {
+      // Store selected site data from URL parameters
       req.session.data['selected-disposal-site-code'] = req.query.code;
-    }
-    if (req.query.name) {
       req.session.data['selected-disposal-site-name'] = req.query.name;
-    }
-    if (req.query.country) {
       req.session.data['selected-disposal-site-country'] = req.query.country;
-    }
-    if (req.query.seaArea) {
       req.session.data['selected-disposal-site-sea-area'] = req.query.seaArea;
-    }
-    if (req.query.status) {
       req.session.data['selected-disposal-site-status'] = req.query.status;
+      
+      // Mark this as the selected disposal site for this session
+      req.session.data['disposal-site-selected'] = true;
+      
+      // Redirect to clean URL without parameters - this ensures session is saved
+      return res.redirect(`/versions/${version}/${section}/${subSection}/review-disposal-site-details`);
     }
     
+    // Normal page load - render with session data
     res.render(`versions/${version}/${section}/${subSection}/review-disposal-site-details`);
+  });
+
+  // Review disposal site details router (POST)
+  router.post(`/versions/${version}/${section}/${subSection}/review-disposal-site-details-router`, function (req, res) {
+    // Mark that user has visited the disposal site review page
+    req.session.data['has-visited-disposal-site-review'] = true;
+    
+    // Ensure the disposal site selection is preserved
+    req.session.data['disposal-site-selected'] = true;
+    
+    // Check if disposal site details are complete
+    // For now, we'll assume incomplete since material type and disposal method sections aren't implemented yet
+    const materialTypeComplete = req.session.data['disposal-site-material-type-completed'];
+    const disposalMethodComplete = req.session.data['disposal-site-disposal-method-completed'];
+    
+    if (materialTypeComplete && disposalMethodComplete) {
+      req.session.data['disposal-sites-completed'] = true;
+    } else {
+      req.session.data['disposal-sites-in-progress'] = true;
+    }
+    
+    // Redirect back to task list
+    res.redirect('../sample-plan-start-page');
   });
 
 };
