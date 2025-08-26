@@ -52,6 +52,42 @@ Check your answers before sending your information
                                     }
                                 ]
                             }
+                        },
+                        {
+                            key: {
+                                text: "Project background"
+                            },
+                            value: {
+                                text: data['sample-plan-project-background'] if data['sample-plan-project-background'] else "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco."
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "",
+                                        text: "Change",
+                                        visuallyHiddenText: "project background",
+                                        classes: "govuk-link govuk-link--no-visited-state"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            key: {
+                                text: "Other contact with the Marine Management Organisation (MMO)" if data['sample-plan-other-contact'] == "No" else "Details of contact with the Marine Management Organisation (MMO)"
+                            },
+                            value: {
+                                text: "No" if data['sample-plan-other-contact'] == "No" else (data['sample-plan-other-contact-details'] if data['sample-plan-other-contact-details'] else "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.")
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "",
+                                        text: "Change",
+                                        visuallyHiddenText: "contact with the Marine Management Organisation",
+                                        classes: "govuk-link govuk-link--no-visited-state"
+                                    }
+                                ]
+                            }
                         }
                     ]
                 }) }}
