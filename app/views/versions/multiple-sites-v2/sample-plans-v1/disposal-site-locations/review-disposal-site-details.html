@@ -1,0 +1,211 @@
+{% extends "../../layouts/exemption.html" %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {{ super() }}
+    {% include "../../includes/back-link.html" %}
+{% endblock %}
+
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+<!-- Set the heading for the page -->
+{% set pageHeadingTextHTML %}
+Review disposal site details
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {% if  data['sample-plan-errorthispage'] == "true"  %}
+        Error:
+    {% endif %}
+
+    {{ pageHeadingTextHTML }} - Get a plan for sediment sample analysis
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <span class="govuk-caption-l">{{ data['sample-plan-project-name-text-input'] }}</span>
+        <h1 class="govuk-heading-l">
+            {{ pageHeadingTextHTML }}
+        </h1>
+        
+        <!-- Check if all required fields are completed for disposal site -->
+        {% set materialTypeComplete = data['disposal-site-material-type-completed'] %}
+        {% set disposalMethodComplete = data['disposal-site-disposal-method-completed'] %}
+        
+        {% set allComplete = materialTypeComplete and disposalMethodComplete %}
+        
+        {% if not allComplete %}
+            {{ govukInsetText({
+                html: "You must complete all sections marked <span class='govuk-tag govuk-tag--red'>Incomplete</span> before you can send your information."
+            }) }}
+        {% endif %}
+        
+        <!-- Disposal site 1 details section -->
+        <div id="disposal-site-1-details" class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">
+                    Disposal site 1 details
+                </h2>
+                <div class="govuk-summary-card__actions">
+                    <a class="govuk-link govuk-link--no-visited-state" href="where-dispose-of-material?sample-plan-where-dispose-material=">
+                        Change site<span class="govuk-visually-hidden"> (disposal site 1)</span>
+                    </a>
+                </div>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Site code
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ data['selected-disposal-site-code'] or 'No site code available' }}
+                        </dd>
+                    </div>
+                    
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Site name
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ data['selected-disposal-site-name'] or 'No site name available' }}
+                        </dd>
+                    </div>
+                    
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Country
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ data['selected-disposal-site-country'] or 'No country available' }}
+                        </dd>
+                    </div>
+                    
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Sea area
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ data['selected-disposal-site-sea-area'] or 'No sea area available' }}
+                        </dd>
+                    </div>
+                    
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Status
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['selected-disposal-site-status'] %}
+                                {% if data['selected-disposal-site-status'] == 'Open' %}
+                                    <strong class="govuk-tag govuk-tag--green">{{ data['selected-disposal-site-status'] }}</strong>
+                                {% elif data['selected-disposal-site-status'] == 'Closed' %}
+                                    <strong class="govuk-tag govuk-tag--red">{{ data['selected-disposal-site-status'] }}</strong>
+                                {% elif data['selected-disposal-site-status'] == 'Disused' %}
+                                    <strong class="govuk-tag govuk-tag--grey">{{ data['selected-disposal-site-status'] }}</strong>
+                                {% else %}
+                                    <strong class="govuk-tag">{{ data['selected-disposal-site-status'] }}</strong>
+                                {% endif %}
+                            {% else %}
+                                No status available
+                            {% endif %}
+                        </dd>
+                    </div>
+                    
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key map-label">
+                            Map view
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            <img src="/public/images/map-4-points.jpg" alt="Map showing disposal site location" />
+                        </dd>
+                    </div>
+
+                    <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+                        <dt class="govuk-summary-list__key">
+                            Type of material being disposed
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['disposal-site-material-type-completed'] %}
+                                {% set materialTypes = [] %}
+                                {% if data['disposal-site-material-type'] %}
+                                    {% for type in data['disposal-site-material-type'] %}
+                                        {% if type == 'capital-dredged-material' %}
+                                            {% set materialTypes = (materialTypes.push('Capital dredged material'), materialTypes) %}
+                                        {% elif type == 'maintenance-dredged-material' %}
+                                            {% set materialTypes = (materialTypes.push('Maintenance dredged material'), materialTypes) %}
+                                        {% elif type == 'non-dredged-sediments' %}
+                                            {% set materialTypes = (materialTypes.push('Non-dredged sediments'), materialTypes) %}
+                                        {% elif type == 'organic-material' %}
+                                            {% set materialTypes = (materialTypes.push('Organic material of natural origin'), materialTypes) %}
+                                        {% elif type == 'other' and data['disposal-site-material-type-other'] %}
+                                            {% set materialTypes = (materialTypes.push('Other: ' + data['disposal-site-material-type-other']), materialTypes) %}
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                                {{ materialTypes | join('<br>') | safe if materialTypes.length > 0 else 'Not provided' }}
+                            {% else %}
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                            {% endif %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="" class="govuk-link">
+                                {% if data['disposal-site-material-type-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> type of material being disposed</span>
+                            </a>
+                        </dd>
+                    </div>
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Proposed method of disposal
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['disposal-site-disposal-method-completed'] %}
+                                {% set methods = [] %}
+                                {% if data['disposal-site-disposal-method'] %}
+                                    {% for method in data['disposal-site-disposal-method'] %}
+                                        {% if method == 'bottom-dumping' %}
+                                            {% set methods = (methods.push('Bottom dumping'), methods) %}
+                                        {% elif method == 'side-casting' %}
+                                            {% set methods = (methods.push('Side casting'), methods) %}
+                                        {% elif method == 'pipeline' %}
+                                            {% set methods = (methods.push('Pipeline'), methods) %}
+                                        {% elif method == 'other' and data['disposal-site-disposal-method-other'] %}
+                                            {% set methods = (methods.push('Other: ' + data['disposal-site-disposal-method-other']), methods) %}
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                                {{ methods | join('<br>') | safe if methods.length > 0 else 'Not provided' }}
+                            {% else %}
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                            {% endif %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        <p class="govuk-body">You can select 'Save and continue' if you're finished or you want to save your progress and return later.</p>
+
+        <div class="govuk-button-group govuk-!-margin-bottom-6">
+            <a href="" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
+                Add another disposal site
+            </a>
+        </div>
+
+        <form action="review-disposal-site-details-router" method="post" novalidate>
+            <div class="govuk-button-group">
+                {{ govukButton({
+                    text: "Save and continue"
+                }) }}
+                <a class="govuk-link govuk-link--no-visited-state" href="">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
