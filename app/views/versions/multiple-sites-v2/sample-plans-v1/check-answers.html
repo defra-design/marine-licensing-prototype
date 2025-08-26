@@ -94,6 +94,130 @@ Check your answers before sending your information
             </div>
         </div>
 
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">Activity and licence details</h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                {% set activityRows = [
+                    {
+                        key: {
+                            text: "Type of activity"
+                        },
+                        value: {
+                            text: data['sample-plan-which-activity'] if data['sample-plan-which-activity'] else "Marine dredging"
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "",
+                                    text: "Change",
+                                    visuallyHiddenText: "type of activity",
+                                    classes: "govuk-link govuk-link--no-visited-state"
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        key: {
+                            text: "New or existing marine licence"
+                        },
+                        value: {
+                            text: data['sample-plan-new-or-existing-licence'] if data['sample-plan-new-or-existing-licence'] else "New marine licence"
+                        },
+                        actions: {
+                            items: [
+                                {
+                                    href: "",
+                                    text: "Change",
+                                    visuallyHiddenText: "new or existing marine licence",
+                                    classes: "govuk-link govuk-link--no-visited-state"
+                                }
+                            ]
+                        }
+                    }
+                ] %}
+
+                {% if data['sample-plan-new-or-existing-licence'] == "New marine licence" %}
+                    {% set licenceLengthText = "" %}
+                    {% if data['sample-plan-licence-length-years'] and data['sample-plan-licence-length-months'] %}
+                        {% set licenceLengthText = data['sample-plan-licence-length-years'] + " years " + data['sample-plan-licence-length-months'] + " months" %}
+                    {% elif data['sample-plan-licence-length-years'] %}
+                        {% set licenceLengthText = data['sample-plan-licence-length-years'] + " years 0 months" %}
+                    {% elif data['sample-plan-licence-length-months'] %}
+                        {% set licenceLengthText = "0 years " + data['sample-plan-licence-length-months'] + " months" %}
+                    {% else %}
+                        {% set licenceLengthText = "5 years 0 months" %}
+                    {% endif %}
+
+                    {% set activityRows = activityRows.concat([
+                        {
+                            key: {
+                                text: "Proposed length of the new licence"
+                            },
+                            value: {
+                                text: licenceLengthText
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "",
+                                        text: "Change",
+                                        visuallyHiddenText: "proposed length of the new licence",
+                                        classes: "govuk-link govuk-link--no-visited-state"
+                                    }
+                                ]
+                            }
+                        }
+                    ]) %}
+                {% elif data['sample-plan-new-or-existing-licence'] == "Existing marine licence" %}
+                    {% set licenceExpiryText = "" %}
+                    {% if data['sample-plan-licence-expiry-day'] and data['sample-plan-licence-expiry-month'] and data['sample-plan-licence-expiry-year'] %}
+                        {% set monthNames = ['', 'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'] %}
+                        {% set monthNumber = data['sample-plan-licence-expiry-month'] | int %}
+                        {% set monthName = monthNames[monthNumber] if monthNumber >= 1 and monthNumber <= 12 else data['sample-plan-licence-expiry-month'] %}
+                        {% set licenceExpiryText = data['sample-plan-licence-expiry-day'] + " " + monthName + " " + data['sample-plan-licence-expiry-year'] %}
+                    {% else %}
+                        {% set licenceExpiryText = "10 June 2029" %}
+                    {% endif %}
+
+                    {% set activityRows = activityRows.concat([
+                        {
+                            key: {
+                                text: "Licence number"
+                            },
+                            value: {
+                                text: data['sample-plan-licence-number'] if data['sample-plan-licence-number'] else "MLA/2025/00123"
+                            },
+                            classes: "govuk-summary-list__row--no-border",
+                            actions: {
+                                items: [
+                                    {
+                                        href: "",
+                                        text: "Change",
+                                        visuallyHiddenText: "licence number",
+                                        classes: "govuk-link govuk-link--no-visited-state"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            key: {
+                                text: "Licence expiry date"
+                            },
+                            value: {
+                                text: licenceExpiryText
+                            }
+                        }
+                    ]) %}
+                {% endif %}
+
+                {{ govukSummaryList({
+                    rows: activityRows
+                }) }}
+            </div>
+        </div>
+
         <h2 class="govuk-heading-m">Send your information</h2>
         
         <p class="govuk-body">By sending this information you're confirming that, to the best of your knowledge, the details you're providing are correct.</p>
