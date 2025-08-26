@@ -113,10 +113,10 @@ module.exports = function (router) {
       res.redirect('find-existing-disposal-site?disposal-site-code=&disposal-site-name=&disposal-site-location=&marine-area=&disposal-site-status=');
     } else if (disposalSelection === 'New disposal site') {
       // TODO: Create and redirect to new disposal site page
-      res.redirect('../sample-plan-start-page');
+      res.redirect('where-dispose-of-material');
     } else {
       // Fallback
-      res.redirect('../sample-plan-start-page');
+      res.redirect('where-dispose-of-material');
     }
   });
 
