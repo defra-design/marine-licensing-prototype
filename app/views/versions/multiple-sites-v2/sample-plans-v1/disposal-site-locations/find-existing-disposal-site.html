@@ -112,17 +112,8 @@ Find the existing disposal site
                         value: "Northern Ireland",
                         text: "Northern Ireland",
                         checked: data['disposal-site-location'] === "Northern Ireland"
-                    },
-                    {
-                        value: "Scotland",
-                        text: "Scotland",
-                        checked: data['disposal-site-location'] === "Scotland"
-                    },
-                    {
-                        value: "Wales",
-                        text: "Wales",
-                        checked: data['disposal-site-location'] === "Wales"
                     }
+                    
                 ],
                 name: "disposal-site-location",
                 value: data['disposal-site-location']
@@ -182,7 +173,7 @@ Find the existing disposal site
                     text: "Search"
                 }) }}
                 
-                <a class="govuk-link govuk-link--no-visited-state" href="">Cancel</a>
+                <a class="govuk-link govuk-link--no-visited-state" href="find-existing-disposal-site?disposal-site-code=&disposal-site-name=&disposal-site-location=&marine-area=&disposal-site-status=">Clear data</a>
             </div>
 
         </form>
