@@ -41,7 +41,17 @@ Search results for disposal sites
         {% set endResult = currentPage * resultsPerPage %}
         {% if endResult > totalResults %}{% set endResult = totalResults %}{% endif %}
 
-        <p class="govuk-body">We found <strong>{{ totalResults }} disposal sites</strong> matching your search criteria.</p>
+        <!-- Search criteria for filtering -->
+        {% set searchCode = data['disposal-site-code'] or '' %}
+        {% set searchName = data['disposal-site-name'] or '' %}
+        {% set searchLocation = data['disposal-site-location'] or '' %}
+        {% set searchMarineArea = data['marine-area'] or '' %}
+        {% set searchStatus = data['disposal-site-status'] or '' %}
+        {% set hasFilters = data['has-search-filters'] or false %}
+
+
+
+        <p class="govuk-body" id="results-count">We found <strong id="total-results">{{ totalResults }}</strong> disposal sites matching your search criteria.</p>
 
         <!-- Search results table -->
         <div class="govuk-table-overflow">
@@ -79,5 +89,17 @@ Search results for disposal sites
 
     </div>
 </div>
+
+<!-- Pass search criteria to JavaScript -->
+<script>
+window.searchCriteria = {
+    code: "{{ searchCode | safe }}",
+    name: "{{ searchName | safe }}",
+    location: "{{ searchLocation | safe }}",
+    marineArea: "{{ searchMarineArea | safe }}",
+    status: "{{ searchStatus | safe }}",
+    hasFilters: {% if hasFilters %}true{% else %}false{% endif %}
+};
+</script>
 
 {% endblock %}

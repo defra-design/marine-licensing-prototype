@@ -193,6 +193,80 @@ window.GOVUKPrototypeKit.documentReady(() => {
     const resultsPerPage = 20
     let sortedDisposalSites = [...disposalSites] // Copy for sorting
     let currentSort = { column: 'code', direction: 'asc' } // Default sort by site code ascending
+    
+    // Get search criteria from template (will be undefined if not set)
+    const searchCriteria = window.searchCriteria || {
+      code: '',
+      name: '',
+      location: 'Any',
+      marineArea: '',
+      status: 'Any',
+      hasFilters: false
+    }
+
+    // Filtering functions
+    function filterByCode(sites, code) {
+      if (!code) return sites
+      return sites.filter(site => 
+        site.code.toLowerCase().includes(code.toLowerCase())
+      )
+    }
+
+    function filterByName(sites, name) {
+      if (!name) return sites
+      return sites.filter(site => 
+        site.name.toLowerCase().includes(name.toLowerCase())
+      )
+    }
+
+    function filterByLocation(sites, location) {
+      if (!location || location === 'Any' || location === '') return sites
+      return sites.filter(site => 
+        site.country.toLowerCase() === location.toLowerCase()
+      )
+    }
+
+    function filterByMarineArea(sites, marineArea) {
+      if (!marineArea) return sites
+      return sites.filter(site => 
+        site.seaArea.toLowerCase().includes(marineArea.toLowerCase())
+      )
+    }
+
+    function filterByStatus(sites, status) {
+      if (!status || status === 'Any' || status === '') return sites
+      return sites.filter(site => 
+        site.status.toLowerCase() === status.toLowerCase()
+      )
+    }
+
+    // Apply all filters
+    function applyFilters() {
+      let filtered = [...disposalSites]
+      
+      // Apply each filter if criteria exists
+      filtered = filterByCode(filtered, searchCriteria.code)
+      filtered = filterByName(filtered, searchCriteria.name)
+      filtered = filterByLocation(filtered, searchCriteria.location)
+      filtered = filterByMarineArea(filtered, searchCriteria.marineArea)
+      filtered = filterByStatus(filtered, searchCriteria.status)
+      
+      // Update the working dataset
+      sortedDisposalSites = filtered
+      
+      // Update results count display
+      updateResultsCount()
+    }
+
+    function updateResultsCount() {
+      const totalResults = sortedDisposalSites.length
+      document.getElementById('total-results').textContent = totalResults
+      
+      // Update the main results text
+      const resultsText = totalResults === 1 ? 'disposal site' : 'disposal sites'
+      document.getElementById('results-count').innerHTML = 
+        `We found <strong id="total-results">${totalResults}</strong> ${resultsText} matching your search criteria.`
+    }
 
     // Get current page from URL parameter or default to 1
     function getCurrentPage() {
@@ -288,11 +362,30 @@ window.GOVUKPrototypeKit.documentReady(() => {
 
     // Populate table with current page results
     function populateTable(page) {
+      const tableBody = document.getElementById('disposal-sites-table-body')
+      const totalResults = sortedDisposalSites.length
+      const tableContainer = document.querySelector('.govuk-table-overflow')
+      
+      // Handle no results case
+      if (totalResults === 0) {
+        // Hide the entire table
+        if (tableContainer) {
+          tableContainer.style.display = 'none'
+        }
+        
+        document.getElementById('results-summary').textContent = ''
+        return
+      } else {
+        // Show table if there are results
+        if (tableContainer) {
+          tableContainer.style.display = 'block'
+        }
+      }
+
       const startIndex = (page - 1) * resultsPerPage
       const endIndex = startIndex + resultsPerPage
       const pageResults = sortedDisposalSites.slice(startIndex, endIndex)
 
-      const tableBody = document.getElementById('disposal-sites-table-body')
       tableBody.innerHTML = ''
 
       pageResults.forEach(site => {
@@ -312,7 +405,6 @@ window.GOVUKPrototypeKit.documentReady(() => {
       })
 
       // Update results summary
-      const totalResults = sortedDisposalSites.length
       const startResult = startIndex + 1
       const endResult = Math.min(endIndex, totalResults)
       document.getElementById('results-summary').textContent = 
@@ -322,7 +414,15 @@ window.GOVUKPrototypeKit.documentReady(() => {
     // Generate pagination HTML
     function generatePagination(currentPage) {
       const paginationNav = document.getElementById('pagination-nav')
-      const totalPages = Math.ceil(sortedDisposalSites.length / resultsPerPage)
+      const totalResults = sortedDisposalSites.length
+      const totalPages = Math.ceil(totalResults / resultsPerPage)
+      
+      // Hide pagination if no results
+      if (totalResults === 0) {
+        paginationNav.innerHTML = ''
+        return
+      }
+      
       let paginationHTML = ''
 
       // Previous link (only show if not on first page)
@@ -483,12 +583,44 @@ window.GOVUKPrototypeKit.documentReady(() => {
       }
     }
 
+    // Add event listener for "Show all disposal sites" link
+    function initializeClearFilters() {
+      const clearFiltersLink = document.getElementById('clear-filters-link')
+      if (clearFiltersLink) {
+        clearFiltersLink.addEventListener('click', (e) => {
+          e.preventDefault()
+          // Clear search criteria
+          window.searchCriteria = {
+            code: '',
+            name: '',
+            location: 'Any',
+            marineArea: '',
+            status: 'Any',
+            hasFilters: false
+          }
+          // Reset to full dataset
+          sortedDisposalSites = [...disposalSites]
+          // Re-apply sort and pagination
+          sortDisposalSites(currentSort.column, currentSort.direction)
+          updateResultsCount()
+          loadPage(1)
+          // Hide search summary
+          const searchSummary = document.getElementById('search-summary')
+          if (searchSummary) {
+            searchSummary.style.display = 'none'
+          }
+        })
+      }
+    }
+
     // Initialize page
+    applyFilters() // Apply search filters first
     const currentPage = getCurrentPage()
     sortDisposalSites(currentSort.column, currentSort.direction) // Apply initial sort
     populateTable(currentPage)
     generatePagination(currentPage)
     updateTableHeaders()
     initializeTableSorting()
+    initializeClearFilters()
   }
 })

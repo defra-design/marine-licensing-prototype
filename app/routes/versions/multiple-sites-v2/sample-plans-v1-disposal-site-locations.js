@@ -10,17 +10,30 @@ module.exports = function (router) {
 
   router.get(`/versions/${version}/${section}/${subSection}/find-existing-disposal-site`, function (req, res) {
     req.session.data['isSamplePlansSection'] = true;
+    
+    // Clear all search filter data when navigating to search page
+    req.session.data['disposal-site-code'] = '';
+    req.session.data['disposal-site-name'] = '';
+    req.session.data['disposal-site-location'] = '';
+    req.session.data['marine-area'] = '';
+    req.session.data['disposal-site-status'] = '';
+    req.session.data['has-search-filters'] = false;
+    req.session.data['page'] = '1';
+    
     res.render(`versions/${version}/${section}/${subSection}/find-existing-disposal-site`);
   });
 
   // Find existing disposal site router (POST)
   router.post(`/versions/${version}/${section}/${subSection}/find-existing-disposal-site-router`, function (req, res) {
-    // Save all the form data
-    req.session.data['disposal-site-code'] = req.body['disposal-site-code'];
-    req.session.data['disposal-site-name'] = req.body['disposal-site-name'];
-    req.session.data['disposal-site-location'] = req.body['disposal-site-location'];
-    req.session.data['marine-area'] = req.body['marine-area'];
-    req.session.data['disposal-site-status'] = req.body['disposal-site-status'];
+    // Save all the form data for filtering
+    req.session.data['disposal-site-code'] = req.body['disposal-site-code'] || '';
+    req.session.data['disposal-site-name'] = req.body['disposal-site-name'] || '';
+    req.session.data['disposal-site-location'] = req.body['disposal-site-location'] || '';
+    req.session.data['marine-area'] = req.body['marine-area'] || '';
+    req.session.data['disposal-site-status'] = req.body['disposal-site-status'] || '';
+    
+    // Set flag to indicate this is a filtered search
+    req.session.data['has-search-filters'] = true;
     
     // Redirect to search results page
     res.redirect('search-results');
@@ -34,6 +47,18 @@ module.exports = function (router) {
     req.session.data['isSamplePlansSection'] = true;
     // Store page parameter in session data for template access
     req.session.data['page'] = req.query.page || '1';
+    
+    // Check if this is a request to clear filters
+    if (req.query.clear === 'true') {
+      // Clear all search filter data
+      req.session.data['disposal-site-code'] = '';
+      req.session.data['disposal-site-name'] = '';
+      req.session.data['disposal-site-location'] = '';
+      req.session.data['marine-area'] = '';
+      req.session.data['disposal-site-status'] = '';
+      req.session.data['has-search-filters'] = false;
+    }
+    
     res.render(`versions/${version}/${section}/${subSection}/search-results`);
   });
 
