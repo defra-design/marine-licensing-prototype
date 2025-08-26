@@ -53,6 +53,8 @@ Search results for disposal sites
 
         <p class="govuk-body" id="results-count">We found <strong id="total-results">{{ totalResults }}</strong> disposal sites matching your search criteria.</p>
 
+        <p class="govuk-body govuk-!-margin-top-4" id="results-summary">Showing {{ startResult }} to {{ endResult }}.</p>
+
         <!-- Search results table -->
         <div class="govuk-table-overflow">
             <table class="govuk-table" id="disposal-sites-table" data-module="moj-sortable-table">
@@ -72,8 +74,6 @@ Search results for disposal sites
                 </tbody>
             </table>
         </div>
-
-        <p class="govuk-body govuk-!-margin-top-4" id="results-summary">Showing {{ startResult }} to {{ endResult }} of {{ totalResults }} results.</p>
 
         <nav class="govuk-pagination" aria-label="Pagination" id="pagination-nav">
             <!-- Pagination will be populated by JavaScript -->
