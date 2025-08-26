@@ -140,9 +140,9 @@ Sample plan start page
 			  </div>
 			  
 			  <div class="govuk-task-list__status" id="disposal-sites-status">
-				{% if data['disposal-sites-completed'] %}
+				{% if data['sample-disposal-sites-completed'] %}
 					Completed
-				{% elif data['disposal-sites-in-progress'] or data['has-visited-disposal-site-review'] %}
+				{% elif data['sample-disposal-sites-in-progress'] or data['has-visited-disposal-site-review'] %}
 					<strong class="govuk-tag govuk-tag--light-blue">
 						In progress
 					</strong>
@@ -288,9 +288,9 @@ Sample plan start page
 			  </div>
 			  
 			  <div class="govuk-task-list__status" id="disposal-sites-status">
-				{% if data['disposal-sites-completed'] %}
+				{% if data['sample-disposal-sites-completed'] %}
 					Completed
-				{% elif data['disposal-sites-in-progress'] or data['has-visited-disposal-site-review'] %}
+				{% elif data['sample-disposal-sites-in-progress'] or data['has-visited-disposal-site-review'] %}
 					<strong class="govuk-tag govuk-tag--light-blue">
 						In progress
 					</strong>
@@ -363,7 +363,7 @@ Sample plan start page
 			<!-- Check activity-specific tasks -->
 			{% if data['sample-plan-which-activity'] == "Marine disposal" %}
 				<!-- For disposal only: need disposal sites completed -->
-				{% if data['disposal-sites-completed'] %}
+				{% if data['sample-disposal-sites-completed'] %}
 					{% set allTasksCompleted = true %}
 				{% endif %}
 			{% elif data['sample-plan-which-activity'] == "Marine dredging" %}
@@ -373,7 +373,7 @@ Sample plan start page
 				{% endif %}
 			{% elif data['sample-plan-which-activity'] == "Marine dredging and disposal" %}
 				<!-- For dredging and disposal: need site locations, dredging volumes, and disposal sites -->
-				{% if data['dredging-sites-all-complete'] and data['sample-plan-dredging-volumes-completed'] and data['disposal-sites-completed'] %}
+				{% if data['dredging-sites-all-complete'] and data['sample-plan-dredging-volumes-completed'] and data['sample-disposal-sites-completed'] %}
 					{% set allTasksCompleted = true %}
 				{% endif %}
 			{% endif %}

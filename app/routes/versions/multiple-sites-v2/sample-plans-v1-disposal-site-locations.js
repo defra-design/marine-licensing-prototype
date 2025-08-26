@@ -129,15 +129,30 @@ module.exports = function (router) {
     
     // If URL parameters are provided (coming from site selection), store them and redirect
     if (req.query.code || req.query.name || req.query.country || req.query.seaArea || req.query.status) {
-      // Store selected site data from URL parameters
-      req.session.data['selected-disposal-site-code'] = req.query.code;
-      req.session.data['selected-disposal-site-name'] = req.query.name;
-      req.session.data['selected-disposal-site-country'] = req.query.country;
-      req.session.data['selected-disposal-site-sea-area'] = req.query.seaArea;
-      req.session.data['selected-disposal-site-status'] = req.query.status;
+      // Check if this is for site 2 (when site 1 already exists)
+      const isSite2 = req.session.data['sample-disposal-site-selected'] && !req.session.data['sample-disposal-site-2-selected'];
       
-      // Mark this as the selected disposal site for this session
-      req.session.data['disposal-site-selected'] = true;
+      if (isSite2) {
+        // Store selected site 2 data from URL parameters
+        req.session.data['selected-disposal-site-2-code'] = req.query.code;
+        req.session.data['selected-disposal-site-2-name'] = req.query.name;
+        req.session.data['selected-disposal-site-2-country'] = req.query.country;
+        req.session.data['selected-disposal-site-2-sea-area'] = req.query.seaArea;
+        req.session.data['selected-disposal-site-2-status'] = req.query.status;
+        
+        // Mark this as the selected disposal site 2 for this session
+        req.session.data['sample-disposal-site-2-selected'] = true;
+      } else {
+        // Store selected site 1 data from URL parameters
+        req.session.data['selected-disposal-site-code'] = req.query.code;
+        req.session.data['selected-disposal-site-name'] = req.query.name;
+        req.session.data['selected-disposal-site-country'] = req.query.country;
+        req.session.data['selected-disposal-site-sea-area'] = req.query.seaArea;
+        req.session.data['selected-disposal-site-status'] = req.query.status;
+        
+        // Mark this as the selected disposal site for this session
+        req.session.data['sample-disposal-site-selected'] = true;
+      }
       
       // Redirect to clean URL without parameters - this ensures session is saved
       return res.redirect(`/versions/${version}/${section}/${subSection}/review-disposal-site-details`);
@@ -156,18 +171,183 @@ module.exports = function (router) {
     req.session.data['disposal-site-selected'] = true;
     
     // Check if disposal site details are complete
-    // For now, we'll assume incomplete since material type and disposal method sections aren't implemented yet
-    const materialTypeComplete = req.session.data['disposal-site-material-type-completed'];
-    const disposalMethodComplete = req.session.data['disposal-site-disposal-method-completed'];
+    const materialTypeComplete = req.session.data['sample-disposal-site-material-type-completed'];
+    const disposalMethodComplete = req.session.data['sample-disposal-site-disposal-method-completed'];
+    const site2MaterialTypeComplete = req.session.data['sample-disposal-site-2-material-type-completed'];
+    const site2DisposalMethodComplete = req.session.data['sample-disposal-site-2-disposal-method-completed'];
+    const hasSite2 = req.session.data['sample-disposal-site-2-selected'];
     
-    if (materialTypeComplete && disposalMethodComplete) {
-      req.session.data['disposal-sites-completed'] = true;
+    // Update completion status based on all sites
+    const site1Complete = materialTypeComplete && disposalMethodComplete;
+    const site2Complete = site2MaterialTypeComplete && site2DisposalMethodComplete;
+    const allSitesComplete = site1Complete && (!hasSite2 || site2Complete);
+    
+    if (allSitesComplete) {
+      req.session.data['sample-disposal-sites-completed'] = true;
+      req.session.data['sample-disposal-sites-in-progress'] = false;
     } else {
-      req.session.data['disposal-sites-in-progress'] = true;
+      req.session.data['sample-disposal-sites-in-progress'] = true;
+      req.session.data['sample-disposal-sites-completed'] = false;
     }
     
     // Redirect back to task list
     res.redirect('../sample-plan-start-page');
+  });
+
+  ///////////////////////////////////////////
+  // Disposal details site 1 page
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/${subSection}/disposal-details-site-1`, function (req, res) {
+    req.session.data['isSamplePlansSection'] = true;
+    
+    // Clear any existing error flags when user navigates to the page
+    req.session.data['sample-disposal-details-site-1-errorthispage'] = "false";
+    req.session.data['sample-disposal-details-site-1-material-type-error'] = "";
+    req.session.data['sample-disposal-details-site-1-method-error'] = "";
+    req.session.data['sample-disposal-details-site-1-method-other-error'] = "";
+    req.session.data['sample-disposal-details-site-1-material-type-other-error'] = "";
+    
+    res.render(`versions/${version}/${section}/${subSection}/disposal-details-site-1`);
+  });
+
+  // Disposal details site 1 router (POST)
+  router.post(`/versions/${version}/${section}/${subSection}/sample-disposal-details-site-1-router`, function (req, res) {
+    // Reset error flags
+    req.session.data['sample-disposal-details-site-1-errorthispage'] = "false";
+    req.session.data['sample-disposal-details-site-1-material-type-error'] = "";
+    req.session.data['sample-disposal-details-site-1-method-error'] = "";
+    req.session.data['sample-disposal-details-site-1-method-other-error'] = "";
+    req.session.data['sample-disposal-details-site-1-material-type-other-error'] = "";
+
+    let hasErrors = false;
+
+    // Validate material type selection
+    if (!req.body['sample-disposal-details-site-1-material-type'] || req.body['sample-disposal-details-site-1-material-type'].length === 0) {
+      req.session.data['sample-disposal-details-site-1-material-type-error'] = "Select the type of material that will be disposed at this site";
+      hasErrors = true;
+    } else {
+      // Save the material type selection
+      req.session.data['sample-disposal-details-site-1-material-type'] = req.body['sample-disposal-details-site-1-material-type'];
+      
+      // If "other" is selected, validate the other field
+      if (req.body['sample-disposal-details-site-1-material-type'].includes('other')) {
+        if (!req.body['sample-disposal-details-site-1-material-type-other'] || req.body['sample-disposal-details-site-1-material-type-other'].trim() === '') {
+          req.session.data['sample-disposal-details-site-1-material-type-other-error'] = "Describe the other material type";
+          hasErrors = true;
+        } else {
+          req.session.data['sample-disposal-details-site-1-material-type-other'] = req.body['sample-disposal-details-site-1-material-type-other'];
+        }
+      }
+    }
+
+    // Validate disposal method selection
+    if (!req.body['sample-disposal-details-site-1-method'] || req.body['sample-disposal-details-site-1-method'].length === 0) {
+      req.session.data['sample-disposal-details-site-1-method-error'] = "Select the proposed method of disposal";
+      hasErrors = true;
+    } else {
+      // Save the method selection
+      req.session.data['sample-disposal-details-site-1-method'] = req.body['sample-disposal-details-site-1-method'];
+      
+      // If "other" is selected, validate the other field
+      if (req.body['sample-disposal-details-site-1-method'].includes('other')) {
+        if (!req.body['sample-disposal-details-site-1-method-other'] || req.body['sample-disposal-details-site-1-method-other'].trim() === '') {
+          req.session.data['sample-disposal-details-site-1-method-other-error'] = "Describe the other method";
+          hasErrors = true;
+        } else {
+          req.session.data['sample-disposal-details-site-1-method-other'] = req.body['sample-disposal-details-site-1-method-other'];
+        }
+      }
+    }
+
+    // If there are errors, redirect back to the form
+    if (hasErrors) {
+      req.session.data['sample-disposal-details-site-1-errorthispage'] = "true";
+      return res.redirect('disposal-details-site-1');
+    }
+
+    // Mark as completed and redirect back to review page
+    req.session.data['sample-disposal-site-material-type-completed'] = true;
+    req.session.data['sample-disposal-site-disposal-method-completed'] = true;
+    res.redirect('review-disposal-site-details');
+  });
+
+  ///////////////////////////////////////////
+  // Disposal details site 2 page
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/${subSection}/disposal-details-site-2`, function (req, res) {
+    req.session.data['isSamplePlansSection'] = true;
+    
+    // Clear any existing error flags when user navigates to the page
+    req.session.data['sample-disposal-details-site-2-errorthispage'] = "false";
+    req.session.data['sample-disposal-details-site-2-material-type-error'] = "";
+    req.session.data['sample-disposal-details-site-2-method-error'] = "";
+    req.session.data['sample-disposal-details-site-2-method-other-error'] = "";
+    req.session.data['sample-disposal-details-site-2-material-type-other-error'] = "";
+    
+    res.render(`versions/${version}/${section}/${subSection}/disposal-details-site-2`);
+  });
+
+  // Disposal details site 2 router (POST)
+  router.post(`/versions/${version}/${section}/${subSection}/sample-disposal-details-site-2-router`, function (req, res) {
+    // Reset error flags
+    req.session.data['sample-disposal-details-site-2-errorthispage'] = "false";
+    req.session.data['sample-disposal-details-site-2-material-type-error'] = "";
+    req.session.data['sample-disposal-details-site-2-method-error'] = "";
+    req.session.data['sample-disposal-details-site-2-method-other-error'] = "";
+    req.session.data['sample-disposal-details-site-2-material-type-other-error'] = "";
+
+    let hasErrors = false;
+
+    // Validate material type selection
+    if (!req.body['sample-disposal-details-site-2-material-type'] || req.body['sample-disposal-details-site-2-material-type'].length === 0) {
+      req.session.data['sample-disposal-details-site-2-material-type-error'] = "Select the type of material that will be disposed at this site";
+      hasErrors = true;
+    } else {
+      // Save the material type selection
+      req.session.data['sample-disposal-details-site-2-material-type'] = req.body['sample-disposal-details-site-2-material-type'];
+      
+      // If "other" is selected, validate the other field
+      if (req.body['sample-disposal-details-site-2-material-type'].includes('other')) {
+        if (!req.body['sample-disposal-details-site-2-material-type-other'] || req.body['sample-disposal-details-site-2-material-type-other'].trim() === '') {
+          req.session.data['sample-disposal-details-site-2-material-type-other-error'] = "Describe the other material type";
+          hasErrors = true;
+        } else {
+          req.session.data['sample-disposal-details-site-2-material-type-other'] = req.body['sample-disposal-details-site-2-material-type-other'];
+        }
+      }
+    }
+
+    // Validate disposal method selection
+    if (!req.body['sample-disposal-details-site-2-method'] || req.body['sample-disposal-details-site-2-method'].length === 0) {
+      req.session.data['sample-disposal-details-site-2-method-error'] = "Select the proposed method of disposal";
+      hasErrors = true;
+    } else {
+      // Save the method selection
+      req.session.data['sample-disposal-details-site-2-method'] = req.body['sample-disposal-details-site-2-method'];
+      
+      // If "other" is selected, validate the other field
+      if (req.body['sample-disposal-details-site-2-method'].includes('other')) {
+        if (!req.body['sample-disposal-details-site-2-method-other'] || req.body['sample-disposal-details-site-2-method-other'].trim() === '') {
+          req.session.data['sample-disposal-details-site-2-method-other-error'] = "Describe the other method";
+          hasErrors = true;
+        } else {
+          req.session.data['sample-disposal-details-site-2-method-other'] = req.body['sample-disposal-details-site-2-method-other'];
+        }
+      }
+    }
+
+    // If there are errors, redirect back to the form
+    if (hasErrors) {
+      req.session.data['sample-disposal-details-site-2-errorthispage'] = "true";
+      return res.redirect('disposal-details-site-2');
+    }
+
+    // Mark as completed and redirect back to review page
+    req.session.data['sample-disposal-site-2-material-type-completed'] = true;
+    req.session.data['sample-disposal-site-2-disposal-method-completed'] = true;
+    res.redirect('review-disposal-site-details');
   });
 
 };
