@@ -129,18 +129,8 @@ window.GOVUKPrototypeKit.documentReady(() => {
 
   // Disposal sites pagination functionality
   if (document.getElementById('disposal-sites-table-body')) {
-    // Complete dataset of all 75 disposal sites (sorted alphabetically by site code)
+    // Complete dataset from the provided screenshots - English disposal sites only (MMO jurisdiction)
     const disposalSites = [
-      { code: 'CR019', name: 'SUTORS', country: 'SCOTLAND', seaArea: 'North Sea', status: 'Open' },
-      { code: 'CR030', name: 'BURGHEAD', country: 'SCOTLAND', seaArea: 'North Sea', status: 'Open' },
-      { code: 'CR034', name: 'Lossiemouth Harbour', country: 'SCOTLAND', seaArea: 'North Sea', status: 'Open' },
-      { code: 'CR040', name: 'BUCKIE', country: 'SCOTLAND', seaArea: 'North Sea', status: 'Open' },
-      { code: 'CR050', name: 'MACDUFF', country: 'SCOTLAND', seaArea: 'North Sea', status: 'Open' },
-      { code: 'CR071', name: 'Peterhead Harbour', country: 'SCOTLAND', seaArea: 'North Sea', status: 'Open' },
-      { code: 'CR080', name: 'NORTH BUCHAN NESS', country: 'SCOTLAND', seaArea: 'North Sea', status: 'Open' },
-      { code: 'CR110', name: 'ABERDEEN', country: 'SCOTLAND', seaArea: 'North Sea', status: 'Open' },
-      { code: 'CR121', name: 'Nairn', country: 'SCOTLAND', seaArea: 'North Sea', status: 'Open' },
-      { code: 'CR170', name: 'Balnapaling', country: 'SCOTLAND', seaArea: 'North Sea', status: 'Open' },
       { code: 'DG025', name: 'Dogger Bank Teeside B', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
       { code: 'DG031', name: 'Dogger Bank A', country: 'ENGLAND', seaArea: 'North Sea', status: 'Closed' },
       { code: 'DG032', name: 'Dogger Bank B', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
@@ -149,10 +139,6 @@ window.GOVUKPrototypeKit.documentReady(() => {
       { code: 'DV031', name: 'Lydd Ranges', country: 'England', seaArea: 'English Channel', status: 'Closed' },
       { code: 'DV040', name: 'EASTBOURNE', country: 'ENGLAND', seaArea: 'English Channel', status: 'Open' },
       { code: 'DV046', name: 'Eastbourne Frontage', country: 'ENGLAND', seaArea: 'English Channel', status: 'Disused' },
-      { code: 'FI100', name: 'FOULA', country: 'SCOTLAND', seaArea: 'North Sea', status: 'Open' },
-      { code: 'FO010', name: 'MONTROSE', country: 'SCOTLAND', seaArea: 'North Sea', status: 'Open' },
-      { code: 'FO020', name: 'ARBROATH', country: 'SCOTLAND', seaArea: 'North Sea', status: 'Open' },
-      { code: 'FO028', name: 'MIDDLE BANK (TAY)', country: 'SCOTLAND', seaArea: 'North Sea', status: 'Open' },
       { code: 'HU015', name: 'BRIDLINGTON A', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
       { code: 'HU020', name: 'HUMBER 4B/HOOK', country: 'ENGLAND', seaArea: 'North Sea', status: 'Closed' },
       { code: 'HU021', name: 'Humber 4B/Hook Extension', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
@@ -310,31 +296,52 @@ window.GOVUKPrototypeKit.documentReady(() => {
         `
       }
 
-      // Show ellipsis if there's a gap
-      if (currentPage > 3) {
-        paginationHTML += '<li class="govuk-pagination__item govuk-pagination__item--ellipses">⋯</li>'
-      }
-
-      // Show pages around current page
-      for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
-        if (i === currentPage) {
-          paginationHTML += `
-            <li class="govuk-pagination__item govuk-pagination__item--current">
-              <a class="govuk-link govuk-pagination__link" href="?page=${i}" aria-label="Page ${i}" aria-current="page" data-page="${i}">${i}</a>
-            </li>
-          `
-        } else {
-          paginationHTML += `
-            <li class="govuk-pagination__item">
-              <a class="govuk-link govuk-pagination__link" href="?page=${i}" aria-label="Page ${i}" data-page="${i}">${i}</a>
-            </li>
-          `
+      // For 4 or fewer pages, show all page numbers without ellipses
+      if (totalPages <= 4) {
+        // Show all pages 2 through totalPages-1 (page 1 and last page are handled separately)
+        for (let i = 2; i <= totalPages - 1; i++) {
+          if (i === currentPage) {
+            paginationHTML += `
+              <li class="govuk-pagination__item govuk-pagination__item--current">
+                <a class="govuk-link govuk-pagination__link" href="?page=${i}" aria-label="Page ${i}" aria-current="page" data-page="${i}">${i}</a>
+              </li>
+            `
+          } else {
+            paginationHTML += `
+              <li class="govuk-pagination__item">
+                <a class="govuk-link govuk-pagination__link" href="?page=${i}" aria-label="Page ${i}" data-page="${i}">${i}</a>
+              </li>
+            `
+          }
         }
-      }
+      } else {
+        // For more than 4 pages, use ellipses logic
+        // Show ellipsis if there's a gap
+        if (currentPage > 3) {
+          paginationHTML += '<li class="govuk-pagination__item govuk-pagination__item--ellipses">⋯</li>'
+        }
 
-      // Show ellipsis if there's a gap before last page
-      if (currentPage < totalPages - 2) {
-        paginationHTML += '<li class="govuk-pagination__item govuk-pagination__item--ellipses">⋯</li>'
+        // Show pages around current page
+        for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
+          if (i === currentPage) {
+            paginationHTML += `
+              <li class="govuk-pagination__item govuk-pagination__item--current">
+                <a class="govuk-link govuk-pagination__link" href="?page=${i}" aria-label="Page ${i}" aria-current="page" data-page="${i}">${i}</a>
+              </li>
+            `
+          } else {
+            paginationHTML += `
+              <li class="govuk-pagination__item">
+                <a class="govuk-link govuk-pagination__link" href="?page=${i}" aria-label="Page ${i}" data-page="${i}">${i}</a>
+              </li>
+            `
+          }
+        }
+
+        // Show ellipsis if there's a gap before last page
+        if (currentPage < totalPages - 2) {
+          paginationHTML += '<li class="govuk-pagination__item govuk-pagination__item--ellipses">⋯</li>'
+        }
       }
 
       // Always show last page (if more than 1 page)
