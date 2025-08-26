@@ -297,6 +297,7 @@ module.exports = function (router) {
     // Clear any existing error flags when user navigates to the page
     req.session.data['sample-plan-errorthispage'] = "false";
     req.session.data['sample-plan-errortypeone'] = "false";
+    req.session.data['sample-plan-errortypetwo'] = "false";
     req.session.data['isSamplePlansSection'] = true;
     
     res.render(`versions/${version}/${section}/existing-licence-expiry`);
@@ -307,15 +308,28 @@ module.exports = function (router) {
     // Reset error flags
     req.session.data['sample-plan-errorthispage'] = "false";
     req.session.data['sample-plan-errortypeone'] = "false";
+    req.session.data['sample-plan-errortypetwo'] = "false";
 
     // Validate that all date fields are filled
     const day = req.body['sample-plan-licence-expiry-day'];
     const month = req.body['sample-plan-licence-expiry-month'];
     const year = req.body['sample-plan-licence-expiry-year'];
+    const licenceNumber = req.body['sample-plan-licence-number'];
+    let hasError = false;
+
+    if (!licenceNumber || licenceNumber.trim() === '') {
+      req.session.data['sample-plan-errorthispage'] = "true";
+      req.session.data['sample-plan-errortypetwo'] = "true";
+      hasError = true;
+    }
     
     if ((!day || day.trim() === '') || (!month || month.trim() === '') || (!year || year.trim() === '')) {
       req.session.data['sample-plan-errorthispage'] = "true";
       req.session.data['sample-plan-errortypeone'] = "true";
+      hasError = true;
+    }
+
+    if (hasError) {
       return res.redirect('existing-licence-expiry');
     }
 
@@ -323,7 +337,28 @@ module.exports = function (router) {
     req.session.data['sample-plan-licence-expiry-day'] = day;
     req.session.data['sample-plan-licence-expiry-month'] = month;
     req.session.data['sample-plan-licence-expiry-year'] = year;
+    req.session.data['sample-plan-licence-number'] = licenceNumber;
     res.redirect('sample-plan-start-page');
+  });
+
+  ///////////////////////////////////////////
+  // Before you start dredging volume page
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/before-you-start-dredging-volume`, function (req, res) {
+    req.session.data['isSamplePlansSection'] = true;
+    
+    // If dredging volumes are already completed, redirect to the maximum dredging volume page
+    if (req.session.data['sample-plan-dredging-volumes-completed'] === "true") {
+      return res.redirect('maximum-dredging-volume');
+    }
+    
+    res.render(`versions/${version}/${section}/before-you-start-dredging-volume`);
+  });
+
+  // Before you start dredging volume router (POST)
+  router.post(`/versions/${version}/${section}/before-you-start-dredging-volume-router`, function (req, res) {
+    res.redirect('maximum-dredging-volume');
   });
 
   ///////////////////////////////////////////
@@ -338,9 +373,6 @@ module.exports = function (router) {
     req.session.data['sample-plan-errortypethree'] = "false";
     req.session.data['sample-plan-errortypefour'] = "false";
     req.session.data['isSamplePlansSection'] = true;
-    
-    // Clear dredging volumes completion flag when user starts the journey again
-    req.session.data['sample-plan-dredging-volumes-completed'] = "false";
     
     res.render(`versions/${version}/${section}/maximum-dredging-volume`);
   });

@@ -1,6 +1,7 @@
 {% extends "../layouts/exemption.html" %}
 
 {% from "govuk/components/date-input/macro.njk" import govukDateInput %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 
@@ -14,7 +15,7 @@
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-What is the marine licence expiry date?
+What are the details of your existing marine licence?
 {% endset %}
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
@@ -28,30 +29,61 @@ Error:
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
+        {% set errorList = [] %}
+
+        {% if data['sample-plan-errortypetwo'] == 'true' %}
+            {% set errorList = errorList.concat([{
+                text: "Enter the licence number",
+                href: "#sample-plan-licence-number"
+            }]) %}
+        {% endif %}
+
+        {% if data['sample-plan-errortypeone'] == 'true' %}
+            {% set errorList = errorList.concat([{
+                text: "Enter the marine licence expiry date",
+                href: "#sample-plan-licence-expiry-day"
+            }]) %}
+        {% endif %}
         {% if data['sample-plan-errorthispage'] == "true" %}
         {{ govukErrorSummary({
             titleText: "There is a problem",
-            errorList: [
-                {
-                    text: "Enter the marine licence expiry date",
-                    href: "#sample-plan-licence-expiry-day"
-                }
-            ]
+            errorList: errorList
         }) }}
         {% endif %}
 
         <!--  END OF 'error summary' -->
 
         <form action="existing-licence-expiry-router" method="post" novalidate>
+          <h1 class="govuk-heading-l">
+            {% if data['sample-plan-project-name-text-input'] %}<span class="govuk-caption-l">{{ data['sample-plan-project-name-text-input'] }}</span>{% endif %}
+            {{ pageHeadingTextHTML | safe }}
+          </h1>
+
+          {{ govukInput({
+            id: "sample-plan-licence-number",
+            name: "sample-plan-licence-number",
+            value: data['sample-plan-licence-number'],
+            classes: "govuk-input--width-20",
+            label: {
+              text: "Licence number",
+              classes: "govuk-fieldset__legend--s"
+            },
+            hint: {
+              text: "For example, MLA/2025/00123"
+            },
+            errorMessage: {
+              text: "Enter the licence number"
+            } if data['sample-plan-errortypetwo'] == "true"
+          }) }}
 
             {{ govukDateInput({
                 id: "sample-plan-licence-expiry",
                 namePrefix: "sample-plan-licence-expiry",
                 fieldset: {
                     legend: {
-                        html: (('<span class="govuk-caption-l">' + data['sample-plan-project-name-text-input'] + '</span>') if data['sample-plan-project-name-text-input']) + pageHeadingTextHTML,
-                        isPageHeading: true,
-                        classes: "govuk-fieldset__legend--l"
+                        text: "When is the licence expiry date?",
+                        isPageHeading: false,
+                        classes: "govuk-fieldset__legend--s"
                     }
                 },
                 hint: {
@@ -110,9 +142,15 @@ Error:
 
         <option
             value="sample-plan-errorthispage=true&sample-plan-errortypeone=true&sample-plan-errortypetwo=false&sample-plan-errortypethree=false&sample-plan-errortypefour=false&sample-plan-errortypefive=false&sample-plan-errortypesix=false&"
-            {% if data['sample-plan-errortypeone']=='true' and data['sample-plan-errortypetwo'] !='true' and data['sample-plan-errortypethree'] !='true' and
-            data['sample-plan-errortypefour'] !='true' and data['sample-plan-errortypefive'] !='true' and data['sample-plan-errortypesix'] !='true'
-            %}selected{% endif %}>Error 1 - No answer entered</option>
+            {% if data['sample-plan-errortypeone']=='true' and data['sample-plan-errortypetwo'] !='true' %}selected{% endif %}>Error 1 - No date entered</option>
+
+        <option
+            value="sample-plan-errorthispage=true&sample-plan-errortypeone=false&sample-plan-errortypetwo=true&sample-plan-errortypethree=false&sample-plan-errortypefour=false&sample-plan-errortypefive=false&sample-plan-errortypesix=false&"
+            {% if data['sample-plan-errortypetwo']=='true' and data['sample-plan-errortypeone'] !='true' %}selected{% endif %}>Error 2 - No licence number entered</option>
+
+        <option
+            value="sample-plan-errorthispage=true&sample-plan-errortypeone=true&sample-plan-errortypetwo=true&sample-plan-errortypethree=false&sample-plan-errortypefour=false&sample-plan-errortypefive=false&sample-plan-errortypesix=false&"
+            {% if data['sample-plan-errortypetwo']=='true' and data['sample-plan-errortypeone']=='true' %}selected{% endif %}>Error 1 & 2</option>
 
     </select>
 
