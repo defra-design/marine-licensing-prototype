@@ -39,30 +39,29 @@
                     href: "#sample-plan-other-contact"
                 } if data['sample-plan-errortypetwo'] == "true",
                 {
-                    text: "Enter details",
+                    text: "Enter the details",
                     href: "#sample-plan-other-contact-details"
                 } if data['sample-plan-errortypethree'] == "true"
             ]
         }) }}
     {% endif %}
 
+    <h1 class="govuk-heading-l">
+        <span class="govuk-caption-l">{{ data['sample-plan-project-name-text-input'] }}</span>
+        {{ pageHeadingTextHTML }}
+    </h1>
+
     <form action="project-background" method="post">
         
-        {% set labelHTML %}
-            <span class="govuk-caption-l">{{ data['sample-plan-project-name-text-input'] }}</span>
-            {{ pageHeadingTextHTML }}
-        {% endset %}
-
         {{ govukTextarea({
             name: "sample-plan-project-background",
             id: "sample-plan-project-background",
             label: {
-                html: labelHTML,
-                classes: "govuk-label--l",
-                isPageHeading: true
+                text: "Provide a brief background",
+                classes: "govuk-label--s"
             },
             hint: {
-                text: "Provide a brief background to the project including the need for, and aim of, the project and if it’s part of a larger project. Also include if there have been any previous licences or dredging activity in the area."
+                text: "Include the need for and aim of the project, if it's part of a larger project and if there have been any previous licences or dredging activity in the area"
             },
             value: data['sample-plan-project-background'],
             errorMessage: {
@@ -79,7 +78,7 @@
                 },
                 value: data['sample-plan-other-contact-details'],
                 errorMessage: {
-                    text: "Enter details"
+                    text: "Enter the details"
                 } if data['sample-plan-errorthispage'] == "true" and data['sample-plan-errortypethree'] == "true"
             }) }}
         {% endset %}
