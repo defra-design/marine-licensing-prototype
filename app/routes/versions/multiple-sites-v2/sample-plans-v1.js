@@ -342,6 +342,26 @@ module.exports = function (router) {
   });
 
   ///////////////////////////////////////////
+  // Before you start dredging volume page
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/before-you-start-dredging-volume`, function (req, res) {
+    req.session.data['isSamplePlansSection'] = true;
+    
+    // If dredging volumes are already completed, redirect to the maximum dredging volume page
+    if (req.session.data['sample-plan-dredging-volumes-completed'] === "true") {
+      return res.redirect('maximum-dredging-volume');
+    }
+    
+    res.render(`versions/${version}/${section}/before-you-start-dredging-volume`);
+  });
+
+  // Before you start dredging volume router (POST)
+  router.post(`/versions/${version}/${section}/before-you-start-dredging-volume-router`, function (req, res) {
+    res.redirect('maximum-dredging-volume');
+  });
+
+  ///////////////////////////////////////////
   // Maximum dredging volume page
   ///////////////////////////////////////////
 
@@ -353,9 +373,6 @@ module.exports = function (router) {
     req.session.data['sample-plan-errortypethree'] = "false";
     req.session.data['sample-plan-errortypefour'] = "false";
     req.session.data['isSamplePlansSection'] = true;
-    
-    // Clear dredging volumes completion flag when user starts the journey again
-    req.session.data['sample-plan-dredging-volumes-completed'] = "false";
     
     res.render(`versions/${version}/${section}/maximum-dredging-volume`);
   });

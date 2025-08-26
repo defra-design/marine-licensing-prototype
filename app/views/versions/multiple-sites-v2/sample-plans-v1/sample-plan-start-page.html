@@ -173,9 +173,15 @@ Sample plan start page
 
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
 			  <div class="govuk-task-list__name-and-hint">
+				{% if data['sample-plan-dredging-volumes-completed'] %}
 				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="maximum-dredging-volume" aria-describedby="dredging-volumes-status">
 				  Dredging volumes
 				</a>
+				{% else %}
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="before-you-start-dredging-volume" aria-describedby="dredging-volumes-status">
+				  Dredging volumes
+				</a>
+				{% endif %}
 			  </div>
 			  
 			  <div class="govuk-task-list__status" id="dredging-volumes-status">
@@ -232,9 +238,15 @@ Sample plan start page
 
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
 			  <div class="govuk-task-list__name-and-hint">
+				{% if data['sample-plan-dredging-volumes-completed'] %}
 				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="maximum-dredging-volume" aria-describedby="dredging-volumes-status">
 				  Dredging volumes
 				</a>
+				{% else %}
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="before-you-start-dredging-volume" aria-describedby="dredging-volumes-status">
+				  Dredging volumes
+				</a>
+				{% endif %}
 			  </div>
 			  
 			  <div class="govuk-task-list__status" id="dredging-volumes-status">
