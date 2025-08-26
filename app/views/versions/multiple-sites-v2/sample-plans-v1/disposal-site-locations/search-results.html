@@ -1,0 +1,83 @@
+{% extends "../../layouts/exemption.html" %}
+
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/pagination/macro.njk" import govukPagination %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% if data['user_type'] === 'organisation' %}
+        {% include "../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+Search results for disposal sites
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        
+        <span class="govuk-caption-l">{{ data['sample-plan-project-name-text-input'] }}</span>
+        <h1 class="govuk-heading-l">
+            {{ pageHeadingTextHTML }}
+        </h1>
+
+        {% set currentPage = data['page'] | int or 1 %}
+        {% set totalResults = 75 %}
+        {% set resultsPerPage = 20 %}
+        {% set totalPages = (totalResults / resultsPerPage) | round(0, 'ceil') %}
+        {% set startResult = ((currentPage - 1) * resultsPerPage) + 1 %}
+        {% set endResult = currentPage * resultsPerPage %}
+        {% if endResult > totalResults %}{% set endResult = totalResults %}{% endif %}
+
+        <p class="govuk-body">We found <strong>{{ totalResults }} disposal sites</strong> matching your search criteria.</p>
+
+        <!-- Search results table -->
+        <div class="govuk-table-overflow">
+            <table class="govuk-table" data-module="moj-sortable-table">
+                <caption class="govuk-table__caption govuk-visually-hidden">Disposal site search results</caption>
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th scope="col" class="govuk-table__header" aria-sort="none">Disposal site code</th>
+                        <th scope="col" class="govuk-table__header" aria-sort="none">Disposal site name</th>
+                        <th scope="col" class="govuk-table__header" aria-sort="none">Country</th>
+                        <th scope="col" class="govuk-table__header" aria-sort="none">Sea area</th>
+                        <th scope="col" class="govuk-table__header" aria-sort="none">Status</th>
+                        <th scope="col" class="govuk-table__header" aria-sort="none">Action</th>
+                    </tr>
+                </thead>
+                <tbody class="govuk-table__body" id="disposal-sites-table-body">
+                    <!-- Table content will be populated by JavaScript -->
+                </tbody>
+            </table>
+        </div>
+
+        <p class="govuk-body govuk-!-margin-top-4" id="results-summary">Showing {{ startResult }} to {{ endResult }} of {{ totalResults }} results.</p>
+
+        <nav class="govuk-pagination" aria-label="Pagination" id="pagination-nav">
+            <!-- Pagination will be populated by JavaScript -->
+        </nav>
+
+        <p class="govuk-body govuk-!-margin-top-6">
+            <a class="govuk-link" href="find-existing-disposal-site">Search for a different disposal site</a>
+        </p>
+
+        <div class="govuk-button-group govuk-!-margin-top-4">
+            <a class="govuk-link govuk-link--no-visited-state" href="../sample-plan-start-page">Cancel and return to task list</a>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
