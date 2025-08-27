@@ -187,7 +187,80 @@ window.GOVUKPrototypeKit.documentReady(() => {
       { code: 'PO070', name: 'SPREY POINT', country: 'ENGLAND', seaArea: 'English Channel', status: 'Disused' },
       { code: 'PO111', name: 'Deep Water Relocation', country: 'ENGLAND', seaArea: 'English Channel', status: 'Open' },
       { code: 'PO112', name: 'Portland Harbour Deep Water Relocation', country: 'ENGLAND', seaArea: 'English Channel', status: 'Open' },
-      { code: 'TH005', name: 'LOWESTOFT CIRCULAR NORTH', country: 'ENGLAND', seaArea: 'North Sea', status: 'Disused' }
+      { code: 'TH005', name: 'LOWESTOFT CIRCULAR NORTH', country: 'ENGLAND', seaArea: 'North Sea', status: 'Disused' },
+      // TH codes from images
+      { code: 'TH011', name: 'Lowestoft Marina Temporary Disposal Site', country: 'England', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TH017', name: 'Five Estuaries N Array', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TH018', name: 'Five Estuaries S Array', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TH019', name: 'Five Estuaries ECC', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TH023', name: 'East Anglia One', country: 'England', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TH027', name: 'Harwich Haven', country: 'ENGLAND', seaArea: 'North Sea', status: 'Disused' },
+      { code: 'TH029', name: 'NeuConnect Disposal Site 3', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TH032', name: 'Orwell Yacht Club', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TH034', name: 'RIVER ORWELL (ABP)', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TH052', name: 'INNER GABBARD', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TH056', name: 'INNER GABBARD EAST', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TH058', name: 'Northey Island', country: 'England', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TH059', name: 'NeuConnect Disposal Site 1', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TH064', name: 'Maldon Saltings 3', country: 'ENGLAND', seaArea: 'North Sea', status: 'Closed' },
+      { code: 'TH067', name: 'NeuConnect Disposal Site 2', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TH068', name: 'NeuConnect South Site', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TH069', name: 'NeuConnect Lower Mid Site', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TH070', name: 'SOUTH FALLS', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TH073', name: 'WHITSTABLE C', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TH074', name: 'NeuConnect Upper Mid Site', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TH081', name: 'Mercator Disposal', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TH096', name: 'Putney Embankment', country: 'ENGLAND', seaArea: 'North Sea', status: 'Disused' },
+      { code: 'TH099', name: 'Tilbury Tunnel outfall', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TH140', name: 'PEGWELL BAY', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TH150', name: 'Nemo Disposal Site A', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TH151', name: 'Nemo Disposal Site B', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TH153', name: 'TEOW Disposal site 1', country: 'England', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TH154', name: 'TEOW Disposal site 2', country: 'England', seaArea: 'North Sea', status: 'Closed' },
+      { code: 'TH155', name: 'TEOW Disposal site 3', country: 'England', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TH156', name: 'Gridlink East Site', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TH157', name: 'Gridlink West Site', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TH213', name: 'WRABNESS BEACH', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TH216', name: 'COPPERAS', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TH217', name: 'ERWARTON TRACK', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TH218', name: 'ORWELL WEST TRACK', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TH219', name: 'ORWELL EAST TRACK', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TH220', name: 'EA One Route EC-1', country: 'England', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TH223', name: 'EA One Route EC-4', country: 'England', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TH224', name: 'EA One Route EC-5', country: 'England', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TH225', name: 'Levington Site 1', country: 'England', seaArea: 'North Sea', status: 'Disused' },
+      { code: 'TH226', name: 'Levington Site 2', country: 'England', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TH227', name: 'Levington Site 3', country: 'England', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TH228', name: 'Levington Site 4', country: 'England', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TH229', name: 'Wrabness Beach East', country: 'England', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TH230', name: 'Horsey', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TH231', name: 'Shotley Marina', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TH232', name: 'Levington Creek', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TH233', name: 'Copperas Bay 3', country: 'ENGLAND', seaArea: 'English Channel', status: 'Open' },
+      // TY codes from images  
+      { code: 'TY025', name: 'COQUET ISLAND', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TY042', name: 'BLYTH A + B', country: 'ENGLAND', seaArea: 'North Sea', status: 'Closed' },
+      { code: 'TY043', name: 'Blyth OWF Demo', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TY070', name: 'NORTH TYNE', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TY081', name: 'SOUTER POINT (OUTER)', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TY090', name: 'SUNDERLAND', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TY130', name: 'NOSES POINT', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TY150', name: 'TEES BAY C', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TY157', name: 'Tees Upriver', country: 'ENGLAND', seaArea: 'North Sea', status: 'Disused' },
+      { code: 'TY158', name: 'Teesport dock and Tees Container Terminal', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TY160', name: 'TEES BAY A', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TY180', name: 'WHITBY', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TY181', name: 'CLEVELAND POTASH OUTFALL', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TY190', name: 'SCARBOROUGH ROCK', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
+      { code: 'TY194', name: 'BEDE QUAY', country: 'ENGLAND', seaArea: 'North Sea', status: 'Closed' },
+      // WI codes from images
+      { code: 'WI010', name: 'NEWHAVEN', country: 'ENGLAND', seaArea: 'English Channel', status: 'Open' },
+      { code: 'WI020', name: 'BRIGHTON/ ROTTINGDEAN', country: 'ENGLAND', seaArea: 'English Channel', status: 'Open' },
+      { code: 'WI021', name: 'Brighton B', country: 'ENGLAND', seaArea: 'English Channel', status: 'Disused' },
+      { code: 'WI029', name: 'Emerald Quay, R Adur', country: 'ENGLAND', seaArea: 'English Channel', status: 'Open' },
+      { code: 'WI031', name: 'SHOREHAM', country: 'ENGLAND', seaArea: 'English Channel', status: 'Open' },
+      { code: 'WI042', name: 'Birdham Pool Marina', country: 'ENGLAND', seaArea: 'English Channel', status: 'Closed' },
+      { code: 'WI046', name: 'TRELOAR HOLE', country: 'ENGLAND', seaArea: 'English Channel', status: 'Open' }
     ]
 
     const resultsPerPage = 20
@@ -459,9 +532,9 @@ window.GOVUKPrototypeKit.documentReady(() => {
         `
       }
 
-      // For 4 or fewer pages, show all page numbers without ellipses
-      if (totalPages <= 4) {
-        // Show all pages 2 through totalPages-1 (page 1 and last page are handled separately)
+      // Improved pagination logic following GOV.UK Design System patterns
+      if (totalPages <= 5) {
+        // For 5 or fewer pages, show all page numbers without ellipses
         for (let i = 2; i <= totalPages - 1; i++) {
           if (i === currentPage) {
             paginationHTML += `
@@ -478,14 +551,30 @@ window.GOVUKPrototypeKit.documentReady(() => {
           }
         }
       } else {
-        // For more than 4 pages, use ellipses logic
-        // Show ellipsis if there's a gap
-        if (currentPage > 3) {
+        // For more than 5 pages, use ellipses logic following GOV.UK patterns
+        let startPage = 2
+        let endPage = totalPages - 1
+        
+        // Determine which pages to show around current page
+        if (currentPage <= 3) {
+          // Current page is near the start - show first few pages
+          endPage = Math.min(4, totalPages - 1)
+        } else if (currentPage >= totalPages - 2) {
+          // Current page is near the end - show last few pages  
+          startPage = Math.max(totalPages - 3, 2)
+        } else {
+          // Current page is in the middle - show pages around current
+          startPage = currentPage - 1
+          endPage = currentPage + 1
+        }
+        
+        // Add ellipsis after page 1 if needed
+        if (startPage > 2) {
           paginationHTML += '<li class="govuk-pagination__item govuk-pagination__item--ellipses">⋯</li>'
         }
-
-        // Show pages around current page
-        for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
+        
+        // Add the visible page numbers
+        for (let i = startPage; i <= endPage; i++) {
           if (i === currentPage) {
             paginationHTML += `
               <li class="govuk-pagination__item govuk-pagination__item--current">
@@ -500,9 +589,9 @@ window.GOVUKPrototypeKit.documentReady(() => {
             `
           }
         }
-
-        // Show ellipsis if there's a gap before last page
-        if (currentPage < totalPages - 2) {
+        
+        // Add ellipsis before last page if needed
+        if (endPage < totalPages - 1) {
           paginationHTML += '<li class="govuk-pagination__item govuk-pagination__item--ellipses">⋯</li>'
         }
       }
