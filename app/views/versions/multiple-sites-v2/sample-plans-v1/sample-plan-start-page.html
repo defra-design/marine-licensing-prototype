@@ -345,6 +345,10 @@ Sample plan start page
 			  <div class="govuk-task-list__status" id="fee-estimate-status">
 				{% if data['sample-plan-fee-estimate-completed'] == "true" and data['fee-terms-checkbox'] == "agree" and data['fee-acceptance'] == "yes" %}
 				Completed
+				{% elif data['sample-plan-fee-estimate-rejected'] == "true" %}
+				<strong class="govuk-tag govuk-tag--red">
+					Not accepted
+				</strong>
 				{% else %}
 				<strong class="govuk-tag govuk-tag--blue">
 					Not yet started
@@ -357,8 +361,8 @@ Sample plan start page
 		<!-- Check and send button - only show when all applicable tasks are completed -->
 		{% set allTasksCompleted = false %}
 		
-		<!-- Check if all always-required tasks are completed -->
-		{% if data['sample-plan-project-background-completed'] and data['sample-plan-which-activity'] and data['sample-plan-new-or-existing-licence'] and data['sample-plan-fee-estimate-completed'] == "true" and data['fee-terms-checkbox'] == "agree" and data['fee-acceptance'] == "yes" %}
+		<!-- Check if all always-required tasks are completed and fee estimate is not rejected -->
+		{% if data['sample-plan-project-background-completed'] and data['sample-plan-which-activity'] and data['sample-plan-new-or-existing-licence'] and data['sample-plan-fee-estimate-completed'] == "true" and data['fee-terms-checkbox'] == "agree" and data['fee-acceptance'] == "yes" and data['sample-plan-fee-estimate-rejected'] != "true" %}
 			
 			<!-- Check activity-specific tasks -->
 			{% if data['sample-plan-which-activity'] == "Marine disposal" %}
