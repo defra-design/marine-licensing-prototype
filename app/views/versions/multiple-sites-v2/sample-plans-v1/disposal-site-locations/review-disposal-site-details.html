@@ -145,7 +145,7 @@ Review disposal site details
                                         {% elif type == 'non-dredged-sediments' %}
                                             {% set materialTypes = (materialTypes.push('Non-dredged sediments'), materialTypes) %}
                                         {% elif type == 'organic-material' %}
-                                            {% set materialTypes = (materialTypes.push('Organic material of natural origin'), materialTypes) %}
+                                            {% set materialTypes = (materialTypes.push('Organic material of natural origin (for example, seaweed)'), materialTypes) %}
                                         {% elif type == 'other' and data['sample-disposal-details-site-1-material-type-other'] %}
                                             {% set materialTypes = (materialTypes.push('Other: ' + data['sample-disposal-details-site-1-material-type-other']), materialTypes) %}
                                         {% endif %}
@@ -292,7 +292,7 @@ Review disposal site details
                                         {% elif type == 'non-dredged-sediments' %}
                                             {% set materialTypes = (materialTypes.push('Non-dredged sediments'), materialTypes) %}
                                         {% elif type == 'organic-material' %}
-                                            {% set materialTypes = (materialTypes.push('Organic material of natural origin'), materialTypes) %}
+                                            {% set materialTypes = (materialTypes.push('Organic material of natural origin (for example, seaweed)'), materialTypes) %}
                                         {% elif type == 'other' and data['sample-disposal-details-site-2-material-type-other'] %}
                                             {% set materialTypes = (materialTypes.push('Other: ' + data['sample-disposal-details-site-2-material-type-other']), materialTypes) %}
                                         {% endif %}
