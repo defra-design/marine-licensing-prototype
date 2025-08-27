@@ -398,7 +398,7 @@ window.GOVUKPrototypeKit.documentReady(() => {
           <td class="govuk-table__cell">${site.seaArea}</td>
           <td class="govuk-table__cell">${getStatusTag(site.status)}</td>
           <td class="govuk-table__cell">
-            <a class="govuk-link govuk-link--no-visited-state govuk-!-white-space-nowrap" href="review-disposal-site-details?code=${encodeURIComponent(site.code)}&name=${encodeURIComponent(site.name)}&country=${encodeURIComponent(site.country)}&seaArea=${encodeURIComponent(site.seaArea)}&status=${encodeURIComponent(site.status)}">Select site</a>
+            <a class="govuk-link govuk-link--no-visited-state govuk-!-white-space-nowrap" href="review-disposal-site-details?code=${encodeURIComponent(site.code)}&name=${encodeURIComponent(site.name)}&country=${encodeURIComponent(site.country)}&seaArea=${encodeURIComponent(site.seaArea)}&status=${encodeURIComponent(site.status)}">Select</a>
           </td>
         `
         tableBody.appendChild(row)
