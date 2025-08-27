@@ -26,7 +26,7 @@ Fee estimate
 			<ul class="govuk-list govuk-error-summary__list">
 				{% if data['sample-plan-errortypeone'] == "true" %}
 					<li>
-						<a href="#fee-terms-checkbox">You must agree to the terms and conditions</a>
+						<a href="#fee-terms-checkbox">You need to agree to the terms and conditions</a>
 					</li>
 				{% endif %}
 				{% if data['sample-plan-errortypetwo'] == "true" %}
@@ -118,7 +118,7 @@ Fee estimate
 					{% if data['sample-plan-errorthispage'] == 'true' and data['sample-plan-errortypeone'] == 'true' %}
 						<p id="fee-terms-checkbox-error" class="govuk-error-message">
 							<span class="govuk-visually-hidden">Error:</span>
-							You must agree to the terms and conditions
+							You need to agree to the terms and conditions
 						</p>
 					{% endif %}
 					<div class="govuk-checkboxes" data-module="govuk-checkboxes">

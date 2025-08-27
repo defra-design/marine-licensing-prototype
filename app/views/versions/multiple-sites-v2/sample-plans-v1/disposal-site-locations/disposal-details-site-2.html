@@ -46,7 +46,7 @@ Disposal details
         }) }}
         {% endif %}
 
-        <span class="govuk-caption-l">{{ data['sample-plan-project-name-text-input'] }}<span class="govuk-!-display-block">{{ data['selected-disposal-site-2-name'] or 'Disposal site 2' }}</span></span>
+        <span class="govuk-caption-l">{{ data['sample-plan-project-name-text-input'] }}<span class="govuk-!-display-block">Site 2</span></span>
         <h1 class="govuk-heading-l">
             {{ pageHeadingTextHTML }}
         </h1>
@@ -97,10 +97,7 @@ Disposal details
                     },
                     {
                         value: "organic-material",
-                        text: "Organic material of natural origin",
-                        hint: {
-                            text: "For example, seaweed or other naturally occurring organic materials"
-                        },
+                        text: "Organic material of natural origin (for example, seaweed)",
                         checked: true if data['sample-disposal-details-site-2-material-type'] and "organic-material" in data['sample-disposal-details-site-2-material-type']
                     },
                     {
