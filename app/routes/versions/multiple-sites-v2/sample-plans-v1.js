@@ -539,13 +539,31 @@ module.exports = function (router) {
     if (req.session.data['fee-acceptance'] === 'yes') {
       res.redirect('sample-plan-start-page');
     } else if (req.session.data['fee-acceptance'] === 'no') {
-      // Redirect to a "rejection" page (not yet built)
-      // For now, redirect back to the same page
-      res.redirect('fee-estimate');
+      // Redirect to the "are you sure" confirmation page
+      res.redirect('fee-are-you-sure');
     } else {
       // Fallback
       res.redirect('sample-plan-start-page');
     }
+  });
+
+  ///////////////////////////////////////////
+  // Fee are you sure page
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/fee-are-you-sure`, function (req, res) {
+    req.session.data['isSamplePlansSection'] = true;
+    res.render(`versions/${version}/${section}/fee-are-you-sure`);
+  });
+
+  // Fee are you sure router (POST)
+  router.post(`/versions/${version}/${section}/fee-are-you-sure-router`, function (req, res) {
+    // Mark fee estimate as rejected/not accepted
+    req.session.data['sample-plan-fee-estimate-completed'] = "false";
+    req.session.data['sample-plan-fee-estimate-rejected'] = "true";
+    
+    // Redirect to projects page - the project will remain as a draft
+    res.redirect('projects');
   });
 
   ///////////////////////////////////////////
