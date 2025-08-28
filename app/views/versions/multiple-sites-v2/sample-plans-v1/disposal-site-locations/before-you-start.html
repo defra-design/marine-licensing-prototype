@@ -1,0 +1,79 @@
+{% extends "../../layouts/exemption.html" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% if data['user_type'] === 'organisation' %}
+        {% include "../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+Disposal site locations and activity
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+{{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        
+        <span class="govuk-caption-l">{{ data['sample-plan-project-name-text-input'] }}</span>
+        <h1 class="govuk-heading-l">
+            {{ pageHeadingTextHTML }}
+        </h1>
+
+      <h2 class="govuk-heading-m">Before you start</h2>
+
+      <p class="govuk-body">
+        <a class="govuk-link" href="https://www.gov.uk/guidance/deposits" target="_blank">Read the guidance on disposal activities (opens in new tab)</a>
+      </p>
+
+      <p class="govuk-body">In the next step, you'll need to tell us the following for every disposal site:</p>
+
+      <ul class="govuk-list govuk-list--bullet">
+        <li>disposal site location</li>
+        <li>type of material being disposed</li>
+        <li>method of disposal</li>
+        <li>maximum disposal volume</li>
+        <li>beneficial use information</li>
+      </ul>
+
+      <h3 class="govuk-heading-s">Choosing disposal sites</h3>
+
+      <p class="govuk-body">You can choose from:</p>
+
+      <ul class="govuk-list govuk-list--bullet">
+        <li>existing licensed disposal sites</li>
+        <li>new disposal sites (if applicable)</li>
+      </ul>
+
+      <h3 class="govuk-heading-s">Projects with multiple disposal sites</h3>
+
+      <p class="govuk-body">You need to give separate details for each disposal site if your project uses multiple sites.</p>
+
+      <h3 class="govuk-heading-s">Volume calculations</h3>
+
+      <p class="govuk-body">You'll need to provide disposal volume information including total volumes over the licence period and any campaign-specific details.</p>
+
+        <form action="before-you-start-router" method="post" novalidate>
+            
+            <div class="govuk-button-group">
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+
+                <a class="govuk-link govuk-link--no-visited-state" href="../sample-plan-start-page">Cancel</a>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+{% endblock %}
