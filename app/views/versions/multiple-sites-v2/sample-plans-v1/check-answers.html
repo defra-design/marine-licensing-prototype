@@ -8,12 +8,20 @@
     {% if data['user_type'] === 'organisation' %}
         {% include "../includes/organisation-switcher.html" %}
     {% endif %}
-    <a class="govuk-back-link" href="sample-plan-start-page.html">Go back to sample plan start page</a>
+    {% if data['samplePlanApplicationSubmitted'] == "true" %}
+        <a class="govuk-back-link" href="projects">Back</a>
+    {% else %}
+        <a class="govuk-back-link" href="sample-plan-start-page.html">Go back to sample plan start page</a>
+    {% endif %}
 {% endblock %}
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-Check your answers before sending your information
+  {% if data['samplePlanApplicationSubmitted'] == "true" %}
+    {{ data['sample-plan-project-name-text-input'] }}
+  {% else %}
+    Check your answers before sending your information
+  {% endif %}
 {% endset %}
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
@@ -24,7 +32,11 @@ Check your answers before sending your information
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
-        <span class="govuk-caption-l">{{ data['sample-plan-project-name-text-input'] }}</span>
+        {% if data['samplePlanApplicationSubmitted'] == "true" %}
+            <span class="govuk-caption-l">SAM/2025/00025 – Sediment sample plan</span>
+        {% else %}
+            <span class="govuk-caption-l">{{ data['sample-plan-project-name-text-input'] }}</span>
+        {% endif %}
         <h1 class="govuk-heading-l">
             {{ pageHeadingTextHTML }}
         </h1>
@@ -34,8 +46,19 @@ Check your answers before sending your information
                 <h2 class="govuk-summary-card__title">Project details</h2>
             </div>
             <div class="govuk-summary-card__content">
-                {{ govukSummaryList({
-                    rows: [
+                {% set projectDetailsRows = [
+                    {
+                        key: {
+                            text: "Project name"
+                        },
+                        value: {
+                            text: data['sample-plan-project-name-text-input'] if data['sample-plan-project-name-text-input'] else "[user entered data]"
+                        }
+                    }
+                ] %}
+                
+                {% if data['samplePlanApplicationSubmitted'] != "true" %}
+                    {% set projectDetailsRows = [
                         {
                             key: {
                                 text: "Project name"
@@ -89,7 +112,30 @@ Check your answers before sending your information
                                 ]
                             }
                         }
-                    ]
+                    ] %}
+                {% else %}
+                    {% set projectDetailsRows = projectDetailsRows.concat([
+                        {
+                            key: {
+                                text: "Project background"
+                            },
+                            value: {
+                                text: data['sample-plan-project-background'] if data['sample-plan-project-background'] else "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco."
+                            }
+                        },
+                        {
+                            key: {
+                                text: "Other contact with the Marine Management Organisation (MMO)" if data['sample-plan-other-contact'] == "No" else "Details of contact with the Marine Management Organisation (MMO)"
+                            },
+                            value: {
+                                text: "No" if data['sample-plan-other-contact'] == "No" else (data['sample-plan-other-contact-details'] if data['sample-plan-other-contact-details'] else "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.")
+                            }
+                        }
+                    ]) %}
+                {% endif %}
+
+                {{ govukSummaryList({
+                    rows: projectDetailsRows
                 }) }}
             </div>
         </div>
@@ -99,44 +145,65 @@ Check your answers before sending your information
                 <h2 class="govuk-summary-card__title">Activity and licence details</h2>
             </div>
             <div class="govuk-summary-card__content">
-                {% set activityRows = [
-                    {
-                        key: {
-                            text: "Type of activity"
+                {% if data['samplePlanApplicationSubmitted'] != "true" %}
+                    {% set activityRows = [
+                        {
+                            key: {
+                                text: "Type of activity"
+                            },
+                            value: {
+                                text: data['sample-plan-which-activity'] if data['sample-plan-which-activity'] else "Marine dredging"
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "",
+                                        text: "Change",
+                                        visuallyHiddenText: "type of activity",
+                                        classes: "govuk-link govuk-link--no-visited-state"
+                                    }
+                                ]
+                            }
                         },
-                        value: {
-                            text: data['sample-plan-which-activity'] if data['sample-plan-which-activity'] else "Marine dredging"
-                        },
-                        actions: {
-                            items: [
-                                {
-                                    href: "",
-                                    text: "Change",
-                                    visuallyHiddenText: "type of activity",
-                                    classes: "govuk-link govuk-link--no-visited-state"
-                                }
-                            ]
+                        {
+                            key: {
+                                text: "New or existing marine licence"
+                            },
+                            value: {
+                                text: data['sample-plan-new-or-existing-licence'] if data['sample-plan-new-or-existing-licence'] else "New marine licence"
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "",
+                                        text: "Change",
+                                        visuallyHiddenText: "new or existing marine licence",
+                                        classes: "govuk-link govuk-link--no-visited-state"
+                                    }
+                                ]
+                            }
                         }
-                    },
-                    {
-                        key: {
-                            text: "New or existing marine licence"
+                    ] %}
+                {% else %}
+                    {% set activityRows = [
+                        {
+                            key: {
+                                text: "Type of activity"
+                            },
+                            value: {
+                                text: data['sample-plan-which-activity'] if data['sample-plan-which-activity'] else "Marine dredging"
+                            }
                         },
-                        value: {
-                            text: data['sample-plan-new-or-existing-licence'] if data['sample-plan-new-or-existing-licence'] else "New marine licence"
-                        },
-                        actions: {
-                            items: [
-                                {
-                                    href: "",
-                                    text: "Change",
-                                    visuallyHiddenText: "new or existing marine licence",
-                                    classes: "govuk-link govuk-link--no-visited-state"
-                                }
-                            ]
+                        {
+                            key: {
+                                text: "New or existing marine licence"
+                            },
+                            value: {
+                                text: data['sample-plan-new-or-existing-licence'] if data['sample-plan-new-or-existing-licence'] else "New marine licence"
+                            }
                         }
-                    }
-                ] %}
+                    ] %}
+                {% endif %}
 
                 {% if data['sample-plan-new-or-existing-licence'] == "New marine licence" %}
                     {% set licenceLengthText = "" %}
@@ -150,26 +217,39 @@ Check your answers before sending your information
                         {% set licenceLengthText = "5 years 0 months" %}
                     {% endif %}
 
-                    {% set activityRows = activityRows.concat([
-                        {
-                            key: {
-                                text: "Proposed length of the new licence"
-                            },
-                            value: {
-                                text: licenceLengthText
-                            },
-                            actions: {
-                                items: [
-                                    {
-                                        href: "",
-                                        text: "Change",
-                                        visuallyHiddenText: "proposed length of the new licence",
-                                        classes: "govuk-link govuk-link--no-visited-state"
-                                    }
-                                ]
+                    {% if data['samplePlanApplicationSubmitted'] != "true" %}
+                        {% set activityRows = activityRows.concat([
+                            {
+                                key: {
+                                    text: "Proposed length of the new licence"
+                                },
+                                value: {
+                                    text: licenceLengthText
+                                },
+                                actions: {
+                                    items: [
+                                        {
+                                            href: "",
+                                            text: "Change",
+                                            visuallyHiddenText: "proposed length of the new licence",
+                                            classes: "govuk-link govuk-link--no-visited-state"
+                                        }
+                                    ]
+                                }
                             }
-                        }
-                    ]) %}
+                        ]) %}
+                    {% else %}
+                        {% set activityRows = activityRows.concat([
+                            {
+                                key: {
+                                    text: "Proposed length of the new licence"
+                                },
+                                value: {
+                                    text: licenceLengthText
+                                }
+                            }
+                        ]) %}
+                    {% endif %}
                 {% elif data['sample-plan-new-or-existing-licence'] == "Existing marine licence" %}
                     {% set licenceExpiryText = "" %}
                     {% if data['sample-plan-licence-expiry-day'] and data['sample-plan-licence-expiry-month'] and data['sample-plan-licence-expiry-year'] %}
@@ -181,35 +261,57 @@ Check your answers before sending your information
                         {% set licenceExpiryText = "10 June 2029" %}
                     {% endif %}
 
-                    {% set activityRows = activityRows.concat([
-                        {
-                            key: {
-                                text: "Licence number"
+                    {% if data['samplePlanApplicationSubmitted'] != "true" %}
+                        {% set activityRows = activityRows.concat([
+                            {
+                                key: {
+                                    text: "Licence number"
+                                },
+                                value: {
+                                    text: data['sample-plan-licence-number'] if data['sample-plan-licence-number'] else "MLA/2025/00123"
+                                },
+                                classes: "govuk-summary-list__row--no-border",
+                                actions: {
+                                    items: [
+                                        {
+                                            href: "",
+                                            text: "Change",
+                                            visuallyHiddenText: "licence number",
+                                            classes: "govuk-link govuk-link--no-visited-state"
+                                        }
+                                    ]
+                                }
                             },
-                            value: {
-                                text: data['sample-plan-licence-number'] if data['sample-plan-licence-number'] else "MLA/2025/00123"
-                            },
-                            classes: "govuk-summary-list__row--no-border",
-                            actions: {
-                                items: [
-                                    {
-                                        href: "",
-                                        text: "Change",
-                                        visuallyHiddenText: "licence number",
-                                        classes: "govuk-link govuk-link--no-visited-state"
-                                    }
-                                ]
+                            {
+                                key: {
+                                    text: "Licence expiry date"
+                                },
+                                value: {
+                                    text: licenceExpiryText
+                                }
                             }
-                        },
-                        {
-                            key: {
-                                text: "Licence expiry date"
+                        ]) %}
+                    {% else %}
+                        {% set activityRows = activityRows.concat([
+                            {
+                                key: {
+                                    text: "Licence number"
+                                },
+                                value: {
+                                    text: data['sample-plan-licence-number'] if data['sample-plan-licence-number'] else "MLA/2025/00123"
+                                },
+                                classes: "govuk-summary-list__row--no-border"
                             },
-                            value: {
-                                text: licenceExpiryText
+                            {
+                                key: {
+                                    text: "Licence expiry date"
+                                },
+                                value: {
+                                    text: licenceExpiryText
+                                }
                             }
-                        }
-                    ]) %}
+                        ]) %}
+                    {% endif %}
                 {% endif %}
 
                 {{ govukSummaryList({
@@ -218,15 +320,19 @@ Check your answers before sending your information
             </div>
         </div>
 
+        <!-- Only show dredge site sections if the activity includes dredging -->
+        {% if data['sample-plan-which-activity'] == "Marine dredging" or data['sample-plan-which-activity'] == "Marine dredging and disposal" %}
         <!-- Dredge site location section -->
         <div class="govuk-summary-card">
             <div class="govuk-summary-card__title-wrapper">
                 <h2 class="govuk-summary-card__title">Providing the dredge site location</h2>
+                {% if data['samplePlanApplicationSubmitted'] != "true" %}
                 <div class="govuk-summary-card__actions">
                     <a class="govuk-link govuk-link--no-visited-state" href="">
                         Change<span class="govuk-visually-hidden"> dredge site location</span>
                     </a>
                 </div>
+                {% endif %}
             </div>
             <div class="govuk-summary-card__content">
                 <dl class="govuk-summary-list">
@@ -272,11 +378,13 @@ Check your answers before sending your information
         <div class="govuk-summary-card">
             <div class="govuk-summary-card__title-wrapper">
                 <h2 class="govuk-summary-card__title">Dredge site 1 details</h2>
+                {% if data['samplePlanApplicationSubmitted'] != "true" %}
                 <div class="govuk-summary-card__actions">
                     <a class="govuk-link govuk-link--no-visited-state" href="">
                         Change<span class="govuk-visually-hidden"> dredge site 1 details</span>
                     </a>
                 </div>
+                {% endif %}
             </div>
             <div class="govuk-summary-card__content">
                 <dl class="govuk-summary-list">
@@ -436,16 +544,21 @@ Check your answers before sending your information
                 </dl>
             </div>
         </div>
+        {% endif %}
 
+        <!-- Only show disposal site sections if the activity includes disposal -->
+        {% if data['sample-plan-which-activity'] == "Marine disposal" or data['sample-plan-which-activity'] == "Marine dredging and disposal" %}
         <!-- Providing the disposal site location section -->
         <div class="govuk-summary-card">
             <div class="govuk-summary-card__title-wrapper">
                 <h2 class="govuk-summary-card__title">Providing the disposal site location</h2>
+                {% if data['samplePlanApplicationSubmitted'] != "true" %}
                 <div class="govuk-summary-card__actions">
                     <a class="govuk-link govuk-link--no-visited-state" href="">
                         Change<span class="govuk-visually-hidden"> disposal site location</span>
                     </a>
                 </div>
+                {% endif %}
             </div>
             <div class="govuk-summary-card__content">
                 <dl class="govuk-summary-list">
@@ -465,11 +578,13 @@ Check your answers before sending your information
         <div class="govuk-summary-card">
             <div class="govuk-summary-card__title-wrapper">
                 <h2 class="govuk-summary-card__title">Disposal site 1 details</h2>
+                {% if data['samplePlanApplicationSubmitted'] != "true" %}
                 <div class="govuk-summary-card__actions">
                     <a class="govuk-link govuk-link--no-visited-state" href="">
                         Change<span class="govuk-visually-hidden"> disposal site 1</span>
                     </a>
                 </div>
+                {% endif %}
             </div>
             <div class="govuk-summary-card__content">
                 <dl class="govuk-summary-list">
@@ -644,11 +759,13 @@ Check your answers before sending your information
         <div class="govuk-summary-card">
             <div class="govuk-summary-card__title-wrapper">
                 <h2 class="govuk-summary-card__title">Disposal site 2 details</h2>
+                {% if data['samplePlanApplicationSubmitted'] != "true" %}
                 <div class="govuk-summary-card__actions">
                     <a class="govuk-link govuk-link--no-visited-state" href="">
                         Change<span class="govuk-visually-hidden"> disposal site 2</span>
                     </a>
                 </div>
+                {% endif %}
             </div>
             <div class="govuk-summary-card__content">
                 <dl class="govuk-summary-list">
@@ -777,16 +894,19 @@ Check your answers before sending your information
             </div>
         </div>
         {% endif %}
+        {% endif %}
 
         <!-- Fee estimate section -->
         <div class="govuk-summary-card">
             <div class="govuk-summary-card__title-wrapper">
                 <h2 class="govuk-summary-card__title">Fee estimate</h2>
+                {% if data['samplePlanApplicationSubmitted'] != "true" %}
                 <div class="govuk-summary-card__actions">
                     <a class="govuk-link govuk-link--no-visited-state" href="">
                         Change<span class="govuk-visually-hidden"> fee estimate</span>
                     </a>
                 </div>
+                {% endif %}
             </div>
             <div class="govuk-summary-card__content">
                 <dl class="govuk-summary-list">
@@ -802,6 +922,7 @@ Check your answers before sending your information
             </div>
         </div>
 
+        {% if data['samplePlanApplicationSubmitted'] != "true" %}
         <h2 class="govuk-heading-m">Send your information</h2>
         
         <p class="govuk-body">By sending this information you're confirming that, to the best of your knowledge, the details you're providing are correct.</p>
@@ -815,6 +936,7 @@ Check your answers before sending your information
                 <a class="govuk-link govuk-link--no-visited-state" href="">Cancel</a>
             </div>
         </form>
+        {% endif %}
 
     </div>
 </div>
