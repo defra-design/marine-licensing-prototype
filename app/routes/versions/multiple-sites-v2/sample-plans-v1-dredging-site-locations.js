@@ -92,19 +92,19 @@ module.exports = function (router) {
   router.post(`/versions/${version}/${section}/${subsection}/upload-file-router`, function (req, res) {
     // For prototype, redirect to review site details after file upload
     // Note: has-visited flag is only set when user SAVES from review page
-    res.redirect('review-site-details');
+    res.redirect('review-dredging-site-details');
   });
 
   /////////////////////////////////////////////////////////
   //////// Review site details page
   /////////////////////////////////////////////////////////
-  router.get(`/versions/${version}/${section}/${subsection}/review-site-details`, function (req, res) {
+  router.get(`/versions/${version}/${section}/${subsection}/review-dredging-site-details`, function (req, res) {
     req.session.data['isSamplePlansSection'] = true;
-    res.render(`versions/${version}/${section}/${subsection}/review-site-details`);
+    res.render(`versions/${version}/${section}/${subsection}/review-dredging-site-details`);
   });
 
-  // Review site details router (POST)
-  router.post(`/versions/${version}/${section}/${subsection}/review-site-details-router`, function (req, res) {
+  // Review dredging site details router (POST)
+  router.post(`/versions/${version}/${section}/${subsection}/review-dredging-site-details-router`, function (req, res) {
     // Mark that user has visited dredging site locations journey
     req.session.data['has-visited-dredging-site-locations'] = true;
     
@@ -193,7 +193,7 @@ module.exports = function (router) {
 
     // If no errors, mark as completed and redirect to review page
     req.session.data['dredging-details-site-1-completed'] = true;
-    res.redirect('review-site-details');
+    res.redirect('review-dredging-site-details');
   });
 
   /////////////////////////////////////////////////////////
@@ -271,7 +271,7 @@ module.exports = function (router) {
 
     // If no errors, mark as completed and redirect to review page
     req.session.data['dredging-details-site-2-completed'] = true;
-    res.redirect('review-site-details');
+    res.redirect('review-dredging-site-details');
   });
 
   /////////////////////////////////////////////////////////
@@ -407,7 +407,7 @@ module.exports = function (router) {
 
     // If no errors, mark as completed and redirect to review page
     req.session.data['site-history-site-1-completed'] = true;
-    res.redirect('review-site-details');
+    res.redirect('review-dredging-site-details');
   });
 
   /////////////////////////////////////////////////////////
@@ -449,7 +449,7 @@ module.exports = function (router) {
 
     // If no errors, mark as completed and redirect to review page
     req.session.data['dredging-details-site-1-depth-completed'] = true;
-    res.redirect('review-site-details');
+    res.redirect('review-dredging-site-details');
   });
 
   /////////////////////////////////////////////////////////
@@ -514,7 +514,7 @@ module.exports = function (router) {
 
     // If no errors, mark as completed and redirect to review page
     req.session.data['maximum-dredge-volume-completed'] = true;
-    res.redirect('review-site-details');
+    res.redirect('review-dredging-site-details');
   });
 
 };

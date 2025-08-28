@@ -514,15 +514,15 @@
                         <dd class="govuk-summary-list__value">
                             {% if data['maximum-dredge-volume-completed'] %}
                                 {% if data['maximum-dredge-volume-total'] %}
-                                    {{ data['maximum-dredge-volume-total'] }} cubic metres, total volume over the full licence period
+                                    {{ data['maximum-dredge-volume-total'] | addCommas }} cubic metres, total volume over the full licence period
                                 {% endif %}
                                 {% if data['maximum-dredge-volume-annual'] %}
                                     <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-                                    {{ data['maximum-dredge-volume-annual'] }} cubic metres, annual volume
+                                    {{ data['maximum-dredge-volume-annual'] | addCommas }} cubic metres, annual volume
                                 {% endif %}
                                 {% if data['maximum-dredge-volume-per-campaign'] and data['maximum-dredge-volume-campaigns-per-year'] %}
                                     <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-                                    {{ data['maximum-dredge-volume-per-campaign'] }} cubic metres, volume per campaign<br>
+                                    {{ data['maximum-dredge-volume-per-campaign'] | addCommas }} cubic metres, volume per campaign<br>
                                     {{ data['maximum-dredge-volume-campaigns-per-year'] }} campaigns per year
                                 {% endif %}
                             {% else %}
@@ -719,15 +719,15 @@
                         <dd class="govuk-summary-list__value">
                             {% if data['sample-disposal-site-1-maximum-volume-completed'] %}
                                 {% if data['sample-disposal-site-1-total-volume'] %}
-                                    {{ data['sample-disposal-site-1-total-volume'] | replace(',', ',') }} cubic metres, total volume over the full licence period
+                                    {{ data['sample-disposal-site-1-total-volume'] | addCommas }} cubic metres, total volume over the full licence period
                                 {% endif %}
                                 {% if data['sample-disposal-site-1-annual-volume'] %}
                                     <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-                                    {{ data['sample-disposal-site-1-annual-volume'] | replace(',', ',') }} cubic metres, annual volume
+                                    {{ data['sample-disposal-site-1-annual-volume'] | addCommas }} cubic metres, annual volume
                                 {% endif %}
                                 {% if data['sample-disposal-site-1-volume-per-campaign'] and data['sample-disposal-site-1-campaigns-per-year'] %}
                                     <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-                                    {{ data['sample-disposal-site-1-volume-per-campaign'] | replace(',', ',') }} cubic metres, volume per campaign<br>
+                                    {{ data['sample-disposal-site-1-volume-per-campaign'] | addCommas }} cubic metres, volume per campaign<br>
                                     {{ data['sample-disposal-site-1-campaigns-per-year'] }} campaigns per year
                                 {% endif %}
                             {% else %}
