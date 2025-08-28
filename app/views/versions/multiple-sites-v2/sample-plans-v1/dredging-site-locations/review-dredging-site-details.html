@@ -263,16 +263,16 @@ Review dredge site details
                         <dd class="govuk-summary-list__value">
                             {% if data['maximum-dredge-volume-completed'] %}
                                 {% if data['maximum-dredge-volume-total'] %}
-                                    {{ data['maximum-dredge-volume-total'] | addCommas }} cubic metres, total volume over the full licence period
+                                    {{ data['maximum-dredge-volume-total'] | addCommas }} {{ 'cubic metre' if data['maximum-dredge-volume-total'] == '1' else 'cubic metres' }}, total volume over the full licence period
                                 {% endif %}
                                 {% if data['maximum-dredge-volume-annual'] %}
                                     <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-                                    {{ data['maximum-dredge-volume-annual'] | addCommas }} cubic metres, annual volume
+                                    {{ data['maximum-dredge-volume-annual'] | addCommas }} {{ 'cubic metre' if data['maximum-dredge-volume-annual'] == '1' else 'cubic metres' }}, annual volume
                                 {% endif %}
                                 {% if data['maximum-dredge-volume-per-campaign'] and data['maximum-dredge-volume-campaigns-per-year'] %}
                                     <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-                                    {{ data['maximum-dredge-volume-per-campaign'] | addCommas }} cubic metres, volume per campaign<br>
-                                    {{ data['maximum-dredge-volume-campaigns-per-year'] }} campaigns per year
+                                    {{ data['maximum-dredge-volume-per-campaign'] | addCommas }} {{ 'cubic metre' if data['maximum-dredge-volume-per-campaign'] == '1' else 'cubic metres' }}, volume per campaign<br>
+                                    {{ data['maximum-dredge-volume-campaigns-per-year'] }} {{ 'campaign' if data['maximum-dredge-volume-campaigns-per-year'] == '1' else 'campaigns' }} per year
                                 {% endif %}
                             {% else %}
                                 <span class="govuk-tag govuk-tag--red">Incomplete</span>
@@ -291,7 +291,7 @@ Review dredge site details
                         </dt>
                         <dd class="govuk-summary-list__value">
                             {% if data['dredging-details-site-1-depth-completed'] and data['dredging-details-site-1-depth'] %}
-                                {{ data['dredging-details-site-1-depth'] }} metres
+                                {{ data['dredging-details-site-1-depth'] }} {{ 'metre' if data['dredging-details-site-1-depth'] == '1' else 'metres' }}
                             {% else %}
                                 <span class="govuk-tag govuk-tag--red">Incomplete</span>
                             {% endif %}
