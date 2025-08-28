@@ -480,6 +480,18 @@ body.page-cookie-banner {
   vertical-align: top;
 }
 
+// Make the map value column wider by overriding the grid template
+.govuk-summary-list__row:has(.map-label) {
+  grid-template-columns: 1fr 2.5fr auto !important; // Make middle column much wider
+}
+
+// Alternative approach for browsers that don't support :has()
+.govuk-summary-list__row .govuk-summary-list__key.map-label + .govuk-summary-list__value {
+  width: auto !important;
+  max-width: none !important;
+  flex: 2.5 !important;
+}
+
 // Ensure map images are responsive and fill their container.
 .govuk-summary-list__value img[alt*="Map showing"] {
   width: 100%;

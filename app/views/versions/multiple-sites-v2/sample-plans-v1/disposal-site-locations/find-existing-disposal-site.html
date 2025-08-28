@@ -80,12 +80,16 @@ Find the existing disposal site
                 classes: "govuk-input--width-20"
             }) }}
 
+
             {{ govukRadios({
                 fieldset: {
                     legend: {
                         text: "Site location",
                         classes: "govuk-fieldset__legend--s"
                     }
+                },
+                hint: {
+                    text: "We only need to know about material being disposed of in any of these locations"
                 },
                 items: [
                     {
