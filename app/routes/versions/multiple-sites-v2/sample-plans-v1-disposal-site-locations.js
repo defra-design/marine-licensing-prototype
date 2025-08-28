@@ -225,40 +225,26 @@ module.exports = function (router) {
     let hasErrors = false;
 
     // Validate material type selection
-    if (!req.body['sample-disposal-details-site-1-material-type'] || req.body['sample-disposal-details-site-1-material-type'].length === 0) {
-      req.session.data['sample-disposal-details-site-1-material-type-error'] = "Select the type of material that will be disposed at this site";
+    if (!req.session.data['sample-disposal-details-site-1-material-type'] || req.session.data['sample-disposal-details-site-1-material-type'].length === 0) {
+      req.session.data['sample-disposal-details-site-1-material-type-error'] = "Select what type of material will be disposed at this site";
       hasErrors = true;
-    } else {
-      // Save the material type selection
-      req.session.data['sample-disposal-details-site-1-material-type'] = req.body['sample-disposal-details-site-1-material-type'];
-      
-      // If "other" is selected, validate the other field
-      if (req.body['sample-disposal-details-site-1-material-type'].includes('other')) {
-        if (!req.body['sample-disposal-details-site-1-material-type-other'] || req.body['sample-disposal-details-site-1-material-type-other'].trim() === '') {
-          req.session.data['sample-disposal-details-site-1-material-type-other-error'] = "Describe the other material type";
-          hasErrors = true;
-        } else {
-          req.session.data['sample-disposal-details-site-1-material-type-other'] = req.body['sample-disposal-details-site-1-material-type-other'];
-        }
+    } else if (req.session.data['sample-disposal-details-site-1-material-type'].includes('other')) {
+      // Check if "Other" is selected but no description provided
+      if (!req.session.data['sample-disposal-details-site-1-material-type-other'] || req.session.data['sample-disposal-details-site-1-material-type-other'].trim() === '') {
+        req.session.data['sample-disposal-details-site-1-material-type-other-error'] = "Describe the other material type";
+        hasErrors = true;
       }
     }
 
     // Validate disposal method selection
-    if (!req.body['sample-disposal-details-site-1-method'] || req.body['sample-disposal-details-site-1-method'].length === 0) {
-      req.session.data['sample-disposal-details-site-1-method-error'] = "Select the proposed method of disposal";
+    if (!req.session.data['sample-disposal-details-site-1-method'] || req.session.data['sample-disposal-details-site-1-method'].length === 0) {
+      req.session.data['sample-disposal-details-site-1-method-error'] = "Select what the proposed method of disposal is";
       hasErrors = true;
-    } else {
-      // Save the method selection
-      req.session.data['sample-disposal-details-site-1-method'] = req.body['sample-disposal-details-site-1-method'];
-      
-      // If "other" is selected, validate the other field
-      if (req.body['sample-disposal-details-site-1-method'].includes('other')) {
-        if (!req.body['sample-disposal-details-site-1-method-other'] || req.body['sample-disposal-details-site-1-method-other'].trim() === '') {
-          req.session.data['sample-disposal-details-site-1-method-other-error'] = "Describe the other method";
-          hasErrors = true;
-        } else {
-          req.session.data['sample-disposal-details-site-1-method-other'] = req.body['sample-disposal-details-site-1-method-other'];
-        }
+    } else if (req.session.data['sample-disposal-details-site-1-method'].includes('other')) {
+      // Check if "Other" is selected but no description provided
+      if (!req.session.data['sample-disposal-details-site-1-method-other'] || req.session.data['sample-disposal-details-site-1-method-other'].trim() === '') {
+        req.session.data['sample-disposal-details-site-1-method-other-error'] = "Describe the other method";
+        hasErrors = true;
       }
     }
 

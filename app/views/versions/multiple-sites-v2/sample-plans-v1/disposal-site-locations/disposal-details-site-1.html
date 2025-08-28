@@ -31,19 +31,36 @@ Disposal details
         
         <!-- Error summary -->
         {% if data['sample-disposal-details-site-1-errorthispage'] == "true" %}
-        {{ govukErrorSummary({
-            titleText: "There is a problem",
-            errorList: [
-                {
-                    text: data['sample-disposal-details-site-1-material-type-error'] or "Select the type of material that will be disposed at this site",
-                    href: "#sample-disposal-details-site-1-material-type"
-                } if data['sample-disposal-details-site-1-material-type-error'],
-                {
-                    text: data['sample-disposal-details-site-1-method-other-error'] or data['sample-disposal-details-site-1-method-error'] or "Select the proposed method of disposal",
-                    href: "#sample-disposal-details-site-1-method-other" if data['sample-disposal-details-site-1-method-other-error'] else "#sample-disposal-details-site-1-method"
-                } if data['sample-disposal-details-site-1-method-error'] or data['sample-disposal-details-site-1-method-other-error']
-            ]
-        }) }}
+            {% set errorArray = [] %}
+            {% if data['sample-disposal-details-site-1-material-type-error'] %}
+                {% set errorArray = (errorArray.push({
+                    "text": data['sample-disposal-details-site-1-material-type-error'],
+                    "href": "#sample-disposal-details-site-1-material-type"
+                }), errorArray) %}
+            {% endif %}
+            {% if data['sample-disposal-details-site-1-method-error'] %}
+                {% set errorArray = (errorArray.push({
+                    "text": data['sample-disposal-details-site-1-method-error'],
+                    "href": "#sample-disposal-details-site-1-method"
+                }), errorArray) %}
+            {% endif %}
+            {% if data['sample-disposal-details-site-1-material-type-other-error'] %}
+                {% set errorArray = (errorArray.push({
+                    "text": data['sample-disposal-details-site-1-material-type-other-error'],
+                    "href": "#sample-disposal-details-site-1-material-type-other"
+                }), errorArray) %}
+            {% endif %}
+            {% if data['sample-disposal-details-site-1-method-other-error'] %}
+                {% set errorArray = (errorArray.push({
+                    "text": data['sample-disposal-details-site-1-method-other-error'],
+                    "href": "#sample-disposal-details-site-1-method-other"
+                }), errorArray) %}
+            {% endif %}
+
+            {{ govukErrorSummary({
+                titleText: "There is a problem",
+                errorList: errorArray
+            }) }}
         {% endif %}
 
         <span class="govuk-caption-l">{{ data['sample-plan-project-name-text-input'] }}<span class="govuk-!-display-block">Disposal site 1</span></span>
