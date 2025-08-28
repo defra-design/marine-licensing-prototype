@@ -4,6 +4,42 @@ module.exports = function (router) {
   const section = "sample-plans-v1";
   const subSection = "disposal-site-locations";
 
+  // Helper function to clear Site 1 completion flags and data
+  function clearSite1CompletionFlags(session) {
+    // Clear completion flags
+    session.data['sample-disposal-site-material-type-completed'] = false;
+    session.data['sample-disposal-site-disposal-method-completed'] = false;
+    session.data['sample-disposal-site-1-maximum-volume-completed'] = false;
+    session.data['sample-disposal-site-1-beneficial-use-completed'] = false;
+    
+    // Clear form data
+    delete session.data['sample-disposal-details-site-1-material-type'];
+    delete session.data['sample-disposal-details-site-1-material-type-other'];
+    delete session.data['sample-disposal-details-site-1-method'];
+    delete session.data['sample-disposal-details-site-1-method-other'];
+    delete session.data['sample-disposal-site-1-total-volume'];
+    delete session.data['sample-disposal-site-1-annual-volume'];
+    delete session.data['sample-disposal-site-1-volume-per-campaign'];
+    delete session.data['sample-disposal-site-1-campaigns-per-year'];
+    delete session.data['sample-disposal-site-1-beneficial-use'];
+    delete session.data['sample-disposal-site-1-beneficial-use-description'];
+    
+    // Clear any error states
+    delete session.data['sample-disposal-details-site-1-errorthispage'];
+    delete session.data['sample-disposal-details-site-1-material-type-error'];
+    delete session.data['sample-disposal-details-site-1-method-error'];
+    delete session.data['sample-disposal-details-site-1-method-other-error'];
+    delete session.data['sample-disposal-details-site-1-material-type-other-error'];
+    delete session.data['sample-disposal-site-1-maximum-volume-errorthispage'];
+    delete session.data['sample-disposal-site-1-total-volume-error'];
+    delete session.data['sample-disposal-site-1-annual-volume-error'];
+    delete session.data['sample-disposal-site-1-volume-per-campaign-error'];
+    delete session.data['sample-disposal-site-1-campaigns-per-year-error'];
+    delete session.data['sample-disposal-site-1-beneficial-use-errorthispage'];
+    delete session.data['sample-disposal-site-1-beneficial-use-error'];
+    delete session.data['sample-disposal-site-1-beneficial-use-description-error'];
+  }
+
   ///////////////////////////////////////////
   // Find existing disposal site page
   ///////////////////////////////////////////
@@ -129,30 +165,26 @@ module.exports = function (router) {
     
     // If URL parameters are provided (coming from site selection), store them and redirect
     if (req.query.code || req.query.name || req.query.country || req.query.seaArea || req.query.status) {
-      // Check if this is for site 2 (when site 1 already exists)
-      const isSite2 = req.session.data['sample-disposal-site-selected'] && !req.session.data['sample-disposal-site-2-selected'];
+      // Check if this is a site replacement (when site 1 already exists)
+      const isReplacingSite = req.session.data['sample-disposal-site-selected'];
       
-      if (isSite2) {
-        // Store selected site 2 data from URL parameters
-        req.session.data['selected-disposal-site-2-code'] = req.query.code;
-        req.session.data['selected-disposal-site-2-name'] = req.query.name;
-        req.session.data['selected-disposal-site-2-country'] = req.query.country;
-        req.session.data['selected-disposal-site-2-sea-area'] = req.query.seaArea;
-        req.session.data['selected-disposal-site-2-status'] = req.query.status;
-        
-        // Mark this as the selected disposal site 2 for this session
-        req.session.data['sample-disposal-site-2-selected'] = true;
-      } else {
-        // Store selected site 1 data from URL parameters
-        req.session.data['selected-disposal-site-code'] = req.query.code;
-        req.session.data['selected-disposal-site-name'] = req.query.name;
-        req.session.data['selected-disposal-site-country'] = req.query.country;
-        req.session.data['selected-disposal-site-sea-area'] = req.query.seaArea;
-        req.session.data['selected-disposal-site-status'] = req.query.status;
-        
-        // Mark this as the selected disposal site for this session
-        req.session.data['sample-disposal-site-selected'] = true;
+      // Clear Site 1 completion flags and data when replacing an existing site
+      if (isReplacingSite) {
+        clearSite1CompletionFlags(req.session);
       }
+      
+      // Always store as Site 1 (either new selection or replacement)
+      req.session.data['selected-disposal-site-code'] = req.query.code;
+      req.session.data['selected-disposal-site-name'] = req.query.name;
+      req.session.data['selected-disposal-site-country'] = req.query.country;
+      req.session.data['selected-disposal-site-sea-area'] = req.query.seaArea;
+      req.session.data['selected-disposal-site-status'] = req.query.status;
+      
+      // Mark this as the selected disposal site for this session
+      req.session.data['sample-disposal-site-selected'] = true;
+      
+      // Ensure Site 2 is not marked as selected (single site mode)
+      req.session.data['sample-disposal-site-2-selected'] = false;
       
       // Redirect to clean URL without parameters - this ensures session is saved
       return res.redirect(`/versions/${version}/${section}/${subSection}/review-disposal-site-details`);

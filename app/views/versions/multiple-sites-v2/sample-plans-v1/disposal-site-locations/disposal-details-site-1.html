@@ -175,28 +175,28 @@ Disposal details
                 } if data['sample-disposal-details-site-1-method-error'],
                 items: [
                     {
-                        value: "bottom-dumping",
-                        text: "Bottom dumping",
+                        value: "contained-disposal",
+                        text: "Contained disposal",
                         hint: {
-                            text: "Direct discharge of material to the seabed from vessels"
+                            text: "For example, in an enclosed pit"
                         },
-                        checked: true if data['sample-disposal-details-site-1-method'] and "bottom-dumping" in data['sample-disposal-details-site-1-method']
+                        checked: true if data['sample-disposal-details-site-1-method'] and "contained-disposal" in data['sample-disposal-details-site-1-method']
                     },
                     {
-                        value: "side-casting",
-                        text: "Side casting",
+                        value: "disposal-at-sea-or-offshore",
+                        text: "Disposal at sea or offshore disposal",
                         hint: {
-                            text: "Discharge of material to the side during dredging operations"
+                            text: "Material is disposed of from a vessel or barge at an approved licensed disposal site"
                         },
-                        checked: true if data['sample-disposal-details-site-1-method'] and "side-casting" in data['sample-disposal-details-site-1-method']
+                        checked: true if data['sample-disposal-details-site-1-method'] and "disposal-at-sea-or-offshore" in data['sample-disposal-details-site-1-method']
                     },
                     {
-                        value: "pipeline",
-                        text: "Pipeline discharge",
+                        value: "onshore-disposal-or-treatment",
+                        text: "Onshore disposal or treatment",
                         hint: {
-                            text: "Transport and discharge of material through a pipeline system"
+                            text: "Material is taken to land for disposal or treatment"
                         },
-                        checked: true if data['sample-disposal-details-site-1-method'] and "pipeline" in data['sample-disposal-details-site-1-method']
+                        checked: true if data['sample-disposal-details-site-1-method'] and "onshore-disposal-or-treatment" in data['sample-disposal-details-site-1-method']
                     },
                     {
                         value: "other",
