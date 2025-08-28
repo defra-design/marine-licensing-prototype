@@ -111,11 +111,10 @@ module.exports = function (router) {
     // Check if all required fields are completed
     const site1DredgingComplete = req.session.data['dredging-details-site-1-completed'];
     const site1HistoryComplete = req.session.data['site-history-site-1-completed'];
-    const site2DredgingComplete = req.session.data['dredging-details-site-2-completed'];
-    const site2HistoryComplete = req.session.data['site-history-site-2-completed'];
+    const maximumVolumeComplete = req.session.data['maximum-dredge-volume-completed'];
     
     // Set the overall completion status
-    if (site1DredgingComplete && site1HistoryComplete && site2DredgingComplete && site2HistoryComplete) {
+    if (site1DredgingComplete && site1HistoryComplete && maximumVolumeComplete) {
       req.session.data['dredging-sites-all-complete'] = true;
     } else {
       req.session.data['dredging-sites-all-complete'] = false;
@@ -418,138 +417,67 @@ module.exports = function (router) {
   });
 
   /////////////////////////////////////////////////////////
-  //////// Site history Site 2 page
+  //////// Maximum dredge volume page
   /////////////////////////////////////////////////////////
-  router.get(`/versions/${version}/${section}/${subsection}/site-history-site-2`, function (req, res) {
+  router.get(`/versions/${version}/${section}/${subsection}/maximum-dredge-volume`, function (req, res) {
     req.session.data['isSamplePlansSection'] = true;
     
     // Clear incomplete data if user navigates away and comes back without completing
-    if (!req.session.data['site-history-site-2-completed']) {
+    if (!req.session.data['maximum-dredge-volume-completed']) {
       // Clear any partial form data to ensure fresh start
-      delete req.session.data['site-history-site-2'];
-      delete req.session.data['site-history-site-2-chemicals-manufacturing-details'];
-      delete req.session.data['site-history-site-2-electronics-manufacturing-details'];
-      delete req.session.data['site-history-site-2-major-port-infrastructure-details'];
-      delete req.session.data['site-history-site-2-mining-details'];
-      delete req.session.data['site-history-site-2-oil-processing-details'];
-      delete req.session.data['site-history-site-2-pollution-incidents-details'];
-      delete req.session.data['site-history-site-2-ship-building-details'];
-      delete req.session.data['site-history-site-2-steelworks-details'];
-      delete req.session.data['site-history-site-2-other-details'];
-      // Clear errors
-      delete req.session.data['site-history-site-2-errorthispage'];
-      delete req.session.data['site-history-site-2-error'];
-      delete req.session.data['site-history-site-2-chemicals-manufacturing-details-error'];
-      delete req.session.data['site-history-site-2-electronics-manufacturing-details-error'];
-      delete req.session.data['site-history-site-2-major-port-infrastructure-details-error'];
-      delete req.session.data['site-history-site-2-mining-details-error'];
-      delete req.session.data['site-history-site-2-oil-processing-details-error'];
-      delete req.session.data['site-history-site-2-pollution-incidents-details-error'];
-      delete req.session.data['site-history-site-2-ship-building-details-error'];
-      delete req.session.data['site-history-site-2-steelworks-details-error'];
-      delete req.session.data['site-history-site-2-other-details-error'];
+      delete req.session.data['maximum-dredge-volume-total'];
+      delete req.session.data['maximum-dredge-volume-annual'];
+      delete req.session.data['maximum-dredge-volume-per-campaign'];
+      delete req.session.data['maximum-dredge-volume-campaigns-per-year'];
+      delete req.session.data['maximum-dredge-volume-errorthispage'];
+      delete req.session.data['maximum-dredge-volume-total-error'];
+      delete req.session.data['maximum-dredge-volume-annual-error'];
+      delete req.session.data['maximum-dredge-volume-per-campaign-error'];
+      delete req.session.data['maximum-dredge-volume-campaigns-per-year-error'];
     }
     
-    res.render(`versions/${version}/${section}/${subsection}/site-history-site-2`);
+    res.render(`versions/${version}/${section}/${subsection}/maximum-dredge-volume`);
   });
 
-  // Site history Site 2 router (POST)
-  router.post(`/versions/${version}/${section}/${subsection}/site-history-site-2-router`, function (req, res) {
+  // Maximum dredge volume router (POST)
+  router.post(`/versions/${version}/${section}/${subsection}/maximum-dredge-volume-router`, function (req, res) {
     // Clear any previous errors
-    req.session.data['site-history-site-2-errorthispage'] = "false";
-    delete req.session.data['site-history-site-2-error'];
-    delete req.session.data['site-history-site-2-chemicals-manufacturing-details-error'];
-    delete req.session.data['site-history-site-2-electronics-manufacturing-details-error'];
-    delete req.session.data['site-history-site-2-major-port-infrastructure-details-error'];
-    delete req.session.data['site-history-site-2-mining-details-error'];
-    delete req.session.data['site-history-site-2-oil-processing-details-error'];
-    delete req.session.data['site-history-site-2-pollution-incidents-details-error'];
-    delete req.session.data['site-history-site-2-ship-building-details-error'];
-    delete req.session.data['site-history-site-2-steelworks-details-error'];
-    delete req.session.data['site-history-site-2-other-details-error'];
+    req.session.data['maximum-dredge-volume-errorthispage'] = "false";
+    delete req.session.data['maximum-dredge-volume-total-error'];
+    delete req.session.data['maximum-dredge-volume-annual-error'];
+    delete req.session.data['maximum-dredge-volume-per-campaign-error'];
+    delete req.session.data['maximum-dredge-volume-campaigns-per-year-error'];
 
     let hasErrors = false;
 
-    // Validate that at least one option is selected
-    if (!req.session.data['site-history-site-2'] || req.session.data['site-history-site-2'].length === 0) {
-      req.session.data['site-history-site-2-error'] = "Select all that apply for the site history";
+    // Validate total volume is mandatory
+    if (!req.session.data['maximum-dredge-volume-total'] || req.session.data['maximum-dredge-volume-total'].trim() === '') {
+      req.session.data['maximum-dredge-volume-total-error'] = "Enter the total volume over the full licence period";
       hasErrors = true;
-    } else {
-      // Check each selected option has details provided (except "not-previously-used")
-      const selectedOptions = req.session.data['site-history-site-2'];
-      
-      if (selectedOptions.includes('chemicals-manufacturing')) {
-        if (!req.session.data['site-history-site-2-chemicals-manufacturing-details'] || req.session.data['site-history-site-2-chemicals-manufacturing-details'].trim() === '') {
-          req.session.data['site-history-site-2-chemicals-manufacturing-details-error'] = "Provide details about chemicals manufacturing";
-          hasErrors = true;
-        }
-      }
-      
-      if (selectedOptions.includes('electronics-manufacturing')) {
-        if (!req.session.data['site-history-site-2-electronics-manufacturing-details'] || req.session.data['site-history-site-2-electronics-manufacturing-details'].trim() === '') {
-          req.session.data['site-history-site-2-electronics-manufacturing-details-error'] = "Provide details about electronics manufacturing";
-          hasErrors = true;
-        }
-      }
-      
-      if (selectedOptions.includes('major-port-infrastructure')) {
-        if (!req.session.data['site-history-site-2-major-port-infrastructure-details'] || req.session.data['site-history-site-2-major-port-infrastructure-details'].trim() === '') {
-          req.session.data['site-history-site-2-major-port-infrastructure-details-error'] = "Provide details about major port infrastructure or activity";
-          hasErrors = true;
-        }
-      }
-      
-      if (selectedOptions.includes('mining')) {
-        if (!req.session.data['site-history-site-2-mining-details'] || req.session.data['site-history-site-2-mining-details'].trim() === '') {
-          req.session.data['site-history-site-2-mining-details-error'] = "Provide details about mining";
-          hasErrors = true;
-        }
-      }
-      
-      if (selectedOptions.includes('oil-processing')) {
-        if (!req.session.data['site-history-site-2-oil-processing-details'] || req.session.data['site-history-site-2-oil-processing-details'].trim() === '') {
-          req.session.data['site-history-site-2-oil-processing-details-error'] = "Provide details about oil processing";
-          hasErrors = true;
-        }
-      }
-      
-      if (selectedOptions.includes('pollution-incidents')) {
-        if (!req.session.data['site-history-site-2-pollution-incidents-details'] || req.session.data['site-history-site-2-pollution-incidents-details'].trim() === '') {
-          req.session.data['site-history-site-2-pollution-incidents-details-error'] = "Provide details about pollution incidents";
-          hasErrors = true;
-        }
-      }
-      
-      if (selectedOptions.includes('ship-building')) {
-        if (!req.session.data['site-history-site-2-ship-building-details'] || req.session.data['site-history-site-2-ship-building-details'].trim() === '') {
-          req.session.data['site-history-site-2-ship-building-details-error'] = "Provide details about ship building";
-          hasErrors = true;
-        }
-      }
-      
-      if (selectedOptions.includes('steelworks')) {
-        if (!req.session.data['site-history-site-2-steelworks-details'] || req.session.data['site-history-site-2-steelworks-details'].trim() === '') {
-          req.session.data['site-history-site-2-steelworks-details-error'] = "Provide details about steelworks";
-          hasErrors = true;
-        }
-      }
-      
-      if (selectedOptions.includes('other')) {
-        if (!req.session.data['site-history-site-2-other-details'] || req.session.data['site-history-site-2-other-details'].trim() === '') {
-          req.session.data['site-history-site-2-other-details-error'] = "Provide details about other activities";
-          hasErrors = true;
-        }
-      }
+    }
+
+    // Validate campaign fields - if either has a value, both are mandatory
+    const hasCampaignVolume = req.session.data['maximum-dredge-volume-per-campaign'] && req.session.data['maximum-dredge-volume-per-campaign'].trim() !== '';
+    const hasCampaignsPerYear = req.session.data['maximum-dredge-volume-campaigns-per-year'] && req.session.data['maximum-dredge-volume-campaigns-per-year'].trim() !== '';
+    
+    if (hasCampaignVolume && !hasCampaignsPerYear) {
+      req.session.data['maximum-dredge-volume-campaigns-per-year-error'] = "Enter the number of campaigns per year";
+      hasErrors = true;
+    }
+    
+    if (hasCampaignsPerYear && !hasCampaignVolume) {
+      req.session.data['maximum-dredge-volume-per-campaign-error'] = "Enter the volume per campaign";
+      hasErrors = true;
     }
 
     if (hasErrors) {
-      req.session.data['site-history-site-2-errorthispage'] = "true";
-      res.redirect('site-history-site-2');
+      req.session.data['maximum-dredge-volume-errorthispage'] = "true";
+      res.redirect('maximum-dredge-volume');
       return;
     }
 
     // If no errors, mark as completed and redirect to review page
-    req.session.data['site-history-site-2-completed'] = true;
+    req.session.data['maximum-dredge-volume-completed'] = true;
     res.redirect('review-site-details');
   });
 
