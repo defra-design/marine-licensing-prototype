@@ -108,20 +108,10 @@ Sample plan start page
 			{% if data['sample-plan-which-activity'] == "Marine disposal" %}
 			<li class="govuk-task-list__item">
 			  <div class="govuk-task-list__name-and-hint">
-				<div>Site locations and dredging activity</div>
+				<div>Dredge sites and details</div>
 			  </div>
 			  
 			  <div class="govuk-task-list__status govuk-task-list__status--cannot-start-yet" id="site-locations-status">
-				Not applicable
-			  </div>
-			</li>
-
-			<li class="govuk-task-list__item">
-			  <div class="govuk-task-list__name-and-hint">
-				<div>Dredging volumes</div>
-			  </div>
-			  
-			  <div class="govuk-task-list__status govuk-task-list__status--cannot-start-yet" id="dredging-volumes-status">
 				Not applicable
 			  </div>
 			</li>
@@ -130,11 +120,11 @@ Sample plan start page
 			  <div class="govuk-task-list__name-and-hint">
 				{% if data['has-visited-disposal-site-review'] %}
 				  <a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="disposal-site-locations/review-disposal-site-details" aria-describedby="disposal-sites-status">
-					Disposal of material
+					Disposal sites and details
 				  </a>
 				{% else %}
 				  <a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="disposal-site-locations/where-dispose-of-material" aria-describedby="disposal-sites-status">
-					Disposal of material
+					Disposal sites and details
 				  </a>
 				{% endif %}
 			  </div>
@@ -159,11 +149,11 @@ Sample plan start page
 			  <div class="govuk-task-list__name-and-hint">
 				{% if data['has-visited-dredging-site-locations'] %}
 				  <a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="dredging-site-locations/review-site-details" aria-describedby="site-locations-status">
-					Site locations and dredging activity
+					Dredge sites and details
 				  </a>
 				{% else %}
 				  <a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="dredging-site-locations/before-you-start" aria-describedby="site-locations-status">
-					Site locations and dredging activity
+					Dredge sites and details
 				  </a>
 				{% endif %}
 			  </div>
@@ -181,30 +171,6 @@ Sample plan start page
 					<strong class="govuk-tag govuk-tag--blue">
 						Not yet started
 					</strong>
-				{% endif %}
-			  </div>
-			</li>
-
-			<li class="govuk-task-list__item govuk-task-list__item--with-link">
-			  <div class="govuk-task-list__name-and-hint">
-				{% if data['sample-plan-dredging-volumes-completed'] %}
-				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="maximum-dredging-volume" aria-describedby="dredging-volumes-status">
-				  Dredging volumes
-				</a>
-				{% else %}
-				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="before-you-start-dredging-volume" aria-describedby="dredging-volumes-status">
-				  Dredging volumes
-				</a>
-				{% endif %}
-			  </div>
-			  
-			  <div class="govuk-task-list__status" id="dredging-volumes-status">
-				{% if data['sample-plan-dredging-volumes-completed'] %}
-				Completed
-				{% else %}
-				<strong class="govuk-tag govuk-tag--blue">
-					Not yet started
-				</strong>
 				{% endif %}
 			  </div>
 			</li>
@@ -224,11 +190,11 @@ Sample plan start page
 			  <div class="govuk-task-list__name-and-hint">
 				{% if data['has-visited-dredging-site-locations'] %}
 				  <a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="dredging-site-locations/review-site-details" aria-describedby="site-locations-status">
-					Site locations and dredging activity
+					Dredge sites and details
 				  </a>
 				{% else %}
 				  <a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="dredging-site-locations/before-you-start" aria-describedby="site-locations-status">
-					Site locations and dredging activity
+					Dredge sites and details
 				  </a>
 				{% endif %}
 			  </div>
@@ -252,37 +218,13 @@ Sample plan start page
 
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
 			  <div class="govuk-task-list__name-and-hint">
-				{% if data['sample-plan-dredging-volumes-completed'] %}
-				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="maximum-dredging-volume" aria-describedby="dredging-volumes-status">
-				  Dredging volumes
-				</a>
-				{% else %}
-				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="before-you-start-dredging-volume" aria-describedby="dredging-volumes-status">
-				  Dredging volumes
-				</a>
-				{% endif %}
-			  </div>
-			  
-			  <div class="govuk-task-list__status" id="dredging-volumes-status">
-				{% if data['sample-plan-dredging-volumes-completed'] %}
-				Completed
-				{% else %}
-				<strong class="govuk-tag govuk-tag--blue">
-					Not yet started
-				</strong>
-				{% endif %}
-			  </div>
-			</li>
-
-			<li class="govuk-task-list__item govuk-task-list__item--with-link">
-			  <div class="govuk-task-list__name-and-hint">
 				{% if data['has-visited-disposal-site-review'] %}
 				  <a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="disposal-site-locations/review-disposal-site-details" aria-describedby="disposal-sites-status">
-					Disposal of material
+					Disposal sites and details
 				  </a>
 				{% else %}
 				  <a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="disposal-site-locations/where-dispose-of-material" aria-describedby="disposal-sites-status">
-					Disposal of material
+					Disposal sites and details
 				  </a>
 				{% endif %}
 			  </div>
@@ -306,7 +248,7 @@ Sample plan start page
 			<!-- Default state when no activity is selected -->
 			<li class="govuk-task-list__item">
 			  <div class="govuk-task-list__name-and-hint">
-				<div>Site locations and dredging activity</div>
+				<div>Dredge sites and details</div>
 			  </div>
 			  
 			  <div class="govuk-task-list__status govuk-task-list__status--cannot-start-yet" id="site-locations-status">
@@ -316,17 +258,7 @@ Sample plan start page
 
 			<li class="govuk-task-list__item">
 			  <div class="govuk-task-list__name-and-hint">
-				<div>Dredging volumes</div>
-			  </div>
-			  
-			  <div class="govuk-task-list__status govuk-task-list__status--cannot-start-yet" id="dredging-volumes-status">
-				Cannot start yet
-			  </div>
-			</li>
-
-			<li class="govuk-task-list__item">
-			  <div class="govuk-task-list__name-and-hint">
-				<div>Disposal sites</div>
+				<div>Disposal sites and details</div>
 			  </div>
 			  
 			  <div class="govuk-task-list__status govuk-task-list__status--cannot-start-yet" id="disposal-sites-status">
@@ -371,13 +303,13 @@ Sample plan start page
 					{% set allTasksCompleted = true %}
 				{% endif %}
 			{% elif data['sample-plan-which-activity'] == "Marine dredging" %}
-				<!-- For dredging only: need site locations and dredging volumes -->
-				{% if data['dredging-sites-all-complete'] and data['sample-plan-dredging-volumes-completed'] %}
+				<!-- For dredging only: need dredge sites completed -->
+				{% if data['dredging-sites-all-complete'] %}
 					{% set allTasksCompleted = true %}
 				{% endif %}
 			{% elif data['sample-plan-which-activity'] == "Marine dredging and disposal" %}
-				<!-- For dredging and disposal: need site locations, dredging volumes, and disposal sites -->
-				{% if data['dredging-sites-all-complete'] and data['sample-plan-dredging-volumes-completed'] and data['sample-disposal-sites-completed'] %}
+				<!-- For dredging and disposal: need dredge sites and disposal sites -->
+				{% if data['dredging-sites-all-complete'] and data['sample-disposal-sites-completed'] %}
 					{% set allTasksCompleted = true %}
 				{% endif %}
 			{% endif %}

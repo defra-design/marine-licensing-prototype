@@ -1,0 +1,166 @@
+{% extends "../../layouts/exemption.html" %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {{ super() }}
+    {% include "../../includes/back-link.html" %}
+{% endblock %}
+
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/fieldset/macro.njk" import govukFieldset %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+<!-- Set the heading for the page -->
+{% set pageHeadingTextHTML %}
+Maximum proposed dredge volumes
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {% if  data['maximum-dredge-volume-errorthispage'] == "true"  %}
+        Error:
+    {% endif %}
+
+    {{ pageHeadingTextHTML }} - Get a plan for sediment sample analysis
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        {% if data['maximum-dredge-volume-errorthispage'] == "true" %}
+            {% set errorList = [] %}
+            {% if data['maximum-dredge-volume-total-error'] %}
+                {% set errorList = (errorList.push({"text": data['maximum-dredge-volume-total-error'], "href": "#maximum-dredge-volume-total"}), errorList) %}
+            {% endif %}
+            {% if data['maximum-dredge-volume-per-campaign-error'] %}
+                {% set errorList = (errorList.push({"text": data['maximum-dredge-volume-per-campaign-error'], "href": "#maximum-dredge-volume-per-campaign"}), errorList) %}
+            {% endif %}
+            {% if data['maximum-dredge-volume-campaigns-per-year-error'] %}
+                {% set errorList = (errorList.push({"text": data['maximum-dredge-volume-campaigns-per-year-error'], "href": "#maximum-dredge-volume-campaigns-per-year"}), errorList) %}
+            {% endif %}
+
+            {{ govukErrorSummary({
+                titleText: "There is a problem",
+                errorList: errorList
+            }) }}
+        {% endif %}
+
+        <span class="govuk-caption-l">{{ data['sample-plan-project-name-text-input'] }}<span class="govuk-!-display-block">Dredge site 1</span></span>
+
+        <h1 class="govuk-heading-l">
+            {{ pageHeadingTextHTML }}
+        </h1>
+
+        <p class="govuk-body">Provide the maximum volume, in cubic metres, you propose to dredge.</p>
+        <p class="govuk-body">You can provide more than 1 type of volume.</p>
+
+        <form action="maximum-dredge-volume-router" method="post" novalidate>
+
+            <div class="govuk-form-group {% if data['maximum-dredge-volume-total-error'] %}govuk-form-group--error{% endif %}">
+                <label class="govuk-label govuk-label--s" for="maximum-dredge-volume-total">
+                    <strong>Total volume over the full licence period</strong>
+                </label>
+                {% if data['maximum-dredge-volume-total-error'] %}
+                    <p id="maximum-dredge-volume-total-error" class="govuk-error-message">
+                        <span class="govuk-visually-hidden">Error:</span> {{ data['maximum-dredge-volume-total-error'] }}
+                    </p>
+                {% endif %}
+                <div class="govuk-input__wrapper">
+                    <input class="govuk-input govuk-input--width-10 {% if data['maximum-dredge-volume-total-error'] %}govuk-input--error{% endif %}" 
+                           id="maximum-dredge-volume-total" 
+                           name="maximum-dredge-volume-total" 
+                           type="text" 
+                           spellcheck="false" 
+                           autocomplete="off"
+                           value="{{ data['maximum-dredge-volume-total'] if data['maximum-dredge-volume-total'] }}"
+                           {% if data['maximum-dredge-volume-total-error'] %}aria-describedby="maximum-dredge-volume-total-error"{% endif %}>
+                    <div class="govuk-input__suffix" aria-hidden="true">m³</div>
+                </div>
+            </div>
+
+            <div class="govuk-form-group {% if data['maximum-dredge-volume-annual-error'] %}govuk-form-group--error{% endif %}">
+                <label class="govuk-label govuk-label--s" for="maximum-dredge-volume-annual">
+                    <strong>Annual volume (if applicable)</strong>
+                </label>
+                {% if data['maximum-dredge-volume-annual-error'] %}
+                    <p id="maximum-dredge-volume-annual-error" class="govuk-error-message">
+                        <span class="govuk-visually-hidden">Error:</span> {{ data['maximum-dredge-volume-annual-error'] }}
+                    </p>
+                {% endif %}
+                <div class="govuk-input__wrapper">
+                    <input class="govuk-input govuk-input--width-10 {% if data['maximum-dredge-volume-annual-error'] %}govuk-input--error{% endif %}" 
+                           id="maximum-dredge-volume-annual" 
+                           name="maximum-dredge-volume-annual" 
+                           type="text" 
+                           spellcheck="false" 
+                           autocomplete="off"
+                           value="{{ data['maximum-dredge-volume-annual'] if data['maximum-dredge-volume-annual'] }}"
+                           {% if data['maximum-dredge-volume-annual-error'] %}aria-describedby="maximum-dredge-volume-annual-error"{% endif %}>
+                    <div class="govuk-input__suffix" aria-hidden="true">m³</div>
+                </div>
+            </div>
+
+            {% call govukFieldset({
+                legend: {
+                    text: "Dredge campaign (if applicable)",
+                    classes: "govuk-fieldset__legend--s",
+                    isPageHeading: false
+                }
+            }) %}
+                <p class="govuk-hint">A dredge campaign is a single, continuous dredging operation</p>
+
+                <div class="govuk-form-group {% if data['maximum-dredge-volume-per-campaign-error'] %}govuk-form-group--error{% endif %}">
+                    <label class="govuk-label" for="maximum-dredge-volume-per-campaign">
+                        Volume per campaign
+                    </label>
+                    {% if data['maximum-dredge-volume-per-campaign-error'] %}
+                        <p id="maximum-dredge-volume-per-campaign-error" class="govuk-error-message">
+                            <span class="govuk-visually-hidden">Error:</span> {{ data['maximum-dredge-volume-per-campaign-error'] }}
+                        </p>
+                    {% endif %}
+                    <div class="govuk-input__wrapper">
+                        <input class="govuk-input govuk-input--width-10 {% if data['maximum-dredge-volume-per-campaign-error'] %}govuk-input--error{% endif %}" 
+                               id="maximum-dredge-volume-per-campaign" 
+                               name="maximum-dredge-volume-per-campaign" 
+                               type="text" 
+                               spellcheck="false" 
+                               autocomplete="off"
+                               value="{{ data['maximum-dredge-volume-per-campaign'] if data['maximum-dredge-volume-per-campaign'] }}"
+                               {% if data['maximum-dredge-volume-per-campaign-error'] %}aria-describedby="maximum-dredge-volume-per-campaign-error"{% endif %}>
+                        <div class="govuk-input__suffix" aria-hidden="true">m³</div>
+                    </div>
+                </div>
+
+                <div class="govuk-form-group {% if data['maximum-dredge-volume-campaigns-per-year-error'] %}govuk-form-group--error{% endif %}">
+                    <label class="govuk-label" for="maximum-dredge-volume-campaigns-per-year">
+                        Number of campaigns per year
+                    </label>
+                    {% if data['maximum-dredge-volume-campaigns-per-year-error'] %}
+                        <p id="maximum-dredge-volume-campaigns-per-year-error" class="govuk-error-message">
+                            <span class="govuk-visually-hidden">Error:</span> {{ data['maximum-dredge-volume-campaigns-per-year-error'] }}
+                        </p>
+                    {% endif %}
+                    <input class="govuk-input govuk-input--width-3 {% if data['maximum-dredge-volume-campaigns-per-year-error'] %}govuk-input--error{% endif %}" 
+                           id="maximum-dredge-volume-campaigns-per-year" 
+                           name="maximum-dredge-volume-campaigns-per-year" 
+                           type="text" 
+                           spellcheck="false" 
+                           autocomplete="off"
+                           value="{{ data['maximum-dredge-volume-campaigns-per-year'] if data['maximum-dredge-volume-campaigns-per-year'] }}"
+                           {% if data['maximum-dredge-volume-campaigns-per-year-error'] %}aria-describedby="maximum-dredge-volume-campaigns-per-year-error"{% endif %}>
+                </div>
+            {% endcall %}
+
+            <div class="govuk-button-group">
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+                <a class="govuk-link govuk-link--no-visited-state" href="review-site-details">Cancel</a>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+{% endblock %}

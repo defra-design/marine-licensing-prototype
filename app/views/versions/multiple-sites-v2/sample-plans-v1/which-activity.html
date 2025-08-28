@@ -58,9 +58,9 @@ Error:
                 } if data['sample-plan-errortypeone'] == "true",
                 items: [
                     {
-                        value: "Marine disposal",
-                        text: "Marine disposal",
-                        checked: data['sample-plan-which-activity'] == "Marine disposal"
+                        value: "Marine dredging and disposal",
+                        text: "Marine dredging and disposal",
+                        checked: data['sample-plan-which-activity'] == "Marine dredging and disposal"
                     },
                     {
                         value: "Marine dredging",
@@ -68,9 +68,12 @@ Error:
                         checked: data['sample-plan-which-activity'] == "Marine dredging"
                     },
                     {
-                        value: "Marine dredging and disposal",
-                        text: "Marine dredging and disposal",
-                        checked: data['sample-plan-which-activity'] == "Marine dredging and disposal"
+                        value: "Marine disposal",
+                        text: "Marine disposal",
+                        hint: {
+                            text: "Includes placement (putting dredged material in a chosen location for a purpose, for example to protect beaches or support construction) and beneficial use to the environment"
+                        },
+                        checked: data['sample-plan-which-activity'] == "Marine disposal"
                     }
                 ]
             }) }}
