@@ -13,7 +13,7 @@
 
 <!-- Set the heading for the page -->
 {% set pageHeadingTextHTML %}
-Dredging details
+Dredge details
 {% endset %}
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
@@ -41,11 +41,7 @@ Dredging details
                 {
                     text: data['dredging-details-site-1-method-other-error'] or data['dredging-details-site-1-method-error'] or "Select the proposed method of dredging",
                     href: "#dredging-details-site-1-method-other" if data['dredging-details-site-1-method-other-error'] else "#dredging-details-site-1-method"
-                } if data['dredging-details-site-1-method-error'] or data['dredging-details-site-1-method-other-error'],
-                {
-                    text: data['dredging-details-site-1-depth-error'] or "Enter the depth of the dredge in metres",
-                    href: "#dredging-details-site-1-depth"
-                } if data['dredging-details-site-1-depth-error']
+                } if data['dredging-details-site-1-method-error'] or data['dredging-details-site-1-method-other-error']
             ]
         }) }}
         {% endif %}
@@ -172,28 +168,7 @@ Dredging details
                 ]
             }) }}
 
-            <!-- Question 3: What is the depth of the dredge in metres? -->
-            {{ govukInput({
-                id: "dredging-details-site-1-depth",
-                name: "dredging-details-site-1-depth",
-                value: data['dredging-details-site-1-depth'],
-                type: "text",
-                inputmode: "decimal",
-                classes: "govuk-input--width-3",
-                label: {
-                    text: "What is the depth of the dredge in metres?",
-                    classes: "govuk-label--s"
-                },
-                hint: {
-                    text: "This is calculated by using the current depth of the sea or river bed and how much you need to deepen it by, for example if the current depth is 10m chart datum and you're deepening it to 12m chart datum, the dredge depth is 2m of sediment"
-                },
-                suffix: {
-                    text: "m"
-                },
-                errorMessage: {
-                    text: data['dredging-details-site-1-depth-error']
-                } if data['dredging-details-site-1-depth-error']
-            }) }}
+
 
             <div class="govuk-button-group">
                 {{ govukButton({

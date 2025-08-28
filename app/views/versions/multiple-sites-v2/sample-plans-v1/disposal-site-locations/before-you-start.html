@@ -12,7 +12,7 @@
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-Disposal site locations and activity
+Disposal sites and details
 {% endset %}
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
@@ -32,35 +32,37 @@ Disposal site locations and activity
       <h2 class="govuk-heading-m">Before you start</h2>
 
       <p class="govuk-body">
-        <a class="govuk-link" href="https://www.gov.uk/guidance/deposits" target="_blank">Read the guidance on disposal activities (opens in new tab)</a>
+        <a class="govuk-link" href="https://www.gov.uk/guidance/deposits" target="_blank">Read the guidance on deposits</a>. This includes guidance on disposal of material at sea.
       </p>
 
-      <p class="govuk-body">In the next step, you'll need to tell us the following for every disposal site:</p>
+      <p class="govuk-body">In the next step, you'll need to tell us the following for every site:</p>
 
       <ul class="govuk-list govuk-list--bullet">
-        <li>disposal site location</li>
+        <li>if you want to dispose of material at an existing or new disposal site</li>
         <li>type of material being disposed</li>
         <li>method of disposal</li>
-        <li>maximum disposal volume</li>
-        <li>beneficial use information</li>
+        <li>maximum disposal volume for the full licence period, you can also tell us maximum annual and campaign disposal volumes if you have this information</li>
+        <li>if any of the material is being disposed of for beneficial use</li>
       </ul>
 
-      <h3 class="govuk-heading-s">Choosing disposal sites</h3>
+      <h2 class="govuk-heading-m">Providing new disposal site locations</h2>
 
-      <p class="govuk-body">You can choose from:</p>
+      <p class="govuk-body">You can provide the site location in 2 ways:</p>
 
       <ul class="govuk-list govuk-list--bullet">
-        <li>existing licensed disposal sites</li>
-        <li>new disposal sites (if applicable)</li>
+        <li>upload a file with the coordinates</li>
+        <li>enter the coordinates manually</li>
       </ul>
 
-      <h3 class="govuk-heading-s">Projects with multiple disposal sites</h3>
+      <h3 class="govuk-heading-s">Projects with multiple sites</h3>
 
-      <p class="govuk-body">You need to give separate details for each disposal site if your project uses multiple sites.</p>
+      <p class="govuk-body">You need to give separate location details for each disposal site if your project has multiple sites.</p>
 
-      <h3 class="govuk-heading-s">Volume calculations</h3>
+      <p class="govuk-body">If you're uploading a file you need to include all the sites in 1 file.</p>
 
-      <p class="govuk-body">You'll need to provide disposal volume information including total volumes over the licence period and any campaign-specific details.</p>
+      <h3 class="govuk-heading-s">Defining the site boundary</h3>
+
+      <p class="govuk-body">The coordinates must mark the full boundary of every site, including space for any movement or small changes in the activity location.</p>
 
         <form action="before-you-start-router" method="post" novalidate>
             

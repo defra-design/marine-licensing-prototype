@@ -112,9 +112,10 @@ module.exports = function (router) {
     const site1DredgingComplete = req.session.data['dredging-details-site-1-completed'];
     const site1HistoryComplete = req.session.data['site-history-site-1-completed'];
     const maximumVolumeComplete = req.session.data['maximum-dredge-volume-completed'];
+    const dredgeDepthComplete = req.session.data['dredging-details-site-1-depth-completed'];
     
     // Set the overall completion status
-    if (site1DredgingComplete && site1HistoryComplete && maximumVolumeComplete) {
+    if (site1DredgingComplete && site1HistoryComplete && maximumVolumeComplete && dredgeDepthComplete) {
       req.session.data['dredging-sites-all-complete'] = true;
     } else {
       req.session.data['dredging-sites-all-complete'] = false;
@@ -137,13 +138,11 @@ module.exports = function (router) {
       delete req.session.data['dredging-details-site-1-material-type-other'];
       delete req.session.data['dredging-details-site-1-method'];
       delete req.session.data['dredging-details-site-1-method-other'];
-      delete req.session.data['dredging-details-site-1-depth'];
       delete req.session.data['dredging-details-site-1-errorthispage'];
       delete req.session.data['dredging-details-site-1-material-type-error'];
       delete req.session.data['dredging-details-site-1-material-type-other-error'];
       delete req.session.data['dredging-details-site-1-method-error'];
       delete req.session.data['dredging-details-site-1-method-other-error'];
-      delete req.session.data['dredging-details-site-1-depth-error'];
     }
     
     res.render(`versions/${version}/${section}/${subsection}/dredging-details-site-1`);
@@ -157,7 +156,6 @@ module.exports = function (router) {
     delete req.session.data['dredging-details-site-1-material-type-other-error'];
     delete req.session.data['dredging-details-site-1-method-error'];
     delete req.session.data['dredging-details-site-1-method-other-error'];
-    delete req.session.data['dredging-details-site-1-depth-error'];
 
     let hasErrors = false;
 
@@ -185,11 +183,7 @@ module.exports = function (router) {
       }
     }
 
-    // Validate Question 3: Depth
-    if (!req.session.data['dredging-details-site-1-depth'] || req.session.data['dredging-details-site-1-depth'].trim() === '') {
-      req.session.data['dredging-details-site-1-depth-error'] = "Enter the depth of the dredge in metres";
-      hasErrors = true;
-    }
+
 
     if (hasErrors) {
       req.session.data['dredging-details-site-1-errorthispage'] = "true";
@@ -413,6 +407,48 @@ module.exports = function (router) {
 
     // If no errors, mark as completed and redirect to review page
     req.session.data['site-history-site-1-completed'] = true;
+    res.redirect('review-site-details');
+  });
+
+  /////////////////////////////////////////////////////////
+  //////// Dredge depth Site 1 page
+  /////////////////////////////////////////////////////////
+  router.get(`/versions/${version}/${section}/${subsection}/dredge-depth-site-1`, function (req, res) {
+    req.session.data['isSamplePlansSection'] = true;
+    
+    // Clear incomplete data if user navigates away and comes back without completing
+    if (!req.session.data['dredging-details-site-1-depth-completed']) {
+      // Clear any partial form data to ensure fresh start
+      delete req.session.data['dredging-details-site-1-depth'];
+      delete req.session.data['dredging-details-site-1-depth-errorthispage'];
+      delete req.session.data['dredging-details-site-1-depth-error'];
+    }
+    
+    res.render(`versions/${version}/${section}/${subsection}/dredge-depth-site-1`);
+  });
+
+  // Dredge depth Site 1 router (POST)
+  router.post(`/versions/${version}/${section}/${subsection}/dredge-depth-site-1-router`, function (req, res) {
+    // Clear any previous errors
+    req.session.data['dredging-details-site-1-depth-errorthispage'] = "false";
+    delete req.session.data['dredging-details-site-1-depth-error'];
+
+    let hasErrors = false;
+
+    // Validate depth
+    if (!req.session.data['dredging-details-site-1-depth'] || req.session.data['dredging-details-site-1-depth'].trim() === '') {
+      req.session.data['dredging-details-site-1-depth-error'] = "Enter the depth of the dredge in metres";
+      hasErrors = true;
+    }
+
+    if (hasErrors) {
+      req.session.data['dredging-details-site-1-depth-errorthispage'] = "true";
+      res.redirect('dredge-depth-site-1');
+      return;
+    }
+
+    // If no errors, mark as completed and redirect to review page
+    req.session.data['dredging-details-site-1-depth-completed'] = true;
     res.redirect('review-site-details');
   });
 
