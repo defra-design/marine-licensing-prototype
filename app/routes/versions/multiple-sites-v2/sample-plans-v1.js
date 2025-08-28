@@ -533,6 +533,8 @@ module.exports = function (router) {
     // Success case - mark as completed if checkbox agreed and Yes selected
     if (req.session.data['fee-terms-checkbox'] && req.session.data['fee-acceptance'] === 'yes') {
       req.session.data['sample-plan-fee-estimate-completed'] = "true";
+      // Clear any previous rejection flag
+      req.session.data['sample-plan-fee-estimate-rejected'] = "false";
     }
 
     // Conditional routing based on fee acceptance
