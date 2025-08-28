@@ -474,7 +474,7 @@
                         </dd>
                     </div>
 
-                    <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+                    <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
                             Proposed method of dredging
                         </dt>
@@ -505,18 +505,7 @@
                         </dd>
                     </div>
 
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Dredge depth
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            {% if data['dredging-details-site-1-completed'] and data['dredging-details-site-1-depth'] %}
-                                {{ data['dredging-details-site-1-depth'] }} metres
-                            {% else %}
-                                Not provided
-                            {% endif %}
-                        </dd>
-                    </div>
+
 
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
@@ -536,6 +525,19 @@
                                     {{ data['maximum-dredge-volume-per-campaign'] }} cubic metres, volume per campaign<br>
                                     {{ data['maximum-dredge-volume-campaigns-per-year'] }} campaigns per year
                                 {% endif %}
+                            {% else %}
+                                Not provided
+                            {% endif %}
+                        </dd>
+                    </div>
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Dredge depth
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['dredging-details-site-1-depth-completed'] and data['dredging-details-site-1-depth'] %}
+                                {{ data['dredging-details-site-1-depth'] }} metres
                             {% else %}
                                 Not provided
                             {% endif %}

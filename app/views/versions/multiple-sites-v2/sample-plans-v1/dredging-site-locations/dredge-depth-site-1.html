@@ -1,0 +1,100 @@
+{% extends "../../layouts/exemption.html" %}
+
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% if data['user_type'] === 'organisation' %}
+        {% include "../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link" href="javascript:window.history.back()">Back</a>
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+What is the depth of the dredge in metres?
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+{% if data['dredging-details-site-1-depth-errorthispage'] == "true" %}
+Error:
+{% endif %}
+
+{{ pageHeadingTextHTML }} - Get a plan for sediment sample analysis
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        {% if data['dredging-details-site-1-depth-errorthispage'] == "true" %}
+        {{ govukErrorSummary({
+            titleText: "There is a problem",
+            errorList: [
+                {
+                    text: data['dredging-details-site-1-depth-error'] or "Enter the depth of the dredge in metres",
+                    href: "#dredging-details-site-1-depth"
+                }
+            ]
+        }) }}
+        {% endif %}
+
+        <form action="dredge-depth-site-1-router" method="post" novalidate>
+
+            {{ govukInput({
+                id: "dredging-details-site-1-depth",
+                name: "dredging-details-site-1-depth",
+                value: data['dredging-details-site-1-depth'],
+                type: "text",
+                inputmode: "decimal",
+                classes: "govuk-input--width-3",
+                label: {
+                    html: '<span class="govuk-caption-l">' + data['sample-plan-project-name-text-input'] + '<span class="govuk-!-display-block">Dredge site 1</span></span>' + pageHeadingTextHTML,
+                    classes: "govuk-label--l",
+                    isPageHeading: true
+                },
+                hint: {
+                    text: "This is calculated by using the current depth of the sea or river bed and how much you need to deepen it by, for example if the current depth is 10m chart datum and you're deepening it to 12m chart datum, the dredge depth is 2m of sediment"
+                },
+                suffix: {
+                    text: "m"
+                },
+                errorMessage: {
+                    text: data['dredging-details-site-1-depth-error']
+                } if data['dredging-details-site-1-depth-error']
+            }) }}
+
+            <div class="govuk-button-group">
+                {{ govukButton({
+                    text: "Save and continue"
+                }) }}
+
+                <a class="govuk-link govuk-link--no-visited-state" href="javascript:window.history.back()">Cancel</a>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+<!-- ERROR LOGIC  drop down to toggle states  -->
+<form method="post" action="#" class="for4" style=" float: left; position: relative; bottom:-325px; padding-bottom: 30px;  ">
+
+    <select style="height:30px;" onchange="window.location.href='?'+this.value">
+
+        <option
+            value="dredging-details-site-1-depth-errorthispage=false&dredging-details-site-1-depth-error=false"
+            {% if data['dredging-details-site-1-depth-errorthispage'] !="true" %}selected{% endif %}>Errors - Off</option>
+
+        <option
+            value="dredging-details-site-1-depth-errorthispage=true&dredging-details-site-1-depth-error=Enter the depth of the dredge in metres"
+            {% if data['dredging-details-site-1-depth-errorthispage']=='true' %}selected{% endif %}>Error 1 - No answer entered</option>
+
+    </select>
+
+</form>
+<!--  END OF ERROR LOGIC -->
+
+{% endblock %}

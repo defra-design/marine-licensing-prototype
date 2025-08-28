@@ -35,8 +35,9 @@ Review dredge site details
         {% set site1DredgingComplete = data['dredging-details-site-1-completed'] %}
         {% set site1HistoryComplete = data['site-history-site-1-completed'] %}
         {% set maximumVolumeComplete = data['maximum-dredge-volume-completed'] %}
+        {% set dredgeDepthComplete = data['dredging-details-site-1-depth-completed'] %}
         
-        {% set allComplete = site1DredgingComplete and site1HistoryComplete and maximumVolumeComplete %}
+        {% set allComplete = site1DredgingComplete and site1HistoryComplete and maximumVolumeComplete and dredgeDepthComplete %}
         
         {% if not allComplete %}
             {{ govukInsetText({
@@ -220,7 +221,7 @@ Review dredge site details
                         </dd>
                     </div>
 
-                    <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+                    <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
                             Proposed method of dredging
                         </dt>
@@ -253,20 +254,7 @@ Review dredge site details
                         </dd>
                     </div>
 
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Dredge depth
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            {% if data['dredging-details-site-1-completed'] and data['dredging-details-site-1-depth'] %}
-                                {{ data['dredging-details-site-1-depth'] }} metres
-                            {% else %}
-                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
-                            {% endif %}
-                        </dd>
-                        <dd class="govuk-summary-list__actions">
-                        </dd>
-                    </div>
+
 
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
@@ -293,6 +281,24 @@ Review dredge site details
                         <dd class="govuk-summary-list__actions">
                             <a href="maximum-dredge-volume" class="govuk-link">
                                 {% if data['maximum-dredge-volume-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> maximum dredge volume</span>
+                            </a>
+                        </dd>
+                    </div>
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Dredge depth
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['dredging-details-site-1-depth-completed'] and data['dredging-details-site-1-depth'] %}
+                                {{ data['dredging-details-site-1-depth'] }} metres
+                            {% else %}
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                            {% endif %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="dredge-depth-site-1" class="govuk-link">
+                                {% if data['dredging-details-site-1-depth-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> dredge depth</span>
                             </a>
                         </dd>
                     </div>
