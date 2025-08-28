@@ -33,7 +33,7 @@ Sample plan start page
 		<h2 class="govuk-heading-m">When you provide your information you'll need to:</h2>
 
 		<ul class="govuk-list govuk-list--bullet">
-			<li>complete the type of activity before you can start some tasks as depending on your answers you may not need to complete them</li>
+			<li>complete the type of activity section before you can start some tasks as depending on your answers you may not need to complete them</li>
 			<li>save your progress at the end of each section if you need to come back later</li>
 			<li>complete all sections before you can send the information</li>
 		</ul>
@@ -122,8 +122,12 @@ Sample plan start page
 				  <a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="disposal-site-locations/review-disposal-site-details" aria-describedby="disposal-sites-status">
 					Disposal sites and details
 				  </a>
+				{% elif data['sample-disposal-sites-in-progress'] %}
+				  <a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="disposal-site-locations/review-disposal-site-details" aria-describedby="disposal-sites-status">
+					Disposal sites and details
+				  </a>
 				{% else %}
-				  <a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="disposal-site-locations/where-dispose-of-material" aria-describedby="disposal-sites-status">
+				  <a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="disposal-site-locations/before-you-start" aria-describedby="disposal-sites-status">
 					Disposal sites and details
 				  </a>
 				{% endif %}
@@ -222,8 +226,12 @@ Sample plan start page
 				  <a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="disposal-site-locations/review-disposal-site-details" aria-describedby="disposal-sites-status">
 					Disposal sites and details
 				  </a>
+				{% elif data['sample-disposal-sites-in-progress'] %}
+				  <a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="disposal-site-locations/review-disposal-site-details" aria-describedby="disposal-sites-status">
+					Disposal sites and details
+				  </a>
 				{% else %}
-				  <a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="disposal-site-locations/where-dispose-of-material" aria-describedby="disposal-sites-status">
+				  <a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="disposal-site-locations/before-you-start" aria-describedby="disposal-sites-status">
 					Disposal sites and details
 				  </a>
 				{% endif %}

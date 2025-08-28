@@ -41,6 +41,21 @@ module.exports = function (router) {
   }
 
   ///////////////////////////////////////////
+  // Before you start page
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/${subSection}/before-you-start`, function (req, res) {
+    req.session.data['isSamplePlansSection'] = true;
+    res.render(`versions/${version}/${section}/${subSection}/before-you-start`);
+  });
+
+  // Before you start router (POST)
+  router.post(`/versions/${version}/${section}/${subSection}/before-you-start-router`, function (req, res) {
+    // Redirect to the where dispose of material page
+    res.redirect('where-dispose-of-material');
+  });
+
+  ///////////////////////////////////////////
   // Find existing disposal site page
   ///////////////////////////////////////////
 
