@@ -173,12 +173,14 @@ module.exports = function (router) {
     // Check if disposal site details are complete
     const materialTypeComplete = req.session.data['sample-disposal-site-material-type-completed'];
     const disposalMethodComplete = req.session.data['sample-disposal-site-disposal-method-completed'];
+    const maximumVolumeComplete = req.session.data['sample-disposal-site-1-maximum-volume-completed'];
+    const beneficialUseComplete = req.session.data['sample-disposal-site-1-beneficial-use-completed'];
     const site2MaterialTypeComplete = req.session.data['sample-disposal-site-2-material-type-completed'];
     const site2DisposalMethodComplete = req.session.data['sample-disposal-site-2-disposal-method-completed'];
     const hasSite2 = req.session.data['sample-disposal-site-2-selected'];
     
     // Update completion status based on all sites
-    const site1Complete = materialTypeComplete && disposalMethodComplete;
+    const site1Complete = materialTypeComplete && disposalMethodComplete && maximumVolumeComplete && beneficialUseComplete;
     const site2Complete = site2MaterialTypeComplete && site2DisposalMethodComplete;
     const allSitesComplete = site1Complete && (!hasSite2 || site2Complete);
     
@@ -269,6 +271,136 @@ module.exports = function (router) {
     // Mark as completed and redirect back to review page
     req.session.data['sample-disposal-site-material-type-completed'] = true;
     req.session.data['sample-disposal-site-disposal-method-completed'] = true;
+    res.redirect('review-disposal-site-details');
+  });
+
+  ///////////////////////////////////////////
+  // Maximum disposal volume page
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/${subSection}/maximum-disposal-volume`, function (req, res) {
+    req.session.data['isSamplePlansSection'] = true;
+    
+    // Clear any existing error flags when user navigates to the page
+    req.session.data['sample-disposal-site-1-maximum-volume-errorthispage'] = "false";
+    req.session.data['sample-disposal-site-1-total-volume-error'] = "";
+    req.session.data['sample-disposal-site-1-annual-volume-error'] = "";
+    req.session.data['sample-disposal-site-1-volume-per-campaign-error'] = "";
+    req.session.data['sample-disposal-site-1-campaigns-per-year-error'] = "";
+    
+    res.render(`versions/${version}/${section}/${subSection}/maximum-disposal-volume`);
+  });
+
+  // Maximum disposal volume router (POST)
+  router.post(`/versions/${version}/${section}/${subSection}/maximum-disposal-volume-router`, function (req, res) {
+    // Reset error flags
+    req.session.data['sample-disposal-site-1-maximum-volume-errorthispage'] = "false";
+    req.session.data['sample-disposal-site-1-total-volume-error'] = "";
+    req.session.data['sample-disposal-site-1-annual-volume-error'] = "";
+    req.session.data['sample-disposal-site-1-volume-per-campaign-error'] = "";
+    req.session.data['sample-disposal-site-1-campaigns-per-year-error'] = "";
+
+    let hasErrors = false;
+
+    // Validate total volume (mandatory)
+    if (!req.body['sample-disposal-site-1-total-volume'] || req.body['sample-disposal-site-1-total-volume'].trim() === '') {
+      req.session.data['sample-disposal-site-1-total-volume-error'] = "Enter the total volume over the full licence period";
+      hasErrors = true;
+    } else {
+      req.session.data['sample-disposal-site-1-total-volume'] = req.body['sample-disposal-site-1-total-volume'];
+    }
+
+    // Save annual volume (optional)
+    if (req.body['sample-disposal-site-1-annual-volume']) {
+      req.session.data['sample-disposal-site-1-annual-volume'] = req.body['sample-disposal-site-1-annual-volume'];
+    }
+
+    // Handle disposal campaign fields - if either has a value, both are required
+    const volumePerCampaign = req.body['sample-disposal-site-1-volume-per-campaign'];
+    const campaignsPerYear = req.body['sample-disposal-site-1-campaigns-per-year'];
+    
+    if (volumePerCampaign || campaignsPerYear) {
+      // If either field has a value, both are required
+      if (!volumePerCampaign || volumePerCampaign.trim() === '') {
+        req.session.data['sample-disposal-site-1-volume-per-campaign-error'] = "Enter the volume per campaign";
+        hasErrors = true;
+      } else {
+        req.session.data['sample-disposal-site-1-volume-per-campaign'] = volumePerCampaign;
+      }
+      
+      if (!campaignsPerYear || campaignsPerYear.trim() === '') {
+        req.session.data['sample-disposal-site-1-campaigns-per-year-error'] = "Enter the number of campaigns per year";
+        hasErrors = true;
+      } else {
+        req.session.data['sample-disposal-site-1-campaigns-per-year'] = campaignsPerYear;
+      }
+    } else {
+      // Save values even if empty to clear previous entries
+      req.session.data['sample-disposal-site-1-volume-per-campaign'] = volumePerCampaign || '';
+      req.session.data['sample-disposal-site-1-campaigns-per-year'] = campaignsPerYear || '';
+    }
+
+    // If there are errors, redirect back to the form
+    if (hasErrors) {
+      req.session.data['sample-disposal-site-1-maximum-volume-errorthispage'] = "true";
+      return res.redirect('maximum-disposal-volume');
+    }
+
+    // Mark as completed and redirect back to review page
+    req.session.data['sample-disposal-site-1-maximum-volume-completed'] = true;
+    res.redirect('review-disposal-site-details');
+  });
+
+  ///////////////////////////////////////////
+  // Beneficial use page
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/${subSection}/beneficial-use`, function (req, res) {
+    req.session.data['isSamplePlansSection'] = true;
+    
+    // Clear any existing error flags when user navigates to the page
+    req.session.data['sample-disposal-site-1-beneficial-use-errorthispage'] = "false";
+    req.session.data['sample-disposal-site-1-beneficial-use-error'] = "";
+    req.session.data['sample-disposal-site-1-beneficial-use-description-error'] = "";
+    
+    res.render(`versions/${version}/${section}/${subSection}/beneficial-use`);
+  });
+
+  // Beneficial use router (POST)
+  router.post(`/versions/${version}/${section}/${subSection}/beneficial-use-router`, function (req, res) {
+    // Reset error flags
+    req.session.data['sample-disposal-site-1-beneficial-use-errorthispage'] = "false";
+    req.session.data['sample-disposal-site-1-beneficial-use-error'] = "";
+    req.session.data['sample-disposal-site-1-beneficial-use-description-error'] = "";
+
+    let hasErrors = false;
+
+    // Validate beneficial use selection (mandatory)
+    if (!req.body['sample-disposal-site-1-beneficial-use']) {
+      req.session.data['sample-disposal-site-1-beneficial-use-error'] = "Select if the material being disposed of is for beneficial use";
+      hasErrors = true;
+    } else {
+      req.session.data['sample-disposal-site-1-beneficial-use'] = req.body['sample-disposal-site-1-beneficial-use'];
+      
+      // If "yes" is selected, validate the description
+      if (req.body['sample-disposal-site-1-beneficial-use'] === 'yes') {
+        if (!req.body['sample-disposal-site-1-beneficial-use-description'] || req.body['sample-disposal-site-1-beneficial-use-description'].trim() === '') {
+          req.session.data['sample-disposal-site-1-beneficial-use-description-error'] = "Enter a description of the proposed beneficial use";
+          hasErrors = true;
+        } else {
+          req.session.data['sample-disposal-site-1-beneficial-use-description'] = req.body['sample-disposal-site-1-beneficial-use-description'];
+        }
+      }
+    }
+
+    // If there are errors, redirect back to the form
+    if (hasErrors) {
+      req.session.data['sample-disposal-site-1-beneficial-use-errorthispage'] = "true";
+      return res.redirect('beneficial-use');
+    }
+
+    // Mark as completed and redirect back to review page
+    req.session.data['sample-disposal-site-1-beneficial-use-completed'] = true;
     res.redirect('review-disposal-site-details');
   });
 
