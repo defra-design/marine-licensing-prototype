@@ -88,6 +88,7 @@ Projects
 
 		{% set isDeleteProject = data['deleteSamplePlanProject'] == "true" %}
 		{% set isUserSamplePlanProjectDeleted = data['userSamplePlanProjectDeleted'] == "true" %}
+		{% set isBranscombeProjectDeleted = data['branscombeProjectDeleted'] == "true" %}
 		{% set isAlternativeView = data['alternativeSamplePlanProjectView'] == "true" %}
 
 		{% if isDeleteProject %}
@@ -131,7 +132,7 @@ Projects
 				</tr>
 				{% endif %}
 
-				{% if not isDeleteProject and not isAlternativeView %}
+				{% if not isBranscombeProjectDeleted and not isDeleteProject and not isAlternativeView %}
 				<tr class="govuk-table__row">
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Branscombe bore holes</th>
 					<td class="govuk-table__cell">
@@ -149,7 +150,7 @@ Projects
 					</td>
 					<td class="govuk-table__cell" data-sort-value="-">-</td>
 					<td class="govuk-table__cell" data-sort-value="Continue">	
-						<a href="#" class="govuk-link--no-visited-state govuk-!-margin-right-4">Continue</a> <a href="delete?project=south-coast" class="govuk-link--no-visited-state">Delete</a>
+						<a href="#" class="govuk-link--no-visited-state govuk-!-margin-right-4">Continue</a> <a href="delete?project=branscombe-bore-holes" class="govuk-link--no-visited-state">Delete</a>
 					</td>
 				</tr>
 				{% endif %}

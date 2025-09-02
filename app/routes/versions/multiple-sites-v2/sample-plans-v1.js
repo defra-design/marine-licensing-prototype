@@ -12,8 +12,22 @@ module.exports = function (router) {
     res.render(`versions/${version}/${section}/projects`);
   });
 
-  // Delete project route
+  ///////////////////////////////////////////
+  // Delete project confirmation page
+  ///////////////////////////////////////////
+
   router.get(`/versions/${version}/${section}/delete`, function (req, res) {
+    req.session.data['isSamplePlansSection'] = true;
+    
+    // Store the project parameter to be passed to the template
+    const projectToDelete = req.query.project;
+    req.session.data['project'] = projectToDelete;
+    
+    res.render(`versions/${version}/${section}/delete`);
+  });
+
+  // Delete project router (POST)
+  router.post(`/versions/${version}/${section}/delete-router`, function (req, res) {
     const projectToDelete = req.query.project;
     
     if (projectToDelete === 'sample-plan-user') {
@@ -24,13 +38,13 @@ module.exports = function (router) {
       req.session.data['sample-plan-new-or-existing-licence'] = '';
       req.session.data['sample-plan-dredging-volumes-completed'] = "false";
       req.session.data['sample-plan-fee-estimate-completed'] = "false";
-    } else if (projectToDelete === 'south-coast') {
-      // Handle deletion of the South coast sample project
-      // Could set a flag to hide this project in the view
-    } else if (projectToDelete === 'my-sample-plan') {
-      // Handle deletion of the My sample plan project
-      // Could set a flag to hide this project in the view
+    } else if (projectToDelete === 'branscombe-bore-holes') {
+      // Handle deletion of the Branscombe bore holes project
+      req.session.data['branscombeProjectDeleted'] = "true";
     }
+    
+    // Clear the project parameter from session
+    delete req.session.data['project'];
     
     res.redirect('projects');
   });
