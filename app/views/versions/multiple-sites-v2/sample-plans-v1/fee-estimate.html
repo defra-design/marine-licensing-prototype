@@ -2,6 +2,9 @@
 
 {% block beforeContent %}
 	{% include "../includes/phase-banner.html" %} 
+	{% if data['organisation-name'] %}
+		{% include "../includes/organisation-switcher.html" %}
+	{% endif %}
 	{% include "../includes/back-link.html" %}
 {% endblock %}
 
