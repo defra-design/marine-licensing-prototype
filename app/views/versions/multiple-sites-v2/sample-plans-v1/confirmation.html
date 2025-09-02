@@ -5,7 +5,6 @@
     {% if data['user_type'] === 'organisation' %}
         {% include "../includes/organisation-switcher.html" %}
     {% endif %}
-    {{ super() }}
 {% endblock %}
 
 {% from "govuk/components/panel/macro.njk" import govukPanel %}

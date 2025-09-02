@@ -41,6 +41,12 @@ module.exports = function (router) {
 
   router.get(`/versions/${version}/${section}/get-a-plan-for-sediment-sample-analysis`, function (req, res) {
     req.session.data['isSamplePlansSection'] = true;
+    
+    // if a user is an org user then store it in the session
+    if (req.query.user_type === 'organisation') {
+      req.session.data['user_type'] = 'organisation';
+    }
+    
     res.render(`versions/${version}/${section}/get-a-plan-for-sediment-sample-analysis`);
   });
 
@@ -50,13 +56,85 @@ module.exports = function (router) {
 
   router.get(`/versions/${version}/${section}/sign-in`, function (req, res) {
     req.session.data['isSamplePlansSection'] = true;
+    
+    // if a user is an org user then store it in the session
+    if (req.query.user_type === 'organisation') {
+      req.session.data['user_type'] = 'organisation';
+    }
+    
+    // Clear organisation data when user signs in (including when they sign out and come back)
+    delete req.session.data['organisation-name'];
+    delete req.session.data['changing-organisation'];
+    
     res.render(`versions/${version}/${section}/sign-in`);
   });
 
   // Sign-in router (POST)
   router.post(`/versions/${version}/${section}/sign-in-router`, function (req, res) {
-    // For prototype purposes, always redirect to project name start
-    res.redirect('project-name-start');
+    // if a user is an org user then redirect to select an org
+    if (req.session.data['user_type'] === 'organisation') {
+      // Clear the flag to ensure this is treated as a new selection
+      delete req.session.data['changing-organisation'];
+      res.redirect('organisation-selector');
+    } else {
+      // For prototype purposes, always redirect to project name start
+      res.redirect('project-name-start');
+    }
+  });
+
+  ///////////////////////////////////////////
+  // Organisation selector page
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/organisation-selector`, function (req, res) {
+    req.session.data['isSamplePlansSection'] = true;
+    
+    // If the user is changing their organisation, set a flag in the session
+    const isChangingOrg = req.query.change === 'true';
+    if (isChangingOrg) {
+      req.session.data['changing-organisation'] = 'true';
+    }
+
+    const allOrganisations = [
+      {value: "Brighton Marina Operations", text: "Brighton Marina Operations"},
+      {value: "Grimsby Fish Dock Enterprise", text: "Grimsby Fish Dock Enterprise"},
+      {value: "North East Wind Farms", text: "North East Wind Farms"},
+      {value: "Ramsgate Marina", text: "Ramsgate Marina"}
+    ];
+
+    const currentOrganisation = req.session.data['organisation-name'];
+    const organisations = allOrganisations.filter(org => org.value !== currentOrganisation);
+
+    res.render(`versions/${version}/${section}/organisation-selector`, {
+      organisations: organisations,
+      changingOrganisation: isChangingOrg
+    });
+  });
+
+  // organisation selector router
+  router.post(`/versions/${version}/${section}/organisation-selector-router`, function (req, res) {
+    // Turn off errors by default
+    req.session.data['sample-plan-errorthispage'] = "false";
+    req.session.data['sample-plan-errortypeone'] = "false";
+
+    // Check if the radio button is selected
+    if (req.session.data['organisation-name'] === undefined) {
+      req.session.data['sample-plan-errorthispage'] = "true";
+      req.session.data['sample-plan-errortypeone'] = "true";
+      res.redirect('organisation-selector');
+    } else {
+      // If the user is changing their organisation, redirect to the projects page
+      if (req.session.data['changing-organisation'] === 'true') {
+        // Toggle the alternative project view
+        req.session.data['alternativeProjectView'] = req.session.data['alternativeProjectView'] === 'true' ? 'false' : 'true';
+        // Reset the flag
+        delete req.session.data['changing-organisation'];
+        res.redirect('projects');
+      } else {
+        // Redirect to the project name start page for new users
+        res.redirect('project-name-start');
+      }
+    }
   });
 
   ///////////////////////////////////////////
