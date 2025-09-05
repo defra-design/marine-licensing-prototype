@@ -1,30 +1,33 @@
 {% extends "layouts/main.html" %}
-{% set pageTitle = "You need to sign in" %}
+{% set pageTitle = "You need to sign in to access this page" %}
 
 {% block content %}
 <div class="govuk-grid-row">
   <div class="govuk-grid-column-two-thirds">
 
-    <h1 class="govuk-heading-l">You need to sign in</h1>
 
-    <p class="govuk-body">You cannot access this page without signing in.</p>
+    <h1 class="govuk-heading-l">You need to sign in to access this page</h1>
 
-    <h2 class="govuk-heading-m">What you can do</h2>
-    <ul class="govuk-list govuk-list--bullet">
-      <li><a class="govuk-link" href="#">Sign in with your Government Gateway account</a></li>
-      <li>If you do not have an account, you need to <a class="govuk-link" href="#">create one through Government
-          Gateway</a></li>
-    </ul>
 
-    <h2 class="govuk-heading-m">If you have problems signing in</h2>
-    <p class="govuk-body">Contact us:</p>
-    <ul class="govuk-list govuk-list--bullet">
-      <li>Email: <a class="govuk-link" href="#">info@marinemanagement.org.uk</a></li>
-      <li>Telephone: <a class="govuk-link" href="#">0300 123 1032</a></li>
-    </ul>
+    <p class="govuk-body">If you already have a Defra ID account, <a class="govuk-link" href="/sign-in">sign in using
+        Government Gateway</a>.</p>
+    <p class="govuk-body">If you do not have an account you can create one through Government Gateway.</p>
+    <p class="govuk-body">Contact our helpline if you have any questions.</p>
 
-    <p class="govuk-body">The helpline is open 9am to 4:30pm, Monday to Thursday, and 9am to 4pm on Friday. For queries
-      outside these times, email us and we will respond the next working day.</p>
+
+    <h2 class="govuk-heading-m govuk-!-margin-bottom-1">Phone</h2>
+    <p class="govuk-body govuk-!-margin-bottom-0">0191 376 2791</p>
+
+
+    <h2 class="govuk-heading-m govuk-!-margin-top-6 govuk-!-margin-bottom-1">Email</h2>
+    <p class="govuk-body govuk-!-margin-bottom-0"><a class="govuk-link"
+        href="mailto:marine.consents@marinemanagement.org.uk">marine.consents@marinemanagement.org.uk</a></p>
+
+
+    <h2 class="govuk-heading-m govuk-!-margin-top-6 govuk-!-margin-bottom-1">Opening times</h2>
+    <p class="govuk-body govuk-!-margin-bottom-1">Monday to Thursday: 9am to 4:30pm</p>
+    <p class="govuk-body govuk-!-margin-bottom-0">Friday: 9am to 4pm</p>
+
 
   </div>
 </div>
