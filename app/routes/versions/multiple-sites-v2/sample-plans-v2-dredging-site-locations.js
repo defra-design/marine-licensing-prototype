@@ -1,7 +1,7 @@
 module.exports = function (router) {
   // Sample plans v1 dredging site locations routes
   const version = "multiple-sites-v2";
-  const section = "sample-plans-v1";
+  const section = "sample-plans-v2";
   const subsection = "dredging-site-locations";
 
   /////////////////////////////////////////////////////////

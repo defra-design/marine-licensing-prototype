@@ -1,0 +1,188 @@
+{% extends "../../layouts/sample-plans.html" %}
+
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% block head %}
+  {{ super() }}
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/accessible-autocomplete@3.0.1/dist/accessible-autocomplete.min.css" />
+{% endblock %}
+
+{% block bodyEnd %}
+  {{ super() }}
+  <script src="https://cdn.jsdelivr.net/npm/accessible-autocomplete@3.0.1/dist/accessible-autocomplete.min.js"></script>
+{% endblock %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% if data['user_type'] === 'organisation' %}
+        {% include "../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+Find the existing disposal site
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        
+        <span class="govuk-caption-l">{{ data['sample-plan-project-name-text-input'] }}</span>
+        <h1 class="govuk-heading-l">
+            {{ pageHeadingTextHTML }}
+        </h1>
+
+        <p class="govuk-body">You can search for an existing disposal site by using any of the following:</p>
+        
+        <ul class="govuk-list govuk-list--bullet">
+            <li>the disposal site code</li>
+            <li>name of the disposal site</li>
+            <li>site location</li>
+            <li>marine area the disposal site is located in</li>
+        </ul>
+        
+        <form action="find-existing-disposal-site-router" method="post">
+            
+            {{ govukInput({
+                label: {
+                    text: "Disposal site code",
+                    classes: "govuk-label--s"
+                },
+                hint: {
+                    text: "Each approved disposal site has a unique code"
+                },
+                id: "disposal-site-code",
+                name: "disposal-site-code",
+                value: data['disposal-site-code'],
+                classes: "govuk-input--width-10"
+            }) }}
+
+            {{ govukInput({
+                label: {
+                    text: "Name of disposal site",
+                    classes: "govuk-label--s"
+                },
+                id: "disposal-site-name",
+                name: "disposal-site-name",
+                value: data['disposal-site-name'],
+                classes: "govuk-input--width-20"
+            }) }}
+
+
+            {{ govukRadios({
+                fieldset: {
+                    legend: {
+                        text: "Site location",
+                        classes: "govuk-fieldset__legend--s"
+                    }
+                },
+                hint: {
+                    text: "We only need to know about material being disposed of in any of these locations"
+                },
+                items: [
+                    {
+                        value: "Any",
+                        text: "Any",
+                        checked: data['disposal-site-location'] === "Any"
+                    },
+                    {
+                        value: "England",
+                        text: "England",
+                        checked: data['disposal-site-location'] === "England"
+                    },
+                    {
+                        value: "Isle of Man",
+                        text: "Isle of Man",
+                        checked: data['disposal-site-location'] === "Isle of Man"
+                    },
+                    {
+                        value: "Jersey",
+                        text: "Jersey",
+                        checked: data['disposal-site-location'] === "Jersey"
+                    },
+                    {
+                        value: "Northern Ireland",
+                        text: "Northern Ireland",
+                        checked: data['disposal-site-location'] === "Northern Ireland"
+                    }
+                    
+                ],
+                name: "disposal-site-location",
+                value: data['disposal-site-location']
+            }) }}
+
+            <div class="govuk-form-group">
+                <label class="govuk-label govuk-label--s" for="marine-area-autocomplete">
+                    Marine area
+                </label>
+                <div class="govuk-hint">
+                    This includes sea, river, estuary and coastal waters
+                </div>
+                <div id="marine-area-autocomplete-container"></div>
+            </div>
+
+            {{ govukRadios({
+                fieldset: {
+                    legend: {
+                        text: "Status",
+                        classes: "govuk-fieldset__legend--s"
+                    }
+                },
+                items: [
+                    {
+                        value: "Open",
+                        text: "Open",
+                        checked: data['disposal-site-status'] === "Open"
+                    },
+                    {
+                        value: "Closed",
+                        text: "Closed",
+                        hint: {
+                            text: "The site has not been used in the last 10 years"
+                        },
+                        checked: data['disposal-site-status'] === "Closed"
+                    },
+                    {
+                        value: "Disused",
+                        text: "Disused",
+                        hint: {
+                            text: "The site has not been used in the last 5 years"
+                        },
+                        checked: data['disposal-site-status'] === "Disused"
+                    },
+                    {
+                        value: "Any",
+                        text: "Any",
+                        checked: data['disposal-site-status'] === "Any"
+                    }
+                ],
+                name: "disposal-site-status",
+                value: data['disposal-site-status']
+            }) }}
+
+            <div class="govuk-button-group">
+                {{ govukButton({
+                    text: "Search"
+                }) }}
+                <a class="govuk-link govuk-link--no-visited-state" href="">Cancel</a>
+                <!-- <a class="govuk-link govuk-link--no-visited-state" href="find-existing-disposal-site?disposal-site-code=&disposal-site-name=&disposal-site-location=&marine-area=&disposal-site-status=">Clear data</a> -->    
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

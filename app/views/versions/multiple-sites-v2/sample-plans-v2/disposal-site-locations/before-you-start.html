@@ -1,0 +1,81 @@
+{% extends "../../layouts/sample-plans.html" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% if data['user_type'] === 'organisation' %}
+        {% include "../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+Disposal sites and details
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+{{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        
+        <span class="govuk-caption-l">{{ data['sample-plan-project-name-text-input'] }}</span>
+        <h1 class="govuk-heading-l">
+            {{ pageHeadingTextHTML }}
+        </h1>
+
+      <h2 class="govuk-heading-m">Before you start</h2>
+
+      <p class="govuk-body">
+        <a class="govuk-link" href="https://www.gov.uk/guidance/deposits" target="_blank">Read the guidance on deposits</a>. This includes guidance on disposal of material at sea.
+      </p>
+
+      <p class="govuk-body">In the next step, you'll need to tell us the following for every site:</p>
+
+      <ul class="govuk-list govuk-list--bullet">
+        <li>if you want to dispose of material at an existing or new disposal site</li>
+        <li>type of material being disposed</li>
+        <li>method of disposal</li>
+        <li>maximum disposal volume for the full licence period, you can also tell us maximum annual and campaign disposal volumes if you have this information</li>
+        <li>if any of the material is being disposed of for beneficial use</li>
+      </ul>
+
+      <h2 class="govuk-heading-m">Providing new disposal site locations</h2>
+
+      <p class="govuk-body">You can provide the site location in 2 ways:</p>
+
+      <ul class="govuk-list govuk-list--bullet">
+        <li>upload a file with the coordinates</li>
+        <li>enter the coordinates manually</li>
+      </ul>
+
+      <h3 class="govuk-heading-s">Projects with multiple sites</h3>
+
+      <p class="govuk-body">You need to give separate location details for each disposal site if your project has multiple sites.</p>
+
+      <p class="govuk-body">If you're uploading a file you need to include all the sites in 1 file.</p>
+
+      <h3 class="govuk-heading-s">Defining the site boundary</h3>
+
+      <p class="govuk-body">The coordinates must mark the full boundary of every site, including space for any movement or small changes in the activity location.</p>
+
+        <form action="before-you-start-router" method="post" novalidate>
+            
+            <div class="govuk-button-group">
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+
+                <a class="govuk-link govuk-link--no-visited-state" href="../sample-plan-start-page">Cancel</a>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+{% endblock %}
