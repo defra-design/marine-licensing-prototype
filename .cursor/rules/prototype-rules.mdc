@@ -174,6 +174,40 @@ Use this approach:
 html: '<span class="govuk-caption-l">' + data['exemption-project-name-text-input'] + '<span class="govuk-!-display-block">Site ' + displaySiteNumber + '</span></span>' + pageHeadingTextHTML
 ```
 
+### Error Styling with Captions
+**CRITICAL**: When using captions with form components that can have errors, the caption MUST be included within the component's legend/label HTML to ensure the error styling red line wraps around both the caption and heading.
+
+**WRONG** (caption outside component - error line won't wrap around caption):
+```nunjucks
+<span class="govuk-caption-l">{{ data['project-name'] }}</span>
+{{ govukRadios({
+    fieldset: {
+        legend: {
+            text: pageHeadingTextHTML,
+            isPageHeading: true,
+            classes: "govuk-fieldset__legend--l"
+        }
+    },
+    errorMessage: { text: "Error message" } if data['errorthispage'] == "true"
+}) }}
+```
+
+**CORRECT** (caption inside component legend HTML - error line wraps around both):
+```nunjucks
+{{ govukRadios({
+    fieldset: {
+        legend: {
+            html: '<span class="govuk-caption-l">' + data['project-name'] + '</span>' + pageHeadingTextHTML,
+            isPageHeading: true,
+            classes: "govuk-fieldset__legend--l"
+        }
+    },
+    errorMessage: { text: "Error message" } if data['errorthispage'] == "true"
+}) }}
+```
+
+This applies to ALL form components with legends/labels (govukRadios, govukCheckboxes, govukInput, etc.) when used with captions and error states.
+
 ### User Data
 - Persist user answers in `req.session`
 - **Use batch system for site data** - never store sites directly in session

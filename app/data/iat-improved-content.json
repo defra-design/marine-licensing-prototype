@@ -1393,7 +1393,7 @@
       "answers": [
         {
           "id": "inSea",
-          "text": "In or over the 'Sea'",
+          "text": "In or over the sea",
           "nextQuestionRoute": "/jurisdiction",
           "hint": "The sea includes any area submerged at mean high water springs"
         },
@@ -1429,11 +1429,6 @@
         {
           "id": "englishWaters",
           "text": "English waters or Northern Ireland offshore waters",
-          "nextQuestionRoute": "/activity-type"
-        },
-        {
-          "id": "northernIrishOffshoreWaters",
-          "text": "In Northern Ireland offshore waters",
           "nextQuestionRoute": "/activity-type"
         },
         {

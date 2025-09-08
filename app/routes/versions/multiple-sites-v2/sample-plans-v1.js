@@ -3,30 +3,158 @@ module.exports = function (router) {
   const version = "multiple-sites-v2";
   const section = "sample-plans-v1";
 
+  ///////////////////////////////////////////
+  // Projects page
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/projects`, function (req, res) {
+    res.render(`versions/${version}/${section}/projects`);
+  });
+
+  ///////////////////////////////////////////
+  // Delete project confirmation page
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/delete`, function (req, res) {
+    
+    // Store the project parameter to be passed to the template
+    const projectToDelete = req.query.project;
+    req.session.data['project'] = projectToDelete;
+    
+    res.render(`versions/${version}/${section}/delete`);
+  });
+
+  // Delete project router (POST)
+  router.post(`/versions/${version}/${section}/delete-router`, function (req, res) {
+    const projectToDelete = req.query.project;
+    
+    if (projectToDelete === 'sample-plan-user') {
+      req.session.data['userSamplePlanProjectDeleted'] = "true";
+      // Clear the user's sample plan project data
+      req.session.data['sample-plan-project-name-text-input'] = '';
+      req.session.data['sample-plan-which-activity'] = '';
+      req.session.data['sample-plan-new-or-existing-licence'] = '';
+      req.session.data['sample-plan-dredging-volumes-completed'] = "false";
+      req.session.data['sample-plan-fee-estimate-completed'] = "false";
+    } else if (projectToDelete === 'branscombe-bore-holes') {
+      // Handle deletion of the Branscombe bore holes project
+      req.session.data['branscombeProjectDeleted'] = "true";
+    }
+    
+    // Clear the project parameter from session
+    delete req.session.data['project'];
+    
+    res.redirect('projects');
+  });
+
+  ///////////////////////////////////////////
   // Sample plan information page
+  ///////////////////////////////////////////
+
   router.get(`/versions/${version}/${section}/get-a-plan-for-sediment-sample-analysis`, function (req, res) {
-    req.session.data['isSamplePlansSection'] = true;
+    
+    // if a user is an org user then store it in the session
+    if (req.query.user_type === 'organisation') {
+      req.session.data['user_type'] = 'organisation';
+    }
+    
     res.render(`versions/${version}/${section}/get-a-plan-for-sediment-sample-analysis`);
   });
 
+  ///////////////////////////////////////////
   // Sign-in page
+  ///////////////////////////////////////////
+
   router.get(`/versions/${version}/${section}/sign-in`, function (req, res) {
-    req.session.data['isSamplePlansSection'] = true;
+    
+    // if a user is an org user then store it in the session
+    if (req.query.user_type === 'organisation') {
+      req.session.data['user_type'] = 'organisation';
+    }
+    
+    // Clear organisation data when user signs in (including when they sign out and come back)
+    delete req.session.data['organisation-name'];
+    delete req.session.data['changing-organisation'];
+    
     res.render(`versions/${version}/${section}/sign-in`);
   });
 
   // Sign-in router (POST)
   router.post(`/versions/${version}/${section}/sign-in-router`, function (req, res) {
-    // For prototype purposes, always redirect to project name start
-    res.redirect('project-name-start');
+    // if a user is an org user then redirect to select an org
+    if (req.session.data['user_type'] === 'organisation') {
+      // Clear the flag to ensure this is treated as a new selection
+      delete req.session.data['changing-organisation'];
+      res.redirect('organisation-selector');
+    } else {
+      // For prototype purposes, always redirect to project name start
+      res.redirect('project-name-start');
+    }
   });
 
+  ///////////////////////////////////////////
+  // Organisation selector page
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/organisation-selector`, function (req, res) {
+    req.session.data['isSamplePlansSection'] = true;
+    
+    // If the user is changing their organisation, set a flag in the session
+    const isChangingOrg = req.query.change === 'true';
+    if (isChangingOrg) {
+      req.session.data['changing-organisation'] = 'true';
+    }
+
+    const allOrganisations = [
+      {value: "Brighton Marina Operations", text: "Brighton Marina Operations"},
+      {value: "Grimsby Fish Dock Enterprise", text: "Grimsby Fish Dock Enterprise"},
+      {value: "North East Wind Farms", text: "North East Wind Farms"},
+      {value: "Ramsgate Marina", text: "Ramsgate Marina"}
+    ];
+
+    const currentOrganisation = req.session.data['organisation-name'];
+    const organisations = allOrganisations.filter(org => org.value !== currentOrganisation);
+
+    res.render(`versions/${version}/${section}/organisation-selector`, {
+      organisations: organisations,
+      changingOrganisation: isChangingOrg
+    });
+  });
+
+  // organisation selector router
+  router.post(`/versions/${version}/${section}/organisation-selector-router`, function (req, res) {
+    // Turn off errors by default
+    req.session.data['sample-plan-errorthispage'] = "false";
+    req.session.data['sample-plan-errortypeone'] = "false";
+
+    // Check if the radio button is selected
+    if (req.session.data['organisation-name'] === undefined) {
+      req.session.data['sample-plan-errorthispage'] = "true";
+      req.session.data['sample-plan-errortypeone'] = "true";
+      res.redirect('organisation-selector');
+    } else {
+      // If the user is changing their organisation, redirect to the projects page
+      if (req.session.data['changing-organisation'] === 'true') {
+        // Toggle the alternative project view
+        req.session.data['alternativeProjectView'] = req.session.data['alternativeProjectView'] === 'true' ? 'false' : 'true';
+        // Reset the flag
+        delete req.session.data['changing-organisation'];
+        res.redirect('projects');
+      } else {
+        // Redirect to the project name start page for new users
+        res.redirect('project-name-start');
+      }
+    }
+  });
+
+  ///////////////////////////////////////////
   // Project name start page
+  ///////////////////////////////////////////
+
   router.get(`/versions/${version}/${section}/project-name-start`, function (req, res) {
     // Clear any existing error flags when user navigates to the page
     req.session.data['sample-plan-errorthispage'] = "false";
     req.session.data['sample-plan-errortypeone'] = "false";
-    req.session.data['isSamplePlansSection'] = true;
     
     res.render(`versions/${version}/${section}/project-name-start`);
   });
@@ -51,13 +179,64 @@ module.exports = function (router) {
     res.redirect('sample-plan-start-page');
   });
 
+  ///////////////////////////////////////////
   // Sample plan start page
+  ///////////////////////////////////////////
+
   router.get(`/versions/${version}/${section}/sample-plan-start-page`, function (req, res) {
     req.session.data['isSamplePlansSection'] = true;
     res.render(`versions/${version}/${section}/sample-plan-start-page`);
   });
 
+  ///////////////////////////////////////////
+  // Project background page
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/project-background`, function (req, res) {
+    req.session.data['isSamplePlansSection'] = true;
+    req.session.data['sample-plan-errorthispage'] = "false";
+    req.session.data['sample-plan-errortypeone'] = "false";
+    req.session.data['sample-plan-errortypetwo'] = "false";
+    req.session.data['sample-plan-errortypethree'] = "false";
+    res.render(`versions/${version}/${section}/project-background`);
+  });
+
+  router.post(`/versions/${version}/${section}/project-background`, function (req, res) {
+    const projectBackground = req.body['sample-plan-project-background'];
+    const otherContact = req.body['sample-plan-other-contact'];
+    const otherContactDetails = req.body['sample-plan-other-contact-details'];
+    let hasError = false;
+    
+    if (!projectBackground || projectBackground.trim() === '') {
+      req.session.data['sample-plan-errorthispage'] = "true";
+      req.session.data['sample-plan-errortypeone'] = "true";
+      hasError = true;
+    }
+
+    if (!otherContact) {
+      req.session.data['sample-plan-errorthispage'] = "true";
+      req.session.data['sample-plan-errortypetwo'] = "true";
+      hasError = true;
+    }
+
+    if (otherContact === 'Yes' && (!otherContactDetails || otherContactDetails.trim() === '')) {
+      req.session.data['sample-plan-errorthispage'] = "true";
+      req.session.data['sample-plan-errortypethree'] = "true";
+      hasError = true;
+    }
+
+    if (hasError) {
+      return res.redirect('project-background');
+    }
+
+    req.session.data['sample-plan-project-background-completed'] = "true";
+    res.redirect('sample-plan-start-page');
+  });
+
+  ///////////////////////////////////////////
   // Which activity page
+  ///////////////////////////////////////////
+
   router.get(`/versions/${version}/${section}/which-activity`, function (req, res) {
     // Clear any existing error flags when user navigates to the page
     req.session.data['sample-plan-errorthispage'] = "false";
@@ -87,7 +266,10 @@ module.exports = function (router) {
     res.redirect('sample-plan-start-page');
   });
 
+  ///////////////////////////////////////////
   // Project name page (for editing from task list)
+  ///////////////////////////////////////////
+
   router.get(`/versions/${version}/${section}/project-name`, function (req, res) {
     // Clear any existing error flags when user navigates to the page
     req.session.data['sample-plan-errorthispage'] = "false";
@@ -117,7 +299,10 @@ module.exports = function (router) {
     res.redirect('sample-plan-start-page');
   });
 
+  ///////////////////////////////////////////
   // New or existing licence page
+  ///////////////////////////////////////////
+
   router.get(`/versions/${version}/${section}/new-or-existing-licence`, function (req, res) {
     // Clear any existing error flags when user navigates to the page
     req.session.data['sample-plan-errorthispage'] = "false";
@@ -156,7 +341,10 @@ module.exports = function (router) {
     }
   });
 
+  ///////////////////////////////////////////
   // New licence length page
+  ///////////////////////////////////////////
+
   router.get(`/versions/${version}/${section}/new-licence-length`, function (req, res) {
     // Clear any existing error flags when user navigates to the page
     req.session.data['sample-plan-errorthispage'] = "false";
@@ -188,11 +376,15 @@ module.exports = function (router) {
     res.redirect('sample-plan-start-page');
   });
 
+  ///////////////////////////////////////////
   // Existing licence expiry page
+  ///////////////////////////////////////////
+
   router.get(`/versions/${version}/${section}/existing-licence-expiry`, function (req, res) {
     // Clear any existing error flags when user navigates to the page
     req.session.data['sample-plan-errorthispage'] = "false";
     req.session.data['sample-plan-errortypeone'] = "false";
+    req.session.data['sample-plan-errortypetwo'] = "false";
     req.session.data['isSamplePlansSection'] = true;
     
     res.render(`versions/${version}/${section}/existing-licence-expiry`);
@@ -203,15 +395,28 @@ module.exports = function (router) {
     // Reset error flags
     req.session.data['sample-plan-errorthispage'] = "false";
     req.session.data['sample-plan-errortypeone'] = "false";
+    req.session.data['sample-plan-errortypetwo'] = "false";
 
     // Validate that all date fields are filled
     const day = req.body['sample-plan-licence-expiry-day'];
     const month = req.body['sample-plan-licence-expiry-month'];
     const year = req.body['sample-plan-licence-expiry-year'];
+    const licenceNumber = req.body['sample-plan-licence-number'];
+    let hasError = false;
+
+    if (!licenceNumber || licenceNumber.trim() === '') {
+      req.session.data['sample-plan-errorthispage'] = "true";
+      req.session.data['sample-plan-errortypetwo'] = "true";
+      hasError = true;
+    }
     
     if ((!day || day.trim() === '') || (!month || month.trim() === '') || (!year || year.trim() === '')) {
       req.session.data['sample-plan-errorthispage'] = "true";
       req.session.data['sample-plan-errortypeone'] = "true";
+      hasError = true;
+    }
+
+    if (hasError) {
       return res.redirect('existing-licence-expiry');
     }
 
@@ -219,7 +424,259 @@ module.exports = function (router) {
     req.session.data['sample-plan-licence-expiry-day'] = day;
     req.session.data['sample-plan-licence-expiry-month'] = month;
     req.session.data['sample-plan-licence-expiry-year'] = year;
+    req.session.data['sample-plan-licence-number'] = licenceNumber;
     res.redirect('sample-plan-start-page');
+  });
+
+  ///////////////////////////////////////////
+  // Before you start dredging volume page
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/before-you-start-dredging-volume`, function (req, res) {
+    req.session.data['isSamplePlansSection'] = true;
+    
+    // If dredging volumes are already completed, redirect to the maximum dredging volume page
+    if (req.session.data['sample-plan-dredging-volumes-completed'] === "true") {
+      return res.redirect('maximum-dredging-volume');
+    }
+    
+    res.render(`versions/${version}/${section}/before-you-start-dredging-volume`);
+  });
+
+  // Before you start dredging volume router (POST)
+  router.post(`/versions/${version}/${section}/before-you-start-dredging-volume-router`, function (req, res) {
+    res.redirect('maximum-dredging-volume');
+  });
+
+  ///////////////////////////////////////////
+  // Maximum dredging volume page
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/maximum-dredging-volume`, function (req, res) {
+    // Clear any existing error flags when user navigates to the page
+    req.session.data['sample-plan-errorthispage'] = "false";
+    req.session.data['sample-plan-errortypeone'] = "false";
+    req.session.data['sample-plan-errortypetwo'] = "false";
+    req.session.data['sample-plan-errortypethree'] = "false";
+    req.session.data['sample-plan-errortypefour'] = "false";
+    req.session.data['isSamplePlansSection'] = true;
+    
+    res.render(`versions/${version}/${section}/maximum-dredging-volume`);
+  });
+
+  // Maximum dredging volume router (POST)
+  router.post(`/versions/${version}/${section}/maximum-dredging-volume-router`, function (req, res) {
+    // Reset error flags
+    req.session.data['sample-plan-errorthispage'] = "false";
+    req.session.data['sample-plan-errortypeone'] = "false";
+    req.session.data['sample-plan-errortypetwo'] = "false";
+    req.session.data['sample-plan-errortypethree'] = "false";
+    req.session.data['sample-plan-errortypefour'] = "false";
+
+    // Validate volume selection
+    const volumeSelection = req.body['sample-plan-maximum-dredging-volume'];
+    
+    if (!volumeSelection || volumeSelection.trim() === '') {
+      req.session.data['sample-plan-errorthispage'] = "true";
+      req.session.data['sample-plan-errortypeone'] = "true";
+      return res.redirect('maximum-dredging-volume');
+    }
+
+    // Validate corresponding input field based on selection
+    let hasVolumeError = false;
+    
+    if (volumeSelection === 'Total volume of material you plan to dredge over the full licence period') {
+      const totalVolume = req.body['sample-plan-total-volume-input'];
+      if (!totalVolume || totalVolume.trim() === '') {
+        req.session.data['sample-plan-errorthispage'] = "true";
+        req.session.data['sample-plan-errortypetwo'] = "true";
+        hasVolumeError = true;
+      } else {
+        req.session.data['sample-plan-total-volume-input'] = totalVolume;
+      }
+    } else if (volumeSelection === 'Annual volume of material you plan to dredge') {
+      const annualVolume = req.body['sample-plan-annual-volume-input'];
+      if (!annualVolume || annualVolume.trim() === '') {
+        req.session.data['sample-plan-errorthispage'] = "true";
+        req.session.data['sample-plan-errortypethree'] = "true";
+        hasVolumeError = true;
+      } else {
+        req.session.data['sample-plan-annual-volume-input'] = annualVolume;
+      }
+    } else if (volumeSelection === 'The maximum volume of material per dredge campaign') {
+      const campaignVolume = req.body['sample-plan-campaign-volume-input'];
+      if (!campaignVolume || campaignVolume.trim() === '') {
+        req.session.data['sample-plan-errorthispage'] = "true";
+        req.session.data['sample-plan-errortypefour'] = "true";
+        hasVolumeError = true;
+      } else {
+        req.session.data['sample-plan-campaign-volume-input'] = campaignVolume;
+      }
+    }
+
+    // If there are validation errors, redirect back to the form
+    if (hasVolumeError) {
+      return res.redirect('maximum-dredging-volume');
+    }
+
+    // Save the volume selection and redirect to beneficial use page
+    req.session.data['sample-plan-maximum-dredging-volume'] = volumeSelection;
+    res.redirect('beneficial-use');
+  });
+
+  ///////////////////////////////////////////
+  // Beneficial use page
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/beneficial-use`, function (req, res) {
+    // Clear any existing error flags when user navigates to the page
+    req.session.data['sample-plan-errorthispage'] = "false";
+    req.session.data['sample-plan-errortypeone'] = "false";
+    req.session.data['sample-plan-errortypetwo'] = "false";
+    req.session.data['isSamplePlansSection'] = true;
+    
+    res.render(`versions/${version}/${section}/beneficial-use`);
+  });
+
+  // Beneficial use router (POST)
+  router.post(`/versions/${version}/${section}/beneficial-use-router`, function (req, res) {
+    // Reset error flags
+    req.session.data['sample-plan-errorthispage'] = "false";
+    req.session.data['sample-plan-errortypeone'] = "false";
+    req.session.data['sample-plan-errortypetwo'] = "false";
+
+    // Validate beneficial use selection
+    const beneficialUse = req.body['sample-plan-beneficial-use'];
+    
+    if (!beneficialUse || beneficialUse.trim() === '') {
+      req.session.data['sample-plan-errorthispage'] = "true";
+      req.session.data['sample-plan-errortypeone'] = "true";
+      return res.redirect('beneficial-use');
+    }
+
+    // If "Yes" is selected, validate the description
+    if (beneficialUse === 'Yes') {
+      const description = req.body['sample-plan-beneficial-use-description'];
+      if (!description || description.trim() === '') {
+        req.session.data['sample-plan-errorthispage'] = "true";
+        req.session.data['sample-plan-errortypetwo'] = "true";
+        return res.redirect('beneficial-use');
+      }
+      req.session.data['sample-plan-beneficial-use-description'] = description;
+    } else {
+      // Clear description if "No" is selected
+      req.session.data['sample-plan-beneficial-use-description'] = '';
+    }
+
+    // Save the beneficial use selection and mark dredging volumes as completed
+    req.session.data['sample-plan-beneficial-use'] = beneficialUse;
+    req.session.data['sample-plan-dredging-volumes-completed'] = "true";
+    
+    res.redirect('sample-plan-start-page');
+  });
+
+  ///////////////////////////////////////////
+  // Fee estimate page
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/fee-estimate`, function (req, res) {
+    // Clear any existing error flags when user navigates to the page
+    req.session.data['sample-plan-errorthispage'] = "false";
+    req.session.data['sample-plan-errortypeone'] = "false";
+    req.session.data['sample-plan-errortypetwo'] = "false";
+    req.session.data['isSamplePlansSection'] = true;
+    
+    res.render(`versions/${version}/${section}/fee-estimate`);
+  });
+
+  // Fee estimate router (POST)
+  router.post(`/versions/${version}/${section}/fee-estimate-router`, function (req, res) {
+    // Reset error flags
+    req.session.data['sample-plan-errorthispage'] = "false";
+    req.session.data['sample-plan-errortypeone'] = "false";
+    req.session.data['sample-plan-errortypetwo'] = "false";
+
+    let hasError = false;
+
+    // Validate terms and conditions checkbox (using session data like other working pages)
+    if (!req.session.data['fee-terms-checkbox']) {
+      req.session.data['sample-plan-errorthispage'] = "true";
+      req.session.data['sample-plan-errortypeone'] = "true";
+      hasError = true;
+    }
+
+    // Validate fee acceptance radio button (using session data like other working pages)
+    if (!req.session.data['fee-acceptance'] || req.session.data['fee-acceptance'].trim() === '') {
+      req.session.data['sample-plan-errorthispage'] = "true";
+      req.session.data['sample-plan-errortypetwo'] = "true";
+      hasError = true;
+    }
+
+    // If there are validation errors, redirect back to the form
+    if (hasError) {
+      return res.redirect('fee-estimate');
+    }
+
+    // Success case - mark as completed if checkbox agreed and Yes selected
+    if (req.session.data['fee-terms-checkbox'] && req.session.data['fee-acceptance'] === 'yes') {
+      req.session.data['sample-plan-fee-estimate-completed'] = "true";
+      // Clear any previous rejection flag
+      req.session.data['sample-plan-fee-estimate-rejected'] = "false";
+    }
+
+    // Conditional routing based on fee acceptance
+    if (req.session.data['fee-acceptance'] === 'yes') {
+      res.redirect('sample-plan-start-page');
+    } else if (req.session.data['fee-acceptance'] === 'no') {
+      // Redirect to the "are you sure" confirmation page
+      res.redirect('fee-are-you-sure');
+    } else {
+      // Fallback
+      res.redirect('sample-plan-start-page');
+    }
+  });
+
+  ///////////////////////////////////////////
+  // Fee are you sure page
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/fee-are-you-sure`, function (req, res) {
+    res.render(`versions/${version}/${section}/fee-are-you-sure`);
+  });
+
+  // Fee are you sure router (POST)
+  router.post(`/versions/${version}/${section}/fee-are-you-sure-router`, function (req, res) {
+    // Mark fee estimate as rejected/not accepted
+    req.session.data['sample-plan-fee-estimate-completed'] = "false";
+    req.session.data['sample-plan-fee-estimate-rejected'] = "true";
+    
+    // Redirect to projects page - the project will remain as a draft
+    res.redirect('projects');
+  });
+
+  ///////////////////////////////////////////
+  // Check answers page
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/check-answers`, function (req, res) {
+    res.render(`versions/${version}/${section}/check-answers`);
+  });
+
+  // Check answers router (POST) - submits application and redirects to confirmation
+  router.post(`/versions/${version}/${section}/check-answers-router`, function (req, res) {
+    // Mark the sample plan application as submitted
+    req.session.data['samplePlanApplicationSubmitted'] = "true";
+    
+    // Redirect to confirmation page
+    res.redirect('confirmation');
+  });
+
+  ///////////////////////////////////////////
+  // Confirmation page
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/confirmation`, function (req, res) {
+    res.render(`versions/${version}/${section}/confirmation`);
   });
 
 }

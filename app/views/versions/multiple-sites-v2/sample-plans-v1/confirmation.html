@@ -1,0 +1,41 @@
+{% extends "../layouts/sample-plans.html" %}
+
+{% block beforeContent %}
+    {% include "../includes/phase-banner.html" %}
+    {% if data['user_type'] === 'organisation' %}
+        {% include "../includes/organisation-switcher.html" %}
+    {% endif %}
+{% endblock %}
+
+{% from "govuk/components/panel/macro.njk" import govukPanel %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+
+  <div class="govuk-grid-column-two-thirds">
+
+	{{ govukPanel({
+        titleText: "The information relating to your sample plan has been sent",
+        html: "Your reference number<br><strong>SAM/2025/00025</strong>"
+      }) }}
+
+      <p class="govuk-body">We've sent you a confirmation email with your reference number.</p>
+
+      <h2 class="govuk-heading-m">What happens next</h2>
+
+      <p class="govuk-body">We'll review your information. You'll usually get a sample plan within 8 weeks.</p>
+
+      <p class="govuk-body">If you need to contact us, you can email <a href="" class="govuk-link">info@marinemanagement.org.uk</a>, quoting your reference number.</p>
+
+      <!-- <p class="govuk-body">Or you can call our helpline on 0300 123 1032. The helpline is open Monday to Thursday, 9am to 4:30pm and Friday, 9am to 4pm. Find out about <a href="" class="govuk-link">call charges</a>.</p> -->
+
+      <p class="govuk-body">
+        <a href="" class="govuk-link--no-visited-state">What did you think of this service?</a> (takes 30 seconds)
+      </p>   
+
+</div>
+</div>
+
+{% endblock %}

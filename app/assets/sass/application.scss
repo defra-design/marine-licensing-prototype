@@ -313,7 +313,7 @@
 }
 
 // Page-specific overrides
-.page-home {
+.page-home, .page-sample-plans-projects {
   .govuk-width-container,
   .govuk-header__container,
   .govuk-header__navigation,
@@ -445,6 +445,12 @@ body.page-cookie-banner {
   flex-shrink: 0;
 }
 
+.page-header-buttons {
+  display: flex;
+  gap: 15px; // govuk-spacing(3)
+  flex-shrink: 0;
+}
+
 // Mobile responsive behavior
 @media (max-width: 40.0525em) {
   .page-header-with-button {
@@ -461,11 +467,29 @@ body.page-cookie-banner {
     align-self: stretch; // Full width on mobile
     text-align: center;
   }
+  
+  .page-header-buttons {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px; // govuk-spacing(2) for mobile
+  }
 }
 
 // Map view
 .map-label {
   vertical-align: top;
+}
+
+// Make the map value column wider by overriding the grid template
+.govuk-summary-list__row:has(.map-label) {
+  grid-template-columns: 1fr 2.5fr auto !important; // Make middle column much wider
+}
+
+// Alternative approach for browsers that don't support :has()
+.govuk-summary-list__row .govuk-summary-list__key.map-label + .govuk-summary-list__value {
+  width: auto !important;
+  max-width: none !important;
+  flex: 2.5 !important;
 }
 
 // Ensure map images are responsive and fill their container.

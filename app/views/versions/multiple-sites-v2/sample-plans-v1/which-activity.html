@@ -1,4 +1,4 @@
-{% extends "../layouts/exemption.html" %}
+{% extends "../layouts/sample-plans.html" %}
 
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
@@ -14,7 +14,7 @@
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-Which activity will the marine licence cover?
+Which activities will the marine licence cover?
 {% endset %}
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
@@ -33,7 +33,7 @@ Error:
             titleText: "There is a problem",
             errorList: [
                 {
-                    text: "Select which activity the marine licence covers",
+                    text: "Select which activities the marine licence covers",
                     href: "#sample-plan-which-activity"
                 }
             ]
@@ -54,18 +54,21 @@ Error:
                     }
                 },
                 errorMessage: {
-                    text: "Select which activity the marine licence covers"
+                    text: "Select which activities the marine licence covers"
                 } if data['sample-plan-errortypeone'] == "true",
                 items: [
                     {
-                        value: "Marine disposal only",
-                        text: "Marine disposal only",
-                        checked: data['sample-plan-which-activity'] == "Marine disposal only"
+                        value: "Marine disposal",
+                        text: "Marine disposal",
+                        hint: {
+                            text: "Includes placement (putting dredged material in a chosen location for a purpose, for example to protect beaches or support construction) and beneficial use to the environment"
+                        },
+                        checked: data['sample-plan-which-activity'] == "Marine disposal"
                     },
                     {
-                        value: "Marine dredging only",
-                        text: "Marine dredging only",
-                        checked: data['sample-plan-which-activity'] == "Marine dredging only"
+                        value: "Marine dredging",
+                        text: "Marine dredging",
+                        checked: data['sample-plan-which-activity'] == "Marine dredging"
                     },
                     {
                         value: "Marine dredging and disposal",
