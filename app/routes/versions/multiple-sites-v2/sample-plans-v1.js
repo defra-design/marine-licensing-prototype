@@ -8,7 +8,6 @@ module.exports = function (router) {
   ///////////////////////////////////////////
 
   router.get(`/versions/${version}/${section}/projects`, function (req, res) {
-    req.session.data['isSamplePlansSection'] = true;
     res.render(`versions/${version}/${section}/projects`);
   });
 
@@ -17,7 +16,6 @@ module.exports = function (router) {
   ///////////////////////////////////////////
 
   router.get(`/versions/${version}/${section}/delete`, function (req, res) {
-    req.session.data['isSamplePlansSection'] = true;
     
     // Store the project parameter to be passed to the template
     const projectToDelete = req.query.project;
@@ -54,7 +52,6 @@ module.exports = function (router) {
   ///////////////////////////////////////////
 
   router.get(`/versions/${version}/${section}/get-a-plan-for-sediment-sample-analysis`, function (req, res) {
-    req.session.data['isSamplePlansSection'] = true;
     
     // if a user is an org user then store it in the session
     if (req.query.user_type === 'organisation') {
@@ -69,7 +66,6 @@ module.exports = function (router) {
   ///////////////////////////////////////////
 
   router.get(`/versions/${version}/${section}/sign-in`, function (req, res) {
-    req.session.data['isSamplePlansSection'] = true;
     
     // if a user is an org user then store it in the session
     if (req.query.user_type === 'organisation') {
@@ -159,7 +155,6 @@ module.exports = function (router) {
     // Clear any existing error flags when user navigates to the page
     req.session.data['sample-plan-errorthispage'] = "false";
     req.session.data['sample-plan-errortypeone'] = "false";
-    req.session.data['isSamplePlansSection'] = true;
     
     res.render(`versions/${version}/${section}/project-name-start`);
   });
@@ -646,7 +641,6 @@ module.exports = function (router) {
   ///////////////////////////////////////////
 
   router.get(`/versions/${version}/${section}/fee-are-you-sure`, function (req, res) {
-    req.session.data['isSamplePlansSection'] = true;
     res.render(`versions/${version}/${section}/fee-are-you-sure`);
   });
 
@@ -665,7 +659,6 @@ module.exports = function (router) {
   ///////////////////////////////////////////
 
   router.get(`/versions/${version}/${section}/check-answers`, function (req, res) {
-    req.session.data['isSamplePlansSection'] = true;
     res.render(`versions/${version}/${section}/check-answers`);
   });
 
@@ -683,7 +676,6 @@ module.exports = function (router) {
   ///////////////////////////////////////////
 
   router.get(`/versions/${version}/${section}/confirmation`, function (req, res) {
-    req.session.data['isSamplePlansSection'] = true;
     res.render(`versions/${version}/${section}/confirmation`);
   });
 
