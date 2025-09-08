@@ -8,7 +8,6 @@ module.exports = function (router) {
   //////// Before you start page
   /////////////////////////////////////////////////////////
   router.get(`/versions/${version}/${section}/${subsection}/before-you-start`, function (req, res) {
-    req.session.data['isSamplePlansSection'] = true;
     
     // Clear any incomplete journey states when starting fresh
     // Only clear if they haven't completed and saved the journey
@@ -31,7 +30,6 @@ module.exports = function (router) {
   //////// How do you want to provide site location page
   /////////////////////////////////////////////////////////
   router.get(`/versions/${version}/${section}/${subsection}/how-do-you-want-to-provide-site-location`, function (req, res) {
-    req.session.data['isSamplePlansSection'] = true;
     res.render(`versions/${version}/${section}/${subsection}/how-do-you-want-to-provide-site-location`);
   });
 
@@ -60,7 +58,6 @@ module.exports = function (router) {
   //////// Which type of file page
   /////////////////////////////////////////////////////////
   router.get(`/versions/${version}/${section}/${subsection}/which-type-of-file`, function (req, res) {
-    req.session.data['isSamplePlansSection'] = true;
     res.render(`versions/${version}/${section}/${subsection}/which-type-of-file`);
   });
 
@@ -84,7 +81,6 @@ module.exports = function (router) {
   //////// Upload file page
   /////////////////////////////////////////////////////////
   router.get(`/versions/${version}/${section}/${subsection}/upload-file`, function (req, res) {
-    req.session.data['isSamplePlansSection'] = true;
     res.render(`versions/${version}/${section}/${subsection}/upload-file`);
   });
 
@@ -99,7 +95,6 @@ module.exports = function (router) {
   //////// Review site details page
   /////////////////////////////////////////////////////////
   router.get(`/versions/${version}/${section}/${subsection}/review-dredging-site-details`, function (req, res) {
-    req.session.data['isSamplePlansSection'] = true;
     res.render(`versions/${version}/${section}/${subsection}/review-dredging-site-details`);
   });
 
@@ -129,7 +124,6 @@ module.exports = function (router) {
   //////// Dredging details Site 1 page
   /////////////////////////////////////////////////////////
   router.get(`/versions/${version}/${section}/${subsection}/dredging-details-site-1`, function (req, res) {
-    req.session.data['isSamplePlansSection'] = true;
     
     // Clear incomplete data if user navigates away and comes back without completing
     if (!req.session.data['dredging-details-site-1-completed']) {
@@ -200,7 +194,6 @@ module.exports = function (router) {
   //////// Dredging details Site 2 page
   /////////////////////////////////////////////////////////
   router.get(`/versions/${version}/${section}/${subsection}/dredging-details-site-2`, function (req, res) {
-    req.session.data['isSamplePlansSection'] = true;
     
     // Clear incomplete data if user navigates away and comes back without completing
     if (!req.session.data['dredging-details-site-2-completed']) {
@@ -278,7 +271,6 @@ module.exports = function (router) {
   //////// Site history Site 1 page
   /////////////////////////////////////////////////////////
   router.get(`/versions/${version}/${section}/${subsection}/site-history-site-1`, function (req, res) {
-    req.session.data['isSamplePlansSection'] = true;
     
     // Clear incomplete data if user navigates away and comes back without completing
     if (!req.session.data['site-history-site-1-completed']) {
@@ -414,7 +406,6 @@ module.exports = function (router) {
   //////// Dredge depth Site 1 page
   /////////////////////////////////////////////////////////
   router.get(`/versions/${version}/${section}/${subsection}/dredge-depth-site-1`, function (req, res) {
-    req.session.data['isSamplePlansSection'] = true;
     
     // Clear incomplete data if user navigates away and comes back without completing
     if (!req.session.data['dredging-details-site-1-depth-completed']) {
@@ -456,7 +447,6 @@ module.exports = function (router) {
   //////// Maximum dredge volume page
   /////////////////////////////////////////////////////////
   router.get(`/versions/${version}/${section}/${subsection}/maximum-dredge-volume`, function (req, res) {
-    req.session.data['isSamplePlansSection'] = true;
     
     // Clear incomplete data if user navigates away and comes back without completing
     if (!req.session.data['maximum-dredge-volume-completed']) {

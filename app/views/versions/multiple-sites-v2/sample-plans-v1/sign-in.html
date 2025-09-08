@@ -1,9 +1,10 @@
-{% extends "../layouts/exemption.html" %}
+{% extends "../layouts/sample-plans.html" %}
 
-{% block header %}
 {% from "govuk/components/header/macro.njk" import govukHeader %}
 {% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
 
+{% block header %}
 {{ govukHeader({
   classes: "govuk-header--full-width-border"
 }) }}

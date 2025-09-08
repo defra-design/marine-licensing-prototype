@@ -45,7 +45,12 @@ module.exports = function (router) {
   ///////////////////////////////////////////
 
   router.get(`/versions/${version}/${section}/${subSection}/before-you-start`, function (req, res) {
-    req.session.data['isSamplePlansSection'] = true;
+    // Clear any incomplete journey states when starting fresh
+    // Only clear if they haven't completed and saved the journey
+    if (!req.session.data['has-visited-disposal-site-locations']) {
+      clearSite1CompletionFlags(req.session);
+    }
+    
     res.render(`versions/${version}/${section}/${subSection}/before-you-start`);
   });
 
@@ -60,7 +65,6 @@ module.exports = function (router) {
   ///////////////////////////////////////////
 
   router.get(`/versions/${version}/${section}/${subSection}/find-existing-disposal-site`, function (req, res) {
-    req.session.data['isSamplePlansSection'] = true;
     
     // Set form data from URL parameters (this will clear if empty parameters are passed)
     if (req.query.hasOwnProperty('disposal-site-code')) {
@@ -105,7 +109,7 @@ module.exports = function (router) {
   ///////////////////////////////////////////
 
   router.get(`/versions/${version}/${section}/${subSection}/search-results`, function (req, res) {
-    req.session.data['isSamplePlansSection'] = true;
+    
     // Store page parameter in session data for template access
     req.session.data['page'] = req.query.page || '1';
     
@@ -131,7 +135,6 @@ module.exports = function (router) {
     // Clear any existing error flags when user navigates to the page
     req.session.data['sample-plan-errorthispage'] = "false";
     req.session.data['sample-plan-errortypeone'] = "false";
-    req.session.data['isSamplePlansSection'] = true;
     
     // If URL parameter is provided to clear the radio selection
     if (req.query.hasOwnProperty('sample-plan-where-dispose-material')) {
@@ -176,7 +179,6 @@ module.exports = function (router) {
   ///////////////////////////////////////////
 
   router.get(`/versions/${version}/${section}/${subSection}/review-disposal-site-details`, function (req, res) {
-    req.session.data['isSamplePlansSection'] = true;
     
     // If URL parameters are provided (coming from site selection), store them and redirect
     if (req.query.code || req.query.name || req.query.country || req.query.seaArea || req.query.status) {
@@ -248,7 +250,6 @@ module.exports = function (router) {
   ///////////////////////////////////////////
 
   router.get(`/versions/${version}/${section}/${subSection}/disposal-details-site-1`, function (req, res) {
-    req.session.data['isSamplePlansSection'] = true;
     
     // Clear any existing error flags when user navigates to the page
     req.session.data['sample-disposal-details-site-1-errorthispage'] = "false";
@@ -312,7 +313,6 @@ module.exports = function (router) {
   ///////////////////////////////////////////
 
   router.get(`/versions/${version}/${section}/${subSection}/maximum-disposal-volume`, function (req, res) {
-    req.session.data['isSamplePlansSection'] = true;
     
     // Clear any existing error flags when user navigates to the page
     req.session.data['sample-disposal-site-1-maximum-volume-errorthispage'] = "false";
@@ -389,7 +389,6 @@ module.exports = function (router) {
   ///////////////////////////////////////////
 
   router.get(`/versions/${version}/${section}/${subSection}/beneficial-use`, function (req, res) {
-    req.session.data['isSamplePlansSection'] = true;
     
     // Clear any existing error flags when user navigates to the page
     req.session.data['sample-disposal-site-1-beneficial-use-errorthispage'] = "false";
@@ -442,7 +441,6 @@ module.exports = function (router) {
   ///////////////////////////////////////////
 
   router.get(`/versions/${version}/${section}/${subSection}/disposal-details-site-2`, function (req, res) {
-    req.session.data['isSamplePlansSection'] = true;
     
     // Clear any existing error flags when user navigates to the page
     req.session.data['sample-disposal-details-site-2-errorthispage'] = "false";
