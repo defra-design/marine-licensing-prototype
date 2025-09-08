@@ -1,0 +1,336 @@
+{% extends "../layouts/sample-plans.html" %}
+
+{% block beforeContent %}
+    {% include "../includes/phase-banner.html" %}
+    {% if data['user_type'] === 'organisation' %}
+        {% include "../includes/organisation-switcher.html" %}
+    {% endif %}
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+Sample plan start page
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-two-thirds">
+		<span class="govuk-caption-l">{{ data['sample-plan-project-name-text-input'] }}</span>
+		<h1 class="govuk-heading-l">
+			{{ pageHeadingTextHTML }}
+		</h1>
+
+		<h2 class="govuk-heading-m">Before you start</h2>
+
+		<p><a href="https://www.gov.uk/guidance/marine-licensing-sediment-analysis-and-sample-plans" rel="noreferrer noopener" target="_blank" class="govuk-link">Read the guidance on sampling requirements (opens in new tab)</a>.</p>
+
+		<h2 class="govuk-heading-m">When you provide your information you'll need to:</h2>
+
+		<ul class="govuk-list govuk-list--bullet">
+			<li>complete the type of activity section before you can start some tasks as depending on your answers you may not need to complete them</li>
+			<li>save your progress at the end of each section if you need to come back later</li>
+			<li>complete all sections before you can send the information</li>
+		</ul>
+
+		<ul class="govuk-task-list">
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="project-name" aria-describedby="project-name-status">
+				  Project name
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="project-name-status">
+				Completed
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="project-background" aria-describedby="project-background-status">
+				  Project background
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="project-background-status">
+				{% if data['sample-plan-project-background-completed'] %}
+				Completed
+				{% else %}
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+				{% endif %}
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="which-activity" aria-describedby="type-of-activity-status">
+				  Type of activity
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="type-of-activity-status">
+				{% if data['sample-plan-which-activity'] %}
+				Completed
+				{% else %}
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+				{% endif %}
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="new-or-existing-licence" aria-describedby="new-or-existing-licence-status">
+				  New or existing licence
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="new-or-existing-licence-status">
+				{% if data['sample-plan-new-or-existing-licence'] %}
+				Completed
+				{% else %}
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+				{% endif %}
+			  </div>
+			</li>
+
+			{% if data['sample-plan-which-activity'] == "Marine disposal" %}
+			<li class="govuk-task-list__item">
+			  <div class="govuk-task-list__name-and-hint">
+				<div>Dredge sites and details</div>
+			  </div>
+			  
+			  <div class="govuk-task-list__status govuk-task-list__status--cannot-start-yet" id="site-locations-status">
+				Not applicable
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				{% if data['has-visited-disposal-site-review'] %}
+				  <a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="disposal-site-locations/review-disposal-site-details" aria-describedby="disposal-sites-status">
+					Disposal sites and details
+				  </a>
+				{% elif data['sample-disposal-sites-in-progress'] %}
+				  <a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="disposal-site-locations/review-disposal-site-details" aria-describedby="disposal-sites-status">
+					Disposal sites and details
+				  </a>
+				{% else %}
+				  <a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="disposal-site-locations/before-you-start" aria-describedby="disposal-sites-status">
+					Disposal sites and details
+				  </a>
+				{% endif %}
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="disposal-sites-status">
+				{% if data['sample-disposal-sites-completed'] %}
+					Completed
+				{% elif data['sample-disposal-sites-in-progress'] or data['has-visited-disposal-site-review'] %}
+					<strong class="govuk-tag govuk-tag--light-blue">
+						In progress
+					</strong>
+				{% else %}
+					<strong class="govuk-tag govuk-tag--blue">
+						Not yet started
+					</strong>
+				{% endif %}
+			  </div>
+			</li>
+
+			{% elif data['sample-plan-which-activity'] == "Marine dredging" %}
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				{% if data['has-visited-dredging-site-locations'] %}
+				  <a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="dredging-site-locations/review-dredging-site-details" aria-describedby="site-locations-status">
+					Dredge sites and details
+				  </a>
+				{% else %}
+				  <a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="dredging-site-locations/before-you-start" aria-describedby="site-locations-status">
+					Dredge sites and details
+				  </a>
+				{% endif %}
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="site-locations-status">
+				{% if data['has-visited-dredging-site-locations'] %}
+					{% if data['dredging-sites-all-complete'] %}
+						Completed
+					{% else %}
+						<strong class="govuk-tag govuk-tag--light-blue">
+							In progress
+						</strong>
+					{% endif %}
+				{% else %}
+					<strong class="govuk-tag govuk-tag--blue">
+						Not yet started
+					</strong>
+				{% endif %}
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item">
+			  <div class="govuk-task-list__name-and-hint">
+				<div>Disposal sites</div>
+			  </div>
+			  
+			  <div class="govuk-task-list__status govuk-task-list__status--cannot-start-yet" id="disposal-sites-status">
+				Not applicable
+			  </div>
+			</li>
+
+			{% elif data['sample-plan-which-activity'] == "Marine dredging and disposal" %}
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				{% if data['has-visited-dredging-site-locations'] %}
+				  <a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="dredging-site-locations/review-dredging-site-details" aria-describedby="site-locations-status">
+					Dredge sites and details
+				  </a>
+				{% else %}
+				  <a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="dredging-site-locations/before-you-start" aria-describedby="site-locations-status">
+					Dredge sites and details
+				  </a>
+				{% endif %}
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="site-locations-status">
+				{% if data['has-visited-dredging-site-locations'] %}
+					{% if data['dredging-sites-all-complete'] %}
+						Completed
+					{% else %}
+						<strong class="govuk-tag govuk-tag--light-blue">
+							In progress
+						</strong>
+					{% endif %}
+				{% else %}
+					<strong class="govuk-tag govuk-tag--blue">
+						Not yet started
+					</strong>
+				{% endif %}
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				{% if data['has-visited-disposal-site-review'] %}
+				  <a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="disposal-site-locations/review-disposal-site-details" aria-describedby="disposal-sites-status">
+					Disposal sites and details
+				  </a>
+				{% elif data['sample-disposal-sites-in-progress'] %}
+				  <a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="disposal-site-locations/review-disposal-site-details" aria-describedby="disposal-sites-status">
+					Disposal sites and details
+				  </a>
+				{% else %}
+				  <a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="disposal-site-locations/before-you-start" aria-describedby="disposal-sites-status">
+					Disposal sites and details
+				  </a>
+				{% endif %}
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="disposal-sites-status">
+				{% if data['sample-disposal-sites-completed'] %}
+					Completed
+				{% elif data['sample-disposal-sites-in-progress'] or data['has-visited-disposal-site-review'] %}
+					<strong class="govuk-tag govuk-tag--light-blue">
+						In progress
+					</strong>
+				{% else %}
+					<strong class="govuk-tag govuk-tag--blue">
+						Not yet started
+					</strong>
+				{% endif %}
+			  </div>
+			</li>
+
+			{% else %}
+			<!-- Default state when no activity is selected -->
+			<li class="govuk-task-list__item">
+			  <div class="govuk-task-list__name-and-hint">
+				<div>Dredge sites and details</div>
+			  </div>
+			  
+			  <div class="govuk-task-list__status govuk-task-list__status--cannot-start-yet" id="site-locations-status">
+				Cannot start yet
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item">
+			  <div class="govuk-task-list__name-and-hint">
+				<div>Disposal sites and details</div>
+			  </div>
+			  
+			  <div class="govuk-task-list__status govuk-task-list__status--cannot-start-yet" id="disposal-sites-status">
+				Cannot start yet
+			  </div>
+			</li>
+			{% endif %}
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="fee-estimate" aria-describedby="fee-estimate-status">
+				  Fee estimate
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="fee-estimate-status">
+				{% if data['sample-plan-fee-estimate-completed'] == "true" and data['fee-terms-checkbox'] == "agree" and data['fee-acceptance'] == "yes" %}
+				Completed
+				{% elif data['sample-plan-fee-estimate-rejected'] == "true" %}
+				<strong class="govuk-tag govuk-tag--red">
+					Not accepted
+				</strong>
+				{% else %}
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+				{% endif %}
+			  </div>
+			</li>
+		</ul>
+
+		<!-- Check and send button - only show when all applicable tasks are completed -->
+		{% set allTasksCompleted = false %}
+		
+		<!-- Check if all always-required tasks are completed and fee estimate is not rejected -->
+		{% if data['sample-plan-project-background-completed'] and data['sample-plan-which-activity'] and data['sample-plan-new-or-existing-licence'] and data['sample-plan-fee-estimate-completed'] == "true" and data['fee-terms-checkbox'] == "agree" and data['fee-acceptance'] == "yes" and data['sample-plan-fee-estimate-rejected'] != "true" %}
+			
+			<!-- Check activity-specific tasks -->
+			{% if data['sample-plan-which-activity'] == "Marine disposal" %}
+				<!-- For disposal only: need disposal sites completed -->
+				{% if data['sample-disposal-sites-completed'] %}
+					{% set allTasksCompleted = true %}
+				{% endif %}
+			{% elif data['sample-plan-which-activity'] == "Marine dredging" %}
+				<!-- For dredging only: need dredge sites completed -->
+				{% if data['dredging-sites-all-complete'] %}
+					{% set allTasksCompleted = true %}
+				{% endif %}
+			{% elif data['sample-plan-which-activity'] == "Marine dredging and disposal" %}
+				<!-- For dredging and disposal: need dredge sites and disposal sites -->
+				{% if data['dredging-sites-all-complete'] and data['sample-disposal-sites-completed'] %}
+					{% set allTasksCompleted = true %}
+				{% endif %}
+			{% endif %}
+		{% endif %}
+
+		{% if allTasksCompleted %}
+		<div class="govuk-button-group govuk-!-margin-top-7">
+			<a href="check-answers" role="button" draggable="false" class="govuk-button" data-module="govuk-button">
+				Check and send your information
+			</a>
+		</div>
+		{% endif %}
+
+	</div>
+</div>
+{% endblock %}

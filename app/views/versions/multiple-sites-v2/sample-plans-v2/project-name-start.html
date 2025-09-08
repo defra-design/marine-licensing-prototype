@@ -1,0 +1,120 @@
+{% extends "../layouts/exemption.html" %}
+
+{% block header %}
+{% from "govuk/components/header/macro.njk" import govukHeader %}
+{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
+
+{{ govukHeader({
+  classes: "govuk-header--full-width-border"
+}) }}
+{{ govukServiceNavigation({
+  serviceName: "Get a plan for sediment sample analysis"
+}) }}
+{% endblock %}
+
+{% block beforeContent %}
+    {% include "../includes/phase-banner.html" %}
+    {% if data['user_type'] === 'organisation' %}
+        {% include "../includes/organisation-switcher.html" %}
+    {% endif %}
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+Project name
+{% endset %}
+
+<!-- Set the text for each error type -->
+{% set errorTextHTML %}
+{% if data['sample-plan-errortypeone'] == "true" and data['sample-plan-errortypetwo'] == "true" %}
+Enter both the project title and project background
+{% elif data['sample-plan-errortypeone'] == "true" %}
+Enter a project name
+{% elif data['sample-plan-errortypetwo'] == "true" %}
+Enter the project background
+{% endif %}
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+{% if data['sample-plan-errorthispage'] == "true" %}
+Error:
+{% endif %}
+
+{{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        {% if data['sample-plan-errorthispage'] == "true" %}
+        <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1"
+            data-module="govuk-error-summary">
+            <h2 class="govuk-error-summary__title" id="error-summary-title">
+                There is a problem
+            </h2>
+            <div class="govuk-error-summary__body">
+                <ul class="govuk-list govuk-error-summary__list">
+                    {% if data['sample-plan-errortypeone'] == "true" %}
+                    <li><a href="#sample-plan-project-name-text-input">Enter a project name</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+
+        <!--  END OF 'error summary' -->
+
+        <form action="project-name-start-router" method="post" novalidate>
+
+            {{ govukInput({
+            label: 
+            {
+                text: pageHeadingTextHTML,
+                classes: "govuk-label--l",
+                isPageHeading: true
+            },
+            hint: {
+                text: "Enter a name that will help you find the information relating to your sample plan"
+              },
+              
+                autocomplete: "off",
+                id: "sample-plan-project-name-text-input",
+                name: "sample-plan-project-name-text-input",
+                errorMessage: null if data['sample-plan-errortypeone'] != "true"
+                else { text: "Enter a project name" },
+                value: data['sample-plan-project-name-text-input'],
+                classes: "govuk-input--full-width"
+            }) }}
+
+            {{ govukButton({
+text: "Save and continue"
+ }) }}
+
+        </form>
+
+    </div>
+</div>
+
+<!-- ERROR LOGIC  drop down to toggle states  -->
+<!-- Updated to use sample-plan specific data values to avoid conflicts with exemption journey -->
+<form method="post" action="#" class="for4" style=" float: left; position: relative; bottom:-325px; padding-bottom: 30px;  ">
+
+    <select style="height:30px;" onchange="window.location.href='?'+this.value">
+
+        <option
+            value="sample-plan-errorthispage=false&sample-plan-errortypeone=false&sample-plan-errortypetwo=false&sample-plan-errortypethree=false&sample-plan-errortypefour=false&sample-plan-errortypefive=false&sample-plan-errortypesix=false&"
+            {% if data['sample-plan-errorthispage'] !="true" %}selected{% endif %}>Errors - Off</option>
+
+        <option
+            value="sample-plan-errorthispage=true&sample-plan-errortypeone=true&sample-plan-errortypetwo=false&sample-plan-errortypethree=false&sample-plan-errortypefour=false&sample-plan-errortypefive=false&sample-plan-errortypesix=false&"
+            {% if data['sample-plan-errortypeone']=='true' and data['sample-plan-errortypetwo'] !='true' and data['sample-plan-errortypethree'] !='true' and
+            data['sample-plan-errortypefour'] !='true' and data['sample-plan-errortypefive'] !='true' and data['sample-plan-errortypesix'] !='true'
+            %}selected{% endif %}>Error 1 - No answer entered</option>
+
+    </select>
+
+</form>
+<!--  END OF ERROR LOGIC -->
+
+{% endblock %}

@@ -1,7 +1,7 @@
 module.exports = function (router) {
   // Sample plans v1 disposal site locations routes
   const version = "multiple-sites-v2";
-  const section = "sample-plans-v1";
+  const section = "sample-plans-v2";
   const subSection = "disposal-site-locations";
 
   // Helper function to clear Site 1 completion flags and data

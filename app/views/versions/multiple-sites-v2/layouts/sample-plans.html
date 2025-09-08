@@ -15,11 +15,12 @@ https://prototype-kit.service.gov.uk/docs/how-to-use-layouts
 {{ govukHeader({
   classes: "govuk-header--full-width-border"
 }) }}
+{% set projectsUrl = "/versions/multiple-sites-v2/" ~ (data['samplePlansSection'] or 'sample-plans-v1') ~ "/projects" %}
 {{ govukServiceNavigation({
   serviceName: "Get a plan for sediment sample analysis",
   navigation: [
     {
-      href: "/versions/multiple-sites-v2/sample-plans-v1/projects",
+      href: projectsUrl,
       text: "Projects"
     },
     {

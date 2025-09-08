@@ -1,0 +1,328 @@
+{% extends "../../layouts/sample-plans.html" %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {{ super() }}
+    {% include "../../includes/back-link.html" %}
+{% endblock %}
+
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+<!-- Set the heading for the page -->
+{% set pageHeadingTextHTML %}
+What is the history of the site?
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {% if  data['site-history-site-2-errorthispage'] == "true"  %}
+        Error:
+    {% endif %}
+
+    {{ pageHeadingTextHTML }} - Get a plan for sediment sample analysis
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        
+        <!-- Error summary -->
+        {% if data['site-history-site-2-errorthispage'] == "true" %}
+        {{ govukErrorSummary({
+            titleText: "There is a problem",
+            errorList: [
+                {
+                    text: data['site-history-site-2-error'] or "Select all that apply for the site history",
+                    href: "#site-history-site-2"
+                } if data['site-history-site-2-error'],
+                {
+                    text: data['site-history-site-2-chemicals-manufacturing-details-error'],
+                    href: "#site-history-site-2-chemicals-manufacturing-details"
+                } if data['site-history-site-2-chemicals-manufacturing-details-error'],
+                {
+                    text: data['site-history-site-2-electronics-manufacturing-details-error'],
+                    href: "#site-history-site-2-electronics-manufacturing-details"
+                } if data['site-history-site-2-electronics-manufacturing-details-error'],
+                {
+                    text: data['site-history-site-2-major-port-infrastructure-details-error'],
+                    href: "#site-history-site-2-major-port-infrastructure-details"
+                } if data['site-history-site-2-major-port-infrastructure-details-error'],
+                {
+                    text: data['site-history-site-2-mining-details-error'],
+                    href: "#site-history-site-2-mining-details"
+                } if data['site-history-site-2-mining-details-error'],
+                {
+                    text: data['site-history-site-2-oil-processing-details-error'],
+                    href: "#site-history-site-2-oil-processing-details"
+                } if data['site-history-site-2-oil-processing-details-error'],
+                {
+                    text: data['site-history-site-2-pollution-incidents-details-error'],
+                    href: "#site-history-site-2-pollution-incidents-details"
+                } if data['site-history-site-2-pollution-incidents-details-error'],
+                {
+                    text: data['site-history-site-2-ship-building-details-error'],
+                    href: "#site-history-site-2-ship-building-details"
+                } if data['site-history-site-2-ship-building-details-error'],
+                {
+                    text: data['site-history-site-2-steelworks-details-error'],
+                    href: "#site-history-site-2-steelworks-details"
+                } if data['site-history-site-2-steelworks-details-error'],
+                {
+                    text: data['site-history-site-2-other-details-error'],
+                    href: "#site-history-site-2-other-details"
+                } if data['site-history-site-2-other-details-error']
+            ]
+        }) }}
+        {% endif %}
+
+        <form action="site-history-site-2-router" method="post" novalidate>
+            
+            <!-- Chemicals manufacturing reveal -->
+            {% set chemicalsManufacturingHtml %}
+            {{ govukTextarea({
+                id: "site-history-site-2-chemicals-manufacturing-details",
+                name: "site-history-site-2-chemicals-manufacturing-details",
+                label: {
+                    text: "Provide details of how long ago this activity took place, or if it’s still active, and how close it is to the area"
+                },
+                value: data['site-history-site-2-chemicals-manufacturing-details'],
+                errorMessage: {
+                    text: data['site-history-site-2-chemicals-manufacturing-details-error']
+                } if data['site-history-site-2-chemicals-manufacturing-details-error']
+            }) }}
+            {% endset -%}
+
+            <!-- Electronics manufacturing reveal -->
+            {% set electronicsManufacturingHtml %}
+            {{ govukTextarea({
+                id: "site-history-site-2-electronics-manufacturing-details",
+                name: "site-history-site-2-electronics-manufacturing-details",
+                label: {
+                    text: "Provide details of how long ago this activity took place, or if it’s still active, and how close it is to the area"
+                },
+                value: data['site-history-site-2-electronics-manufacturing-details'],
+                errorMessage: {
+                    text: data['site-history-site-2-electronics-manufacturing-details-error']
+                } if data['site-history-site-2-electronics-manufacturing-details-error']
+            }) }}
+            {% endset -%}
+
+            <!-- Major port infrastructure reveal -->
+            {% set majorPortInfrastructureHtml %}
+            {{ govukTextarea({
+                id: "site-history-site-2-major-port-infrastructure-details",
+                name: "site-history-site-2-major-port-infrastructure-details",
+                label: {
+                    text: "Provide details of how long ago this activity took place, or if it’s still active, and how close it is to the area"
+                },
+                value: data['site-history-site-2-major-port-infrastructure-details'],
+                errorMessage: {
+                    text: data['site-history-site-2-major-port-infrastructure-details-error']
+                } if data['site-history-site-2-major-port-infrastructure-details-error']
+            }) }}
+            {% endset -%}
+
+            <!-- Mining reveal -->
+            {% set miningHtml %}
+            {{ govukTextarea({
+                id: "site-history-site-2-mining-details",
+                name: "site-history-site-2-mining-details",
+                label: {
+                    text: "Provide details of how long ago this activity took place, or if it’s still active, and how close it is to the area"
+                },
+                value: data['site-history-site-2-mining-details'],
+                errorMessage: {
+                    text: data['site-history-site-2-mining-details-error']
+                } if data['site-history-site-2-mining-details-error']
+            }) }}
+            {% endset -%}
+
+            <!-- Oil processing reveal -->
+            {% set oilProcessingHtml %}
+            {{ govukTextarea({
+                id: "site-history-site-2-oil-processing-details",
+                name: "site-history-site-2-oil-processing-details",
+                label: {
+                    text: "Provide details of how long ago this activity took place, or if it’s still active, and how close it is to the area"
+                },
+                value: data['site-history-site-2-oil-processing-details'],
+                errorMessage: {
+                    text: data['site-history-site-2-oil-processing-details-error']
+                } if data['site-history-site-2-oil-processing-details-error']
+            }) }}
+            {% endset -%}
+
+            <!-- Pollution incidents reveal -->
+            {% set pollutionIncidentsHtml %}
+            {{ govukTextarea({
+                id: "site-history-site-2-pollution-incidents-details",
+                name: "site-history-site-2-pollution-incidents-details",
+                label: {
+                    text: "Provide details of how long ago this activity took place, or if it’s still active, and how close it is to the area"
+                },
+                value: data['site-history-site-2-pollution-incidents-details'],
+                errorMessage: {
+                    text: data['site-history-site-2-pollution-incidents-details-error']
+                } if data['site-history-site-2-pollution-incidents-details-error']
+            }) }}
+            {% endset -%}
+
+            <!-- Ship building reveal -->
+            {% set shipBuildingHtml %}
+            {{ govukTextarea({
+                id: "site-history-site-2-ship-building-details",
+                name: "site-history-site-2-ship-building-details",
+                label: {
+                    text: "Provide details of how long ago this activity took place, or if it’s still active, and how close it is to the area"
+                },
+                value: data['site-history-site-2-ship-building-details'],
+                errorMessage: {
+                    text: data['site-history-site-2-ship-building-details-error']
+                } if data['site-history-site-2-ship-building-details-error']
+            }) }}
+            {% endset -%}
+
+            <!-- Steelworks reveal -->
+            {% set steelworksHtml %}
+            {{ govukTextarea({
+                id: "site-history-site-2-steelworks-details",
+                name: "site-history-site-2-steelworks-details",
+                label: {
+                    text: "Provide details of how long ago this activity took place, or if it’s still active, and how close it is to the area"
+                },
+                value: data['site-history-site-2-steelworks-details'],
+                errorMessage: {
+                    text: data['site-history-site-2-steelworks-details-error']
+                } if data['site-history-site-2-steelworks-details-error']
+            }) }}
+            {% endset -%}
+
+            <!-- Other reveal -->
+            {% set otherHtml %}
+            {{ govukTextarea({
+                id: "site-history-site-2-other-details",
+                name: "site-history-site-2-other-details",
+                label: {
+                    text: "Provide details of how long ago this activity took place, or if it’s still active, and how close it is to the area"
+                },
+                value: data['site-history-site-2-other-details'],
+                errorMessage: {
+                    text: data['site-history-site-2-other-details-error']
+                } if data['site-history-site-2-other-details-error']
+            }) }}
+            {% endset -%}
+
+            {{ govukCheckboxes({
+                idPrefix: "site-history-site-2",
+                name: "site-history-site-2",
+                fieldset: {
+                    legend: {
+                        html: '<span class="govuk-caption-l">' + data['sample-plan-project-name-text-input'] + '<span class="govuk-!-display-block">Dredge site 2</span></span>' + pageHeadingTextHTML,
+                        isPageHeading: true,
+                        classes: "govuk-fieldset__legend--l"
+                    }
+                },
+                hint: {
+                    text: "Include the site itself, the surrounding area, and select all that apply"
+                },
+                errorMessage: {
+                    text: data['site-history-site-2-error']
+                } if data['site-history-site-2-error'],
+                items: [
+                    {
+                        value: "chemicals-manufacturing",
+                        text: "Chemicals manufacturing",
+                        checked: true if data['site-history-site-2'] and "chemicals-manufacturing" in data['site-history-site-2'],
+                        conditional: {
+                            html: chemicalsManufacturingHtml
+                        }
+                    },
+                    {
+                        value: "electronics-manufacturing",
+                        text: "Electronics manufacturing",
+                        checked: true if data['site-history-site-2'] and "electronics-manufacturing" in data['site-history-site-2'],
+                        conditional: {
+                            html: electronicsManufacturingHtml
+                        }
+                    },
+                    {
+                        value: "major-port-infrastructure",
+                        text: "Major port infrastructure or activity",
+                        checked: true if data['site-history-site-2'] and "major-port-infrastructure" in data['site-history-site-2'],
+                        conditional: {
+                            html: majorPortInfrastructureHtml
+                        }
+                    },
+                    {
+                        value: "mining",
+                        text: "Mining",
+                        checked: true if data['site-history-site-2'] and "mining" in data['site-history-site-2'],
+                        conditional: {
+                            html: miningHtml
+                        }
+                    },
+                    {
+                        value: "oil-processing",
+                        text: "Oil processing",
+                        checked: true if data['site-history-site-2'] and "oil-processing" in data['site-history-site-2'],
+                        conditional: {
+                            html: oilProcessingHtml
+                        }
+                    },
+                    {
+                        value: "pollution-incidents",
+                        text: "Pollution incidents",
+                        checked: true if data['site-history-site-2'] and "pollution-incidents" in data['site-history-site-2'],
+                        conditional: {
+                            html: pollutionIncidentsHtml
+                        }
+                    },
+                    {
+                        value: "ship-building",
+                        text: "Ship building",
+                        checked: true if data['site-history-site-2'] and "ship-building" in data['site-history-site-2'],
+                        conditional: {
+                            html: shipBuildingHtml
+                        }
+                    },
+                    {
+                        value: "steelworks",
+                        text: "Steelworks",
+                        checked: true if data['site-history-site-2'] and "steelworks" in data['site-history-site-2'],
+                        conditional: {
+                            html: steelworksHtml
+                        }
+                    },
+                    {
+                        value: "other",
+                        text: "Other",
+                        checked: true if data['site-history-site-2'] and "other" in data['site-history-site-2'],
+                        conditional: {
+                            html: otherHtml
+                        }
+                    },
+                    {
+                        divider: "or"
+                    },
+                    {
+                        value: "no-history-industrial-use",
+                        text: "No history of industrial use",
+                        checked: true if data['site-history-site-2'] and "no-history-industrial-use" in data['site-history-site-2']
+                    }
+                ]
+            }) }}
+
+            <div class="govuk-button-group">
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+                <a class="govuk-link govuk-link--no-visited-state" href="">Cancel</a>
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
