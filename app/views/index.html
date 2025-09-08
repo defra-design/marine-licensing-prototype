@@ -9,28 +9,28 @@ Private beta prototype
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
 {% block pageTitle %}
-    {{ pageHeadingTextHTML }} - Marine Management Organisation
+{{ pageHeadingTextHTML }} - Marine Management Organisation
 {% endblock %}
 
 {% block beforeContent %}
 {{ govukPhaseBanner({
-        tag: {
-          text: "Prototype"
-        },
-        html: ''
-      }) }}
+tag: {
+text: "Prototype"
+},
+html: ''
+}) }}
 {% endblock %}
 
 {% block content %}
 
 <div class="govuk-grid-row">
 
-    <div class="govuk-grid-column-two-thirds">
-        <h1 class="govuk-heading-xl">
-          {{ pageHeadingTextHTML }}
-        </h1>
-        
-        <!--<span>
+  <div class="govuk-grid-column-two-thirds">
+    <h1 class="govuk-heading-xl">
+      {{ pageHeadingTextHTML }}
+    </h1>
+
+    <!--<span>
         {{ govukButton({
           text: "Go to start",
           href: "versions/2025-03-03/check/start",
@@ -38,465 +38,584 @@ Private beta prototype
         }) }}
         </span>-->
 
-        
-        <!-- Start of session warning text -->
-        <div class="govuk-warning-text">
-          <span class="govuk-warning-text__icon info" aria-hidden="true">!</span>
-          <strong class="govuk-warning-text__text">
-            <span class="govuk-visually-hidden">Warning</span>
-            Remember to <a href="/manage-prototype/clear-data" class=" govuk-link--no-visited-state">clear session data</a>  every time you start a journey
-          </strong>
-        </div>
 
-        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-        <!-- End of session warning text -->
+    <!-- Start of session warning text -->
+    <div class="govuk-warning-text">
+      <span class="govuk-warning-text__icon info" aria-hidden="true">!</span>
+      <strong class="govuk-warning-text__text">
+        <span class="govuk-visually-hidden">Warning</span>
+        Remember to <a href="/manage-prototype/clear-data" class=" govuk-link--no-visited-state">clear session data</a>
+        every time you start a journey
+      </strong>
+    </div>
 
-        <!-- Start of Multiple Sites v2 -->
-        <h2 class="govuk-heading-m">Private beta MVP<strong class="govuk-tag govuk-tag--yellow" style="float:right">In progress</strong></h2>
+    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+    <!-- End of session warning text -->
 
-        <p>(Previously known as 'Multiple sites v2')</p>
+    <!-- Start of Multiple Sites v2 -->
+    <h2 class="govuk-heading-m">Private beta MVP<strong class="govuk-tag govuk-tag--yellow" style="float:right">In
+        progress</strong></h2>
 
-        <p>This version provides enhanced support for multiple sites, allowing users to provide coordinates through file upload and manual entry within the same exemption journey. You can add and delete sites multiple times using different methods.</p>
+    <p>(Previously known as 'Multiple sites v2')</p>
 
-        <p>This is a prototype. You are not required to upload a file – just select 'Continue' on the upload page. The mapped coordinates shown are generic.</p>
+    <p>This version provides enhanced support for multiple sites, allowing users to provide coordinates through file
+      upload and manual entry within the same exemption journey. You can add and delete sites multiple times using
+      different methods.</p>
 
-        <h3 class="govuk-heading-s">Exemption notifications – start from:</h3>
+    <p>This is a prototype. You are not required to upload a file – just select 'Continue' on the upload page. The
+      mapped coordinates shown are generic.</p>
 
+    <h3 class="govuk-heading-s">Exemption notifications – start from:</h3>
+
+    <ul class="govuk-list govuk-list--spaced">
+      <li><a
+          href="versions/multiple-sites-v2/check/exemption?headerName=Check%20if%20you%20need%20a%20marine%20licence&headerNameExemption=Apply%20for%20a%20marine%20licence&exemption=sample-notification&errorthispage=false&errortypeone=false&exempt-information-1-status=completed&"
+          class="govuk-link--no-visited-state">The 'You are exempt' page of the 'Check if you need a licence'
+          section</a></li>
+      <li><a
+          href="versions/multiple-sites-v2/check/exemption?user_type=organisation&headerName=Check%20if%20you%20need%20a%20marine%20licence&headerNameExemption=Apply%20for%20a%20marine%20licence&exemption=sample-notification&errorthispage=false&errortypeone=false&exempt-information-1-status=completed&"
+          class="govuk-link--no-visited-state">The 'You are exempt' page for a multi-organisation user - radios</a></li>
+      <li><a
+          href="versions/multiple-sites-v2/check/exemption?user_type=organisation&component_type=autocomplete&headerName=Check%20if%20you%20need%20a%20marine%20licence&headerNameExemption=Apply%20for%20a%20marine%20licence&exemption=sample-notification&errorthispage=false&errortypeone=false&exempt-information-1-status=completed&"
+          class="govuk-link--no-visited-state">The 'You are exempt' page for a multi-organisation user -
+          autocomplete</a></li>
+      <li><a
+          href="versions/multiple-sites-v2/exemption/task-list?headerName=Check%20if%20you%20need%20a%20marine%20licence&headerNameExemption=Apply%20for%20a%20marine%20licence&exemption=sample-notification&exemption-project-name-text-input=South%20coast%20sea%20samples&errorthispage=false&errortypeone=false&exempt-information-1-status=completed&"
+          class="govuk-link--no-visited-state">Task list with project name completed</a></li>
+      <li><a
+          href="versions/mvp-multi-sites/exemption/task-list?headerName=Check%20if%20you%20need%20a%20marine%20licence&headerNameExemption=Apply%20for%20a%20marine%20licence&exemption=sample-notification&exemption-project-name-text-input=South%20coast%20sea%20samples&errorthispage=false&errortypeone=false&exempt-information-1-status=completed&"
+          class="govuk-link--no-visited-state">Archived 'Your sites' version</a></li>
+    </ul>
+
+
+    <details class="govuk-details govuk-!-margin-bottom-2">
+      <summary class="govuk-details__summary">
+        <span class="govuk-details__summary-text">
+          Internal user pages
+        </span>
+      </summary>
+      <div class="govuk-details__text">
         <ul class="govuk-list govuk-list--spaced">
-          <li><a href="versions/multiple-sites-v2/check/exemption?headerName=Check%20if%20you%20need%20a%20marine%20licence&headerNameExemption=Apply%20for%20a%20marine%20licence&exemption=sample-notification&errorthispage=false&errortypeone=false&exempt-information-1-status=completed&" class="govuk-link--no-visited-state">The 'You are exempt' page of the 'Check if you need a licence' section</a></li>
-          <li><a href="versions/multiple-sites-v2/check/exemption?user_type=organisation&headerName=Check%20if%20you%20need%20a%20marine%20licence&headerNameExemption=Apply%20for%20a%20marine%20licence&exemption=sample-notification&errorthispage=false&errortypeone=false&exempt-information-1-status=completed&" class="govuk-link--no-visited-state">The 'You are exempt' page for a multi-organisation user - radios</a></li>
-          <li><a href="versions/multiple-sites-v2/check/exemption?user_type=organisation&component_type=autocomplete&headerName=Check%20if%20you%20need%20a%20marine%20licence&headerNameExemption=Apply%20for%20a%20marine%20licence&exemption=sample-notification&errorthispage=false&errortypeone=false&exempt-information-1-status=completed&" class="govuk-link--no-visited-state">The 'You are exempt' page for a multi-organisation user - autocomplete</a></li>
-          <li><a href="versions/multiple-sites-v2/exemption/task-list?headerName=Check%20if%20you%20need%20a%20marine%20licence&headerNameExemption=Apply%20for%20a%20marine%20licence&exemption=sample-notification&exemption-project-name-text-input=South%20coast%20sea%20samples&errorthispage=false&errortypeone=false&exempt-information-1-status=completed&" class="govuk-link--no-visited-state">Task list with project name completed</a></li>
-          <li><a href="versions/mvp-multi-sites/exemption/task-list?headerName=Check%20if%20you%20need%20a%20marine%20licence&headerNameExemption=Apply%20for%20a%20marine%20licence&exemption=sample-notification&exemption-project-name-text-input=South%20coast%20sea%20samples&errorthispage=false&errortypeone=false&exempt-information-1-status=completed&" class="govuk-link--no-visited-state">Archived 'Your sites' version</a></li>
+          <li><a href="versions/multiple-sites-v2/exemption/notifications/activity01"
+              class="govuk-link--no-visited-state">Exempt activity notification 1 - individual applicant</a></li>
+          <li><a href="versions/multiple-sites-v2/exemption/notifications/activity02"
+              class="govuk-link--no-visited-state">Exempt activity notification 2 - individual applicant</a></li>
+          <li><a href="versions/multiple-sites-v2/exemption/notifications/activity03"
+              class="govuk-link--no-visited-state">Exempt activity notification 3 - individual applicant – no applicant
+              details</a></li>
+          <li><a href="versions/multiple-sites-v2/exemption/notifications/activity04"
+              class="govuk-link--no-visited-state">Exempt activity notification 4 - organisation applicant</a></li>
         </ul>
-        
-        
-        <details class="govuk-details govuk-!-margin-bottom-2">
-          <summary class="govuk-details__summary">
-            <span class="govuk-details__summary-text">
-              Internal user pages
-            </span>
-          </summary>
-          <div class="govuk-details__text">
-            <ul class="govuk-list govuk-list--spaced">
-              <li><a href="versions/multiple-sites-v2/exemption/notifications/activity01" class="govuk-link--no-visited-state">Exempt activity notification 1 - individual applicant</a></li>
-              <li><a href="versions/multiple-sites-v2/exemption/notifications/activity02" class="govuk-link--no-visited-state">Exempt activity notification 2 - individual applicant</a></li>
-              <li><a href="versions/multiple-sites-v2/exemption/notifications/activity03" class="govuk-link--no-visited-state">Exempt activity notification 3 - individual applicant – no applicant details</a></li>
-              <li><a href="versions/multiple-sites-v2/exemption/notifications/activity04" class="govuk-link--no-visited-state">Exempt activity notification 4 - organisation applicant</a></li>
-            </ul>
-          </div>
-        </details>
-        
-        <details class="govuk-details govuk-!-margin-bottom-2">
-          <summary class="govuk-details__summary">
-            <span class="govuk-details__summary-text">
-              Cookie banners and help pages
-            </span>
-          </summary>
-          <div class="govuk-details__text">
-            <ul class="govuk-list govuk-list--spaced">
-              <li><a href="versions/multiple-sites-v2/help/cookies" class="govuk-link--no-visited-state">Cookies page</a></li>
-              <li><a href="versions/multiple-sites-v2/help/cookie-banner" class="govuk-link--no-visited-state">Cookie banner</a></li>
-              <li><a href="versions/multiple-sites-v2/help/cookie-banner-accept" class="govuk-link--no-visited-state">Cookies accepted banner</a></li>
-              <li><a href="versions/multiple-sites-v2/help/cookie-banner-reject" class="govuk-link--no-visited-state">Cookies rejected banner</a></li>
-              <li><a href="versions/multiple-sites-v2/help/privacy" class="govuk-link--no-visited-state">Privacy notice</a></li>
-            </ul>
-          </div>
-        </details>
-        
-        <details class="govuk-details">
-          <summary class="govuk-details__summary">
-            <span class="govuk-details__summary-text">
-              IAT replica journeys
-            </span>
-          </summary>
-          <div class="govuk-details__text">
-            <ul class="govuk-list govuk-list--spaced">
-              <li><a href="versions/multiple-sites-v2/start" class="govuk-link--no-visited-state">Start the IAT replica journey</a></li>
-              <li><a href="versions/multiple-sites-v2/start-improved" class="govuk-link--no-visited-state">Start the IAT replica journey with the improved content</a></li>
-            </ul>
-          </div>
-        </details>
+      </div>
+    </details>
 
-        <h3 class="govuk-heading-s">Sample plans – start from:</h3>
-
+    <details class="govuk-details govuk-!-margin-bottom-2">
+      <summary class="govuk-details__summary">
+        <span class="govuk-details__summary-text">
+          Cookie banners and help pages
+        </span>
+      </summary>
+      <div class="govuk-details__text">
         <ul class="govuk-list govuk-list--spaced">
-          <li><a href="versions/multiple-sites-v2/sample-plans-v1/get-a-plan-for-sediment-sample-analysis" class="govuk-link--no-visited-state">You need to get a sample plan</a></li>
-          <li><a href="versions/multiple-sites-v2/sample-plans-v1/get-a-plan-for-sediment-sample-analysis?user_type=organisation" class="govuk-link--no-visited-state">You need to get a sample plan - organisation user</a></li>
-          <li><a href="/versions/multiple-sites-v2/sample-plans-v1/sample-plan-start-page?state=eyJoZWFkZXJOYW1lIjoiQ2hlY2sgaWYgeW91IG5lZWQgYSBtYXJpbmUgbGljZW5jZSIsImhlYWRlck5hbWVFeGVtcHRpb24iOiJBcHBseSBmb3IgYSBtYXJpbmUgbGljZW5jZSIsImV4ZW1wdGlvbiI6IiIsImFuYWx5dGljcy1jb29raWVzIjoibm8iLCJpc1NhbXBsZVBsYW5zU2VjdGlvbiI6dHJ1ZSwidGVzIjoiY3NyZlRva2VuLHVzZXJfaWQscGFzc3dvcmQscHJvZmlsZTo0Njk2ODAxNTQxMjY3MTU4NTQ4OjpHVVFKSnMzT2NhODRQcDVOTlhEVGNrMnlUelRRcVNhMkVqd2J3QXQ4OXVLUGQ5TTEzRUtWSTlxT3BXMldINk83UnlWY2EyamV5SHlYZnByWTBiZHc9PSIsImNzcmZUb2tlbiI6IjZlOGJmYWJmMmNjNzVmMjZhMjAzNjEyYzE3YjdmZWQ0MTYyYjQ5YmQtMTc0MTE5NTQwMTc3Mi0zYTI3YmFiMmVhOTY5MDY5MjQ5YTk0MjAiLCJ1c2VyX2lkIjoiIiwicGFzc3dvcmQiOiIiLCJzYW1wbGUtcGxhbi1lcnJvcnRoaXNwYWdlIjoiZmFsc2UiLCJzYW1wbGUtcGxhbi1lcnJvcnR5cGVvbmUiOiJmYWxzZSIsInNhbXBsZS1wbGFuLXByb2plY3QtbmFtZS10ZXh0LWlucHV0IjoiTXkgc2FtcGxlIHBsYW4ifQ==" class="govuk-link--no-visited-state">Task list with project name completed</a></li>
-          <li><a href="/versions/multiple-sites-v2/sample-plans-v1/sample-plan-start-page?state=eyJoZWFkZXJOYW1lIjoiQ2hlY2sgaWYgeW91IG5lZWQgYSBtYXJpbmUgbGljZW5jZSIsImhlYWRlck5hbWVFeGVtcHRpb24iOiJBcHBseSBmb3IgYSBtYXJpbmUgbGljZW5jZSIsImV4ZW1wdGlvbiI6IiIsImFuYWx5dGljcy1jb29raWVzIjoibm8iLCJzdGF0ZSI6ImV5Sm9aV0ZrWlhKT1lXMWxJam9pUTJobFkyc2dhV1lnZVc5MUlHNWxaV1FnWVNCdFlYSnBibVVnYkdsalpXNWpaU0lzSW1obFlXUmxjazVoYldWRmVHVnRjSFJwYjI0aU9pSkJjSEJzZVNCbWIzSWdZU0J0WVhKcGJtVWdiR2xqWlc1alpTSXNJbVY0Wlcxd2RHbHZiaUk2SWlJc0ltRnVZV3g1ZEdsamN5MWpiMjlyYVdWeklqb2libThpTENKcGMxTmhiWEJzWlZCc1lXNXpVMlZqZEdsdmJpSTZkSEoxWlN3aWRHVnpJam9pWTNOeVpsUnZhMlZ1TEhWelpYSmZhV1FzY0dGemMzZHZjbVFzY0hKdlptbHNaVG8wTmprMk9EQXhOVFF4TWpZM01UVTROVFE0T2pwSFZWRktTbk16VDJOaE9EUlFjRFZPVGxoRVZHTnJNbmxVZWxSUmNWTmhNa1ZxZDJKM1FYUTRPWFZMVUdRNVRURXpSVXRXU1RseFQzQlhNbGRJTms4M1VubFdZMkV5YW1WNVNIbFlabkJ5V1RCaVpIYzlQU0lzSW1OemNtWlViMnRsYmlJNklqWmxPR0ptWVdKbU1tTmpOelZtTWpaaE1qQXpOakV5WXpFM1lqZG1aV1EwTVRZeVlqUTVZbVF0TVRjME1URTVOVFF3TVRjM01pMHpZVEkzWW1GaU1tVmhPVFk1TURZNU1qUTVZVGswTWpBaUxDSjFjMlZ5WDJsa0lqb2lJaXdpY0dGemMzZHZjbVFpT2lJaUxDSnpZVzF3YkdVdGNHeGhiaTFsY25KdmNuUm9hWE53WVdkbElqb2labUZzYzJVaUxDSnpZVzF3YkdVdGNHeGhiaTFsY25KdmNuUjVjR1Z2Ym1VaU9pSm1ZV3h6WlNJc0luTmhiWEJzWlMxd2JHRnVMWEJ5YjJwbFkzUXRibUZ0WlMxMFpYaDBMV2x1Y0hWMElqb2lUWGtnYzJGdGNHeGxJSEJzWVc0aWZRPT0iLCJpc1NhbXBsZVBsYW5zU2VjdGlvbiI6dHJ1ZSwidGVzIjoiY3NyZlRva2VuLHVzZXJfaWQscGFzc3dvcmQscHJvZmlsZTo0Njk2ODAxNTQxMjY3MTU4NTQ4OjpHVVFKSnMzT2NhODRQcDVOTlhEVGNrMnlUelRRcVNhMkVqd2J3QXQ4OXVLUGQ5TTEzRUtWSTlxT3BXMldINk83UnlWY2EyamV5SHlYZnByWTBiZHc9PSIsImNzcmZUb2tlbiI6IjZlOGJmYWJmMmNjNzVmMjZhMjAzNjEyYzE3YjdmZWQ0MTYyYjQ5YmQtMTc0MTE5NTQwMTc3Mi0zYTI3YmFiMmVhOTY5MDY5MjQ5YTk0MjAiLCJ1c2VyX2lkIjoiIiwicGFzc3dvcmQiOiIiLCJzYW1wbGUtcGxhbi1lcnJvcnRoaXNwYWdlIjoiZmFsc2UiLCJzYW1wbGUtcGxhbi1lcnJvcnR5cGVvbmUiOiJmYWxzZSIsInNhbXBsZS1wbGFuLXByb2plY3QtbmFtZS10ZXh0LWlucHV0IjoiTXkgc2FtcGxlIHBsYW4iLCJzYW1wbGUtcGxhbi13aGljaC1hY3Rpdml0eSI6Ik1hcmluZSBkcmVkZ2luZyBhbmQgZGlzcG9zYWwifQ==" class="govuk-link--no-visited-state">Task list with project name completed and dredging and disposal selected</a></li>
-          <li><a href="/versions/multiple-sites-v2/sample-plans-v1/sample-plan-start-page?state=eyJoZWFkZXJOYW1lIjoiQ2hlY2sgaWYgeW91IG5lZWQgYSBtYXJpbmUgbGljZW5jZSIsImhlYWRlck5hbWVFeGVtcHRpb24iOiJBcHBseSBmb3IgYSBtYXJpbmUgbGljZW5jZSIsImV4ZW1wdGlvbiI6IiIsImFuYWx5dGljcy1jb29raWVzIjoibm8iLCJzdGF0ZSI6ImV5Sm9aV0ZrWlhKT1lXMWxJam9pUTJobFkyc2dhV1lnZVc5MUlHNWxaV1FnWVNCdFlYSnBibVVnYkdsalpXNWpaU0lzSW1obFlXUmxjazVoYldWRmVHVnRjSFJwYjI0aU9pSkJjSEJzZVNCbWIzSWdZU0J0WVhKcGJtVWdiR2xqWlc1alpTSXNJbVY0Wlcxd2RHbHZiaUk2SWlJc0ltRnVZV3g1ZEdsamN5MWpiMjlyYVdWeklqb2libThpTENKcGMxTmhiWEJzWlZCc1lXNXpVMlZqZEdsdmJpSTZkSEoxWlN3aWRHVnpJam9pWTNOeVpsUnZhMlZ1TEhWelpYSmZhV1FzY0dGemMzZHZjbVFzY0hKdlptbHNaVG8wTmprMk9EQXhOVFF4TWpZM01UVTROVFE0T2pwSFZWRktTbk16VDJOaE9EUlFjRFZPVGxoRVZHTnJNbmxVZWxSUmNWTmhNa1ZxZDJKM1FYUTRPWFZMVUdRNVRURXpSVXRXU1RseFQzQlhNbGRJTms4M1VubFdZMkV5YW1WNVNIbFlabkJ5V1RCaVpIYzlQU0lzSW1OemNtWlViMnRsYmlJNklqWmxPR0ptWVdKbU1tTmpOelZtTWpaaE1qQXpOakV5WXpFM1lqZG1aV1EwTVRZeVlqUTVZbVF0TVRjME1URTVOVFF3TVRjM01pMHpZVEkzWW1GaU1tVmhPVFk1TURZNU1qUTVZVGswTWpBaUxDSjFjMlZ5WDJsa0lqb2lJaXdpY0dGemMzZHZjbVFpT2lJaUxDSnpZVzF3YkdVdGNHeGhiaTFsY25KdmNuUm9hWE53WVdkbElqb2labUZzYzJVaUxDSnpZVzF3YkdVdGNHeGhiaTFsY25KdmNuUjVjR1Z2Ym1VaU9pSm1ZV3h6WlNJc0luTmhiWEJzWlMxd2JHRnVMWEJ5YjJwbFkzUXRibUZ0WlMxMFpYaDBMV2x1Y0hWMElqb2lUWGtnYzJGdGNHeGxJSEJzWVc0aWZRPT0iLCJpc1NhbXBsZVBsYW5zU2VjdGlvbiI6dHJ1ZSwidGVzIjoiY3NyZlRva2VuLHVzZXJfaWQscGFzc3dvcmQscHJvZmlsZTo0Njk2ODAxNTQxMjY3MTU4NTQ4OjpHVVFKSnMzT2NhODRQcDVOTlhEVGNrMnlUelRRcVNhMkVqd2J3QXQ4OXVLUGQ5TTEzRUtWSTlxT3BXMldINk83UnlWY2EyamV5SHlYZnByWTBiZHc9PSIsImNzcmZUb2tlbiI6IjZlOGJmYWJmMmNjNzVmMjZhMjAzNjEyYzE3YjdmZWQ0MTYyYjQ5YmQtMTc0MTE5NTQwMTc3Mi0zYTI3YmFiMmVhOTY5MDY5MjQ5YTk0MjAiLCJ1c2VyX2lkIjoiIiwicGFzc3dvcmQiOiIiLCJzYW1wbGUtcGxhbi1lcnJvcnRoaXNwYWdlIjoiZmFsc2UiLCJzYW1wbGUtcGxhbi1lcnJvcnR5cGVvbmUiOiJmYWxzZSIsInNhbXBsZS1wbGFuLXByb2plY3QtbmFtZS10ZXh0LWlucHV0IjoiTXkgc2FtcGxlIHBsYW4iLCJzYW1wbGUtcGxhbi1uZXctb3ItZXhpc3RpbmctbGljZW5jZSI6Ik5ldyBtYXJpbmUgbGljZW5jZSIsInNhbXBsZS1wbGFuLWxpY2VuY2UtbGVuZ3RoLXllYXJzIjoiNSIsInNhbXBsZS1wbGFuLWxpY2VuY2UtbGVuZ3RoLW1vbnRocyI6IjAiLCJzYW1wbGUtcGxhbi1lcnJvcnR5cGV0d28iOiJmYWxzZSIsInNhbXBsZS1wbGFuLWxpY2VuY2UtbnVtYmVyIjoiIiwic2FtcGxlLXBsYW4tbGljZW5jZS1leHBpcnktZGF5IjoiIiwic2FtcGxlLXBsYW4tbGljZW5jZS1leHBpcnktbW9udGgiOiIiLCJzYW1wbGUtcGxhbi1saWNlbmNlLWV4cGlyeS15ZWFyIjoiIiwic2FtcGxlLXBsYW4tZXJyb3J0eXBldGhyZWUiOiJmYWxzZSIsInNhbXBsZS1wbGFuLXByb2plY3QtYmFja2dyb3VuZCI6IkxvcmVtIGlwc3VtIGRvbG9yIHNpdCBhbWV0LCBjb25zZWN0ZXR1ciBhZGlwaXNjaW5nIGVsaXQsIHNlZCBkbyBlaXVzbW9kIHRlbXBvciBpbmNpZGlkdW50IHV0IGxhYm9yZSBldCBkb2xvcmUgbWFnbmEgYWxpcXVhLiBVdCBlbmltIGFkIG1pbmltIHZlbmlhbSwgcXVpcyBub3N0cnVkIGV4ZXJjaXRhdGlvbiB1bGxhbWNvIGxhYm9yaXMgbmlzaSB1dCBhbGlxdWlwIGV4IGVhIGNvbW1vZG8gY29uc2VxdWF0Iiwic2FtcGxlLXBsYW4tb3RoZXItY29udGFjdC1kZXRhaWxzIjoiIiwic2FtcGxlLXBsYW4tb3RoZXItY29udGFjdCI6Ik5vIiwic2FtcGxlLXBsYW4tcHJvamVjdC1iYWNrZ3JvdW5kLWNvbXBsZXRlZCI6InRydWUiLCJzYW1wbGUtcGxhbi13aGljaC1hY3Rpdml0eSI6Ik1hcmluZSBkcmVkZ2luZyBhbmQgZGlzcG9zYWwiLCJzYW1wbGUtcGxhbi1zaXRlLWxvY2F0aW9uLW1ldGhvZCI6ImZpbGUtdXBsb2FkIiwic2FtcGxlLXBsYW4tZmlsZS10eXBlIjoic2hhcGVmaWxlIiwic2FtcGxlLXBsYW4tZmlsZS10eXBlLWVycm9ydGhpc3BhZ2UiOiJmYWxzZSIsImZpbGVVcGxvYWQxIjoiIiwic2l0ZS1oaXN0b3J5LXNpdGUtMSI6WyJjaGVtaWNhbHMtbWFudWZhY3R1cmluZyJdLCJzaXRlLWhpc3Rvcnktc2l0ZS0xLWNoZW1pY2Fscy1tYW51ZmFjdHVyaW5nLWRldGFpbHMiOiJMb3JlbSBpcHN1bSBkb2xvciBzaXQgYW1ldCwgY29uc2VjdGV0dXIgYWRpcGlzY2luZyBlbGl0LCBzZWQgZG8gZWl1c21vZCB0ZW1wb3IgaW5jaWRpZHVudCIsInNpdGUtaGlzdG9yeS1zaXRlLTEtZWxlY3Ryb25pY3MtbWFudWZhY3R1cmluZy1kZXRhaWxzIjoiIiwic2l0ZS1oaXN0b3J5LXNpdGUtMS1tYWpvci1wb3J0LWluZnJhc3RydWN0dXJlLWRldGFpbHMiOiIiLCJzaXRlLWhpc3Rvcnktc2l0ZS0xLW1pbmluZy1kZXRhaWxzIjoiIiwic2l0ZS1oaXN0b3J5LXNpdGUtMS1vaWwtcHJvY2Vzc2luZy1kZXRhaWxzIjoiIiwic2l0ZS1oaXN0b3J5LXNpdGUtMS1wb2xsdXRpb24taW5jaWRlbnRzLWRldGFpbHMiOiIiLCJzaXRlLWhpc3Rvcnktc2l0ZS0xLXNoaXAtYnVpbGRpbmctZGV0YWlscyI6IiIsInNpdGUtaGlzdG9yeS1zaXRlLTEtc3RlZWx3b3Jrcy1kZXRhaWxzIjoiIiwic2l0ZS1oaXN0b3J5LXNpdGUtMS1vdGhlci1kZXRhaWxzIjoiIiwic2l0ZS1oaXN0b3J5LXNpdGUtMS1lcnJvcnRoaXNwYWdlIjoiZmFsc2UiLCJzaXRlLWhpc3Rvcnktc2l0ZS0xLWNvbXBsZXRlZCI6dHJ1ZSwiZHJlZGdpbmctZGV0YWlscy1zaXRlLTEtbWF0ZXJpYWwtdHlwZSI6WyJjYXBpdGFsLWRyZWRnZWQtbWF0ZXJpYWwiLCJyZW1lZGlhdGlvbi1kcmVkZ2VkLW1hdGVyaWFsIl0sImRyZWRnaW5nLWRldGFpbHMtc2l0ZS0xLW1ldGhvZCI6WyJjdXR0ZXItc3VjdGlvbiIsInBsb3VnaC1iZWQtbGV2ZWxsaW5nIl0sImRyZWRnaW5nLWRldGFpbHMtc2l0ZS0xLW1ldGhvZC1vdGhlciI6IiIsImRyZWRnaW5nLWRldGFpbHMtc2l0ZS0xLWVycm9ydGhpc3BhZ2UiOiJmYWxzZSIsImRyZWRnaW5nLWRldGFpbHMtc2l0ZS0xLWNvbXBsZXRlZCI6dHJ1ZSwibWF4aW11bS1kcmVkZ2Utdm9sdW1lLXRvdGFsIjoiMTAwMDAwMCIsIm1heGltdW0tZHJlZGdlLXZvbHVtZS1hbm51YWwiOiIiLCJtYXhpbXVtLWRyZWRnZS12b2x1bWUtcGVyLWNhbXBhaWduIjoiNTAwMDAiLCJtYXhpbXVtLWRyZWRnZS12b2x1bWUtY2FtcGFpZ25zLXBlci15ZWFyIjoiMTAiLCJtYXhpbXVtLWRyZWRnZS12b2x1bWUtZXJyb3J0aGlzcGFnZSI6ImZhbHNlIiwibWF4aW11bS1kcmVkZ2Utdm9sdW1lLWNvbXBsZXRlZCI6dHJ1ZSwiZHJlZGdpbmctZGV0YWlscy1zaXRlLTEtZGVwdGgiOiIxMCIsImRyZWRnaW5nLWRldGFpbHMtc2l0ZS0xLWRlcHRoLWVycm9ydGhpc3BhZ2UiOiJmYWxzZSIsImRyZWRnaW5nLWRldGFpbHMtc2l0ZS0xLWRlcHRoLWNvbXBsZXRlZCI6dHJ1ZSwiaGFzLXZpc2l0ZWQtZHJlZGdpbmctc2l0ZS1sb2NhdGlvbnMiOnRydWUsImRyZWRnaW5nLXNpdGVzLWFsbC1jb21wbGV0ZSI6dHJ1ZSwic2FtcGxlLXBsYW4td2hlcmUtZGlzcG9zZS1tYXRlcmlhbCI6IkV4aXN0aW5nIGRpc3Bvc2FsIHNpdGUiLCJkaXNwb3NhbC1zaXRlLWNvZGUiOiIiLCJkaXNwb3NhbC1zaXRlLW5hbWUiOiIiLCJkaXNwb3NhbC1zaXRlLWxvY2F0aW9uIjoiIiwibWFyaW5lLWFyZWEiOiIiLCJkaXNwb3NhbC1zaXRlLXN0YXR1cyI6IiIsImhhcy1zZWFyY2gtZmlsdGVycyI6dHJ1ZSwicGFnZSI6IjEiLCJpbnB1dC1hdXRvY29tcGxldGUiOiIiLCJjb2RlIjoiSFUwNzUiLCJuYW1lIjoiT2xkZmxlZXQgRHJhaW4iLCJjb3VudHJ5IjoiRU5HTEFORCIsInNlYUFyZWEiOiJOb3J0aCBTZWEiLCJzdGF0dXMiOiJPcGVuIiwic2VsZWN0ZWQtZGlzcG9zYWwtc2l0ZS1jb2RlIjoiSFUwNzUiLCJzZWxlY3RlZC1kaXNwb3NhbC1zaXRlLW5hbWUiOiJPbGRmbGVldCBEcmFpbiIsInNlbGVjdGVkLWRpc3Bvc2FsLXNpdGUtY291bnRyeSI6IkVOR0xBTkQiLCJzZWxlY3RlZC1kaXNwb3NhbC1zaXRlLXNlYS1hcmVhIjoiTm9ydGggU2VhIiwic2VsZWN0ZWQtZGlzcG9zYWwtc2l0ZS1zdGF0dXMiOiJPcGVuIiwic2FtcGxlLWRpc3Bvc2FsLXNpdGUtc2VsZWN0ZWQiOnRydWUsInNhbXBsZS1kaXNwb3NhbC1zaXRlLTItc2VsZWN0ZWQiOmZhbHNlLCJzYW1wbGUtZGlzcG9zYWwtZGV0YWlscy1zaXRlLTEtZXJyb3J0aGlzcGFnZSI6ImZhbHNlIiwic2FtcGxlLWRpc3Bvc2FsLWRldGFpbHMtc2l0ZS0xLW1hdGVyaWFsLXR5cGUtZXJyb3IiOiIiLCJzYW1wbGUtZGlzcG9zYWwtZGV0YWlscy1zaXRlLTEtbWV0aG9kLWVycm9yIjoiIiwic2FtcGxlLWRpc3Bvc2FsLWRldGFpbHMtc2l0ZS0xLW1ldGhvZC1vdGhlci1lcnJvciI6IiIsInNhbXBsZS1kaXNwb3NhbC1kZXRhaWxzLXNpdGUtMS1tYXRlcmlhbC10eXBlLW90aGVyLWVycm9yIjoiIiwic2FtcGxlLWRpc3Bvc2FsLWRldGFpbHMtc2l0ZS0xLW1hdGVyaWFsLXR5cGUiOlsiY2FwaXRhbC1kcmVkZ2VkLW1hdGVyaWFsIiwibm9uLWRyZWRnZWQtc2VkaW1lbnRzIl0sInNhbXBsZS1kaXNwb3NhbC1kZXRhaWxzLXNpdGUtMS1tYXRlcmlhbC10eXBlLW90aGVyIjoiIiwic2FtcGxlLWRpc3Bvc2FsLWRldGFpbHMtc2l0ZS0xLW1ldGhvZCI6WyJjb250YWluZWQtZGlzcG9zYWwiLCJkaXNwb3NhbC1hdC1zZWEtb3Itb2Zmc2hvcmUiXSwic2FtcGxlLWRpc3Bvc2FsLWRldGFpbHMtc2l0ZS0xLW1ldGhvZC1vdGhlciI6IiIsInNhbXBsZS1kaXNwb3NhbC1zaXRlLW1hdGVyaWFsLXR5cGUtY29tcGxldGVkIjp0cnVlLCJzYW1wbGUtZGlzcG9zYWwtc2l0ZS1kaXNwb3NhbC1tZXRob2QtY29tcGxldGVkIjp0cnVlLCJzYW1wbGUtZGlzcG9zYWwtc2l0ZS0xLW1heGltdW0tdm9sdW1lLWVycm9ydGhpc3BhZ2UiOiJmYWxzZSIsInNhbXBsZS1kaXNwb3NhbC1zaXRlLTEtdG90YWwtdm9sdW1lLWVycm9yIjoiIiwic2FtcGxlLWRpc3Bvc2FsLXNpdGUtMS1hbm51YWwtdm9sdW1lLWVycm9yIjoiIiwic2FtcGxlLWRpc3Bvc2FsLXNpdGUtMS12b2x1bWUtcGVyLWNhbXBhaWduLWVycm9yIjoiIiwic2FtcGxlLWRpc3Bvc2FsLXNpdGUtMS1jYW1wYWlnbnMtcGVyLXllYXItZXJyb3IiOiIiLCJzYW1wbGUtZGlzcG9zYWwtc2l0ZS0xLXRvdGFsLXZvbHVtZSI6IjEwMDAwMDAiLCJzYW1wbGUtZGlzcG9zYWwtc2l0ZS0xLWFubnVhbC12b2x1bWUiOiIiLCJzYW1wbGUtZGlzcG9zYWwtc2l0ZS0xLXZvbHVtZS1wZXItY2FtcGFpZ24iOiI1MDAwMCIsInNhbXBsZS1kaXNwb3NhbC1zaXRlLTEtY2FtcGFpZ25zLXBlci15ZWFyIjoiMTAiLCJzYW1wbGUtZGlzcG9zYWwtc2l0ZS0xLW1heGltdW0tdm9sdW1lLWNvbXBsZXRlZCI6dHJ1ZSwic2FtcGxlLWRpc3Bvc2FsLXNpdGUtMS1iZW5lZmljaWFsLXVzZS1lcnJvcnRoaXNwYWdlIjoiZmFsc2UiLCJzYW1wbGUtZGlzcG9zYWwtc2l0ZS0xLWJlbmVmaWNpYWwtdXNlLWVycm9yIjoiIiwic2FtcGxlLWRpc3Bvc2FsLXNpdGUtMS1iZW5lZmljaWFsLXVzZS1kZXNjcmlwdGlvbi1lcnJvciI6IiIsInNhbXBsZS1kaXNwb3NhbC1zaXRlLTEtYmVuZWZpY2lhbC11c2UiOiJ5ZXMiLCJzYW1wbGUtZGlzcG9zYWwtc2l0ZS0xLWJlbmVmaWNpYWwtdXNlLWRlc2NyaXB0aW9uIjoiTG9yZW0gaXBzdW0gZG9sb3Igc2l0IGFtZXQsIGNvbnNlY3RldHVyIGFkaXBpc2NpbmcgZWxpdCwgc2VkIGRvIGVpdXNtb2QgdGVtcG9yIGluY2lkaWR1bnQiLCJzYW1wbGUtZGlzcG9zYWwtc2l0ZS0xLWJlbmVmaWNpYWwtdXNlLWNvbXBsZXRlZCI6dHJ1ZSwiaGFzLXZpc2l0ZWQtZGlzcG9zYWwtc2l0ZS1yZXZpZXciOnRydWUsImRpc3Bvc2FsLXNpdGUtc2VsZWN0ZWQiOnRydWUsInNhbXBsZS1kaXNwb3NhbC1zaXRlcy1jb21wbGV0ZWQiOnRydWUsInNhbXBsZS1kaXNwb3NhbC1zaXRlcy1pbi1wcm9ncmVzcyI6ZmFsc2UsImZlZS10ZXJtcy1jaGVja2JveCI6WyJhZ3JlZSJdLCJmZWUtYWNjZXB0YW5jZSI6InllcyIsInNhbXBsZS1wbGFuLWZlZS1lc3RpbWF0ZS1jb21wbGV0ZWQiOiJ0cnVlIn0=" class="govuk-link--no-visited-state">Task list with everything completed</a></li>
+          <li><a href="versions/multiple-sites-v2/help/cookies" class="govuk-link--no-visited-state">Cookies page</a>
+          </li>
+          <li><a href="versions/multiple-sites-v2/help/cookie-banner" class="govuk-link--no-visited-state">Cookie
+              banner</a></li>
+          <li><a href="versions/multiple-sites-v2/help/cookie-banner-accept"
+              class="govuk-link--no-visited-state">Cookies accepted banner</a></li>
+          <li><a href="versions/multiple-sites-v2/help/cookie-banner-reject"
+              class="govuk-link--no-visited-state">Cookies rejected banner</a></li>
+          <li><a href="versions/multiple-sites-v2/help/privacy" class="govuk-link--no-visited-state">Privacy notice</a>
+          </li>
         </ul>
+      </div>
+    </details>
 
-        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-        <!-- End of Multiple Sites v2 -->         
-
-        <!-- Start of MVP -->
-        <h2 class="govuk-heading-m">Single site journey <strong class="govuk-tag govuk-tag--green" style="float:right">Finished</strong></h2>
-        <p>(Our 'steel thread' minimal end-to-end journey, previously known as 'MVP')</p>
-        
-        <h3 class="govuk-heading-s">Start from:</h3>
-
-        <p><a href="versions/mvp/exemption/project-name-start.html" class="govuk-link--no-visited-state">Project name start page</a></p>
-        
-            <ul class="govuk-list govuk-list--spaced">
-              <li>Exempt activity page, featured maps are: <a href="versions/mvp/check/exemption?headerName=Check%20if%20you%20need%20a%20marine%20licence&headerNameExemption=Apply%20for%20a%20marine%20licence&exemption=sample-notification&errorthispage=false&errortypeone=false&exempt-information-1-status=completed&" class="govuk-link--no-visited-state">Sea sample</a> | <a href="versions/mvp/check/exemption?headerName=Check if you need a marine licence&headerNameExemption=Check if you need a marine licence&exemption=&errorthispage=false&errortypeone=false&exempt-information-1-status=completed&" class="govuk-link--no-visited-state">Pontoon</a></li>
-              <li><a href="versions/mvp/exemption/sign-in.html" class="govuk-link--no-visited-state">Government Gateway sign in page</a></li>
-              <li>Task list, project name completed: <a href="versions/mvp/exemption/task-list?headerName=Check%20if%20you%20need%20a%20marine%20licence&headerNameExemption=Apply%20for%20a%20marine%20licence&exemption=sample-notification&exemption-project-name-text-input=Worthing%20sea%20sample&errorthispage=false&errortypeone=false&exempt-information-1-status=completed&" class="govuk-link--no-visited-state">Sea sample</a> | <a href="versions/mvp/exemption/task-list.html?headerName=Check if you need a marine licence&headerNameExemption=Check if you need a marine licence&exemption=&exemption-project-name-text-input=Hammersmith pontoon construction&errorthispage=false&errortypeone=false&exempt-information-1-status=completed&" class="govuk-link--no-visited-state">Pontoon</a></li>
-
-              <li>Task list, all sections completed: <a href="versions/mvp/exemption/task-list?headerName=Check%20if%20you%20need%20a%20marine%20licence&headerNameExemption=Apply%20for%20a%20marine%20licence&exemption=sample-notification&exemption-project-name-text-input=Worthing%20sea%20sample&errorthispage=false&errortypeone=false&exempt-information-1-status=completed&exemption-start-date-date-input-day=1&exemption-start-date-date-input-month=7&exemption-start-date-date-input-year=2025&exemption-end-date-date-input-day=7&exemption-end-date-date-input-month=7&exemption-end-date-date-input-year=2025&startdateerror=false&enddateerror=false&exempt-information-2-status=completed&exemption-how-do-you-want-to-provide-the-coordinates-radios=Upload%20a%20file%20with%20the%20coordinates%20of%20the%20site&exemption-which-type-of-file-radios=KML&fileUpload1=&siteTitle=review&exempt-information-3-status=completed&exemption-public-register-radios=No&errortypetwo=false&exempt-information-4-status=completed&errors=&exemption-activity-details-text-area=I%20will%20be%20using%20a%20grabber%20from%20a%20small%20boat%20to%20take%20a%20sample%20of%20sediment%20from%20the%20sea%20bed.%20It%20will%20be%20a%20sample%20of%20about%200.3%20metres%20cubed.&exempt-information-5-status=completed&camefromcheckanswers=false&" class="govuk-link--no-visited-state">Sea sample</a> | <a href="versions/mvp/exemption/task-list.html?headerName=Check if you need a marine licence&headerNameExemption=Check if you need a marine licence&exemption=&exemption-project-name-text-input=Hammersmith pontoon construction&errorthispage=false&errortypeone=false&exempt-information-1-status=completed&exemption-start-date-date-input-day=1&exemption-start-date-date-input-month=7&exemption-start-date-date-input-year=2025&exemption-end-date-date-input-day=7&exemption-end-date-date-input-month=7&exemption-end-date-date-input-year=2025&startdateerror=false&enddateerror=false&exempt-information-2-status=completed&exemption-how-do-you-want-to-provide-the-coordinates-radios=Upload a file with the coordinates of the site&exemption-which-type-of-file-radios=KML&fileUpload1=&siteTitle=review&exempt-information-3-status=completed&exemption-public-register-radios=No&errortypetwo=false&exempt-information-4-status=completed&errors=&exemption-activity-details-text-area=We will be installing a pontoon approximately 20 metres squared at the end of our garden that backs onto the river. It will be accessible via a gangway. The pontoon and gangway will be constructed and installed on site. &exempt-information-5-status=completed&" class="govuk-link--no-visited-state">Pontoon</a></li>
-
-              <li>Internal user view: <a href="versions/mvp/exemption/check-answers-internal?headerName=Check if you need a marine licence&headerNameExemption=Apply for a marine licence&exemption=sample-notification&exemption-project-name-text-input=Worthing sea sample&errorthispage=false&errortypeone=false&exempt-information-1-status=completed&exemption-start-date-date-input-day=1&exemption-start-date-date-input-month=7&exemption-start-date-date-input-year=2025&exemption-end-date-date-input-day=7&exemption-end-date-date-input-month=7&exemption-end-date-date-input-year=2025&startdateerror=false&enddateerror=false&exempt-information-2-status=completed&exemption-how-do-you-want-to-provide-the-coordinates-radios=Upload a file with the coordinates of the site&exemption-which-type-of-file-radios=KML&fileUpload1=&siteTitle=review&exempt-information-3-status=completed&exemption-public-register-radios=Yes&errortypetwo=false&exempt-information-4-status=completed&errors=&exemption-activity-details-text-area=I will be using a grabber from a small boat to take a sample of sediment from the sea bed. It will be a sample of about 0.3 metres cubed.&exempt-information-5-status=completed&camefromcheckanswers=false&exemption-public-register-text-area=[Users details] Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse a felis auctor, blandit ex eget, placerat augue. Sed nibh nibh, interdum quis ligula ut, laoreet luctus lorem. Morbi a venenatis augue. Ut egestas aliquam ipsum at gravida. Aenean congue magna at odio semper, sed pulvinar felis rhoncus&applicationSubmitted=true&goto=home&" class="govuk-link--no-visited-state">Sea sample</a> | <a href="versions/mvp/exemption/check-answers-internal?headerName=Check if you need a marine licence&headerNameExemption=Check if you need a marine licence&exemption=&exemption-project-name-text-input=Hammersmith pontoon construction&errorthispage=false&errortypeone=false&exempt-information-1-status=completed&exemption-start-date-date-input-day=1&exemption-start-date-date-input-month=7&exemption-start-date-date-input-year=2025&exemption-end-date-date-input-day=7&exemption-end-date-date-input-month=7&exemption-end-date-date-input-year=2025&startdateerror=false&enddateerror=false&exempt-information-2-status=completed&exemption-how-do-you-want-to-provide-the-coordinates-radios=Upload a file with the coordinates of the site&exemption-which-type-of-file-radios=KML&fileUpload1=&siteTitle=review&exempt-information-3-status=completed&exemption-public-register-radios=Yes&errortypetwo=false&exempt-information-4-status=completed&errors=&exemption-activity-details-text-area=We will be installing a pontoon approximately 20 metres squared at the end of our garden that backs onto the river. It will be accessible via a gangway. The pontoon and gangway will be constructed and installed on site. &exempt-information-5-status=completed&exemption-public-register-text-area=[Users details] Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse a felis auctor, blandit ex eget, placerat augue. Sed nibh nibh, interdum quis ligula ut, laoreet luctus lorem. Morbi a venenatis augue. Ut egestas aliquam ipsum at gravida. Aenean congue magna at odio semper, sed pulvinar felis rhoncus&applicationSubmitted=true&goto=home&" class="govuk-link--no-visited-state">Pontoon</a></li>
-
-              <li>Confirmation email: <a href="versions/mvp/exemption/email??headerName=Check%20if%20you%20need%20a%20marine%20licence&headerNameExemption=Apply%20for%20a%20marine%20licence&exemption=sample-notification&exemption-project-name-text-input=Worthing%20sea%20sample&errorthispage=false&errortypeone=false&exempt-information-1-status=completed&exemption-start-date-date-input-day=1&exemption-start-date-date-input-month=7&exemption-start-date-date-input-year=2025&exemption-end-date-date-input-day=7&exemption-end-date-date-input-month=7&exemption-end-date-date-input-year=2025&startdateerror=false&enddateerror=false&exempt-information-2-status=completed&exemption-how-do-you-want-to-provide-the-coordinates-radios=Upload%20a%20file%20with%20the%20coordinates%20of%20the%20site&exemption-which-type-of-file-radios=KML&fileUpload1=&siteTitle=review&exempt-information-3-status=completed&exemption-public-register-radios=No&errortypetwo=false&exempt-information-4-status=completed&errors=&exemption-activity-details-text-area=I%20will%20be%20using%20a%20grabber%20from%20a%20small%20boat%20to%20take%20a%20sample%20of%20sediment%20from%20the%20sea%20bed.%20It%20will%20be%20a%20sample%20of%20about%200.3%20metres%20cubed.&exempt-information-5-status=completed&camefromcheckanswers=false&applicationSubmitted=true&" class="govuk-link--no-visited-state">Sea sample</a> | <a href="versions/mvp/exemption/email?headerName=Check if you need a marine licence&headerNameExemption=Check if you need a marine licence&exemption=&exemption-project-name-text-input=Hammersmith pontoon construction&errorthispage=false&errortypeone=false&exempt-information-1-status=completed&exemption-start-date-date-input-day=1&exemption-start-date-date-input-month=7&exemption-start-date-date-input-year=2025&exemption-end-date-date-input-day=7&exemption-end-date-date-input-month=7&exemption-end-date-date-input-year=2025&startdateerror=false&enddateerror=false&exempt-information-2-status=completed&exemption-how-do-you-want-to-provide-the-coordinates-radios=Upload a file with the coordinates of the site&exemption-which-type-of-file-radios=KML&fileUpload1=&siteTitle=review&exempt-information-3-status=completed&exemption-public-register-radios=No&errortypetwo=false&exempt-information-4-status=completed&errors=&exemption-activity-details-text-area=We will be installing a pontoon approximately 20 metres squared at the end of our garden that backs onto the river. It will be accessible via a gangway. The pontoon and gangway will be constructed and installed on site. &exempt-information-5-status=completed&applicationSubmitted=true&" class="govuk-link--no-visited-state">Pontoon</a></li>
-              
-            </ul>
-
-            <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-            
-        <!-- End of MVP -->
-
-        <!-- Start of Multiple Sites -->
-        <h2 class="govuk-heading-m">Multiple sites v1<strong class="govuk-tag govuk-tag--green" style="float:right">Finished</strong></h2>
-        
-        <p>This version explores adding support for multiple sites in a single file upload.</p>
-        
-        <h3 class="govuk-heading-s">Start from:</h3>
-
+    <details class="govuk-details">
+      <summary class="govuk-details__summary">
+        <span class="govuk-details__summary-text">
+          IAT replica journeys
+        </span>
+      </summary>
+      <div class="govuk-details__text">
         <ul class="govuk-list govuk-list--spaced">
-          <li><a href="versions/multiple-sites/check/exemption?headerName=Check%20if%20you%20need%20a%20marine%20licence&headerNameExemption=Apply%20for%20a%20marine%20licence&exemption=sample-notification&errorthispage=false&errortypeone=false&exempt-information-1-status=completed&" class="govuk-link--no-visited-state">The 'You are exempt' page of the 'Check if you need a licence' section</a></li>
-          <li><a href="versions/multiple-sites/exemption/task-list?headerName=Check%20if%20you%20need%20a%20marine%20licence&headerNameExemption=Apply%20for%20a%20marine%20licence&exemption=sample-notification&exemption-project-name-text-input=South%20coast%20sea%20samples&errorthispage=false&errortypeone=false&exempt-information-1-status=completed&" class="govuk-link--no-visited-state">Task list with project name completed</a></li>
+          <li><a href="versions/multiple-sites-v2/start" class="govuk-link--no-visited-state">Start the IAT replica
+              journey</a></li>
+          <li><a href="versions/multiple-sites-v2/start-improved" class="govuk-link--no-visited-state">Start the IAT
+              replica journey with the improved content</a></li>
+        </ul>
+      </div>
+    </details>
+
+    <h3 class="govuk-heading-s">Sample plans – start from:</h3>
+
+    <ul class="govuk-list govuk-list--spaced">
+      <li><a href="versions/multiple-sites-v2/sample-plans-v1/get-a-plan-for-sediment-sample-analysis"
+          class="govuk-link--no-visited-state">You need to get a sample plan</a></li>
+      <li><a
+          href="versions/multiple-sites-v2/sample-plans-v1/get-a-plan-for-sediment-sample-analysis?user_type=organisation"
+          class="govuk-link--no-visited-state">You need to get a sample plan - organisation user</a></li>
+      <li><a
+          href="/versions/multiple-sites-v2/sample-plans-v1/sample-plan-start-page?state=eyJoZWFkZXJOYW1lIjoiQ2hlY2sgaWYgeW91IG5lZWQgYSBtYXJpbmUgbGljZW5jZSIsImhlYWRlck5hbWVFeGVtcHRpb24iOiJBcHBseSBmb3IgYSBtYXJpbmUgbGljZW5jZSIsImV4ZW1wdGlvbiI6IiIsImFuYWx5dGljcy1jb29raWVzIjoibm8iLCJpc1NhbXBsZVBsYW5zU2VjdGlvbiI6dHJ1ZSwidGVzIjoiY3NyZlRva2VuLHVzZXJfaWQscGFzc3dvcmQscHJvZmlsZTo0Njk2ODAxNTQxMjY3MTU4NTQ4OjpHVVFKSnMzT2NhODRQcDVOTlhEVGNrMnlUelRRcVNhMkVqd2J3QXQ4OXVLUGQ5TTEzRUtWSTlxT3BXMldINk83UnlWY2EyamV5SHlYZnByWTBiZHc9PSIsImNzcmZUb2tlbiI6IjZlOGJmYWJmMmNjNzVmMjZhMjAzNjEyYzE3YjdmZWQ0MTYyYjQ5YmQtMTc0MTE5NTQwMTc3Mi0zYTI3YmFiMmVhOTY5MDY5MjQ5YTk0MjAiLCJ1c2VyX2lkIjoiIiwicGFzc3dvcmQiOiIiLCJzYW1wbGUtcGxhbi1lcnJvcnRoaXNwYWdlIjoiZmFsc2UiLCJzYW1wbGUtcGxhbi1lcnJvcnR5cGVvbmUiOiJmYWxzZSIsInNhbXBsZS1wbGFuLXByb2plY3QtbmFtZS10ZXh0LWlucHV0IjoiTXkgc2FtcGxlIHBsYW4ifQ=="
+          class="govuk-link--no-visited-state">Task list with project name completed</a></li>
+      <li><a
+          href="/versions/multiple-sites-v2/sample-plans-v1/sample-plan-start-page?state=eyJoZWFkZXJOYW1lIjoiQ2hlY2sgaWYgeW91IG5lZWQgYSBtYXJpbmUgbGljZW5jZSIsImhlYWRlck5hbWVFeGVtcHRpb24iOiJBcHBseSBmb3IgYSBtYXJpbmUgbGljZW5jZSIsImV4ZW1wdGlvbiI6IiIsImFuYWx5dGljcy1jb29raWVzIjoibm8iLCJzdGF0ZSI6ImV5Sm9aV0ZrWlhKT1lXMWxJam9pUTJobFkyc2dhV1lnZVc5MUlHNWxaV1FnWVNCdFlYSnBibVVnYkdsalpXNWpaU0lzSW1obFlXUmxjazVoYldWRmVHVnRjSFJwYjI0aU9pSkJjSEJzZVNCbWIzSWdZU0J0WVhKcGJtVWdiR2xqWlc1alpTSXNJbVY0Wlcxd2RHbHZiaUk2SWlJc0ltRnVZV3g1ZEdsamN5MWpiMjlyYVdWeklqb2libThpTENKcGMxTmhiWEJzWlZCc1lXNXpVMlZqZEdsdmJpSTZkSEoxWlN3aWRHVnpJam9pWTNOeVpsUnZhMlZ1TEhWelpYSmZhV1FzY0dGemMzZHZjbVFzY0hKdlptbHNaVG8wTmprMk9EQXhOVFF4TWpZM01UVTROVFE0T2pwSFZWRktTbk16VDJOaE9EUlFjRFZPVGxoRVZHTnJNbmxVZWxSUmNWTmhNa1ZxZDJKM1FYUTRPWFZMVUdRNVRURXpSVXRXU1RseFQzQlhNbGRJTms4M1VubFdZMkV5YW1WNVNIbFlabkJ5V1RCaVpIYzlQU0lzSW1OemNtWlViMnRsYmlJNklqWmxPR0ptWVdKbU1tTmpOelZtTWpaaE1qQXpOakV5WXpFM1lqZG1aV1EwTVRZeVlqUTVZbVF0TVRjME1URTVOVFF3TVRjM01pMHpZVEkzWW1GaU1tVmhPVFk1TURZNU1qUTVZVGswTWpBaUxDSjFjMlZ5WDJsa0lqb2lJaXdpY0dGemMzZHZjbVFpT2lJaUxDSnpZVzF3YkdVdGNHeGhiaTFsY25KdmNuUm9hWE53WVdkbElqb2labUZzYzJVaUxDSnpZVzF3YkdVdGNHeGhiaTFsY25KdmNuUjVjR1Z2Ym1VaU9pSm1ZV3h6WlNJc0luTmhiWEJzWlMxd2JHRnVMWEJ5YjJwbFkzUXRibUZ0WlMxMFpYaDBMV2x1Y0hWMElqb2lUWGtnYzJGdGNHeGxJSEJzWVc0aWZRPT0iLCJpc1NhbXBsZVBsYW5zU2VjdGlvbiI6dHJ1ZSwidGVzIjoiY3NyZlRva2VuLHVzZXJfaWQscGFzc3dvcmQscHJvZmlsZTo0Njk2ODAxNTQxMjY3MTU4NTQ4OjpHVVFKSnMzT2NhODRQcDVOTlhEVGNrMnlUelRRcVNhMkVqd2J3QXQ4OXVLUGQ5TTEzRUtWSTlxT3BXMldINk83UnlWY2EyamV5SHlYZnByWTBiZHc9PSIsImNzcmZUb2tlbiI6IjZlOGJmYWJmMmNjNzVmMjZhMjAzNjEyYzE3YjdmZWQ0MTYyYjQ5YmQtMTc0MTE5NTQwMTc3Mi0zYTI3YmFiMmVhOTY5MDY5MjQ5YTk0MjAiLCJ1c2VyX2lkIjoiIiwicGFzc3dvcmQiOiIiLCJzYW1wbGUtcGxhbi1lcnJvcnRoaXNwYWdlIjoiZmFsc2UiLCJzYW1wbGUtcGxhbi1lcnJvcnR5cGVvbmUiOiJmYWxzZSIsInNhbXBsZS1wbGFuLXByb2plY3QtbmFtZS10ZXh0LWlucHV0IjoiTXkgc2FtcGxlIHBsYW4iLCJzYW1wbGUtcGxhbi13aGljaC1hY3Rpdml0eSI6Ik1hcmluZSBkcmVkZ2luZyBhbmQgZGlzcG9zYWwifQ=="
+          class="govuk-link--no-visited-state">Task list with project name completed and dredging and disposal
+          selected</a></li>
+      <li><a
+          href="/versions/multiple-sites-v2/sample-plans-v1/sample-plan-start-page?state=eyJoZWFkZXJOYW1lIjoiQ2hlY2sgaWYgeW91IG5lZWQgYSBtYXJpbmUgbGljZW5jZSIsImhlYWRlck5hbWVFeGVtcHRpb24iOiJBcHBseSBmb3IgYSBtYXJpbmUgbGljZW5jZSIsImV4ZW1wdGlvbiI6IiIsImFuYWx5dGljcy1jb29raWVzIjoibm8iLCJzdGF0ZSI6ImV5Sm9aV0ZrWlhKT1lXMWxJam9pUTJobFkyc2dhV1lnZVc5MUlHNWxaV1FnWVNCdFlYSnBibVVnYkdsalpXNWpaU0lzSW1obFlXUmxjazVoYldWRmVHVnRjSFJwYjI0aU9pSkJjSEJzZVNCbWIzSWdZU0J0WVhKcGJtVWdiR2xqWlc1alpTSXNJbVY0Wlcxd2RHbHZiaUk2SWlJc0ltRnVZV3g1ZEdsamN5MWpiMjlyYVdWeklqb2libThpTENKcGMxTmhiWEJzWlZCc1lXNXpVMlZqZEdsdmJpSTZkSEoxWlN3aWRHVnpJam9pWTNOeVpsUnZhMlZ1TEhWelpYSmZhV1FzY0dGemMzZHZjbVFzY0hKdlptbHNaVG8wTmprMk9EQXhOVFF4TWpZM01UVTROVFE0T2pwSFZWRktTbk16VDJOaE9EUlFjRFZPVGxoRVZHTnJNbmxVZWxSUmNWTmhNa1ZxZDJKM1FYUTRPWFZMVUdRNVRURXpSVXRXU1RseFQzQlhNbGRJTms4M1VubFdZMkV5YW1WNVNIbFlabkJ5V1RCaVpIYzlQU0lzSW1OemNtWlViMnRsYmlJNklqWmxPR0ptWVdKbU1tTmpOelZtTWpaaE1qQXpOakV5WXpFM1lqZG1aV1EwTVRZeVlqUTVZbVF0TVRjME1URTVOVFF3TVRjM01pMHpZVEkzWW1GaU1tVmhPVFk1TURZNU1qUTVZVGswTWpBaUxDSjFjMlZ5WDJsa0lqb2lJaXdpY0dGemMzZHZjbVFpT2lJaUxDSnpZVzF3YkdVdGNHeGhiaTFsY25KdmNuUm9hWE53WVdkbElqb2labUZzYzJVaUxDSnpZVzF3YkdVdGNHeGhiaTFsY25KdmNuUjVjR1Z2Ym1VaU9pSm1ZV3h6WlNJc0luTmhiWEJzWlMxd2JHRnVMWEJ5YjJwbFkzUXRibUZ0WlMxMFpYaDBMV2x1Y0hWMElqb2lUWGtnYzJGdGNHeGxJSEJzWVc0aWZRPT0iLCJpc1NhbXBsZVBsYW5zU2VjdGlvbiI6dHJ1ZSwidGVzIjoiY3NyZlRva2VuLHVzZXJfaWQscGFzc3dvcmQscHJvZmlsZTo0Njk2ODAxNTQxMjY3MTU4NTQ4OjpHVVFKSnMzT2NhODRQcDVOTlhEVGNrMnlUelRRcVNhMkVqd2J3QXQ4OXVLUGQ5TTEzRUtWSTlxT3BXMldINk83UnlWY2EyamV5SHlYZnByWTBiZHc9PSIsImNzcmZUb2tlbiI6IjZlOGJmYWJmMmNjNzVmMjZhMjAzNjEyYzE3YjdmZWQ0MTYyYjQ5YmQtMTc0MTE5NTQwMTc3Mi0zYTI3YmFiMmVhOTY5MDY5MjQ5YTk0MjAiLCJ1c2VyX2lkIjoiIiwicGFzc3dvcmQiOiIiLCJzYW1wbGUtcGxhbi1lcnJvcnRoaXNwYWdlIjoiZmFsc2UiLCJzYW1wbGUtcGxhbi1lcnJvcnR5cGVvbmUiOiJmYWxzZSIsInNhbXBsZS1wbGFuLXByb2plY3QtbmFtZS10ZXh0LWlucHV0IjoiTXkgc2FtcGxlIHBsYW4iLCJzYW1wbGUtcGxhbi1uZXctb3ItZXhpc3RpbmctbGljZW5jZSI6Ik5ldyBtYXJpbmUgbGljZW5jZSIsInNhbXBsZS1wbGFuLWxpY2VuY2UtbGVuZ3RoLXllYXJzIjoiNSIsInNhbXBsZS1wbGFuLWxpY2VuY2UtbGVuZ3RoLW1vbnRocyI6IjAiLCJzYW1wbGUtcGxhbi1lcnJvcnR5cGV0d28iOiJmYWxzZSIsInNhbXBsZS1wbGFuLWxpY2VuY2UtbnVtYmVyIjoiIiwic2FtcGxlLXBsYW4tbGljZW5jZS1leHBpcnktZGF5IjoiIiwic2FtcGxlLXBsYW4tbGljZW5jZS1leHBpcnktbW9udGgiOiIiLCJzYW1wbGUtcGxhbi1saWNlbmNlLWV4cGlyeS15ZWFyIjoiIiwic2FtcGxlLXBsYW4tZXJyb3J0eXBldGhyZWUiOiJmYWxzZSIsInNhbXBsZS1wbGFuLXByb2plY3QtYmFja2dyb3VuZCI6IkxvcmVtIGlwc3VtIGRvbG9yIHNpdCBhbWV0LCBjb25zZWN0ZXR1ciBhZGlwaXNjaW5nIGVsaXQsIHNlZCBkbyBlaXVzbW9kIHRlbXBvciBpbmNpZGlkdW50IHV0IGxhYm9yZSBldCBkb2xvcmUgbWFnbmEgYWxpcXVhLiBVdCBlbmltIGFkIG1pbmltIHZlbmlhbSwgcXVpcyBub3N0cnVkIGV4ZXJjaXRhdGlvbiB1bGxhbWNvIGxhYm9yaXMgbmlzaSB1dCBhbGlxdWlwIGV4IGVhIGNvbW1vZG8gY29uc2VxdWF0Iiwic2FtcGxlLXBsYW4tb3RoZXItY29udGFjdC1kZXRhaWxzIjoiIiwic2FtcGxlLXBsYW4tb3RoZXItY29udGFjdCI6Ik5vIiwic2FtcGxlLXBsYW4tcHJvamVjdC1iYWNrZ3JvdW5kLWNvbXBsZXRlZCI6InRydWUiLCJzYW1wbGUtcGxhbi13aGljaC1hY3Rpdml0eSI6Ik1hcmluZSBkcmVkZ2luZyBhbmQgZGlzcG9zYWwiLCJzYW1wbGUtcGxhbi1zaXRlLWxvY2F0aW9uLW1ldGhvZCI6ImZpbGUtdXBsb2FkIiwic2FtcGxlLXBsYW4tZmlsZS10eXBlIjoic2hhcGVmaWxlIiwic2FtcGxlLXBsYW4tZmlsZS10eXBlLWVycm9ydGhpc3BhZ2UiOiJmYWxzZSIsImZpbGVVcGxvYWQxIjoiIiwic2l0ZS1oaXN0b3J5LXNpdGUtMSI6WyJjaGVtaWNhbHMtbWFudWZhY3R1cmluZyJdLCJzaXRlLWhpc3Rvcnktc2l0ZS0xLWNoZW1pY2Fscy1tYW51ZmFjdHVyaW5nLWRldGFpbHMiOiJMb3JlbSBpcHN1bSBkb2xvciBzaXQgYW1ldCwgY29uc2VjdGV0dXIgYWRpcGlzY2luZyBlbGl0LCBzZWQgZG8gZWl1c21vZCB0ZW1wb3IgaW5jaWRpZHVudCIsInNpdGUtaGlzdG9yeS1zaXRlLTEtZWxlY3Ryb25pY3MtbWFudWZhY3R1cmluZy1kZXRhaWxzIjoiIiwic2l0ZS1oaXN0b3J5LXNpdGUtMS1tYWpvci1wb3J0LWluZnJhc3RydWN0dXJlLWRldGFpbHMiOiIiLCJzaXRlLWhpc3Rvcnktc2l0ZS0xLW1pbmluZy1kZXRhaWxzIjoiIiwic2l0ZS1oaXN0b3J5LXNpdGUtMS1vaWwtcHJvY2Vzc2luZy1kZXRhaWxzIjoiIiwic2l0ZS1oaXN0b3J5LXNpdGUtMS1wb2xsdXRpb24taW5jaWRlbnRzLWRldGFpbHMiOiIiLCJzaXRlLWhpc3Rvcnktc2l0ZS0xLXNoaXAtYnVpbGRpbmctZGV0YWlscyI6IiIsInNpdGUtaGlzdG9yeS1zaXRlLTEtc3RlZWx3b3Jrcy1kZXRhaWxzIjoiIiwic2l0ZS1oaXN0b3J5LXNpdGUtMS1vdGhlci1kZXRhaWxzIjoiIiwic2l0ZS1oaXN0b3J5LXNpdGUtMS1lcnJvcnRoaXNwYWdlIjoiZmFsc2UiLCJzaXRlLWhpc3Rvcnktc2l0ZS0xLWNvbXBsZXRlZCI6dHJ1ZSwiZHJlZGdpbmctZGV0YWlscy1zaXRlLTEtbWF0ZXJpYWwtdHlwZSI6WyJjYXBpdGFsLWRyZWRnZWQtbWF0ZXJpYWwiLCJyZW1lZGlhdGlvbi1kcmVkZ2VkLW1hdGVyaWFsIl0sImRyZWRnaW5nLWRldGFpbHMtc2l0ZS0xLW1ldGhvZCI6WyJjdXR0ZXItc3VjdGlvbiIsInBsb3VnaC1iZWQtbGV2ZWxsaW5nIl0sImRyZWRnaW5nLWRldGFpbHMtc2l0ZS0xLW1ldGhvZC1vdGhlciI6IiIsImRyZWRnaW5nLWRldGFpbHMtc2l0ZS0xLWVycm9ydGhpc3BhZ2UiOiJmYWxzZSIsImRyZWRnaW5nLWRldGFpbHMtc2l0ZS0xLWNvbXBsZXRlZCI6dHJ1ZSwibWF4aW11bS1kcmVkZ2Utdm9sdW1lLXRvdGFsIjoiMTAwMDAwMCIsIm1heGltdW0tZHJlZGdlLXZvbHVtZS1hbm51YWwiOiIiLCJtYXhpbXVtLWRyZWRnZS12b2x1bWUtcGVyLWNhbXBhaWduIjoiNTAwMDAiLCJtYXhpbXVtLWRyZWRnZS12b2x1bWUtY2FtcGFpZ25zLXBlci15ZWFyIjoiMTAiLCJtYXhpbXVtLWRyZWRnZS12b2x1bWUtZXJyb3J0aGlzcGFnZSI6ImZhbHNlIiwibWF4aW11bS1kcmVkZ2Utdm9sdW1lLWNvbXBsZXRlZCI6dHJ1ZSwiZHJlZGdpbmctZGV0YWlscy1zaXRlLTEtZGVwdGgiOiIxMCIsImRyZWRnaW5nLWRldGFpbHMtc2l0ZS0xLWRlcHRoLWVycm9ydGhpc3BhZ2UiOiJmYWxzZSIsImRyZWRnaW5nLWRldGFpbHMtc2l0ZS0xLWRlcHRoLWNvbXBsZXRlZCI6dHJ1ZSwiaGFzLXZpc2l0ZWQtZHJlZGdpbmctc2l0ZS1sb2NhdGlvbnMiOnRydWUsImRyZWRnaW5nLXNpdGVzLWFsbC1jb21wbGV0ZSI6dHJ1ZSwic2FtcGxlLXBsYW4td2hlcmUtZGlzcG9zZS1tYXRlcmlhbCI6IkV4aXN0aW5nIGRpc3Bvc2FsIHNpdGUiLCJkaXNwb3NhbC1zaXRlLWNvZGUiOiIiLCJkaXNwb3NhbC1zaXRlLW5hbWUiOiIiLCJkaXNwb3NhbC1zaXRlLWxvY2F0aW9uIjoiIiwibWFyaW5lLWFyZWEiOiIiLCJkaXNwb3NhbC1zaXRlLXN0YXR1cyI6IiIsImhhcy1zZWFyY2gtZmlsdGVycyI6dHJ1ZSwicGFnZSI6IjEiLCJpbnB1dC1hdXRvY29tcGxldGUiOiIiLCJjb2RlIjoiSFUwNzUiLCJuYW1lIjoiT2xkZmxlZXQgRHJhaW4iLCJjb3VudHJ5IjoiRU5HTEFORCIsInNlYUFyZWEiOiJOb3J0aCBTZWEiLCJzdGF0dXMiOiJPcGVuIiwic2VsZWN0ZWQtZGlzcG9zYWwtc2l0ZS1jb2RlIjoiSFUwNzUiLCJzZWxlY3RlZC1kaXNwb3NhbC1zaXRlLW5hbWUiOiJPbGRmbGVldCBEcmFpbiIsInNlbGVjdGVkLWRpc3Bvc2FsLXNpdGUtY291bnRyeSI6IkVOR0xBTkQiLCJzZWxlY3RlZC1kaXNwb3NhbC1zaXRlLXNlYS1hcmVhIjoiTm9ydGggU2VhIiwic2VsZWN0ZWQtZGlzcG9zYWwtc2l0ZS1zdGF0dXMiOiJPcGVuIiwic2FtcGxlLWRpc3Bvc2FsLXNpdGUtc2VsZWN0ZWQiOnRydWUsInNhbXBsZS1kaXNwb3NhbC1zaXRlLTItc2VsZWN0ZWQiOmZhbHNlLCJzYW1wbGUtZGlzcG9zYWwtZGV0YWlscy1zaXRlLTEtZXJyb3J0aGlzcGFnZSI6ImZhbHNlIiwic2FtcGxlLWRpc3Bvc2FsLWRldGFpbHMtc2l0ZS0xLW1hdGVyaWFsLXR5cGUtZXJyb3IiOiIiLCJzYW1wbGUtZGlzcG9zYWwtZGV0YWlscy1zaXRlLTEtbWV0aG9kLWVycm9yIjoiIiwic2FtcGxlLWRpc3Bvc2FsLWRldGFpbHMtc2l0ZS0xLW1ldGhvZC1vdGhlci1lcnJvciI6IiIsInNhbXBsZS1kaXNwb3NhbC1kZXRhaWxzLXNpdGUtMS1tYXRlcmlhbC10eXBlLW90aGVyLWVycm9yIjoiIiwic2FtcGxlLWRpc3Bvc2FsLWRldGFpbHMtc2l0ZS0xLW1hdGVyaWFsLXR5cGUiOlsiY2FwaXRhbC1kcmVkZ2VkLW1hdGVyaWFsIiwibm9uLWRyZWRnZWQtc2VkaW1lbnRzIl0sInNhbXBsZS1kaXNwb3NhbC1kZXRhaWxzLXNpdGUtMS1tYXRlcmlhbC10eXBlLW90aGVyIjoiIiwic2FtcGxlLWRpc3Bvc2FsLWRldGFpbHMtc2l0ZS0xLW1ldGhvZCI6WyJjb250YWluZWQtZGlzcG9zYWwiLCJkaXNwb3NhbC1hdC1zZWEtb3Itb2Zmc2hvcmUiXSwic2FtcGxlLWRpc3Bvc2FsLWRldGFpbHMtc2l0ZS0xLW1ldGhvZC1vdGhlciI6IiIsInNhbXBsZS1kaXNwb3NhbC1zaXRlLW1hdGVyaWFsLXR5cGUtY29tcGxldGVkIjp0cnVlLCJzYW1wbGUtZGlzcG9zYWwtc2l0ZS1kaXNwb3NhbC1tZXRob2QtY29tcGxldGVkIjp0cnVlLCJzYW1wbGUtZGlzcG9zYWwtc2l0ZS0xLW1heGltdW0tdm9sdW1lLWVycm9ydGhpc3BhZ2UiOiJmYWxzZSIsInNhbXBsZS1kaXNwb3NhbC1zaXRlLTEtdG90YWwtdm9sdW1lLWVycm9yIjoiIiwic2FtcGxlLWRpc3Bvc2FsLXNpdGUtMS1hbm51YWwtdm9sdW1lLWVycm9yIjoiIiwic2FtcGxlLWRpc3Bvc2FsLXNpdGUtMS12b2x1bWUtcGVyLWNhbXBhaWduLWVycm9yIjoiIiwic2FtcGxlLWRpc3Bvc2FsLXNpdGUtMS1jYW1wYWlnbnMtcGVyLXllYXItZXJyb3IiOiIiLCJzYW1wbGUtZGlzcG9zYWwtc2l0ZS0xLXRvdGFsLXZvbHVtZSI6IjEwMDAwMDAiLCJzYW1wbGUtZGlzcG9zYWwtc2l0ZS0xLWFubnVhbC12b2x1bWUiOiIiLCJzYW1wbGUtZGlzcG9zYWwtc2l0ZS0xLXZvbHVtZS1wZXItY2FtcGFpZ24iOiI1MDAwMCIsInNhbXBsZS1kaXNwb3NhbC1zaXRlLTEtY2FtcGFpZ25zLXBlci15ZWFyIjoiMTAiLCJzYW1wbGUtZGlzcG9zYWwtc2l0ZS0xLW1heGltdW0tdm9sdW1lLWNvbXBsZXRlZCI6dHJ1ZSwic2FtcGxlLWRpc3Bvc2FsLXNpdGUtMS1iZW5lZmljaWFsLXVzZS1lcnJvcnRoaXNwYWdlIjoiZmFsc2UiLCJzYW1wbGUtZGlzcG9zYWwtc2l0ZS0xLWJlbmVmaWNpYWwtdXNlLWVycm9yIjoiIiwic2FtcGxlLWRpc3Bvc2FsLXNpdGUtMS1iZW5lZmljaWFsLXVzZS1kZXNjcmlwdGlvbi1lcnJvciI6IiIsInNhbXBsZS1kaXNwb3NhbC1zaXRlLTEtYmVuZWZpY2lhbC11c2UiOiJ5ZXMiLCJzYW1wbGUtZGlzcG9zYWwtc2l0ZS0xLWJlbmVmaWNpYWwtdXNlLWRlc2NyaXB0aW9uIjoiTG9yZW0gaXBzdW0gZG9sb3Igc2l0IGFtZXQsIGNvbnNlY3RldHVyIGFkaXBpc2NpbmcgZWxpdCwgc2VkIGRvIGVpdXNtb2QgdGVtcG9yIGluY2lkaWR1bnQiLCJzYW1wbGUtZGlzcG9zYWwtc2l0ZS0xLWJlbmVmaWNpYWwtdXNlLWNvbXBsZXRlZCI6dHJ1ZSwiaGFzLXZpc2l0ZWQtZGlzcG9zYWwtc2l0ZS1yZXZpZXciOnRydWUsImRpc3Bvc2FsLXNpdGUtc2VsZWN0ZWQiOnRydWUsInNhbXBsZS1kaXNwb3NhbC1zaXRlcy1jb21wbGV0ZWQiOnRydWUsInNhbXBsZS1kaXNwb3NhbC1zaXRlcy1pbi1wcm9ncmVzcyI6ZmFsc2UsImZlZS10ZXJtcy1jaGVja2JveCI6WyJhZ3JlZSJdLCJmZWUtYWNjZXB0YW5jZSI6InllcyIsInNhbXBsZS1wbGFuLWZlZS1lc3RpbWF0ZS1jb21wbGV0ZWQiOiJ0cnVlIn0="
+          class="govuk-link--no-visited-state">Task list with everything completed</a></li>
+    </ul>
+
+    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+    <!-- End of Multiple Sites v2 -->
+
+    <!-- Start of MVP -->
+    <h2 class="govuk-heading-m">Single site journey <strong class="govuk-tag govuk-tag--green"
+        style="float:right">Finished</strong></h2>
+    <p>(Our 'steel thread' minimal end-to-end journey, previously known as 'MVP')</p>
+
+    <h3 class="govuk-heading-s">Start from:</h3>
+
+    <p><a href="versions/mvp/exemption/project-name-start.html" class="govuk-link--no-visited-state">Project name start
+        page</a></p>
+
+    <ul class="govuk-list govuk-list--spaced">
+      <li>Exempt activity page, featured maps are: <a
+          href="versions/mvp/check/exemption?headerName=Check%20if%20you%20need%20a%20marine%20licence&headerNameExemption=Apply%20for%20a%20marine%20licence&exemption=sample-notification&errorthispage=false&errortypeone=false&exempt-information-1-status=completed&"
+          class="govuk-link--no-visited-state">Sea sample</a> | <a
+          href="versions/mvp/check/exemption?headerName=Check if you need a marine licence&headerNameExemption=Check if you need a marine licence&exemption=&errorthispage=false&errortypeone=false&exempt-information-1-status=completed&"
+          class="govuk-link--no-visited-state">Pontoon</a></li>
+      <li><a href="versions/mvp/exemption/sign-in.html" class="govuk-link--no-visited-state">Government Gateway sign in
+          page</a></li>
+      <li>Task list, project name completed: <a
+          href="versions/mvp/exemption/task-list?headerName=Check%20if%20you%20need%20a%20marine%20licence&headerNameExemption=Apply%20for%20a%20marine%20licence&exemption=sample-notification&exemption-project-name-text-input=Worthing%20sea%20sample&errorthispage=false&errortypeone=false&exempt-information-1-status=completed&"
+          class="govuk-link--no-visited-state">Sea sample</a> | <a
+          href="versions/mvp/exemption/task-list.html?headerName=Check if you need a marine licence&headerNameExemption=Check if you need a marine licence&exemption=&exemption-project-name-text-input=Hammersmith pontoon construction&errorthispage=false&errortypeone=false&exempt-information-1-status=completed&"
+          class="govuk-link--no-visited-state">Pontoon</a></li>
+
+      <li>Task list, all sections completed: <a
+          href="versions/mvp/exemption/task-list?headerName=Check%20if%20you%20need%20a%20marine%20licence&headerNameExemption=Apply%20for%20a%20marine%20licence&exemption=sample-notification&exemption-project-name-text-input=Worthing%20sea%20sample&errorthispage=false&errortypeone=false&exempt-information-1-status=completed&exemption-start-date-date-input-day=1&exemption-start-date-date-input-month=7&exemption-start-date-date-input-year=2025&exemption-end-date-date-input-day=7&exemption-end-date-date-input-month=7&exemption-end-date-date-input-year=2025&startdateerror=false&enddateerror=false&exempt-information-2-status=completed&exemption-how-do-you-want-to-provide-the-coordinates-radios=Upload%20a%20file%20with%20the%20coordinates%20of%20the%20site&exemption-which-type-of-file-radios=KML&fileUpload1=&siteTitle=review&exempt-information-3-status=completed&exemption-public-register-radios=No&errortypetwo=false&exempt-information-4-status=completed&errors=&exemption-activity-details-text-area=I%20will%20be%20using%20a%20grabber%20from%20a%20small%20boat%20to%20take%20a%20sample%20of%20sediment%20from%20the%20sea%20bed.%20It%20will%20be%20a%20sample%20of%20about%200.3%20metres%20cubed.&exempt-information-5-status=completed&camefromcheckanswers=false&"
+          class="govuk-link--no-visited-state">Sea sample</a> | <a
+          href="versions/mvp/exemption/task-list.html?headerName=Check if you need a marine licence&headerNameExemption=Check if you need a marine licence&exemption=&exemption-project-name-text-input=Hammersmith pontoon construction&errorthispage=false&errortypeone=false&exempt-information-1-status=completed&exemption-start-date-date-input-day=1&exemption-start-date-date-input-month=7&exemption-start-date-date-input-year=2025&exemption-end-date-date-input-day=7&exemption-end-date-date-input-month=7&exemption-end-date-date-input-year=2025&startdateerror=false&enddateerror=false&exempt-information-2-status=completed&exemption-how-do-you-want-to-provide-the-coordinates-radios=Upload a file with the coordinates of the site&exemption-which-type-of-file-radios=KML&fileUpload1=&siteTitle=review&exempt-information-3-status=completed&exemption-public-register-radios=No&errortypetwo=false&exempt-information-4-status=completed&errors=&exemption-activity-details-text-area=We will be installing a pontoon approximately 20 metres squared at the end of our garden that backs onto the river. It will be accessible via a gangway. The pontoon and gangway will be constructed and installed on site. &exempt-information-5-status=completed&"
+          class="govuk-link--no-visited-state">Pontoon</a></li>
+
+      <li>Internal user view: <a
+          href="versions/mvp/exemption/check-answers-internal?headerName=Check if you need a marine licence&headerNameExemption=Apply for a marine licence&exemption=sample-notification&exemption-project-name-text-input=Worthing sea sample&errorthispage=false&errortypeone=false&exempt-information-1-status=completed&exemption-start-date-date-input-day=1&exemption-start-date-date-input-month=7&exemption-start-date-date-input-year=2025&exemption-end-date-date-input-day=7&exemption-end-date-date-input-month=7&exemption-end-date-date-input-year=2025&startdateerror=false&enddateerror=false&exempt-information-2-status=completed&exemption-how-do-you-want-to-provide-the-coordinates-radios=Upload a file with the coordinates of the site&exemption-which-type-of-file-radios=KML&fileUpload1=&siteTitle=review&exempt-information-3-status=completed&exemption-public-register-radios=Yes&errortypetwo=false&exempt-information-4-status=completed&errors=&exemption-activity-details-text-area=I will be using a grabber from a small boat to take a sample of sediment from the sea bed. It will be a sample of about 0.3 metres cubed.&exempt-information-5-status=completed&camefromcheckanswers=false&exemption-public-register-text-area=[Users details] Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse a felis auctor, blandit ex eget, placerat augue. Sed nibh nibh, interdum quis ligula ut, laoreet luctus lorem. Morbi a venenatis augue. Ut egestas aliquam ipsum at gravida. Aenean congue magna at odio semper, sed pulvinar felis rhoncus&applicationSubmitted=true&goto=home&"
+          class="govuk-link--no-visited-state">Sea sample</a> | <a
+          href="versions/mvp/exemption/check-answers-internal?headerName=Check if you need a marine licence&headerNameExemption=Check if you need a marine licence&exemption=&exemption-project-name-text-input=Hammersmith pontoon construction&errorthispage=false&errortypeone=false&exempt-information-1-status=completed&exemption-start-date-date-input-day=1&exemption-start-date-date-input-month=7&exemption-start-date-date-input-year=2025&exemption-end-date-date-input-day=7&exemption-end-date-date-input-month=7&exemption-end-date-date-input-year=2025&startdateerror=false&enddateerror=false&exempt-information-2-status=completed&exemption-how-do-you-want-to-provide-the-coordinates-radios=Upload a file with the coordinates of the site&exemption-which-type-of-file-radios=KML&fileUpload1=&siteTitle=review&exempt-information-3-status=completed&exemption-public-register-radios=Yes&errortypetwo=false&exempt-information-4-status=completed&errors=&exemption-activity-details-text-area=We will be installing a pontoon approximately 20 metres squared at the end of our garden that backs onto the river. It will be accessible via a gangway. The pontoon and gangway will be constructed and installed on site. &exempt-information-5-status=completed&exemption-public-register-text-area=[Users details] Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse a felis auctor, blandit ex eget, placerat augue. Sed nibh nibh, interdum quis ligula ut, laoreet luctus lorem. Morbi a venenatis augue. Ut egestas aliquam ipsum at gravida. Aenean congue magna at odio semper, sed pulvinar felis rhoncus&applicationSubmitted=true&goto=home&"
+          class="govuk-link--no-visited-state">Pontoon</a></li>
+
+      <li>Confirmation email: <a
+          href="versions/mvp/exemption/email??headerName=Check%20if%20you%20need%20a%20marine%20licence&headerNameExemption=Apply%20for%20a%20marine%20licence&exemption=sample-notification&exemption-project-name-text-input=Worthing%20sea%20sample&errorthispage=false&errortypeone=false&exempt-information-1-status=completed&exemption-start-date-date-input-day=1&exemption-start-date-date-input-month=7&exemption-start-date-date-input-year=2025&exemption-end-date-date-input-day=7&exemption-end-date-date-input-month=7&exemption-end-date-date-input-year=2025&startdateerror=false&enddateerror=false&exempt-information-2-status=completed&exemption-how-do-you-want-to-provide-the-coordinates-radios=Upload%20a%20file%20with%20the%20coordinates%20of%20the%20site&exemption-which-type-of-file-radios=KML&fileUpload1=&siteTitle=review&exempt-information-3-status=completed&exemption-public-register-radios=No&errortypetwo=false&exempt-information-4-status=completed&errors=&exemption-activity-details-text-area=I%20will%20be%20using%20a%20grabber%20from%20a%20small%20boat%20to%20take%20a%20sample%20of%20sediment%20from%20the%20sea%20bed.%20It%20will%20be%20a%20sample%20of%20about%200.3%20metres%20cubed.&exempt-information-5-status=completed&camefromcheckanswers=false&applicationSubmitted=true&"
+          class="govuk-link--no-visited-state">Sea sample</a> | <a
+          href="versions/mvp/exemption/email?headerName=Check if you need a marine licence&headerNameExemption=Check if you need a marine licence&exemption=&exemption-project-name-text-input=Hammersmith pontoon construction&errorthispage=false&errortypeone=false&exempt-information-1-status=completed&exemption-start-date-date-input-day=1&exemption-start-date-date-input-month=7&exemption-start-date-date-input-year=2025&exemption-end-date-date-input-day=7&exemption-end-date-date-input-month=7&exemption-end-date-date-input-year=2025&startdateerror=false&enddateerror=false&exempt-information-2-status=completed&exemption-how-do-you-want-to-provide-the-coordinates-radios=Upload a file with the coordinates of the site&exemption-which-type-of-file-radios=KML&fileUpload1=&siteTitle=review&exempt-information-3-status=completed&exemption-public-register-radios=No&errortypetwo=false&exempt-information-4-status=completed&errors=&exemption-activity-details-text-area=We will be installing a pontoon approximately 20 metres squared at the end of our garden that backs onto the river. It will be accessible via a gangway. The pontoon and gangway will be constructed and installed on site. &exempt-information-5-status=completed&applicationSubmitted=true&"
+          class="govuk-link--no-visited-state">Pontoon</a></li>
+
+    </ul>
+
+    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
+    <!-- End of MVP -->
+
+    <!-- Start of Multiple Sites -->
+    <h2 class="govuk-heading-m">Multiple sites v1<strong class="govuk-tag govuk-tag--green"
+        style="float:right">Finished</strong></h2>
+
+    <p>This version explores adding support for multiple sites in a single file upload.</p>
+
+    <h3 class="govuk-heading-s">Start from:</h3>
+
+    <ul class="govuk-list govuk-list--spaced">
+      <li><a
+          href="versions/multiple-sites/check/exemption?headerName=Check%20if%20you%20need%20a%20marine%20licence&headerNameExemption=Apply%20for%20a%20marine%20licence&exemption=sample-notification&errorthispage=false&errortypeone=false&exempt-information-1-status=completed&"
+          class="govuk-link--no-visited-state">The 'You are exempt' page of the 'Check if you need a licence'
+          section</a></li>
+      <li><a
+          href="versions/multiple-sites/exemption/task-list?headerName=Check%20if%20you%20need%20a%20marine%20licence&headerNameExemption=Apply%20for%20a%20marine%20licence&exemption=sample-notification&exemption-project-name-text-input=South%20coast%20sea%20samples&errorthispage=false&errortypeone=false&exempt-information-1-status=completed&"
+          class="govuk-link--no-visited-state">Task list with project name completed</a></li>
+    </ul>
+
+    </details>
+
+    <p>This is a prototype. You are not required to upload a file – just select 'Continue' on the upload page. The
+      mapped coordinates shown are generic.</p>
+
+
+
+    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+    <!-- End of Multiple Sites -->
+
+    <!-- Start of Interactive Assistance Tool (IAT) -->
+    <h2 class="govuk-heading-m">Interactive Assistance Tool (IAT) <strong class="govuk-tag govuk-tag--green"
+        style="float:right">Finished</strong></h2>
+
+    <p><a href="versions/iat/start" class="govuk-link--no-visited-state">Start the IAT journey</a></p>
+
+    <p><a href="versions/iat/start-99" class="govuk-link--no-visited-state">Start the mock IAT journey</a></p>
+
+    <p>This is a replica of the live Interactive Assistance Tool (IAT) which helps users determine whether they need a
+      marine licence. The tool guides users through a series of questions to assess their proposed marine activities.
+    </p>
+
+    <details class="govuk-details govuk-!-margin-bottom-2">
+      <summary class="govuk-details__summary">
+        <span class="govuk-details__summary-text">
+          What each asset is doing
+        </span>
+      </summary>
+      <div class="govuk-details__text">
+
+        <h3 class="govuk-heading-s">Technical architecture</h3>
+
+        <table class="govuk-table">
+          <thead class="govuk-table__head">
+            <tr class="govuk-table__row">
+              <th scope="col" class="govuk-table__header">Asset</th>
+              <th scope="col" class="govuk-table__header">Role in the prototype</th>
+            </tr>
+          </thead>
+          <tbody class="govuk-table__body">
+            <tr class="govuk-table__row">
+              <td class="govuk-table__cell"><strong>app/data/iat.json</strong></td>
+              <td class="govuk-table__cell">
+                <strong>Single source of truth for content & routing.</strong><br>
+                The route file (iat.js) reads this JSON to build every question/outcome page at runtime.
+              </td>
+            </tr>
+            <tr class="govuk-table__row">
+              <td class="govuk-table__cell"><strong>iat.js</strong> (routes)</td>
+              <td class="govuk-table__cell">
+                Converts the JSON into Express routes, decides whether to render a radio-page, card-selection, or
+                outcome.
+              </td>
+            </tr>
+            <tr class="govuk-table__row">
+              <td class="govuk-table__cell"><strong>.njk templates</strong></td>
+              <td class="govuk-table__cell">
+                Present the pages: radio-page, card-selection, outcome, and (now) start.html.
+              </td>
+            </tr>
+            <tr class="govuk-table__row">
+              <td class="govuk-table__cell"><strong>IAT-design-spec.md</strong></td>
+              <td class="govuk-table__cell">
+                <strong>Human-readable spec</strong> – lists every screen's copy, component, and logic so you (and
+                reviewers) can understand / QA the journey. Not referenced by any code.
+              </td>
+            </tr>
+            <tr class="govuk-table__row">
+              <td class="govuk-table__cell"><strong>iat-tech-spec.csv / flow diagram</strong></td>
+              <td class="govuk-table__cell">
+                Additional documentation aids; likewise not used programmatically.
+              </td>
+            </tr>
+          </tbody>
+        </table>
+
+        <h3 class="govuk-heading-s">Documentation</h3>
+        <ul class="govuk-list govuk-list--spaced">
+          <li><a href="/public/iat/IAT-design-spec.md" class="govuk-link--no-visited-state">IAT Design Specification</a>
+          </li>
+          <li><a href="/public/iat/iat-flow.svg" class="govuk-link--no-visited-state">IAT Flow Diagram</a></li>
+          <li><a href="/public/iat/iat-tech-spec.csv" class="govuk-link--no-visited-state">IAT Technical Specification
+              (CSV)</a></li>
         </ul>
 
-        </details>
+      </div>
+    </details>
 
-        <p>This is a prototype. You are not required to upload a file – just select 'Continue' on the upload page. The mapped coordinates shown are generic.</p>
+    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+    <!-- End of Interactive Assistance Tool (IAT) -->
 
-        
+    <h2 class="govuk-heading-l">2025 alpha iterations</h2>
 
-        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-        <!-- End of Multiple Sites -->
+    <!-- Start of iteration 4 -->
+    <strong class="govuk-tag govuk-tag--green" style="float:right">Finished</strong>
+    <h2 class="govuk-heading-m">Iteration 4</h2>
 
-        <!-- Start of Interactive Assistance Tool (IAT) -->
-        <h2 class="govuk-heading-m">Interactive Assistance Tool (IAT) <strong class="govuk-tag govuk-tag--green" style="float:right">Finished</strong></h2>
 
-                <p><a href="versions/iat/start" class="govuk-link--no-visited-state">Start the IAT journey</a></p>
-        
-        <p><a href="versions/iat/start-99" class="govuk-link--no-visited-state">Start the mock IAT journey</a></p>
-        
-        <p>This is a replica of the live Interactive Assistance Tool (IAT) which helps users determine whether they need a marine licence. The tool guides users through a series of questions to assess their proposed marine activities.</p>
+    <p><a href="versions/2025-04-04/check/start" class="govuk-link--no-visited-state">Start the iteration 4 journey</a>
+    </p>
 
-        <details class="govuk-details govuk-!-margin-bottom-2">
-          <summary class="govuk-details__summary">
-            <span class="govuk-details__summary-text">
-             What each asset is doing
-            </span>
-          </summary>
-          <div class="govuk-details__text">
-            
-            <h3 class="govuk-heading-s">Technical architecture</h3>
+    <p>v4 now features a dashboard 'Your projects', and asking 'Project name' before landing on the task list page. <a
+        href="about-the-prototype.html#iteration4" class="govuk-link--no-visited-state">Read about all the changes</a>.
+    </p>
 
-            <table class="govuk-table">
-              <thead class="govuk-table__head">
-                <tr class="govuk-table__row">
-                  <th scope="col" class="govuk-table__header">Asset</th>
-                  <th scope="col" class="govuk-table__header">Role in the prototype</th>
-                </tr>
-              </thead>
-              <tbody class="govuk-table__body">
-                <tr class="govuk-table__row">
-                  <td class="govuk-table__cell"><strong>app/data/iat.json</strong></td>
-                  <td class="govuk-table__cell">
-                    <strong>Single source of truth for content & routing.</strong><br>
-                    The route file (iat.js) reads this JSON to build every question/outcome page at runtime.
-                  </td>
-                </tr>
-                <tr class="govuk-table__row">
-                  <td class="govuk-table__cell"><strong>iat.js</strong> (routes)</td>
-                  <td class="govuk-table__cell">
-                    Converts the JSON into Express routes, decides whether to render a radio-page, card-selection, or outcome.
-                  </td>
-                </tr>
-                <tr class="govuk-table__row">
-                  <td class="govuk-table__cell"><strong>.njk templates</strong></td>
-                  <td class="govuk-table__cell">
-                    Present the pages: radio-page, card-selection, outcome, and (now) start.html.
-                  </td>
-                </tr>
-                <tr class="govuk-table__row">
-                  <td class="govuk-table__cell"><strong>IAT-design-spec.md</strong></td>
-                  <td class="govuk-table__cell">
-                    <strong>Human-readable spec</strong> – lists every screen's copy, component, and logic so you (and reviewers) can understand / QA the journey. Not referenced by any code.
-                  </td>
-                </tr>
-                <tr class="govuk-table__row">
-                  <td class="govuk-table__cell"><strong>iat-tech-spec.csv / flow diagram</strong></td>
-                  <td class="govuk-table__cell">
-                    Additional documentation aids; likewise not used programmatically.
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+    <!--<p><a href="#">Read about all the iterations here</a>.</p>-->
 
-            <h3 class="govuk-heading-s">Documentation</h3>
-            <ul class="govuk-list govuk-list--spaced">
-              <li><a href="/public/iat/IAT-design-spec.md" class="govuk-link--no-visited-state">IAT Design Specification</a></li>
-              <li><a href="/public/iat/iat-flow.svg" class="govuk-link--no-visited-state">IAT Flow Diagram</a></li>
-              <li><a href="/public/iat/iat-tech-spec.csv" class="govuk-link--no-visited-state">IAT Technical Specification (CSV)</a></li>
-            </ul>
+    <details class="govuk-details govuk-!-margin-bottom-2">
+      <summary class="govuk-details__summary">
+        <span class="govuk-details__summary-text">
+          The scenarios to follow for this iteration
+        </span>
+      </summary>
+      <div class="govuk-details__text">
 
-          </div>
-        </details>
+        <p>We are planning to test with novice and professional users, so both scenarios are relevant for this
+          iteration.</p>
 
-        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-        <!-- End of Interactive Assistance Tool (IAT) -->
-         
-        <h2 class="govuk-heading-l">2025 alpha iterations</h2>   
+        <h2 class="govuk-heading-m">Scenario 1</h2>
 
-        <!-- Start of iteration 4 -->
-        <strong class="govuk-tag govuk-tag--green" style="float:right">Finished</strong>
-        <h2 class="govuk-heading-m">Iteration 4</h2>
-        
+        <p>You're looking to carry out some research involving analysis of sediments from just off the coast of
+          Worthing, by the pier.</p>
+        <p>You need to carry out a survey taking 1 sample within 100m of the pier.</p>
+        <p>You'll travel to the sample sites by boat and lower a grab overboard.</p>
+        <p>The grab will be used to extract 0.3m<sup>3</sup> of material from the surface of the sea floor.</p>
+        <p>The material removed will be returned to the vessel and taken anyway for testing and analysis.</p>
+        <p>The material will be disposed to land once testing and analysis is complete.</p>
+        <p>A colleague advised that you might need to get permission from the Marine Management Organisation before you
+          carry out this activity.</p>
 
-        <p><a href="versions/2025-04-04/check/start" class="govuk-link--no-visited-state">Start the iteration 4 journey</a></p>
-  
-        <p>v4 now features a dashboard 'Your projects', and asking 'Project name' before landing on the task list page. <a href="about-the-prototype.html#iteration4" class="govuk-link--no-visited-state">Read about all the changes</a>.</p>
+        <h2 class="govuk-heading-m">Scenario 2</h2>
 
-        <!--<p><a href="#">Read about all the iterations here</a>.</p>-->
+        <p>You live in Hammersmith London W6 9TS with a private garden fronting onto the River Thames.</p>
+        <p>You'd like to install a new private pontoon of 20m<sup>2</sup>, accessible via gangway, enabling independent
+          access to the River Thames. You'll employ a builder to do this work for you.</p>
+        <p>Five of your neighbours properties have a similar pontoon.</p>
+        <p>The Pontoon and gangway will be constructed and installed on site.</p>
+        <p>You have also applied for permission from the Marine Harbour Authority.</p>
+        <p>Works are planned to be conducted in one phase, over an estimated period of 2 days in the period April-May
+          2025.</p>
 
-        <details class="govuk-details govuk-!-margin-bottom-2">
-          <summary class="govuk-details__summary">
-            <span class="govuk-details__summary-text">
-             The scenarios to follow for this iteration
-            </span>
-          </summary>
-          <div class="govuk-details__text">
-           
-            <p>We are planning to test with novice and professional users, so both scenarios are relevant for this iteration.</p>
+      </div>
+    </details>
 
-            <h2 class="govuk-heading-m">Scenario 1</h2>
+    <details class="govuk-details">
+      <summary class="govuk-details__summary">
+        <span class="govuk-details__summary-text">
+          Internal shortcuts
+        </span>
+      </summary>
+      <div class="govuk-details__text">
+        <ul class="govuk-list govuk-list--spaced">
+          <li><a href="versions/2025-04-04/check/exemption.html" class="govuk-link--no-visited-state">Exempt activity
+              page</a></li>
+          <li><a href="versions/2025-04-04/exemption/project-name-start.html"
+              class="govuk-link--no-visited-state">Project name start page</a></li>
+          <li><a
+              href="versions/2025-04-04/exemption/task-list?headerName=Check if you need a marine licence&headerNameExemption=Check if you need a marine licence&exemption=sample-notification&exemption-do-you-want-to-draw-the-site-on-our-map-radios=No, I've got the coordinates&errorthispage=false&errortypeone=false&exemption-how-do-you-want-to-provide-the-coordinates-radios=Enter them manually&exemption-how-do-you-want-to-enter-the-coordinates-radios=Enter multiple sets of coordinates to mark the boundary of the site&previous-coords-entry-method=Enter multiple sets of coordinates to mark the boundary of the site&coords-type=coords-multiple&coordinate-system=WGS84 (World Geodetic System 1984)&errortypetwo=false&siteTitle=view&exempt-information-3-status=completed&exemption-project-name-text-input=Worthing sea sample&exempt-information-1-status=completed&exemption-start-date-date-input-day=1&exemption-start-date-date-input-month=5&exemption-start-date-date-input-year=2025&exemption-end-date-date-input-day=7&exemption-end-date-date-input-month=5&exemption-end-date-date-input-year=2025&startdateerror=false&enddateerror=false&exempt-information-2-status=completed&exemption-public-register-radios=No&exempt-information-4-status=completed&fromreview=true&exemption-what-coordinate-system-radios=WGS84 (World Geodetic System 1984)&errors=&error-coordinates-point-1-latitude=false&error-coordinates-point-1-longitude=false&error-coordinates-point-2-latitude=false&error-coordinates-point-2-longitude=false&error-coordinates-point-3-latitude=false&error-coordinates-point-3-longitude=false&error-coordinates-point-4-latitude=false&error-coordinates-point-4-longitude=false&error-coordinates-point-5-latitude=false&error-coordinates-point-5-longitude=false&coordinates-point-1-latitude=50.0000&coordinates-point-1-longitude=-1.0000&coordinates-point-2-latitude=50.0100&coordinates-point-2-longitude=-1.0100&coordinates-point-3-latitude=50.0200&coordinates-point-3-longitude=-1.0200&coordinates-point-4-latitude=50.0200&coordinates-point-4-longitude=-1.0200&coordinates-point-5-latitude=&coordinates-point-5-longitude=&"
+              class="govuk-link--no-visited-state">Task list with all sections completed – Scenario 1: Sample
+              removal</a></li>
 
-            <p>You're looking to carry out some research involving analysis of sediments from just off the coast of Worthing, by the pier.</p>
-            <p>You need to carry out a survey taking 1 sample within 100m of the pier.</p>
-            <p>You'll travel to the sample sites by boat and lower a grab overboard.</p>
-            <p>The grab will be used to extract 0.3m<sup>3</sup> of material from the surface of the sea floor.</p>
-            <p>The material removed will be returned to the vessel and taken anyway for testing and analysis.</p>
-            <p>The material will be disposed to land once testing and analysis is complete.</p>
-            <p>A colleague advised that you might need to get permission from the Marine Management Organisation before you carry out this activity.</p>
+          <li><a
+              href="versions/2025-04-04/exemption/task-list?headerName=Check if you need a marine licence&headerNameExemption=Check if you need a marine licence&exemption=&exemption-do-you-want-to-draw-the-site-on-our-map-radios=No, I've got the coordinates&errorthispage=false&errortypeone=false&exemption-how-do-you-want-to-provide-the-coordinates-radios=Enter them manually&exemption-how-do-you-want-to-enter-the-coordinates-radios=Enter multiple sets of coordinates to mark the boundary of the site&previous-coords-entry-method=Enter multiple sets of coordinates to mark the boundary of the site&coords-type=coords-multiple&coordinate-system=WGS84 (World Geodetic System 1984)&errortypetwo=false&siteTitle=view&exempt-information-3-status=completed&exemption-project-name-text-input=Hammersmith pontoon&exempt-information-1-status=completed&exemption-start-date-date-input-day=1&exemption-start-date-date-input-month=5&exemption-start-date-date-input-year=2025&exemption-end-date-date-input-day=7&exemption-end-date-date-input-month=5&exemption-end-date-date-input-year=2025&startdateerror=false&enddateerror=false&exempt-information-2-status=completed&exemption-public-register-radios=No&exempt-information-4-status=completed&fromreview=true&exemption-what-coordinate-system-radios=WGS84 (World Geodetic System 1984)&errors=&error-coordinates-point-1-latitude=false&error-coordinates-point-1-longitude=false&error-coordinates-point-2-latitude=false&error-coordinates-point-2-longitude=false&error-coordinates-point-3-latitude=false&error-coordinates-point-3-longitude=false&error-coordinates-point-4-latitude=false&error-coordinates-point-4-longitude=false&error-coordinates-point-5-latitude=false&error-coordinates-point-5-longitude=false&coordinates-point-1-latitude=50.0000&coordinates-point-1-longitude=-1.0000&coordinates-point-2-latitude=50.0100&coordinates-point-2-longitude=-1.0100&coordinates-point-3-latitude=50.0200&coordinates-point-3-longitude=-1.0200&coordinates-point-4-latitude=50.0200&coordinates-point-4-longitude=-1.0200&coordinates-point-5-latitude=&coordinates-point-5-longitude=&"
+              class="govuk-link--no-visited-state">Task list with all sections completed – Scenario 2: Pontoon</a></li>
+          <li><a
+              href="versions/2025-04-04/exemption/email?headerName=Check if you need a marine licence&headerNameExemption=Check if you need a marine licence&exemption=&exemption-do-you-want-to-draw-the-site-on-our-map-radios=No, I've got the coordinates&errorthispage=false&errortypeone=false&exemption-how-do-you-want-to-provide-the-coordinates-radios=Enter them manually&exemption-how-do-you-want-to-enter-the-coordinates-radios=Enter multiple sets of coordinates to mark the boundary of the site&previous-coords-entry-method=Enter multiple sets of coordinates to mark the boundary of the site&coords-type=coords-multiple&coordinate-system=WGS84 (World Geodetic System 1984)&errortypetwo=false&siteTitle=view&exempt-information-3-status=completed&exemption-project-name-text-input=Hammersmith pontoon&exempt-information-1-status=completed&exemption-start-date-date-input-day=1&exemption-start-date-date-input-month=5&exemption-start-date-date-input-year=2025&exemption-end-date-date-input-day=7&exemption-end-date-date-input-month=5&exemption-end-date-date-input-year=2025&startdateerror=false&enddateerror=false&exempt-information-2-status=completed&exemption-public-register-radios=No&exempt-information-4-status=completed&fromreview=true&exemption-what-coordinate-system-radios=WGS84 (World Geodetic System 1984)&errors=&error-coordinates-point-1-latitude=false&error-coordinates-point-1-longitude=false&error-coordinates-point-2-latitude=false&error-coordinates-point-2-longitude=false&error-coordinates-point-3-latitude=false&error-coordinates-point-3-longitude=false&error-coordinates-point-4-latitude=false&error-coordinates-point-4-longitude=false&error-coordinates-point-5-latitude=false&error-coordinates-point-5-longitude=false&coordinates-point-1-latitude=50.0000&coordinates-point-1-longitude=-1.0000&coordinates-point-2-latitude=50.0100&coordinates-point-2-longitude=-1.0100&coordinates-point-3-latitude=50.0200&coordinates-point-3-longitude=-1.0200&coordinates-point-4-latitude=50.0200&coordinates-point-4-longitude=-1.0200&coordinates-point-5-latitude=&coordinates-point-5-longitude=&applicationSubmitted=true&"
+              class="govuk-link--no-visited-state">Confirmation email</a><br>Also linked to from the Confirmation page
+            link - 'What did you think of this service?'</li>
+          <li><a
+              href="versions/2025-04-04/exemption/check-answers-internal?headerName=Check%20if%20you%20need%20a%20marine%20licence&headerNameExemption=Check%20if%20you%20need%20a%20marine%20licence&exemption=sample-notification&exemption-do-you-want-to-draw-the-site-on-our-map-radios=No,%20I%27ve%20got%20the%20coordinates&errorthispage=false&errortypeone=false&exemption-how-do-you-want-to-provide-the-coordinates-radios=Enter%20them%20manually&exemption-how-do-you-want-to-enter-the-coordinates-radios=Enter%20multiple%20sets%20of%20coordinates%20to%20mark%20the%20boundary%20of%20the%20site&previous-coords-entry-method=Enter%20multiple%20sets%20of%20coordinates%20to%20mark%20the%20boundary%20of%20the%20site&coords-type=coords-multiple&coordinate-system=WGS84%20(World%20Geodetic%20System%201984)&errortypetwo=false&siteTitle=view&exempt-information-3-status=completed&exemption-project-name-text-input=Worthing%20sea%20sample&exempt-information-1-status=completed&exemption-start-date-date-input-day=1&exemption-start-date-date-input-month=5&exemption-start-date-date-input-year=2025&exemption-end-date-date-input-day=7&exemption-end-date-date-input-month=5&exemption-end-date-date-input-year=2025&startdateerror=false&enddateerror=false&exempt-information-2-status=completed&exemption-public-register-radios=No&exempt-information-4-status=completed&fromreview=true&exemption-what-coordinate-system-radios=WGS84%20(World%20Geodetic%20System%201984)&errors=&error-coordinates-point-1-latitude=false&error-coordinates-point-1-longitude=false&error-coordinates-point-2-latitude=false&error-coordinates-point-2-longitude=false&error-coordinates-point-3-latitude=false&error-coordinates-point-3-longitude=false&error-coordinates-point-4-latitude=false&error-coordinates-point-4-longitude=false&error-coordinates-point-5-latitude=false&error-coordinates-point-5-longitude=false&coordinates-point-1-latitude=50.0000&coordinates-point-1-longitude=-1.0000&coordinates-point-2-latitude=50.0100&coordinates-point-2-longitude=-1.0100&coordinates-point-3-latitude=50.0200&coordinates-point-3-longitude=-1.0200&coordinates-point-4-latitude=50.0200&coordinates-point-4-longitude=-1.0200&coordinates-point-5-latitude=&coordinates-point-5-longitude=&applicationSubmitted=true&">Internal
+              user view</a></li>
+        </ul>
+      </div>
+    </details>
 
-            <h2 class="govuk-heading-m">Scenario 2</h2>
+    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
 
-            <p>You live in Hammersmith London W6 9TS with a private garden fronting onto the River Thames.</p>
-            <p>You'd like to install a new private pontoon of 20m<sup>2</sup>, accessible via gangway, enabling independent access to the River Thames. You'll employ a builder to do this work for you.</p>
-            <p>Five of your neighbours properties have a similar pontoon.</p>
-            <p>The Pontoon and gangway will be constructed and installed on site.</p>
-            <p>You have also applied for permission from the Marine Harbour Authority.</p>
-            <p>Works are planned to be conducted in one phase, over an estimated period of 2 days in the period April-May 2025.</p>
+    <!-- End of iteration 4 -->
 
-          </div>
-        </details>
-        
-        <details class="govuk-details">
-          <summary class="govuk-details__summary">
-            <span class="govuk-details__summary-text">
-              Internal shortcuts
-            </span>
-          </summary>
-          <div class="govuk-details__text">
-            <ul class="govuk-list govuk-list--spaced">
-              <li><a href="versions/2025-04-04/check/exemption.html" class="govuk-link--no-visited-state">Exempt activity page</a></li>
-              <li><a href="versions/2025-04-04/exemption/project-name-start.html" class="govuk-link--no-visited-state">Project name start page</a></li>
-              <li><a href="versions/2025-04-04/exemption/task-list?headerName=Check if you need a marine licence&headerNameExemption=Check if you need a marine licence&exemption=sample-notification&exemption-do-you-want-to-draw-the-site-on-our-map-radios=No, I've got the coordinates&errorthispage=false&errortypeone=false&exemption-how-do-you-want-to-provide-the-coordinates-radios=Enter them manually&exemption-how-do-you-want-to-enter-the-coordinates-radios=Enter multiple sets of coordinates to mark the boundary of the site&previous-coords-entry-method=Enter multiple sets of coordinates to mark the boundary of the site&coords-type=coords-multiple&coordinate-system=WGS84 (World Geodetic System 1984)&errortypetwo=false&siteTitle=view&exempt-information-3-status=completed&exemption-project-name-text-input=Worthing sea sample&exempt-information-1-status=completed&exemption-start-date-date-input-day=1&exemption-start-date-date-input-month=5&exemption-start-date-date-input-year=2025&exemption-end-date-date-input-day=7&exemption-end-date-date-input-month=5&exemption-end-date-date-input-year=2025&startdateerror=false&enddateerror=false&exempt-information-2-status=completed&exemption-public-register-radios=No&exempt-information-4-status=completed&fromreview=true&exemption-what-coordinate-system-radios=WGS84 (World Geodetic System 1984)&errors=&error-coordinates-point-1-latitude=false&error-coordinates-point-1-longitude=false&error-coordinates-point-2-latitude=false&error-coordinates-point-2-longitude=false&error-coordinates-point-3-latitude=false&error-coordinates-point-3-longitude=false&error-coordinates-point-4-latitude=false&error-coordinates-point-4-longitude=false&error-coordinates-point-5-latitude=false&error-coordinates-point-5-longitude=false&coordinates-point-1-latitude=50.0000&coordinates-point-1-longitude=-1.0000&coordinates-point-2-latitude=50.0100&coordinates-point-2-longitude=-1.0100&coordinates-point-3-latitude=50.0200&coordinates-point-3-longitude=-1.0200&coordinates-point-4-latitude=50.0200&coordinates-point-4-longitude=-1.0200&coordinates-point-5-latitude=&coordinates-point-5-longitude=&" class="govuk-link--no-visited-state">Task list with all sections completed – Scenario 1: Sample removal</a></li>
+    <!-- Start of iteration 3 -->
+    <strong class="govuk-tag govuk-tag--green" style="float:right">Finished</strong>
+    <h2 class="govuk-heading-m">Iteration 3</h2>
 
-              <li><a href="versions/2025-04-04/exemption/task-list?headerName=Check if you need a marine licence&headerNameExemption=Check if you need a marine licence&exemption=&exemption-do-you-want-to-draw-the-site-on-our-map-radios=No, I've got the coordinates&errorthispage=false&errortypeone=false&exemption-how-do-you-want-to-provide-the-coordinates-radios=Enter them manually&exemption-how-do-you-want-to-enter-the-coordinates-radios=Enter multiple sets of coordinates to mark the boundary of the site&previous-coords-entry-method=Enter multiple sets of coordinates to mark the boundary of the site&coords-type=coords-multiple&coordinate-system=WGS84 (World Geodetic System 1984)&errortypetwo=false&siteTitle=view&exempt-information-3-status=completed&exemption-project-name-text-input=Hammersmith pontoon&exempt-information-1-status=completed&exemption-start-date-date-input-day=1&exemption-start-date-date-input-month=5&exemption-start-date-date-input-year=2025&exemption-end-date-date-input-day=7&exemption-end-date-date-input-month=5&exemption-end-date-date-input-year=2025&startdateerror=false&enddateerror=false&exempt-information-2-status=completed&exemption-public-register-radios=No&exempt-information-4-status=completed&fromreview=true&exemption-what-coordinate-system-radios=WGS84 (World Geodetic System 1984)&errors=&error-coordinates-point-1-latitude=false&error-coordinates-point-1-longitude=false&error-coordinates-point-2-latitude=false&error-coordinates-point-2-longitude=false&error-coordinates-point-3-latitude=false&error-coordinates-point-3-longitude=false&error-coordinates-point-4-latitude=false&error-coordinates-point-4-longitude=false&error-coordinates-point-5-latitude=false&error-coordinates-point-5-longitude=false&coordinates-point-1-latitude=50.0000&coordinates-point-1-longitude=-1.0000&coordinates-point-2-latitude=50.0100&coordinates-point-2-longitude=-1.0100&coordinates-point-3-latitude=50.0200&coordinates-point-3-longitude=-1.0200&coordinates-point-4-latitude=50.0200&coordinates-point-4-longitude=-1.0200&coordinates-point-5-latitude=&coordinates-point-5-longitude=&" class="govuk-link--no-visited-state">Task list with all sections completed – Scenario 2: Pontoon</a></li>
-              <li><a href="versions/2025-04-04/exemption/email?headerName=Check if you need a marine licence&headerNameExemption=Check if you need a marine licence&exemption=&exemption-do-you-want-to-draw-the-site-on-our-map-radios=No, I've got the coordinates&errorthispage=false&errortypeone=false&exemption-how-do-you-want-to-provide-the-coordinates-radios=Enter them manually&exemption-how-do-you-want-to-enter-the-coordinates-radios=Enter multiple sets of coordinates to mark the boundary of the site&previous-coords-entry-method=Enter multiple sets of coordinates to mark the boundary of the site&coords-type=coords-multiple&coordinate-system=WGS84 (World Geodetic System 1984)&errortypetwo=false&siteTitle=view&exempt-information-3-status=completed&exemption-project-name-text-input=Hammersmith pontoon&exempt-information-1-status=completed&exemption-start-date-date-input-day=1&exemption-start-date-date-input-month=5&exemption-start-date-date-input-year=2025&exemption-end-date-date-input-day=7&exemption-end-date-date-input-month=5&exemption-end-date-date-input-year=2025&startdateerror=false&enddateerror=false&exempt-information-2-status=completed&exemption-public-register-radios=No&exempt-information-4-status=completed&fromreview=true&exemption-what-coordinate-system-radios=WGS84 (World Geodetic System 1984)&errors=&error-coordinates-point-1-latitude=false&error-coordinates-point-1-longitude=false&error-coordinates-point-2-latitude=false&error-coordinates-point-2-longitude=false&error-coordinates-point-3-latitude=false&error-coordinates-point-3-longitude=false&error-coordinates-point-4-latitude=false&error-coordinates-point-4-longitude=false&error-coordinates-point-5-latitude=false&error-coordinates-point-5-longitude=false&coordinates-point-1-latitude=50.0000&coordinates-point-1-longitude=-1.0000&coordinates-point-2-latitude=50.0100&coordinates-point-2-longitude=-1.0100&coordinates-point-3-latitude=50.0200&coordinates-point-3-longitude=-1.0200&coordinates-point-4-latitude=50.0200&coordinates-point-4-longitude=-1.0200&coordinates-point-5-latitude=&coordinates-point-5-longitude=&applicationSubmitted=true&" class="govuk-link--no-visited-state">Confirmation email</a><br>Also linked to from the Confirmation page link - 'What did you think of this service?'</li>
-              <li><a href="versions/2025-04-04/exemption/check-answers-internal?headerName=Check%20if%20you%20need%20a%20marine%20licence&headerNameExemption=Check%20if%20you%20need%20a%20marine%20licence&exemption=sample-notification&exemption-do-you-want-to-draw-the-site-on-our-map-radios=No,%20I%27ve%20got%20the%20coordinates&errorthispage=false&errortypeone=false&exemption-how-do-you-want-to-provide-the-coordinates-radios=Enter%20them%20manually&exemption-how-do-you-want-to-enter-the-coordinates-radios=Enter%20multiple%20sets%20of%20coordinates%20to%20mark%20the%20boundary%20of%20the%20site&previous-coords-entry-method=Enter%20multiple%20sets%20of%20coordinates%20to%20mark%20the%20boundary%20of%20the%20site&coords-type=coords-multiple&coordinate-system=WGS84%20(World%20Geodetic%20System%201984)&errortypetwo=false&siteTitle=view&exempt-information-3-status=completed&exemption-project-name-text-input=Worthing%20sea%20sample&exempt-information-1-status=completed&exemption-start-date-date-input-day=1&exemption-start-date-date-input-month=5&exemption-start-date-date-input-year=2025&exemption-end-date-date-input-day=7&exemption-end-date-date-input-month=5&exemption-end-date-date-input-year=2025&startdateerror=false&enddateerror=false&exempt-information-2-status=completed&exemption-public-register-radios=No&exempt-information-4-status=completed&fromreview=true&exemption-what-coordinate-system-radios=WGS84%20(World%20Geodetic%20System%201984)&errors=&error-coordinates-point-1-latitude=false&error-coordinates-point-1-longitude=false&error-coordinates-point-2-latitude=false&error-coordinates-point-2-longitude=false&error-coordinates-point-3-latitude=false&error-coordinates-point-3-longitude=false&error-coordinates-point-4-latitude=false&error-coordinates-point-4-longitude=false&error-coordinates-point-5-latitude=false&error-coordinates-point-5-longitude=false&coordinates-point-1-latitude=50.0000&coordinates-point-1-longitude=-1.0000&coordinates-point-2-latitude=50.0100&coordinates-point-2-longitude=-1.0100&coordinates-point-3-latitude=50.0200&coordinates-point-3-longitude=-1.0200&coordinates-point-4-latitude=50.0200&coordinates-point-4-longitude=-1.0200&coordinates-point-5-latitude=&coordinates-point-5-longitude=&applicationSubmitted=true&">Internal user view</a></li>
-          </ul>
-          </div>
-        </details>
 
-        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+    <p><a href="versions/2025-03-03/check/start" class="govuk-link--no-visited-state">Start the iteration 3 journey</a>
+    </p>
 
-        <!-- End of iteration 4 -->
+    <p>When entering the location details all options are available apart from file upload, where only KML files can be
+      uploaded.</p>
 
-        <!-- Start of iteration 3 -->
-        <strong class="govuk-tag govuk-tag--green" style="float:right">Finished</strong>
-        <h2 class="govuk-heading-m">Iteration 3</h2>
-        
+    <details class="govuk-details govuk-!-margin-bottom-2">
+      <summary class="govuk-details__summary">
+        <span class="govuk-details__summary-text">
+          The scenarios to follow for this iteration
+        </span>
+      </summary>
+      <div class="govuk-details__text">
 
-        <p><a href="versions/2025-03-03/check/start" class="govuk-link--no-visited-state">Start the iteration 3 journey</a></p>
-  
-        <p>When entering the location details all options are available apart from file upload, where only KML files can be uploaded.</p>
+        <p>The scenario from iteration 1 still works, but we have been testing with scenario 2, pontoon construction,
+          which is more appropriate for novice users.</p>
 
-        <details class="govuk-details govuk-!-margin-bottom-2">
-          <summary class="govuk-details__summary">
-            <span class="govuk-details__summary-text">
-             The scenarios to follow for this iteration
-            </span>
-          </summary>
-          <div class="govuk-details__text">
-           
-            <p>The scenario from iteration 1 still works, but we have been testing with scenario 2, pontoon construction, which is more appropriate for novice users.</p>
+        <h2 class="govuk-heading-m">Scenario 2</h2>
 
-            <h2 class="govuk-heading-m">Scenario 2</h2>
+        <p>You live in Hammersmith London W6 9TS with a private garden fronting onto the River Thames.</p>
+        <p>You'd like to install a new private pontoon of 20m<sup>2</sup>, accessible via gangway, enabling independent
+          access to the River Thames. You'll employ a builder to do this work for you.</p>
+        <p>Five of your neighbours properties have a similar pontoon.</p>
+        <p>The Pontoon and gangway will be constructed and installed on site.</p>
+        <p>You have also applied for permission from the Marine Harbour Authority.</p>
+        <p>Works are planned to be conducted in one phase, over an estimated period of 2 days in the period April-May
+          2025.</p>
 
-            <p>You live in Hammersmith London W6 9TS with a private garden fronting onto the River Thames.</p>
-            <p>You'd like to install a new private pontoon of 20m<sup>2</sup>, accessible via gangway, enabling independent access to the River Thames. You'll employ a builder to do this work for you.</p>
-            <p>Five of your neighbours properties have a similar pontoon.</p>
-            <p>The Pontoon and gangway will be constructed and installed on site.</p>
-            <p>You have also applied for permission from the Marine Harbour Authority.</p>
-            <p>Works are planned to be conducted in one phase, over an estimated period of 2 days in the period April-May 2025.</p>
+      </div>
+    </details>
 
-          </div>
-        </details>
-        
-        <details class="govuk-details">
-          <summary class="govuk-details__summary">
-            <span class="govuk-details__summary-text">
-              Internal shortcuts
-            </span>
-          </summary>
-          <div class="govuk-details__text">
-            <ul class="govuk-list govuk-list--spaced">
-              <li><a href="versions/2025-03-03/check/exemption.html" class="govuk-link--no-visited-state">Exempt activity page</a></li>
-              <li><a href="versions/2025-03-03/exemption/task-list.html" class="govuk-link--no-visited-state">Task list page</a></li>
-          </ul>
-          </div>
-        </details>
+    <details class="govuk-details">
+      <summary class="govuk-details__summary">
+        <span class="govuk-details__summary-text">
+          Internal shortcuts
+        </span>
+      </summary>
+      <div class="govuk-details__text">
+        <ul class="govuk-list govuk-list--spaced">
+          <li><a href="versions/2025-03-03/check/exemption.html" class="govuk-link--no-visited-state">Exempt activity
+              page</a></li>
+          <li><a href="versions/2025-03-03/exemption/task-list.html" class="govuk-link--no-visited-state">Task list
+              page</a></li>
+        </ul>
+      </div>
+    </details>
 
-        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
 
-        <!-- End of iteration 3 -->
+    <!-- End of iteration 3 -->
 
-        
 
-        <!-- Start of iteration 2 -->
-        <strong class="govuk-tag govuk-tag--green" style="float:right">Finished</strong>
-        <h2 class="govuk-heading-m">Iteration 2</h2>
-        
-        <p><a href="versions/2025-02-17/check/start" class="govuk-link--no-visited-state">Start the iteration 2 journey</a></p>
-  
-        <p>When entering the location details all options are now available apart from file upload, where only KML files can be uploaded.</p>
 
-        <!--<p><a href="#">Read about all the iterations here</a>.</p>-->
+    <!-- Start of iteration 2 -->
+    <strong class="govuk-tag govuk-tag--green" style="float:right">Finished</strong>
+    <h2 class="govuk-heading-m">Iteration 2</h2>
 
-        <details class="govuk-details govuk-!-margin-bottom-2">
-          <summary class="govuk-details__summary">
-            <span class="govuk-details__summary-text">
-             The scenarios to follow for this iteration
-            </span>
-          </summary>
-          <div class="govuk-details__text">
-           
-            <p>The scenario from iteration 1 still works, but we have now added a pontoon construction scenario more appropriate for a novice user.</p>
+    <p><a href="versions/2025-02-17/check/start" class="govuk-link--no-visited-state">Start the iteration 2 journey</a>
+    </p>
 
-            <h2 class="govuk-heading-m">Scenario 2</h2>
+    <p>When entering the location details all options are now available apart from file upload, where only KML files can
+      be uploaded.</p>
 
-            <p>You live in Hammersmith London W6 9TS with a private garden fronting onto the River Thames.</p>
-            <p>You'd like to install a new private pontoon of 20m<sup>2</sup>, accessible via gangway, enabling independent access to the River Thames. You'll employ a builder to do this work for you.</p>
-            <p>Five of your neighbours properties have a similar pontoon.</p>
-            <p>The Pontoon and gangway will be constructed and installed on site.</p>
-            <p>You have also applied for permission from the Marine Harbour Authority.</p>
-            <p>Works are planned to be conducted in one phase, over an estimated period of 2 days in the period April-May 2025.</p>
+    <!--<p><a href="#">Read about all the iterations here</a>.</p>-->
 
-          </div>
-        </details>
-        
-        <details class="govuk-details">
-          <summary class="govuk-details__summary">
-            <span class="govuk-details__summary-text">
-              Internal shortcuts
-            </span>
-          </summary>
-          <div class="govuk-details__text">
-            <ul class="govuk-list govuk-list--spaced">
-              <li><a href="versions/2025-02-17/check/exemption" class="govuk-link--no-visited-state">Exempt activity page</a><br>
-                Defaults to pontoon scenario 2 if no data is saved</li>
-              <!--<li><a href="versions/2025-02-17/check/exemption" class="govuk-link--no-visited-state">Exemption required page</a></li>
+    <details class="govuk-details govuk-!-margin-bottom-2">
+      <summary class="govuk-details__summary">
+        <span class="govuk-details__summary-text">
+          The scenarios to follow for this iteration
+        </span>
+      </summary>
+      <div class="govuk-details__text">
+
+        <p>The scenario from iteration 1 still works, but we have now added a pontoon construction scenario more
+          appropriate for a novice user.</p>
+
+        <h2 class="govuk-heading-m">Scenario 2</h2>
+
+        <p>You live in Hammersmith London W6 9TS with a private garden fronting onto the River Thames.</p>
+        <p>You'd like to install a new private pontoon of 20m<sup>2</sup>, accessible via gangway, enabling independent
+          access to the River Thames. You'll employ a builder to do this work for you.</p>
+        <p>Five of your neighbours properties have a similar pontoon.</p>
+        <p>The Pontoon and gangway will be constructed and installed on site.</p>
+        <p>You have also applied for permission from the Marine Harbour Authority.</p>
+        <p>Works are planned to be conducted in one phase, over an estimated period of 2 days in the period April-May
+          2025.</p>
+
+      </div>
+    </details>
+
+    <details class="govuk-details">
+      <summary class="govuk-details__summary">
+        <span class="govuk-details__summary-text">
+          Internal shortcuts
+        </span>
+      </summary>
+      <div class="govuk-details__text">
+        <ul class="govuk-list govuk-list--spaced">
+          <li><a href="versions/2025-02-17/check/exemption" class="govuk-link--no-visited-state">Exempt activity
+              page</a><br>
+            Defaults to pontoon scenario 2 if no data is saved</li>
+          <!--<li><a href="versions/2025-02-17/check/exemption" class="govuk-link--no-visited-state">Exemption required page</a></li>
               <li><a href="versions/2025-02-17/exemption/what-is-your-name.html" class="govuk-link--no-visited-state">Exemption form start</a></li>-->
-              <li><a href="versions/2025-02-17/exemption/about-the-location-of-the-activity.html" class="govuk-link--no-visited-state">Location details start</a><br>Defaults to pontoon scenario 2 if no data is saved</li>
-              <li><a href="versions/2025-02-17/check/marine-protected-areas.html" class="govuk-link--no-visited-state">Marine protected area page (scientific sample scenario 1)</a></li>              
-          </ul>
-          </div>
-        </details>
+          <li><a href="versions/2025-02-17/exemption/about-the-location-of-the-activity.html"
+              class="govuk-link--no-visited-state">Location details start</a><br>Defaults to pontoon scenario 2 if no
+            data is saved</li>
+          <li><a href="versions/2025-02-17/check/marine-protected-areas.html"
+              class="govuk-link--no-visited-state">Marine protected area page (scientific sample scenario 1)</a></li>
+        </ul>
+      </div>
+    </details>
 
-        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
 
-        <!-- End of iteration 2 -->
+    <!-- End of iteration 2 -->
 
-        <!-- Start of iteration 1 -->
-        <strong class="govuk-tag govuk-tag--green" style="float:right">Finished</strong>
-        <h2 class="govuk-heading-m">Iteration 1</h2>
+    <!-- Start of iteration 1 -->
+    <strong class="govuk-tag govuk-tag--green" style="float:right">Finished</strong>
+    <h2 class="govuk-heading-m">Iteration 1</h2>
 
-        <p><a href="versions/2025-01-27/check/start" class="govuk-link--no-visited-state">Start the iteration 1 journey</a></p>
-        
-        <p>When entering the location details the options available are draw on a map and specify the centre of a square and its width.</p>
+    <p><a href="versions/2025-01-27/check/start" class="govuk-link--no-visited-state">Start the iteration 1 journey</a>
+    </p>
 
-        <!--<p><a href="#">Read about all the iterations here</a>.</p>-->
+    <p>When entering the location details the options available are draw on a map and specify the centre of a square and
+      its width.</p>
 
-        <details class="govuk-details govuk-!-margin-bottom-2">
-          <summary class="govuk-details__summary">
-            <span class="govuk-details__summary-text">
-             The scenario to follow for this iteration
-            </span>
-          </summary>
-          <div class="govuk-details__text">
-            
-            <h2 class="govuk-heading-m">Scenario 1</h2>
+    <!--<p><a href="#">Read about all the iterations here</a>.</p>-->
 
-            <p>You're looking to carry out some research involving analysis of sediments from just off the coast of Worthing, by the pier.</p>
-            <p>You need to carry out a survey taking 1 sample within 100m of the pier.</p>
-            <p>You'll travel to the sample sites by boat and lower a grab overboard.</p>
-            <p>The grab will be used to extract 0.3m<sup>3</sup> of material from the surface of the sea floor.</p>
-            <p>The material removed will be returned to the vessel and taken anyway for testing and analysis.</p>
-            <p>The material will be disposed to land once testing and analysis is complete.</p>
-            <p>A colleague advised that you might need to get permission from the Marine Management Organisation before you carry out this activity.</p>
-          </div>
-        </details>
-        
-        <details class="govuk-details">
-          <summary class="govuk-details__summary">
-            <span class="govuk-details__summary-text">
-              Internal shortcuts
-            </span>
-          </summary>
-          <div class="govuk-details__text">
-            <ul class="govuk-list govuk-list--spaced">
-              <li><a href="versions/2025-01-27/check/exemption" class="govuk-link--no-visited-state">Exempt activity page</a></li>
-              <li><a href="versions/2025-01-27/exemption/what-is-your-name.html" class="govuk-link--no-visited-state">Start of exemption form</a></li>
-          </ul>
-          </div>
-        </details>
+    <details class="govuk-details govuk-!-margin-bottom-2">
+      <summary class="govuk-details__summary">
+        <span class="govuk-details__summary-text">
+          The scenario to follow for this iteration
+        </span>
+      </summary>
+      <div class="govuk-details__text">
 
-        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+        <h2 class="govuk-heading-m">Scenario 1</h2>
 
-        <!-- End of iteration 1 -->
+        <p>You're looking to carry out some research involving analysis of sediments from just off the coast of
+          Worthing, by the pier.</p>
+        <p>You need to carry out a survey taking 1 sample within 100m of the pier.</p>
+        <p>You'll travel to the sample sites by boat and lower a grab overboard.</p>
+        <p>The grab will be used to extract 0.3m<sup>3</sup> of material from the surface of the sea floor.</p>
+        <p>The material removed will be returned to the vessel and taken anyway for testing and analysis.</p>
+        <p>The material will be disposed to land once testing and analysis is complete.</p>
+        <p>A colleague advised that you might need to get permission from the Marine Management Organisation before you
+          carry out this activity.</p>
+      </div>
+    </details>
 
-         
+    <details class="govuk-details">
+      <summary class="govuk-details__summary">
+        <span class="govuk-details__summary-text">
+          Internal shortcuts
+        </span>
+      </summary>
+      <div class="govuk-details__text">
+        <ul class="govuk-list govuk-list--spaced">
+          <li><a href="versions/2025-01-27/check/exemption" class="govuk-link--no-visited-state">Exempt activity
+              page</a></li>
+          <li><a href="versions/2025-01-27/exemption/what-is-your-name.html" class="govuk-link--no-visited-state">Start
+              of exemption form</a></li>
+        </ul>
+      </div>
+    </details>
+
+    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
+    <!-- End of iteration 1 -->
+
+
+  </div>
+
+  <!-- Right 3rd of the home screen.   Mostly admin stuff  -->
+  <div class="govuk-grid-column-one-third govuk-!-margin-top-9 govuk-!-padding-left-8">
+    <p class="govuk-!-margin-top-6" style="border-top: 2px solid #1d70b8; margin-bottom: 30px;">
+
+    <div class="govuk-!-margin-bottom-7">
+      <h3 class="govuk-heading-s govuk-!-margin-top-3">2025 alpha and beta</h3>
+      <p><a href="about-the-prototype.html" class="govuk-link--no-visited-state">About the prototype and iterations</a>
+      </p>
     </div>
 
-    <!-- Right 3rd of the home screen.   Mostly admin stuff  -->
-    <div class="govuk-grid-column-one-third govuk-!-margin-top-9 govuk-!-padding-left-8">
-        <p class="govuk-!-margin-top-6" style="border-top: 2px solid #1d70b8; margin-bottom: 30px;">
-
-          <div class="govuk-!-margin-bottom-7">
-            <h3 class="govuk-heading-s govuk-!-margin-top-3">2025 alpha and beta</h3> 
-            <p><a href="about-the-prototype.html" class="govuk-link--no-visited-state">About the prototype and iterations</a></p>   
-        </div>
-
-        <div class="govuk-!-margin-bottom-7">
-                <h3 class="govuk-heading-s govuk-!-margin-top-3">Previous alpha</h3> 
-                <p><a href="alpha-2024.html" class="govuk-link--no-visited-state">2024 prototype</a></p>   
-        </div>
-
-        <div class="govuk-!-margin-bottom-7">
-            <h3 class="govuk-heading-s govuk-!-margin-top-3">For designers</h3>
-            <p><a href="templates/a-list-of-templates" class="govuk-link--no-visited-state">Templates </a></p>
-            <p><a href="templates/a-list-of-helpful-features" class="govuk-link--no-visited-state">Helpful features</a></p>
-            <p><a href="documentation" class="govuk-link--no-visited-state">Documentation</a></p>
-        </div>
-
+    <div class="govuk-!-margin-bottom-7">
+      <h3 class="govuk-heading-s govuk-!-margin-top-3">Previous alpha</h3>
+      <p><a href="alpha-2024.html" class="govuk-link--no-visited-state">2024 prototype</a></p>
     </div>
+
+    <div class="govuk-!-margin-bottom-7">
+      <h3 class="govuk-heading-s govuk-!-margin-top-3">For designers</h3>
+      <p><a href="templates/a-list-of-templates" class="govuk-link--no-visited-state">Templates </a></p>
+      <p><a href="templates/a-list-of-helpful-features" class="govuk-link--no-visited-state">Helpful features</a></p>
+      <p><a href="documentation" class="govuk-link--no-visited-state">Documentation</a></p>
+    </div>
+
+  </div>
 
 </div>
 
