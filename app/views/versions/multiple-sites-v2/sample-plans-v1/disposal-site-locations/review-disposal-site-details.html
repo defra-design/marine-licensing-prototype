@@ -217,6 +217,9 @@ Review disposal site details
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
+                            <a href="disposal-details-site-1" class="govuk-link govuk-visually-hidden">
+                                {% if site1DisposalMethodComplete %}Change{% else %}Add{% endif %} proposed method of disposal
+                            </a>
                         </dd>
                     </div>
 
@@ -415,6 +418,9 @@ Review disposal site details
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
+                            <a href="disposal-details-site-2" class="govuk-link govuk-visually-hidden">
+                                {% if site2DisposalMethodComplete %}Change{% else %}Add{% endif %} proposed method of disposal
+                            </a>
                         </dd>
                     </div>
                 </dl>
