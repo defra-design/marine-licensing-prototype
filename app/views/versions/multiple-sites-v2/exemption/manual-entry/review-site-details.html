@@ -552,22 +552,18 @@ Review site details
 
         <!-- Add another site button for multiple sites journey -->
         {% if isMultipleSitesJourney %}
-        {% if data['camefromcheckanswers'] != 'true' %}
-        <p class="govuk-body">You can select 'Save and continue' if you're finished or you want to save your progress and return later.</p>
-        {% endif %}
-        
-
-
-        
         <div class="govuk-button-group govuk-!-margin-bottom-6">
             <a href="add-next-site-router{% if currentBatch and currentBatch.id %}?batchId={{ currentBatch.id }}{% endif %}" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
-                Add another site
+                Save and add another site
             </a>
         </div>
         {% endif %}
 
         
         <form action="review-site-details-router" method="post" novalidate>
+            {% if data['camefromcheckanswers'] != 'true' %}
+            <p class="govuk-body">You can select 'Save and continue' if you're finished or you want to save your progress and return later.</p>
+            {% endif %}
             <div class="govuk-button-group">
                 {{ govukButton({
                     text: "Save and continue"
