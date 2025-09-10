@@ -88,10 +88,11 @@ Find the existing disposal site
                     text: "We only need to know about material being disposed of in any of these locations"
                 },
                 items: [
-                    { value: "England", text: "England" },
-                    { value: "Isle of Man", text: "Isle of Man" },
-                    { value: "Jersey", text: "Jersey" },
-                    { value: "Northern Ireland", text: "Northern Ireland" }
+                    { value: "Any", text: "Any", checked: data['disposal-site-location'] === "Any" or not data['disposal-site-location'] },
+                    { value: "England", text: "England", checked: data['disposal-site-location'] === "England" },
+                    { value: "Isle of Man", text: "Isle of Man", checked: data['disposal-site-location'] === "Isle of Man" },
+                    { value: "Jersey", text: "Jersey", checked: data['disposal-site-location'] === "Jersey" },
+                    { value: "Northern Ireland", text: "Northern Ireland", checked: data['disposal-site-location'] === "Northern Ireland" }
                 ],
                 name: "disposal-site-location",
                 value: data['disposal-site-location']

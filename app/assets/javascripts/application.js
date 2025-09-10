@@ -75,6 +75,7 @@ window.GOVUKPrototypeKit.documentReady(() => {
 
     // Marine areas autocomplete for disposal site search
     const marineAreas = [
+      'Any',
       'Atlantic',
       'Bristol Channel',
       'Eastern Channel',

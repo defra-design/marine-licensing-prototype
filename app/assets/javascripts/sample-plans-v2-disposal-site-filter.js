@@ -418,12 +418,34 @@ window.GOVUKPrototypeKit.documentReady(() => {
       return
     }
 
-    let html = '<h2 class="govuk-heading-s">Selected filters</h2><ul class="moj-filter-tags">'
-    items.forEach((it, idx) => {
-      html += `<li><strong class="govuk-tag govuk-tag--grey govuk-!-margin-right-2">${it.key}: ${it.value}</strong></li>`
+    let html = '<ul class="moj-filter-tags">'
+    items.forEach((it) => {
+      if (it.clearId) {
+        html += `<li><a href="#" class="moj-filter__tag" data-clear-id="${it.clearId}"><span class="govuk-visually-hidden">Remove this filter</span> ${it.value}</a></li>`
+      } else if (it.clearName) {
+        html += `<li><a href="#" class="moj-filter__tag" data-clear-name="${it.clearName}"><span class="govuk-visually-hidden">Remove this filter</span> ${it.value}</a></li>`
+      }
     })
     html += '</ul>'
     container.innerHTML = html
+
+    // Wire up individual tag clears
+    container.querySelectorAll('.moj-filter__tag').forEach(tag => {
+      tag.addEventListener('click', (e) => {
+        e.preventDefault()
+        const clearId = tag.getAttribute('data-clear-id')
+        const clearName = tag.getAttribute('data-clear-name')
+        if (clearId) {
+          const el = document.getElementById(clearId)
+          if (el) el.value = ''
+        }
+        if (clearName) {
+          const selected = document.querySelector(`input[name="${clearName}"]:checked`)
+          if (selected) selected.checked = false
+        }
+        applyAndRender()
+      })
+    })
   }
 
   function applyAndRender () {
@@ -469,6 +491,14 @@ window.GOVUKPrototypeKit.documentReady(() => {
   const clearLink = document.getElementById('clear-filters-link')
   if (clearLink) {
     clearLink.addEventListener('click', function (e) {
+      e.preventDefault()
+      clearFilters()
+    })
+  }
+
+  const topClearLink = document.getElementById('top-clear-filters-link')
+  if (topClearLink) {
+    topClearLink.addEventListener('click', function (e) {
       e.preventDefault()
       clearFilters()
     })
