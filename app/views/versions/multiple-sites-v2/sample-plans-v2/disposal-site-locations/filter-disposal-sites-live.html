@@ -58,7 +58,13 @@ Find the existing disposal site
             <div class="moj-filter__header-action"></div>
           </div>
           <div class="moj-filter__content">
-            <div class="moj-filter__selected" id="selected-filters-container" aria-live="polite"></div>
+            <div class="moj-filter__selected" aria-live="polite">
+              <div class="moj-filter__selected-heading">
+                <div class="moj-filter__heading-title"><h2 class="govuk-heading-s">Selected filters</h2></div>
+                <div class="moj-filter__heading-action"><p><a class="govuk-link govuk-link--no-visited-state" href="#" id="top-clear-filters-link">Clear filters</a></p></div>
+              </div>
+              <div id="selected-filters-container"></div>
+            </div>
             <div class="moj-filter__options">
               <form id="filter-form" onsubmit="return false;">
 
@@ -106,9 +112,7 @@ Find the existing disposal site
                   <div class="govuk-!-width-full" id="filter-marine-area-autocomplete-container"></div>
                 </div>
 
-                <div class="govuk-button-group">
-                  <a class="govuk-link govuk-link--no-visited-state" href="#" id="clear-filters-link">Clear filters</a>
-                </div>
+                
 
               </form>
             </div>

@@ -290,12 +290,33 @@ window.GOVUKPrototypeKit.documentReady(() => {
       return
     }
 
-    let html = '<h2 class="govuk-heading-s">Selected filters</h2><ul class="moj-filter-tags">'
+    let html = '<ul class="moj-filter-tags">'
     items.forEach((it) => {
-      html += `<li><strong class="govuk-tag govuk-tag--grey govuk-!-margin-right-2">${it.key}: ${it.value}</strong></li>`
+      if (it.clearId) {
+        html += `<li><a href="#" class="moj-filter__tag" data-clear-id="${it.clearId}"><span class="govuk-visually-hidden">Remove this filter</span> ${it.value}</a></li>`
+      } else if (it.clearName) {
+        html += `<li><a href="#" class="moj-filter__tag" data-clear-name="${it.clearName}"><span class="govuk-visually-hidden">Remove this filter</span> ${it.value}</a></li>`
+      }
     })
     html += '</ul>'
     container.innerHTML = html
+
+    container.querySelectorAll('.moj-filter__tag').forEach(tag => {
+      tag.addEventListener('click', (e) => {
+        e.preventDefault()
+        const clearId = tag.getAttribute('data-clear-id')
+        const clearName = tag.getAttribute('data-clear-name')
+        if (clearId) {
+          const el = document.getElementById(clearId)
+          if (el) el.value = ''
+        }
+        if (clearName) {
+          const selected = document.querySelector(`input[name="${clearName}"]:checked`)
+          if (selected) selected.checked = false
+        }
+        applyAndRender()
+      })
+    })
   }
 
   // Debounce for live filtering
@@ -345,9 +366,9 @@ window.GOVUKPrototypeKit.documentReady(() => {
   const locationRadios = document.querySelectorAll('input[name="filter-location"]')
   locationRadios.forEach(r => r.addEventListener('change', scheduleApply))
 
-  const clearLink = document.getElementById('clear-filters-link')
-  if (clearLink) {
-    clearLink.addEventListener('click', function (e) {
+  const topClearLink = document.getElementById('top-clear-filters-link')
+  if (topClearLink) {
+    topClearLink.addEventListener('click', function (e) {
       e.preventDefault()
       clearFilters()
     })
