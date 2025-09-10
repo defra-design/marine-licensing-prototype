@@ -129,8 +129,8 @@ window.GOVUKPrototypeKit.documentReady(() => {
 
   // Disposal sites pagination functionality
   if (document.getElementById('disposal-sites-table-body')) {
-    // Complete dataset from the provided screenshots - English disposal sites only (MMO jurisdiction)
-    const disposalSites = [
+    // Prefer shared dataset if available; fallback to embedded copy
+    const disposalSites = (window.__DISPOSAL_SITES_DATA__ && Array.isArray(window.__DISPOSAL_SITES_DATA__)) ? window.__DISPOSAL_SITES_DATA__ : [
       { code: 'DG025', name: 'Dogger Bank Teeside B', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
       { code: 'DG031', name: 'Dogger Bank A', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
       { code: 'DG032', name: 'Dogger Bank B', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
@@ -465,14 +465,11 @@ window.GOVUKPrototypeKit.documentReady(() => {
         const row = document.createElement('tr')
         row.className = 'govuk-table__row'
         row.innerHTML = `
-          <td class="govuk-table__cell">${site.code}</td>
+          <td class="govuk-table__cell"><a class="govuk-link govuk-link--no-visited-state" href="/versions/multiple-sites-v2/sample-plans-v2/disposal-site-locations/review-disposal-site-details?code=${encodeURIComponent(site.code)}&name=${encodeURIComponent(site.name)}&country=${encodeURIComponent(site.country)}&seaArea=${encodeURIComponent(site.seaArea)}&status=${encodeURIComponent(site.status)}">${site.code}</a></td>
           <td class="govuk-table__cell">${site.name}</td>
           <td class="govuk-table__cell">${site.country}</td>
           <td class="govuk-table__cell">${site.seaArea}</td>
           <td class="govuk-table__cell">${getStatusTag(site.status)}</td>
-          <td class="govuk-table__cell">
-            <a class="govuk-link govuk-link--no-visited-state govuk-!-white-space-nowrap" href="review-disposal-site-details?code=${encodeURIComponent(site.code)}&name=${encodeURIComponent(site.name)}&country=${encodeURIComponent(site.country)}&seaArea=${encodeURIComponent(site.seaArea)}&status=${encodeURIComponent(site.status)}">Select</a>
-          </td>
         `
         tableBody.appendChild(row)
       })

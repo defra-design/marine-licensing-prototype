@@ -499,3 +499,23 @@ body.page-cookie-banner {
   display: block;
 }
 
+
+.moj-action-bar__filter::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 2px;
+  height: 40px;
+  background-color: #fff;
+}
+
+
+// MOJ Filter component – ensure the remove "×" icon uses our served path
+// The prototype serves assets from /public, so override the default background-image
+.moj-filter__tag:after {
+  background-image: url('/public/images/icon-tag-remove-cross.svg') !important;
+  width: 10px;  // keep same dimensions as MOJ default
+  height: 10px; // keep same dimensions as MOJ default
+}
+
