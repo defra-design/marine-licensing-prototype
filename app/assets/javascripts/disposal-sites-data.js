@@ -387,7 +387,7 @@ window.__DISPOSAL_SITES_DATA__.push(
   { code: 'TH045', name: 'ROUGHS TOWER EXTENSION', country: 'ENGLAND', seaArea: 'North Sea', status: 'Closed' },
   { code: 'TH047', name: 'TOLLESBURY SALTINGS', country: 'ENGLAND', seaArea: 'North Sea', status: 'Closed' },
   { code: 'TH048', name: 'UPPER BLACKWATER ESTUARY', country: 'ENGLAND', seaArea: 'North Sea', status: 'Closed' },
-  { code: 'TH049', name: 'ROUGHS TOWER 'E'', country: 'ENGLAND', seaArea: 'North Sea', status: 'Closed' },
+  { code: 'TH049', name: "ROUGHS TOWER 'E'", country: 'ENGLAND', seaArea: 'North Sea', status: 'Closed' },
   { code: 'TH050', name: 'BARROW DEEP', country: 'ENGLAND', seaArea: 'North Sea', status: 'Closed' },
   { code: 'TH051', name: 'BARROW DEEP B', country: 'ENGLAND', seaArea: 'North Sea', status: 'Closed' },
   { code: 'TH053', name: 'ORWELL EAST', country: 'ENGLAND', seaArea: 'North Sea', status: 'Closed' },
