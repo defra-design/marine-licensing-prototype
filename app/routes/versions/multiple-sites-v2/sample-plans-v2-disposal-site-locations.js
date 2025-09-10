@@ -131,6 +131,15 @@ module.exports = function (router) {
   });
 
   ///////////////////////////////////////////
+  // Filter disposal sites page (alternative search)
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/${subSection}/filter-disposal-sites`, function (req, res) {
+    req.session.data['samplePlansSection'] = section;
+    res.render(`versions/${version}/${section}/${subSection}/filter-disposal-sites`);
+  });
+
+  ///////////////////////////////////////////
   // Where dispose of material page
   ///////////////////////////////////////////
 
