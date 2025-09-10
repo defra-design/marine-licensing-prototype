@@ -2,7 +2,6 @@
 
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
-{% from "govuk/components/select/macro.njk" import govukSelect %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 
@@ -44,20 +43,13 @@ Find the existing disposal site
             {{ pageHeadingTextHTML }}
         </h1>
 
-        <p class="govuk-body">You can search for an existing disposal site by using any of the following:</p>
-        
-        <ul class="govuk-list govuk-list--bullet">
-            <li>the disposal site code</li>
-            <li>name of the disposal site</li>
-            <li>site location</li>
-            <li>marine area the disposal site is located in</li>
-        </ul>
+        <p class="govuk-body">If you do not select any of the options the full list of existing disposal sites will be displayed.</p>
         
         <form action="find-existing-disposal-site-router" method="post">
             
             {{ govukInput({
                 label: {
-                    text: "Disposal site code",
+                    text: "Disposal site code (optional)",
                     classes: "govuk-label--s"
                 },
                 hint: {
@@ -71,8 +63,11 @@ Find the existing disposal site
 
             {{ govukInput({
                 label: {
-                    text: "Name of disposal site",
+                    text: "Name of disposal site (optional)",
                     classes: "govuk-label--s"
+                },
+                hint: {
+                    text: "This can be the full or partial name"
                 },
                 id: "disposal-site-name",
                 name: "disposal-site-name",
@@ -82,9 +77,10 @@ Find the existing disposal site
 
 
             {{ govukRadios({
+                classes: "govuk-radios--small",
                 fieldset: {
                     legend: {
-                        text: "Site location",
+                        text: "Site location (optional)",
                         classes: "govuk-fieldset__legend--s"
                     }
                 },
@@ -92,32 +88,10 @@ Find the existing disposal site
                     text: "We only need to know about material being disposed of in any of these locations"
                 },
                 items: [
-                    {
-                        value: "Any",
-                        text: "Any",
-                        checked: data['disposal-site-location'] === "Any"
-                    },
-                    {
-                        value: "England",
-                        text: "England",
-                        checked: data['disposal-site-location'] === "England"
-                    },
-                    {
-                        value: "Isle of Man",
-                        text: "Isle of Man",
-                        checked: data['disposal-site-location'] === "Isle of Man"
-                    },
-                    {
-                        value: "Jersey",
-                        text: "Jersey",
-                        checked: data['disposal-site-location'] === "Jersey"
-                    },
-                    {
-                        value: "Northern Ireland",
-                        text: "Northern Ireland",
-                        checked: data['disposal-site-location'] === "Northern Ireland"
-                    }
-                    
+                    { value: "England", text: "England" },
+                    { value: "Isle of Man", text: "Isle of Man" },
+                    { value: "Jersey", text: "Jersey" },
+                    { value: "Northern Ireland", text: "Northern Ireland" }
                 ],
                 name: "disposal-site-location",
                 value: data['disposal-site-location']
@@ -133,44 +107,7 @@ Find the existing disposal site
                 <div id="marine-area-autocomplete-container"></div>
             </div>
 
-            {{ govukRadios({
-                fieldset: {
-                    legend: {
-                        text: "Status",
-                        classes: "govuk-fieldset__legend--s"
-                    }
-                },
-                items: [
-                    {
-                        value: "Open",
-                        text: "Open",
-                        checked: data['disposal-site-status'] === "Open"
-                    },
-                    {
-                        value: "Closed",
-                        text: "Closed",
-                        hint: {
-                            text: "The site has not been used in the last 10 years"
-                        },
-                        checked: data['disposal-site-status'] === "Closed"
-                    },
-                    {
-                        value: "Disused",
-                        text: "Disused",
-                        hint: {
-                            text: "The site has not been used in the last 5 years"
-                        },
-                        checked: data['disposal-site-status'] === "Disused"
-                    },
-                    {
-                        value: "Any",
-                        text: "Any",
-                        checked: data['disposal-site-status'] === "Any"
-                    }
-                ],
-                name: "disposal-site-status",
-                value: data['disposal-site-status']
-            }) }}
+            {# Status radios removed per new content #}
 
             <div class="govuk-button-group">
                 {{ govukButton({

@@ -34,7 +34,7 @@ Search results for disposal sites
         </h1>
 
         {% set currentPage = data['page'] | int or 1 %}
-        {% set totalResults = 53 %}
+        {% set totalResults = 127 %}
         {% set resultsPerPage = 20 %}
         {% set totalPages = (totalResults / resultsPerPage) | round(0, 'ceil') %}
         {% set startResult = ((currentPage - 1) * resultsPerPage) + 1 %}
@@ -56,6 +56,7 @@ Search results for disposal sites
         <p class="govuk-body govuk-!-margin-top-4" id="results-summary">Showing {{ startResult }} to {{ endResult }}.</p>
 
         <!-- Search results table -->
+        <script src="/public/javascripts/disposal-sites-data.js"></script>
         <div class="govuk-table-overflow">
             <table class="govuk-table" id="disposal-sites-table" data-module="moj-sortable-table">
                 <caption class="govuk-table__caption govuk-visually-hidden">Disposal site search results</caption>
@@ -66,12 +67,9 @@ Search results for disposal sites
                         <th scope="col" class="govuk-table__header" aria-sort="none">Site location</th>
                         <th scope="col" class="govuk-table__header" aria-sort="none">Marine area</th>
                         <th scope="col" class="govuk-table__header" aria-sort="none">Status</th>
-                        <th scope="col" class="govuk-table__header">Action</th>
                     </tr>
                 </thead>
-                <tbody class="govuk-table__body" id="disposal-sites-table-body">
-                    <!-- Table content will be populated by JavaScript -->
-                </tbody>
+                <tbody class="govuk-table__body" id="disposal-sites-table-body"></tbody>
             </table>
         </div>
 
