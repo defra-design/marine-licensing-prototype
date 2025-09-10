@@ -7,6 +7,16 @@
 {% block head %}
   {{ super() }}
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/accessible-autocomplete@3.0.1/dist/accessible-autocomplete.min.css" />
+  <style>
+  @media (min-width: 48.0625em) {
+    /* Narrow the filter column by 115px (from default ~320px to ~205px) */
+    .moj-filter-layout.sample-filter .moj-filter-layout__filter {
+      width: 205px;
+      max-width: 205px;
+      flex: 0 0 205px;
+    }
+  }
+  </style>
 {% endblock %}
 
 {% block bodyEnd %}
@@ -39,11 +49,11 @@ Find the existing disposal site
     <span class="govuk-caption-l">{{ data['sample-plan-project-name-text-input'] }}</span>
     <h1 class="govuk-heading-l">{{ pageHeadingTextHTML }}</h1>
 
-    <div class="moj-filter-layout">
+    <div class="moj-filter-layout sample-filter">
       <div class="moj-filter-layout__filter">
-        <div class="moj-filter">
+        <div class="moj-filter" data-module="moj-filter">
           <div class="moj-filter__header">
-            <div class="moj-filter__header-title">Filter</div>
+            <div class="moj-filter__header-title"><h2 class="govuk-heading-m">Filter</h2></div>
           </div>
           <div class="moj-filter__content">
             <div class="moj-filter__selected" id="selected-filters-container" aria-live="polite"></div>

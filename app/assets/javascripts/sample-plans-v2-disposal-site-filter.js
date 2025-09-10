@@ -279,13 +279,13 @@ window.GOVUKPrototypeKit.documentReady(() => {
       const tr = document.createElement('tr')
       tr.className = 'govuk-table__row'
       tr.innerHTML = `
-        <td class="govuk-table__cell">${site.code}</td>
+        <td class="govuk-table__cell"><a class="govuk-link govuk-link--no-visited-state" href="/versions/multiple-sites-v2/sample-plans-v2/disposal-site-locations/review-disposal-site-details?code=${encodeURIComponent(site.code)}&name=${encodeURIComponent(site.name)}&country=${encodeURIComponent(site.country)}&seaArea=${encodeURIComponent(site.seaArea)}&status=${encodeURIComponent(site.status)}">${site.code}</a></td>
         <td class="govuk-table__cell">${site.name}</td>
         <td class="govuk-table__cell">${site.country}</td>
         <td class="govuk-table__cell">${site.seaArea}</td>
         <td class="govuk-table__cell">${getStatusTag(site.status)}</td>
         <td class="govuk-table__cell">
-          <a class="govuk-link govuk-link--no-visited-state govuk-!-white-space-nowrap" href="review-disposal-site-details?code=${encodeURIComponent(site.code)}&name=${encodeURIComponent(site.name)}&country=${encodeURIComponent(site.country)}&seaArea=${encodeURIComponent(site.seaArea)}&status=${encodeURIComponent(site.status)}">Select</a>
+          <a class="govuk-link govuk-link--no-visited-state govuk-!-white-space-nowrap" href="/versions/multiple-sites-v2/sample-plans-v2/disposal-site-locations/review-disposal-site-details?code=${encodeURIComponent(site.code)}&name=${encodeURIComponent(site.name)}&country=${encodeURIComponent(site.country)}&seaArea=${encodeURIComponent(site.seaArea)}&status=${encodeURIComponent(site.status)}">Select</a>
         </td>`
       tbody.appendChild(tr)
     })
@@ -484,6 +484,29 @@ window.GOVUKPrototypeKit.documentReady(() => {
   generatePagination(currentPage)
   updateSortHeaders()
   initHeaderSorting()
+
+  // Enable MOJ Filter toggle (Hide filter)
+  try {
+    // FilterToggleButton is provided by moj-frontend; if available, wire it
+    const $filter = document.querySelector('[data-module="moj-filter"]')
+    if (window.FilterToggleButton && $filter) {
+      /* global FilterToggleButton */
+      new FilterToggleButton($filter, {
+        bigModeMediaQuery: '(min-width: 48.0625em)',
+        startHidden: true,
+        toggleButton: {
+          showText: 'Show filter',
+          hideText: 'Hide filter',
+          classes: 'govuk-button--secondary'
+        },
+        closeButton: {
+          text: 'Close'
+        }
+      })
+    }
+  } catch (e) {
+    // no-op if moj-frontend not present
+  }
 })
 
 
