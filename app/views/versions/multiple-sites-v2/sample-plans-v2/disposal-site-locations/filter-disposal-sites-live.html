@@ -112,7 +112,22 @@ Find the existing disposal site
                   <div class="govuk-!-width-full" id="filter-marine-area-autocomplete-container"></div>
                 </div>
 
-                
+                {{ govukRadios({
+                  classes: "govuk-radios--small",
+                  fieldset: {
+                    legend: {
+                      text: "Status (optional)",
+                      classes: "govuk-fieldset__legend--s"
+                    }
+                  },
+                  items: [
+                    { value: "Any", text: "Any", checked: true },
+                    { value: "Open", text: "Open" },
+                    { value: "Closed", text: "Closed", hint: { text: "The site has not been used in the last 10 years" } },
+                    { value: "Disused", text: "Disused", hint: { text: "The site has not been used in the last 5 years" } }
+                  ],
+                  name: "filter-status"
+                }) }}
 
               </form>
             </div>

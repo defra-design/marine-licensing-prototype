@@ -196,7 +196,8 @@ window.GOVUKPrototypeKit.documentReady(() => {
     const name = (document.getElementById('filter-name')?.value || '').trim()
     const location = (document.querySelector('input[name="filter-location"]:checked')?.value || 'Any')
     const marineArea = (document.getElementById('filter-marine-area-hidden')?.value || '').trim()
-    return { code, name, location, marineArea }
+    const status = (document.querySelector('input[name="filter-status"]:checked')?.value || 'Any')
+    return { code, name, location, marineArea, status }
   }
 
   function filterSites (criteria) {
@@ -216,6 +217,10 @@ window.GOVUKPrototypeKit.documentReady(() => {
     if (criteria.marineArea) {
       const m = criteria.marineArea.toLowerCase()
       result = result.filter(s => s.seaArea.toLowerCase().includes(m))
+    }
+    if (criteria.status && criteria.status !== 'Any') {
+      const st = criteria.status.toLowerCase()
+      result = result.filter(s => s.status.toLowerCase() === st)
     }
     return result
   }
@@ -412,6 +417,7 @@ window.GOVUKPrototypeKit.documentReady(() => {
     if (criteria.name) items.push({ key: 'Name', value: criteria.name, clearId: 'filter-name' })
     if (criteria.location && criteria.location !== 'Any') items.push({ key: 'Location', value: criteria.location, clearName: 'filter-location' })
     if (criteria.marineArea) items.push({ key: 'Marine area', value: criteria.marineArea, clearId: 'filter-marine-area-hidden' })
+    if (criteria.status && criteria.status !== 'Any') items.push({ key: 'Status', value: criteria.status, clearName: 'filter-status' })
 
     if (!items.length) {
       container.innerHTML = ''
