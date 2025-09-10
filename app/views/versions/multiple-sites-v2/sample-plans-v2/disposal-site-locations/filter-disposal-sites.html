@@ -21,6 +21,7 @@
 
 {% block bodyEnd %}
   {{ super() }}
+  <script src="https://cdn.jsdelivr.net/npm/@ministryofjustice/frontend/moj-frontend.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/accessible-autocomplete@3.0.1/dist/accessible-autocomplete.min.js"></script>
   <script src="/public/javascripts/sample-plans-v2-disposal-site-filter.js"></script>
 {% endblock %}
@@ -129,7 +130,6 @@ Find the existing disposal site
                 <th scope="col" class="govuk-table__header" aria-sort="none">Site location</th>
                 <th scope="col" class="govuk-table__header" aria-sort="none">Marine area</th>
                 <th scope="col" class="govuk-table__header" aria-sort="none">Status</th>
-                <th scope="col" class="govuk-table__header">Action</th>
               </tr>
             </thead>
             <tbody class="govuk-table__body" id="filter-disposal-sites-table-body"></tbody>
