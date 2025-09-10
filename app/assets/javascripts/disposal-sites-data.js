@@ -128,7 +128,77 @@ window.__DISPOSAL_SITES_DATA__ = [
   { code: 'WI029', name: 'Emerald Quay, R Adur', country: 'ENGLAND', seaArea: 'English Channel', status: 'Open' },
   { code: 'WI031', name: 'SHOREHAM', country: 'ENGLAND', seaArea: 'English Channel', status: 'Open' },
   { code: 'WI042', name: 'Birdham Pool Marina', country: 'ENGLAND', seaArea: 'English Channel', status: 'Closed' },
-  { code: 'WI046', name: 'TRELOAR HOLE', country: 'ENGLAND', seaArea: 'English Channel', status: 'Open' }
+  { code: 'WI046', name: 'TRELOAR HOLE', country: 'ENGLAND', seaArea: 'English Channel', status: 'Open' },
+  // Jersey (Channel Islands)
+  { code: 'JE001', name: 'Foul Ground', country: 'JERSEY', seaArea: 'English Channel', status: 'Open' },
+  { code: 'JE002', name: 'Grouville Bay', country: 'JERSEY', seaArea: 'English Channel', status: 'Open' },
+  { code: 'PO500', name: 'ST HELIER', country: 'JERSEY', seaArea: 'English Channel', status: 'Closed' },
+  { code: 'PO501', name: 'St.Aubins', country: 'JERSEY', seaArea: 'English Channel', status: 'Open' },
+  { code: 'PO502', name: 'St. Aubins East', country: 'JERSEY', seaArea: 'English Channel', status: 'Closed' },
+  { code: 'PO503', name: 'St Bredlades Bay', country: 'JERSEY', seaArea: 'English Channel', status: 'Open' },
+  { code: 'PO504', name: "Greve d'Azette", country: 'JERSEY', seaArea: 'English Channel', status: 'Open' },
+  // Isle of Man
+  { code: 'IS400', name: 'DOUGLAS (I.O.M)', country: 'ISLE OF MAN', seaArea: 'Irish Sea', status: 'Open' },
+  { code: 'IS410', name: 'RAMSEY (I.O.M)', country: 'ISLE OF MAN', seaArea: 'Irish Sea', status: 'Closed' },
+  { code: 'IS420', name: 'PEEL (I.O.M)', country: 'ISLE OF MAN', seaArea: 'Irish Sea', status: 'Open' },
+  { code: 'IS430', name: 'PORT ST. MARY (I.O.M)', country: 'ISLE OF MAN', seaArea: 'Irish Sea', status: 'Closed' },
+  { code: 'IS440', name: 'CASTLETOWN BAY (I.O.M)', country: 'ISLE OF MAN', seaArea: 'Irish Sea', status: 'Closed' },
+  { code: 'IS445', name: 'Douglas Harbour (I.O.M)', country: 'ISLE OF MAN', seaArea: 'Irish Sea', status: 'Open' },
+  { code: 'IS450', name: 'LAXEY BAY (I.O.M)', country: 'ISLE OF MAN', seaArea: 'Irish Sea', status: 'Closed' },
+  { code: 'IS460', name: 'ISLE OF MAN SITE C', country: 'ISLE OF MAN', seaArea: 'Irish Sea', status: 'Closed' }
 ]
+
+// Do not force status; retain authoritative values
+
+// Append Northern Ireland (all set to Open)
+window.__DISPOSAL_SITES_DATA__.push(
+  // Irish Sea
+  { code: 'IS500', name: 'BLACK HEAD', country: 'Northern Ireland', seaArea: 'Irish Sea', status: 'Closed' },
+  { code: 'IS510', name: 'EDEN', country: 'Northern Ireland', seaArea: 'Irish Sea', status: 'Closed' },
+  { code: 'IS520', name: 'CARRICKFERGUS', country: 'Northern Ireland', seaArea: 'Irish Sea', status: 'Closed' },
+  { code: 'IS530', name: 'FOLLY ROAD', country: 'Northern Ireland', seaArea: 'Irish Sea', status: 'Closed' },
+  { code: 'IS540', name: 'BELFAST DREDGINGS', country: 'Northern Ireland', seaArea: 'Irish Sea', status: 'Closed' },
+  { code: 'IS570', name: 'BELFAST RECLAMATION', country: 'Northern Ireland', seaArea: 'Irish Sea', status: 'Closed' },
+  { code: 'IS580', name: 'BANGOR', country: 'Northern Ireland', seaArea: 'Irish Sea', status: 'Closed' },
+  { code: 'IS590', name: 'BELFAST SLUDGE', country: 'Northern Ireland', seaArea: 'Irish Sea', status: 'Closed' },
+  { code: 'IS591', name: 'BELFAST DREDGINGS C', country: 'Northern Ireland', seaArea: 'Irish Sea', status: 'Open' },
+  { code: 'IS595', name: 'BELFAST DREDGINGS B', country: 'Northern Ireland', seaArea: 'Irish Sea', status: 'Closed' },
+  { code: 'IS600', name: 'COPELAND ISLAND', country: 'Northern Ireland', seaArea: 'Irish Sea', status: 'Closed' },
+  { code: 'IS610', name: 'ARDMILLON', country: 'Northern Ireland', seaArea: 'Irish Sea', status: 'Closed' },
+  { code: 'IS620', name: 'PORTAVOGIE', country: 'Northern Ireland', seaArea: 'Irish Sea', status: 'Open' },
+  { code: 'IS630', name: 'DUNDRUM BAY', country: 'Northern Ireland', seaArea: 'Irish Sea', status: 'Closed' },
+  { code: 'IS635', name: 'ARDGLASS', country: 'Northern Ireland', seaArea: 'Irish Sea', status: 'Closed' },
+  { code: 'IS636', name: 'ARDGLASS B', country: 'Northern Ireland', seaArea: 'Irish Sea', status: 'Disused' },
+  { code: 'IS640', name: 'NEWCASTLE (NI)', country: 'Northern Ireland', seaArea: 'Irish Sea', status: 'Closed' },
+  { code: 'IS650', name: 'KILKEEL', country: 'Northern Ireland', seaArea: 'Irish Sea', status: 'Open' },
+  { code: 'IS660', name: 'CARLINGFORD', country: 'Northern Ireland', seaArea: 'Irish Sea', status: 'Open' },
+  { code: 'IS670', name: 'WARRENPOINT', country: 'Northern Ireland', seaArea: 'Irish Sea', status: 'Closed' },
+  { code: 'IS671', name: 'WARRENPOINT B', country: 'Northern Ireland', seaArea: 'Irish Sea', status: 'Open' },
+  // Malin Sea
+  { code: 'MA501', name: 'LOUGH FOYLE', country: 'Northern Ireland', seaArea: 'Malin Sea', status: 'Closed' },
+  { code: 'MA502', name: "McKinneys Bank", country: 'Northern Ireland', seaArea: 'Malin Sea', status: 'Disused' },
+  { code: 'MA520', name: 'PORTSTEWART BAY', country: 'Northern Ireland', seaArea: 'Malin Sea', status: 'Closed' },
+  { code: 'MA530', name: 'COLERAINE', country: 'Northern Ireland', seaArea: 'Malin Sea', status: 'Closed' },
+  { code: 'MA545', name: 'PORTSTEWART BAY B', country: 'Northern Ireland', seaArea: 'Malin Sea', status: 'Disused' },
+  { code: 'MA550', name: 'RATHLIN ISLAND A', country: 'Northern Ireland', seaArea: 'Malin Sea', status: 'Closed' },
+  { code: 'MA560', name: 'RATHLIN ISLAND B', country: 'Northern Ireland', seaArea: 'Malin Sea', status: 'Closed' },
+  { code: 'MA565', name: 'RATHLIN ISLAND C', country: 'Northern Ireland', seaArea: 'Malin Sea', status: 'Closed' },
+  { code: 'MA570', name: 'BALLYCASTLE BAY', country: 'Northern Ireland', seaArea: 'Malin Sea', status: 'Closed' },
+  { code: 'MA571', name: 'BALLYCASTLE BAY B', country: 'Northern Ireland', seaArea: 'Malin Sea', status: 'Closed' },
+  { code: 'MA580', name: 'CARNLOUGH', country: 'Northern Ireland', seaArea: 'Malin Sea', status: 'Closed' },
+  { code: 'MA581', name: 'CARNLOUGH A', country: 'Northern Ireland', seaArea: 'Malin Sea', status: 'Closed' },
+  { code: 'MA583', name: 'CARNLOUGH B', country: 'Northern Ireland', seaArea: 'Malin Sea', status: 'Closed' },
+  { code: 'MA590', name: 'LARNE', country: 'Northern Ireland', seaArea: 'Malin Sea', status: 'Closed' },
+  { code: 'MA600', name: 'LARNE B', country: 'Northern Ireland', seaArea: 'Malin Sea', status: 'Closed' },
+  { code: 'MA605', name: 'LARNE A', country: 'Northern Ireland', seaArea: 'Malin Sea', status: 'Disused' }
+)
+
+// Ensure all England entries are marked Open (do not change other countries)
+window.__DISPOSAL_SITES_DATA__ = window.__DISPOSAL_SITES_DATA__.map(function (s) {
+  if (s.country === 'ENGLAND' || s.country === 'England') {
+    s.status = 'Open'
+  }
+  return s
+})
 
 
