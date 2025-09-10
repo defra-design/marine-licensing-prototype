@@ -61,7 +61,7 @@ Find the existing disposal site
             <div class="moj-filter__selected" aria-live="polite">
               <div class="moj-filter__selected-heading">
                 <div class="moj-filter__heading-title"><h2 class="govuk-heading-s">Selected filters</h2></div>
-                <div class="moj-filter__heading-action"><p><a class="govuk-link govuk-link--no-visited-state" href="#" id="top-clear-filters-link">Clear</a></p></div>
+                <div class="moj-filter__heading-action"><p><a class="govuk-link govuk-link--no-visited-state" href="#" id="top-clear-filters-link">Clear<span class="govuk-visually-hidden"> filters</span></a></p></div>
               </div>
               <div id="selected-filters-container"></div>
             </div>
@@ -96,6 +96,9 @@ Find the existing disposal site
                       classes: "govuk-fieldset__legend--s"
                     }
                   },
+                  hint: {
+                    text: "We only need to know about material being disposed of in any of these locations"
+                  },
                   items: [
                     { value: "Any", text: "Any", checked: true },
                     { value: "England", text: "England" },
@@ -108,7 +111,6 @@ Find the existing disposal site
 
                 <div class="govuk-form-group">
                   <label class="govuk-label govuk-label--s" for="filter-marine-area-autocomplete">Marine area</label>
-                  <div class="govuk-hint">This includes sea, river, estuary and coastal waters</div>
                   <div class="govuk-!-width-full" id="filter-marine-area-autocomplete-container"></div>
                 </div>
 
@@ -116,7 +118,7 @@ Find the existing disposal site
                   classes: "govuk-radios--small",
                   fieldset: {
                     legend: {
-                      text: "Status (optional)",
+                      text: "Status",
                       classes: "govuk-fieldset__legend--s"
                     }
                   },
@@ -148,9 +150,9 @@ Find the existing disposal site
             <caption class="govuk-table__caption govuk-visually-hidden">Disposal site search results</caption>
             <thead class="govuk-table__head">
               <tr class="govuk-table__row">
-                <th scope="col" class="govuk-table__header" aria-sort="ascending">Site code</th>
+                <th scope="col" class="govuk-table__header" aria-sort="ascending">Code</th>
                 <th scope="col" class="govuk-table__header" aria-sort="none">Site name</th>
-                <th scope="col" class="govuk-table__header" aria-sort="none">Site location</th>
+                <th scope="col" class="govuk-table__header" aria-sort="none">Location</th>
                 <th scope="col" class="govuk-table__header" aria-sort="none">Marine area</th>
                 <th scope="col" class="govuk-table__header" aria-sort="none">Status</th>
               </tr>
