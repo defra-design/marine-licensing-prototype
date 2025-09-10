@@ -7,8 +7,8 @@ window.GOVUKPrototypeKit.documentReady(() => {
     return
   }
 
-  // Dataset: copied from application.js (disposalSites array)
-  const disposalSites = [
+  // Dataset: prefer shared global if available; fallback to embedded copy
+  const disposalSites = (window.__DISPOSAL_SITES_DATA__ && Array.isArray(window.__DISPOSAL_SITES_DATA__)) ? window.__DISPOSAL_SITES_DATA__ : [
     { code: 'DG025', name: 'Dogger Bank Teeside B', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
     { code: 'DG031', name: 'Dogger Bank A', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },
     { code: 'DG032', name: 'Dogger Bank B', country: 'ENGLAND', seaArea: 'North Sea', status: 'Open' },

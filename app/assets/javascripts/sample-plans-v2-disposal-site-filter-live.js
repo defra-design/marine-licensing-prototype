@@ -7,20 +7,7 @@ window.GOVUKPrototypeKit.documentReady(() => {
 
   // Reuse the same dataset as the non-live script to avoid divergence
   // (copy kept inline to avoid import complexity in the prototype environment)
-  const disposalSites = (function () {
-    // Extract array by referencing the existing script if loaded; fallback to embedded copy
-    try {
-      if (window.__DISPOSAL_SITES_DATA__ && Array.isArray(window.__DISPOSAL_SITES_DATA__)) {
-        return window.__DISPOSAL_SITES_DATA__
-      }
-    } catch (e) {}
-    // Minimal duplication risk: we embed the same array via a slim dependency by relying on the existing page JS if any
-    // If not present, we can fallback by reading from the table once populated (but initial load needs data),
-    // so we guard against missing dataset by creating a small placeholder; in practice the live page should include
-    // the same dataset block as the non-live file for parity. To ensure parity, we create a small no-op and bail.
-    console.error('Dataset not initialised: please ensure the non-live dataset source is mirrored here if needed.')
-    return []
-  })()
+  const disposalSites = (window.__DISPOSAL_SITES_DATA__ && Array.isArray(window.__DISPOSAL_SITES_DATA__)) ? window.__DISPOSAL_SITES_DATA__ : []
 
   const marineAreas = [
     'Any',
