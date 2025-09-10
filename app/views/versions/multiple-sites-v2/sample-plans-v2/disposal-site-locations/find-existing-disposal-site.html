@@ -52,9 +52,6 @@ Find the existing disposal site
                     text: "Disposal site code (optional)",
                     classes: "govuk-label--s"
                 },
-                hint: {
-                    text: "Each approved disposal site has a unique code"
-                },
                 id: "disposal-site-code",
                 name: "disposal-site-code",
                 value: data['disposal-site-code'],
@@ -100,13 +97,28 @@ Find the existing disposal site
 
             <div class="govuk-form-group">
                 <label class="govuk-label govuk-label--s" for="marine-area-autocomplete">
-                    Marine area
+                    Marine area (optional)
                 </label>
-                <div class="govuk-hint">
-                    This includes sea, river, estuary and coastal waters
-                </div>
                 <div id="marine-area-autocomplete-container"></div>
             </div>
+
+            {{ govukRadios({
+                classes: "govuk-radios--small",
+                fieldset: {
+                    legend: {
+                        text: "Status (optional)",
+                        classes: "govuk-fieldset__legend--s"
+                    }
+                },
+                items: [
+                    { value: "Any", text: "Any", checked: data['disposal-site-status'] === "Any" or not data['disposal-site-status'] },
+                    { value: "Open", text: "Open", checked: data['disposal-site-status'] === "Open" },
+                    { value: "Closed", text: "Closed", hint: { text: "The site has not been used in the last 10 years" }, checked: data['disposal-site-status'] === "Closed" },
+                    { value: "Disused", text: "Disused", hint: { text: "The site has not been used in the last 5 years" }, checked: data['disposal-site-status'] === "Disused" }
+                ],
+                name: "disposal-site-status",
+                value: data['disposal-site-status']
+            }) }}
 
             {# Status radios removed per new content #}
 
