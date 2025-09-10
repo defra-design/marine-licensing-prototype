@@ -499,3 +499,14 @@ body.page-cookie-banner {
   display: block;
 }
 
+
+.moj-action-bar__filter::after {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 2px;
+  height: 40px;
+  background-color: #fff;
+}
+

@@ -484,17 +484,16 @@ window.GOVUKPrototypeKit.documentReady(() => {
 
   // Enable MOJ Filter toggle (Hide filter)
   try {
-    // FilterToggleButton is provided by moj-frontend; if available, wire it
+    // FilterToggleButton is provided by MOJFrontend
     const $filter = document.querySelector('[data-module="moj-filter"]')
-    if (window.FilterToggleButton && $filter) {
-      /* global FilterToggleButton */
-      new FilterToggleButton($filter, {
+    if (window.MOJFrontend && window.MOJFrontend.FilterToggleButton && $filter) {
+      new window.MOJFrontend.FilterToggleButton($filter, {
         bigModeMediaQuery: '(min-width: 48.0625em)',
-        startHidden: true,
+        startHidden: false,
         toggleButton: {
           showText: 'Show filter',
           hideText: 'Hide filter',
-          classes: 'govuk-button--secondary'
+          classes: 'govuk-button--primary'
         },
         closeButton: {
           text: 'Close'
