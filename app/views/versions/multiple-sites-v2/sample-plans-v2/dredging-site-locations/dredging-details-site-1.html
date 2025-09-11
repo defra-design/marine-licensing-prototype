@@ -133,6 +133,11 @@ Dredge details
                 } if data['dredging-details-site-1-method-error'],
                 items: [
                     {
+                        value: "backhoe",
+                        text: "Backhoe",
+                        checked: true if data['dredging-details-site-1-method'] and "backhoe" in data['dredging-details-site-1-method']
+                    },
+                    {
                         value: "cutter-suction",
                         text: "Cutter suction",
                         checked: true if data['dredging-details-site-1-method'] and "cutter-suction" in data['dredging-details-site-1-method']

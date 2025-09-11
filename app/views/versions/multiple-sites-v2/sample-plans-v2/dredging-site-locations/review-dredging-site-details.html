@@ -230,7 +230,9 @@ Review dredge site details
                                 {% set methods = [] %}
                                 {% if data['dredging-details-site-1-method'] %}
                                     {% for method in data['dredging-details-site-1-method'] %}
-                                        {% if method == 'cutter-suction' %}
+                                        {% if method == 'backhoe' %}
+                                            {% set methods = (methods.push('Backhoe'), methods) %}
+                                        {% elif method == 'cutter-suction' %}
                                             {% set methods = (methods.push('Cutter suction'), methods) %}
                                         {% elif method == 'grab' %}
                                             {% set methods = (methods.push('Grab'), methods) %}
