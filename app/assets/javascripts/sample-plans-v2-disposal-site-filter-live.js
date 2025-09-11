@@ -329,7 +329,7 @@ window.GOVUKPrototypeKit.documentReady(() => {
   let debounceTimer = null
   function scheduleApply () {
     if (debounceTimer) clearTimeout(debounceTimer)
-    debounceTimer = setTimeout(applyAndRender, 300)
+    debounceTimer = setTimeout(applyAndRender, 400)
   }
 
   function applyAndRender () {
