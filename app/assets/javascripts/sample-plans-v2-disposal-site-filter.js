@@ -157,39 +157,46 @@ window.GOVUKPrototypeKit.documentReady(() => {
   let workingSet = [...disposalSites]
   let currentSort = { column: 'code', direction: 'asc' }
 
-  // Initialize accessible autocomplete for marine area
-  if (typeof accessibleAutocomplete !== 'undefined') {
+  // Initialize accessible autocomplete for marine area (mount function for reuse)
+  function initMarineAreaAutocomplete () {
+    if (typeof accessibleAutocomplete === 'undefined') return
     const container = document.querySelector('#filter-marine-area-autocomplete-container')
-    if (container) {
-      const hiddenInput = document.createElement('input')
+    if (!container) return
+    // Ensure hidden input exists
+    let hiddenInput = document.getElementById('filter-marine-area-hidden')
+    if (!hiddenInput) {
+      hiddenInput = document.createElement('input')
       hiddenInput.type = 'hidden'
       hiddenInput.name = 'filter-marine-area'
       hiddenInput.id = 'filter-marine-area-hidden'
       container.parentNode.appendChild(hiddenInput)
-
-      accessibleAutocomplete({
-        element: container,
-        id: 'filter-marine-area-autocomplete',
-        source: marineAreas,
-        minLength: 1,
-        showAllValues: true,
-        confirmOnBlur: false,
-        autoselect: true,
-        onConfirm: function (value) {
-          hiddenInput.value = value || ''
-        }
-      })
-
-      setTimeout(() => {
-        const input = document.querySelector('#filter-marine-area-autocomplete')
-        if (input) {
-          input.addEventListener('input', function (e) {
-            hiddenInput.value = e.target.value || ''
-          })
-        }
-      }, 100)
     }
+
+    accessibleAutocomplete({
+      element: container,
+      id: 'filter-marine-area-autocomplete',
+      source: marineAreas,
+      minLength: 1,
+      showAllValues: true,
+      confirmOnBlur: false,
+      autoselect: false,
+      onConfirm: function (value) {
+        hiddenInput.value = value || ''
+      }
+    })
+
+    setTimeout(() => {
+      const input = document.querySelector('#filter-marine-area-autocomplete')
+      if (input) {
+        input.addEventListener('input', function (e) {
+          hiddenInput.value = e.target.value || ''
+        })
+      }
+    }, 100)
   }
+
+  // Mount on load
+  initMarineAreaAutocomplete()
 
   function getCriteria () {
     const code = (document.getElementById('filter-code')?.value || '').trim()
@@ -444,6 +451,9 @@ window.GOVUKPrototypeKit.documentReady(() => {
         if (clearId) {
           const el = document.getElementById(clearId)
           if (el) el.value = ''
+          if (clearId === 'filter-marine-area-hidden') {
+            resetMarineAreaAutocomplete()
+          }
         }
         if (clearName) {
           const selected = document.querySelector(`input[name="${clearName}"]:checked`)
@@ -469,14 +479,22 @@ window.GOVUKPrototypeKit.documentReady(() => {
     const form = document.getElementById('filter-form')
     if (!form) return
     form.reset()
-    const marineHidden = document.getElementById('filter-marine-area-hidden')
-    if (marineHidden) marineHidden.value = ''
-    const autoInput = document.getElementById('filter-marine-area-autocomplete')
-    if (autoInput) autoInput.value = ''
+    resetMarineAreaAutocomplete()
     workingSet = [...disposalSites]
     sortWorkingSet(currentSort.column, currentSort.direction)
     renderSelectedFiltersSummary({})
     loadPage(1)
+  }
+
+  function resetMarineAreaAutocomplete () {
+    const container = document.querySelector('#filter-marine-area-autocomplete-container')
+    if (!container) return
+    const hiddenInput = document.getElementById('filter-marine-area-hidden')
+    if (hiddenInput) hiddenInput.value = ''
+    try {
+      container.innerHTML = ''
+      initMarineAreaAutocomplete()
+    } catch (e) {}
   }
 
   function loadPage (page) {
