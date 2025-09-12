@@ -266,6 +266,14 @@ window.GOVUKPrototypeKit.documentReady(() => {
     const resultsPerPage = 20
     let sortedDisposalSites = [...disposalSites] // Copy for sorting
     let currentSort = { column: 'code', direction: 'asc' } // Default sort by site code ascending
+
+    // Detect if this table has an Action column (v1) so we can render rows appropriately
+    const disposalSitesTable = document.getElementById('disposal-sites-table')
+    const hasActionColumn = (() => {
+      if (!disposalSitesTable) return false
+      const lastHeader = disposalSitesTable.querySelector('thead th:last-child')
+      return !!lastHeader && lastHeader.textContent.trim().toLowerCase() === 'action'
+    })()
     
     // Get search criteria from template (will be undefined if not set)
     const searchCriteria = window.searchCriteria || {
@@ -464,13 +472,26 @@ window.GOVUKPrototypeKit.documentReady(() => {
       pageResults.forEach(site => {
         const row = document.createElement('tr')
         row.className = 'govuk-table__row'
-        row.innerHTML = `
-          <td class="govuk-table__cell"><a class="govuk-link govuk-link--no-visited-state" href="/versions/multiple-sites-v2/sample-plans-v2/disposal-site-locations/review-disposal-site-details?code=${encodeURIComponent(site.code)}&name=${encodeURIComponent(site.name)}&country=${encodeURIComponent(site.country)}&seaArea=${encodeURIComponent(site.seaArea)}&status=${encodeURIComponent(site.status)}">${site.code}</a></td>
-          <td class="govuk-table__cell">${site.name}</td>
-          <td class="govuk-table__cell">${site.country}</td>
-          <td class="govuk-table__cell">${site.seaArea}</td>
-          <td class="govuk-table__cell">${getStatusTag(site.status)}</td>
-        `
+        if (hasActionColumn) {
+          // Version 1 behaviour: plain text code and a Select link in the Action column
+          row.innerHTML = `
+            <td class="govuk-table__cell">${site.code}</td>
+            <td class="govuk-table__cell">${site.name}</td>
+            <td class="govuk-table__cell">${site.country}</td>
+            <td class="govuk-table__cell">${site.seaArea}</td>
+            <td class="govuk-table__cell">${getStatusTag(site.status)}</td>
+            <td class="govuk-table__cell"><a class="govuk-link govuk-link--no-visited-state" href="review-disposal-site-details?code=${encodeURIComponent(site.code)}&name=${encodeURIComponent(site.name)}&country=${encodeURIComponent(site.country)}&seaArea=${encodeURIComponent(site.seaArea)}&status=${encodeURIComponent(site.status)}">Select</a></td>
+          `
+        } else {
+          // Version 2 behaviour: code is a link; no Action column
+          row.innerHTML = `
+            <td class="govuk-table__cell"><a class="govuk-link govuk-link--no-visited-state" href="review-disposal-site-details?code=${encodeURIComponent(site.code)}&name=${encodeURIComponent(site.name)}&country=${encodeURIComponent(site.country)}&seaArea=${encodeURIComponent(site.seaArea)}&status=${encodeURIComponent(site.status)}">${site.code}</a></td>
+            <td class="govuk-table__cell">${site.name}</td>
+            <td class="govuk-table__cell">${site.country}</td>
+            <td class="govuk-table__cell">${site.seaArea}</td>
+            <td class="govuk-table__cell">${getStatusTag(site.status)}</td>
+          `
+        }
         tableBody.appendChild(row)
       })
 
