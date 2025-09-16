@@ -1,0 +1,114 @@
+{% extends "../../layouts/exemption.html" %}
+
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% block head %}
+  {{ super() }}
+  <script src="/public/javascripts/disposal-sites-data.js"></script>
+  <script src="/public/javascripts/sample-plans-v2-disposal-site-lean-v1.js"></script>
+{% endblock %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% if data['user_type'] === 'organisation' %}
+        {% include "../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+Find the existing disposal site
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        
+        <span class="govuk-caption-l">{{ data['sample-plan-project-name-text-input'] }}</span>
+        <h1 class="govuk-heading-l">
+            {{ pageHeadingTextHTML }}
+        </h1>
+
+        <p class="govuk-body">You can search using either a site code, site name or by status.</p>
+        
+        {{ govukDetails({
+            summaryText: "How to find an existing disposal site without a code or site name",
+            html: '<p class="govuk-body">You can <a class="govuk-link" href="https://explore-marine-plans.marineservices.org.uk/marine-plans-explorer" target="_blank" rel="noopener noreferrer">find an existing disposal site on a map (opens in a new window)</a>.</p>
+                  <p class="govuk-body">You can zoom in to view disposal sites. When you click on a disposal site a box will pop up with information about the sites in that area.</p>
+                  <p class="govuk-body">If the site name is not shown you can use the forward arrow to show more details, including the name of a disposal site.</p>'
+        }) }}
+        
+        <form action="/versions/multiple-sites-v2/sample-plans-v2/disposal-site-locations/search-results" method="post">
+            
+            {{ govukInput({
+                label: {
+                    text: "Disposal site code (optional)",
+                    classes: "govuk-label--s"
+                },
+                id: "disposal-site-code",
+                name: "disposal-site-code",
+                value: data['disposal-site-code'],
+                classes: "govuk-input--width-10"
+            }) }}
+
+            {{ govukInput({
+                label: {
+                    text: "Name of disposal site (optional)",
+                    classes: "govuk-label--s"
+                },
+                hint: {
+                    text: "This can be the full or partial name"
+                },
+                id: "disposal-site-name",
+                name: "disposal-site-name",
+                value: data['disposal-site-name'],
+                classes: "govuk-input--width-20"
+            }) }}
+
+            {{ govukCheckboxes({
+                fieldset: {
+                    legend: {
+                        text: "Current site use (optional)",
+                        classes: "govuk-fieldset__legend--s"
+                    }
+                },
+                hint: {
+                    text: "The search results will only show open sites unless you select the box to also show closed and disused sites"
+                },
+                items: [
+                    {
+                        value: "include-closed-disused",
+                        text: "Include closed and disused sites as well as open sites",
+                        hint: {
+                            text: "Sites that have not been used in the last 5 or 10 years"
+                        },
+                        checked: data['include-closed-disused'] == "include-closed-disused"
+                    }
+                ],
+                name: "include-closed-disused"
+            }) }}
+
+            <div class="govuk-button-group">
+                {{ govukButton({
+                    text: "Search"
+                }) }}
+                <a class="govuk-link govuk-link--no-visited-state" href="">Cancel</a>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

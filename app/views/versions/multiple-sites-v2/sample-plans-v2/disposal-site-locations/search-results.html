@@ -47,6 +47,7 @@ Search results for disposal sites
         {% set searchLocation = data['disposal-site-location'] or '' %}
         {% set searchMarineArea = data['marine-area'] or '' %}
         {% set searchStatus = data['disposal-site-status'] or '' %}
+        {% set includeClosedDisused = data['include-closed-disused'] or '' %}
         {% set hasFilters = data['has-search-filters'] or false %}
 
 
@@ -57,6 +58,7 @@ Search results for disposal sites
 
         <!-- Search results table -->
         <script src="/public/javascripts/disposal-sites-data.js"></script>
+        <script src="/public/javascripts/sample-plans-v2-disposal-site-lean-v1.js"></script>
         <div class="govuk-table-overflow">
             <table class="govuk-table" id="disposal-sites-table" data-module="moj-sortable-table">
                 <caption class="govuk-table__caption govuk-visually-hidden">Disposal site search results</caption>
@@ -96,6 +98,7 @@ window.searchCriteria = {
     location: "{{ searchLocation | safe }}",
     marineArea: "{{ searchMarineArea | safe }}",
     status: "{{ searchStatus | safe }}",
+    includeClosedDisused: "{{ includeClosedDisused | safe }}",
     hasFilters: {% if hasFilters %}true{% else %}false{% endif %}
 };
 </script>
