@@ -103,7 +103,7 @@
 
       row.innerHTML = `
         <td class="govuk-table__cell">
-          <a href="#" class="govuk-link govuk-link--no-visited-state" data-site-code="${site.code}">${site.code}</a>
+          <a class="govuk-link govuk-link--no-visited-state" href="review-disposal-site-details?code=${encodeURIComponent(site.code)}&name=${encodeURIComponent(site.name)}&country=${encodeURIComponent(site.country)}&seaArea=${encodeURIComponent(site.seaArea)}&status=${encodeURIComponent(site.status)}">${site.code}</a>
         </td>
         <td class="govuk-table__cell">${site.name}</td>
         <td class="govuk-table__cell">${site.country}</td>
@@ -318,15 +318,6 @@
   // Run initialization
   init()
 
-  // Add click handlers for disposal site selection
-  document.addEventListener('click', (e) => {
-    if (e.target.matches('[data-site-code]')) {
-      e.preventDefault()
-      const siteCode = e.target.dataset.siteCode
-      console.log('Selected disposal site:', siteCode)
-      window.location.href = '../sample-plan-start-page'
-    }
-  })
 
   }
   if (document.readyState === 'loading') {
