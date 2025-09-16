@@ -142,6 +142,54 @@ module.exports = function (router) {
     res.render(`versions/${version}/${section}/${subSection}/search-results-lean-v1`);
   });
 
+  ///////////////////////////////////////////
+  // Find existing disposal site - LEAN V2
+  ///////////////////////////////////////////
+
+  // GET: lean v2 find page
+  router.get(`/versions/${version}/${section}/${subSection}/find-existing-disposal-site-lean-v2`, function (req, res) {
+    req.session.data['samplePlansSection'] = section;
+
+    // Allow query params to explicitly set/clear values when linking back
+    if (req.query.hasOwnProperty('disposal-site-code-or-name')) {
+      req.session.data['disposal-site-code-or-name'] = req.query['disposal-site-code-or-name'] || '';
+    }
+    if (req.query.hasOwnProperty('include-closed-disused')) {
+      // Checkbox: ensure explicit clearing when param present but empty
+      req.session.data['include-closed-disused'] = req.query['include-closed-disused'] || '';
+    }
+
+    // Default page number
+    req.session.data['page'] = '1';
+
+    res.render(`versions/${version}/${section}/${subSection}/find-existing-disposal-site-lean-v2`);
+  });
+
+  // POST: lean v2 results (capture form and redirect)
+  router.post(`/versions/${version}/${section}/${subSection}/search-results-lean-v2`, function (req, res) {
+    // Save criteria; clear checkbox when not present
+    req.session.data['disposal-site-code-or-name'] = req.body['disposal-site-code-or-name'] || '';
+    req.session.data['include-closed-disused'] = req.body['include-closed-disused'] || '';
+
+    // Reset to first page on new search
+    req.session.data['page'] = '1';
+
+    // PRG: Redirect to GET of results
+    res.redirect('search-results-lean-v2');
+  });
+
+  // GET: lean v2 results page
+  router.get(`/versions/${version}/${section}/${subSection}/search-results-lean-v2`, function (req, res) {
+    req.session.data['samplePlansSection'] = section;
+
+    // Allow page query to paginate (JS handles rendering)
+    if (req.query.page) {
+      req.session.data['page'] = req.query.page;
+    }
+
+    res.render(`versions/${version}/${section}/${subSection}/search-results-lean-v2`);
+  });
+
   // Find existing disposal site router (POST)
   router.post(`/versions/${version}/${section}/${subSection}/find-existing-disposal-site-router`, function (req, res) {
     // Save all the form data for filtering
