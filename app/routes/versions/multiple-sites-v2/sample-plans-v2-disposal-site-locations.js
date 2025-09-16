@@ -277,7 +277,8 @@ module.exports = function (router) {
     
     // Conditional routing based on selection
     if (disposalSelection === 'Existing disposal site') {
-      res.redirect('find-existing-disposal-site?disposal-site-code=&disposal-site-name=&disposal-site-location=&marine-area=&disposal-site-status=');
+      // Route to Lean v2 find page (default for A/B), clearing any previous criteria
+      res.redirect('find-existing-disposal-site-lean-v2?disposal-site-code-or-name=&include-closed-disused=');
     } else if (disposalSelection === 'New disposal site') {
       // TODO: Create and redirect to new disposal site page
       res.redirect('where-dispose-of-material');
