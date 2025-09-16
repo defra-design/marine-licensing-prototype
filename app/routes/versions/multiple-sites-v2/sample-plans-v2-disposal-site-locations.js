@@ -90,6 +90,58 @@ module.exports = function (router) {
     res.render(`versions/${version}/${section}/${subSection}/find-existing-disposal-site`);
   });
 
+  ///////////////////////////////////////////
+  // Find existing disposal site - LEAN V1
+  ///////////////////////////////////////////
+
+  // GET: lean find page
+  router.get(`/versions/${version}/${section}/${subSection}/find-existing-disposal-site-lean-v1`, function (req, res) {
+    req.session.data['samplePlansSection'] = section;
+
+    // Allow query params to explicitly set/clear values when linking back
+    if (req.query.hasOwnProperty('disposal-site-code')) {
+      req.session.data['disposal-site-code'] = req.query['disposal-site-code'] || '';
+    }
+    if (req.query.hasOwnProperty('disposal-site-name')) {
+      req.session.data['disposal-site-name'] = req.query['disposal-site-name'] || '';
+    }
+    if (req.query.hasOwnProperty('include-closed-disused')) {
+      // Checkbox: ensure explicit clearing when param present but empty
+      req.session.data['include-closed-disused'] = req.query['include-closed-disused'] || '';
+    }
+
+    // Default page number
+    req.session.data['page'] = '1';
+
+    res.render(`versions/${version}/${section}/${subSection}/find-existing-disposal-site-lean-v1`);
+  });
+
+  // POST: lean results (capture form and redirect)
+  router.post(`/versions/${version}/${section}/${subSection}/search-results-lean-v1`, function (req, res) {
+    // Save criteria; clear checkbox when not present
+    req.session.data['disposal-site-code'] = req.body['disposal-site-code'] || '';
+    req.session.data['disposal-site-name'] = req.body['disposal-site-name'] || '';
+    req.session.data['include-closed-disused'] = req.body['include-closed-disused'] || '';
+
+    // Reset to first page on new search
+    req.session.data['page'] = '1';
+
+    // PRG: Redirect to GET of results
+    res.redirect('search-results-lean-v1');
+  });
+
+  // GET: lean results page
+  router.get(`/versions/${version}/${section}/${subSection}/search-results-lean-v1`, function (req, res) {
+    req.session.data['samplePlansSection'] = section;
+
+    // Allow page query to paginate (JS handles rendering)
+    if (req.query.page) {
+      req.session.data['page'] = req.query.page;
+    }
+
+    res.render(`versions/${version}/${section}/${subSection}/search-results-lean-v1`);
+  });
+
   // Find existing disposal site router (POST)
   router.post(`/versions/${version}/${section}/${subSection}/find-existing-disposal-site-router`, function (req, res) {
     // Save all the form data for filtering

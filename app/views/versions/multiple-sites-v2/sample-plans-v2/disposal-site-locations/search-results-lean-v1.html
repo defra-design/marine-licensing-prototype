@@ -1,0 +1,112 @@
+{% extends "../../layouts/sample-plans.html" %}
+
+{% from "govuk/components/table/macro.njk" import govukTable %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/pagination/macro.njk" import govukPagination %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% if data['user_type'] === 'organisation' %}
+        {% include "../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+Search results for disposal sites
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        
+        <span class="govuk-caption-l">{{ data['sample-plan-project-name-text-input'] }}</span>
+        <h1 class="govuk-heading-l">
+            {{ pageHeadingTextHTML }}
+        </h1>
+
+        {% set currentPage = data['page'] | int or 1 %}
+        {% set totalResults = 127 %}
+        {% set resultsPerPage = 20 %}
+        {% set totalPages = (totalResults / resultsPerPage) | round(0, 'ceil') %}
+        {% set startResult = ((currentPage - 1) * resultsPerPage) + 1 %}
+        {% set endResult = currentPage * resultsPerPage %}
+        {% if endResult > totalResults %}{% set endResult = totalResults %}{% endif %}
+
+        <!-- Search criteria for filtering (lean version) -->
+        {% set searchCode = data['disposal-site-code'] or '' %}
+        {% set searchName = data['disposal-site-name'] or '' %}
+        {% set includeClosedDisused = data['include-closed-disused'] or '' %}
+
+        <p class="govuk-body" id="results-count">We found <strong id="total-results">{{ totalResults }}</strong> disposal sites matching your search criteria.</p>
+
+        {% if includeClosedDisused and includeClosedDisused != '_unchecked' %}
+            {% set statusText = 'Open, Closed, Disused' %}
+        {% else %}
+            {% set statusText = 'Open' %}
+        {% endif %}
+        <p class="govuk-body"><strong>You searched for:</strong></p>
+        <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-0">
+            {% if searchCode %}
+            <li>Site code: {{ searchCode }}</li>
+            {% endif %}
+            {% if searchName %}
+            <li>Site name: {{ searchName }}</li>
+            {% endif %}
+            <li>Site availability: {{ statusText }}</li>
+        </ul>
+
+        <p class="govuk-body govuk-!-margin-top-4" id="results-summary">Showing {{ startResult }} to {{ endResult }}.</p>
+
+        <!-- Search results table -->
+        <script src="/public/javascripts/disposal-sites-data.js"></script>
+        <script src="/public/javascripts/sample-plans-v2-disposal-site-lean-v1.js"></script>
+        <div class="govuk-table-overflow">
+            <table class="govuk-table" id="disposal-sites-table-lean" data-module="moj-sortable-table">
+                <caption class="govuk-table__caption govuk-visually-hidden">Disposal site search results</caption>
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        <th scope="col" class="govuk-table__header" aria-sort="ascending">Site code</th>
+                        <th scope="col" class="govuk-table__header" aria-sort="none">Site name</th>
+                        <th scope="col" class="govuk-table__header" aria-sort="none">Site location</th>
+                        <th scope="col" class="govuk-table__header" aria-sort="none">Marine area</th>
+                        <th scope="col" class="govuk-table__header" aria-sort="none">Availability</th>
+                    </tr>
+                </thead>
+                <tbody class="govuk-table__body" id="disposal-sites-table-body-lean"></tbody>
+            </table>
+        </div>
+
+        <nav class="govuk-pagination" aria-label="Pagination" id="pagination-nav">
+            <!-- Pagination will be populated by JavaScript -->
+        </nav>
+
+        <p class="govuk-body govuk-!-margin-top-6">
+            <a class="govuk-link govuk-link--no-visited-state" href="find-existing-disposal-site-lean-v1?disposal-site-code=&disposal-site-name=&include-closed-disused=">Search for a different disposal site</a>
+        </p>
+
+        <div class="govuk-button-group govuk-!-margin-top-4">
+            <a class="govuk-link govuk-link--no-visited-state" href="../sample-plan-start-page">Cancel and return to sample plan start page</a>
+        </div>
+
+    </div>
+</div>
+
+<!-- Pass search criteria to JavaScript (lean version) -->
+<script>
+window.searchCriteria = {
+    code: "{{ searchCode | safe }}",
+    name: "{{ searchName | safe }}",
+    includeClosedDisused: "{{ includeClosedDisused | safe }}"
+};
+</script>
+
+{% endblock %}
