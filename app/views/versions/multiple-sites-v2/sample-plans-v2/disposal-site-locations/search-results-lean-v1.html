@@ -10,7 +10,7 @@
     {% if data['user_type'] === 'organisation' %}
         {% include "../../includes/organisation-switcher.html" %}
     {% endif %}
-    <a class="govuk-back-link" href="find-existing-disposal-site-lean-v1.html">Back</a>
+    <a class="govuk-back-link" href="javascript:history.back()">Back</a>
 {% endblock %}
 
 <!-- Setting the big main heading at the top of the page -->
@@ -48,6 +48,22 @@ Search results for disposal sites
 
         <p class="govuk-body" id="results-count">We found <strong id="total-results">{{ totalResults }}</strong> disposal sites matching your search criteria.</p>
 
+        {% if includeClosedDisused and includeClosedDisused != '_unchecked' %}
+            {% set statusText = 'Open, Closed, Disused' %}
+        {% else %}
+            {% set statusText = 'Open' %}
+        {% endif %}
+        <p class="govuk-body"><strong>You searched for:</strong></p>
+        <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-0">
+            {% if searchCode %}
+            <li>Site code: {{ searchCode }}</li>
+            {% endif %}
+            {% if searchName %}
+            <li>Site name: {{ searchName }}</li>
+            {% endif %}
+            <li>Site availability: {{ statusText }}</li>
+        </ul>
+
         <p class="govuk-body govuk-!-margin-top-4" id="results-summary">Showing {{ startResult }} to {{ endResult }}.</p>
 
         <!-- Search results table -->
@@ -62,7 +78,7 @@ Search results for disposal sites
                         <th scope="col" class="govuk-table__header" aria-sort="none">Site name</th>
                         <th scope="col" class="govuk-table__header" aria-sort="none">Site location</th>
                         <th scope="col" class="govuk-table__header" aria-sort="none">Marine area</th>
-                        <th scope="col" class="govuk-table__header" aria-sort="none">Status</th>
+                        <th scope="col" class="govuk-table__header" aria-sort="none">Availability</th>
                     </tr>
                 </thead>
                 <tbody class="govuk-table__body" id="disposal-sites-table-body-lean"></tbody>
