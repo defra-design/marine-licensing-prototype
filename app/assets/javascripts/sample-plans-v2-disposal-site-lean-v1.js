@@ -1,9 +1,10 @@
 // JavaScript for disposal site lean search functionality
 // Enhances the lean disposal site search page with live filtering
 
-window.GOVUKPrototypeKit.documentReady(() => {
-  // Check if we're on the search results page
-  const disposalSitesTable = document.getElementById('disposal-sites-table-body')
+(function() {
+  function onReady() {
+  // Check if we're on the lean search results page (use lean-specific ids to avoid global script conflict)
+  const disposalSitesTable = document.getElementById('disposal-sites-table-body-lean')
   if (!disposalSitesTable) {
     return
   }
@@ -11,19 +12,48 @@ window.GOVUKPrototypeKit.documentReady(() => {
   // Dataset: Use shared global disposal sites data
   const disposalSites = window.__DISPOSAL_SITES_DATA__ || []
   
-  // Get search criteria from the page
-  const searchCriteria = window.searchCriteria || {}
+  // Build search criteria preferring injected session state from POST, fallback to URL
+  function getSearchCriteria() {
+    const params = new URLSearchParams(window.location.search)
+    const injectedCode = (window.searchCriteria && window.searchCriteria.code) || ''
+    const injectedName = (window.searchCriteria && window.searchCriteria.name) || ''
+    const injectedInclude = (window.searchCriteria && window.searchCriteria.includeClosedDisused) || ''
+    const code = (injectedCode || params.get('disposal-site-code') || '').toString()
+    const name = (injectedName || params.get('disposal-site-name') || '').toString()
+    // Checkbox: prefer explicit injected value from session when provided
+    let includeClosedDisused = false
+    if (Array.isArray(injectedInclude)) {
+      includeClosedDisused = injectedInclude
+        .map(v => (v || '').toString().toLowerCase())
+        .some(v => v === 'include-closed-disused' || v === 'true' || v === 'on' || v === '1')
+    } else if (injectedInclude) {
+      const v = injectedInclude.toString().toLowerCase()
+      // Handle comma-separated strings like "include-closed-disused,_unchecked"
+      includeClosedDisused = v.includes('include-closed-disused') || v === 'true' || v === 'on' || v === '1'
+    } else {
+      const includeValues = params.getAll('include-closed-disused').map(v => (v || '').toString().toLowerCase())
+      includeClosedDisused = includeValues.some(v => v === 'include-closed-disused' || v === 'true' || v === 'on' || v === '1')
+    }
+    return { code, name, includeClosedDisused }
+  }
   
   let currentPage = 1
   const resultsPerPage = 20
   let filteredSites = []
+  let sortedSites = []
+  let currentSort = { column: 'code', direction: 'asc' }
 
   // Filter sites based on search criteria
   function filterSites() {
-    const searchCode = (searchCriteria.code || '').toLowerCase().trim()
-    const searchName = (searchCriteria.name || '').toLowerCase().trim()
-    const includeClosedDisused = document.querySelector('input[name="include-closed-disused"]:checked') || 
-                                 (searchCriteria.hasFilters && searchCriteria.includeClosedDisused === 'include-closed-disused')
+    const { code, name, includeClosedDisused } = getSearchCriteria()
+    const searchCode = code.toLowerCase().trim()
+    const searchName = name.toLowerCase().trim()
+    // Check if the checkbox was checked in the form submission (handle arrays/strings/booleans robustly)
+    // Fallback: also read from URL if not present in injected criteria
+    // includeClosedDisused already computed via getSearchCriteria
+
+    // Debug logging (comment out in production)
+    console.log('Search criteria (lean):', { code, name, includeClosedDisused })
 
     // Start with all sites
     let filtered = disposalSites.slice()
@@ -44,13 +74,20 @@ window.GOVUKPrototypeKit.documentReady(() => {
 
     // Apply status filter
     if (!includeClosedDisused) {
-      // Only show Open sites if checkbox not checked
-      filtered = filtered.filter(site => 
-        site.status === 'Open'
-      )
+      // Only show Open sites if checkbox was not checked
+      console.log('Filtering to show only Open sites')
+      filtered = filtered.filter(site => {
+        const status = (site.status || '').toString().trim().toLowerCase()
+        return status === 'open'
+      })
+    } else {
+      console.log('Showing all statuses (Open, Closed, Disused)')
     }
-    // If checkbox is checked, show all statuses (Open, Closed, Disused)
 
+    // Default sort by currentSort settings
+    filtered = sortSites(filtered, currentSort.column, currentSort.direction)
+
+    console.log('Filtered sites count:', filtered.length)
     return filtered
   }
 
@@ -60,7 +97,7 @@ window.GOVUKPrototypeKit.documentReady(() => {
     const endIndex = startIndex + resultsPerPage
     const pageSites = sites.slice(startIndex, endIndex)
 
-    const tbody = document.getElementById('disposal-sites-table-body')
+    const tbody = document.getElementById('disposal-sites-table-body-lean')
     if (!tbody) return
 
     tbody.innerHTML = ''
@@ -89,8 +126,8 @@ window.GOVUKPrototypeKit.documentReady(() => {
     })
 
     // Update results count
-    updateResultsCount(sites.length, page)
-    renderPagination(sites.length, page)
+    updateResultsCount(sortedSites.length, page)
+    renderPagination(sortedSites.length, page)
   }
 
   // Update the results count display
@@ -107,7 +144,7 @@ window.GOVUKPrototypeKit.documentReady(() => {
     if (resultsSummaryElement && totalResults > 0) {
       const startResult = ((page - 1) * resultsPerPage) + 1
       const endResult = Math.min(page * resultsPerPage, totalResults)
-      resultsSummaryElement.textContent = `Showing ${startResult} to ${endResult}.`
+      resultsSummaryElement.textContent = `Showing ${startResult} to ${endResult} of ${totalResults} results.`
     } else if (resultsSummaryElement) {
       resultsSummaryElement.textContent = ''
     }
@@ -119,55 +156,88 @@ window.GOVUKPrototypeKit.documentReady(() => {
     if (!paginationNav) return
 
     const totalPages = Math.ceil(totalResults / resultsPerPage)
-    
     if (totalPages <= 1) {
       paginationNav.innerHTML = ''
       return
     }
 
-    let paginationHTML = '<ul class="govuk-pagination__list">'
+    let html = ''
 
-    // Previous page
+    // Previous
     if (page > 1) {
-      paginationHTML += `
-        <li class="govuk-pagination__item govuk-pagination__item--prev">
+      html += `
+        <div class="govuk-pagination__prev">
           <a class="govuk-link govuk-pagination__link" href="#" data-page="${page - 1}" rel="prev">
             <span class="govuk-pagination__link-title">Previous<span class="govuk-visually-hidden"> page</span></span>
           </a>
-        </li>
+        </div>
       `
     }
 
-    // Page numbers
-    for (let i = 1; i <= totalPages; i++) {
-      if (i === page) {
-        paginationHTML += `
-          <li class="govuk-pagination__item govuk-pagination__item--current">
-            <a class="govuk-link govuk-pagination__link" href="#" aria-label="Page ${i}" aria-current="page">${i}</a>
-          </li>
-        `
+    html += '<ul class="govuk-pagination__list">'
+
+    // Always show 1
+    html += `
+      <li class="govuk-pagination__item ${page === 1 ? 'govuk-pagination__item--current' : ''}">
+        <a class="govuk-link govuk-pagination__link" href="#" ${page === 1 ? 'aria-current="page"' : ''} data-page="1">1</a>
+      </li>
+    `
+
+    // Determine visible range around current page
+    let startPage = 2
+    let endPage = totalPages - 1
+    if (totalPages > 5) {
+      if (page <= 3) {
+        endPage = 4
+      } else if (page >= totalPages - 2) {
+        startPage = totalPages - 3
       } else {
-        paginationHTML += `
-          <li class="govuk-pagination__item">
-            <a class="govuk-link govuk-pagination__link" href="#" aria-label="Page ${i}" data-page="${i}">${i}</a>
+        startPage = page - 1
+        endPage = page + 1
+      }
+    }
+
+    if (startPage > 2) {
+      html += '<li class="govuk-pagination__item govuk-pagination__item--ellipses">⋯</li>'
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      if (i >= 2 && i <= totalPages - 1) {
+        html += `
+          <li class="govuk-pagination__item ${page === i ? 'govuk-pagination__item--current' : ''}">
+            <a class="govuk-link govuk-pagination__link" href="#" ${page === i ? 'aria-current="page"' : ''} data-page="${i}">${i}</a>
           </li>
         `
       }
     }
 
-    // Next page
-    if (page < totalPages) {
-      paginationHTML += `
-        <li class="govuk-pagination__item govuk-pagination__item--next">
-          <a class="govuk-link govuk-pagination__link" href="#" data-page="${page + 1}" rel="next">
-            <span class="govuk-pagination__link-title">Next<span class="govuk-visually-hidden"> page</span></span>
-          </a>
+    if (endPage < totalPages - 1) {
+      html += '<li class="govuk-pagination__item govuk-pagination__item--ellipses">⋯</li>'
+    }
+
+    // Always show last if more than 1 page
+    if (totalPages > 1) {
+      html += `
+        <li class="govuk-pagination__item ${page === totalPages ? 'govuk-pagination__item--current' : ''}">
+          <a class="govuk-link govuk-pagination__link" href="#" ${page === totalPages ? 'aria-current="page"' : ''} data-page="${totalPages}">${totalPages}</a>
         </li>
       `
     }
 
-    paginationHTML += '</ul>'
-    paginationNav.innerHTML = paginationHTML
+    html += '</ul>'
+
+    // Next
+    if (page < totalPages) {
+      html += `
+        <div class="govuk-pagination__next">
+          <a class="govuk-link govuk-pagination__link" href="#" data-page="${page + 1}" rel="next">
+            <span class="govuk-pagination__link-title">Next<span class="govuk-visually-hidden"> page</span></span>
+          </a>
+        </div>
+      `
+    }
+
+    paginationNav.innerHTML = html
 
     // Add click events to pagination links
     paginationNav.addEventListener('click', (e) => {
@@ -176,15 +246,83 @@ window.GOVUKPrototypeKit.documentReady(() => {
       if (pageLink) {
         const newPage = parseInt(pageLink.dataset.page)
         currentPage = newPage
-        renderTable(filteredSites, currentPage)
+        renderTable(sortedSites, currentPage)
       }
+    })
+  }
+
+  // Sorting helpers
+  function sortSites(sites, column, direction) {
+    const copy = sites.slice()
+    copy.sort((a, b) => {
+      let aVal = ''
+      let bVal = ''
+      switch (column) {
+        case 'code':
+          aVal = (a.code || '').toString().toLowerCase(); bVal = (b.code || '').toString().toLowerCase(); break
+        case 'name':
+          aVal = (a.name || '').toString().toLowerCase(); bVal = (b.name || '').toString().toLowerCase(); break
+        case 'country':
+          aVal = (a.country || '').toString().toLowerCase(); bVal = (b.country || '').toString().toLowerCase(); break
+        case 'seaArea':
+          aVal = (a.seaArea || '').toString().toLowerCase(); bVal = (b.seaArea || '').toString().toLowerCase(); break
+        case 'status':
+          aVal = (a.status || '').toString().toLowerCase(); bVal = (b.status || '').toString().toLowerCase(); break
+        default:
+          aVal = (a.code || '').toString().toLowerCase(); bVal = (b.code || '').toString().toLowerCase(); break
+      }
+      if (aVal < bVal) return direction === 'asc' ? -1 : 1
+      if (aVal > bVal) return direction === 'asc' ? 1 : -1
+      return 0
+    })
+    return copy
+  }
+
+  function updateTableHeaders() {
+    const headers = document.querySelectorAll('#disposal-sites-table-lean thead th')
+    const columnMap = ['code', 'name', 'country', 'seaArea', 'status']
+    headers.forEach((h, idx) => {
+      const col = columnMap[idx]
+      if (!col) return
+      if (currentSort.column === col) {
+        h.setAttribute('aria-sort', currentSort.direction === 'asc' ? 'ascending' : 'descending')
+      } else {
+        h.setAttribute('aria-sort', 'none')
+      }
+    })
+  }
+
+  function initializeHeaderSorting() {
+    const table = document.getElementById('disposal-sites-table-lean')
+    if (!table) return
+    const headers = table.querySelectorAll('thead th')
+    const columnMap = ['code', 'name', 'country', 'seaArea', 'status']
+    headers.forEach((header, idx) => {
+      const col = columnMap[idx]
+      if (!col) return
+      header.addEventListener('click', (e) => {
+        e.preventDefault()
+        if (currentSort.column === col) {
+          currentSort.direction = currentSort.direction === 'asc' ? 'desc' : 'asc'
+        } else {
+          currentSort.column = col
+          currentSort.direction = 'asc'
+        }
+        sortedSites = sortSites(filteredSites, currentSort.column, currentSort.direction)
+        currentPage = 1
+        updateTableHeaders()
+        renderTable(sortedSites, currentPage)
+      })
     })
   }
 
   // Initialize the page
   function init() {
     filteredSites = filterSites()
-    renderTable(filteredSites, currentPage)
+    sortedSites = filteredSites
+    renderTable(sortedSites, currentPage)
+    updateTableHeaders()
+    initializeHeaderSorting()
   }
 
   // Run initialization
@@ -206,4 +344,10 @@ window.GOVUKPrototypeKit.documentReady(() => {
     }
   })
 
-})
+  }
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', onReady)
+  } else {
+    onReady()
+  }
+})()

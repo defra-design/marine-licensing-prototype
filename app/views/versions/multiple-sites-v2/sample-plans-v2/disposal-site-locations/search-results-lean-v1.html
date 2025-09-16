@@ -10,7 +10,7 @@
     {% if data['user_type'] === 'organisation' %}
         {% include "../../includes/organisation-switcher.html" %}
     {% endif %}
-    <a class="govuk-back-link" href="find-existing-disposal-site.html">Back</a>
+    <a class="govuk-back-link" href="find-existing-disposal-site-lean-v1.html">Back</a>
 {% endblock %}
 
 <!-- Setting the big main heading at the top of the page -->
@@ -41,15 +41,10 @@ Search results for disposal sites
         {% set endResult = currentPage * resultsPerPage %}
         {% if endResult > totalResults %}{% set endResult = totalResults %}{% endif %}
 
-        <!-- Search criteria for filtering -->
+        <!-- Search criteria for filtering (lean version) -->
         {% set searchCode = data['disposal-site-code'] or '' %}
         {% set searchName = data['disposal-site-name'] or '' %}
-        {% set searchLocation = data['disposal-site-location'] or '' %}
-        {% set searchMarineArea = data['marine-area'] or '' %}
-        {% set searchStatus = data['disposal-site-status'] or '' %}
-        {% set hasFilters = data['has-search-filters'] or false %}
-
-
+        {% set includeClosedDisused = data['include-closed-disused'] or '' %}
 
         <p class="govuk-body" id="results-count">We found <strong id="total-results">{{ totalResults }}</strong> disposal sites matching your search criteria.</p>
 
@@ -57,8 +52,9 @@ Search results for disposal sites
 
         <!-- Search results table -->
         <script src="/public/javascripts/disposal-sites-data.js"></script>
+        <script src="/public/javascripts/sample-plans-v2-disposal-site-lean-v1.js"></script>
         <div class="govuk-table-overflow">
-            <table class="govuk-table" id="disposal-sites-table" data-module="moj-sortable-table">
+            <table class="govuk-table" id="disposal-sites-table-lean" data-module="moj-sortable-table">
                 <caption class="govuk-table__caption govuk-visually-hidden">Disposal site search results</caption>
                 <thead class="govuk-table__head">
                     <tr class="govuk-table__row">
@@ -69,7 +65,7 @@ Search results for disposal sites
                         <th scope="col" class="govuk-table__header" aria-sort="none">Status</th>
                     </tr>
                 </thead>
-                <tbody class="govuk-table__body" id="disposal-sites-table-body"></tbody>
+                <tbody class="govuk-table__body" id="disposal-sites-table-body-lean"></tbody>
             </table>
         </div>
 
@@ -78,7 +74,7 @@ Search results for disposal sites
         </nav>
 
         <p class="govuk-body govuk-!-margin-top-6">
-            <a class="govuk-link govuk-link--no-visited-state" href="find-existing-disposal-site?disposal-site-code=&disposal-site-name=&disposal-site-location=&marine-area=&disposal-site-status=">Search for a different disposal site</a>
+            <a class="govuk-link govuk-link--no-visited-state" href="find-existing-disposal-site-lean-v1?disposal-site-code=&disposal-site-name=&include-closed-disused=">Search for a different disposal site</a>
         </p>
 
         <div class="govuk-button-group govuk-!-margin-top-4">
@@ -88,15 +84,12 @@ Search results for disposal sites
     </div>
 </div>
 
-<!-- Pass search criteria to JavaScript -->
+<!-- Pass search criteria to JavaScript (lean version) -->
 <script>
 window.searchCriteria = {
     code: "{{ searchCode | safe }}",
     name: "{{ searchName | safe }}",
-    location: "{{ searchLocation | safe }}",
-    marineArea: "{{ searchMarineArea | safe }}",
-    status: "{{ searchStatus | safe }}",
-    hasFilters: {% if hasFilters %}true{% else %}false{% endif %}
+    includeClosedDisused: "{{ includeClosedDisused | safe }}"
 };
 </script>
 

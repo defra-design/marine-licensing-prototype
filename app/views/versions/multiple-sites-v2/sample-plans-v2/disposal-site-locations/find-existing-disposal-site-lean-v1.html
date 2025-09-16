@@ -49,7 +49,7 @@ Find the existing disposal site
                   <p class="govuk-body">If the site name is not shown you can use the forward arrow to show more details, including the name of a disposal site.</p>'
         }) }}
         
-        <form action="/versions/multiple-sites-v2/sample-plans-v2/disposal-site-locations/search-results" method="post">
+        <form action="/versions/multiple-sites-v2/sample-plans-v2/disposal-site-locations/search-results-lean-v1" method="post">
             
             {{ govukInput({
                 label: {
@@ -79,7 +79,7 @@ Find the existing disposal site
             {{ govukCheckboxes({
                 fieldset: {
                     legend: {
-                        text: "Current site use (optional)",
+                        text: "Site availability (optional)",
                         classes: "govuk-fieldset__legend--s"
                     }
                 },
