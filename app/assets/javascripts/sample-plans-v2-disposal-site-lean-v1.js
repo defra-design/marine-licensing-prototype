@@ -100,6 +100,18 @@
     const tbody = document.getElementById('disposal-sites-table-body-lean')
     if (!tbody) return
 
+    // Show/hide table container when there are no results
+    const tableContainer = document.querySelector('.govuk-table-overflow')
+    const paginationNav = document.getElementById('pagination-nav')
+    if (sites.length === 0) {
+      if (tableContainer) tableContainer.style.display = 'none'
+      if (paginationNav) paginationNav.innerHTML = ''
+      updateResultsCount(0, 1)
+      return
+    } else {
+      if (tableContainer) tableContainer.style.display = 'block'
+    }
+
     tbody.innerHTML = ''
 
     pageSites.forEach(site => {
