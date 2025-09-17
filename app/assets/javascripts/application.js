@@ -436,7 +436,7 @@ window.GOVUKPrototypeKit.documentReady(() => {
       } else if (status === 'Closed') {
         classes += ' govuk-tag--red'
       } else if (status === 'Disused') {
-        classes += ' govuk-tag--yellow'
+        classes += ' govuk-tag--grey'
       }
       return `<span class="${classes}">${status}</span>`
     }

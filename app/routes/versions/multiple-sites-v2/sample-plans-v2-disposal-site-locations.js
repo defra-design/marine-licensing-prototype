@@ -167,9 +167,16 @@ module.exports = function (router) {
 
   // POST: lean v2 results (capture form and redirect)
   router.post(`/versions/${version}/${section}/${subSection}/search-results-lean-v2`, function (req, res) {
-    // Save criteria; clear checkbox when not present
+    // Save criteria; normalize checkbox to only 'include-closed-disused' or '' (ignore '_unchecked')
     req.session.data['disposal-site-code-or-name'] = req.body['disposal-site-code-or-name'] || '';
-    req.session.data['include-closed-disused'] = req.body['include-closed-disused'] || '';
+    const rawInclude = req.body['include-closed-disused'];
+    let normalizedInclude = '';
+    if (Array.isArray(rawInclude)) {
+      normalizedInclude = rawInclude.includes('include-closed-disused') ? 'include-closed-disused' : '';
+    } else if (typeof rawInclude === 'string') {
+      normalizedInclude = (rawInclude === 'include-closed-disused') ? 'include-closed-disused' : '';
+    }
+    req.session.data['include-closed-disused'] = normalizedInclude;
 
     // Reset to first page on new search
     req.session.data['page'] = '1';
