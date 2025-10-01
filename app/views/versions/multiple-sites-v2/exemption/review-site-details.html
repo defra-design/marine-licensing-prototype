@@ -119,12 +119,12 @@ Review site details
 
         {% if not allComplete %}
             {{ govukInsetText({
-                html: "You must complete all sections marked <span class='govuk-tag govuk-tag--red'>Incomplete</span> before you can send your information.<br><br>You can select 'Save and continue' to keep your progress and return later."
+                html: "The site details you've provided are saved.<br>You must complete all sections marked <span class='govuk-tag govuk-tag--red'>Incomplete</span> before you can send your information.<br>If you cannot finish now, you can return to this page later."
             }) }}
         {% else %}
             {% if data['camefromcheckanswers'] != 'true' %}
             {{ govukInsetText({
-                html: "You can select 'Save and continue' to keep your progress and return later."
+                html: "The site details you've provided are saved.<br>You can return to this page and make changes at any time before you send your information."
             }) }}
             {% endif %}
         {% endif %}
@@ -145,6 +145,13 @@ Review site details
                 <h2 class="govuk-summary-card__title">
                     Providing the site location
                 </h2>
+                <ul class="govuk-summary-card__actions">
+                    <li class="govuk-summary-card__action">
+                        <a class="govuk-link" href="delete-all-sites">
+                            Delete all site details<span class="govuk-visually-hidden"></span>
+                        </a>
+                    </li>
+                </ul>
             </div>
             <div class="govuk-summary-card__content">
                 <dl class="govuk-summary-list">
@@ -155,11 +162,6 @@ Review site details
                         <dd class="govuk-summary-list__value">
                             Upload a file with the coordinates of the site
                         </dd>
-                        <dd class="govuk-summary-list__actions">
-                            <a href="how-do-you-want-to-provide-the-coordinates?returnTo=review-site-details#site-location" class="govuk-link">
-                                Change<span class="govuk-visually-hidden"> method of providing site location</span>
-                            </a>
-                        </dd>
                     </div>
                     {% if data['exemption-which-type-of-file-radios'] %}
                     <div class="govuk-summary-list__row">
@@ -168,11 +170,6 @@ Review site details
                         </dt>
                         <dd class="govuk-summary-list__value">
                             {{ data['exemption-which-type-of-file-radios'] }}
-                        </dd>
-                        <dd class="govuk-summary-list__actions">
-                            <a href="which-type-of-file?returnTo=review-site-details#site-location" class="govuk-link">
-                                Change<span class="govuk-visually-hidden"> file type</span>
-                            </a>
                         </dd>
                     </div>
                     {% endif %}
@@ -187,11 +184,6 @@ Review site details
                             {% else %}
                                 se-coast-sample-sites-coordinates.zip
                             {% endif %}
-                        </dd>
-                        <dd class="govuk-summary-list__actions">
-                            <a href="upload-file?returnTo=review-site-details#site-location" class="govuk-link">
-                                Change<span class="govuk-visually-hidden"> file uploaded</span>
-                            </a>
                         </dd>
                     </div>
                     {% endif %}
@@ -438,12 +430,9 @@ Review site details
             </div>
         {% endif %}
         <form action="review-site-details-router" method="post" novalidate>
-            <div class="govuk-button-group">
-                {{ govukButton({
-                    text: "Save and continue"
-                }) }}
-                <a class="govuk-link govuk-link--no-visited-state" href="cancel-site-details">Cancel</a>
-            </div>
+            {{ govukButton({
+                text: "Continue"
+            }) }}
         </form>
     </div>
 </div>

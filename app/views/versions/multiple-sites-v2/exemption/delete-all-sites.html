@@ -31,7 +31,19 @@ Are you sure you want to delete all site details?
           text: "Yes, delete all site details",
           classes: "govuk-button--warning"
         }) }}
-        <a class="govuk-link govuk-link--no-visited-state" href="manual-entry/review-site-details">Cancel</a>
+        {% set currentBatch = null %}
+        {% if data['currentBatchId'] and data['siteBatches'] %}
+          {% for batch in data['siteBatches'] %}
+            {% if batch.id == data['currentBatchId'] %}
+              {% set currentBatch = batch %}
+            {% endif %}
+          {% endfor %}
+        {% endif %}
+        {% if currentBatch and currentBatch.entryMethod == 'manual-entry' %}
+          <a class="govuk-link govuk-link--no-visited-state" href="manual-entry/review-site-details">Cancel</a>
+        {% else %}
+          <a class="govuk-link govuk-link--no-visited-state" href="review-site-details">Cancel</a>
+        {% endif %}
     </div>
     </form>
   </div>
