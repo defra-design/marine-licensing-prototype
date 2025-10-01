@@ -3126,6 +3126,44 @@ router.post('/' + version + section + 'cancel-confirmed', function (req, res) {
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////
+// Delete all sites functionality (from manual entry review page)
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+// GET route for delete all sites warning page
+router.get('/' + version + section + 'delete-all-sites', function (req, res) {
+    res.render(version + section + 'delete-all-sites');
+});
+
+// POST route for delete all sites confirmation
+router.post('/' + version + section + 'delete-all-sites-confirmed', function (req, res) {
+    logCancelState(req.session, 'delete-all-sites-confirmed - user confirmed deletion of all sites');
+    
+    // Clear any method switch backup (user explicitly confirmed deletion)
+    clearMethodSwitchBackup(req.session);
+    
+    // Force complete clear of all site details
+    clearAllSiteDetails(req.session);
+    
+    // Clear state tracking for fresh start
+    delete req.session.data['cancelOrigin'];
+    delete req.session.data['inSiteDetailsJourney'];
+    req.session.data['reviewPageVisited'] = false;
+    req.session.data['reviewPageSaved'] = false;
+    req.session.data['isEditingFromReview'] = false;
+    
+    // Clear any legacy navigation flags
+    delete req.session.data['fromReviewSiteDetails'];
+    delete req.session.data['camefromcheckanswers'];
+    
+    // Ensure task status is properly reset to not-started
+    req.session.data['exempt-information-3-status'] = 'not-started';
+    delete req.session.data['siteDetailsSaved'];
+    
+    logCancelState(req.session, 'delete-all-sites-confirmed - complete clear performed, redirecting to task-list');
+    res.redirect('task-list');
+});
+
+//////////////////////////////////////////////////////////////////////////////////////////////
 // More than one site change functionality (from single-site review page)
 /////////////////////////////////////////////////////////////////////////////////////////////
 

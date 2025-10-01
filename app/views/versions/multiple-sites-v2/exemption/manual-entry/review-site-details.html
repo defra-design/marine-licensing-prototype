@@ -142,6 +142,13 @@ Review site details
                 <h2 class="govuk-summary-card__title">
                     Providing the site location
                 </h2>
+                <ul class="govuk-summary-card__actions">
+                    <li class="govuk-summary-card__action">
+                        <a class="govuk-link" href="../delete-all-sites">
+                            Delete all site details<span class="govuk-visually-hidden"></span>
+                        </a>
+                    </li>
+                </ul>
             </div>
             <div class="govuk-summary-card__content">
                 <dl class="govuk-summary-list">
@@ -151,11 +158,6 @@ Review site details
                         </dt>
                         <dd class="govuk-summary-list__value">
                             Enter the coordinates of the site manually
-                        </dd>
-                        <dd class="govuk-summary-list__actions">
-                            <a href="../how-do-you-want-to-provide-the-coordinates?returnTo=review-site-details#site-location" class="govuk-link">
-                                Change<span class="govuk-visually-hidden"> method of providing site location</span>
-                            </a>
                         </dd>
                     </div>
                     <div class="govuk-summary-list__row">
@@ -168,11 +170,6 @@ Review site details
                             {% else %}
                                 <span class="govuk-tag govuk-tag--red">Incomplete</span>
                             {% endif %}
-                        </dd>
-                        <dd class="govuk-summary-list__actions">
-                            <a href="does-your-project-involve-more-than-one-site?returnTo=review-site-details#site-location" class="govuk-link">
-                                {% if data['manual-multiple-sites'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> more than one site setting</span>
-                            </a>
                         </dd>
                     </div>
                 </dl>
@@ -554,7 +551,7 @@ Review site details
         {% if isMultipleSitesJourney %}
         <div class="govuk-button-group govuk-!-margin-bottom-6">
             <a href="add-next-site-router{% if currentBatch and currentBatch.id %}?batchId={{ currentBatch.id }}{% endif %}" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
-                Save and add another site
+                Add another site
             </a>
         </div>
         {% endif %}
@@ -562,14 +559,11 @@ Review site details
         
         <form action="review-site-details-router" method="post" novalidate>
             {% if data['camefromcheckanswers'] != 'true' %}
-            <p class="govuk-body">You can select 'Save and continue' if you're finished or you want to save your progress and return later.</p>
+            <p class="govuk-body">Your site details are saved. You can select 'Continue' if you're finished or you want to return to this page later.</p>
             {% endif %}
-            <div class="govuk-button-group">
-                {{ govukButton({
-                    text: "Save and continue"
-                }) }}
-                <a class="govuk-link govuk-link--no-visited-state" href="../cancel-site-details">Cancel</a>
-            </div>
+            {{ govukButton({
+                text: "Continue"
+            }) }}
         </form>
     </div>
 </div>
