@@ -102,7 +102,9 @@ Enter the width of the circular site in metres
                 {{ govukButton({
                   text: "Save and continue"
                 }) }}
+                {% if returnTo !== 'review-site-details' %}
                 <a class="govuk-link govuk-link--no-visited-state" href="../cancel-site-details">Cancel</a>
+                {% endif %}
             </div>
 
         </form>

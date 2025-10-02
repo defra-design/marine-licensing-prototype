@@ -139,10 +139,13 @@ Enter the coordinates at the centre point of the site
             {% endcall %}
 
             <div class="govuk-button-group">
+                {% set isIndependentEdit = (returnTo == 'review-site-details' and site.coordinates.type == 'circle' and site.coordinates.width) %}
                 {{ govukButton({
-                  text: "Continue"
+                  text: "Save and continue" if isIndependentEdit else "Continue"
                 }) }}
+                {% if returnTo !== 'review-site-details' %}
                 <a class="govuk-link govuk-link--no-visited-state" href="../cancel-site-details">Cancel</a>
+                {% endif %}
             </div>
 
         </form>
