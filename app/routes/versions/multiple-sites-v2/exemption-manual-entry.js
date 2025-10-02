@@ -833,6 +833,7 @@ router.post('/' + version + section + 'manual-entry/same-activity-dates-router',
     if (returnTo === 'review-site-details') {
         // If changing from Yes to No, copy shared dates to individual sites
         if (selection === "No" && previousSelection === "Yes") {
+            console.log('🔄 JOURNEY 8: Changing from shared dates to individual dates');
             // Copy shared dates to all batch sites
             const sharedStartDate = currentBatch.settings.sharedStartDate;
             const sharedEndDate = currentBatch.settings.sharedEndDate;
@@ -847,25 +848,22 @@ router.post('/' + version + section + 'manual-entry/same-activity-dates-router',
             // Clear shared dates from batch settings after copying
             currentBatch.settings.sharedStartDate = {};
             currentBatch.settings.sharedEndDate = {};
+            
+            // Return to review page
+            return res.redirect('/' + version + section + 'manual-entry/review-site-details');
         }
-        // If changing from No to Yes, use first site's data as shared data
+        // If changing from No to Yes, ask for the shared dates (2-page journey)
         else if (selection === "Yes" && previousSelection === "No") {
-            // Use first site's dates as shared dates
-            if (currentBatch.sites && currentBatch.sites.length > 0) {
-                const firstSite = currentBatch.sites[0];
-                if (firstSite.startDate && firstSite.startDate.day) {
-                    currentBatch.settings.sharedStartDate = { ...firstSite.startDate };
-                    currentBatch.settings.sharedEndDate = { ...firstSite.endDate };
-                    
-                    // Apply shared dates to all sites
-                    currentBatch.sites.forEach(site => {
-                        site.startDate = { ...currentBatch.settings.sharedStartDate };
-                        site.endDate = { ...currentBatch.settings.sharedEndDate };
-                    });
-                }
-            }
+            console.log('🔄 JOURNEY 8: Changing from individual dates to shared dates - redirecting to ask for dates');
+            // Get first site number for URL
+            const siteNumber = currentBatch.sites.length > 0 ? currentBatch.sites[0].globalNumber : 1;
+            
+            // Redirect to activity-dates page to gather the shared dates
+            return res.redirect('/' + version + section + 'manual-entry/activity-dates?site=' + siteNumber + '&returnTo=review-site-details');
         }
         
+        // No change in selection - just return to review
+        console.log('🔄 No change in selection - returning to review');
         return res.redirect('/' + version + section + 'manual-entry/review-site-details');
     }
 
@@ -1198,6 +1196,7 @@ router.post('/' + version + section + 'manual-entry/same-activity-description-ro
     if (returnTo === 'review-site-details') {
         // If changing from Yes to No, copy shared description to individual sites
         if (selection === "No" && previousSelection === "Yes") {
+            console.log('🔄 JOURNEY 9: Changing from shared description to individual descriptions');
             // Copy shared description to all batch sites
             const sharedDescription = currentBatch.settings.sharedDescription;
             
@@ -1209,23 +1208,22 @@ router.post('/' + version + section + 'manual-entry/same-activity-description-ro
             
             // Clear shared description from batch settings after copying
             currentBatch.settings.sharedDescription = '';
+            
+            // Return to review page
+            return res.redirect('/' + version + section + 'manual-entry/review-site-details');
         }
-        // If changing from No to Yes, use first site's description as shared description
+        // If changing from No to Yes, ask for the shared description (2-page journey)
         else if (selection === "Yes" && previousSelection === "No") {
-            // Use first site's description as shared description
-            if (currentBatch.sites && currentBatch.sites.length > 0) {
-                const firstSite = currentBatch.sites[0];
-                if (firstSite.description) {
-                    currentBatch.settings.sharedDescription = firstSite.description;
-                    
-                    // Apply shared description to all sites
-                    currentBatch.sites.forEach(site => {
-                        site.description = currentBatch.settings.sharedDescription;
-                    });
-                }
-            }
+            console.log('🔄 JOURNEY 9: Changing from individual descriptions to shared description - redirecting to ask for description');
+            // Get first site number for URL
+            const siteNumber = currentBatch.sites.length > 0 ? currentBatch.sites[0].globalNumber : 1;
+            
+            // Redirect to activity-description page to gather the shared description
+            return res.redirect('/' + version + section + 'manual-entry/activity-description?site=' + siteNumber + '&returnTo=review-site-details');
         }
         
+        // No change in selection - just return to review
+        console.log('🔄 No change in selection - returning to review');
         return res.redirect('/' + version + section + 'manual-entry/review-site-details');
     }
 
@@ -1495,42 +1493,51 @@ router.post('/' + version + section + 'manual-entry/how-do-you-want-to-enter-the
         // Store the previous method to check if it's actually changing
         const previousMethod = site.coordinates && site.coordinates.entryMethod;
         
-        if (previousMethod && previousMethod !== selection) {
-            console.log(`🔄 JOURNEY RESTART: Coordinate entry method changed from "${previousMethod}" to "${selection}" - clearing subsequent data`);
-            
-            // Clear ALL coordinate data except the method selection
-            site.coordinates = {
-                entryMethod: selection
-            };
-            
-            // Set coordinate type based on selection (needed for journey routing)
-            if (selection === "Enter one set of coordinates and a width to create a circular site") {
-                site.coordinates.type = 'circle';
-            } else if (selection === "Enter multiple sets of coordinates to mark the boundary of the site") {
-                site.coordinates.type = 'polygon';
-            }
-            
-            // Clear coordinate system selection (force user to choose again)
-            delete site.coordinateSystem;
-            
-            // CRITICAL: Clear session data so coordinate system radio doesn't remain selected
-            const currentSite = parseInt(siteParam);
-            const siteDataKey = 'manual-coordinate-system-radios' + (currentSite === 1 ? '' : '-site-' + currentSite);
-            delete req.session.data[siteDataKey];
-            delete req.session.data['manual-coordinate-system-radios'];
-            
-            console.log(`🧹 Cleared ALL coordinate data AND session data for site ${site.globalNumber} due to method change`);
-            console.log(`🔄 JOURNEY RESTART: User will be taken through coordinate system → coordinates → width (if circular) → review`);
-        } else {
-            // Same method selected, just update without clearing
-            site.coordinates.entryMethod = selection;
-            // Still need to set type for routing
-            if (selection === "Enter one set of coordinates and a width to create a circular site") {
-                site.coordinates.type = 'circle';
-            } else if (selection === "Enter multiple sets of coordinates to mark the boundary of the site") {
-                site.coordinates.type = 'polygon';
-            }
+        console.log(`🔄 CHANGE FROM REVIEW: Coordinate entry method change detected`);
+        console.log(`Previous method: "${previousMethod}", New method: "${selection}"`);
+        
+        // ALWAYS clear ALL subsequent data when changing entry method from review page (Journey 1a/1b)
+        // This includes coordinate system, values, everything - user starts fresh
+        console.log(`🔄 JOURNEY 1a/1b: Clearing ALL coordinate data including system selection`);
+        
+        // Clear ALL coordinate data - user must re-select coordinate system
+        site.coordinates = {
+            entryMethod: selection
+        };
+        
+        // Set coordinate type based on selection (needed for journey routing)
+        if (selection === "Enter one set of coordinates and a width to create a circular site") {
+            site.coordinates.type = 'circle';
+        } else if (selection === "Enter multiple sets of coordinates to mark the boundary of the site") {
+            site.coordinates.type = 'polygon';
         }
+        
+        // CRITICAL: Clear coordinate system from site object
+        delete site.coordinateSystem;
+        
+        // CRITICAL: Clear ALL session data including coordinate system selection
+        const currentSite = parseInt(siteParam);
+        delete req.session.data['manual-coordinate-system-radios'];
+        delete req.session.data[`manual-site-${currentSite}-coordinate-system-radios`];
+        delete req.session.data['coordinates-latitude'];
+        delete req.session.data['coordinates-longitude'];
+        delete req.session.data['site-width'];
+        
+        // Clear site-specific coordinate data
+        delete req.session.data[`manual-site-${currentSite}-coordinates-latitude`];
+        delete req.session.data[`manual-site-${currentSite}-coordinates-longitude`];
+        delete req.session.data[`manual-site-${currentSite}-site-width`];
+        
+        // Clear multiple coordinate points
+        for (let i = 1; i <= 5; i++) {
+            delete req.session.data[`coordinates-point-${i}-latitude`];
+            delete req.session.data[`coordinates-point-${i}-longitude`];
+            delete req.session.data[`manual-site-${currentSite}-coordinates-point-${i}-latitude`];
+            delete req.session.data[`manual-site-${currentSite}-coordinates-point-${i}-longitude`];
+        }
+        
+        console.log(`🧹 Cleared ALL coordinate data AND session data for site ${site.globalNumber} (including system selection)`);
+        console.log(`🔄 JOURNEY 1a/1b: User will select coordinate system from scratch → coordinates → width (if circular) → review`);
     } else {
         // Normal flow (not from review page)
         if (!site.coordinates) site.coordinates = {};
@@ -1545,7 +1552,7 @@ router.post('/' + version + section + 'manual-entry/how-do-you-want-to-enter-the
     
     // Determine next step
     if (returnTo === 'review-site-details') {
-        // JOURNEY RESTART: Continue through the journey instead of going directly back to review
+        // JOURNEY RESTART (Journey 1a/1b): Continue through the journey instead of going directly back to review
         // This allows the user to complete the restarted coordinate entry journey
         console.log(`🔄 JOURNEY RESTART: Continuing to coordinate system selection`);
         res.redirect('/' + version + section + 'manual-entry/which-coordinate-system?site=' + site.globalNumber + '&returnTo=review-site-details');
@@ -1635,43 +1642,53 @@ router.post('/' + version + section + 'manual-entry/which-coordinate-system-rout
         // Store the previous system to check if it's actually changing
         const previousSystem = site.coordinateSystem || (site.coordinates && site.coordinates.system);
         
-        if (previousSystem && previousSystem !== selection) {
-            console.log(`🔄 JOURNEY RESTART: Coordinate system changed from "${previousSystem}" to "${selection}" - clearing subsequent data`);
+        console.log(`🔄 CHANGE FROM REVIEW: Coordinate system change detected`);
+        console.log(`Previous system: "${previousSystem}", New system: "${selection}"`);
+        
+        // ALWAYS clear subsequent coordinate data when changing from review page (Journey 2a/2b)
+        // This ensures user goes through full journey even if selecting same system
+        console.log(`🔄 JOURNEY RESTART: Clearing ALL coordinate values`);
+        
+        // Clear ALL coordinate values but keep type and entry method
+        if (site.coordinates) {
+            const preservedData = {
+                entryMethod: site.coordinates.entryMethod,
+                type: site.coordinates.type,
+                system: selection
+            };
             
-            // Clear ALL coordinate values but keep type and entry method
-            if (site.coordinates) {
-                const preservedData = {
-                    entryMethod: site.coordinates.entryMethod,
-                    type: site.coordinates.type,
-                    system: selection
-                };
-                
-                // Clear all coordinate values (latitude, longitude, width, points, etc.)
-                site.coordinates = preservedData;
-            }
-            
-            // Update coordinate system
-            site.coordinateSystem = selection;
-            
-            // CRITICAL: Clear session data so coordinate values don't remain in forms
-            const currentSite = parseInt(siteParam);
-            // Clear coordinate session data
-            delete req.session.data['coordinates-latitude'];
-            delete req.session.data['coordinates-longitude'];
-            delete req.session.data['site-width'];
-            // Clear site-specific coordinate data if it exists
-            delete req.session.data[`manual-site-${currentSite}-coordinates-latitude`];
-            delete req.session.data[`manual-site-${currentSite}-coordinates-longitude`];
-            delete req.session.data[`manual-site-${currentSite}-site-width`];
-            
-            console.log(`🧹 Cleared ALL coordinate values AND session data for site ${site.globalNumber} due to system change`);
-            console.log(`🔄 JOURNEY RESTART: User will be taken through coordinates entry → width (if circular) → review`);
+            // Clear all coordinate values (latitude, longitude, width, points, etc.)
+            site.coordinates = preservedData;
         } else {
-            // Same system selected, just update without clearing
-            if (!site.coordinates) site.coordinates = {};
-            site.coordinates.system = selection;
-            site.coordinateSystem = selection;
+            site.coordinates = {
+                system: selection
+            };
         }
+        
+        // Update coordinate system
+        site.coordinateSystem = selection;
+        
+        // CRITICAL: Clear session data so coordinate values don't remain in forms
+        const currentSite = parseInt(siteParam);
+        delete req.session.data['coordinates-latitude'];
+        delete req.session.data['coordinates-longitude'];
+        delete req.session.data['site-width'];
+        
+        // Clear site-specific coordinate data
+        delete req.session.data[`manual-site-${currentSite}-coordinates-latitude`];
+        delete req.session.data[`manual-site-${currentSite}-coordinates-longitude`];
+        delete req.session.data[`manual-site-${currentSite}-site-width`];
+        
+        // Clear multiple coordinate points
+        for (let i = 1; i <= 5; i++) {
+            delete req.session.data[`coordinates-point-${i}-latitude`];
+            delete req.session.data[`coordinates-point-${i}-longitude`];
+            delete req.session.data[`manual-site-${currentSite}-coordinates-point-${i}-latitude`];
+            delete req.session.data[`manual-site-${currentSite}-coordinates-point-${i}-longitude`];
+        }
+        
+        console.log(`🧹 Cleared ALL coordinate values AND session data for site ${site.globalNumber}`);
+        console.log(`🔄 JOURNEY RESTART: User will be taken through coordinates entry → width (if circular) → review`);
     } else {
         // Normal flow (not from review page)
         if (!site.coordinates) site.coordinates = {};
@@ -1693,7 +1710,7 @@ router.post('/' + version + section + 'manual-entry/which-coordinate-system-rout
     
     // Determine next step based on coordinate type
     if (returnTo === 'review-site-details') {
-        // JOURNEY RESTART: Continue through the journey to complete all required steps
+        // JOURNEY RESTART (Journey 2a/2b): Continue through the journey to complete all required steps
         // This is a coordinate system change from review page - user needs to complete the full journey
         console.log(`🔄 JOURNEY RESTART: Continuing to coordinate entry after system change`);
         if (site.coordinates && site.coordinates.type === 'polygon') {
@@ -1869,20 +1886,24 @@ router.post('/' + version + section + 'manual-entry/enter-coordinates-router', f
     
     // Determine next step
     if (returnTo === 'review-site-details') {
-        // Check if this is part of a journey restart or an independent coordinate change
-        // If the site doesn't have a width yet and it's a circular site, continue the journey
-        // If it already has a width, this is likely an independent coordinate change
+        // Determine if this is Journey 3 (independent edit) or part of Journey 1a/2a (journey restart)
+        // Key indicator: If width doesn't exist for circular site, we're in a journey restart
         if (site.coordinates.type === 'circle' && !site.coordinates.width) {
-            // JOURNEY RESTART: Circular site without width - continue to width page
+            // JOURNEY RESTART (part of 1a or 2a): Circular site without width - continue to width page
             console.log(`🔄 JOURNEY RESTART: Continuing to width page for circular site (no width set)`);
             res.redirect('/' + version + section + 'manual-entry/site-width?site=' + site.globalNumber + '&returnTo=review-site-details');
+        } else if (site.coordinates.type === 'circle' && site.coordinates.width) {
+            // JOURNEY 3: Independent coordinate change for circular site with existing width
+            console.log(`🔄 JOURNEY 3 (Independent Edit): Coordinates updated for circular site, returning to review with anchor`);
+            res.redirect('/' + version + section + 'manual-entry/review-site-details?site=' + site.globalNumber + '#site-' + site.globalNumber + '-details');
         } else if (site.coordinates.type === 'polygon') {
-            // JOURNEY RESTART: Polygon site - coordinates are complete, return to review
-            console.log(`🔄 JOURNEY RESTART: Polygon coordinates complete, returning to review with anchor`);
+            // JOURNEY RESTART (part of 1b or 2b) OR polygon doesn't have this route - should use enter-multiple-coordinates
+            // Polygon coordinates are entered via enter-multiple-coordinates page, not here
+            console.log(`🔄 JOURNEY RESTART: Polygon site - shouldn't reach this route, redirecting to review`);
             res.redirect('/' + version + section + 'manual-entry/review-site-details?site=' + site.globalNumber + '#site-' + site.globalNumber + '-details');
         } else {
-            // INDEPENDENT CHANGE: Site already has width or is being edited independently
-            console.log(`🔄 INDEPENDENT CHANGE: Coordinates updated, returning directly to review with anchor`);
+            // Fallback
+            console.log(`🔄 Fallback: Returning to review with anchor`);
             res.redirect('/' + version + section + 'manual-entry/review-site-details?site=' + site.globalNumber + '#site-' + site.globalNumber + '-details');
         }
     } else {

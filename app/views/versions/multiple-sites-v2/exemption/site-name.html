@@ -73,12 +73,20 @@ Site name
                        value="{{ currentSiteName }}">
             </div>
             
-            <div class="govuk-button-group">
+            {% if data['return'] %}
+                {# Coming from review page - show Save and continue, hide Cancel #}
                 {{ govukButton({
-                  text: "Continue"
+                  text: "Save and continue"
                 }) }}
-                <a class="govuk-link govuk-link--no-visited-state" href="cancel-site-details">Cancel</a>
-            </div>
+            {% else %}
+                {# Create journey - show Continue and Cancel link #}
+                <div class="govuk-button-group">
+                    {{ govukButton({
+                      text: "Continue"
+                    }) }}
+                    <a class="govuk-link govuk-link--no-visited-state" href="cancel-site-details">Cancel</a>
+                </div>
+            {% endif %}
         </form>
 
     </div>

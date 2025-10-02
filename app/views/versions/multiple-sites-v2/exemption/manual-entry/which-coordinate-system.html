@@ -89,11 +89,13 @@ Which coordinate system do you want to use?
                 </p>
             {% endif %}
 
+            {# For change journeys, use site.coordinateSystem (Journey 2a/2b will have it, Journey 1a/1b won't - will be cleared) #}
+            {# For creation journeys, use session data #}
             {{ govukRadios
                 ({
                     name: siteDataKey,
                     id: siteDataKey,
-                    value: data[siteDataKey],
+                    value: site.coordinateSystem if returnTo == 'review-site-details' else data[siteDataKey],
                     fieldset:
                     {
                         legend:
@@ -108,7 +110,7 @@ Which coordinate system do you want to use?
                         {
                             value: "WGS84 (World Geodetic System 1984)",
                             text: "WGS84 (World Geodetic System 1984)",
-                            checked: data[siteDataKey] == "WGS84 (World Geodetic System 1984)",
+                            checked: (site.coordinateSystem == "WGS84 (World Geodetic System 1984)") if returnTo == 'review-site-details' else (data[siteDataKey] == "WGS84 (World Geodetic System 1984)"),
                             hint: {
                               text: "Uses latitude and longitude"
                             }
@@ -116,7 +118,7 @@ Which coordinate system do you want to use?
                         {
                             value: "OSGB36 (National Grid)",
                             text: "OSGB36 (National Grid)",
-                            checked: data[siteDataKey] == "OSGB36 (National Grid)",
+                            checked: (site.coordinateSystem == "OSGB36 (National Grid)") if returnTo == 'review-site-details' else (data[siteDataKey] == "OSGB36 (National Grid)"),
                             hint: {
                               text: "Uses eastings and northings"
                             }
@@ -131,7 +133,9 @@ Which coordinate system do you want to use?
                 {{ govukButton({
                   text: "Continue"
                 }) }}
+                {% if returnTo !== 'review-site-details' %}
                 <a class="govuk-link govuk-link--no-visited-state" href="../cancel-site-details">Cancel</a>
+                {% endif %}
             </div>
 
         </form>

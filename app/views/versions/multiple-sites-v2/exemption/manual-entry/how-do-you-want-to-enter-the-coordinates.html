@@ -132,7 +132,9 @@ How do you want to enter the site coordinates?
         {{ govukButton({
           text: "Continue"
         }) }}
+        {% if returnTo !== 'review-site-details' %}
         <a class="govuk-link govuk-link--no-visited-state" href="../cancel-site-details">Cancel</a>
+        {% endif %}
     </div>
 
         </form>
