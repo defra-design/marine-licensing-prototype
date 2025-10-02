@@ -21,12 +21,17 @@ This document describes the implementation of all change link journeys from the 
 4. **Comprehensive session clearing**: Clear all coordinate-related session keys including multiple points and system selection for 1a/1b
 
 ### Files Modified
-- ✅ `exemption-manual-entry.js` (route handlers)
+**Route Handlers:**
+- ✅ `exemption-manual-entry.js`
+
+**Templates:**
 - ✅ `how-do-you-want-to-enter-the-coordinates.html`
 - ✅ `which-coordinate-system.html`
 - ✅ `enter-coordinates.html`
 - ✅ `site-width.html`
 - ✅ `enter-multiple-coordinates.html`
+- ✅ `activity-dates.html`
+- ✅ `activity-description.html`
 
 ## Journey Types - Quick Reference
 
@@ -39,6 +44,8 @@ This document describes the implementation of all change link journeys from the 
 | **3** | "Coordinates at centre" | N/A | Save and continue | Hidden |
 | **4** | "Width of circular site" | N/A | Save and continue | Hidden |
 | **5** | "Start and end points" | N/A | Save and continue | Hidden |
+| **6** | "Activity dates" (shared) | N/A | Save and continue | Hidden |
+| **7** | "Activity description" (shared) | N/A | Save and continue | Hidden |
 
 ### Full Journey Details
 
@@ -228,6 +235,80 @@ These journeys edit a single value and return directly to review:
 **Implementation**:
 - `POST enter-multiple-coordinates-router`: Always returns to review page with anchor
 - This works for both journey restarts (1b, 2b) and independent edits
+
+---
+
+## Journey 6: Activity Details - Shared Activity Dates
+
+**User clicks**: "Change" on "Activity dates" (in Activity details card, multiple sites only)
+
+**Flow**:
+1. `activity-dates?site=X&returnTo=review-site-details`
+   - **Previous shared dates PRESERVED** (dates shown)
+   - Button: "Save and continue" (single page edit)
+   - No Cancel link
+   
+2. Returns to `review-site-details#activity-details`
+
+**Template**: `activity-dates.html`
+
+**Changes Made**:
+```nunjucks
+<div class="govuk-button-group">
+  {{ govukButton({
+    text: "Save and continue" if returnTo == 'review-site-details' else "Continue"
+  }) }}
+  {% if returnTo !== 'review-site-details' %}
+  <a class="govuk-link govuk-link--no-visited-state" href="../cancel-site-details">Cancel</a>
+  {% endif %}
+</div>
+```
+
+**How It Works**:
+- **Change journey** (`returnTo=review-site-details`): Shows "Save and continue", hides cancel link
+- **Creation journey** (no `returnTo`): Shows "Continue", shows cancel link
+
+**Route Handler**:
+- `POST activity-dates-router`: Updates shared dates in batch settings
+- Applies shared dates to all sites in batch
+- Returns to review page
+
+---
+
+## Journey 7: Activity Details - Shared Activity Description
+
+**User clicks**: "Change" on "Activity description" (in Activity details card, multiple sites only)
+
+**Flow**:
+1. `activity-description?site=X&returnTo=review-site-details`
+   - **Previous shared description PRESERVED** (description shown)
+   - Button: "Save and continue" (single page edit)
+   - No Cancel link
+   
+2. Returns to `review-site-details#activity-details`
+
+**Template**: `activity-description.html`
+
+**Changes Made**:
+```nunjucks
+<div class="govuk-button-group">
+  {{ govukButton({
+    text: "Save and continue" if returnTo == 'review-site-details' else "Continue"
+  }) }}
+  {% if returnTo !== 'review-site-details' %}
+  <a class="govuk-link govuk-link--no-visited-state" href="../cancel-site-details">Cancel</a>
+  {% endif %}
+</div>
+```
+
+**How It Works**:
+- **Change journey** (`returnTo=review-site-details`): Shows "Save and continue", hides cancel link
+- **Creation journey** (no `returnTo`): Shows "Continue", shows cancel link
+
+**Route Handler**:
+- `POST activity-description-router`: Updates shared description in batch settings
+- Applies shared description to all sites in batch
+- Returns to review page
 
 ---
 
@@ -522,4 +603,287 @@ All journeys:
 - Handle edge cases gracefully
 
 The solution is clean, maintainable, and follows the existing codebase patterns.
+
+---
+
+## Implementation Pattern Guide for Other Journeys (e.g., Sample Plans)
+
+This section provides a comprehensive pattern guide that can be followed for implementing change link journeys in other parts of the application (such as the sample plans journey).
+
+### Pattern 1: Single-Page Independent Edit
+
+**Use for**: Simple one-field changes that don't affect other fields (e.g., Journey 3, 4, 5, 6, 7)
+
+**Template Pattern**:
+```nunjucks
+<div class="govuk-button-group">
+  {{ govukButton({
+    text: "Save and continue" if returnTo == 'review-site-details' else "Continue"
+  }) }}
+  {% if returnTo !== 'review-site-details' %}
+  <a class="govuk-link govuk-link--no-visited-state" href="../cancel-site-details">Cancel</a>
+  {% endif %}
+</div>
+```
+
+**Route Handler Pattern**:
+```javascript
+router.post('/' + version + section + 'your-page-router', function (req, res) {
+    const returnTo = req.query.returnTo;
+    const value = req.body['your-field'];
+    
+    // Get site/batch and update
+    const site = getCurrentSite(req.session);
+    site.yourField = value;
+    
+    // Validation...
+    
+    if (returnTo === 'review-site-details') {
+        // Independent edit - return directly to review
+        return res.redirect('review-page?site=' + site.id + '#anchor');
+    } else {
+        // Creation journey - continue to next page
+        return res.redirect('next-page');
+    }
+});
+```
+
+**When to Use**:
+- Editing a single value
+- No dependencies on other fields
+- Data is preserved (shown in form)
+
+---
+
+### Pattern 2: Multi-Page Journey Restart (Clear Subsequent Data)
+
+**Use for**: Changes that invalidate subsequent choices (e.g., Journey 1a/1b, 2a/2b)
+
+**Template Pattern for First Page**:
+```nunjucks
+{# Show previous selection for the CHANGED field #}
+{{ govukRadios({
+    value: site.yourField,
+    items: [...]
+}) }}
+
+<div class="govuk-button-group">
+  {{ govukButton({
+    text: "Continue"  {# Always Continue, not Save and continue #}
+  }) }}
+  {% if returnTo !== 'review-site-details' %}
+  <a class="govuk-link govuk-link--no-visited-state" href="../cancel-site-details">Cancel</a>
+  {% endif %}
+</div>
+```
+
+**Template Pattern for Intermediate Pages**:
+```nunjucks
+{# Clear or preserve based on journey type #}
+{# Journey 1a/1b: Clear everything (blank forms) #}
+{# Journey 2a/2b: Preserve selections, clear values #}
+
+<div class="govuk-button-group">
+  {{ govukButton({
+    text: "Continue"
+  }) }}
+  {% if returnTo !== 'review-site-details' %}
+  <a class="govuk-link govuk-link--no-visited-state" href="../cancel-site-details">Cancel</a>
+  {% endif %}
+</div>
+```
+
+**Template Pattern for Last Page**:
+```nunjucks
+{# Values cleared #}
+
+<div class="govuk-button-group">
+  {{ govukButton({
+    text: "Save and continue"  {# Last page uses Save and continue #}
+  }) }}
+  {% if returnTo !== 'review-site-details' %}
+  <a class="govuk-link govuk-link--no-visited-state" href="../cancel-site-details">Cancel</a>
+  {% endif %}
+</div>
+```
+
+**Route Handler Pattern (First POST)**:
+```javascript
+router.post('/' + version + section + 'trigger-page-router', function (req, res) {
+    const returnTo = req.query.returnTo;
+    const newSelection = req.body['your-field'];
+    
+    if (returnTo === 'review-site-details') {
+        console.log(`🔄 JOURNEY RESTART: Clearing subsequent data`);
+        
+        // Clear ALL data that depends on this change
+        site.dependentField = null;
+        site.anotherDependentField = null;
+        
+        // Clear session data
+        delete req.session.data['dependent-field'];
+        delete req.session.data['another-dependent-field'];
+        
+        // Continue through journey with returnTo parameter
+        return res.redirect('next-page?site=' + site.id + '&returnTo=review-site-details');
+    } else {
+        // Normal creation flow
+        return res.redirect('next-page?site=' + site.id);
+    }
+});
+```
+
+**Route Handler Pattern (Intermediate/Last POST)**:
+```javascript
+router.post('/' + version + section + 'intermediate-page-router', function (req, res) {
+    const returnTo = req.query.returnTo;
+    
+    // Update site data...
+    
+    if (returnTo === 'review-site-details') {
+        // Check if this is the last page in the journey
+        if (isLastPage) {
+            // Last page - return to review
+            return res.redirect('review-page?site=' + site.id + '#anchor');
+        } else {
+            // Not last page - continue journey
+            return res.redirect('next-page?site=' + site.id + '&returnTo=review-site-details');
+        }
+    } else {
+        // Normal creation flow
+        return res.redirect('next-page?site=' + site.id);
+    }
+});
+```
+
+**When to Use**:
+- Changing a field invalidates subsequent fields
+- Need to guide user through multiple pages
+- Clear dependent data but preserve context
+
+---
+
+### Pattern 3: Conditional Button Text Based on Journey Position
+
+**Use for**: Pages that can be reached from different contexts
+
+**Template Pattern**:
+```nunjucks
+{# Detect if this is an independent edit or part of a journey restart #}
+{% set isIndependentEdit = (returnTo == 'review-site-details' and site.hasAllDependentData) %}
+
+<div class="govuk-button-group">
+  {{ govukButton({
+    text: "Save and continue" if isIndependentEdit else "Continue"
+  }) }}
+  {% if returnTo !== 'review-site-details' %}
+  <a class="govuk-link govuk-link--no-visited-state" href="../cancel-site-details">Cancel</a>
+  {% endif %}
+</div>
+```
+
+**Route Handler Pattern**:
+```javascript
+router.post('/' + version + section + 'your-page-router', function (req, res) {
+    const returnTo = req.query.returnTo;
+    
+    if (returnTo === 'review-site-details') {
+        // Determine if independent edit or journey restart
+        if (site.hasDependentData) {
+            // Independent edit - return to review
+            return res.redirect('review-page#anchor');
+        } else {
+            // Journey restart - continue to next page
+            return res.redirect('next-page?returnTo=review-site-details');
+        }
+    } else {
+        // Creation flow
+        return res.redirect('next-page');
+    }
+});
+```
+
+**Example**: Journey 3 (`enter-coordinates`) - checks if `site.coordinates.width` exists to determine journey type
+
+---
+
+### Checklist for Implementing Change Links
+
+**For Each Page in Your Journey**:
+
+- [ ] **Template Updates**:
+  - [ ] Add conditional button text: `"Save and continue" if returnTo == 'review-site-details' else "Continue"`
+  - [ ] Hide cancel link: `{% if returnTo !== 'review-site-details' %}`
+  - [ ] Ensure form action includes: `{% if returnTo %}&returnTo={{ returnTo }}{% endif %}`
+  - [ ] For selection fields: Determine if showing previous selection or cleared based on journey type
+
+- [ ] **Route Handler Updates (GET)**:
+  - [ ] Accept `returnTo` query parameter
+  - [ ] Pass `returnTo` to template
+  - [ ] Load appropriate data (from site object for changes, from session for creation)
+  - [ ] Track review state if needed: `updateReviewState(req.session, 'editing')`
+
+- [ ] **Route Handler Updates (POST)**:
+  - [ ] Accept `returnTo` query parameter
+  - [ ] Determine journey type (independent edit vs journey restart)
+  - [ ] Clear dependent data for journey restarts
+  - [ ] Clear session data to prevent stale values
+  - [ ] Redirect appropriately:
+    - Journey restart: `next-page?returnTo=review-site-details`
+    - Independent edit: `review-page#anchor`
+    - Creation: `next-page`
+
+- [ ] **Testing**:
+  - [ ] Test change link from review page
+  - [ ] Verify button text is correct
+  - [ ] Verify cancel link is hidden
+  - [ ] Verify data clearing/preservation
+  - [ ] Verify return to review page works
+  - [ ] Test browser back button
+  - [ ] Test validation errors
+  - [ ] Test initial creation journey still works
+
+---
+
+### Common Pitfalls to Avoid
+
+1. **Reading stale session data**: Always read from site/batch object when `returnTo=review-site-details`
+2. **Not clearing session data**: Clear session keys when clearing site data, otherwise forms show old values
+3. **Wrong button text**: Last page uses "Save and continue", intermediate pages use "Continue"
+4. **Forgetting cancel link logic**: Must hide for ALL change journeys
+5. **Not passing returnTo through journey**: Every redirect in a multi-page journey must preserve `returnTo` parameter
+6. **Clearing too much data**: Journey 2a/2b preserves system selection, only clears values
+7. **Not using anchors**: When returning to review, use anchor links to jump to updated section
+
+---
+
+### Example Application: Sample Plans Journey
+
+If implementing change links for sample plans (similar structure to manual entry):
+
+1. **Identify all change links** on the sample plans review page
+2. **Categorize each journey**:
+   - Single-page independent edits (like Journey 3, 4, 5, 6, 7)
+   - Multi-page journey restarts (like Journey 1a/1b, 2a/2b)
+3. **Apply appropriate pattern** from above
+4. **Update templates** with button text and cancel link logic
+5. **Update route handlers** with journey detection and data clearing
+6. **Test thoroughly** using the testing checklist
+
+The patterns are consistent across different parts of the application - just adapt the field names, page names, and data structures to match your specific journey.
+
+---
+
+## Summary
+
+This implementation provides a complete solution for all change link journeys in the manual entry flow, with comprehensive documentation that can be used as a reference for implementing similar functionality in other parts of the application (such as sample plans).
+
+**Key Principles**:
+1. **Single-page edits**: "Save and continue" button, no cancel link, preserve data
+2. **Multi-page journey restarts**: "Continue" buttons (except last page), no cancel links, clear dependent data
+3. **Always pass `returnTo` parameter** through multi-page journeys
+4. **Read from site/batch object** when changing from review (not session data)
+5. **Clear session data** when clearing site data to prevent stale form values
+
+The solution is clean, maintainable, follows existing codebase patterns, and is fully documented for future reference.
 

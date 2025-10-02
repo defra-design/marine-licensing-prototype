@@ -111,9 +111,11 @@ End date
 
       <div class="govuk-button-group">
         {{ govukButton({
-          text: "Continue"
+          text: "Save and continue" if returnTo == 'review-site-details' else "Continue"
         }) }}
+        {% if returnTo !== 'review-site-details' %}
         <a class="govuk-link govuk-link--no-visited-state" href="../cancel-site-details">Cancel</a>
+        {% endif %}
       </div>
 
         </form>
