@@ -3030,8 +3030,48 @@ router.get('/' + version + section + 'cancel-site-details', function (req, res) 
             break;
             
         case 'creation-review':
-            // State 2: Creation review pages - return to review page without clearing data
-            logCancelState(req.session, 'CREATION-REVIEW STATE: Returning to review page without clearing data');
+            // State 2: Creation review pages - return to review page
+            logCancelState(req.session, 'CREATION-REVIEW STATE: Checking if canceling new site creation');
+            
+            // Check if we're canceling creation of a new subsequent site
+            const creatingNewSiteNumber = req.session.data['creatingNewSiteNumber'];
+            
+            if (creatingNewSiteNumber) {
+                // User is canceling creation of a new subsequent site
+                console.log(`🗑️ CANCEL: Removing incomplete site ${creatingNewSiteNumber}`);
+                
+                const currentBatch = getCurrentBatch(req.session);
+                if (currentBatch) {
+                    // Find and remove the incomplete site
+                    const siteIndex = currentBatch.sites.findIndex(
+                        s => s.globalNumber === parseInt(creatingNewSiteNumber)
+                    );
+                    
+                    if (siteIndex !== -1) {
+                        console.log(`🗑️ Found incomplete site at index ${siteIndex}, removing...`);
+                        currentBatch.sites.splice(siteIndex, 1);
+                        
+                        // Decrement global site counter
+                        if (req.session.data['globalSiteCounter']) {
+                            req.session.data['globalSiteCounter']--;
+                        }
+                        
+                        // Rebuild global sites array
+                        if (req.session.data['siteBatches']) {
+                            req.session.data['sites'] = req.session.data['siteBatches']
+                                .flatMap(batch => batch.sites);
+                        }
+                        
+                        console.log(`✅ Removed site ${creatingNewSiteNumber}, counter now: ${req.session.data['globalSiteCounter']}`);
+                    } else {
+                        console.log(`⚠️ Site ${creatingNewSiteNumber} not found in batch (may not have been added yet)`);
+                    }
+                }
+                
+                // Clear the flag
+                delete req.session.data['creatingNewSiteNumber'];
+            }
+            
             // Clear editing flag to indicate user is back on review page
             req.session.data['isEditingFromReview'] = false;
             
@@ -3045,9 +3085,15 @@ router.get('/' + version + section + 'cancel-site-details', function (req, res) 
             break;
             
         case 'review-not-saved':
-            // State 3: Review page not saved - show cancel warning page
-            logCancelState(req.session, 'REVIEW-NOT-SAVED STATE: Showing cancel warning page');
-            res.redirect('cancel');
+            // REMOVED: Warning page no longer needed
+            // This case occurred when user used back button after reaching review page
+            // Now we treat this the same as 'creation' - clear and return to task list
+            logCancelState(req.session, 'REVIEW-NOT-SAVED STATE: Treating as creation, clearing batch and returning to task list');
+            clearCurrentBatchSafely(req.session);
+            req.session.data['reviewPageVisited'] = false;
+            req.session.data['reviewPageSaved'] = false;
+            req.session.data['isEditingFromReview'] = false;
+            res.redirect('task-list');
             break;
             
         case 'review-saved':

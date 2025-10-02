@@ -2037,6 +2037,11 @@ router.post('/' + version + section + 'manual-entry/site-width-router', function
         res.redirect('/' + version + section + 'manual-entry/review-site-details?site=' + site.globalNumber + '#site-' + site.globalNumber + '-details');
     } else {
         // Completing site creation - load review page normally at top
+        // Clear the creating new site flag since site is now complete
+        if (req.session.data['creatingNewSiteNumber'] === site.globalNumber) {
+            console.log(`✅ COMPLETED: Site ${site.globalNumber} creation finished, clearing flag`);
+            delete req.session.data['creatingNewSiteNumber'];
+        }
         res.redirect('/' + version + section + 'manual-entry/review-site-details');
     }
 });
@@ -2321,6 +2326,12 @@ router.post('/' + version + section + 'manual-entry/review-site-details-router',
     // Mark the task as completed and clear the current batch ID so we can start fresh next time
     req.session.data['siteDetailsSaved'] = true;
     
+    // Clear the creating new site flag since batch is being saved to task list
+    if (req.session.data['creatingNewSiteNumber']) {
+        console.log(`✅ SAVED: Clearing creatingNewSiteNumber flag (was ${req.session.data['creatingNewSiteNumber']})`);
+        delete req.session.data['creatingNewSiteNumber'];
+    }
+    
     // Track that review page has been saved
     updateReviewState(req.session, 'saved');
     logCancelState(req.session, 'manual entry - review-site-details POST - sites saved');
@@ -2352,6 +2363,11 @@ router.post('/' + version + section + 'manual-entry/review-site-details-router',
 router.get('/' + version + section + 'manual-entry/add-next-site-router', function (req, res) {
     // Get next global site number
     const nextGlobalSiteNumber = (req.session.data['globalSiteCounter'] || 0) + 1;
+    
+    // TRACK: Flag that we're creating this new subsequent site
+    // This allows cancel handler to remove incomplete site without affecting completed sites
+    req.session.data['creatingNewSiteNumber'] = nextGlobalSiteNumber;
+    console.log(`🆕 TRACKING: Starting creation of new site ${nextGlobalSiteNumber}`);
     
     // EDGE CASE FIX: If batchId is provided (e.g., from back button after saving),
     // reactivate that batch so the new site gets added to it
@@ -2501,6 +2517,11 @@ router.post('/' + version + section + 'manual-entry/enter-multiple-coordinates-r
         res.redirect('/' + version + section + 'manual-entry/review-site-details?site=' + site.globalNumber + '#site-' + site.globalNumber + '-details');
     } else {
         // Completing site creation - load review page normally at top
+        // Clear the creating new site flag since site is now complete
+        if (req.session.data['creatingNewSiteNumber'] === site.globalNumber) {
+            console.log(`✅ COMPLETED: Site ${site.globalNumber} creation finished, clearing flag`);
+            delete req.session.data['creatingNewSiteNumber'];
+        }
         res.redirect('/' + version + section + 'manual-entry/review-site-details');
     }
 });
