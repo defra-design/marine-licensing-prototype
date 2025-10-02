@@ -147,7 +147,7 @@ Review site details
                 </h2>
                 <ul class="govuk-summary-card__actions">
                     <li class="govuk-summary-card__action">
-                        <a class="govuk-link" href="delete-all-sites">
+                        <a class="govuk-link govuk-link--no-visited-state" href="delete-all-sites">
                             Delete all site details<span class="govuk-visually-hidden"></span>
                         </a>
                     </li>
@@ -215,7 +215,7 @@ Review site details
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="same-activity-dates?returnTo=review-site-details#activity-details" class="govuk-link">
+                            <a href="same-activity-dates?returnTo=review-site-details#activity-details" class="govuk-link govuk-link--no-visited-state">
                                 Change<span class="govuk-visually-hidden"> activity dates setting</span>
                             </a>
                         </dd>
@@ -237,7 +237,7 @@ Review site details
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="activity-dates?returnTo=review-site-details#activity-details" class="govuk-link">
+                            <a href="activity-dates?returnTo=review-site-details#activity-details" class="govuk-link govuk-link--no-visited-state">
                                 {% if (currentBatch and currentBatch.settings and currentBatch.settings.sharedStartDate and currentBatch.settings.sharedStartDate.day) or data['exemption-start-date-date-input-day'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> activity dates</span>
                             </a>
                         </dd>
@@ -258,7 +258,7 @@ Review site details
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="same-activity-description?returnTo=review-site-details#activity-details" class="govuk-link">
+                            <a href="same-activity-description?returnTo=review-site-details#activity-details" class="govuk-link govuk-link--no-visited-state">
                                 Change<span class="govuk-visually-hidden"> activity description setting</span>
                             </a>
                         </dd>
@@ -280,7 +280,7 @@ Review site details
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="activity-details?returnTo=review-site-details#activity-details" class="govuk-link">
+                            <a href="activity-details?returnTo=review-site-details#activity-details" class="govuk-link govuk-link--no-visited-state">
                                 {% if (currentBatch and currentBatch.settings and currentBatch.settings.sharedDescription) or data['exemption-activity-details-text-area'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> Activity description</span>
                             </a>
                         </dd>
@@ -321,7 +321,7 @@ Review site details
                                     {% endif %}
                                 </dd>
                                 <dd class="govuk-summary-list__actions">
-                                    <a href="site-name?site={{ siteIndex }}&return=site-{{ siteIndex }}-details#site-{{ siteIndex }}-details" class="govuk-link">
+                                    <a href="site-name?site={{ siteIndex }}&return=site-{{ siteIndex }}-details#site-{{ siteIndex }}-details" class="govuk-link govuk-link--no-visited-state">
                                         {% if site.name %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> site name</span>
                                     </a>
                                 </dd>
@@ -342,7 +342,7 @@ Review site details
                                         {% endif %}
                                     </dd>
                                     <dd class="govuk-summary-list__actions">
-                                        <a href="site-activity-dates?site={{ siteIndex }}&return=site-{{ siteIndex }}-details#site-{{ siteIndex }}-details" class="govuk-link">
+                                        <a href="site-activity-dates?site={{ siteIndex }}&return=site-{{ siteIndex }}-details#site-{{ siteIndex }}-details" class="govuk-link govuk-link--no-visited-state">
                                             {% if site.startDate and site.startDate.day %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> Activity dates</span>
                                         </a>
                                     </dd>
@@ -360,7 +360,7 @@ Review site details
                                         {% endif %}
                                     </dd>
                                     <dd class="govuk-summary-list__actions">
-                                        <a href="site-activity-description?site={{ siteIndex }}&return=site-{{ siteIndex }}-details#site-{{ siteIndex }}-details" class="govuk-link">
+                                        <a href="site-activity-description?site={{ siteIndex }}&return=site-{{ siteIndex }}-details#site-{{ siteIndex }}-details" class="govuk-link govuk-link--no-visited-state">
                                             {% if site.description %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> Activity description</span>
                                         </a>
                                     </dd>
@@ -381,7 +381,7 @@ Review site details
                                         {% endif %}
                                     </dd>
                                     <dd class="govuk-summary-list__actions">
-                                        <a href="site-activity-dates?site={{ siteIndex }}&return=site-{{ siteIndex }}-details#site-{{ siteIndex }}-details" class="govuk-link">
+                                        <a href="site-activity-dates?site={{ siteIndex }}&return=site-{{ siteIndex }}-details#site-{{ siteIndex }}-details" class="govuk-link govuk-link--no-visited-state">
                                             {% if site.startDate and site.startDate.day %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> Activity dates</span>
                                         </a>
                                     </dd>
@@ -402,7 +402,7 @@ Review site details
                                         {% endif %}
                                     </dd>
                                     <dd class="govuk-summary-list__actions">
-                                        <a href="site-activity-description?site={{ siteIndex }}&return=site-{{ siteIndex }}-details#site-{{ siteIndex }}-details" class="govuk-link">
+                                        <a href="site-activity-description?site={{ siteIndex }}&return=site-{{ siteIndex }}-details#site-{{ siteIndex }}-details" class="govuk-link govuk-link--no-visited-state">
                                             {% if site.description %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> Activity description</span>
                                         </a>
                                     </dd>

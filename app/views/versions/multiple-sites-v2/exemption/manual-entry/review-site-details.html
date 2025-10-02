@@ -144,7 +144,7 @@ Review site details
                 </h2>
                 <ul class="govuk-summary-card__actions">
                     <li class="govuk-summary-card__action">
-                        <a class="govuk-link" href="../delete-all-sites">
+                        <a class="govuk-link govuk-link--no-visited-state" href="../delete-all-sites">
                             Delete all site details<span class="govuk-visually-hidden"></span>
                         </a>
                     </li>
@@ -200,7 +200,7 @@ Review site details
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="same-activity-dates?returnTo=review-site-details#activity-details" class="govuk-link">
+                            <a href="same-activity-dates?returnTo=review-site-details#activity-details" class="govuk-link govuk-link--no-visited-state">
                                 {% if (currentBatch and currentBatch.settings and currentBatch.settings.sameActivityDates) or data['manual-same-activity-dates'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> activity dates setting</span>
                             </a>
                         </dd>
@@ -223,7 +223,7 @@ Review site details
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="activity-dates?returnTo=review-site-details#activity-details" class="govuk-link">
+                            <a href="activity-dates?returnTo=review-site-details#activity-details" class="govuk-link govuk-link--no-visited-state">
                                 {% if (currentBatch and currentBatch.settings and currentBatch.settings.sharedStartDate and currentBatch.settings.sharedStartDate.day) or (sites and sites[0] and sites[0].startDate and sites[0].startDate.day) %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> activity dates</span>
                             </a>
                         </dd>
@@ -244,7 +244,7 @@ Review site details
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="same-activity-description?returnTo=review-site-details#activity-details" class="govuk-link">
+                            <a href="same-activity-description?returnTo=review-site-details#activity-details" class="govuk-link govuk-link--no-visited-state">
                                 {% if (currentBatch and currentBatch.settings and currentBatch.settings.sameActivityDescription) or data['manual-same-activity-description'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> activity description setting</span>
                             </a>
                         </dd>
@@ -267,7 +267,7 @@ Review site details
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="activity-description?returnTo=review-site-details#activity-details" class="govuk-link">
+                            <a href="activity-description?returnTo=review-site-details#activity-details" class="govuk-link govuk-link--no-visited-state">
                                 {% if (currentBatch and currentBatch.settings and currentBatch.settings.sharedDescription) or (sites and sites[0] and sites[0].description) %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> activity description</span>
                             </a>
                         </dd>
@@ -295,7 +295,7 @@ Review site details
                         </h2>
                         <ul class="govuk-summary-card__actions">
                             <li class="govuk-summary-card__action">
-                                <a class="govuk-link" href="../delete-site?site={{ siteIndex }}&return=manual-entry-review">
+                                <a class="govuk-link govuk-link--no-visited-state" href="../delete-site?site={{ siteIndex }}&return=manual-entry-review">
                                     Delete site<span class="govuk-visually-hidden"> {{ siteIndex }}</span>
                                 </a>
                             </li>
@@ -317,7 +317,7 @@ Review site details
                                     {% endif %}
                                 </dd>
                                 <dd class="govuk-summary-list__actions">
-                                    <a href="site-name?site={{ siteIndex }}&returnTo=review-site-details#site-{{ siteIndex }}-details" class="govuk-link">
+                                    <a href="site-name?site={{ siteIndex }}&returnTo=review-site-details#site-{{ siteIndex }}-details" class="govuk-link govuk-link--no-visited-state">
                                         {% if site.name %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> site name</span>
                                     </a>
                                 </dd>
@@ -346,7 +346,7 @@ Review site details
                                     {% endif %}
                                 </dd>
                                 <dd class="govuk-summary-list__actions">
-                                    <a href="individual-site-activity-dates?site={{ siteIndex }}&returnTo=review-site-details#site-{{ siteIndex }}-details" class="govuk-link">
+                                    <a href="individual-site-activity-dates?site={{ siteIndex }}&returnTo=review-site-details#site-{{ siteIndex }}-details" class="govuk-link govuk-link--no-visited-state">
                                         {% if site.startDate and site.startDate.day %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> activity dates</span>
                                     </a>
                                 </dd>
@@ -375,7 +375,7 @@ Review site details
                                     {% endif %}
                                 </dd>
                                 <dd class="govuk-summary-list__actions">
-                                    <a href="individual-site-activity-description?site={{ siteIndex }}&returnTo=review-site-details#site-{{ siteIndex }}-details" class="govuk-link">
+                                    <a href="individual-site-activity-description?site={{ siteIndex }}&returnTo=review-site-details#site-{{ siteIndex }}-details" class="govuk-link govuk-link--no-visited-state">
                                         {% if site.description %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> activity description</span>
                                     </a>
                                 </dd>
@@ -400,7 +400,7 @@ Review site details
                                     {% endif %}
                                 </dd>
                                 <dd class="govuk-summary-list__actions">
-                                    <a href="how-do-you-want-to-enter-the-coordinates?site={{ siteIndex }}&returnTo=review-site-details#site-{{ siteIndex }}-details" class="govuk-link">
+                                    <a href="how-do-you-want-to-enter-the-coordinates?site={{ siteIndex }}&returnTo=review-site-details#site-{{ siteIndex }}-details" class="govuk-link govuk-link--no-visited-state">
                                         Change<span class="govuk-visually-hidden"> single or multiple sets of coordinates</span>
                                     </a>
                                 </dd>
@@ -423,7 +423,7 @@ Review site details
                                     {% endif %}
                                 </dd>
                                 <dd class="govuk-summary-list__actions">
-                                    <a href="which-coordinate-system?site={{ siteIndex }}&returnTo=review-site-details#site-{{ siteIndex }}-details" class="govuk-link">
+                                    <a href="which-coordinate-system?site={{ siteIndex }}&returnTo=review-site-details#site-{{ siteIndex }}-details" class="govuk-link govuk-link--no-visited-state">
                                         Change<span class="govuk-visually-hidden"> coordinate system</span>
                                     </a>
                                 </dd>
@@ -443,7 +443,7 @@ Review site details
                                     {% endif %}
                                 </dd>
                                 <dd class="govuk-summary-list__actions">
-                                    <a href="enter-coordinates?site={{ siteIndex }}&returnTo=review-site-details#site-{{ siteIndex }}-details" class="govuk-link">
+                                    <a href="enter-coordinates?site={{ siteIndex }}&returnTo=review-site-details#site-{{ siteIndex }}-details" class="govuk-link govuk-link--no-visited-state">
                                         {% if site.coordinates.center and site.coordinates.center.latitude and site.coordinates.center.longitude %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> coordinates at centre of site</span>
                                     </a>
                                 </dd>
@@ -461,7 +461,7 @@ Review site details
                                     {% endif %}
                                 </dd>
                                 <dd class="govuk-summary-list__actions">
-                                    <a href="site-width?site={{ siteIndex }}&returnTo=review-site-details#site-{{ siteIndex }}-details" class="govuk-link">
+                                    <a href="site-width?site={{ siteIndex }}&returnTo=review-site-details#site-{{ siteIndex }}-details" class="govuk-link govuk-link--no-visited-state">
                                         {% if site.coordinates.width %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> width of circular site</span>
                                     </a>
                                 </dd>
@@ -483,7 +483,7 @@ Review site details
                                     </dd>
                                     <dd class="govuk-summary-list__actions">
                                         {% if loop.index == 1 %}
-                                            <a href="enter-multiple-coordinates?site={{ siteIndex }}&returnTo=review-site-details#site-{{ siteIndex }}-details" class="govuk-link">
+                                            <a href="enter-multiple-coordinates?site={{ siteIndex }}&returnTo=review-site-details#site-{{ siteIndex }}-details" class="govuk-link govuk-link--no-visited-state">
                                                 Change<span class="govuk-visually-hidden"> coordinates</span>
                                             </a>
                                         {% endif %}
@@ -500,7 +500,7 @@ Review site details
                                     <span class="govuk-tag govuk-tag--red">Incomplete</span>
                                 </dd>
                                 <dd class="govuk-summary-list__actions">
-                                    <a href="enter-multiple-coordinates?site={{ siteIndex }}&returnTo=review-site-details#site-{{ siteIndex }}-details" class="govuk-link">
+                                    <a href="enter-multiple-coordinates?site={{ siteIndex }}&returnTo=review-site-details#site-{{ siteIndex }}-details" class="govuk-link govuk-link--no-visited-state">
                                         Add<span class="govuk-visually-hidden"> coordinates</span>
                                     </a>
                                 </dd>
