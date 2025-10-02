@@ -453,6 +453,36 @@ module.exports = function (router) {
   });
 
   /////////////////////////////////////////////////////////
+  //////// Dredge site name page
+  /////////////////////////////////////////////////////////
+  router.get(`/versions/${version}/${section}/${subsection}/dredge-site-name`, function (req, res) {
+    req.session.data['samplePlansSection'] = section;
+    res.render(`versions/${version}/${section}/${subsection}/dredge-site-name`);
+  });
+
+  // Dredge site name router (POST)
+  router.post(`/versions/${version}/${section}/${subsection}/dredge-site-name-router`, function (req, res) {
+    // Clear any previous errors
+    req.session.data['dredging-site-1-name-errorthispage'] = "false";
+
+    let hasErrors = false;
+
+    // Validate site name
+    if (!req.session.data['dredging-site-1-name'] || req.session.data['dredging-site-1-name'].trim() === '') {
+      req.session.data['dredging-site-1-name-errorthispage'] = "true";
+      hasErrors = true;
+    }
+
+    if (hasErrors) {
+      res.redirect('dredge-site-name');
+      return;
+    }
+
+    // If no errors, redirect to review page
+    res.redirect('review-dredging-site-details');
+  });
+
+  /////////////////////////////////////////////////////////
   //////// Maximum dredge volume page
   /////////////////////////////////////////////////////////
   router.get(`/versions/${version}/${section}/${subsection}/maximum-dredge-volume`, function (req, res) {
