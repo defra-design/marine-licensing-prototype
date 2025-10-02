@@ -85,7 +85,9 @@ Is the activity description the same for every site?
         {{ govukButton({
           text: "Continue"
         }) }}
+        {% if returnTo !== 'review-site-details' %}
         <a class="govuk-link govuk-link--no-visited-state" href="cancel-site-details">Cancel</a>
+        {% endif %}
     </div>
 
         </form>

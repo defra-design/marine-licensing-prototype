@@ -2454,13 +2454,17 @@ router.post('/' + version + section + 'same-activity-dates-router', function (re
 });
 
 router.get('/' + version + section + 'same-activity-dates', function (req, res) {
+    const returnTo = req.query.returnTo;
+    
     // Check if we're returning from review-site-details
-    if (req.query.returnTo === 'review-site-details') {
+    if (returnTo === 'review-site-details') {
         req.session.data['fromReviewSiteDetails'] = 'true';
         updateReviewState(req.session, 'editing');
     }
     
-    res.render(version + section + 'same-activity-dates');
+    res.render(version + section + 'same-activity-dates', {
+        returnTo: returnTo
+    });
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -2544,13 +2548,17 @@ router.post('/' + version + section + 'same-activity-description-router', functi
 });
 
 router.get('/' + version + section + 'same-activity-description', function (req, res) {
+    const returnTo = req.query.returnTo;
+    
     // Check if we're returning from review-site-details
-    if (req.query.returnTo === 'review-site-details') {
+    if (returnTo === 'review-site-details') {
         req.session.data['fromReviewSiteDetails'] = 'true';
         updateReviewState(req.session, 'editing');
     }
     
-    res.render(version + section + 'same-activity-description');
+    res.render(version + section + 'same-activity-description', {
+        returnTo: returnTo
+    });
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////
