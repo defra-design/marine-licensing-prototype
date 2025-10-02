@@ -833,6 +833,7 @@ router.post('/' + version + section + 'manual-entry/same-activity-dates-router',
     if (returnTo === 'review-site-details') {
         // If changing from Yes to No, copy shared dates to individual sites
         if (selection === "No" && previousSelection === "Yes") {
+            console.log('🔄 JOURNEY 8: Changing from shared dates to individual dates');
             // Copy shared dates to all batch sites
             const sharedStartDate = currentBatch.settings.sharedStartDate;
             const sharedEndDate = currentBatch.settings.sharedEndDate;
@@ -847,25 +848,22 @@ router.post('/' + version + section + 'manual-entry/same-activity-dates-router',
             // Clear shared dates from batch settings after copying
             currentBatch.settings.sharedStartDate = {};
             currentBatch.settings.sharedEndDate = {};
+            
+            // Return to review page
+            return res.redirect('/' + version + section + 'manual-entry/review-site-details');
         }
-        // If changing from No to Yes, use first site's data as shared data
+        // If changing from No to Yes, ask for the shared dates (2-page journey)
         else if (selection === "Yes" && previousSelection === "No") {
-            // Use first site's dates as shared dates
-            if (currentBatch.sites && currentBatch.sites.length > 0) {
-                const firstSite = currentBatch.sites[0];
-                if (firstSite.startDate && firstSite.startDate.day) {
-                    currentBatch.settings.sharedStartDate = { ...firstSite.startDate };
-                    currentBatch.settings.sharedEndDate = { ...firstSite.endDate };
-                    
-                    // Apply shared dates to all sites
-                    currentBatch.sites.forEach(site => {
-                        site.startDate = { ...currentBatch.settings.sharedStartDate };
-                        site.endDate = { ...currentBatch.settings.sharedEndDate };
-                    });
-                }
-            }
+            console.log('🔄 JOURNEY 8: Changing from individual dates to shared dates - redirecting to ask for dates');
+            // Get first site number for URL
+            const siteNumber = currentBatch.sites.length > 0 ? currentBatch.sites[0].globalNumber : 1;
+            
+            // Redirect to activity-dates page to gather the shared dates
+            return res.redirect('/' + version + section + 'manual-entry/activity-dates?site=' + siteNumber + '&returnTo=review-site-details');
         }
         
+        // No change in selection - just return to review
+        console.log('🔄 No change in selection - returning to review');
         return res.redirect('/' + version + section + 'manual-entry/review-site-details');
     }
 
@@ -1198,6 +1196,7 @@ router.post('/' + version + section + 'manual-entry/same-activity-description-ro
     if (returnTo === 'review-site-details') {
         // If changing from Yes to No, copy shared description to individual sites
         if (selection === "No" && previousSelection === "Yes") {
+            console.log('🔄 JOURNEY 9: Changing from shared description to individual descriptions');
             // Copy shared description to all batch sites
             const sharedDescription = currentBatch.settings.sharedDescription;
             
@@ -1209,23 +1208,22 @@ router.post('/' + version + section + 'manual-entry/same-activity-description-ro
             
             // Clear shared description from batch settings after copying
             currentBatch.settings.sharedDescription = '';
+            
+            // Return to review page
+            return res.redirect('/' + version + section + 'manual-entry/review-site-details');
         }
-        // If changing from No to Yes, use first site's description as shared description
+        // If changing from No to Yes, ask for the shared description (2-page journey)
         else if (selection === "Yes" && previousSelection === "No") {
-            // Use first site's description as shared description
-            if (currentBatch.sites && currentBatch.sites.length > 0) {
-                const firstSite = currentBatch.sites[0];
-                if (firstSite.description) {
-                    currentBatch.settings.sharedDescription = firstSite.description;
-                    
-                    // Apply shared description to all sites
-                    currentBatch.sites.forEach(site => {
-                        site.description = currentBatch.settings.sharedDescription;
-                    });
-                }
-            }
+            console.log('🔄 JOURNEY 9: Changing from individual descriptions to shared description - redirecting to ask for description');
+            // Get first site number for URL
+            const siteNumber = currentBatch.sites.length > 0 ? currentBatch.sites[0].globalNumber : 1;
+            
+            // Redirect to activity-description page to gather the shared description
+            return res.redirect('/' + version + section + 'manual-entry/activity-description?site=' + siteNumber + '&returnTo=review-site-details');
         }
         
+        // No change in selection - just return to review
+        console.log('🔄 No change in selection - returning to review');
         return res.redirect('/' + version + section + 'manual-entry/review-site-details');
     }
 

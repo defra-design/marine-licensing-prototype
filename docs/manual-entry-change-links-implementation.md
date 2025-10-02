@@ -32,6 +32,8 @@ This document describes the implementation of all change link journeys from the 
 - ✅ `enter-multiple-coordinates.html`
 - ✅ `activity-dates.html`
 - ✅ `activity-description.html`
+- ✅ `same-activity-dates.html`
+- ✅ `same-activity-description.html`
 
 ## Journey Types - Quick Reference
 
@@ -46,10 +48,12 @@ This document describes the implementation of all change link journeys from the 
 | **5** | "Start and end points" | N/A | Save and continue | Hidden |
 | **6** | "Activity dates" (shared) | N/A | Save and continue | Hidden |
 | **7** | "Activity description" (shared) | N/A | Save and continue | Hidden |
+| **8** | "Same dates?" → Yes | N/A | Continue → Save and continue | Hidden |
+| **9** | "Same description?" → Yes | N/A | Continue → Save and continue | Hidden |
 
 ### Full Journey Details
 
-There are **5 distinct journey types** that can be initiated from change links on the review page:
+There are **9 distinct journey types** that can be initiated from change links on the review page:
 
 ### Journey Restart Types (Clear Subsequent Data)
 
@@ -65,6 +69,15 @@ These journeys edit a single value and return directly to review:
 - **Journey 3**: Changing "Coordinates at centre of site" (circular sites)
 - **Journey 4**: Changing "Width of circular site"
 - **Journey 5**: Changing "Start and end points" (polygon sites)
+- **Journey 6**: Changing "Activity dates" (when already shared)
+- **Journey 7**: Changing "Activity description" (when already shared)
+
+### Two-Page Journey Types (Decision + Data Entry)
+
+These journeys change a decision, then gather the required data:
+
+- **Journey 8**: Changing "Are the activity dates the same?" from "No" to "Yes"
+- **Journey 9**: Changing "Is the activity description the same?" from "No" to "Yes"
 
 ---
 
@@ -309,6 +322,142 @@ These journeys edit a single value and return directly to review:
 - `POST activity-description-router`: Updates shared description in batch settings
 - Applies shared description to all sites in batch
 - Returns to review page
+
+---
+
+## Journey 8: Activity Details - Change to Shared Dates (2-Page Journey)
+
+**User clicks**: "Change" on "Are the activity dates the same for every site?" (currently "No")
+
+**Scenario**: User is changing from individual dates to shared dates
+
+**Flow**:
+1. `same-activity-dates?returnTo=review-site-details`
+   - Shows previous selection (currently "No")
+   - User changes to "Yes"
+   - Button: "Continue"
+   - No Cancel link
+   
+2. `activity-dates?site=X&returnTo=review-site-details`
+   - Shows shared date inputs (blank or previous if existed)
+   - Button: "Save and continue" (last page)
+   - No Cancel link
+   
+3. Returns to `review-site-details#activity-details`
+
+**Template**: `same-activity-dates.html`
+
+**Changes Made**:
+```nunjucks
+<div class="govuk-button-group">
+  {{ govukButton({
+    text: "Continue"  {# Always Continue on this page #}
+  }) }}
+  {% if returnTo !== 'review-site-details' %}
+  <a class="govuk-link govuk-link--no-visited-state" href="../cancel-site-details">Cancel</a>
+  {% endif %}
+</div>
+```
+
+**How It Works**:
+- **Change journey** (`returnTo=review-site-details`): Shows "Continue", hides cancel link
+- **Creation journey** (no `returnTo`): Shows "Continue", shows cancel link
+- This is the first page of a 2-page journey
+
+**Route Handler** (`POST same-activity-dates-router`):
+```javascript
+if (returnTo === 'review-site-details') {
+    // Changing from shared (Yes) to individual (No)
+    if (selection === "No" && previousSelection === "Yes") {
+        // Copy shared dates to all sites
+        // Clear shared dates from batch settings
+        return res.redirect('review-site-details');
+    }
+    // Changing from individual (No) to shared (Yes) - 2-page journey
+    else if (selection === "Yes" && previousSelection === "No") {
+        // Redirect to activity-dates to gather shared dates
+        return res.redirect('activity-dates?site=X&returnTo=review-site-details');
+    }
+    // No change - return to review
+    return res.redirect('review-site-details');
+}
+```
+
+**Key Logic**: When changing from "No" to "Yes", must redirect to data entry page instead of returning directly to review
+
+**Why This Pattern**:
+When changing to "Yes" (shared dates), we need to ask what those dates are, so it's a 2-page journey:
+1. Page 1 (this page): User indicates dates should be shared
+2. Page 2 (`activity-dates`): User enters the shared dates
+3. Return to review
+
+---
+
+## Journey 9: Activity Details - Change to Shared Description (2-Page Journey)
+
+**User clicks**: "Change" on "Is the activity description the same for every site?" (currently "No")
+
+**Scenario**: User is changing from individual descriptions to shared description
+
+**Flow**:
+1. `same-activity-description?returnTo=review-site-details`
+   - Shows previous selection (currently "No")
+   - User changes to "Yes"
+   - Button: "Continue"
+   - No Cancel link
+   
+2. `activity-description?site=X&returnTo=review-site-details`
+   - Shows shared description textarea (blank or previous if existed)
+   - Button: "Save and continue" (last page)
+   - No Cancel link
+   
+3. Returns to `review-site-details#activity-details`
+
+**Template**: `same-activity-description.html`
+
+**Changes Made**:
+```nunjucks
+<div class="govuk-button-group">
+  {{ govukButton({
+    text: "Continue"  {# Always Continue on this page #}
+  }) }}
+  {% if returnTo !== 'review-site-details' %}
+  <a class="govuk-link govuk-link--no-visited-state" href="../cancel-site-details">Cancel</a>
+  {% endif %}
+</div>
+```
+
+**How It Works**:
+- **Change journey** (`returnTo=review-site-details`): Shows "Continue", hides cancel link
+- **Creation journey** (no `returnTo`): Shows "Continue", shows cancel link
+- This is the first page of a 2-page journey
+
+**Route Handler** (`POST same-activity-description-router`):
+```javascript
+if (returnTo === 'review-site-details') {
+    // Changing from shared (Yes) to individual (No)
+    if (selection === "No" && previousSelection === "Yes") {
+        // Copy shared description to all sites
+        // Clear shared description from batch settings
+        return res.redirect('review-site-details');
+    }
+    // Changing from individual (No) to shared (Yes) - 2-page journey
+    else if (selection === "Yes" && previousSelection === "No") {
+        // Redirect to activity-description to gather shared description
+        return res.redirect('activity-description?site=X&returnTo=review-site-details');
+    }
+    // No change - return to review
+    return res.redirect('review-site-details');
+}
+```
+
+**Key Logic**: When changing from "No" to "Yes", must redirect to data entry page instead of returning directly to review
+
+**Why This Pattern**:
+When changing to "Yes" (shared description), we need to ask what that description is, so it's a 2-page journey:
+1. Page 1 (this page): User indicates description should be shared
+2. Page 2 (`activity-description`): User enters the shared description
+3. Return to review
 
 ---
 
@@ -659,6 +808,8 @@ router.post('/' + version + section + 'your-page-router', function (req, res) {
 
 **Use for**: Changes that invalidate subsequent choices (e.g., Journey 1a/1b, 2a/2b)
 
+**Also applies to**: Two-page decision journeys where changing a "Yes/No" decision requires gathering data (e.g., Journey 8, 9)
+
 **Template Pattern for First Page**:
 ```nunjucks
 {# Show previous selection for the CHANGED field #}
@@ -854,6 +1005,7 @@ router.post('/' + version + section + 'your-page-router', function (req, res) {
 5. **Not passing returnTo through journey**: Every redirect in a multi-page journey must preserve `returnTo` parameter
 6. **Clearing too much data**: Journey 2a/2b preserves system selection, only clears values
 7. **Not using anchors**: When returning to review, use anchor links to jump to updated section
+8. **2-page journeys going straight back to review**: When changing a Yes/No decision that requires gathering data (Journey 8, 9), must check if changing from "No" to "Yes" and redirect to data entry page, NOT straight back to review
 
 ---
 
@@ -876,14 +1028,20 @@ The patterns are consistent across different parts of the application - just ada
 
 ## Summary
 
-This implementation provides a complete solution for all change link journeys in the manual entry flow, with comprehensive documentation that can be used as a reference for implementing similar functionality in other parts of the application (such as sample plans).
+This implementation provides a complete solution for all **9 change link journeys** in the manual entry flow, with comprehensive documentation that can be used as a reference for implementing similar functionality in other parts of the application (such as sample plans).
+
+**Journey Categories**:
+1. **Journey Restart Types (1a, 1b, 2a, 2b)**: Multi-page journeys that clear dependent data
+2. **Independent Edit Types (3, 4, 5, 6, 7)**: Single-page edits that preserve data
+3. **Two-Page Journey Types (8, 9)**: Decision change followed by data entry
 
 **Key Principles**:
 1. **Single-page edits**: "Save and continue" button, no cancel link, preserve data
 2. **Multi-page journey restarts**: "Continue" buttons (except last page), no cancel links, clear dependent data
-3. **Always pass `returnTo` parameter** through multi-page journeys
-4. **Read from site/batch object** when changing from review (not session data)
-5. **Clear session data** when clearing site data to prevent stale form values
+3. **Two-page decision journeys**: "Continue" on first page, "Save and continue" on last page, no cancel links
+4. **Always pass `returnTo` parameter** through multi-page journeys
+5. **Read from site/batch object** when changing from review (not session data)
+6. **Clear session data** when clearing site data to prevent stale form values
 
 The solution is clean, maintainable, follows existing codebase patterns, and is fully documented for future reference.
 
