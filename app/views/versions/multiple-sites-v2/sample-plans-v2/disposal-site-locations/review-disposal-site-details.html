@@ -91,8 +91,8 @@ Review disposal site details
                     Disposal site 1 details
                 </h2>
                 <div class="govuk-summary-card__actions">
-                    <a class="govuk-link govuk-link--no-visited-state" href="find-existing-disposal-site?disposal-site-code=&disposal-site-name=&disposal-site-location=&marine-area=&disposal-site-status=">
-                        Change site<span class="govuk-visually-hidden"> (disposal site 1)</span>
+                    <a class="govuk-link govuk-link--no-visited-state" href="#">
+                        Delete site<span class="govuk-visually-hidden"> (disposal site 1)</span>
                     </a>
                 </div>
             </div>
@@ -192,7 +192,7 @@ Review disposal site details
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="disposal-details-site-1" class="govuk-link">
+                            <a href="disposal-details-site-1" class="govuk-link govuk-link--no-visited-state">
                                 {% if site1MaterialTypeComplete %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> type of material being disposed</span>
                             </a>
                         </dd>
@@ -224,7 +224,7 @@ Review disposal site details
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="disposal-details-site-1" class="govuk-link govuk-visually-hidden">
+                            <a href="disposal-details-site-1" class="govuk-link govuk-link--no-visited-state govuk-visually-hidden">
                                 {% if site1DisposalMethodComplete %}Change{% else %}Add{% endif %} proposed method of disposal
                             </a>
                         </dd>
@@ -253,7 +253,7 @@ Review disposal site details
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="maximum-disposal-volume" class="govuk-link">
+                            <a href="maximum-disposal-volume" class="govuk-link govuk-link--no-visited-state">
                                 {% if data['sample-disposal-site-1-maximum-volume-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> maximum disposal volume</span>
                             </a>
                         </dd>
@@ -275,7 +275,7 @@ Review disposal site details
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="beneficial-use" class="govuk-link">
+                            <a href="beneficial-use" class="govuk-link govuk-link--no-visited-state">
                                 {% if data['sample-disposal-site-1-beneficial-use-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> beneficial use</span>
                             </a>
                         </dd>
@@ -293,7 +293,7 @@ Review disposal site details
                 </h2>
                 <div class="govuk-summary-card__actions">
                     <a class="govuk-link govuk-link--no-visited-state" href="where-dispose-of-material?sample-plan-where-dispose-material=">
-                        Change site<span class="govuk-visually-hidden"> (disposal site 2)</span>
+                        Delete site<span class="govuk-visually-hidden"> (disposal site 2)</span>
                     </a>
                 </div>
             </div>
@@ -393,7 +393,7 @@ Review disposal site details
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="disposal-details-site-2" class="govuk-link">
+                            <a href="disposal-details-site-2" class="govuk-link govuk-link--no-visited-state">
                                 {% if site2MaterialTypeComplete %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> type of material being disposed</span>
                             </a>
                         </dd>
@@ -425,7 +425,7 @@ Review disposal site details
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="disposal-details-site-2" class="govuk-link govuk-visually-hidden">
+                            <a href="disposal-details-site-2" class="govuk-link govuk-link--no-visited-state govuk-visually-hidden">
                                 {% if site2DisposalMethodComplete %}Change{% else %}Add{% endif %} proposed method of disposal
                             </a>
                         </dd>
@@ -454,7 +454,7 @@ Review disposal site details
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="maximum-disposal-volume-site-2" class="govuk-link">
+                            <a href="maximum-disposal-volume-site-2" class="govuk-link govuk-link--no-visited-state">
                                 {% if data['sample-disposal-site-2-maximum-volume-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> maximum disposal volume</span>
                             </a>
                         </dd>
@@ -476,7 +476,7 @@ Review disposal site details
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="beneficial-use-site-2" class="govuk-link">
+                            <a href="beneficial-use-site-2" class="govuk-link govuk-link--no-visited-state">
                                 {% if data['sample-disposal-site-2-beneficial-use-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> beneficial use</span>
                             </a>
                         </dd>
