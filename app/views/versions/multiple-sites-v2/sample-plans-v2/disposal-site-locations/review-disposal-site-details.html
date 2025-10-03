@@ -44,10 +44,14 @@ Review disposal site details
         {% set hasSite2 = data['sample-disposal-site-2-selected'] %}
         
         {% set allComplete = site1Complete and (not hasSite2 or site2Complete) %}
-        
+
         {% if not allComplete %}
             {{ govukInsetText({
-                html: "You must complete all sections marked <span class='govuk-tag govuk-tag--red'>Incomplete</span> before you can send your information."
+                html: "The site details you've provided are saved.<br>You must complete all sections marked <span class='govuk-tag govuk-tag--red govuk-!-margin-bottom-2 govuk-!-margin-top-2'>Incomplete</span> before you can send your information.<br>If you cannot finish now, you can return to this page later."
+            }) }}
+        {% else %}
+            {{ govukInsetText({
+                html: "The site details you've provided are saved.<br>You can return to this page and make changes at any time before you send your information."
             }) }}
         {% endif %}
         
@@ -428,26 +432,16 @@ Review disposal site details
         </div>
         {% endif %}
 
-        
-
-        <!-- <div class="govuk-button-group govuk-!-margin-bottom-6">
-            <a href="where-dispose-of-material?disposal-site-code=&disposal-site-name=&disposal-site-location=&marine-area=&disposal-site-status=&sample-plan-where-dispose-material=" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
-                Save and add another disposal site
-            </a>
-        </div> -->
-
         <div class="govuk-button-group govuk-!-margin-bottom-6">
-            <a href="" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
-                Save and add another disposal site
+            <a href="where-dispose-of-material?disposal-site-code=&disposal-site-name=&disposal-site-location=&marine-area=&disposal-site-status=&sample-plan-where-dispose-material=" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
+                Add another disposal site
             </a>
         </div>
-
-        <p class="govuk-body">You can select 'Save and continue' if you're finished or you want to save your progress and return later.</p>
 
         <form action="review-disposal-site-details-router" method="post" novalidate>
             <div class="govuk-button-group">
                 {{ govukButton({
-                    text: "Save and continue"
+                    text: "Continue"
                 }) }}
                 <a class="govuk-link govuk-link--no-visited-state" href="">Cancel</a>
             </div>
