@@ -12,12 +12,17 @@
 Are you sure you want to delete all site details?
 {% endset %}
 
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - Get a plan for sediment sample analysis
+{% endblock %}
+
 {% block content %}
 
 <div class="govuk-grid-row">
 
   <div class="govuk-grid-column-two-thirds">
-    <span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
+    <span class="govuk-caption-l">{{ data['sample-plan-project-name-text-input'] }}</span>
     <h1 class="govuk-heading-l">
       {{ pageHeadingTextHTML }}
     </h1>
@@ -26,25 +31,13 @@ Are you sure you want to delete all site details?
       You'll lose all the site details you've already entered. This cannot be undone.
     </p>
  
-    <form action="delete-all-sites-confirmed" method="post" novalidate>
+    <form action="delete-all-sites-router" method="post" novalidate>
       <div class="govuk-button-group govuk-!-margin-top-7">
         {{ govukButton({
           text: "Yes, delete all site details",
           classes: "govuk-button--warning"
         }) }}
-        {% set currentBatch = null %}
-        {% if data['currentBatchId'] and data['siteBatches'] %}
-          {% for batch in data['siteBatches'] %}
-            {% if batch.id == data['currentBatchId'] %}
-              {% set currentBatch = batch %}
-            {% endif %}
-          {% endfor %}
-        {% endif %}
-        {% if currentBatch and currentBatch.entryMethod == 'manual-entry' %}
-          <a class="govuk-link govuk-link--no-visited-state" href="manual-entry/review-site-details">Cancel</a>
-        {% else %}
-          <a class="govuk-link govuk-link--no-visited-state" href="review-site-details">Cancel</a>
-        {% endif %}
+        <a class="govuk-link govuk-link--no-visited-state" href="review-dredging-site-details">Cancel</a>
     </div>
     </form>
   </div>
