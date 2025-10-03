@@ -547,4 +547,71 @@ module.exports = function (router) {
     res.redirect('review-dredging-site-details');
   });
 
+  /////////////////////////////////////////////////////////
+  //////// Delete all sites page
+  /////////////////////////////////////////////////////////
+  router.get(`/versions/${version}/${section}/${subsection}/delete-all-sites`, function (req, res) {
+    req.session.data['samplePlansSection'] = section;
+    res.render(`versions/${version}/${section}/${subsection}/delete-all-sites`);
+  });
+
+  // Delete all sites router (POST)
+  router.post(`/versions/${version}/${section}/${subsection}/delete-all-sites-router`, function (req, res) {
+    // Clear all dredging site location data
+    
+    // File upload journey data
+    delete req.session.data['sample-plan-site-location-method'];
+    delete req.session.data['sample-plan-file-type'];
+    delete req.session.data['hasUploadedFile'];
+    
+    // Site 1 dredging details
+    delete req.session.data['dredging-details-site-1-completed'];
+    delete req.session.data['dredging-details-site-1-material-type'];
+    delete req.session.data['dredging-details-site-1-material-type-other'];
+    delete req.session.data['dredging-details-site-1-method'];
+    delete req.session.data['dredging-details-site-1-method-other'];
+    
+    // Site 1 history
+    delete req.session.data['site-history-site-1-completed'];
+    delete req.session.data['site-history-site-1'];
+    delete req.session.data['site-history-site-1-chemicals-manufacturing-details'];
+    delete req.session.data['site-history-site-1-electronics-manufacturing-details'];
+    delete req.session.data['site-history-site-1-major-port-infrastructure-details'];
+    delete req.session.data['site-history-site-1-mining-details'];
+    delete req.session.data['site-history-site-1-oil-processing-details'];
+    delete req.session.data['site-history-site-1-pollution-incidents-details'];
+    delete req.session.data['site-history-site-1-ship-building-details'];
+    delete req.session.data['site-history-site-1-steelworks-details'];
+    delete req.session.data['site-history-site-1-other-details'];
+    
+    // Site 1 depth
+    delete req.session.data['dredging-details-site-1-depth-completed'];
+    delete req.session.data['dredging-details-site-1-depth'];
+    
+    // Site 1 name
+    delete req.session.data['dredging-site-1-name'];
+    
+    // Maximum dredge volume
+    delete req.session.data['maximum-dredge-volume-completed'];
+    delete req.session.data['maximum-dredge-volume-total'];
+    delete req.session.data['maximum-dredge-volume-annual'];
+    delete req.session.data['maximum-dredge-volume-per-campaign'];
+    delete req.session.data['maximum-dredge-volume-campaigns-per-year'];
+    
+    // Overall completion flags
+    delete req.session.data['has-visited-dredging-site-locations'];
+    delete req.session.data['dredging-sites-all-complete'];
+    
+    // Site 2 data (if it exists in future)
+    delete req.session.data['dredging-details-site-2-completed'];
+    delete req.session.data['dredging-details-site-2-material-type'];
+    delete req.session.data['dredging-details-site-2-material-type-other'];
+    delete req.session.data['dredging-details-site-2-method'];
+    delete req.session.data['dredging-details-site-2-method-other'];
+    delete req.session.data['dredging-details-site-2-depth'];
+    
+    // Redirect to sample plan start page (task list)
+    res.redirect('../sample-plan-start-page');
+  });
+
 };
