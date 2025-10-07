@@ -119,24 +119,6 @@
                                     }
                                 ]
                             }
-                        },
-                        {
-                            key: {
-                                text: "New or existing marine licence"
-                            },
-                            value: {
-                                text: data['sample-plan-new-or-existing-licence'] if data['sample-plan-new-or-existing-licence'] else "New marine licence"
-                            },
-                            actions: {
-                                items: [
-                                    {
-                                        href: "",
-                                        text: "Change",
-                                        visuallyHiddenText: "new or existing marine licence",
-                                        classes: "govuk-link govuk-link--no-visited-state"
-                                    }
-                                ]
-                            }
                         }
                     ] %}
                 {% else %}
@@ -172,7 +154,44 @@
                             value: {
                                 text: "No" if data['sample-plan-other-contact'] == "No" else (data['sample-plan-other-contact-details'] if data['sample-plan-other-contact-details'] else "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.")
                             }
-                        },
+                        }
+                    ] %}
+                {% endif %}
+
+                {{ govukSummaryList({
+                    rows: projectDetailsRows
+                }) }}
+            </div>
+        </div>
+
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">Licence details</h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                {% if data['samplePlanApplicationSubmitted'] != "true" %}
+                    {% set licenceDetailsRows = [
+                        {
+                            key: {
+                                text: "New or existing marine licence"
+                            },
+                            value: {
+                                text: data['sample-plan-new-or-existing-licence'] if data['sample-plan-new-or-existing-licence'] else "New marine licence"
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "",
+                                        text: "Change",
+                                        visuallyHiddenText: "new or existing marine licence",
+                                        classes: "govuk-link govuk-link--no-visited-state"
+                                    }
+                                ]
+                            }
+                        }
+                    ] %}
+                {% else %}
+                    {% set licenceDetailsRows = [
                         {
                             key: {
                                 text: "New or existing marine licence"
@@ -197,7 +216,7 @@
                     {% endif %}
 
                     {% if data['samplePlanApplicationSubmitted'] != "true" %}
-                        {% set projectDetailsRows = projectDetailsRows.concat([
+                        {% set licenceDetailsRows = licenceDetailsRows.concat([
                             {
                                 key: {
                                     text: "Proposed length of the new licence"
@@ -218,7 +237,7 @@
                             }
                         ]) %}
                     {% else %}
-                        {% set projectDetailsRows = projectDetailsRows.concat([
+                        {% set licenceDetailsRows = licenceDetailsRows.concat([
                             {
                                 key: {
                                     text: "Proposed length of the new licence"
@@ -241,7 +260,7 @@
                     {% endif %}
 
                     {% if data['samplePlanApplicationSubmitted'] != "true" %}
-                        {% set projectDetailsRows = projectDetailsRows.concat([
+                        {% set licenceDetailsRows = licenceDetailsRows.concat([
                             {
                                 key: {
                                     text: "Licence number"
@@ -281,7 +300,7 @@
                             }
                         ]) %}
                     {% else %}
-                        {% set projectDetailsRows = projectDetailsRows.concat([
+                        {% set licenceDetailsRows = licenceDetailsRows.concat([
                             {
                                 key: {
                                     text: "Licence number"
@@ -304,7 +323,7 @@
                 {% endif %}
 
                 {{ govukSummaryList({
-                    rows: projectDetailsRows
+                    rows: licenceDetailsRows
                 }) }}
             </div>
         </div>
