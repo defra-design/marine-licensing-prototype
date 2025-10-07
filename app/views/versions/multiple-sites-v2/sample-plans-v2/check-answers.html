@@ -46,17 +46,6 @@
                 <h2 class="govuk-summary-card__title">Project details</h2>
             </div>
             <div class="govuk-summary-card__content">
-                {% set projectDetailsRows = [
-                    {
-                        key: {
-                            text: "Project name"
-                        },
-                        value: {
-                            text: data['sample-plan-project-name-text-input'] if data['sample-plan-project-name-text-input'] else "[user entered data]"
-                        }
-                    }
-                ] %}
-                
                 {% if data['samplePlanApplicationSubmitted'] != "true" %}
                     {% set projectDetailsRows = [
                         {
@@ -72,6 +61,24 @@
                                         href: "",
                                         text: "Change",
                                         visuallyHiddenText: "project name",
+                                        classes: "govuk-link govuk-link--no-visited-state"
+                                    }
+                                ]
+                            }
+                        },
+                        {
+                            key: {
+                                text: "Type of activity"
+                            },
+                            value: {
+                                text: data['sample-plan-which-activity'] if data['sample-plan-which-activity'] else "Marine dredging"
+                            },
+                            actions: {
+                                items: [
+                                    {
+                                        href: "",
+                                        text: "Change",
+                                        visuallyHiddenText: "type of activity",
                                         classes: "govuk-link govuk-link--no-visited-state"
                                     }
                                 ]
@@ -112,59 +119,6 @@
                                     }
                                 ]
                             }
-                        }
-                    ] %}
-                {% else %}
-                    {% set projectDetailsRows = projectDetailsRows.concat([
-                        {
-                            key: {
-                                text: "Project background"
-                            },
-                            value: {
-                                text: data['sample-plan-project-background'] if data['sample-plan-project-background'] else "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco."
-                            }
-                        },
-                        {
-                            key: {
-                                text: "Other contact with the Marine Management Organisation (MMO)" if data['sample-plan-other-contact'] == "No" else "Details of contact with the Marine Management Organisation (MMO)"
-                            },
-                            value: {
-                                text: "No" if data['sample-plan-other-contact'] == "No" else (data['sample-plan-other-contact-details'] if data['sample-plan-other-contact-details'] else "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.")
-                            }
-                        }
-                    ]) %}
-                {% endif %}
-
-                {{ govukSummaryList({
-                    rows: projectDetailsRows
-                }) }}
-            </div>
-        </div>
-
-        <div class="govuk-summary-card">
-            <div class="govuk-summary-card__title-wrapper">
-                <h2 class="govuk-summary-card__title">Activity and licence details</h2>
-            </div>
-            <div class="govuk-summary-card__content">
-                {% if data['samplePlanApplicationSubmitted'] != "true" %}
-                    {% set activityRows = [
-                        {
-                            key: {
-                                text: "Type of activity"
-                            },
-                            value: {
-                                text: data['sample-plan-which-activity'] if data['sample-plan-which-activity'] else "Marine dredging"
-                            },
-                            actions: {
-                                items: [
-                                    {
-                                        href: "",
-                                        text: "Change",
-                                        visuallyHiddenText: "type of activity",
-                                        classes: "govuk-link govuk-link--no-visited-state"
-                                    }
-                                ]
-                            }
                         },
                         {
                             key: {
@@ -186,13 +140,37 @@
                         }
                     ] %}
                 {% else %}
-                    {% set activityRows = [
+                    {% set projectDetailsRows = [
+                        {
+                            key: {
+                                text: "Project name"
+                            },
+                            value: {
+                                text: data['sample-plan-project-name-text-input'] if data['sample-plan-project-name-text-input'] else "[user entered data]"
+                            }
+                        },
                         {
                             key: {
                                 text: "Type of activity"
                             },
                             value: {
                                 text: data['sample-plan-which-activity'] if data['sample-plan-which-activity'] else "Marine dredging"
+                            }
+                        },
+                        {
+                            key: {
+                                text: "Project background"
+                            },
+                            value: {
+                                text: data['sample-plan-project-background'] if data['sample-plan-project-background'] else "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco."
+                            }
+                        },
+                        {
+                            key: {
+                                text: "Other contact with the Marine Management Organisation (MMO)" if data['sample-plan-other-contact'] == "No" else "Details of contact with the Marine Management Organisation (MMO)"
+                            },
+                            value: {
+                                text: "No" if data['sample-plan-other-contact'] == "No" else (data['sample-plan-other-contact-details'] if data['sample-plan-other-contact-details'] else "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.")
                             }
                         },
                         {
@@ -219,7 +197,7 @@
                     {% endif %}
 
                     {% if data['samplePlanApplicationSubmitted'] != "true" %}
-                        {% set activityRows = activityRows.concat([
+                        {% set projectDetailsRows = projectDetailsRows.concat([
                             {
                                 key: {
                                     text: "Proposed length of the new licence"
@@ -240,7 +218,7 @@
                             }
                         ]) %}
                     {% else %}
-                        {% set activityRows = activityRows.concat([
+                        {% set projectDetailsRows = projectDetailsRows.concat([
                             {
                                 key: {
                                     text: "Proposed length of the new licence"
@@ -263,7 +241,7 @@
                     {% endif %}
 
                     {% if data['samplePlanApplicationSubmitted'] != "true" %}
-                        {% set activityRows = activityRows.concat([
+                        {% set projectDetailsRows = projectDetailsRows.concat([
                             {
                                 key: {
                                     text: "Licence number"
@@ -289,11 +267,21 @@
                                 },
                                 value: {
                                     text: licenceExpiryText
+                                },
+                                actions: {
+                                    items: [
+                                        {
+                                            href: "",
+                                            text: "Change",
+                                            visuallyHiddenText: "licence expiry date",
+                                            classes: "govuk-link govuk-link--no-visited-state govuk-visually-hidden"
+                                        }
+                                    ]
                                 }
                             }
                         ]) %}
                     {% else %}
-                        {% set activityRows = activityRows.concat([
+                        {% set projectDetailsRows = projectDetailsRows.concat([
                             {
                                 key: {
                                     text: "Licence number"
@@ -316,7 +304,7 @@
                 {% endif %}
 
                 {{ govukSummaryList({
-                    rows: activityRows
+                    rows: projectDetailsRows
                 }) }}
             </div>
         </div>
@@ -342,7 +330,7 @@
                             Method of providing site location
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            Upload a file with the coordinates of the site
+                            File uploaded
                         </dd>
                     </div>
                     <div class="govuk-summary-list__row">
