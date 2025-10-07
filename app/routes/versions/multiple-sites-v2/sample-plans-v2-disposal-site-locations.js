@@ -799,4 +799,112 @@ module.exports = function (router) {
     res.redirect('review-disposal-site-details');
   });
 
+  ///////////////////////////////////////////
+  // Delete site page
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/${subSection}/delete-site`, function (req, res) {
+    req.session.data['samplePlansSection'] = section;
+    res.render(`versions/${version}/${section}/${subSection}/delete-site`);
+  });
+
+  // Delete site router (POST)
+  router.post(`/versions/${version}/${section}/${subSection}/delete-site-router`, function (req, res) {
+    // Get the site number from the form (1 or 2)
+    const siteNumber = parseInt(req.body.site) || 1;
+    const hasSite2 = req.session.data['sample-disposal-site-2-selected'];
+    
+    if (siteNumber === 2) {
+      // Deleting Site 2 - simply clear Site 2 data
+      clearSite2CompletionFlags(req.session);
+      req.session.data['sample-disposal-site-2-selected'] = false;
+      
+      // Clear Site 2 location data
+      delete req.session.data['selected-disposal-site-2-code'];
+      delete req.session.data['selected-disposal-site-2-name'];
+      delete req.session.data['selected-disposal-site-2-country'];
+      delete req.session.data['selected-disposal-site-2-sea-area'];
+      delete req.session.data['selected-disposal-site-2-status'];
+      
+      // Redirect back to review page
+      res.redirect('review-disposal-site-details');
+    } else if (siteNumber === 1 && hasSite2) {
+      // Deleting Site 1 when Site 2 exists - move Site 2 data to Site 1
+      
+      // Move Site 2 location data to Site 1
+      req.session.data['selected-disposal-site-code'] = req.session.data['selected-disposal-site-2-code'];
+      req.session.data['selected-disposal-site-name'] = req.session.data['selected-disposal-site-2-name'];
+      req.session.data['selected-disposal-site-country'] = req.session.data['selected-disposal-site-2-country'];
+      req.session.data['selected-disposal-site-sea-area'] = req.session.data['selected-disposal-site-2-sea-area'];
+      req.session.data['selected-disposal-site-status'] = req.session.data['selected-disposal-site-2-status'];
+      
+      // Move Site 2 disposal details to Site 1
+      req.session.data['sample-disposal-details-site-1-material-type'] = req.session.data['sample-disposal-details-site-2-material-type'];
+      req.session.data['sample-disposal-details-site-1-material-type-other'] = req.session.data['sample-disposal-details-site-2-material-type-other'];
+      req.session.data['sample-disposal-details-site-1-method'] = req.session.data['sample-disposal-details-site-2-method'];
+      req.session.data['sample-disposal-details-site-1-method-other'] = req.session.data['sample-disposal-details-site-2-method-other'];
+      
+      // Move Site 2 volume data to Site 1
+      req.session.data['sample-disposal-site-1-total-volume'] = req.session.data['sample-disposal-site-2-total-volume'];
+      req.session.data['sample-disposal-site-1-annual-volume'] = req.session.data['sample-disposal-site-2-annual-volume'];
+      req.session.data['sample-disposal-site-1-volume-per-campaign'] = req.session.data['sample-disposal-site-2-volume-per-campaign'];
+      req.session.data['sample-disposal-site-1-campaigns-per-year'] = req.session.data['sample-disposal-site-2-campaigns-per-year'];
+      
+      // Move Site 2 beneficial use data to Site 1
+      req.session.data['sample-disposal-site-1-beneficial-use'] = req.session.data['sample-disposal-site-2-beneficial-use'];
+      req.session.data['sample-disposal-site-1-beneficial-use-description'] = req.session.data['sample-disposal-site-2-beneficial-use-description'];
+      
+      // Move Site 2 completion flags to Site 1
+      req.session.data['sample-disposal-site-material-type-completed'] = req.session.data['sample-disposal-site-2-material-type-completed'];
+      req.session.data['sample-disposal-site-disposal-method-completed'] = req.session.data['sample-disposal-site-2-disposal-method-completed'];
+      req.session.data['sample-disposal-site-1-maximum-volume-completed'] = req.session.data['sample-disposal-site-2-maximum-volume-completed'];
+      req.session.data['sample-disposal-site-1-beneficial-use-completed'] = req.session.data['sample-disposal-site-2-beneficial-use-completed'];
+      
+      // Clear Site 2 data
+      clearSite2CompletionFlags(req.session);
+      req.session.data['sample-disposal-site-2-selected'] = false;
+      delete req.session.data['selected-disposal-site-2-code'];
+      delete req.session.data['selected-disposal-site-2-name'];
+      delete req.session.data['selected-disposal-site-2-country'];
+      delete req.session.data['selected-disposal-site-2-sea-area'];
+      delete req.session.data['selected-disposal-site-2-status'];
+      
+      // Redirect back to review page
+      res.redirect('review-disposal-site-details');
+    } else {
+      // Deleting the only site (Site 1) - clear all data and return to task list
+      clearSite1CompletionFlags(req.session);
+      clearSite2CompletionFlags(req.session);
+      
+      // Clear all site selection flags
+      req.session.data['sample-disposal-site-selected'] = false;
+      req.session.data['sample-disposal-site-2-selected'] = false;
+      
+      // Clear Site 1 location data
+      delete req.session.data['selected-disposal-site-code'];
+      delete req.session.data['selected-disposal-site-name'];
+      delete req.session.data['selected-disposal-site-country'];
+      delete req.session.data['selected-disposal-site-sea-area'];
+      delete req.session.data['selected-disposal-site-status'];
+      
+      // Clear Site 2 location data
+      delete req.session.data['selected-disposal-site-2-code'];
+      delete req.session.data['selected-disposal-site-2-name'];
+      delete req.session.data['selected-disposal-site-2-country'];
+      delete req.session.data['selected-disposal-site-2-sea-area'];
+      delete req.session.data['selected-disposal-site-2-status'];
+      
+      // Reset task status to "Not yet started"
+      req.session.data['sample-disposal-sites-completed'] = false;
+      req.session.data['sample-disposal-sites-in-progress'] = false;
+      req.session.data['has-visited-disposal-site-review'] = false;
+      
+      // Clear where dispose material selection
+      delete req.session.data['sample-plan-where-dispose-material'];
+      
+      // Redirect to task list
+      res.redirect('../sample-plan-start-page');
+    }
+  });
+
 };

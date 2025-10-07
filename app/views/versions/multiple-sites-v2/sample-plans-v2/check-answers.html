@@ -69,9 +69,10 @@
                             actions: {
                                 items: [
                                     {
-                                        href: "project-name",
+                                        href: "",
                                         text: "Change",
-                                        visuallyHiddenText: "project name"
+                                        visuallyHiddenText: "project name",
+                                        classes: "govuk-link govuk-link--no-visited-state"
                                     }
                                 ]
                             }
@@ -551,7 +552,7 @@
         <!-- Only show disposal site sections if the activity includes disposal -->
         {% if data['sample-plan-which-activity'] == "Marine disposal" or data['sample-plan-which-activity'] == "Marine dredging and disposal" %}
         <!-- Providing the disposal site location section -->
-        <div class="govuk-summary-card">
+        <!--<div class="govuk-summary-card">
             <div class="govuk-summary-card__title-wrapper">
                 <h2 class="govuk-summary-card__title">Providing the disposal site location</h2>
                 {% if data['samplePlanApplicationSubmitted'] != "true" %}
@@ -574,7 +575,7 @@
                     </div>
                 </dl>
             </div>
-        </div>
+        </div>-->
 
         <!-- Disposal site 1 details section -->
         <div class="govuk-summary-card">
