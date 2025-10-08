@@ -2,6 +2,15 @@
 
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - {{ data['headerNameSamplePlan'] }}
+{% endblock %}
+
+{% set pageHeadingTextHTML %}
+Declaration
+{% endset %}
+
 {% block beforeContent %}
     {% include "../includes/phase-banner.html" %}
     <a class="govuk-back-link" href="javascript:history.back()">Back</a>
@@ -13,7 +22,9 @@
     <div class="govuk-grid-column-two-thirds">
 
         <span class="govuk-caption-l">{{ data['sample-plan-project-name-text-input'] }}</span>
-        <h1 class="govuk-heading-l">Declaration</h1>
+        <h1 class="govuk-heading-l">
+            {{ pageHeadingTextHTML }}
+        </h1>
 
         <p class="govuk-body">I confirm that:</p>
 

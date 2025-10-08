@@ -7,6 +7,10 @@
     {% endif %}
 {% endblock %}
 
+{% block pageTitle %}
+    Confirmation - {{ data['headerNameSamplePlan'] }}
+{% endblock %}
+
 {% from "govuk/components/panel/macro.njk" import govukPanel %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
