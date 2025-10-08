@@ -26,7 +26,7 @@ Do you consent to the MMO publishing your information publicly?
 {% if data['errortypeone'] == "true" %}
 Select whether you consent to the MMO publishing your information publicly
 {% elif data['errortypetwo'] == "true" %}
-Provide details of why you do not consent to your information being published
+Enter details of why you do not consent to your information being published
 {% endif %}
 {% endset %}
 
@@ -57,7 +57,7 @@ isPageHeading: false
 },
 
 errorMessage: null if data['errortypetwo'] != "true"
-else { text: "Provide details of why you do not consent to your information being published" }
+else { text: "Enter details of why you do not consent to your information being published" }
 }) }}
 {% endset -%}
 
@@ -80,7 +80,7 @@ else { text: "Provide details of why you do not consent to your information bein
 		<!-- END OF 'error summary' -->
 
 		<!-- go to routes.js for routing  -->
-		<form action="public-register-router" method="post" novalidate>
+		<form action="sharing-your-information-router" method="post" novalidate>
 			<span class="govuk-caption-l">{{ data['exemption-project-name-text-input'] }}</span>
 			<h1 class="govuk-heading-l">
 				{{ pageHeadingTextHTML }}

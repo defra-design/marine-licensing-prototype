@@ -907,11 +907,11 @@ router.post('/' + version + section + 'about-your-activity-router', function (re
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////
-// Public Register
+// Sharing your information publicly
 // RADIO BUTTONS WITH CONDITIONAL TEXTAREA
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-router.post('/' + version + section + 'public-register-router', function (req, res) {
+router.post('/' + version + section + 'sharing-your-information-router', function (req, res) {
     // Reset error states
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
@@ -929,7 +929,7 @@ router.post('/' + version + section + 'public-register-router', function (req, r
     ) {
         req.session.data['errorthispage'] = "true";
         req.session.data['errortypeone'] = "true";
-        res.redirect('public-register');
+        res.redirect('sharing-your-information');
     } 
     // If "No" is selected, ensure the textarea is not empty
     else if (
@@ -939,7 +939,7 @@ router.post('/' + version + section + 'public-register-router', function (req, r
     ) {
         req.session.data['errorthispage'] = "true";
         req.session.data['errortypetwo'] = "true";
-        res.redirect('public-register');
+        res.redirect('sharing-your-information');
     } else {
        // Set the status to completed
        req.session.data['exempt-information-4-status'] = 'completed';
