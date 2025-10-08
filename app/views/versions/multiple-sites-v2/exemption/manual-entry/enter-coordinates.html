@@ -33,7 +33,7 @@ Enter the coordinates at the centre point of the site
         
         <!-- Setting the smaller secondary headings based on coordinate system -->
         {% set questionHeadingTextOneHTML %}
-            {% if site.coordinates.system == "OSGB36 (National Grid)" %}
+            {% if site.coordinates.system == "British National Grid (OSGB36)" %}
             Easting
             {% else %}
             Latitude
@@ -41,7 +41,7 @@ Enter the coordinates at the centre point of the site
         {% endset %}
 
         {% set questionHeadingTextTwoHTML %}
-            {% if site.coordinates.system == "OSGB36 (National Grid)" %}
+            {% if site.coordinates.system == "British National Grid (OSGB36)" %}
             Northing
             {% else %}
             Longitude
@@ -83,7 +83,7 @@ Enter the coordinates at the centre point of the site
                 }
               }) %}
               
-              {% if site.coordinates.system == "OSGB36 (National Grid)" %}
+              {% if site.coordinates.system == "British National Grid (OSGB36)" %}
               {% include "../../includes/east-north-content.html" %}
               {% else %}
               {% include "../../includes/lat-long-content.html" %}
