@@ -1,0 +1,37 @@
+{% extends "../layouts/exemption.html" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block beforeContent %}
+    {% include "../includes/phase-banner.html" %}
+    <a class="govuk-back-link" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <span class="govuk-caption-l">{{ data['sample-plan-project-name-text-input'] }}</span>
+        <h1 class="govuk-heading-l">Declaration</h1>
+
+        <p class="govuk-body">I confirm that:</p>
+
+        <ul class="govuk-list govuk-list--bullet">
+            <li>I'm authorised to make this agreement</li>
+            <li>to the best of my knowledge, the information provided is correct</li>
+            <li>I could be prosecuted if I give information I know, or suspect is false</li>
+            <li>I understand I may be sued if I give incorrect information, knowingly or recklessly</li>
+        </ul>
+
+        <form method="post" action="declaration-router">
+            {{ govukButton({
+                text: "Confirm and send information",
+                classes: "govuk-!-margin-top-2"
+            }) }}
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

@@ -681,8 +681,24 @@ module.exports = function (router) {
     res.render(`versions/${version}/${section}/check-answers`);
   });
 
-  // Check answers router (POST) - submits application and redirects to confirmation
+  // Check answers router (POST) - redirects to declaration page
   router.post(`/versions/${version}/${section}/check-answers-router`, function (req, res) {
+    // Redirect to declaration page
+    res.redirect('declaration');
+  });
+
+  ///////////////////////////////////////////
+  // Declaration page
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/declaration`, function (req, res) {
+    req.session.data['samplePlansSection'] = section;
+    req.session.data['isSamplePlansSection'] = true;
+    res.render(`versions/${version}/${section}/declaration`);
+  });
+
+  // Declaration router (POST) - submits application and redirects to confirmation
+  router.post(`/versions/${version}/${section}/declaration-router`, function (req, res) {
     // Mark the sample plan application as submitted
     req.session.data['samplePlanApplicationSubmitted'] = "true";
     
@@ -696,6 +712,7 @@ module.exports = function (router) {
 
   router.get(`/versions/${version}/${section}/confirmation`, function (req, res) {
     req.session.data['samplePlansSection'] = section;
+    req.session.data['isSamplePlansSection'] = true;
     res.render(`versions/${version}/${section}/confirmation`);
   });
 

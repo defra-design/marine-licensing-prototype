@@ -105,7 +105,7 @@
                         },
                         {
                             key: {
-                                text: "Other contact with the Marine Management Organisation (MMO)" if data['sample-plan-other-contact'] == "No" else "Details of contact with the Marine Management Organisation (MMO)"
+                                text: "Other contact with the Marine Management Organisation (MMO)" if data['sample-plan-other-contact'] == "No" else "Details of contact with the Marine Management Organisation"
                             },
                             value: {
                                 text: "No" if data['sample-plan-other-contact'] == "No" else (data['sample-plan-other-contact-details'] if data['sample-plan-other-contact-details'] else "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco.")
@@ -912,13 +912,6 @@
         <div class="govuk-summary-card">
             <div class="govuk-summary-card__title-wrapper">
                 <h2 class="govuk-summary-card__title">Fee estimate</h2>
-                {% if data['samplePlanApplicationSubmitted'] != "true" %}
-                <div class="govuk-summary-card__actions">
-                    <a class="govuk-link govuk-link--no-visited-state" href="">
-                        Change<span class="govuk-visually-hidden"> fee estimate</span>
-                    </a>
-                </div>
-                {% endif %}
             </div>
             <div class="govuk-summary-card__content">
                 <dl class="govuk-summary-list">
@@ -929,23 +922,24 @@
                         <dd class="govuk-summary-list__value">
                             £3,102.24
                         </dd>
+                        {% if data['samplePlanApplicationSubmitted'] != "true" %}
+                        <dd class="govuk-summary-list__actions">
+                            <a class="govuk-link govuk-link--no-visited-state" href="">
+                                Change<span class="govuk-visually-hidden"> fee estimate accepted</span>
+                            </a>
+                        </dd>
+                        {% endif %}
                     </div>
                 </dl>
             </div>
         </div>
 
         {% if data['samplePlanApplicationSubmitted'] != "true" %}
-        <h2 class="govuk-heading-m">Send your information</h2>
-        
-        <p class="govuk-body">By sending this information you're confirming that, to the best of your knowledge, the details you're providing are correct.</p>
-
         <form action="check-answers-router" method="post" novalidate>
             <div class="govuk-button-group">
                 {{ govukButton({
-                    text: "Confirm and send"
+                    text: "Continue"
                 }) }}
-
-                <a class="govuk-link govuk-link--no-visited-state" href="">Cancel</a>
             </div>
         </form>
         {% endif %}
