@@ -917,8 +917,8 @@ router.post('/' + version + section + 'public-register-router', function (req, r
     req.session.data['errortypeone'] = "false";
     req.session.data['errortypetwo'] = "false";
 
-    // Clear text area if user changes from Yes to No
-    if (req.session.data['exemption-public-register-radios'] === 'No') {
+    // Clear text area if user changes from No to Yes
+    if (req.session.data['exemption-public-register-radios'] === 'Yes') {
         delete req.session.data['exemption-public-register-text-area'];
     }
 
@@ -931,9 +931,9 @@ router.post('/' + version + section + 'public-register-router', function (req, r
         req.session.data['errortypeone'] = "true";
         res.redirect('public-register');
     } 
-    // If "Yes" is selected, ensure the textarea is not empty
+    // If "No" is selected, ensure the textarea is not empty
     else if (
-        req.session.data['exemption-public-register-radios'] == "Yes" &&
+        req.session.data['exemption-public-register-radios'] == "No" &&
         (req.session.data['exemption-public-register-text-area'] == undefined ||
          req.session.data['exemption-public-register-text-area'].trim() == "")
     ) {
