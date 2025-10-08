@@ -413,7 +413,7 @@
             </dd>
             {% if data['applicationSubmitted'] != "true" %}
             <dd class="govuk-summary-list__actions">
-              <a class="govuk-link" href="project-name.html?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Project name</span></a>
+              <a class="govuk-link govuk-link--no-visited-state" href="project-name.html?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Project name</span></a>
             </dd>
             {% endif %}
           </div>
@@ -570,7 +570,7 @@
         {% if data['applicationSubmitted'] != "true" %}
         <ul class="govuk-summary-card__actions">
           <li class="govuk-summary-card__action">
-            <a class="govuk-link" href="review-site-details?batchId={{ fileUploadBatchId }}&camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Providing the site location</span></a>
+            <a class="govuk-link govuk-link--no-visited-state" href="review-site-details?batchId={{ fileUploadBatchId }}&camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Providing the site location</span></a>
           </li>
         </ul>
         {% endif %}
@@ -624,7 +624,7 @@
         {% if data['applicationSubmitted'] != "true" %}
         <ul class="govuk-summary-card__actions">
           <li class="govuk-summary-card__action">
-            <a class="govuk-link" href="review-site-details?batchId={{ fileUploadBatchId }}&camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Activity details</span></a>
+            <a class="govuk-link govuk-link--no-visited-state" href="review-site-details?batchId={{ fileUploadBatchId }}&camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Activity details</span></a>
           </li>
         </ul>
         {% endif %}
@@ -703,7 +703,7 @@
         {% if data['applicationSubmitted'] != "true" %}
         <ul class="govuk-summary-card__actions">
           <li class="govuk-summary-card__action">
-            <a class="govuk-link" href="manual-entry/review-site-details?batchId={{ manualEntryBatchId }}&camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Providing the site location</span></a>
+            <a class="govuk-link govuk-link--no-visited-state" href="manual-entry/review-site-details?batchId={{ manualEntryBatchId }}&camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Providing the site location</span></a>
           </li>
         </ul>
         {% endif %}
@@ -741,7 +741,7 @@
         {% if data['applicationSubmitted'] != "true" %}
         <ul class="govuk-summary-card__actions">
           <li class="govuk-summary-card__action">
-            <a class="govuk-link" href="manual-entry/review-site-details?batchId={{ manualEntryBatchId }}&camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Providing the site location</span></a>
+            <a class="govuk-link govuk-link--no-visited-state" href="manual-entry/review-site-details?batchId={{ manualEntryBatchId }}&camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Providing the site location</span></a>
           </li>
         </ul>
         {% endif %}
@@ -777,7 +777,7 @@
         {% if data['applicationSubmitted'] != "true" %}
         <ul class="govuk-summary-card__actions">
           <li class="govuk-summary-card__action">
-            <a class="govuk-link" href="manual-entry/review-site-details?batchId={{ manualEntryBatchId }}&camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Activity details</span></a>
+            <a class="govuk-link govuk-link--no-visited-state" href="manual-entry/review-site-details?batchId={{ manualEntryBatchId }}&camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Activity details</span></a>
           </li>
         </ul>
         {% endif %}
@@ -998,7 +998,7 @@
                   <dd class="govuk-summary-list__value">
                     {{ site.coordinateSystem }}
                     <br>
-                    {% if site.coordinateSystem == "OSGB36 (National Grid)" %}
+                    {% if site.coordinateSystem == "British National Grid (OSGB36)" %}
                       Eastings and Northings
                     {% else %}
                       Latitude and longitude
@@ -1095,7 +1095,7 @@
                   <dd class="govuk-summary-list__value">
                     {{ site.coordinateSystem }}
                     <br>
-                    {% if site.coordinateSystem == "OSGB36 (National Grid)" %}
+                    {% if site.coordinateSystem == "British National Grid (OSGB36)" %}
                       Eastings and Northings
                     {% else %}
                       Latitude and longitude
@@ -1219,7 +1219,7 @@
         {% if data['applicationSubmitted'] != "true" %}
         <ul class="govuk-summary-card__actions">
           <li class="govuk-summary-card__action">
-            <a class="govuk-link" href="public-register?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Information withheld from public register</span></a>
+            <a class="govuk-link govuk-link--no-visited-state" href="public-register?camefromcheckanswers=true">Change<span class="govuk-visually-hidden"> Information withheld from public register</span></a>
           </li>
         </ul>
         {% endif %}

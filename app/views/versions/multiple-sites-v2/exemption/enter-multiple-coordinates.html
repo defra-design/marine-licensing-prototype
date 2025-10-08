@@ -13,7 +13,7 @@
 {% set point1LatHTML %}
     {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['exemption-what-coordinate-system-radios'] %}                  
     Latitude of start and end point
-    {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+    {% elif data['exemption-what-coordinate-system-radios'] == "British National Grid (OSGB36)" %}
     Eastings of the start and end point
     {% endif %}
 {% endset %}
@@ -21,7 +21,7 @@
 {% set point1LongHTML %}
     {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['exemption-what-coordinate-system-radios'] %}
     Longitude of start and end point
-    {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+    {% elif data['exemption-what-coordinate-system-radios'] == "British National Grid (OSGB36)" %}
     Northings of the start and end point
     {% endif %}
 {% endset %}
@@ -29,7 +29,7 @@
 {% set point2LatHTML %}
     {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['exemption-what-coordinate-system-radios'] %}                 
     Latitude of point 2
-    {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+    {% elif data['exemption-what-coordinate-system-radios'] == "British National Grid (OSGB36)" %}
     Eastings of point 2
     {% endif %}
 {% endset %}
@@ -37,7 +37,7 @@
 {% set point2LongHTML %}
     {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['exemption-what-coordinate-system-radios'] %}          
     Longitude of point 2
-    {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+    {% elif data['exemption-what-coordinate-system-radios'] == "British National Grid (OSGB36)" %}
     Northings of point 2
     {% endif %}
 {% endset %}
@@ -45,7 +45,7 @@
 {% set point3LatHTML %}
     {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['exemption-what-coordinate-system-radios'] %}              
     Latitude of point 3
-    {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+    {% elif data['exemption-what-coordinate-system-radios'] == "British National Grid (OSGB36)" %}
     Eastings of point 3
     {% endif %}
 {% endset %}
@@ -53,7 +53,7 @@
 {% set point3LongHTML %}
 {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['exemption-what-coordinate-system-radios'] %}          
     Longitude of point 3
-    {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+    {% elif data['exemption-what-coordinate-system-radios'] == "British National Grid (OSGB36)" %}
     Northings of point 3
     {% endif %}
 {% endset %}
@@ -61,7 +61,7 @@
 {% set point4LatHTML %}
     {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['exemption-what-coordinate-system-radios'] %}              
     Latitude of point 4
-    {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+    {% elif data['exemption-what-coordinate-system-radios'] == "British National Grid (OSGB36)" %}
     Eastings of point 4
     {% endif %}
 {% endset %}
@@ -69,7 +69,7 @@
 {% set point4LongHTML %}
 {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['exemption-what-coordinate-system-radios'] %}          
     Longitude of point 4
-    {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+    {% elif data['exemption-what-coordinate-system-radios'] == "British National Grid (OSGB36)" %}
     Northings of point 4
     {% endif %}
 {% endset %}
@@ -77,7 +77,7 @@
 {% set point5LatHTML %}
     {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['exemption-what-coordinate-system-radios'] %}              
     Latitude of point 5
-    {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+    {% elif data['exemption-what-coordinate-system-radios'] == "British National Grid (OSGB36)" %}
     Eastings of point 5
     {% endif %}
 {% endset %}
@@ -85,7 +85,7 @@
 {% set point5LongHTML %}
 {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['exemption-what-coordinate-system-radios'] %}          
     Longitude of point 5
-    {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+    {% elif data['exemption-what-coordinate-system-radios'] == "British National Grid (OSGB36)" %}
     Northings of point 5
     {% endif %}
 {% endset %}
@@ -95,28 +95,28 @@
     {% if data['errorLatHTML'] == "true" %}
         {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['exemption-what-coordinate-system-radios'] %} 
             Enter the latitude
-        {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+        {% elif data['exemption-what-coordinate-system-radios'] == "British National Grid (OSGB36)" %}
             Enter the eastings
         {% endif %}
     {% elif data['errorLongHTML'] == "true" %}
         {% if data['exemption-what-coordinate-system-radios'] == "WGS84 (World Geodetic System 1984)" or not data['exemption-what-coordinate-system-radios'] %} 
             Enter the longitude
-        {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+        {% elif data['exemption-what-coordinate-system-radios'] == "British National Grid (OSGB36)" %}
             Enter the northings
         {% endif %}
     {% endif %}
 {% endset %}
 
-{% set point1LatError = "Enter the " + ("eastings" if data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" else "latitude") + " of the start and end point" %}
-{% set point1LongError = "Enter the " + ("northings" if data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" else "longitude") + " of the start and end point" %}
-{% set point2LatError = "Enter the " + ("eastings" if data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" else "latitude") + " of point 2" %}
-{% set point2LongError = "Enter the " + ("northings" if data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" else "longitude") + " of point 2" %}
-{% set point3LatError = "Enter the " + ("eastings" if data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" else "latitude") + " of point 3" %}
-{% set point3LongError = "Enter the " + ("northings" if data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" else "longitude") + " of point 3" %}
-{% set point4LatError = "Enter the " + ("eastings" if data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" else "latitude") + " of point 4" %}
-{% set point4LongError = "Enter the " + ("northings" if data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" else "longitude") + " of point 4" %}
-{% set point5LatError = "Enter the " + ("eastings" if data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" else "latitude") + " of point 5" %}
-{% set point5LongError = "Enter the " + ("northings" if data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" else "longitude") + " of point 5" %}
+{% set point1LatError = "Enter the " + ("eastings" if data['exemption-what-coordinate-system-radios'] == "British National Grid (OSGB36)" else "latitude") + " of the start and end point" %}
+{% set point1LongError = "Enter the " + ("northings" if data['exemption-what-coordinate-system-radios'] == "British National Grid (OSGB36)" else "longitude") + " of the start and end point" %}
+{% set point2LatError = "Enter the " + ("eastings" if data['exemption-what-coordinate-system-radios'] == "British National Grid (OSGB36)" else "latitude") + " of point 2" %}
+{% set point2LongError = "Enter the " + ("northings" if data['exemption-what-coordinate-system-radios'] == "British National Grid (OSGB36)" else "longitude") + " of point 2" %}
+{% set point3LatError = "Enter the " + ("eastings" if data['exemption-what-coordinate-system-radios'] == "British National Grid (OSGB36)" else "latitude") + " of point 3" %}
+{% set point3LongError = "Enter the " + ("northings" if data['exemption-what-coordinate-system-radios'] == "British National Grid (OSGB36)" else "longitude") + " of point 3" %}
+{% set point4LatError = "Enter the " + ("eastings" if data['exemption-what-coordinate-system-radios'] == "British National Grid (OSGB36)" else "latitude") + " of point 4" %}
+{% set point4LongError = "Enter the " + ("northings" if data['exemption-what-coordinate-system-radios'] == "British National Grid (OSGB36)" else "longitude") + " of point 4" %}
+{% set point5LatError = "Enter the " + ("eastings" if data['exemption-what-coordinate-system-radios'] == "British National Grid (OSGB36)" else "latitude") + " of point 5" %}
+{% set point5LongError = "Enter the " + ("northings" if data['exemption-what-coordinate-system-radios'] == "British National Grid (OSGB36)" else "longitude") + " of point 5" %}
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
 {% block pageTitle %}
@@ -159,7 +159,7 @@
                         
         {% include "../includes/lat-long-content.html" %}
 
-        {% elif data['exemption-what-coordinate-system-radios'] == "OSGB36 (National Grid)" %}
+        {% elif data['exemption-what-coordinate-system-radios'] == "British National Grid (OSGB36)" %}
 
         {% include "../includes/east-north-content.html" %}
 

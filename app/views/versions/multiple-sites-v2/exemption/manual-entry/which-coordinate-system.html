@@ -78,8 +78,8 @@ Which coordinate system do you want to use?
                  <h2 class="govuk-heading-s">WGS84 (World Geodetic System 1984)</h2>
                   <p>WGS84 is a global system widely used in GPS and mapping tools like Google Maps. It uses latitude and longitude to pinpoint locations. For example, latitude 55.019889, longitude -1.399500.</p>
                     
-                  <h2 class="govuk-heading-s">OSGB36 (National Grid)</h2>
-                  <p>Also known as the British National Grid (BNG), OSGB36 maps Great Britain using numerical east and north positions, called eastings and northings. For example, easting 438493, northing 569648.</p>
+                  <h2 class="govuk-heading-s">British National Grid (OSGB36)</h2>
+                  <p>The British National Grid maps Great Britain using numerical east and north positions, called eastings and northings. It’s based on the OSGB36 reference system used by Ordnance Survey. For example, easting 438493, northing 569648.</p>
                 </div>
               </details>
             
@@ -116,9 +116,9 @@ Which coordinate system do you want to use?
                             }
                         },
                         {
-                            value: "OSGB36 (National Grid)",
-                            text: "OSGB36 (National Grid)",
-                            checked: (site.coordinateSystem == "OSGB36 (National Grid)") if returnTo == 'review-site-details' else (data[siteDataKey] == "OSGB36 (National Grid)"),
+                            value: "British National Grid (OSGB36)",
+                            text: "British National Grid (OSGB36)",
+                            checked: (site.coordinateSystem == "British National Grid (OSGB36)") if returnTo == 'review-site-details' else (data[siteDataKey] == "British National Grid (OSGB36)"),
                             hint: {
                               text: "Uses eastings and northings"
                             }
