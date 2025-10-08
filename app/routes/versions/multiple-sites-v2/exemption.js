@@ -907,18 +907,18 @@ router.post('/' + version + section + 'about-your-activity-router', function (re
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////
-// Public Register
+// Sharing your information publicly
 // RADIO BUTTONS WITH CONDITIONAL TEXTAREA
 /////////////////////////////////////////////////////////////////////////////////////////////
 
-router.post('/' + version + section + 'public-register-router', function (req, res) {
+router.post('/' + version + section + 'sharing-your-information-router', function (req, res) {
     // Reset error states
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
     req.session.data['errortypetwo'] = "false";
 
-    // Clear text area if user changes from Yes to No
-    if (req.session.data['exemption-public-register-radios'] === 'No') {
+    // Clear text area if user changes from No to Yes
+    if (req.session.data['exemption-public-register-radios'] === 'Yes') {
         delete req.session.data['exemption-public-register-text-area'];
     }
 
@@ -929,17 +929,17 @@ router.post('/' + version + section + 'public-register-router', function (req, r
     ) {
         req.session.data['errorthispage'] = "true";
         req.session.data['errortypeone'] = "true";
-        res.redirect('public-register');
+        res.redirect('sharing-your-information');
     } 
-    // If "Yes" is selected, ensure the textarea is not empty
+    // If "No" is selected, ensure the textarea is not empty
     else if (
-        req.session.data['exemption-public-register-radios'] == "Yes" &&
+        req.session.data['exemption-public-register-radios'] == "No" &&
         (req.session.data['exemption-public-register-text-area'] == undefined ||
          req.session.data['exemption-public-register-text-area'].trim() == "")
     ) {
         req.session.data['errorthispage'] = "true";
         req.session.data['errortypetwo'] = "true";
-        res.redirect('public-register');
+        res.redirect('sharing-your-information');
     } else {
        // Set the status to completed
        req.session.data['exempt-information-4-status'] = 'completed';
