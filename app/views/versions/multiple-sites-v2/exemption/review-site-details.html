@@ -306,7 +306,7 @@ Review site details
                         </h2>
                     </div>
                     <div class="govuk-summary-card__content">
-                        <dl class="govuk-summary-list">
+                        <dl class="govuk-summary-list govuk-summary-list--full-width">
                             <!-- Only show site name for non-single-site-file-upload journeys -->
                             {% if isMultipleSitesJourney or site.entryMethod != 'file-upload' %}
                             <div class="govuk-summary-list__row">
@@ -410,11 +410,11 @@ Review site details
                                 {% endif %}
                             {% endif %}
                             
-                            <div class="govuk-summary-list__row">
-                                <dt class="govuk-summary-list__key map-label">
+                            <div class="govuk-summary-list__row govuk-summary-list__row--no-actions">
+                                <dt class="govuk-summary-list__key govuk-summary-list__key--full-width map-label">
                                     Map view
                                 </dt>
-                                <dd class="govuk-summary-list__value">
+                                <dd class="govuk-summary-list__value govuk-summary-list__value--full-width">
                                     <img src="{{ site.mapImage or '/public/images/map-drawn.jpg' }}" alt="Map showing site {{ siteIndex }} location" />
                                 </dd>
                             </div>
