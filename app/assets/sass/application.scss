@@ -519,3 +519,52 @@ body.page-cookie-banner {
   height: 10px; // keep same dimensions as MOJ default
 }
 
+// Summary list full width override - use flex for all rows
+
+
+@media (min-width: 40.0625em) {
+
+  .govuk-summary-list--full-width {
+    // Apply flex layout to ALL rows
+    .govuk-summary-list__row {
+      display: flex !important;
+      max-width: none !important;
+    }
+
+    .govuk-summary-list__key {
+      flex: 0 0 30%;
+      padding-right: 20px;
+      margin-right: 0;
+    }
+
+    .govuk-summary-list__value {
+      flex: 1 1 auto;
+      padding-right: 20px;
+      margin-right: 0;
+    }
+
+    .govuk-summary-list__actions {
+      flex: 0 0 auto;
+      text-align: right;
+      padding-left: 20px;
+      margin-left: 0;
+    }
+
+    // For map rows with full-width value, keep the same proportions
+    .govuk-summary-list__row:has(.govuk-summary-list__value--full-width) {
+      .govuk-summary-list__key {
+        flex: 0 0 30%;
+      }
+      
+      .govuk-summary-list__value {
+        flex: 1 1 auto;
+        padding-right: 0;
+      }
+    }
+
+    // Remove the pseudo-element that creates extra spacing on rows with no actions
+    .govuk-summary-list__row--no-actions::after {
+      content: none;
+    }
+  }
+}
