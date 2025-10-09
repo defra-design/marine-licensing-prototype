@@ -1210,11 +1210,11 @@
     {% endif %}
     <!-- End of dynamic site cards -->
 
-    <!-- Public register section -->
+    <!-- Sharing your information publicly -->
     <div class="govuk-summary-card">
       <div class="govuk-summary-card__title-wrapper">
         <h2 class="govuk-summary-card__title">
-          Public register
+          Sharing your information publicly
         </h2>
         {% if data['applicationSubmitted'] != "true" %}
         <ul class="govuk-summary-card__actions">
@@ -1229,20 +1229,20 @@
         <dl class="govuk-summary-list">
           <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
-              Information withheld from public register
+              Consent to publish your information
             </dt>
             <dd class="govuk-summary-list__value">
-              {{ data['exemption-public-register-radios'] or "No" }}
+              {{ data['exemption-public-register-radios'] }}
             </dd>
           </div>
 
-          {% if data['exemption-public-register-radios'] == "Yes" %}
+          {% if data['exemption-public-register-radios'] == "No" %}
           <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">
-              Why the information should be withheld 
+              Why you do not consent 
             </dt>
             <dd class="govuk-summary-list__value">
-              {{ data['exemption-public-register-text-area'] or "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum." }}
+              {{ data['exemption-public-register-text-area'] or "It includes commercially sensitive data." }}
             </dd>
           </div>
           {% endif %}
