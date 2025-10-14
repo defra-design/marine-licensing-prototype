@@ -1,4 +1,13 @@
-{% extends "../layouts/sample-plans.html" %}
+{% extends "../layouts/exemption.html" %}
+
+{% block header %}
+{{ govukHeader({
+  classes: "govuk-header--full-width-border"
+}) }}
+{{ govukServiceNavigation({
+  serviceName: "Get permission for marine work"
+}) }}
+{% endblock %}
 
 {% block beforeContent %}
 	{% include "../includes/phase-banner.html" %} 
