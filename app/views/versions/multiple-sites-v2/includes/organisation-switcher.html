@@ -3,11 +3,11 @@
 	{% if currentPageId === "home" or currentPageId === "sample-plans-projects" %}
 		{% if data['component_type'] === 'autocomplete' %}
 			<a class="govuk-link app-organisation-switcher__link govuk-link--no-visited-state" href="organisation-selector-autocomplete?change=true">
-				Change organisation
+				Change who you're representing
 			</a>
 		{% else %}
 			<a class="govuk-link app-organisation-switcher__link govuk-link--no-visited-state" href="organisation-selector?change=true">
-				Change organisation
+				Change who you're representing
 			</a>
 		{% endif %}
 	{% endif %}
