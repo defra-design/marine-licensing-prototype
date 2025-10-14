@@ -472,7 +472,7 @@ module.exports = function (router) {
     // Mark as completed and redirect back to review page
     req.session.data['sample-disposal-site-material-type-completed'] = true;
     req.session.data['sample-disposal-site-disposal-method-completed'] = true;
-    res.redirect('review-disposal-site-details');
+    res.redirect('review-disposal-site-details#disposal-site-1-details');
   });
 
   ///////////////////////////////////////////
@@ -549,7 +549,7 @@ module.exports = function (router) {
 
     // Mark as completed and redirect back to review page
     req.session.data['sample-disposal-site-1-maximum-volume-completed'] = true;
-    res.redirect('review-disposal-site-details');
+    res.redirect('review-disposal-site-details#disposal-site-1-details');
   });
 
   ///////////////////////////////////////////
@@ -602,7 +602,7 @@ module.exports = function (router) {
 
     // Mark as completed and redirect back to review page
     req.session.data['sample-disposal-site-1-beneficial-use-completed'] = true;
-    res.redirect('review-disposal-site-details');
+    res.redirect('review-disposal-site-details#disposal-site-1-details');
   });
 
   ///////////////////////////////////////////
@@ -666,7 +666,7 @@ module.exports = function (router) {
     // Mark as completed and redirect back to review page
     req.session.data['sample-disposal-site-2-material-type-completed'] = true;
     req.session.data['sample-disposal-site-2-disposal-method-completed'] = true;
-    res.redirect('review-disposal-site-details');
+    res.redirect('review-disposal-site-details#disposal-site-2-details');
   });
 
   ///////////////////////////////////////////
@@ -743,7 +743,7 @@ module.exports = function (router) {
 
     // Mark as completed and redirect back to review page
     req.session.data['sample-disposal-site-2-maximum-volume-completed'] = true;
-    res.redirect('review-disposal-site-details');
+    res.redirect('review-disposal-site-details#disposal-site-2-details');
   });
 
   ///////////////////////////////////////////
@@ -796,7 +796,7 @@ module.exports = function (router) {
 
     // Mark as completed and redirect back to review page
     req.session.data['sample-disposal-site-2-beneficial-use-completed'] = true;
-    res.redirect('review-disposal-site-details');
+    res.redirect('review-disposal-site-details#disposal-site-2-details');
   });
 
   ///////////////////////////////////////////
