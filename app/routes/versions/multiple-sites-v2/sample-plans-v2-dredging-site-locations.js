@@ -193,7 +193,7 @@ module.exports = function (router) {
 
     // If no errors, mark as completed and redirect to review page
     req.session.data['dredging-details-site-1-completed'] = true;
-    res.redirect('review-dredging-site-details');
+    res.redirect('review-dredging-site-details#site-1-details');
   });
 
   /////////////////////////////////////////////////////////
@@ -407,7 +407,7 @@ module.exports = function (router) {
 
     // If no errors, mark as completed and redirect to review page
     req.session.data['site-history-site-1-completed'] = true;
-    res.redirect('review-dredging-site-details');
+    res.redirect('review-dredging-site-details#site-1-details');
   });
 
   /////////////////////////////////////////////////////////
@@ -449,7 +449,7 @@ module.exports = function (router) {
 
     // If no errors, mark as completed and redirect to review page
     req.session.data['dredging-details-site-1-depth-completed'] = true;
-    res.redirect('review-dredging-site-details');
+    res.redirect('review-dredging-site-details#site-1-details');
   });
 
   /////////////////////////////////////////////////////////
@@ -479,7 +479,7 @@ module.exports = function (router) {
     }
 
     // If no errors, redirect to review page
-    res.redirect('review-dredging-site-details');
+    res.redirect('review-dredging-site-details#site-1-details');
   });
 
   /////////////////////////////////////////////////////////
@@ -544,7 +544,7 @@ module.exports = function (router) {
 
     // If no errors, mark as completed and redirect to review page
     req.session.data['maximum-dredge-volume-completed'] = true;
-    res.redirect('review-dredging-site-details');
+    res.redirect('review-dredging-site-details#site-1-details');
   });
 
   /////////////////////////////////////////////////////////
