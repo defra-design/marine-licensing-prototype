@@ -480,7 +480,7 @@
     <!-- End of project summary section -->
 
     <!-- Applicant details card - only for organisation users -->
-    {% if data['user_type'] === 'organisation' %}
+    {% if data['user_type'] === 'organisation' and data['organisation-name'] !== 'John Doe' %}
     <div class="govuk-summary-card">
       <div class="govuk-summary-card__title-wrapper">
         <h2 class="govuk-summary-card__title">
