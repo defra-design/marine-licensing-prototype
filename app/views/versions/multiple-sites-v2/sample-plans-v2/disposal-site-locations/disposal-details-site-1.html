@@ -175,28 +175,52 @@ Disposal details
                 } if data['sample-disposal-details-site-1-method-error'],
                 items: [
                     {
-                        value: "contained-disposal",
-                        text: "Contained disposal",
+                        value: "backhoe-dredger",
+                        text: "Backhoe dredger",
                         hint: {
-                            text: "For example, in an enclosed pit"
+                            text: "Mechanical excavator that sits on a barge and scoops up dredged material, then drops it overboard or into another barge for disposal"
                         },
-                        checked: true if data['sample-disposal-details-site-1-method'] and "contained-disposal" in data['sample-disposal-details-site-1-method']
+                        checked: true if data['sample-disposal-details-site-1-method'] and "backhoe-dredger" in data['sample-disposal-details-site-1-method']
                     },
                     {
-                        value: "disposal-at-sea-or-offshore",
-                        text: "Disposal at sea or offshore disposal",
+                        value: "bottom-dumping-hopper",
+                        text: "Bottom dumping (hopper)",
                         hint: {
-                            text: "Material is disposed of from a vessel or barge at an approved licensed disposal site"
+                            text: "Barge with a big storage compartment that splits open along the bottom to release the dredged material"
                         },
-                        checked: true if data['sample-disposal-details-site-1-method'] and "disposal-at-sea-or-offshore" in data['sample-disposal-details-site-1-method']
+                        checked: true if data['sample-disposal-details-site-1-method'] and "bottom-dumping-hopper" in data['sample-disposal-details-site-1-method']
                     },
                     {
-                        value: "onshore-disposal-or-treatment",
-                        text: "Onshore disposal or treatment",
+                        value: "direct-pumping-trailing-suction",
+                        text: "Direct pumping from trailing suction hopper dredger",
                         hint: {
-                            text: "Material is taken to land for disposal or treatment"
+                            text: "Dredger that pumps material directly to shore through a pipe connected to the vessel"
                         },
-                        checked: true if data['sample-disposal-details-site-1-method'] and "onshore-disposal-or-treatment" in data['sample-disposal-details-site-1-method']
+                        checked: true if data['sample-disposal-details-site-1-method'] and "direct-pumping-trailing-suction" in data['sample-disposal-details-site-1-method']
+                    },
+                    {
+                        value: "pump-out-floating-pipeline",
+                        text: "Pump-out via floating pipeline",
+                        hint: {
+                            text: "Dredged material is pumped through a long floating or submerged pipe directly to shore or a containment area"
+                        },
+                        checked: true if data['sample-disposal-details-site-1-method'] and "pump-out-floating-pipeline" in data['sample-disposal-details-site-1-method']
+                    },
+                    {
+                        value: "rainbowing",
+                        text: "Rainbowing",
+                        hint: {
+                            text: "Dredger sprays material in a high arc through the air on to the shore or shallow water area"
+                        },
+                        checked: true if data['sample-disposal-details-site-1-method'] and "rainbowing" in data['sample-disposal-details-site-1-method']
+                    },
+                    {
+                        value: "split-hopper-barge",
+                        text: "Split hopper barge",
+                        hint: {
+                            text: "Barge with a big storage compartment, with a door or hatch along the bottom, that opens to release the dredged material"
+                        },
+                        checked: true if data['sample-disposal-details-site-1-method'] and "split-hopper-barge" in data['sample-disposal-details-site-1-method']
                     },
                     {
                         value: "other",

@@ -175,28 +175,52 @@ Disposal details
                 } if data['sample-disposal-details-site-2-method-error'],
                 items: [
                     {
-                        value: "bottom-dumping",
-                        text: "Bottom dumping",
+                        value: "backhoe-dredger",
+                        text: "Backhoe dredger",
                         hint: {
-                            text: "Direct discharge of material to the seabed from vessels"
+                            text: "Mechanical excavator that sits on a barge and scoops up dredged material, then drops it overboard or into another barge for disposal"
                         },
-                        checked: true if data['sample-disposal-details-site-2-method'] and "bottom-dumping" in data['sample-disposal-details-site-2-method']
+                        checked: true if data['sample-disposal-details-site-2-method'] and "backhoe-dredger" in data['sample-disposal-details-site-2-method']
                     },
                     {
-                        value: "side-casting",
-                        text: "Side casting",
+                        value: "bottom-dumping-hopper",
+                        text: "Bottom dumping (hopper)",
                         hint: {
-                            text: "Discharge of material to the side during dredging operations"
+                            text: "Barge with a big storage compartment that splits open along the bottom to release the dredged material"
                         },
-                        checked: true if data['sample-disposal-details-site-2-method'] and "side-casting" in data['sample-disposal-details-site-2-method']
+                        checked: true if data['sample-disposal-details-site-2-method'] and "bottom-dumping-hopper" in data['sample-disposal-details-site-2-method']
                     },
                     {
-                        value: "pipeline",
-                        text: "Pipeline discharge",
+                        value: "direct-pumping-trailing-suction",
+                        text: "Direct pumping from trailing suction hopper dredger",
                         hint: {
-                            text: "Transport and discharge of material through a pipeline system"
+                            text: "Dredger that pumps material directly to shore through a pipe connected to the vessel"
                         },
-                        checked: true if data['sample-disposal-details-site-2-method'] and "pipeline" in data['sample-disposal-details-site-2-method']
+                        checked: true if data['sample-disposal-details-site-2-method'] and "direct-pumping-trailing-suction" in data['sample-disposal-details-site-2-method']
+                    },
+                    {
+                        value: "pump-out-floating-pipeline",
+                        text: "Pump-out via floating pipeline",
+                        hint: {
+                            text: "Dredged material is pumped through a long floating or submerged pipe directly to shore or a containment area"
+                        },
+                        checked: true if data['sample-disposal-details-site-2-method'] and "pump-out-floating-pipeline" in data['sample-disposal-details-site-2-method']
+                    },
+                    {
+                        value: "rainbowing",
+                        text: "Rainbowing",
+                        hint: {
+                            text: "Dredger sprays material in a high arc through the air on to the shore or shallow water area"
+                        },
+                        checked: true if data['sample-disposal-details-site-2-method'] and "rainbowing" in data['sample-disposal-details-site-2-method']
+                    },
+                    {
+                        value: "split-hopper-barge",
+                        text: "Split hopper barge",
+                        hint: {
+                            text: "Barge with a big storage compartment, with a door or hatch along the bottom, that opens to release the dredged material"
+                        },
+                        checked: true if data['sample-disposal-details-site-2-method'] and "split-hopper-barge" in data['sample-disposal-details-site-2-method']
                     },
                     {
                         value: "other",

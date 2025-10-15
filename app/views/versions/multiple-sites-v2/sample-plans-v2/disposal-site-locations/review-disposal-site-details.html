@@ -207,12 +207,18 @@ Review disposal site details
                                 {% set methods = [] %}
                                 {% if data['sample-disposal-details-site-1-method'] %}
                                     {% for method in data['sample-disposal-details-site-1-method'] %}
-                                        {% if method == 'contained-disposal' %}
-                                            {% set methods = (methods.push('Contained disposal'), methods) %}
-                                        {% elif method == 'disposal-at-sea-or-offshore' %}
-                                            {% set methods = (methods.push('Disposal at sea or offshore disposal'), methods) %}
-                                        {% elif method == 'onshore-disposal-or-treatment' %}
-                                            {% set methods = (methods.push('Onshore disposal or treatment'), methods) %}
+                                        {% if method == 'backhoe-dredger' %}
+                                            {% set methods = (methods.push('Backhoe dredger'), methods) %}
+                                        {% elif method == 'bottom-dumping-hopper' %}
+                                            {% set methods = (methods.push('Bottom dumping (hopper)'), methods) %}
+                                        {% elif method == 'direct-pumping-trailing-suction' %}
+                                            {% set methods = (methods.push('Direct pumping from trailing suction hopper dredger'), methods) %}
+                                        {% elif method == 'pump-out-floating-pipeline' %}
+                                            {% set methods = (methods.push('Pump-out via floating pipeline'), methods) %}
+                                        {% elif method == 'rainbowing' %}
+                                            {% set methods = (methods.push('Rainbowing'), methods) %}
+                                        {% elif method == 'split-hopper-barge' %}
+                                            {% set methods = (methods.push('Split hopper barge'), methods) %}
                                         {% elif method == 'other' and data['sample-disposal-details-site-1-method-other'] %}
                                             {% set methods = (methods.push('Other: ' + data['sample-disposal-details-site-1-method-other']), methods) %}
                                         {% endif %}
@@ -408,12 +414,18 @@ Review disposal site details
                                 {% set methods = [] %}
                                 {% if data['sample-disposal-details-site-2-method'] %}
                                     {% for method in data['sample-disposal-details-site-2-method'] %}
-                                        {% if method == 'bottom-dumping' %}
-                                            {% set methods = (methods.push('Bottom dumping'), methods) %}
-                                        {% elif method == 'side-casting' %}
-                                            {% set methods = (methods.push('Side casting'), methods) %}
-                                        {% elif method == 'pipeline' %}
-                                            {% set methods = (methods.push('Pipeline discharge'), methods) %}
+                                        {% if method == 'backhoe-dredger' %}
+                                            {% set methods = (methods.push('Backhoe dredger'), methods) %}
+                                        {% elif method == 'bottom-dumping-hopper' %}
+                                            {% set methods = (methods.push('Bottom dumping (hopper)'), methods) %}
+                                        {% elif method == 'direct-pumping-trailing-suction' %}
+                                            {% set methods = (methods.push('Direct pumping from trailing suction hopper dredger'), methods) %}
+                                        {% elif method == 'pump-out-floating-pipeline' %}
+                                            {% set methods = (methods.push('Pump-out via floating pipeline'), methods) %}
+                                        {% elif method == 'rainbowing' %}
+                                            {% set methods = (methods.push('Rainbowing'), methods) %}
+                                        {% elif method == 'split-hopper-barge' %}
+                                            {% set methods = (methods.push('Split hopper barge'), methods) %}
                                         {% elif method == 'other' and data['sample-disposal-details-site-2-method-other'] %}
                                             {% set methods = (methods.push('Other: ' + data['sample-disposal-details-site-2-method-other']), methods) %}
                                         {% endif %}
