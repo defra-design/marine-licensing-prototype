@@ -44,12 +44,12 @@
                     <strong>Note: This is a prototype.</strong><br>
                     You don't need to upload a file. Just select <strong>'Continue'</strong> to move to the next step.
                   </div>-->
-                  
-                <div id="file-upload-1-hint" class="govuk-hint">
+
                     {% if data['sample-plan-file-type'] == "shapefile" %}
-                      Upload a ZIP file containing all the files for your shapefile (for example, .shp, .shx and .dbf). You can include more than one site.
+                    <p>Upload a ZIP file containing all the files for your shapefile. Your shapefile must include .shp, .shx, .dbf and .prj files.</p>
+                    <p>You can include more than one site.</p>
                     {% endif %}
-                </div>
+
 
             {{ govukFileUpload({
                 id: "file-upload-1",
