@@ -91,7 +91,7 @@ Maximum proposed disposal volumes
             <div class="govuk-form-group {% if data['sample-disposal-site-1-annual-volume-error'] %}govuk-form-group--error{% endif %}">
                 <h2 class="govuk-label-wrapper">
                     <label class="govuk-label govuk-label--s" for="sample-disposal-site-1-annual-volume">
-                        Annual volume (if applicable)
+                        Annual volume (optional)
                     </label>
                 </h2>
                 {% if data['sample-disposal-site-1-annual-volume-error'] %}
@@ -111,7 +111,7 @@ Maximum proposed disposal volumes
 
             {% call govukFieldset({
                 legend: {
-                    text: "Disposal campaign (if applicable)",
+                    text: "Disposal campaign (optional)",
                     classes: "govuk-fieldset__legend--s",
                     isPageHeading: false
                 }

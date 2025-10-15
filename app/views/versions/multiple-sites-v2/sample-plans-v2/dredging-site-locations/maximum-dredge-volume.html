@@ -81,7 +81,7 @@ Maximum proposed dredge volumes
 
             <div class="govuk-form-group {% if data['maximum-dredge-volume-annual-error'] %}govuk-form-group--error{% endif %}">
                 <label class="govuk-label govuk-label--s" for="maximum-dredge-volume-annual">
-                    <strong>Annual volume (if applicable)</strong>
+                    <strong>Annual volume (optional)</strong>
                 </label>
                 {% if data['maximum-dredge-volume-annual-error'] %}
                     <p id="maximum-dredge-volume-annual-error" class="govuk-error-message">
@@ -103,7 +103,7 @@ Maximum proposed dredge volumes
 
             {% call govukFieldset({
                 legend: {
-                    text: "Dredge campaign (if applicable)",
+                    text: "Dredge campaign (optional)",
                     classes: "govuk-fieldset__legend--s",
                     isPageHeading: false
                 }
