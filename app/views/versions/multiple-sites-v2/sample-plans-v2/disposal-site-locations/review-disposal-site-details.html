@@ -11,7 +11,7 @@
 
 <!-- Set the heading for the page -->
 {% set pageHeadingTextHTML %}
-Review disposal site details
+Review existing disposal site details
 {% endset %}
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
@@ -88,7 +88,7 @@ Review disposal site details
         <div id="disposal-site-1-details" class="govuk-summary-card">
             <div class="govuk-summary-card__title-wrapper">
                 <h2 class="govuk-summary-card__title">
-                    Disposal site 1 details
+                    Existing disposal site 1 details
                 </h2>
                 <div class="govuk-summary-card__actions">
                     <a class="govuk-link govuk-link--no-visited-state" href="delete-site?site=1">
@@ -286,7 +286,7 @@ Review disposal site details
         <div id="disposal-site-2-details" class="govuk-summary-card">
             <div class="govuk-summary-card__title-wrapper">
                 <h2 class="govuk-summary-card__title">
-                    Disposal site 2 details
+                    Existing disposal site 2 details
                 </h2>
                 <div class="govuk-summary-card__actions">
                     <a class="govuk-link govuk-link--no-visited-state" href="delete-site?site=2">
@@ -482,8 +482,8 @@ Review disposal site details
 
         {% if not hasSite2 %}
         <div class="govuk-button-group govuk-!-margin-bottom-6">
-            <a href="where-dispose-of-material?disposal-site-code=&disposal-site-name=&disposal-site-location=&marine-area=&disposal-site-status=&sample-plan-where-dispose-material=" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
-                Add another disposal site
+            <a href="find-existing-disposal-site-lean-v2?disposal-site-code=&disposal-site-name=&disposal-site-location=&marine-area=&disposal-site-status=&sample-plan-where-dispose-material=" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
+                Add another existing disposal site
             </a>
         </div>
         {% endif %}
@@ -491,7 +491,7 @@ Review disposal site details
         {% if hasSite2 %}
         <div class="govuk-button-group govuk-!-margin-bottom-6">
             <a href="#" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
-                Add another disposal site
+                Add another existing disposal site
             </a>
         </div>
         {% endif %}

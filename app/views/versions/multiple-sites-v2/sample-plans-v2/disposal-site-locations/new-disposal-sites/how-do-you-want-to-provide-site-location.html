@@ -14,7 +14,7 @@
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-How do you want to provide the site location for the new disposal site?
+How do you want to provide the new disposal site location?
 {% endset %}
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
@@ -34,7 +34,7 @@ How do you want to provide the site location for the new disposal site?
                     titleText: "There is a problem",
                     errorList: [
                         {
-                            text: "Select how you want to provide the site location for the new disposal site",
+                            text: "Select how you want to provide the new disposal site location",
                             href: "#new-disposal-site-location-method"
                         }
                     ]
@@ -54,11 +54,15 @@ How do you want to provide the site location for the new disposal site?
                     {
                         value: "file-upload",
                         text: "Upload a file with the coordinates of the site"
+                    },
+                    {
+                        value: "manual-entry",
+                        text: "Enter the coordinates of the site manually"
                     }
                 ],
                 value: data['new-disposal-site-location-method'],
                 errorMessage: {
-                    text: "Select how you want to provide the site location for the new disposal site"
+                    text: "Select how you want to provide the new disposal site location"
                 } if data['new-disposal-errorthispage'] == "true"
             }) }}
             
