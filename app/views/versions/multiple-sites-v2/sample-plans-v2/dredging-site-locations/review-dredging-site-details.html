@@ -33,11 +33,10 @@ Review dredge site details
         
         <!-- Check if all required fields are completed -->
         {% set site1DredgingComplete = data['dredging-details-site-1-completed'] %}
-        {% set site1HistoryComplete = data['site-history-site-1-completed'] %}
         {% set maximumVolumeComplete = data['maximum-dredge-volume-completed'] %}
         {% set dredgeDepthComplete = data['dredging-details-site-1-depth-completed'] %}
         
-        {% set allComplete = site1DredgingComplete and site1HistoryComplete and maximumVolumeComplete and dredgeDepthComplete %}
+        {% set allComplete = site1DredgingComplete and maximumVolumeComplete and dredgeDepthComplete %}
         
         {% if not allComplete %}
             {{ govukInsetText({
@@ -135,50 +134,6 @@ Review dredge site details
                         </dt>
                         <dd class="govuk-summary-list__value govuk-summary-list__value--full-width">
                             <img src="/public/images/map-5-points.jpg" alt="Map showing site 1 location" />
-                        </dd>
-                    </div>
-
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Previous site activity
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            {% if data['site-history-site-1-completed'] %}
-                                {% set historyItems = [] %}
-                                {% if data['site-history-site-1'] %}
-                                    {% for item in data['site-history-site-1'] %}
-                                        {% if item == 'chemicals-manufacturing' and data['site-history-site-1-chemicals-manufacturing-details'] %}
-                                            {% set historyItems = (historyItems.push('Chemicals manufacturing: ' + data['site-history-site-1-chemicals-manufacturing-details']), historyItems) %}
-                                        {% elif item == 'electronics-manufacturing' and data['site-history-site-1-electronics-manufacturing-details'] %}
-                                            {% set historyItems = (historyItems.push('Electronics manufacturing: ' + data['site-history-site-1-electronics-manufacturing-details']), historyItems) %}
-                                        {% elif item == 'major-port-infrastructure' and data['site-history-site-1-major-port-infrastructure-details'] %}
-                                            {% set historyItems = (historyItems.push('Major port infrastructure or activity: ' + data['site-history-site-1-major-port-infrastructure-details']), historyItems) %}
-                                        {% elif item == 'mining' and data['site-history-site-1-mining-details'] %}
-                                            {% set historyItems = (historyItems.push('Mining: ' + data['site-history-site-1-mining-details']), historyItems) %}
-                                        {% elif item == 'oil-processing' and data['site-history-site-1-oil-processing-details'] %}
-                                            {% set historyItems = (historyItems.push('Oil processing: ' + data['site-history-site-1-oil-processing-details']), historyItems) %}
-                                        {% elif item == 'pollution-incidents' and data['site-history-site-1-pollution-incidents-details'] %}
-                                            {% set historyItems = (historyItems.push('Pollution incidents: ' + data['site-history-site-1-pollution-incidents-details']), historyItems) %}
-                                        {% elif item == 'ship-building' and data['site-history-site-1-ship-building-details'] %}
-                                            {% set historyItems = (historyItems.push('Ship building: ' + data['site-history-site-1-ship-building-details']), historyItems) %}
-                                        {% elif item == 'steelworks' and data['site-history-site-1-steelworks-details'] %}
-                                            {% set historyItems = (historyItems.push('Steelworks: ' + data['site-history-site-1-steelworks-details']), historyItems) %}
-                                        {% elif item == 'other' and data['site-history-site-1-other-details'] %}
-                                            {% set historyItems = (historyItems.push('Other: ' + data['site-history-site-1-other-details']), historyItems) %}
-                                        {% elif item == 'not-previously-used' %}
-                                            {% set historyItems = (historyItems.push('Not previously used for anything'), historyItems) %}
-                                        {% endif %}
-                                    {% endfor %}
-                                {% endif %}
-                                {{ historyItems | join('<br>') | safe if historyItems.length > 0 else 'Not provided' }}
-                            {% else %}
-                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
-                            {% endif %}
-                        </dd>
-                        <dd class="govuk-summary-list__actions">
-                            <a href="site-history-site-1" class="govuk-link govuk-link--no-visited-state">
-                                {% if data['site-history-site-1-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> previous site activity</span>
-                            </a>
                         </dd>
                     </div>
 

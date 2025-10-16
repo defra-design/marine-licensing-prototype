@@ -110,12 +110,11 @@ module.exports = function (router) {
     
     // Check if all required fields are completed
     const site1DredgingComplete = req.session.data['dredging-details-site-1-completed'];
-    const site1HistoryComplete = req.session.data['site-history-site-1-completed'];
     const maximumVolumeComplete = req.session.data['maximum-dredge-volume-completed'];
     const dredgeDepthComplete = req.session.data['dredging-details-site-1-depth-completed'];
     
     // Set the overall completion status
-    if (site1DredgingComplete && site1HistoryComplete && maximumVolumeComplete && dredgeDepthComplete) {
+    if (site1DredgingComplete && maximumVolumeComplete && dredgeDepthComplete) {
       req.session.data['dredging-sites-all-complete'] = true;
     } else {
       req.session.data['dredging-sites-all-complete'] = false;
