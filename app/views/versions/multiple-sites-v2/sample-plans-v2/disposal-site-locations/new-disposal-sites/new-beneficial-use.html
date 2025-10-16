@@ -1,9 +1,9 @@
-{% extends "../../layouts/sample-plans.html" %}
+{% extends "../../../layouts/sample-plans.html" %}
 
 {% block beforeContent %}
-    {% include "../../includes/phase-banner.html" %}
+    {% include "../../../includes/phase-banner.html" %}
     {{ super() }}
-    {% include "../../includes/back-link.html" %}
+    {% include "../../../includes/back-link.html" %}
 {% endblock %}
 
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
@@ -18,7 +18,7 @@ Will any of the material being disposed of be re-used to benefit the environment
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
 {% block pageTitle %}
-    {% if  data['sample-disposal-site-2-beneficial-use-errorthispage'] == "true"  %}
+    {% if  data['new-disposal-site-1-beneficial-use-errorthispage'] == "true"  %}
         Error:
     {% endif %}
 
@@ -29,18 +29,18 @@ Will any of the material being disposed of be re-used to benefit the environment
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <!-- Show error summary if there are errors -->
-        {% if data['sample-disposal-site-2-beneficial-use-errorthispage'] == "true" %}
+        {% if data['new-disposal-site-1-beneficial-use-errorthispage'] == "true" %}
             {% set errorArray = [] %}
-            {% if data['sample-disposal-site-2-beneficial-use-error'] %}
+            {% if data['new-disposal-site-1-beneficial-use-error'] %}
                 {% set errorArray = (errorArray.push({
-                    "text": data['sample-disposal-site-2-beneficial-use-error'],
-                    "href": "#sample-disposal-site-2-beneficial-use"
+                    "text": data['new-disposal-site-1-beneficial-use-error'],
+                    "href": "#new-disposal-site-1-beneficial-use"
                 }), errorArray) %}
             {% endif %}
-            {% if data['sample-disposal-site-2-beneficial-use-description-error'] %}
+            {% if data['new-disposal-site-1-beneficial-use-description-error'] %}
                 {% set errorArray = (errorArray.push({
-                    "text": data['sample-disposal-site-2-beneficial-use-description-error'],
-                    "href": "#sample-disposal-site-2-beneficial-use-description"
+                    "text": data['new-disposal-site-1-beneficial-use-description-error'],
+                    "href": "#new-disposal-site-1-beneficial-use-description"
                 }), errorArray) %}
             {% endif %}
 
@@ -50,13 +50,13 @@ Will any of the material being disposed of be re-used to benefit the environment
             }) }}
         {% endif %}
 
-        <form action="beneficial-use-site-2-router" method="post" novalidate>
+        <form action="new-beneficial-use-router" method="post" novalidate>
             
             {{ govukRadios({
-                name: "sample-disposal-site-2-beneficial-use",
+                name: "new-disposal-site-1-beneficial-use",
                 fieldset: {
                     legend: {
-                        html: '<span class="govuk-caption-l">' + (data['sample-plan-project-name-text-input'] or '') + '<span class="govuk-!-display-block">Existing disposal site 2</span></span>' + pageHeadingTextHTML,
+                        html: '<span class="govuk-caption-l">' + (data['sample-plan-project-name-text-input'] or '') + '<span class="govuk-!-display-block">New disposal site 1</span></span>' + pageHeadingTextHTML,
                         isPageHeading: true,
                         classes: "govuk-fieldset__legend--l"
                     }
@@ -65,31 +65,31 @@ Will any of the material being disposed of be re-used to benefit the environment
                     text: "The material being disposed of for beneficial use, for example to create saltmarsh or wetlands, or to add clean sand to an eroding beach"
                 },
                 errorMessage: {
-                    text: data['sample-disposal-site-2-beneficial-use-error']
-                } if data['sample-disposal-site-2-beneficial-use-error'],
+                    text: data['new-disposal-site-1-beneficial-use-error']
+                } if data['new-disposal-site-1-beneficial-use-error'],
                 items: [
                     {
                         value: "yes",
                         text: "Yes",
-                        checked: true if data['sample-disposal-site-2-beneficial-use'] == "yes",
+                        checked: true if data['new-disposal-site-1-beneficial-use'] == "yes",
                         conditional: {
                             html: govukTextarea({
-                                name: "sample-disposal-site-2-beneficial-use-description",
-                                id: "sample-disposal-site-2-beneficial-use-description",
+                                name: "new-disposal-site-1-beneficial-use-description",
+                                id: "new-disposal-site-1-beneficial-use-description",
                                 label: {
                                     text: "Describe the proposed beneficial use"
                                 },
-                                value: data['sample-disposal-site-2-beneficial-use-description'],
+                                value: data['new-disposal-site-1-beneficial-use-description'],
                                 errorMessage: {
-                                    text: data['sample-disposal-site-2-beneficial-use-description-error']
-                                } if data['sample-disposal-site-2-beneficial-use-description-error']
+                                    text: data['new-disposal-site-1-beneficial-use-description-error']
+                                } if data['new-disposal-site-1-beneficial-use-description-error']
                             })
                         }
                     },
                     {
                         value: "no",
                         text: "No",
-                        checked: true if data['sample-disposal-site-2-beneficial-use'] == "no"
+                        checked: true if data['new-disposal-site-1-beneficial-use'] == "no"
                     }
                 ]
             }) }}

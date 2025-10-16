@@ -109,6 +109,7 @@ require('./routes/versions/multiple-sites-v2/sample-plans-v1-disposal-site-locat
 require('./routes/versions/multiple-sites-v2/sample-plans-v2.js')(router);
 require('./routes/versions/multiple-sites-v2/sample-plans-v2-dredging-site-locations.js')(router);
 require('./routes/versions/multiple-sites-v2/sample-plans-v2-disposal-site-locations.js')(router);
+require('./routes/versions/multiple-sites-v2/sample-plans-v2-new-disposal-site-locations.js')(router);
 
 // MVP Multi Sites Version
 require('./routes/versions/mvp-multi-sites/check.js')(router);
