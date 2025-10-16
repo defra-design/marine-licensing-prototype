@@ -13,7 +13,7 @@
 
 <!-- Set the heading for the page -->
 {% set pageHeadingTextHTML %}
-Maximum proposed disposal volumes
+Maximum proposed disposal volume
 {% endset %}
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
@@ -30,51 +30,31 @@ Maximum proposed disposal volumes
     <div class="govuk-grid-column-two-thirds">
         <!-- Show error summary if there are errors -->
         {% if data['sample-disposal-site-1-maximum-volume-errorthispage'] == "true" %}
-            {% set errorArray = [] %}
-            {% if data['sample-disposal-site-1-total-volume-error'] %}
-                {% set errorArray = (errorArray.push({
-                    "text": data['sample-disposal-site-1-total-volume-error'],
-                    "href": "#sample-disposal-site-1-total-volume"
-                }), errorArray) %}
-            {% endif %}
-            {% if data['sample-disposal-site-1-volume-per-campaign-error'] %}
-                {% set errorArray = (errorArray.push({
-                    "text": data['sample-disposal-site-1-volume-per-campaign-error'],
-                    "href": "#sample-disposal-site-1-volume-per-campaign"
-                }), errorArray) %}
-            {% endif %}
-            {% if data['sample-disposal-site-1-campaigns-per-year-error'] %}
-                {% set errorArray = (errorArray.push({
-                    "text": data['sample-disposal-site-1-campaigns-per-year-error'],
-                    "href": "#sample-disposal-site-1-campaigns-per-year"
-                }), errorArray) %}
-            {% endif %}
-
             {{ govukErrorSummary({
                 titleText: "There is a problem",
-                errorList: errorArray
+                errorList: [
+                    {
+                        text: data['sample-disposal-site-1-total-volume-error'],
+                        href: "#sample-disposal-site-1-total-volume"
+                    }
+                ]
             }) }}
         {% endif %}
-
-        <span class="govuk-caption-l">{{ data['sample-plan-project-name-text-input'] }}<span class="govuk-!-display-block">Disposal site 1</span></span>
-        <h1 class="govuk-heading-l">
-            {{ pageHeadingTextHTML }}
-        </h1>
-        
-        <p class="govuk-body">Provide the maximum volume, in cubic metres, you propose to dispose of.</p>
-        
-        <p class="govuk-body">You can provide more than 1 type of volume.</p>
 
         <form action="maximum-disposal-volume-router" method="post" novalidate>
             
             <div class="govuk-form-group {% if data['sample-disposal-site-1-total-volume-error'] %}govuk-form-group--error{% endif %}">
-                <h2 class="govuk-label-wrapper">
-                    <label class="govuk-label govuk-label--s" for="sample-disposal-site-1-total-volume">
-                        Total volume over the full licence period
+                <span class="govuk-caption-l">{{ data['sample-plan-project-name-text-input'] }}<span class="govuk-!-display-block">Disposal site 1</span></span>
+                <h1 class="govuk-label-wrapper">
+                    <label class="govuk-label govuk-label--l" for="sample-disposal-site-1-total-volume">
+                        {{ pageHeadingTextHTML }}
                     </label>
-                </h2>
+                </h1>
+                <div id="sample-disposal-site-1-total-volume-hint" class="govuk-hint">
+                    Total volume, in cubic metres, over the full licence period
+                </div>
                 {% if data['sample-disposal-site-1-total-volume-error'] %}
-                    <p class="govuk-error-message">
+                    <p id="sample-disposal-site-1-total-volume-error" class="govuk-error-message">
                         <span class="govuk-visually-hidden">Error:</span> {{ data['sample-disposal-site-1-total-volume-error'] }}
                     </p>
                 {% endif %}
@@ -83,76 +63,11 @@ Maximum proposed disposal volumes
                            id="sample-disposal-site-1-total-volume" 
                            name="sample-disposal-site-1-total-volume" 
                            type="text" 
+                           aria-describedby="sample-disposal-site-1-total-volume-hint{% if data['sample-disposal-site-1-total-volume-error'] %} sample-disposal-site-1-total-volume-error{% endif %}"
                            value="{{ data['sample-disposal-site-1-total-volume'] }}">
                     <div class="govuk-input__suffix" aria-hidden="true">m³</div>
                 </div>
             </div>
-
-            <div class="govuk-form-group {% if data['sample-disposal-site-1-annual-volume-error'] %}govuk-form-group--error{% endif %}">
-                <h2 class="govuk-label-wrapper">
-                    <label class="govuk-label govuk-label--s" for="sample-disposal-site-1-annual-volume">
-                        Annual volume (optional)
-                    </label>
-                </h2>
-                {% if data['sample-disposal-site-1-annual-volume-error'] %}
-                    <p class="govuk-error-message">
-                        <span class="govuk-visually-hidden">Error:</span> {{ data['sample-disposal-site-1-annual-volume-error'] }}
-                    </p>
-                {% endif %}
-                <div class="govuk-input__wrapper">
-                    <input class="govuk-input govuk-input--width-10 {% if data['sample-disposal-site-1-annual-volume-error'] %}govuk-input--error{% endif %}" 
-                           id="sample-disposal-site-1-annual-volume" 
-                           name="sample-disposal-site-1-annual-volume" 
-                           type="text" 
-                           value="{{ data['sample-disposal-site-1-annual-volume'] }}">
-                    <div class="govuk-input__suffix" aria-hidden="true">m³</div>
-                </div>
-            </div>
-
-            {% call govukFieldset({
-                legend: {
-                    text: "Disposal campaign (optional)",
-                    classes: "govuk-fieldset__legend--s",
-                    isPageHeading: false
-                }
-            }) %}
-                <p class="govuk-hint">A disposal campaign is a single, continuous disposal operation</p>
-
-                <div class="govuk-form-group {% if data['sample-disposal-site-1-volume-per-campaign-error'] %}govuk-form-group--error{% endif %}">
-                    <label class="govuk-label" for="sample-disposal-site-1-volume-per-campaign">
-                        Volume per campaign
-                    </label>
-                    {% if data['sample-disposal-site-1-volume-per-campaign-error'] %}
-                        <p class="govuk-error-message">
-                            <span class="govuk-visually-hidden">Error:</span> {{ data['sample-disposal-site-1-volume-per-campaign-error'] }}
-                        </p>
-                    {% endif %}
-                    <div class="govuk-input__wrapper">
-                        <input class="govuk-input govuk-input--width-10 {% if data['sample-disposal-site-1-volume-per-campaign-error'] %}govuk-input--error{% endif %}" 
-                               id="sample-disposal-site-1-volume-per-campaign" 
-                               name="sample-disposal-site-1-volume-per-campaign" 
-                               type="text" 
-                               value="{{ data['sample-disposal-site-1-volume-per-campaign'] }}">
-                        <div class="govuk-input__suffix" aria-hidden="true">m³</div>
-                    </div>
-                </div>
-
-                <div class="govuk-form-group {% if data['sample-disposal-site-1-campaigns-per-year-error'] %}govuk-form-group--error{% endif %}">
-                    <label class="govuk-label" for="sample-disposal-site-1-campaigns-per-year">
-                        Number of campaigns per year
-                    </label>
-                    {% if data['sample-disposal-site-1-campaigns-per-year-error'] %}
-                        <p class="govuk-error-message">
-                            <span class="govuk-visually-hidden">Error:</span> {{ data['sample-disposal-site-1-campaigns-per-year-error'] }}
-                        </p>
-                    {% endif %}
-                    <input class="govuk-input govuk-input--width-3 {% if data['sample-disposal-site-1-campaigns-per-year-error'] %}govuk-input--error{% endif %}" 
-                           id="sample-disposal-site-1-campaigns-per-year" 
-                           name="sample-disposal-site-1-campaigns-per-year" 
-                           type="text" 
-                           value="{{ data['sample-disposal-site-1-campaigns-per-year'] }}">
-                </div>
-            {% endcall %}
 
             <div class="govuk-button-group">
                 {{ govukButton({
