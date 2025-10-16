@@ -491,14 +491,9 @@ module.exports = function (router) {
     if (!req.session.data['maximum-dredge-volume-completed']) {
       // Clear any partial form data to ensure fresh start
       delete req.session.data['maximum-dredge-volume-total'];
-      delete req.session.data['maximum-dredge-volume-annual'];
-      delete req.session.data['maximum-dredge-volume-per-campaign'];
-      delete req.session.data['maximum-dredge-volume-campaigns-per-year'];
+      delete req.session.data['maximum-dredge-volume-frequency'];
       delete req.session.data['maximum-dredge-volume-errorthispage'];
       delete req.session.data['maximum-dredge-volume-total-error'];
-      delete req.session.data['maximum-dredge-volume-annual-error'];
-      delete req.session.data['maximum-dredge-volume-per-campaign-error'];
-      delete req.session.data['maximum-dredge-volume-campaigns-per-year-error'];
     }
     
     res.render(`versions/${version}/${section}/${subsection}/maximum-dredge-volume`);
@@ -509,29 +504,12 @@ module.exports = function (router) {
     // Clear any previous errors
     req.session.data['maximum-dredge-volume-errorthispage'] = "false";
     delete req.session.data['maximum-dredge-volume-total-error'];
-    delete req.session.data['maximum-dredge-volume-annual-error'];
-    delete req.session.data['maximum-dredge-volume-per-campaign-error'];
-    delete req.session.data['maximum-dredge-volume-campaigns-per-year-error'];
 
     let hasErrors = false;
 
     // Validate total volume is mandatory
     if (!req.session.data['maximum-dredge-volume-total'] || req.session.data['maximum-dredge-volume-total'].trim() === '') {
       req.session.data['maximum-dredge-volume-total-error'] = "Enter the total volume over the full licence period";
-      hasErrors = true;
-    }
-
-    // Validate campaign fields - if either has a value, both are mandatory
-    const hasCampaignVolume = req.session.data['maximum-dredge-volume-per-campaign'] && req.session.data['maximum-dredge-volume-per-campaign'].trim() !== '';
-    const hasCampaignsPerYear = req.session.data['maximum-dredge-volume-campaigns-per-year'] && req.session.data['maximum-dredge-volume-campaigns-per-year'].trim() !== '';
-    
-    if (hasCampaignVolume && !hasCampaignsPerYear) {
-      req.session.data['maximum-dredge-volume-campaigns-per-year-error'] = "Enter the number of campaigns per year";
-      hasErrors = true;
-    }
-    
-    if (hasCampaignsPerYear && !hasCampaignVolume) {
-      req.session.data['maximum-dredge-volume-per-campaign-error'] = "Enter the volume per campaign";
       hasErrors = true;
     }
 
@@ -593,9 +571,7 @@ module.exports = function (router) {
     // Maximum dredge volume
     delete req.session.data['maximum-dredge-volume-completed'];
     delete req.session.data['maximum-dredge-volume-total'];
-    delete req.session.data['maximum-dredge-volume-annual'];
-    delete req.session.data['maximum-dredge-volume-per-campaign'];
-    delete req.session.data['maximum-dredge-volume-campaigns-per-year'];
+    delete req.session.data['maximum-dredge-volume-frequency'];
     
     // Overall completion flags
     delete req.session.data['has-visited-dredging-site-locations'];
