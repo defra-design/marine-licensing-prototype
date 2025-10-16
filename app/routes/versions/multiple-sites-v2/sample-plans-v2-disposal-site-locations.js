@@ -311,8 +311,8 @@ module.exports = function (router) {
       // Route to Lean v2 find page (default for A/B), clearing any previous criteria
       res.redirect('find-existing-disposal-site-lean-v2?disposal-site-code-or-name=&include-closed-disused=');
     } else if (disposalSelection === 'New disposal site') {
-      // TODO: Create and redirect to new disposal site page
-      res.redirect('where-dispose-of-material');
+      // Route to new disposal site journey
+      res.redirect('new-disposal-sites/how-do-you-want-to-provide-site-location');
     } else {
       // Fallback
       res.redirect('where-dispose-of-material');

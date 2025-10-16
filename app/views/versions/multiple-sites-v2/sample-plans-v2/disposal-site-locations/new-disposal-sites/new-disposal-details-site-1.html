@@ -1,0 +1,246 @@
+{% extends "../../../layouts/sample-plans.html" %}
+
+{% block beforeContent %}
+    {% include "../../../includes/phase-banner.html" %}
+    {{ super() }}
+    {% include "../../../includes/back-link.html" %}
+{% endblock %}
+
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+<!-- Set the heading for the page -->
+{% set pageHeadingTextHTML %}
+Disposal details
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {% if  data['new-disposal-details-site-1-errorthispage'] == "true"  %}
+        Error:
+    {% endif %}
+
+    {{ pageHeadingTextHTML }} - Get a plan for sediment sample analysis
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        
+        <!-- Error summary -->
+        {% if data['new-disposal-details-site-1-errorthispage'] == "true" %}
+            {% set errorArray = [] %}
+            {% if data['new-disposal-details-site-1-material-type-error'] %}
+                {% set errorArray = (errorArray.push({
+                    "text": data['new-disposal-details-site-1-material-type-error'],
+                    "href": "#new-disposal-details-site-1-material-type"
+                }), errorArray) %}
+            {% endif %}
+            {% if data['new-disposal-details-site-1-method-error'] %}
+                {% set errorArray = (errorArray.push({
+                    "text": data['new-disposal-details-site-1-method-error'],
+                    "href": "#new-disposal-details-site-1-method"
+                }), errorArray) %}
+            {% endif %}
+            {% if data['new-disposal-details-site-1-material-type-other-error'] %}
+                {% set errorArray = (errorArray.push({
+                    "text": data['new-disposal-details-site-1-material-type-other-error'],
+                    "href": "#new-disposal-details-site-1-material-type-other"
+                }), errorArray) %}
+            {% endif %}
+            {% if data['new-disposal-details-site-1-method-other-error'] %}
+                {% set errorArray = (errorArray.push({
+                    "text": data['new-disposal-details-site-1-method-other-error'],
+                    "href": "#new-disposal-details-site-1-method-other"
+                }), errorArray) %}
+            {% endif %}
+
+            {{ govukErrorSummary({
+                titleText: "There is a problem",
+                errorList: errorArray
+            }) }}
+        {% endif %}
+
+        <span class="govuk-caption-l">{{ data['sample-plan-project-name-text-input'] }}<span class="govuk-!-display-block">New disposal site 1</span></span>
+        <h1 class="govuk-heading-l">
+            {{ pageHeadingTextHTML }}
+        </h1>
+
+        <form action="new-disposal-details-site-1-router" method="post" novalidate>
+            
+            <!-- Question 1: What type of material will be disposed at this site? -->
+            {{ govukCheckboxes({
+                idPrefix: "new-disposal-details-site-1-material-type",
+                name: "new-disposal-details-site-1-material-type",
+                fieldset: {
+                    legend: {
+                        text: "What type of material will be disposed at this site?",
+                        isPageHeading: false,
+                        classes: "govuk-fieldset__legend--s"
+                    }
+                },
+                hint: {
+                    text: "Select all that apply"
+                },
+                errorMessage: {
+                    text: data['new-disposal-details-site-1-material-type-error']
+                } if data['new-disposal-details-site-1-material-type-error'],
+                items: [
+                    {
+                        value: "capital-dredged-material",
+                        text: "Capital dredged material",
+                        hint: {
+                            text: "Removal of material not previously dredged in the last 10 years, including deepening or widening an existing dredge area"
+                        },
+                        checked: true if data['new-disposal-details-site-1-material-type'] and "capital-dredged-material" in data['new-disposal-details-site-1-material-type']
+                    },
+                    {
+                        value: "maintenance-dredged-material",
+                        text: "Maintenance dredged material",
+                        hint: {
+                            text: "Routine removal of material from areas previously dredged in the last 10 years, to the same depth as before"
+                        },
+                        checked: true if data['new-disposal-details-site-1-material-type'] and "maintenance-dredged-material" in data['new-disposal-details-site-1-material-type']
+                    },
+                    {
+                        value: "non-dredged-sediments",
+                        text: "Non-dredged sediments",
+                        hint: {
+                            text: "Natural material, for example sand or mud, taken directly from the seabed or water"
+                        },
+                        checked: true if data['new-disposal-details-site-1-material-type'] and "non-dredged-sediments" in data['new-disposal-details-site-1-material-type']
+                    },
+                    {
+                        value: "organic-material",
+                        text: "Organic material of natural origin (for example, seaweed)",
+                        checked: true if data['new-disposal-details-site-1-material-type'] and "organic-material" in data['new-disposal-details-site-1-material-type']
+                    },
+                    {
+                        value: "other",
+                        text: "Other",
+                        checked: true if data['new-disposal-details-site-1-material-type'] and "other" in data['new-disposal-details-site-1-material-type'],
+                        conditional: {
+                            html: govukInput({
+                                id: "new-disposal-details-site-1-material-type-other",
+                                name: "new-disposal-details-site-1-material-type-other",
+                                type: "text",
+                                classes: "govuk-!-width-full",
+                                label: {
+                                    text: "Describe the other material type"
+                                },
+                                value: data['new-disposal-details-site-1-material-type-other'],
+                                errorMessage: {
+                                    text: data['new-disposal-details-site-1-material-type-other-error']
+                                } if data['new-disposal-details-site-1-material-type-other-error']
+                            })
+                        }
+                    }
+                ]
+            }) }}
+
+            <!-- Question 2: What is the proposed method of disposal? -->
+            {% set methodOtherHtml %}
+            {{ govukInput({
+                id: "new-disposal-details-site-1-method-other",
+                name: "new-disposal-details-site-1-method-other",
+                type: "text",
+                classes: "govuk-!-width-full",
+                label: {
+                    text: "Describe the other method"
+                },
+                value: data['new-disposal-details-site-1-method-other'],
+                errorMessage: {
+                    text: data['new-disposal-details-site-1-method-other-error']
+                } if data['new-disposal-details-site-1-method-other-error']
+            }) }}
+            {% endset -%}
+
+            {{ govukCheckboxes({
+                idPrefix: "new-disposal-details-site-1-method",
+                name: "new-disposal-details-site-1-method",
+                fieldset: {
+                    legend: {
+                        text: "What is the proposed method of disposal?",
+                        isPageHeading: false,
+                        classes: "govuk-fieldset__legend--s"
+                    }
+                },
+                hint: {
+                    text: "Select all that apply"
+                },
+                errorMessage: {
+                    text: data['new-disposal-details-site-1-method-error']
+                } if data['new-disposal-details-site-1-method-error'],
+                items: [
+                    {
+                        value: "backhoe-dredger",
+                        text: "Backhoe dredger",
+                        hint: {
+                            text: "Mechanical excavator that sits on a barge and scoops up dredged material, then drops it overboard or into another barge for disposal"
+                        },
+                        checked: true if data['new-disposal-details-site-1-method'] and "backhoe-dredger" in data['new-disposal-details-site-1-method']
+                    },
+                    {
+                        value: "bottom-dumping-hopper",
+                        text: "Bottom dumping (hopper)",
+                        hint: {
+                            text: "Barge with a big storage compartment that splits open along the bottom to release the dredged material"
+                        },
+                        checked: true if data['new-disposal-details-site-1-method'] and "bottom-dumping-hopper" in data['new-disposal-details-site-1-method']
+                    },
+                    {
+                        value: "direct-pumping-trailing-suction",
+                        text: "Direct pumping from trailing suction hopper dredger",
+                        hint: {
+                            text: "Dredger that pumps material directly to shore through a pipe connected to the vessel"
+                        },
+                        checked: true if data['new-disposal-details-site-1-method'] and "direct-pumping-trailing-suction" in data['new-disposal-details-site-1-method']
+                    },
+                    {
+                        value: "pump-out-floating-pipeline",
+                        text: "Pump-out via floating pipeline",
+                        hint: {
+                            text: "Dredged material is pumped through a long floating or submerged pipe directly to shore or a containment area"
+                        },
+                        checked: true if data['new-disposal-details-site-1-method'] and "pump-out-floating-pipeline" in data['new-disposal-details-site-1-method']
+                    },
+                    {
+                        value: "rainbowing",
+                        text: "Rainbowing",
+                        hint: {
+                            text: "Dredger sprays material in a high arc through the air on to the shore or shallow water area"
+                        },
+                        checked: true if data['new-disposal-details-site-1-method'] and "rainbowing" in data['new-disposal-details-site-1-method']
+                    },
+                    {
+                        value: "split-hopper-barge",
+                        text: "Split hopper barge",
+                        hint: {
+                            text: "Barge with a big storage compartment, with a door or hatch along the bottom, that opens to release the dredged material"
+                        },
+                        checked: true if data['new-disposal-details-site-1-method'] and "split-hopper-barge" in data['new-disposal-details-site-1-method']
+                    },
+                    {
+                        value: "other",
+                        text: "Other",
+                        checked: true if data['new-disposal-details-site-1-method'] and "other" in data['new-disposal-details-site-1-method'],
+                        conditional: {
+                            html: methodOtherHtml
+                        }
+                    }
+                ]
+            }) }}
+
+            <div class="govuk-button-group">
+                {{ govukButton({
+                    text: "Save and continue"
+                }) }}
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+

@@ -1,0 +1,78 @@
+{% extends "../../../layouts/sample-plans.html" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% block beforeContent %}
+    {% include "../../../includes/phase-banner.html" %}
+    {% if data['user_type'] === 'organisation' %}
+        {% include "../../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+How do you want to provide the site location for the new disposal site?
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+{{ pageHeadingTextHTML }} - {{ data['headerNameSamplePlan'] }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        
+        <form action="how-do-you-want-to-provide-site-location-router" method="post" novalidate>
+            
+            <!-- Error summary -->
+            {% if data['new-disposal-errorthispage'] == "true" %}
+                {{ govukErrorSummary({
+                    titleText: "There is a problem",
+                    errorList: [
+                        {
+                            text: "Select how you want to provide the site location for the new disposal site",
+                            href: "#new-disposal-site-location-method"
+                        }
+                    ]
+                }) }}
+            {% endif %}
+
+            {{ govukRadios({
+                name: "new-disposal-site-location-method",
+                fieldset: {
+                    legend: {
+                        html: '<span class="govuk-caption-l">' + data['sample-plan-project-name-text-input'] + '</span>' + pageHeadingTextHTML,
+                        isPageHeading: true,
+                        classes: "govuk-fieldset__legend--l"
+                    }
+                },
+                items: [
+                    {
+                        value: "file-upload",
+                        text: "Upload a file with the coordinates of the site"
+                    }
+                ],
+                value: data['new-disposal-site-location-method'],
+                errorMessage: {
+                    text: "Select how you want to provide the site location for the new disposal site"
+                } if data['new-disposal-errorthispage'] == "true"
+            }) }}
+            
+            <div class="govuk-button-group">
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+
+                <a class="govuk-link govuk-link--no-visited-state" href="../../sample-plan-start-page">Cancel</a>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+{% endblock %}
+
