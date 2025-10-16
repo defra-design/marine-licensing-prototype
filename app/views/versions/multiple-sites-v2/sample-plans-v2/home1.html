@@ -1,0 +1,144 @@
+{% extends "../layouts/exemption.html" %}
+
+{% block header %}
+{% from "govuk/components/header/macro.njk" import govukHeader %}
+{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
+
+{{ govukHeader({
+  classes: "govuk-header--full-width-border"
+}) }}
+{{ govukServiceNavigation({
+  serviceName: "Get permission for marine work",
+  navigation: [
+  {
+	href: "home1",
+	text: "Home",
+	active: true
+  },
+  {
+      href: "projects",
+      text: "Projects",
+	  active: false
+    },
+    {
+      href: "#",
+      text: "Defra account",
+      active: false
+    },
+    {
+      href: "/versions/multiple-sites-v2/sample-plans-v1/sign-in.html?goto=home",
+      text: "Sign out"
+    }
+  ]
+}) }}
+{% endblock %}
+
+{% block beforeContent %}
+    {% include "../includes/phase-banner.html" %}
+    {% if data['user_type'] === 'organisation' %}
+        {% include "../includes/organisation-switcher.html" %}
+    {% endif %}
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+Home
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - {{ data['headerNameSamplePlan'] }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-full">
+		<h1 class="govuk-heading-l">
+			{{ pageHeadingTextHTML }}
+		</h1>
+
+		<div class="govuk-grid-row">
+			<div class="govuk-grid-column-one-third">
+				<a href="#" class="homepage-tile-card">
+					<h2 class="govuk-heading-m homepage-tile-card__heading">View my projects</h2>
+					<p class="govuk-body homepage-tile-card__description">Lorem ipsum dolor sit amet</p>
+				</a>
+			</div>
+
+			<div class="govuk-grid-column-one-third">
+				<a href="#" class="homepage-tile-card">
+					<h2 class="govuk-heading-m homepage-tile-card__heading">Check if I need a licence</h2>
+					<p class="govuk-body homepage-tile-card__description">Lorem ipsum dolor sit amet</p>
+				</a>
+			</div>
+
+			<div class="govuk-grid-column-one-third">
+				<a href="#" class="homepage-tile-card">
+					<h2 class="govuk-heading-m homepage-tile-card__heading">Start a request for a sample plan</h2>
+					<p class="govuk-body homepage-tile-card__description">Lorem ipsum dolor sit amet</p>
+				</a>
+			</div>
+		</div>
+
+		<h2 class="govuk-heading-m">
+			Heading
+		</h2>
+
+		<div class="govuk-grid-row">
+			<div class="govuk-grid-column-one-third">
+				<a href="#" class="homepage-tile-card">
+					<h2 class="govuk-heading-m homepage-tile-card__heading">Apply for a standard marine licence</h2>
+					<p class="govuk-body homepage-tile-card__description">Lorem ipsum dolor sit amet</p>
+				</a>
+			</div>
+
+			<div class="govuk-grid-column-one-third">
+				<a href="#" class="homepage-tile-card">
+					<h2 class="govuk-heading-m homepage-tile-card__heading">Apply for a self service marine licence</h2>
+					<p class="govuk-body homepage-tile-card__description">Lorem ipsum dolor sit amet</p>
+				</a>
+			</div>
+
+			<div class="govuk-grid-column-one-third">
+				<a href="#" class="homepage-tile-card">
+					<h2 class="govuk-heading-m homepage-tile-card__heading">Placeholder heading</h2>
+					<p class="govuk-body homepage-tile-card__description">Lorem ipsum dolor sit amet</p>
+				</a>
+			</div>
+		</div>
+
+		<h2 class="govuk-heading-m">
+			Heading
+		</h2>
+
+		<div class="govuk-grid-row">
+			<div class="govuk-grid-column-one-third">
+				<a href="#" class="homepage-tile-card">
+					<h2 class="govuk-heading-m homepage-tile-card__heading">Placeholder heading</h2>
+					<p class="govuk-body homepage-tile-card__description">Lorem ipsum dolor sit amet</p>
+				</a>
+			</div>
+
+			<div class="govuk-grid-column-one-third">
+				<a href="#" class="homepage-tile-card">
+					<h2 class="govuk-heading-m homepage-tile-card__heading">Placeholder heading</h2>
+					<p class="govuk-body homepage-tile-card__description">Lorem ipsum dolor sit amet</p>
+				</a>
+			</div>
+
+			<div class="govuk-grid-column-one-third">
+				<a href="#" class="homepage-tile-card">
+					<h2 class="govuk-heading-m homepage-tile-card__heading">Placeholder heading</h2>
+					<p class="govuk-body homepage-tile-card__description">Lorem ipsum dolor sit amet</p>
+				</a>
+			</div>
+		</div>
+
+
+
+
+
+	</div>
+</div>
+{% endblock %}
