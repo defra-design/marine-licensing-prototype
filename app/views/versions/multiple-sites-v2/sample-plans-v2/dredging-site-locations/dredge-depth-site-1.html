@@ -41,6 +41,15 @@ Error:
         }) }}
         {% endif %}
 
+        <span class="govuk-caption-l">{{ data['sample-plan-project-name-text-input'] }}<span class="govuk-!-display-block">Dredge site 1</span></span>
+        <h1 class="govuk-heading-l">{{ pageHeadingTextHTML }}</h1>
+
+        <h2 class="govuk-heading-m">Capital dredge</h2>
+        <p class="govuk-body">This is calculated by using the current depth of the sea or river bed and how much you need to deepen it by, for example if the current depth is 10m chart datum and you're deepening it to 12m chart datum, the dredge depth is 2m of sediment.</p>
+
+        <h2 class="govuk-heading-m">Maintenance dredge</h2>
+        <p class="govuk-body">This is the amount of sediment you need to remove to maintain the approved depth, for example if the approved depth is 12m chart datum and the sediment has built up so the current depth is 10m chart datum, the dredge depth is 2m.</p>
+
         <form action="dredge-depth-site-1-router" method="post" novalidate>
 
             {{ govukInput({
@@ -51,12 +60,8 @@ Error:
                 inputmode: "decimal",
                 classes: "govuk-input--width-3",
                 label: {
-                    html: '<span class="govuk-caption-l">' + data['sample-plan-project-name-text-input'] + '<span class="govuk-!-display-block">Dredge site 1</span></span>' + pageHeadingTextHTML,
-                    classes: "govuk-label--l",
-                    isPageHeading: true
-                },
-                hint: {
-                    text: "This is calculated by using the current depth of the sea or river bed and how much you need to deepen it by, for example if the current depth is 10m chart datum and you're deepening it to 12m chart datum, the dredge depth is 2m of sediment"
+                    text: "Dredge depth",
+                    classes: "govuk-label--s govuk-!-font-weight-bold"
                 },
                 suffix: {
                     text: "m"
