@@ -568,3 +568,58 @@ body.page-cookie-banner {
     }
   }
 }
+
+// Homepage tile cards component
+.homepage-tile-card {
+  display: block;
+  background-color: #f3f2f1;
+  padding: 20px;
+  min-height: 120px;
+  margin-bottom: 30px; // govuk-spacing(6)
+  text-decoration: none;
+  color: inherit;
+  transition: background-color 0.2s ease;
+  
+  &:hover {
+    background-color: #1d70b8; // GOV.UK blue
+    
+    .homepage-tile-card__heading {
+      color: #ffffff;
+      text-decoration: underline;
+    }
+    
+    .homepage-tile-card__description {
+      color: #ffffff;
+    }
+  }
+  
+  &:focus {
+    outline: 3px solid #fd0; // GOV.UK focus color
+    outline-offset: 0;
+    background-color: #fd0;
+    
+    .homepage-tile-card__heading,
+    .homepage-tile-card__description {
+      color: #0b0c0c;
+    }
+  }
+}
+
+.homepage-tile-card__heading {
+  margin-bottom: 15px; // govuk-spacing(3)
+  color: #1d70b8; // GOV.UK blue for links
+}
+
+.homepage-tile-card__description {
+  margin-bottom: 0;
+  color: #0b0c0c; // GOV.UK text color
+}
+
+// Mobile responsive behavior for homepage tiles
+@media (max-width: 40.0525em) {
+  .homepage-tile-card {
+    min-height: 50px; // Shorter on mobile
+    padding: 15px;
+    margin-bottom: 20px; // govuk-spacing(4)
+  }
+}
