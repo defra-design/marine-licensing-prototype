@@ -18,9 +18,6 @@ module.exports = function (router) {
     delete session.data['sample-disposal-details-site-1-method'];
     delete session.data['sample-disposal-details-site-1-method-other'];
     delete session.data['sample-disposal-site-1-total-volume'];
-    delete session.data['sample-disposal-site-1-annual-volume'];
-    delete session.data['sample-disposal-site-1-volume-per-campaign'];
-    delete session.data['sample-disposal-site-1-campaigns-per-year'];
     delete session.data['sample-disposal-site-1-beneficial-use'];
     delete session.data['sample-disposal-site-1-beneficial-use-description'];
     
@@ -32,9 +29,6 @@ module.exports = function (router) {
     delete session.data['sample-disposal-details-site-1-material-type-other-error'];
     delete session.data['sample-disposal-site-1-maximum-volume-errorthispage'];
     delete session.data['sample-disposal-site-1-total-volume-error'];
-    delete session.data['sample-disposal-site-1-annual-volume-error'];
-    delete session.data['sample-disposal-site-1-volume-per-campaign-error'];
-    delete session.data['sample-disposal-site-1-campaigns-per-year-error'];
     delete session.data['sample-disposal-site-1-beneficial-use-errorthispage'];
     delete session.data['sample-disposal-site-1-beneficial-use-error'];
     delete session.data['sample-disposal-site-1-beneficial-use-description-error'];
@@ -54,9 +48,6 @@ module.exports = function (router) {
     delete session.data['sample-disposal-details-site-2-method'];
     delete session.data['sample-disposal-details-site-2-method-other'];
     delete session.data['sample-disposal-site-2-total-volume'];
-    delete session.data['sample-disposal-site-2-annual-volume'];
-    delete session.data['sample-disposal-site-2-volume-per-campaign'];
-    delete session.data['sample-disposal-site-2-campaigns-per-year'];
     delete session.data['sample-disposal-site-2-beneficial-use'];
     delete session.data['sample-disposal-site-2-beneficial-use-description'];
     
@@ -68,9 +59,6 @@ module.exports = function (router) {
     delete session.data['sample-disposal-details-site-2-material-type-other-error'];
     delete session.data['sample-disposal-site-2-maximum-volume-errorthispage'];
     delete session.data['sample-disposal-site-2-total-volume-error'];
-    delete session.data['sample-disposal-site-2-annual-volume-error'];
-    delete session.data['sample-disposal-site-2-volume-per-campaign-error'];
-    delete session.data['sample-disposal-site-2-campaigns-per-year-error'];
     delete session.data['sample-disposal-site-2-beneficial-use-errorthispage'];
     delete session.data['sample-disposal-site-2-beneficial-use-error'];
     delete session.data['sample-disposal-site-2-beneficial-use-description-error'];
@@ -485,9 +473,6 @@ module.exports = function (router) {
     // Clear any existing error flags when user navigates to the page
     req.session.data['sample-disposal-site-1-maximum-volume-errorthispage'] = "false";
     req.session.data['sample-disposal-site-1-total-volume-error'] = "";
-    req.session.data['sample-disposal-site-1-annual-volume-error'] = "";
-    req.session.data['sample-disposal-site-1-volume-per-campaign-error'] = "";
-    req.session.data['sample-disposal-site-1-campaigns-per-year-error'] = "";
     
     res.render(`versions/${version}/${section}/${subSection}/maximum-disposal-volume`);
   });
@@ -497,48 +482,15 @@ module.exports = function (router) {
     // Reset error flags
     req.session.data['sample-disposal-site-1-maximum-volume-errorthispage'] = "false";
     req.session.data['sample-disposal-site-1-total-volume-error'] = "";
-    req.session.data['sample-disposal-site-1-annual-volume-error'] = "";
-    req.session.data['sample-disposal-site-1-volume-per-campaign-error'] = "";
-    req.session.data['sample-disposal-site-1-campaigns-per-year-error'] = "";
 
     let hasErrors = false;
 
     // Validate total volume (mandatory)
     if (!req.body['sample-disposal-site-1-total-volume'] || req.body['sample-disposal-site-1-total-volume'].trim() === '') {
-      req.session.data['sample-disposal-site-1-total-volume-error'] = "Enter the total volume over the full licence period";
+      req.session.data['sample-disposal-site-1-total-volume-error'] = "Enter the total volume, in cubic metres, over the full licence period";
       hasErrors = true;
     } else {
       req.session.data['sample-disposal-site-1-total-volume'] = req.body['sample-disposal-site-1-total-volume'];
-    }
-
-    // Save annual volume (optional)
-    if (req.body['sample-disposal-site-1-annual-volume']) {
-      req.session.data['sample-disposal-site-1-annual-volume'] = req.body['sample-disposal-site-1-annual-volume'];
-    }
-
-    // Handle disposal campaign fields - if either has a value, both are required
-    const volumePerCampaign = req.body['sample-disposal-site-1-volume-per-campaign'];
-    const campaignsPerYear = req.body['sample-disposal-site-1-campaigns-per-year'];
-    
-    if (volumePerCampaign || campaignsPerYear) {
-      // If either field has a value, both are required
-      if (!volumePerCampaign || volumePerCampaign.trim() === '') {
-        req.session.data['sample-disposal-site-1-volume-per-campaign-error'] = "Enter the volume per campaign";
-        hasErrors = true;
-      } else {
-        req.session.data['sample-disposal-site-1-volume-per-campaign'] = volumePerCampaign;
-      }
-      
-      if (!campaignsPerYear || campaignsPerYear.trim() === '') {
-        req.session.data['sample-disposal-site-1-campaigns-per-year-error'] = "Enter the number of campaigns per year";
-        hasErrors = true;
-      } else {
-        req.session.data['sample-disposal-site-1-campaigns-per-year'] = campaignsPerYear;
-      }
-    } else {
-      // Save values even if empty to clear previous entries
-      req.session.data['sample-disposal-site-1-volume-per-campaign'] = volumePerCampaign || '';
-      req.session.data['sample-disposal-site-1-campaigns-per-year'] = campaignsPerYear || '';
     }
 
     // If there are errors, redirect back to the form
@@ -679,9 +631,6 @@ module.exports = function (router) {
     // Clear any existing error flags when user navigates to the page
     req.session.data['sample-disposal-site-2-maximum-volume-errorthispage'] = "false";
     req.session.data['sample-disposal-site-2-total-volume-error'] = "";
-    req.session.data['sample-disposal-site-2-annual-volume-error'] = "";
-    req.session.data['sample-disposal-site-2-volume-per-campaign-error'] = "";
-    req.session.data['sample-disposal-site-2-campaigns-per-year-error'] = "";
     
     res.render(`versions/${version}/${section}/${subSection}/maximum-disposal-volume-site-2`);
   });
@@ -691,48 +640,15 @@ module.exports = function (router) {
     // Reset error flags
     req.session.data['sample-disposal-site-2-maximum-volume-errorthispage'] = "false";
     req.session.data['sample-disposal-site-2-total-volume-error'] = "";
-    req.session.data['sample-disposal-site-2-annual-volume-error'] = "";
-    req.session.data['sample-disposal-site-2-volume-per-campaign-error'] = "";
-    req.session.data['sample-disposal-site-2-campaigns-per-year-error'] = "";
 
     let hasErrors = false;
 
     // Validate total volume (mandatory)
     if (!req.body['sample-disposal-site-2-total-volume'] || req.body['sample-disposal-site-2-total-volume'].trim() === '') {
-      req.session.data['sample-disposal-site-2-total-volume-error'] = "Enter the total volume over the full licence period";
+      req.session.data['sample-disposal-site-2-total-volume-error'] = "Enter the total volume, in cubic metres, over the full licence period";
       hasErrors = true;
     } else {
       req.session.data['sample-disposal-site-2-total-volume'] = req.body['sample-disposal-site-2-total-volume'];
-    }
-
-    // Save annual volume (optional)
-    if (req.body['sample-disposal-site-2-annual-volume']) {
-      req.session.data['sample-disposal-site-2-annual-volume'] = req.body['sample-disposal-site-2-annual-volume'];
-    }
-
-    // Handle disposal campaign fields - if either has a value, both are required
-    const volumePerCampaign = req.body['sample-disposal-site-2-volume-per-campaign'];
-    const campaignsPerYear = req.body['sample-disposal-site-2-campaigns-per-year'];
-    
-    if (volumePerCampaign || campaignsPerYear) {
-      // If either field has a value, both are required
-      if (!volumePerCampaign || volumePerCampaign.trim() === '') {
-        req.session.data['sample-disposal-site-2-volume-per-campaign-error'] = "Enter the volume per campaign";
-        hasErrors = true;
-      } else {
-        req.session.data['sample-disposal-site-2-volume-per-campaign'] = volumePerCampaign;
-      }
-      
-      if (!campaignsPerYear || campaignsPerYear.trim() === '') {
-        req.session.data['sample-disposal-site-2-campaigns-per-year-error'] = "Enter the number of campaigns per year";
-        hasErrors = true;
-      } else {
-        req.session.data['sample-disposal-site-2-campaigns-per-year'] = campaignsPerYear;
-      }
-    } else {
-      // Save values even if empty to clear previous entries
-      req.session.data['sample-disposal-site-2-volume-per-campaign'] = volumePerCampaign || '';
-      req.session.data['sample-disposal-site-2-campaigns-per-year'] = campaignsPerYear || '';
     }
 
     // If there are errors, redirect back to the form
@@ -846,9 +762,6 @@ module.exports = function (router) {
       
       // Move Site 2 volume data to Site 1
       req.session.data['sample-disposal-site-1-total-volume'] = req.session.data['sample-disposal-site-2-total-volume'];
-      req.session.data['sample-disposal-site-1-annual-volume'] = req.session.data['sample-disposal-site-2-annual-volume'];
-      req.session.data['sample-disposal-site-1-volume-per-campaign'] = req.session.data['sample-disposal-site-2-volume-per-campaign'];
-      req.session.data['sample-disposal-site-1-campaigns-per-year'] = req.session.data['sample-disposal-site-2-campaigns-per-year'];
       
       // Move Site 2 beneficial use data to Site 1
       req.session.data['sample-disposal-site-1-beneficial-use'] = req.session.data['sample-disposal-site-2-beneficial-use'];

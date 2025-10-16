@@ -238,21 +238,12 @@ Review disposal site details
 
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
-                            Maximum disposal volume
+                            Maximum proposed disposal volume
                         </dt>
                         <dd class="govuk-summary-list__value">
                             {% if data['sample-disposal-site-1-maximum-volume-completed'] %}
                                 {% if data['sample-disposal-site-1-total-volume'] %}
-                                    {{ data['sample-disposal-site-1-total-volume'] | addCommas }} {{ 'cubic metre' if data['sample-disposal-site-1-total-volume'] == '1' else 'cubic metres' }}, total volume over the full licence period
-                                {% endif %}
-                                {% if data['sample-disposal-site-1-annual-volume'] %}
-                                    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-                                    {{ data['sample-disposal-site-1-annual-volume'] | addCommas }} {{ 'cubic metre' if data['sample-disposal-site-1-annual-volume'] == '1' else 'cubic metres' }}, annual volume
-                                {% endif %}
-                                {% if data['sample-disposal-site-1-volume-per-campaign'] and data['sample-disposal-site-1-campaigns-per-year'] %}
-                                    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-                                    {{ data['sample-disposal-site-1-volume-per-campaign'] | addCommas }} {{ 'cubic metre' if data['sample-disposal-site-1-volume-per-campaign'] == '1' else 'cubic metres' }}, volume per campaign<br>
-                                    {{ data['sample-disposal-site-1-campaigns-per-year'] }} {{ 'campaign' if data['sample-disposal-site-1-campaigns-per-year'] == '1' else 'campaigns' }} per year
+                                    {{ data['sample-disposal-site-1-total-volume'] | addCommas }} m³
                                 {% endif %}
                             {% else %}
                                 <span class="govuk-tag govuk-tag--red">Incomplete</span>
@@ -260,7 +251,7 @@ Review disposal site details
                         </dd>
                         <dd class="govuk-summary-list__actions">
                             <a href="maximum-disposal-volume" class="govuk-link govuk-link--no-visited-state">
-                                {% if data['sample-disposal-site-1-maximum-volume-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> maximum disposal volume</span>
+                                {% if data['sample-disposal-site-1-maximum-volume-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> maximum proposed disposal volume</span>
                             </a>
                         </dd>
                     </div>
@@ -445,21 +436,12 @@ Review disposal site details
 
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
-                            Maximum disposal volume
+                            Maximum proposed disposal volume
                         </dt>
                         <dd class="govuk-summary-list__value">
                             {% if data['sample-disposal-site-2-maximum-volume-completed'] %}
                                 {% if data['sample-disposal-site-2-total-volume'] %}
-                                    {{ data['sample-disposal-site-2-total-volume'] | addCommas }} {{ 'cubic metre' if data['sample-disposal-site-2-total-volume'] == '1' else 'cubic metres' }}, total volume over the full licence period
-                                {% endif %}
-                                {% if data['sample-disposal-site-2-annual-volume'] %}
-                                    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-                                    {{ data['sample-disposal-site-2-annual-volume'] | addCommas }} {{ 'cubic metre' if data['sample-disposal-site-2-annual-volume'] == '1' else 'cubic metres' }}, annual volume
-                                {% endif %}
-                                {% if data['sample-disposal-site-2-volume-per-campaign'] and data['sample-disposal-site-2-campaigns-per-year'] %}
-                                    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-                                    {{ data['sample-disposal-site-2-volume-per-campaign'] | addCommas }} {{ 'cubic metre' if data['sample-disposal-site-2-volume-per-campaign'] == '1' else 'cubic metres' }}, volume per campaign<br>
-                                    {{ data['sample-disposal-site-2-campaigns-per-year'] }} {{ 'campaign' if data['sample-disposal-site-2-campaigns-per-year'] == '1' else 'campaigns' }} per year
+                                    {{ data['sample-disposal-site-2-total-volume'] | addCommas }} m³
                                 {% endif %}
                             {% else %}
                                 <span class="govuk-tag govuk-tag--red">Incomplete</span>
@@ -467,7 +449,7 @@ Review disposal site details
                         </dd>
                         <dd class="govuk-summary-list__actions">
                             <a href="maximum-disposal-volume-site-2" class="govuk-link govuk-link--no-visited-state">
-                                {% if data['sample-disposal-site-2-maximum-volume-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> maximum disposal volume</span>
+                                {% if data['sample-disposal-site-2-maximum-volume-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> maximum proposed disposal volume</span>
                             </a>
                         </dd>
                     </div>
