@@ -236,10 +236,14 @@ Review dredge site details
                             Dredge frequency
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            {% if data['maximum-dredge-volume-frequency'] %}
-                                {{ data['maximum-dredge-volume-frequency'] }}
+                            {% if data['maximum-dredge-volume-completed'] %}
+                                {% if data['maximum-dredge-volume-frequency'] %}
+                                    {{ data['maximum-dredge-volume-frequency'] }}
+                                {% else %}
+                                    Not provided
+                                {% endif %}
                             {% else %}
-                                Not provided
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">

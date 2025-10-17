@@ -355,6 +355,9 @@ module.exports = function (router) {
         
         // Mark Site 1 as selected
         req.session.data['sample-disposal-site-selected'] = true;
+        
+        // Set journey type to existing when they select a site
+        req.session.data['disposal-site-journey-type'] = 'existing';
       }
       
       // Redirect to clean URL without parameters - this ensures session is saved
@@ -806,6 +809,9 @@ module.exports = function (router) {
       delete req.session.data['selected-disposal-site-2-country'];
       delete req.session.data['selected-disposal-site-2-sea-area'];
       delete req.session.data['selected-disposal-site-2-status'];
+      
+      // Clear journey type to allow switching
+      delete req.session.data['disposal-site-journey-type'];
       
       // Reset task status to "Not yet started"
       req.session.data['sample-disposal-sites-completed'] = false;

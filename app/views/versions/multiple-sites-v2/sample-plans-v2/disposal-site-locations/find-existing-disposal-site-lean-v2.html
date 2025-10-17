@@ -46,9 +46,14 @@ Find the existing disposal site
         
         {{ govukDetails({
             summaryText: "How to find an existing disposal site without a code or site name",
-            html: '<p class="govuk-body">You can <a class="govuk-link" href="https://explore-marine-plans.marineservices.org.uk/marine-plans-explorer" target="_blank" rel="noopener noreferrer">find an existing disposal site on a map (opens in a new window)</a>.</p>
-                  <p class="govuk-body">You can zoom in to view disposal sites. When you click on a disposal site a box will pop up with information about the sites in that area.</p>
-                  <p class="govuk-body">If the site name is not shown you can use the forward arrow to show more details, including the name of a disposal site.</p>'
+            html: '<p class="govuk-body">You can <a class="govuk-link" href="https://explore-marine-plans.marineservices.org.uk/marine-plans-explorer" target="_blank" rel="noopener noreferrer">find an existing disposal site on the Explore Marine Plans map (opens in a new window)</a>.</p>
+                  <ol class="govuk-list govuk-list--number">
+                    <li>Go to the Dredging and Disposal section in the list below Marine Activity Data.</li>
+                    <li>Click on Dredging and Disposal.</li>
+                    <li>Click on Disposal Sites.</li>
+                    <li>Select Designated Marine Disposal Sites. The map will show all existing disposal sites.</li>
+                    <li>Zoom in to view disposal sites in your area. When you click on a disposal site a box will pop up with information about the sites in that area. If the site name is not shown, use the forward arrow to show more details, including the name of the disposal site.</li>
+                  </ol>'
         }) }}
         
         <form action="/versions/multiple-sites-v2/sample-plans-v2/disposal-site-locations/search-results-lean-v2" method="post">

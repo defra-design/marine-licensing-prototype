@@ -68,6 +68,9 @@ module.exports = function (router) {
 
   // Upload file router (POST)
   router.post(`/versions/${version}/${section}/${subSection}/${newSubSection}/upload-file-router`, function (req, res) {
+    // Set journey type to new when they upload a file
+    req.session.data['disposal-site-journey-type'] = 'new';
+    
     // For prototype, redirect to review site details after file upload
     res.redirect('review-new-disposal-site-details');
   });
@@ -337,6 +340,9 @@ module.exports = function (router) {
     // Overall completion flags
     delete req.session.data['has-visited-new-disposal-site-locations'];
     delete req.session.data['new-disposal-sites-all-complete'];
+    
+    // Clear journey type to allow switching
+    delete req.session.data['disposal-site-journey-type'];
     
     // Reset the sample disposal sites status
     req.session.data['sample-disposal-sites-completed'] = false;
