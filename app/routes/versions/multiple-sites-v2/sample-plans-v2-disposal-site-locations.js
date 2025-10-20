@@ -307,10 +307,10 @@ module.exports = function (router) {
     req.session.data['sample-plan-where-dispose-material'] = disposalSelection;
     
     // Conditional routing based on selection
-    if (disposalSelection === 'Existing disposal site') {
+    if (disposalSelection === 'Use an existing designated disposal site') {
       // Route to Lean v2 find page (default for A/B), clearing any previous criteria
       res.redirect('find-existing-disposal-site-lean-v2?disposal-site-code-or-name=&include-closed-disused=');
-    } else if (disposalSelection === 'New disposal site') {
+    } else if (disposalSelection === 'Request a new disposal site to be designated') {
       // Route to new disposal site journey
       res.redirect('new-disposal-sites/how-do-you-want-to-provide-site-location');
     } else {
