@@ -596,11 +596,11 @@ body.page-cookie-banner {
   &:focus {
     outline: 3px solid #fd0; // GOV.UK focus color
     outline-offset: 0;
-    background-color: #fd0;
+    background-color: #1d70b8; // GOV.UK blue
     
     .homepage-tile-card__heading,
     .homepage-tile-card__description {
-      color: #0b0c0c;
+      color: #ffffff;
     }
   }
 }
@@ -608,6 +608,9 @@ body.page-cookie-banner {
 .homepage-tile-card__heading {
   margin-bottom: 15px; // govuk-spacing(3)
   color: #1d70b8; // GOV.UK blue for links
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 2px;
 }
 
 .homepage-tile-card__description {
