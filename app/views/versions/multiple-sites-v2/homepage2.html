@@ -1,0 +1,183 @@
+{% extends "versions/multiple-sites-v2/layouts/exemption.html" %}
+
+{% block header %}
+{% from "govuk/components/header/macro.njk" import govukHeader %}
+{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
+
+{{ govukHeader({
+  classes: "govuk-header--full-width-border"
+}) }}
+{{ govukServiceNavigation({
+  serviceName: "Get permission for marine work",
+  navigation: [
+  {
+	href: "homepage1",
+	text: "Home",
+	active: true
+  },
+  {
+      href: "projects",
+      text: "Projects",
+	  active: false
+    },
+    {
+      href: "#",
+      text: "Defra account",
+      active: false
+    },
+    {
+      href: "/versions/multiple-sites-v2/sample-plans-v1/sign-in.html?goto=home",
+      text: "Sign out"
+    }
+  ]
+}) }}
+{% endblock %}
+
+{% block beforeContent %}
+    {% include "versions/multiple-sites-v2/includes/phase-banner.html" %}
+    <div class="app-organisation-switcher">
+		<span class="govuk-body-s govuk-!-font-weight-bold app-organisation-switcher__name">Brighton Marina</span>
+
+				<a class="govuk-link app-organisation-switcher__link govuk-link--no-visited-state" href="organisation-selector-autocomplete?change=true">
+					Change who you're representing
+				</a>
+	</div>
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+Home
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - {{ data['headerNameSamplePlan'] }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-full">
+		<span class="govuk-caption-l">Brighton Marina</span>
+		<h1 class="govuk-heading-l">
+			{{ pageHeadingTextHTML }}
+		</h1>
+
+		<div class="govuk-grid-row">
+			<div class="govuk-grid-column-one-third">
+				<a href="#" class="homepage-tile-card">
+					<h2 class="govuk-heading-m homepage-tile-card__heading">View projects</h2>
+					<p class="govuk-body homepage-tile-card__description">View all of the existing projects in this account.</p>
+				</a>
+			</div>
+		</div>
+
+		<h2 class="govuk-heading-m">
+			Before you apply for a marine licence
+		</h2>
+
+		<div class="govuk-grid-row">
+			<div class="govuk-grid-column-one-third">
+				<a href="#" class="homepage-tile-card">
+					<h2 class="govuk-heading-m homepage-tile-card__heading">Check if I need a marine licence</h2>
+					<p class="govuk-body homepage-tile-card__description">Find out if an activity needs a marine licence.</p>
+				</a>
+			</div>
+
+			<div class="govuk-grid-column-one-third">
+				<a href="#" class="homepage-tile-card">
+					<h2 class="govuk-heading-m homepage-tile-card__heading">Get a plan for sediment sample analysis</h2>
+					<p class="govuk-body homepage-tile-card__description">Send us some information to get a sample plan agreed so you can take sediment samples.</p>
+				</a>
+			</div>
+
+			<div class="govuk-grid-column-one-third">
+				<a href="#" class="homepage-tile-card">
+					<h2 class="govuk-heading-m homepage-tile-card__heading">Request a screening opinion</h2>
+					<p class="govuk-body homepage-tile-card__description">A screening will determine if you need an Environmental Impact Assessment (EIA).</p>
+				</a>
+			</div>
+
+			<div class="govuk-grid-column-one-third">
+				<a href="#" class="homepage-tile-card">
+					<h2 class="govuk-heading-m homepage-tile-card__heading">Request a scoping opinion</h2>
+					<p class="govuk-body homepage-tile-card__description">This sets out the scope of the EIA you need to complete.</p>
+				</a>
+			</div>
+
+			<div class="govuk-grid-column-one-third">
+				<a href="#" class="homepage-tile-card">
+					<h2 class="govuk-heading-m homepage-tile-card__heading">Get an environmental statement review</h2>
+					<p class="govuk-body homepage-tile-card__description">Request a review before submitting a marine licence application</p>
+				</a>
+			</div>
+		</div>
+
+		<h2 class="govuk-heading-m">
+			Apply for a licence
+		</h2>
+
+		<div class="govuk-grid-row">
+			<div class="govuk-grid-column-one-third">
+				<a href="#" class="homepage-tile-card">
+					<h2 class="govuk-heading-m homepage-tile-card__heading">Apply for a standard marine licence</h2>
+					<p class="govuk-body homepage-tile-card__description">For marine work that is not exempt or eligible for self-service.</p>
+				</a>
+			</div>
+
+			<div class="govuk-grid-column-one-third">
+				<a href="#" class="homepage-tile-card">
+					<h2 class="govuk-heading-m homepage-tile-card__heading">Apply for a self-service marine licence</h2>
+					<p class="govuk-body homepage-tile-card__description">For marine work that is not exempt and qualifies for self-service.</p>
+				</a>
+			</div>
+		</div>
+
+		<h2 class="govuk-heading-m">
+			After you apply  for a marine licence
+		</h2>
+
+		<div class="govuk-grid-row">
+			<div class="govuk-grid-column-one-third">
+				<a href="#" class="homepage-tile-card">
+					<h2 class="govuk-heading-m homepage-tile-card__heading">Submit information</h2>
+					<p class="govuk-body homepage-tile-card__description">Lorem ipsum dolor sit amet, consectetur adipiscing elit</p>
+				</a>
+			</div>
+
+			<div class="govuk-grid-column-one-third">
+				<a href="#" class="homepage-tile-card">
+					<h2 class="govuk-heading-m homepage-tile-card__heading">Apply to make a change to your licence</h2>
+					<p class="govuk-body homepage-tile-card__description">Apply to get a variation on an existing marine licence.</p>
+				</a>
+			</div>
+		</div>
+
+		<h2 class="govuk-heading-m">
+			Contact us
+		</h2>
+
+		<div class="govuk-grid-row">
+			<div class="govuk-grid-column-one-third">
+				<a href="#" class="homepage-tile-card">
+					<h2 class="govuk-heading-m homepage-tile-card__heading">Get help</h2>
+					<p class="govuk-body homepage-tile-card__description">Contact us if you need advice</p>
+				</a>
+			</div>
+
+			<div class="govuk-grid-column-one-third">
+				<a href="#" class="homepage-tile-card">
+					<h2 class="govuk-heading-m homepage-tile-card__heading">Request a meeting with us</h2>
+					<p class="govuk-body homepage-tile-card__description">Lorem ipsum dolor sit amet, consectetur adipiscing elit</p>
+				</a>
+			</div>
+		</div>
+
+
+
+
+
+	</div>
+</div>
+{% endblock %}
+
