@@ -574,7 +574,7 @@ body.page-cookie-banner {
   display: block;
   background-color: #f3f2f1;
   padding: 20px;
-  min-height: 120px;
+  min-height: 150px;
   margin-bottom: 30px; // govuk-spacing(6)
   text-decoration: none;
   color: inherit;
@@ -624,5 +624,32 @@ body.page-cookie-banner {
     min-height: 50px; // Shorter on mobile
     padding: 15px;
     margin-bottom: 20px; // govuk-spacing(4)
+  }
+}
+
+// Responsive grid overrides for homepage tiles
+@media (max-width: 64em) { // 1024px
+  // Override GOV.UK's one-third columns to be one-half at this width
+  .govuk-grid-row .govuk-grid-column-one-third {
+    width: 50%;
+    float: left;
+  }
+  
+  // Clear every 2nd card to start a new row (for 2-column layout)
+  .govuk-grid-row .govuk-grid-column-one-third:nth-child(2n+1) {
+    clear: left;
+  }
+  
+  // Remove clear from every 3rd (which was for 3-column layout)
+  .govuk-grid-row .govuk-grid-column-one-third:nth-child(3n+1) {
+    clear: none;
+  }
+}
+
+@media (max-width: 40.0625em) { // 640px - matching GOV.UK mobile breakpoint
+  // Override GOV.UK's columns to be full width at mobile
+  .govuk-grid-row .govuk-grid-column-one-third {
+    width: 100%;
+    float: none;
   }
 }
