@@ -36,6 +36,7 @@
 
 {% block beforeContent %}
 	  	{% include "../includes/phase-banner.html" %}
+    {% if data['hideButtons'] == "true" %}
     <div class="app-organisation-switcher">
 		<span class="govuk-body-s govuk-!-font-weight-bold app-organisation-switcher__name">Brighton Marina</span>
 
@@ -43,7 +44,9 @@
 					Change who you're representing
 				</a>
 	</div>
+    {% else %}
     {{ super() }}
+    {% endif %}
 {% endblock %}
 
 <!-- Setting the big main heading at the top of the page -->
