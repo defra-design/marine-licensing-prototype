@@ -1,0 +1,125 @@
+{% extends "../../../../layouts/sample-plans.html" %}
+
+{% block beforeContent %}
+    {% include "../../../../includes/phase-banner.html" %}
+    {{ super() }}
+    {% include "../../../../includes/back-link.html" %}
+{% endblock %}
+
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+<!-- Setting the smaller secondary heading lower down the page -->
+{% set pageHeadingTextHTML %}
+Which coordinate system do you want to use?
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {% if data['new-disposal-site-' + siteNumber + '-coordinate-system-errorthispage'] == "true" %}
+        Error:
+    {% endif %}
+
+    {{ pageHeadingTextHTML }} - {{ data['headerNameSamplePlan'] }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        {% set siteDataKey = 'new-disposal-site-' + siteNumber + '-coordinate-system' %}
+
+        <!-- ERROR LOGIC 'error summary' -->
+        {% if data['new-disposal-site-' + siteNumber + '-coordinate-system-errorthispage'] == "true" %}
+            {{ govukErrorSummary({
+                titleText: "There is a problem",
+                errorList: [
+                    {
+                        text: "Select which coordinate system you want to use",
+                        href: "#" + siteDataKey
+                    }
+                ]
+            }) }}
+        {% endif %}
+        <!--  END OF 'error summary' -->
+
+        <!-- go to routes.js for routing  -->
+        <form action="which-coordinate-system-router?site={{ siteNumber }}{% if returnTo %}&returnTo={{ returnTo }}{% endif %}" method="post" novalidate>
+        
+        <div class="govuk-form-group {% if data['new-disposal-site-' + siteNumber + '-coordinate-system-errorthispage'] == 'true' %}govuk-form-group--error{% endif %}">
+            <span class="govuk-caption-l">{{ data['sample-plan-project-name-text-input'] }}<span class="govuk-!-display-block">New disposal site {{ siteNumber }}</span></span>
+            <h1 class="govuk-heading-l">
+                {{ pageHeadingTextHTML }}
+            </h1>
+
+            <details class="govuk-details">
+                <summary class="govuk-details__summary">
+                  <span class="govuk-details__summary-text">
+                    Help with the coordinate systems
+                  </span>
+                </summary>
+                <div class="govuk-details__text">
+                 <h2 class="govuk-heading-s">WGS84 (World Geodetic System 1984)</h2>
+                  <p>WGS84 is a global system widely used in GPS and mapping tools like Google Maps. It uses latitude and longitude to pinpoint locations. For example, latitude 55.019889, longitude -1.399500.</p>
+                    
+                  <h2 class="govuk-heading-s">British National Grid (OSGB36)</h2>
+                  <p>The British National Grid maps Great Britain using numerical east and north positions, called eastings and northings. It's based on the OSGB36 reference system used by Ordnance Survey. For example, easting 438493, northing 569648.</p>
+                </div>
+              </details>
+            
+            {% if data['new-disposal-site-' + siteNumber + '-coordinate-system-errorthispage'] == "true" %}
+                <p id="{{ siteDataKey }}-error" class="govuk-error-message">
+                    <span class="govuk-visually-hidden">Error:</span> Select which coordinate system you want to use
+                </p>
+            {% endif %}
+
+            {{ govukRadios({
+                name: siteDataKey,
+                id: siteDataKey,
+                value: data[siteDataKey],
+                fieldset: {
+                    legend: {
+                        html: pageHeadingTextHTML,
+                        isPageHeading: false,
+                        classes: "govuk-fieldset__legend--l govuk-visually-hidden"
+                    }
+                },
+                items: [
+                    {
+                        value: "WGS84 (World Geodetic System 1984)",
+                        text: "WGS84 (World Geodetic System 1984)",
+                        checked: data[siteDataKey] == "WGS84 (World Geodetic System 1984)",
+                        hint: {
+                          text: "Uses latitude and longitude"
+                        }
+                    },
+                    {
+                        value: "British National Grid (OSGB36)",
+                        text: "British National Grid (OSGB36)",
+                        checked: data[siteDataKey] == "British National Grid (OSGB36)",
+                        hint: {
+                          text: "Uses eastings and northings"
+                        }
+                    }
+                ]
+            }) }}
+            
+            </div>
+
+            <div class="govuk-button-group">
+                {{ govukButton({
+                  text: "Continue"
+                }) }}
+                {% if returnTo !== 'review' %}
+                <a class="govuk-link govuk-link--no-visited-state" href="cancel">Cancel</a>
+                {% endif %}
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}
+

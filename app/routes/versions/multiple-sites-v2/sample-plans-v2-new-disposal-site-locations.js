@@ -25,12 +25,16 @@ module.exports = function (router) {
       return;
     }
 
-    // Route based on selection (only file upload is implemented)
+    // Route based on selection
     if (req.session.data['new-disposal-site-location-method'] === 'file-upload') {
+      // Set journey type to new file upload
+      req.session.data['disposal-site-journey-type'] = 'new';
       res.redirect('which-type-of-file');
     } else {
-      // For manual entry - redirect back to same page for now since manual entry is not implemented
-      res.redirect('how-do-you-want-to-provide-site-location');
+      // For manual entry - set journey type and redirect to manual entry flow
+      req.session.data['disposal-site-journey-type'] = 'manual-entry';
+      req.session.data['disposal-site-manual-entry-count'] = 1; // Initialize count
+      res.redirect('manual-entry/site-name?site=1');
     }
   });
 
@@ -303,6 +307,175 @@ module.exports = function (router) {
   });
 
   /////////////////////////////////////////////////////////
+  //////// Disposal details site 2 page
+  /////////////////////////////////////////////////////////
+  router.get(`/versions/${version}/${section}/${subSection}/${newSubSection}/new-disposal-details-site-2`, function (req, res) {
+    req.session.data['samplePlansSection'] = section;
+    
+    // Clear any existing error flags when user navigates to the page
+    req.session.data['new-disposal-details-site-2-errorthispage'] = "false";
+    req.session.data['new-disposal-details-site-2-material-type-error'] = "";
+    req.session.data['new-disposal-details-site-2-method-error'] = "";
+    req.session.data['new-disposal-details-site-2-method-other-error'] = "";
+    req.session.data['new-disposal-details-site-2-material-type-other-error'] = "";
+    
+    res.render(`versions/${version}/${section}/${subSection}/${newSubSection}/new-disposal-details-site-2`);
+  });
+
+  // Disposal details site 2 router (POST)
+  router.post(`/versions/${version}/${section}/${subSection}/${newSubSection}/new-disposal-details-site-2-router`, function (req, res) {
+    // Reset error flags
+    req.session.data['new-disposal-details-site-2-errorthispage'] = "false";
+    req.session.data['new-disposal-details-site-2-material-type-error'] = "";
+    req.session.data['new-disposal-details-site-2-method-error'] = "";
+    req.session.data['new-disposal-details-site-2-method-other-error'] = "";
+    req.session.data['new-disposal-details-site-2-material-type-other-error'] = "";
+
+    let hasErrors = false;
+
+    // Validate material type selection
+    if (!req.session.data['new-disposal-details-site-2-material-type'] || req.session.data['new-disposal-details-site-2-material-type'].length === 0) {
+      req.session.data['new-disposal-details-site-2-material-type-error'] = "Select what type of material will be disposed at this site";
+      hasErrors = true;
+    } else if (req.session.data['new-disposal-details-site-2-material-type'].includes('other')) {
+      // Check if "Other" is selected but no description provided
+      if (!req.session.data['new-disposal-details-site-2-material-type-other'] || req.session.data['new-disposal-details-site-2-material-type-other'].trim() === '') {
+        req.session.data['new-disposal-details-site-2-material-type-other-error'] = "Describe the other material type";
+        hasErrors = true;
+      }
+    }
+
+    // Validate disposal method selection
+    if (!req.session.data['new-disposal-details-site-2-method'] || req.session.data['new-disposal-details-site-2-method'].length === 0) {
+      req.session.data['new-disposal-details-site-2-method-error'] = "Select what the proposed method of disposal is";
+      hasErrors = true;
+    } else if (req.session.data['new-disposal-details-site-2-method'].includes('other')) {
+      // Check if "Other" is selected but no description provided
+      if (!req.session.data['new-disposal-details-site-2-method-other'] || req.session.data['new-disposal-details-site-2-method-other'].trim() === '') {
+        req.session.data['new-disposal-details-site-2-method-other-error'] = "Describe the other method";
+        hasErrors = true;
+      }
+    }
+
+    // If there are errors, redirect back to the form
+    if (hasErrors) {
+      req.session.data['new-disposal-details-site-2-errorthispage'] = "true";
+      return res.redirect('new-disposal-details-site-2');
+    }
+
+    // Check if this is manual entry journey
+    if (req.session.data['disposal-site-journey-type'] === 'manual-entry') {
+      // Redirect to manual entry review page
+      res.redirect('manual-entry/review-manual-disposal-site-details#site-2-details');
+    } else {
+      // Redirect to file upload review page (for future implementation)
+      res.redirect('review-new-disposal-site-details#site-2-details');
+    }
+  });
+
+  /////////////////////////////////////////////////////////
+  //////// Maximum disposal volume site 2 page
+  /////////////////////////////////////////////////////////
+  router.get(`/versions/${version}/${section}/${subSection}/${newSubSection}/new-maximum-disposal-volume-site-2`, function (req, res) {
+    req.session.data['samplePlansSection'] = section;
+    
+    // Clear any existing error flags when user navigates to the page
+    req.session.data['new-disposal-site-2-maximum-volume-errorthispage'] = "false";
+    req.session.data['new-disposal-site-2-total-volume-error'] = "";
+    
+    res.render(`versions/${version}/${section}/${subSection}/${newSubSection}/new-maximum-disposal-volume-site-2`);
+  });
+
+  // Maximum disposal volume site 2 router (POST)
+  router.post(`/versions/${version}/${section}/${subSection}/${newSubSection}/new-maximum-disposal-volume-site-2-router`, function (req, res) {
+    // Reset error flags
+    req.session.data['new-disposal-site-2-maximum-volume-errorthispage'] = "false";
+    req.session.data['new-disposal-site-2-total-volume-error'] = "";
+
+    let hasErrors = false;
+
+    // Validate total volume is mandatory
+    if (!req.body['new-disposal-site-2-total-volume'] || req.body['new-disposal-site-2-total-volume'].trim() === '') {
+      req.session.data['new-disposal-site-2-total-volume-error'] = "Enter the total volume, in cubic metres, over the full licence period";
+      hasErrors = true;
+    } else {
+      req.session.data['new-disposal-site-2-total-volume'] = req.body['new-disposal-site-2-total-volume'];
+    }
+
+    if (hasErrors) {
+      req.session.data['new-disposal-site-2-maximum-volume-errorthispage'] = "true";
+      res.redirect('new-maximum-disposal-volume-site-2');
+      return;
+    }
+
+    // Check if this is manual entry journey
+    if (req.session.data['disposal-site-journey-type'] === 'manual-entry') {
+      // Redirect to manual entry review page
+      res.redirect('manual-entry/review-manual-disposal-site-details#site-2-details');
+    } else {
+      // Redirect to file upload review page (for future implementation)
+      res.redirect('review-new-disposal-site-details#site-2-details');
+    }
+  });
+
+  /////////////////////////////////////////////////////////
+  //////// Beneficial use site 2 page
+  /////////////////////////////////////////////////////////
+  router.get(`/versions/${version}/${section}/${subSection}/${newSubSection}/new-beneficial-use-site-2`, function (req, res) {
+    req.session.data['samplePlansSection'] = section;
+    
+    // Clear any existing error flags when user navigates to the page
+    req.session.data['new-disposal-site-2-beneficial-use-errorthispage'] = "false";
+    req.session.data['new-disposal-site-2-beneficial-use-error'] = "";
+    req.session.data['new-disposal-site-2-beneficial-use-description-error'] = "";
+    
+    res.render(`versions/${version}/${section}/${subSection}/${newSubSection}/new-beneficial-use-site-2`);
+  });
+
+  // Beneficial use site 2 router (POST)
+  router.post(`/versions/${version}/${section}/${subSection}/${newSubSection}/new-beneficial-use-site-2-router`, function (req, res) {
+    // Reset error flags
+    req.session.data['new-disposal-site-2-beneficial-use-errorthispage'] = "false";
+    req.session.data['new-disposal-site-2-beneficial-use-error'] = "";
+    req.session.data['new-disposal-site-2-beneficial-use-description-error'] = "";
+
+    let hasErrors = false;
+
+    // Validate beneficial use selection (mandatory)
+    if (!req.body['new-disposal-site-2-beneficial-use']) {
+      req.session.data['new-disposal-site-2-beneficial-use-error'] = "Select if the material being disposed of is for beneficial use";
+      hasErrors = true;
+    } else {
+      req.session.data['new-disposal-site-2-beneficial-use'] = req.body['new-disposal-site-2-beneficial-use'];
+      
+      // If "yes" is selected, validate the description
+      if (req.body['new-disposal-site-2-beneficial-use'] === 'yes') {
+        if (!req.body['new-disposal-site-2-beneficial-use-description'] || req.body['new-disposal-site-2-beneficial-use-description'].trim() === '') {
+          req.session.data['new-disposal-site-2-beneficial-use-description-error'] = "Enter a description of the proposed beneficial use";
+          hasErrors = true;
+        } else {
+          req.session.data['new-disposal-site-2-beneficial-use-description'] = req.body['new-disposal-site-2-beneficial-use-description'];
+        }
+      }
+    }
+
+    if (hasErrors) {
+      req.session.data['new-disposal-site-2-beneficial-use-errorthispage'] = "true";
+      res.redirect('new-beneficial-use-site-2');
+      return;
+    }
+
+    // Check if this is manual entry journey
+    if (req.session.data['disposal-site-journey-type'] === 'manual-entry') {
+      // Redirect to manual entry review page
+      res.redirect('manual-entry/review-manual-disposal-site-details#site-2-details');
+    } else {
+      // Redirect to file upload review page (for future implementation)
+      res.redirect('review-new-disposal-site-details#site-2-details');
+    }
+  });
+
+  /////////////////////////////////////////////////////////
   //////// Delete all sites page
   /////////////////////////////////////////////////////////
   router.get(`/versions/${version}/${section}/${subSection}/${newSubSection}/delete-all-sites`, function (req, res) {
@@ -318,8 +491,35 @@ module.exports = function (router) {
     delete req.session.data['new-disposal-site-location-method'];
     delete req.session.data['new-disposal-file-type'];
     
-    // Site 1 name
+    // Manual entry journey data - Site 1
     delete req.session.data['new-disposal-site-1-name'];
+    delete req.session.data['new-disposal-site-1-coordinate-entry-method'];
+    delete req.session.data['new-disposal-site-1-coordinate-system'];
+    delete req.session.data['new-disposal-site-1-centre-latitude'];
+    delete req.session.data['new-disposal-site-1-centre-longitude'];
+    delete req.session.data['new-disposal-site-1-width'];
+    // Clear polygon points for site 1
+    for (let i = 1; i <= 5; i++) {
+      delete req.session.data[`new-disposal-site-1-point-${i}-latitude`];
+      delete req.session.data[`new-disposal-site-1-point-${i}-longitude`];
+    }
+    
+    // Manual entry journey data - Site 2
+    delete req.session.data['new-disposal-site-2-name'];
+    delete req.session.data['new-disposal-site-2-coordinate-entry-method'];
+    delete req.session.data['new-disposal-site-2-coordinate-system'];
+    delete req.session.data['new-disposal-site-2-centre-latitude'];
+    delete req.session.data['new-disposal-site-2-centre-longitude'];
+    delete req.session.data['new-disposal-site-2-width'];
+    // Clear polygon points for site 2
+    for (let i = 1; i <= 5; i++) {
+      delete req.session.data[`new-disposal-site-2-point-${i}-latitude`];
+      delete req.session.data[`new-disposal-site-2-point-${i}-longitude`];
+    }
+    
+    // Manual entry count
+    delete req.session.data['disposal-site-manual-entry-count'];
+    delete req.session.data['has-visited-manual-disposal-site-locations'];
     
     // Site 1 disposal details
     delete req.session.data['new-disposal-details-site-1-completed'];
@@ -336,6 +536,15 @@ module.exports = function (router) {
     delete req.session.data['new-disposal-beneficial-use-completed'];
     delete req.session.data['new-disposal-site-1-beneficial-use'];
     delete req.session.data['new-disposal-site-1-beneficial-use-description'];
+    
+    // Site 2 disposal details
+    delete req.session.data['new-disposal-details-site-2-material-type'];
+    delete req.session.data['new-disposal-details-site-2-material-type-other'];
+    delete req.session.data['new-disposal-details-site-2-method'];
+    delete req.session.data['new-disposal-details-site-2-method-other'];
+    delete req.session.data['new-disposal-site-2-total-volume'];
+    delete req.session.data['new-disposal-site-2-beneficial-use'];
+    delete req.session.data['new-disposal-site-2-beneficial-use-description'];
     
     // Overall completion flags
     delete req.session.data['has-visited-new-disposal-site-locations'];

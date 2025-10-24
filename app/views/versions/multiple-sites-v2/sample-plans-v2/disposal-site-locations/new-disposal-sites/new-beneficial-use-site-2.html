@@ -1,0 +1,107 @@
+{% extends "../../../layouts/sample-plans.html" %}
+
+{% block beforeContent %}
+    {% include "../../../includes/phase-banner.html" %}
+    {{ super() }}
+    {% include "../../../includes/back-link.html" %}
+{% endblock %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+<!-- Set the heading for the page -->
+{% set pageHeadingTextHTML %}
+Will any of the material being disposed of be re-used to benefit the environment?
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {% if  data['new-disposal-site-2-beneficial-use-errorthispage'] == "true"  %}
+        Error:
+    {% endif %}
+
+    {{ pageHeadingTextHTML }} - Get a plan for sediment sample analysis
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <!-- Show error summary if there are errors -->
+        {% if data['new-disposal-site-2-beneficial-use-errorthispage'] == "true" %}
+            {% set errorArray = [] %}
+            {% if data['new-disposal-site-2-beneficial-use-error'] %}
+                {% set errorArray = (errorArray.push({
+                    "text": data['new-disposal-site-2-beneficial-use-error'],
+                    "href": "#new-disposal-site-2-beneficial-use"
+                }), errorArray) %}
+            {% endif %}
+            {% if data['new-disposal-site-2-beneficial-use-description-error'] %}
+                {% set errorArray = (errorArray.push({
+                    "text": data['new-disposal-site-2-beneficial-use-description-error'],
+                    "href": "#new-disposal-site-2-beneficial-use-description"
+                }), errorArray) %}
+            {% endif %}
+
+            {{ govukErrorSummary({
+                titleText: "There is a problem",
+                errorList: errorArray
+            }) }}
+        {% endif %}
+
+        <form action="new-beneficial-use-site-2-router" method="post" novalidate>
+            
+            {{ govukRadios({
+                name: "new-disposal-site-2-beneficial-use",
+                fieldset: {
+                    legend: {
+                        html: '<span class="govuk-caption-l">' + (data['sample-plan-project-name-text-input'] or '') + '<span class="govuk-!-display-block">New disposal site 2</span></span>' + pageHeadingTextHTML,
+                        isPageHeading: true,
+                        classes: "govuk-fieldset__legend--l"
+                    }
+                },
+                hint: {
+                    text: "The material being disposed of for beneficial use, for example to create saltmarsh or wetlands, or to add clean sand to an eroding beach"
+                },
+                errorMessage: {
+                    text: data['new-disposal-site-2-beneficial-use-error']
+                } if data['new-disposal-site-2-beneficial-use-error'],
+                items: [
+                    {
+                        value: "yes",
+                        text: "Yes",
+                        checked: true if data['new-disposal-site-2-beneficial-use'] == "yes",
+                        conditional: {
+                            html: govukTextarea({
+                                name: "new-disposal-site-2-beneficial-use-description",
+                                id: "new-disposal-site-2-beneficial-use-description",
+                                label: {
+                                    text: "Describe the proposed beneficial use"
+                                },
+                                value: data['new-disposal-site-2-beneficial-use-description'],
+                                errorMessage: {
+                                    text: data['new-disposal-site-2-beneficial-use-description-error']
+                                } if data['new-disposal-site-2-beneficial-use-description-error']
+                            })
+                        }
+                    },
+                    {
+                        value: "no",
+                        text: "No",
+                        checked: true if data['new-disposal-site-2-beneficial-use'] == "no"
+                    }
+                ]
+            }) }}
+
+            <div class="govuk-button-group">
+                {{ govukButton({
+                    text: "Save and continue"
+                }) }}
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
