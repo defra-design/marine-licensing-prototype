@@ -1,0 +1,134 @@
+{% extends "../../../../layouts/sample-plans.html" %}
+
+{% block beforeContent %}
+    {% include "../../../../includes/phase-banner.html" %}
+    {{ super() }}
+    {% include "../../../../includes/back-link.html" %}
+{% endblock %}
+
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+<!-- Set the heading for the page -->
+{% set pageHeadingTextHTML %}
+How do you want to enter the site coordinates?
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {% if data['new-disposal-site-' + siteNumber + '-coordinate-entry-errorthispage'] == "true" %}
+        Error:
+    {% endif %}
+
+    {{ pageHeadingTextHTML }} - {{ data['headerNameSamplePlan'] }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        {% set siteDataKey = 'new-disposal-site-' + siteNumber + '-coordinate-entry-method' %}
+
+        <!-- ERROR LOGIC 'error summary' -->
+        {% if data['new-disposal-site-' + siteNumber + '-coordinate-entry-errorthispage'] == "true" %}
+            {{ govukErrorSummary({
+                titleText: "There is a problem",
+                errorList: [
+                    {
+                        text: "Select how you want to enter the site coordinates",
+                        href: "#" + siteDataKey
+                    }
+                ]
+            }) }}
+        {% endif %}
+        <!--  END OF 'error summary' -->
+        
+        <form action="how-do-you-want-to-enter-coordinates-router?site={{ siteNumber }}{% if returnTo %}&returnTo={{ returnTo }}{% endif %}" method="post" novalidate>
+        
+        <div class="govuk-form-group {% if data['new-disposal-site-' + siteNumber + '-coordinate-entry-errorthispage'] == 'true' %}govuk-form-group--error{% endif %}">
+            <span class="govuk-caption-l">{{ data['sample-plan-project-name-text-input'] }}<span class="govuk-!-display-block">New disposal site {{ siteNumber }}</span></span>
+            <h1 class="govuk-heading-l">
+                {{ pageHeadingTextHTML }}
+            </h1>
+
+            <details class="govuk-details">
+                <summary class="govuk-details__summary">
+                  <span class="govuk-details__summary-text">
+                    Help with choosing how to enter coordinates
+                  </span>
+                </summary>
+                <div class="govuk-details__text">
+                  <h2 class="govuk-heading-s">For sites without a defined shape</h2>
+                  <p>If you only know the coordinates at the centre of the site, we'll use those and the width you enter to create a circular area.</p>
+                  <p>This is useful for activities like taking samples from a boat.</p>
+                  <p>Make sure the circle covers the full area where the activity will take place, including any expected movement.</p>
+                  <p>This example shows a 30-metre circular site using a single set of coordinates as the centre point.</p>
+                  
+                  <img src="/public/images/map-circle-example.jpg" alt="Example map showing a circular site marked with a centre point and 30-metre radius" width="100%" class="govuk-!-margin-bottom-6" />
+                  
+                  <h2 class="govuk-heading-s">For sites with a defined shape or boundary</h2>
+                  <p>If your site has a clear shape or boundary, you can enter multiple coordinates to mark out the area. You'll need to enter the coordinates for each point in order, so they join to form a closed shape.</p>
+                  <p>This is useful for activities that take place within a specific area, such as building a structure or dredging part of the seabed.</p>
+                  <p>Make sure the shape includes the full area where the activity will take place, and allow for any movement, if that's relevant.</p>
+                  <p>This example shows a site marked by 4 sets of coordinates to form a custom shape.</p>
+                  
+                  <img src="/public/images/map-polygon-example.jpg" alt="Example map showing a square site boundary marked with 4 coordinate points" width="100%" />
+              </div>
+              </details>
+            
+            {% if data['new-disposal-site-' + siteNumber + '-coordinate-entry-errorthispage'] == "true" %}
+                <p id="{{ siteDataKey }}-error" class="govuk-error-message">
+                    <span class="govuk-visually-hidden">Error:</span> Select how you want to enter the site coordinates
+                </p>
+            {% endif %}
+
+            {{ govukRadios({
+              idPrefix: siteDataKey,
+              name: siteDataKey,
+              value: data[siteDataKey],
+              fieldset: {
+                legend: {
+                  html: pageHeadingTextHTML,
+                  isPageHeading: false,
+                  classes: "govuk-fieldset__legend--l govuk-visually-hidden"
+                }
+              },
+              items: [
+                {
+                  value: "Enter one set of coordinates and a width to create a circular site",
+                  text: "Enter one set of coordinates and a width to create a circular site",
+                  hint: {
+                    text: "Use this if you only have the centre point of the site"
+                  },
+                  checked: data[siteDataKey] == "Enter one set of coordinates and a width to create a circular site"
+                },
+                {
+                  value: "Enter multiple sets of coordinates to mark the boundary of the site",
+                  text: "Enter multiple sets of coordinates to mark the boundary of the site",
+                  hint: {
+                    text: "Use this if the site is a custom shape with more than one point"
+                  },
+                  checked: data[siteDataKey] == "Enter multiple sets of coordinates to mark the boundary of the site"
+                }
+              ]
+            }) }}
+            
+            </div>
+
+      <div class="govuk-button-group">
+        {{ govukButton({
+          text: "Continue"
+        }) }}
+        {% if not returnTo %}
+        <a class="govuk-link govuk-link--no-visited-state" href="cancel">Cancel</a>
+        {% endif %}
+    </div>
+
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}
+

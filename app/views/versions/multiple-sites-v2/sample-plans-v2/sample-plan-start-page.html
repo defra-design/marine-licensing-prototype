@@ -119,10 +119,25 @@ Sample plan start page
 		<li class="govuk-task-list__item govuk-task-list__item--with-link">
 		  <div class="govuk-task-list__name-and-hint">
 			{% if data['disposal-site-journey-type'] == 'new' %}
-			  {# Route to new disposal site review if that's the active journey #}
+			  {# Route to new disposal site file upload review if that's the active journey #}
 			  {% if data['has-visited-new-disposal-site-locations'] %}
 				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" 
 				   href="disposal-site-locations/new-disposal-sites/review-new-disposal-site-details" 
+				   aria-describedby="disposal-sites-status">
+				  Disposal sites and details
+				</a>
+			  {% else %}
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" 
+				   href="disposal-site-locations/before-you-start?sample-plan-where-dispose-material=" 
+				   aria-describedby="disposal-sites-status">
+				  Disposal sites and details
+				</a>
+			  {% endif %}
+			{% elif data['disposal-site-journey-type'] == 'manual-entry' %}
+			  {# Route to manual entry review if that's the active journey #}
+			  {% if data['has-visited-manual-disposal-site-locations'] %}
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" 
+				   href="disposal-site-locations/new-disposal-sites/manual-entry/review-manual-disposal-site-details" 
 				   aria-describedby="disposal-sites-status">
 				  Disposal sites and details
 				</a>
@@ -161,7 +176,7 @@ Sample plan start page
 		  <div class="govuk-task-list__status" id="disposal-sites-status">
 			{% if data['sample-disposal-sites-completed'] %}
 				Completed
-			{% elif data['sample-disposal-sites-in-progress'] or data['has-visited-disposal-site-review'] or data['has-visited-new-disposal-site-locations'] %}
+			{% elif data['sample-disposal-sites-in-progress'] or data['has-visited-disposal-site-review'] or data['has-visited-new-disposal-site-locations'] or data['has-visited-manual-disposal-site-locations'] %}
 				<strong class="govuk-tag govuk-tag--light-blue">
 					In progress
 				</strong>
@@ -248,10 +263,25 @@ Sample plan start page
 		<li class="govuk-task-list__item govuk-task-list__item--with-link">
 		  <div class="govuk-task-list__name-and-hint">
 			{% if data['disposal-site-journey-type'] == 'new' %}
-			  {# Route to new disposal site review if that's the active journey #}
+			  {# Route to new disposal site file upload review if that's the active journey #}
 			  {% if data['has-visited-new-disposal-site-locations'] %}
 				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" 
 				   href="disposal-site-locations/new-disposal-sites/review-new-disposal-site-details" 
+				   aria-describedby="disposal-sites-status">
+				  Disposal sites and details
+				</a>
+			  {% else %}
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" 
+				   href="disposal-site-locations/before-you-start?sample-plan-where-dispose-material=" 
+				   aria-describedby="disposal-sites-status">
+				  Disposal sites and details
+				</a>
+			  {% endif %}
+			{% elif data['disposal-site-journey-type'] == 'manual-entry' %}
+			  {# Route to manual entry review if that's the active journey #}
+			  {% if data['has-visited-manual-disposal-site-locations'] %}
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" 
+				   href="disposal-site-locations/new-disposal-sites/manual-entry/review-manual-disposal-site-details" 
 				   aria-describedby="disposal-sites-status">
 				  Disposal sites and details
 				</a>
@@ -290,7 +320,7 @@ Sample plan start page
 		  <div class="govuk-task-list__status" id="disposal-sites-status">
 			{% if data['sample-disposal-sites-completed'] %}
 				Completed
-			{% elif data['sample-disposal-sites-in-progress'] or data['has-visited-disposal-site-review'] or data['has-visited-new-disposal-site-locations'] %}
+			{% elif data['sample-disposal-sites-in-progress'] or data['has-visited-disposal-site-review'] or data['has-visited-new-disposal-site-locations'] or data['has-visited-manual-disposal-site-locations'] %}
 				<strong class="govuk-tag govuk-tag--light-blue">
 					In progress
 				</strong>

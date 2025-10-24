@@ -1,0 +1,82 @@
+{% extends "../../../layouts/sample-plans.html" %}
+
+{% block beforeContent %}
+    {% include "../../../includes/phase-banner.html" %}
+    {{ super() }}
+    {% include "../../../includes/back-link.html" %}
+{% endblock %}
+
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/fieldset/macro.njk" import govukFieldset %}
+
+<!-- Set the heading for the page -->
+{% set pageHeadingTextHTML %}
+Maximum proposed disposal volume
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {% if  data['new-disposal-site-2-maximum-volume-errorthispage'] == "true"  %}
+        Error:
+    {% endif %}
+
+    {{ pageHeadingTextHTML }} - Get a plan for sediment sample analysis
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <!-- Show error summary if there are errors -->
+        {% if data['new-disposal-site-2-maximum-volume-errorthispage'] == "true" %}
+            {{ govukErrorSummary({
+                titleText: "There is a problem",
+                errorList: [
+                    {
+                        text: data['new-disposal-site-2-total-volume-error'],
+                        href: "#new-disposal-site-2-total-volume"
+                    }
+                ]
+            }) }}
+        {% endif %}
+
+        <form action="new-maximum-disposal-volume-site-2-router" method="post" novalidate>
+            
+            <div class="govuk-form-group {% if data['new-disposal-site-2-total-volume-error'] %}govuk-form-group--error{% endif %}">
+                <span class="govuk-caption-l">{{ data['sample-plan-project-name-text-input'] }}<span class="govuk-!-display-block">New disposal site 2</span></span>
+                <h1 class="govuk-label-wrapper">
+                    <label class="govuk-label govuk-label--l" for="new-disposal-site-2-total-volume">
+                        {{ pageHeadingTextHTML }}
+                    </label>
+                </h1>
+                <div id="new-disposal-site-2-total-volume-hint" class="govuk-hint">
+                    Total volume, in cubic metres, over the full licence period
+                </div>
+                {% if data['new-disposal-site-2-total-volume-error'] %}
+                    <p id="new-disposal-site-2-total-volume-error" class="govuk-error-message">
+                        <span class="govuk-visually-hidden">Error:</span> {{ data['new-disposal-site-2-total-volume-error'] }}
+                    </p>
+                {% endif %}
+                <div class="govuk-input__wrapper">
+                    <input class="govuk-input govuk-input--width-10 {% if data['new-disposal-site-2-total-volume-error'] %}govuk-input--error{% endif %}" 
+                           id="new-disposal-site-2-total-volume" 
+                           name="new-disposal-site-2-total-volume" 
+                           type="text" 
+                           aria-describedby="new-disposal-site-2-total-volume-hint{% if data['new-disposal-site-2-total-volume-error'] %} new-disposal-site-2-total-volume-error{% endif %}"
+                           value="{{ data['new-disposal-site-2-total-volume'] }}">
+                    <div class="govuk-input__suffix" aria-hidden="true">m³</div>
+                </div>
+            </div>
+
+            <div class="govuk-button-group">
+                {{ govukButton({
+                    text: "Save and continue"
+                }) }}
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+

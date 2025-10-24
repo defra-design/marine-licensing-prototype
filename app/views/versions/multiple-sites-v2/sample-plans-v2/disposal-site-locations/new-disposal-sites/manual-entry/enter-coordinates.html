@@ -1,0 +1,176 @@
+{% extends "../../../../layouts/sample-plans.html" %}
+
+{% block beforeContent %}
+    {% include "../../../../includes/phase-banner.html" %}
+    {{ super() }}
+    {% include "../../../../includes/back-link.html" %}
+{% endblock %}
+
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/fieldset/macro.njk" import govukFieldset %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+Enter the coordinates at the centre point of the site
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {% if data['new-disposal-site-' + siteNumber + '-centre-latitude-error'] or data['new-disposal-site-' + siteNumber + '-centre-longitude-error'] %}
+        Error:
+    {% endif %}
+
+    {{ pageHeadingTextHTML }} - {{ data['headerNameSamplePlan'] }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        {% set coordinateSystem = data['new-disposal-site-' + siteNumber + '-coordinate-system'] %}
+        
+        <!-- Setting the smaller secondary headings based on coordinate system -->
+        {% set questionHeadingTextOneHTML %}
+            {% if coordinateSystem == "British National Grid (OSGB36)" %}
+            Easting
+            {% else %}
+            Latitude
+            {% endif %}
+        {% endset %}
+
+        {% set questionHeadingTextTwoHTML %}
+            {% if coordinateSystem == "British National Grid (OSGB36)" %}
+            Northing
+            {% else %}
+            Longitude
+            {% endif %}
+        {% endset %}
+
+        <!-- ERROR LOGIC 'error summary' -->
+        {% if data['new-disposal-site-' + siteNumber + '-centre-latitude-error'] or data['new-disposal-site-' + siteNumber + '-centre-longitude-error'] %}
+        <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+            <h2 class="govuk-error-summary__title" id="error-summary-title">
+                There is a problem
+            </h2>
+            <div class="govuk-error-summary__body">
+                <ul class="govuk-list govuk-error-summary__list">
+                    {% if data['new-disposal-site-' + siteNumber + '-centre-latitude-error'] %}
+                    <li><a href="#new-disposal-site-{{ siteNumber }}-centre-latitude">{{ data['new-disposal-site-' + siteNumber + '-centre-latitude-error'] }}</a></li> 
+                    {% endif %}
+                    {% if data['new-disposal-site-' + siteNumber + '-centre-longitude-error'] %}
+                    <li><a href="#new-disposal-site-{{ siteNumber }}-centre-longitude">{{ data['new-disposal-site-' + siteNumber + '-centre-longitude-error'] }}</a></li> 
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+        <!--  END OF 'error summary' -->
+
+        <span class="govuk-caption-l">{{ data['sample-plan-project-name-text-input'] }}<span class="govuk-!-display-block">New disposal site {{ siteNumber }}</span></span>
+        <h1 class="govuk-heading-l">
+            {{ pageHeadingTextHTML }}
+          </h1> 
+
+        <form action="enter-coordinates-router?site={{ siteNumber }}{% if returnTo %}&returnTo={{ returnTo }}{% endif %}" method="post" novalidate>
+
+            {% call govukFieldset({
+                legend: {
+                  html: pageHeadingTextHTML,
+                  classes: "govuk-visually-hidden",
+                  isPageHeading: false
+                }
+              }) %}
+              
+              <p>Enter in the decimal degree format. For example, 55.019889 or -1.399500</p>
+
+              {% if coordinateSystem == "British National Grid (OSGB36)" %}
+              <details class="govuk-details">
+                <summary class="govuk-details__summary">
+                  <span class="govuk-details__summary-text">
+                    Help with eastings and northings formats
+                  </span>
+                </summary>
+                <div class="govuk-details__text">
+                  <p>Eastings and northings should only include numbers. For example: 123456, 654321.</p>
+                  <p>How accurate your eastings and northings coordinates are, depends on how many digits you use for each:</p>
+                  <ul class="govuk-list govuk-list--bullet">
+                    <li>2 + 2 digits (4 in total) - accurate to 1 square kilometre</li>
+                    <li>3 + 3 digits (6 in total) - accurate to 100 square metres</li>
+                    <li>4 + 4 digits (8 in total) - accurate to 10 square metres</li>
+                    <li>6 + 6 digits (12 in total) - accurate to 1 square metre</li>
+                  </ul>
+                  <p>Some places further north, such as the Shetland Islands, may need 7 digits for the northing coordinate.</p>
+                  <p>Enter 2 values, each with at least 6 digits - one for eastings and one for northings. For example, 123456, 654321.</p>
+                  <p>Always enter eastings first, then northings, in their separate fields.</p>
+                </div>
+              </details>
+              {% else %}
+              <details class="govuk-details">
+                <summary class="govuk-details__summary">
+                  <span class="govuk-details__summary-text">
+                    Help with latitude and longitude formats
+                  </span>
+                </summary>
+                <div class="govuk-details__text">
+                  <p>Latitude and longitude can be written in different formats, including:</p>
+                  <ul class="govuk-list govuk-list--bullet">
+                    <li>decimal degrees (DD) - 55.019889 or -1.399500</li>
+                    <li>degrees, minutes and seconds (DMS) - 55°01'11.6"N 1°23'58.2"WE</li>
+                    <li>degrees and decimal minutes (DMM) - 55° 1.19334', 1° 23.97'</li>
+                  </ul>
+                  <p>Enter coordinates in decimal degree (DD) format only.</p>
+                  <p>Latitude ranges from -90 to 90, and longitude ranges from -180 to 180. Always enter latitude first, then longitude, in their separate fields.</p>
+                </div>
+              </details>
+              {% endif %}
+
+            {{ govukInput({
+                label: {
+                    html: questionHeadingTextOneHTML,
+                    classes: "govuk-label",
+                    isPageHeading: false
+                },
+                autocomplete: "off",
+                id: "new-disposal-site-" + siteNumber + "-centre-latitude",
+                name: "new-disposal-site-" + siteNumber + "-centre-latitude",
+                errorMessage: null if not data['new-disposal-site-' + siteNumber + '-centre-latitude-error']
+                               else { html: data['new-disposal-site-' + siteNumber + '-centre-latitude-error'] },
+                value: data['new-disposal-site-' + siteNumber + '-centre-latitude'],
+                classes: "govuk-input govuk-!-width-one-half"
+            }) }}
+
+            {{ govukInput({
+                label: {
+                    html: questionHeadingTextTwoHTML,
+                    classes: "govuk-label",
+                    isPageHeading: false
+                },
+                autocomplete: "off",
+                id: "new-disposal-site-" + siteNumber + "-centre-longitude",
+                name: "new-disposal-site-" + siteNumber + "-centre-longitude",
+                errorMessage: null if not data['new-disposal-site-' + siteNumber + '-centre-longitude-error']
+                               else { html: data['new-disposal-site-' + siteNumber + '-centre-longitude-error'] },
+                value: data['new-disposal-site-' + siteNumber + '-centre-longitude'],
+                classes: "govuk-input govuk-!-width-one-half"
+            }) }}
+            {% endcall %}
+
+            <div class="govuk-button-group">
+                {% set hasWidth = data['new-disposal-site-' + siteNumber + '-width'] %}
+                {% set isJourney3 = (returnTo == 'review' and hasWidth) %}
+                {{ govukButton({
+                  text: "Save and continue" if isJourney3 else "Continue"
+                }) }}
+                {% if not returnTo %}
+                <a class="govuk-link govuk-link--no-visited-state" href="cancel">Cancel</a>
+                {% endif %}
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}
+

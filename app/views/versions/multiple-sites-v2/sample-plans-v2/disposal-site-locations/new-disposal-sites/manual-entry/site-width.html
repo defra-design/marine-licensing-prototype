@@ -1,0 +1,102 @@
+{% extends "../../../../layouts/sample-plans.html" %}
+
+{% block beforeContent %}
+    {% include "../../../../includes/phase-banner.html" %}
+    {{ super() }}
+    {% include "../../../../includes/back-link.html" %}
+{% endblock %}
+
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+Enter the width of the circular site in metres
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {% if data['new-disposal-site-' + siteNumber + '-width-error'] %}
+        Error:
+    {% endif %}
+
+    {{ pageHeadingTextHTML }} - {{ data['headerNameSamplePlan'] }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        {% set siteWidthInputId = 'new-disposal-site-' + siteNumber + '-width' %}
+
+        <!-- ERROR LOGIC 'error summary' -->
+        {% if data['new-disposal-site-' + siteNumber + '-width-error'] %}
+            {{ govukErrorSummary({
+                titleText: "There is a problem",
+                errorList: [
+                    {
+                        html: data['new-disposal-site-' + siteNumber + '-width-error'],
+                        href: "#" + siteWidthInputId
+                    }
+                ]
+            }) }}
+        {% endif %}
+        <!--  END OF 'error summary' -->
+
+        <!-- go to routes.js for routing  -->
+        <form action="site-width-router?site={{ siteNumber }}{% if returnTo %}&returnTo={{ returnTo }}{% endif %}" method="post" novalidate>
+
+            {% if data['new-disposal-site-' + siteNumber + '-width-error'] %}
+            <div class="govuk-form-group govuk-form-group--error">
+            {% else %}
+            <div class="govuk-form-group">
+            {% endif %}
+            
+                <span class="govuk-caption-l">{{ data['sample-plan-project-name-text-input'] }}<span class="govuk-!-display-block">New disposal site {{ siteNumber }}</span></span>
+                <h1 class="govuk-heading-l">
+                    {{ pageHeadingTextHTML }}
+                </h1>
+                
+                {% if data['new-disposal-site-' + siteNumber + '-width-error'] %}
+                <p id="{{ siteWidthInputId }}-error" class="govuk-error-message">
+                    <span class="govuk-visually-hidden">Error:</span> {{ data['new-disposal-site-' + siteNumber + '-width-error'] }}
+                </p>
+                {% endif %}
+                
+                {{ govukInput({
+                    label: {
+                        html: pageHeadingTextHTML,
+                        classes: "govuk-visually-hidden",
+                        isPageHeading: false
+                    },
+                    autocomplete: "off",
+                    id: siteWidthInputId,
+                    name: siteWidthInputId,
+                    value: data[siteWidthInputId],
+                    suffix: {
+                        text: "metres"
+                    },
+                    classes: "govuk-input--width-5" + (" govuk-input--error" if data['new-disposal-site-' + siteNumber + '-width-error'] else ""),
+                    formGroup: {
+                        classes: "govuk-!-margin-bottom-0"
+                    }
+                }) }}
+            </div>
+
+            <div class="govuk-button-group">
+                {{ govukButton({
+                  text: "Save and continue"
+                }) }}
+                {% if not returnTo %}
+                <a class="govuk-link govuk-link--no-visited-state" href="cancel">Cancel</a>
+                {% endif %}
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}
+
