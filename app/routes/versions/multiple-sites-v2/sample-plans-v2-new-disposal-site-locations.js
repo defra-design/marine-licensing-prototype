@@ -208,7 +208,15 @@ module.exports = function (router) {
 
     // If no errors, mark as completed and redirect to review page
     req.session.data['new-disposal-details-site-1-completed'] = true;
-    res.redirect('review-new-disposal-site-details#site-1-details');
+    
+    // Check if this is manual entry journey
+    if (req.session.data['disposal-site-journey-type'] === 'manual-entry') {
+      // Redirect to manual entry review page
+      res.redirect('manual-entry/review-manual-disposal-site-details#site-1-details');
+    } else {
+      // Redirect to file upload review page
+      res.redirect('review-new-disposal-site-details#site-1-details');
+    }
   });
 
   /////////////////////////////////////////////////////////
@@ -250,7 +258,15 @@ module.exports = function (router) {
 
     // If no errors, mark as completed and redirect to review page
     req.session.data['new-disposal-maximum-volume-completed'] = true;
-    res.redirect('review-new-disposal-site-details#site-1-details');
+    
+    // Check if this is manual entry journey
+    if (req.session.data['disposal-site-journey-type'] === 'manual-entry') {
+      // Redirect to manual entry review page
+      res.redirect('manual-entry/review-manual-disposal-site-details#site-1-details');
+    } else {
+      // Redirect to file upload review page
+      res.redirect('review-new-disposal-site-details#site-1-details');
+    }
   });
 
   /////////////////////////////////////////////////////////
@@ -303,7 +319,15 @@ module.exports = function (router) {
 
     // If no errors, mark as completed and redirect to review page
     req.session.data['new-disposal-beneficial-use-completed'] = true;
-    res.redirect('review-new-disposal-site-details#site-1-details');
+    
+    // Check if this is manual entry journey
+    if (req.session.data['disposal-site-journey-type'] === 'manual-entry') {
+      // Redirect to manual entry review page
+      res.redirect('manual-entry/review-manual-disposal-site-details#site-1-details');
+    } else {
+      // Redirect to file upload review page
+      res.redirect('review-new-disposal-site-details#site-1-details');
+    }
   });
 
   /////////////////////////////////////////////////////////

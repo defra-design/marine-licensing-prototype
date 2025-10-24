@@ -415,13 +415,13 @@ Review new disposal site details
                         </dt>
                         <dd class="govuk-summary-list__value">
                             {% if data['new-disposal-site-' + siteNum + '-total-volume'] %}
-                                {{ data['new-disposal-site-' + siteNum + '-total-volume'] | addCommas }} m³
+                                {{ data['new-disposal-site-' + siteNum + '-total-volume'] | addCommas }} cubic metres, total volume over the full licence period
                             {% else %}
                                 <span class="govuk-tag govuk-tag--red">Incomplete</span>
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="../new-maximum-disposal-volume-site-{{ siteNum }}" class="govuk-link govuk-link--no-visited-state">
+                            <a href="../new-maximum-disposal-volume{% if siteNum == 2 %}-site-2{% endif %}" class="govuk-link govuk-link--no-visited-state">
                                 {% if data['new-disposal-site-' + siteNum + '-total-volume'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> maximum proposed disposal volume</span>
                             </a>
                         </dd>
@@ -444,7 +444,7 @@ Review new disposal site details
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="../new-beneficial-use-site-{{ siteNum }}" class="govuk-link govuk-link--no-visited-state">
+                            <a href="../new-beneficial-use{% if siteNum == 2 %}-site-2{% endif %}" class="govuk-link govuk-link--no-visited-state">
                                 {% if data['new-disposal-site-' + siteNum + '-beneficial-use'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> beneficial use</span>
                             </a>
                         </dd>
