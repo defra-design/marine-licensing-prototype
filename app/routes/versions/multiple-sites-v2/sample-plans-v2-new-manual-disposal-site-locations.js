@@ -14,6 +14,7 @@ module.exports = function (router) {
     
     // Get site number from query parameter (defaults to 1)
     const siteNumber = parseInt(req.query.site) || 1;
+    const returnTo = req.query.returnTo;
     
     // Update the site count if adding site 2
     if (siteNumber === 2) {
@@ -24,7 +25,8 @@ module.exports = function (router) {
     req.session.data[`new-disposal-site-${siteNumber}-name-errorthispage`] = "false";
     
     res.render(`versions/${version}/${section}/${subSection}/${newSubSection}/${manualSubSection}/site-name`, {
-      siteNumber: siteNumber
+      siteNumber: siteNumber,
+      returnTo: returnTo
     });
   });
 
@@ -32,6 +34,7 @@ module.exports = function (router) {
   router.post(`/versions/${version}/${section}/${subSection}/${newSubSection}/${manualSubSection}/site-name-router`, function (req, res) {
     // Get site number from query parameter
     const siteNumber = parseInt(req.query.site) || 1;
+    const returnTo = req.query.returnTo;
     
     // Reset error flags
     req.session.data[`new-disposal-site-${siteNumber}-name-errorthispage`] = "false";
@@ -47,12 +50,18 @@ module.exports = function (router) {
     }
 
     if (hasErrors) {
-      res.redirect(`site-name?site=${siteNumber}`);
+      res.redirect(`site-name?site=${siteNumber}${returnTo ? '&returnTo=' + returnTo : ''}`);
       return;
     }
 
-    // If no errors, redirect to how to enter coordinates
-    res.redirect(`how-do-you-want-to-enter-coordinates?site=${siteNumber}`);
+    // Route based on context
+    if (returnTo === 'review') {
+      // Direct edit from review - return immediately with anchor
+      res.redirect(`review-manual-disposal-site-details#site-${siteNumber}-details`);
+    } else {
+      // Normal creation flow - continue to how to enter coordinates
+      res.redirect(`how-do-you-want-to-enter-coordinates?site=${siteNumber}`);
+    }
   });
 
   /////////////////////////////////////////////////////////
@@ -63,6 +72,21 @@ module.exports = function (router) {
     
     const siteNumber = parseInt(req.query.site) || 1;
     const returnTo = req.query.returnTo;
+    const clearData = req.query.clearData;
+    
+    // If clearData=true (Journey 1), clear coordinate system and all coordinate data
+    if (clearData === 'true') {
+      delete req.session.data[`new-disposal-site-${siteNumber}-coordinate-system`];
+      // Clear circular coordinates
+      delete req.session.data[`new-disposal-site-${siteNumber}-centre-latitude`];
+      delete req.session.data[`new-disposal-site-${siteNumber}-centre-longitude`];
+      delete req.session.data[`new-disposal-site-${siteNumber}-width`];
+      // Clear polygon points
+      for (let i = 1; i <= 5; i++) {
+        delete req.session.data[`new-disposal-site-${siteNumber}-point-${i}-latitude`];
+        delete req.session.data[`new-disposal-site-${siteNumber}-point-${i}-longitude`];
+      }
+    }
     
     // Clear any existing error flags when user navigates to the page
     req.session.data[`new-disposal-site-${siteNumber}-coordinate-entry-errorthispage`] = "false";
@@ -91,10 +115,10 @@ module.exports = function (router) {
     // Save the selection
     req.session.data[`new-disposal-site-${siteNumber}-coordinate-entry-method`] = req.body[`new-disposal-site-${siteNumber}-coordinate-entry-method`];
 
-    // Route based on selection
+    // Route based on context
     if (returnTo === 'review') {
-      // If coming from review page, go back to review
-      res.redirect(`review-manual-disposal-site-details#site-${siteNumber}-details`);
+      // Journey 1: Always route to coordinate system with clearData flag
+      res.redirect(`which-coordinate-system?site=${siteNumber}&returnTo=review&clearData=true`);
     } else {
       // Normal flow - go to coordinate system page
       res.redirect(`which-coordinate-system?site=${siteNumber}`);
@@ -109,6 +133,20 @@ module.exports = function (router) {
     
     const siteNumber = parseInt(req.query.site) || 1;
     const returnTo = req.query.returnTo;
+    const clearData = req.query.clearData;
+    
+    // If clearData=true (Journey 2), clear all coordinate data
+    if (clearData === 'true' && returnTo === 'review') {
+      // Clear circular coordinates
+      delete req.session.data[`new-disposal-site-${siteNumber}-centre-latitude`];
+      delete req.session.data[`new-disposal-site-${siteNumber}-centre-longitude`];
+      delete req.session.data[`new-disposal-site-${siteNumber}-width`];
+      // Clear polygon points
+      for (let i = 1; i <= 5; i++) {
+        delete req.session.data[`new-disposal-site-${siteNumber}-point-${i}-latitude`];
+        delete req.session.data[`new-disposal-site-${siteNumber}-point-${i}-longitude`];
+      }
+    }
     
     // Clear any existing error flags when user navigates to the page
     req.session.data[`new-disposal-site-${siteNumber}-coordinate-system-errorthispage`] = "false";
@@ -141,12 +179,19 @@ module.exports = function (router) {
     const entryMethod = req.session.data[`new-disposal-site-${siteNumber}-coordinate-entry-method`];
     
     if (returnTo === 'review') {
-      // If coming from review page, go back to review
-      res.redirect(`review-manual-disposal-site-details#site-${siteNumber}-details`);
-    } else if (entryMethod === 'Enter one set of coordinates and a width to create a circular site') {
-      res.redirect(`enter-coordinates?site=${siteNumber}`);
+      // Journey 1 or 2: Route to appropriate page based on entry method, preserving returnTo
+      if (entryMethod === 'Enter one set of coordinates and a width to create a circular site') {
+        res.redirect(`enter-coordinates?site=${siteNumber}&returnTo=review`);
+      } else {
+        res.redirect(`enter-multiple-coordinates?site=${siteNumber}&returnTo=review`);
+      }
     } else {
-      res.redirect(`enter-multiple-coordinates?site=${siteNumber}`);
+      // Normal flow (no returnTo)
+      if (entryMethod === 'Enter one set of coordinates and a width to create a circular site') {
+        res.redirect(`enter-coordinates?site=${siteNumber}`);
+      } else {
+        res.redirect(`enter-multiple-coordinates?site=${siteNumber}`);
+      }
     }
   });
 
@@ -203,15 +248,22 @@ module.exports = function (router) {
       return;
     }
 
-    // Check if this is an independent edit from review (when width already exists)
+    // Check if this is a direct edit (Journey 3) or part of a flow (Journey 1a/2a)
     const hasWidth = req.session.data[`new-disposal-site-${siteNumber}-width`];
     
-    if (returnTo === 'review' && hasWidth) {
-      // Go back to review page with anchor for change links
-      res.redirect(`review-manual-disposal-site-details#site-${siteNumber}-details`);
+    if (returnTo === 'review') {
+      if (hasWidth) {
+        // Journey 3: Direct edit of coordinates only
+        // Return to review immediately with anchor
+        res.redirect(`review-manual-disposal-site-details#site-${siteNumber}-details`);
+      } else {
+        // Journey 1a or 2a: Part of multi-step flow
+        // Continue to width page
+        res.redirect(`site-width?site=${siteNumber}&returnTo=review`);
+      }
     } else {
-      // Continue to width page
-      res.redirect(`site-width?site=${siteNumber}${returnTo ? '&returnTo=' + returnTo : ''}`);
+      // Normal creation flow
+      res.redirect(`site-width?site=${siteNumber}`);
     }
   });
 
@@ -259,10 +311,12 @@ module.exports = function (router) {
     // Mark that user has visited manual entry journey
     req.session.data['has-visited-manual-disposal-site-locations'] = true;
     
-    // Redirect to review page (with anchor only if from Change link)
+    // Redirect to review page
     if (returnTo === 'review') {
+      // Journey 1a, 2a, or 4: Always return to review with anchor
       res.redirect(`review-manual-disposal-site-details#site-${siteNumber}-details`);
     } else {
+      // Normal creation flow - go to review without anchor
       res.redirect(`review-manual-disposal-site-details`);
     }
   });
@@ -368,10 +422,12 @@ module.exports = function (router) {
     // Mark that user has visited manual entry journey
     req.session.data['has-visited-manual-disposal-site-locations'] = true;
     
-    // Redirect to review page (with anchor only if from Change link)
+    // Redirect to review page
     if (returnTo === 'review') {
+      // Journey 1b, 2b, or 5: Return to review with anchor
       res.redirect(`review-manual-disposal-site-details#site-${siteNumber}-details`);
     } else {
+      // Normal creation flow - go to review without anchor
       res.redirect(`review-manual-disposal-site-details`);
     }
   });
@@ -521,6 +577,122 @@ module.exports = function (router) {
     // Redirect back to task list (sample plan start page)
     res.redirect('../../../sample-plan-start-page');
   });
+
+  /////////////////////////////////////////////////////////
+  //////// Delete site confirmation page and router
+  /////////////////////////////////////////////////////////
+  
+  // Delete site confirmation page (GET)
+  router.get(`/versions/${version}/${section}/${subSection}/${newSubSection}/${manualSubSection}/delete-site`, function (req, res) {
+    req.session.data['samplePlansSection'] = section;
+    res.render(`versions/${version}/${section}/${subSection}/${newSubSection}/${manualSubSection}/delete-site`);
+  });
+
+  // Delete site router (POST)
+  router.post(`/versions/${version}/${section}/${subSection}/${newSubSection}/${manualSubSection}/delete-site-router`, function (req, res) {
+    const siteNumber = parseInt(req.query.site) || 1;
+    const siteCount = parseInt(req.session.data['disposal-site-manual-entry-count']) || 1;
+    
+    if (siteNumber === 2) {
+      // Scenario 1: Deleting Site 2 - clear Site 2 data only
+      clearManualEntrySite2Data(req.session);
+      req.session.data['disposal-site-manual-entry-count'] = 1;
+      res.redirect('review-manual-disposal-site-details');
+      
+    } else if (siteNumber === 1 && siteCount >= 2) {
+      // Scenario 2: Deleting Site 1 when Site 2 exists - move Site 2 to Site 1
+      moveManualEntrySite2ToSite1(req.session);
+      req.session.data['disposal-site-manual-entry-count'] = 1;
+      res.redirect('review-manual-disposal-site-details');
+      
+    } else {
+      // Scenario 3: Deleting only site - clear all and return to task list
+      clearAllManualEntryData(req.session);
+      res.redirect('../../../sample-plan-start-page');
+    }
+  });
+
+  /////////////////////////////////////////////////////////
+  //////// Helper functions for delete site
+  /////////////////////////////////////////////////////////
+  
+  function clearManualEntrySite2Data(session) {
+    // Location data
+    delete session.data['new-disposal-site-2-name'];
+    delete session.data['new-disposal-site-2-coordinate-entry-method'];
+    delete session.data['new-disposal-site-2-coordinate-system'];
+    delete session.data['new-disposal-site-2-centre-latitude'];
+    delete session.data['new-disposal-site-2-centre-longitude'];
+    delete session.data['new-disposal-site-2-width'];
+    for (let i = 1; i <= 5; i++) {
+      delete session.data[`new-disposal-site-2-point-${i}-latitude`];
+      delete session.data[`new-disposal-site-2-point-${i}-longitude`];
+    }
+    // Disposal details
+    delete session.data['new-disposal-details-site-2-material-type'];
+    delete session.data['new-disposal-details-site-2-material-type-other'];
+    delete session.data['new-disposal-details-site-2-method'];
+    delete session.data['new-disposal-details-site-2-method-other'];
+    delete session.data['new-disposal-site-2-total-volume'];
+    delete session.data['new-disposal-site-2-beneficial-use'];
+    delete session.data['new-disposal-site-2-beneficial-use-description'];
+  }
+
+  function moveManualEntrySite2ToSite1(session) {
+    // Move location data
+    session.data['new-disposal-site-1-name'] = session.data['new-disposal-site-2-name'];
+    session.data['new-disposal-site-1-coordinate-entry-method'] = session.data['new-disposal-site-2-coordinate-entry-method'];
+    session.data['new-disposal-site-1-coordinate-system'] = session.data['new-disposal-site-2-coordinate-system'];
+    session.data['new-disposal-site-1-centre-latitude'] = session.data['new-disposal-site-2-centre-latitude'];
+    session.data['new-disposal-site-1-centre-longitude'] = session.data['new-disposal-site-2-centre-longitude'];
+    session.data['new-disposal-site-1-width'] = session.data['new-disposal-site-2-width'];
+    for (let i = 1; i <= 5; i++) {
+      session.data[`new-disposal-site-1-point-${i}-latitude`] = session.data[`new-disposal-site-2-point-${i}-latitude`];
+      session.data[`new-disposal-site-1-point-${i}-longitude`] = session.data[`new-disposal-site-2-point-${i}-longitude`];
+    }
+    // Move disposal details
+    session.data['new-disposal-details-site-1-material-type'] = session.data['new-disposal-details-site-2-material-type'];
+    session.data['new-disposal-details-site-1-material-type-other'] = session.data['new-disposal-details-site-2-material-type-other'];
+    session.data['new-disposal-details-site-1-method'] = session.data['new-disposal-details-site-2-method'];
+    session.data['new-disposal-details-site-1-method-other'] = session.data['new-disposal-details-site-2-method-other'];
+    session.data['new-disposal-site-1-total-volume'] = session.data['new-disposal-site-2-total-volume'];
+    session.data['new-disposal-site-1-beneficial-use'] = session.data['new-disposal-site-2-beneficial-use'];
+    session.data['new-disposal-site-1-beneficial-use-description'] = session.data['new-disposal-site-2-beneficial-use-description'];
+    // Clear Site 2
+    clearManualEntrySite2Data(session);
+  }
+
+  function clearAllManualEntryData(session) {
+    // Clear Site 1
+    delete session.data['new-disposal-site-1-name'];
+    delete session.data['new-disposal-site-1-coordinate-entry-method'];
+    delete session.data['new-disposal-site-1-coordinate-system'];
+    delete session.data['new-disposal-site-1-centre-latitude'];
+    delete session.data['new-disposal-site-1-centre-longitude'];
+    delete session.data['new-disposal-site-1-width'];
+    for (let i = 1; i <= 5; i++) {
+      delete session.data[`new-disposal-site-1-point-${i}-latitude`];
+      delete session.data[`new-disposal-site-1-point-${i}-longitude`];
+    }
+    delete session.data['new-disposal-details-site-1-material-type'];
+    delete session.data['new-disposal-details-site-1-material-type-other'];
+    delete session.data['new-disposal-details-site-1-method'];
+    delete session.data['new-disposal-details-site-1-method-other'];
+    delete session.data['new-disposal-site-1-total-volume'];
+    delete session.data['new-disposal-site-1-beneficial-use'];
+    delete session.data['new-disposal-site-1-beneficial-use-description'];
+    
+    // Clear Site 2
+    clearManualEntrySite2Data(session);
+    
+    // Clear overall state
+    delete session.data['disposal-site-manual-entry-count'];
+    delete session.data['has-visited-manual-disposal-site-locations'];
+    delete session.data['disposal-site-journey-type'];
+    delete session.data['new-disposal-sites-all-complete'];
+    session.data['sample-disposal-sites-completed'] = false;
+    session.data['sample-disposal-sites-in-progress'] = false;
+  }
 
 };
 

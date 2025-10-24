@@ -158,11 +158,11 @@ Enter the coordinates at the centre point of the site
 
             <div class="govuk-button-group">
                 {% set hasWidth = data['new-disposal-site-' + siteNumber + '-width'] %}
-                {% set isIndependentEdit = (returnTo == 'review' and hasWidth) %}
+                {% set isJourney3 = (returnTo == 'review' and hasWidth) %}
                 {{ govukButton({
-                  text: "Save and continue" if isIndependentEdit else "Continue"
+                  text: "Save and continue" if isJourney3 else "Continue"
                 }) }}
-                {% if returnTo !== 'review' %}
+                {% if not returnTo %}
                 <a class="govuk-link govuk-link--no-visited-state" href="cancel">Cancel</a>
                 {% endif %}
             </div>

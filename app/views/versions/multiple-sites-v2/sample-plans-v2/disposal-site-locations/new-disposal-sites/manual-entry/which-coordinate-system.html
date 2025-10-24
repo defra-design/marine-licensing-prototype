@@ -111,7 +111,7 @@ Which coordinate system do you want to use?
                 {{ govukButton({
                   text: "Continue"
                 }) }}
-                {% if returnTo !== 'review' %}
+                {% if not returnTo %}
                 <a class="govuk-link govuk-link--no-visited-state" href="cancel">Cancel</a>
                 {% endif %}
             </div>

@@ -399,7 +399,7 @@
                 {{ govukButton({
                   text: "Save and continue"
                 }) }}
-                {% if returnTo !== 'review' %}
+                {% if not returnTo %}
                 <a class="govuk-link govuk-link--no-visited-state" href="cancel">Cancel</a>
                 {% endif %}
             </div>
