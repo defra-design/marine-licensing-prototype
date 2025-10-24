@@ -585,6 +585,11 @@ module.exports = function (router) {
   // Delete site confirmation page (GET)
   router.get(`/versions/${version}/${section}/${subSection}/${newSubSection}/${manualSubSection}/delete-site`, function (req, res) {
     req.session.data['samplePlansSection'] = section;
+    
+    // Store the site parameter in session for the template to access
+    const siteNumber = parseInt(req.query.site) || 1;
+    req.session.data['site'] = siteNumber;
+    
     res.render(`versions/${version}/${section}/${subSection}/${newSubSection}/${manualSubSection}/delete-site`);
   });
 
