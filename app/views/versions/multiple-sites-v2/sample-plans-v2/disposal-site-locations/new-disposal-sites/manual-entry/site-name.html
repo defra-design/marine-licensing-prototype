@@ -44,7 +44,7 @@ Site name
         {% endif %}
         <!--  END OF 'error summary' -->
 
-        <form action="site-name-router?site={{ siteNumber }}" method="post" novalidate>
+        <form action="site-name-router?site={{ siteNumber }}{% if returnTo %}&returnTo={{ returnTo }}{% endif %}" method="post" novalidate>
             
             <div class="govuk-form-group {% if data['new-disposal-site-' + siteNumber + '-name-errorthispage'] == 'true' %}govuk-form-group--error{% endif %}">
                 <span class="govuk-caption-l">{{ data['sample-plan-project-name-text-input'] }}<span class="govuk-!-display-block">New disposal site {{ siteNumber }}</span></span>
@@ -72,9 +72,11 @@ Site name
             
             <div class="govuk-button-group">
                 {{ govukButton({
-                  text: "Continue"
+                  text: "Save and continue" if returnTo else "Continue"
                 }) }}
+                {% if not returnTo %}
                 <a class="govuk-link govuk-link--no-visited-state" href="cancel">Cancel</a>
+                {% endif %}
             </div>
         </form>
 
