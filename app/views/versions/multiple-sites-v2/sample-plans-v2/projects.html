@@ -36,7 +36,17 @@
 
 {% block beforeContent %}
 	  	{% include "../includes/phase-banner.html" %}
+    {% if data['hideButtons'] == "true" %}
+    <div class="app-organisation-switcher">
+		<span class="govuk-body-s govuk-!-font-weight-bold app-organisation-switcher__name">Brighton Marina</span>
+
+				<a class="govuk-link app-organisation-switcher__link govuk-link--no-visited-state" href="../organisation-selector-autocomplete?change=true">
+					Change who you're representing
+				</a>
+	</div>
+    {% else %}
     {{ super() }}
+    {% endif %}
 {% endblock %}
 
 <!-- Setting the big main heading at the top of the page -->
@@ -76,6 +86,7 @@ Projects
 					{{ pageHeadingTextHTML }}
 				</h1>
 			</div>
+			{% if data['hideButtons'] != "true" %}
 			<div class="page-header-buttons">
 				<a href="/versions/multiple-sites-v2/start-improved" role="button" draggable="false" class="govuk-button govuk-button--secondary page-header-button govuk-!-margin-right-3" data-module="govuk-button">
 					Create new project
@@ -84,6 +95,7 @@ Projects
 					Get new sample plan
 				</a>
 			</div>
+			{% endif %}
 		</div>
 
 		{% set isDeleteProject = data['deleteSamplePlanProject'] == "true" %}
