@@ -5,7 +5,7 @@
     {% if data['user_type'] === 'organisation' %}
         {% include "../../includes/organisation-switcher.html" %}
     {% endif %}
-    <a class="govuk-back-link" href="javascript:history.back()">Back</a>
+    <a class="govuk-back-link" href="../sample-plan-start-page">Back to the sample plan start page</a>
 {% endblock %}
 
 <!-- Setting the big main heading at the top of the page -->
@@ -27,7 +27,9 @@ Disposal sites and details
             {{ pageHeadingTextHTML }}
         </h1>
 
-        <p class="govuk-body">Complete both tasks below.</p>
+        <p class="govuk-body">You've told us you plan to dispose of material at both existing and new disposal sites.</p>
+            
+        <p>You can complete or make changes to site details, and add and delete sites on each of the relevant pages.</p>
 
         <ul class="govuk-task-list">
             <!-- Existing disposal sites task -->
@@ -110,12 +112,6 @@ Disposal sites and details
                 </div>
             </li>
         </ul>
-
-        <div class="govuk-button-group govuk-!-margin-top-7">
-            <a href="../sample-plan-start-page" class="govuk-link govuk-link--no-visited-state">
-                Back to the sample plan start page
-            </a>
-        </div>
 
         <p class="govuk-body">
             <a href="delete-all-disposal-sites" class="govuk-link govuk-link--no-visited-state">

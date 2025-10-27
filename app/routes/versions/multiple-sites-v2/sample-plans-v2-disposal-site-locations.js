@@ -361,8 +361,14 @@ module.exports = function (router) {
       req.session.data['sample-disposal-sites-in-progress'] = true;
       req.session.data['sample-disposal-sites-completed'] = false;
     } else {
-      req.session.data['sample-disposal-sites-in-progress'] = false;
-      req.session.data['sample-disposal-sites-completed'] = false;
+      // If user has selected 'both', they've started the task even if no sites added yet
+      if (req.session.data['disposal-site-journey-type'] === 'both') {
+        req.session.data['sample-disposal-sites-in-progress'] = true;
+        req.session.data['sample-disposal-sites-completed'] = false;
+      } else {
+        req.session.data['sample-disposal-sites-in-progress'] = false;
+        req.session.data['sample-disposal-sites-completed'] = false;
+      }
     }
     
     res.render(`versions/${version}/${section}/${subSection}/disposal-sites-and-details`);
