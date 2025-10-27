@@ -486,16 +486,21 @@ module.exports = function (router) {
     delete req.session.data['new-disposal-site-2-beneficial-use'];
     delete req.session.data['new-disposal-site-2-beneficial-use-description'];
     
-    // Clear journey type
-    delete req.session.data['disposal-site-journey-type'];
-    
     // Clear overall completion flags
     delete req.session.data['new-disposal-sites-all-complete'];
     req.session.data['sample-disposal-sites-completed'] = false;
     req.session.data['sample-disposal-sites-in-progress'] = false;
     
-    // Redirect to task list
-    res.redirect('../../../sample-plan-start-page');
+    // Redirect based on journey type
+    if (req.session.data['disposal-site-journey-type'] === 'both') {
+      // Clear journey type since we're deleting new sites only
+      delete req.session.data['disposal-site-journey-type'];
+      res.redirect('../../disposal-sites-and-details');
+    } else {
+      // Clear journey type
+      delete req.session.data['disposal-site-journey-type'];
+      res.redirect('../../../sample-plan-start-page');
+    }
   });
 
   /////////////////////////////////////////////////////////
@@ -563,19 +568,31 @@ module.exports = function (router) {
       }
     }
     
-    // Set the overall completion status
+    // Set the new disposal sites completion status
     if (allComplete) {
       req.session.data['new-disposal-sites-all-complete'] = true;
-      req.session.data['sample-disposal-sites-completed'] = true;
-      req.session.data['sample-disposal-sites-in-progress'] = false;
     } else {
       req.session.data['new-disposal-sites-all-complete'] = false;
-      req.session.data['sample-disposal-sites-in-progress'] = true;
-      req.session.data['sample-disposal-sites-completed'] = false;
     }
     
-    // Redirect back to task list (sample plan start page)
-    res.redirect('../../../sample-plan-start-page');
+    // Only set overall completion status if journey type is NOT 'both'
+    // (sub-task list page handles combined status for 'both')
+    if (req.session.data['disposal-site-journey-type'] !== 'both') {
+      if (allComplete) {
+        req.session.data['sample-disposal-sites-completed'] = true;
+        req.session.data['sample-disposal-sites-in-progress'] = false;
+      } else {
+        req.session.data['sample-disposal-sites-in-progress'] = true;
+        req.session.data['sample-disposal-sites-completed'] = false;
+      }
+    }
+    
+    // Redirect based on journey type
+    if (req.session.data['disposal-site-journey-type'] === 'both') {
+      res.redirect('../../disposal-sites-and-details');
+    } else {
+      res.redirect('../../../sample-plan-start-page');
+    }
   });
 
   /////////////////////////////////////////////////////////

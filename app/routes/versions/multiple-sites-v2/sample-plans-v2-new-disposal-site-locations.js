@@ -27,12 +27,16 @@ module.exports = function (router) {
 
     // Route based on selection
     if (req.session.data['new-disposal-site-location-method'] === 'file-upload') {
-      // Set journey type to new file upload
-      req.session.data['disposal-site-journey-type'] = 'new';
+      // Set journey type to new file upload (only if not already set to 'both')
+      if (req.session.data['disposal-site-journey-type'] !== 'both') {
+        req.session.data['disposal-site-journey-type'] = 'new';
+      }
       res.redirect('which-type-of-file');
     } else {
-      // For manual entry - set journey type and redirect to manual entry flow
-      req.session.data['disposal-site-journey-type'] = 'manual-entry';
+      // For manual entry - set journey type and redirect to manual entry flow (only if not already set to 'both')
+      if (req.session.data['disposal-site-journey-type'] !== 'both') {
+        req.session.data['disposal-site-journey-type'] = 'manual-entry';
+      }
       req.session.data['disposal-site-manual-entry-count'] = 1; // Initialize count
       res.redirect('manual-entry/site-name?site=1');
     }
@@ -72,8 +76,10 @@ module.exports = function (router) {
 
   // Upload file router (POST)
   router.post(`/versions/${version}/${section}/${subSection}/${newSubSection}/upload-file-router`, function (req, res) {
-    // Set journey type to new when they upload a file
-    req.session.data['disposal-site-journey-type'] = 'new';
+    // Set journey type to new when they upload a file (only if not already set to 'both')
+    if (req.session.data['disposal-site-journey-type'] !== 'both') {
+      req.session.data['disposal-site-journey-type'] = 'new';
+    }
     
     // For prototype, redirect to review site details after file upload
     res.redirect('review-new-disposal-site-details');
@@ -97,19 +103,31 @@ module.exports = function (router) {
     const maximumVolumeComplete = req.session.data['new-disposal-maximum-volume-completed'];
     const beneficialUseComplete = req.session.data['new-disposal-beneficial-use-completed'];
     
-    // Set the overall completion status
+    // Set the new disposal sites completion status
     if (detailsComplete && maximumVolumeComplete && beneficialUseComplete) {
       req.session.data['new-disposal-sites-all-complete'] = true;
-      req.session.data['sample-disposal-sites-completed'] = true;
-      req.session.data['sample-disposal-sites-in-progress'] = false;
     } else {
       req.session.data['new-disposal-sites-all-complete'] = false;
-      req.session.data['sample-disposal-sites-in-progress'] = true;
-      req.session.data['sample-disposal-sites-completed'] = false;
     }
     
-    // Redirect back to task list (sample plan start page)
-    res.redirect('../../sample-plan-start-page');
+    // Only set overall completion status if journey type is NOT 'both'
+    // (sub-task list page handles combined status for 'both')
+    if (req.session.data['disposal-site-journey-type'] !== 'both') {
+      if (detailsComplete && maximumVolumeComplete && beneficialUseComplete) {
+        req.session.data['sample-disposal-sites-completed'] = true;
+        req.session.data['sample-disposal-sites-in-progress'] = false;
+      } else {
+        req.session.data['sample-disposal-sites-in-progress'] = true;
+        req.session.data['sample-disposal-sites-completed'] = false;
+      }
+    }
+    
+    // Redirect based on journey type
+    if (req.session.data['disposal-site-journey-type'] === 'both') {
+      res.redirect('../disposal-sites-and-details');
+    } else {
+      res.redirect('../../sample-plan-start-page');
+    }
   });
 
   /////////////////////////////////////////////////////////
@@ -209,8 +227,10 @@ module.exports = function (router) {
     // If no errors, mark as completed and redirect to review page
     req.session.data['new-disposal-details-site-1-completed'] = true;
     
-    // Check if this is manual entry journey
-    if (req.session.data['disposal-site-journey-type'] === 'manual-entry') {
+    // Check if this is manual entry journey (check visited flag to handle 'both' journey type)
+    if (req.session.data['has-visited-manual-disposal-site-locations'] || 
+        req.session.data['disposal-site-journey-type'] === 'manual-entry' ||
+        (req.session.data['disposal-site-journey-type'] === 'both' && req.session.data['disposal-site-manual-entry-count'])) {
       // Redirect to manual entry review page
       res.redirect('manual-entry/review-manual-disposal-site-details#site-1-details');
     } else {
@@ -259,8 +279,10 @@ module.exports = function (router) {
     // If no errors, mark as completed and redirect to review page
     req.session.data['new-disposal-maximum-volume-completed'] = true;
     
-    // Check if this is manual entry journey
-    if (req.session.data['disposal-site-journey-type'] === 'manual-entry') {
+    // Check if this is manual entry journey (check visited flag to handle 'both' journey type)
+    if (req.session.data['has-visited-manual-disposal-site-locations'] || 
+        req.session.data['disposal-site-journey-type'] === 'manual-entry' ||
+        (req.session.data['disposal-site-journey-type'] === 'both' && req.session.data['disposal-site-manual-entry-count'])) {
       // Redirect to manual entry review page
       res.redirect('manual-entry/review-manual-disposal-site-details#site-1-details');
     } else {
@@ -320,8 +342,10 @@ module.exports = function (router) {
     // If no errors, mark as completed and redirect to review page
     req.session.data['new-disposal-beneficial-use-completed'] = true;
     
-    // Check if this is manual entry journey
-    if (req.session.data['disposal-site-journey-type'] === 'manual-entry') {
+    // Check if this is manual entry journey (check visited flag to handle 'both' journey type)
+    if (req.session.data['has-visited-manual-disposal-site-locations'] || 
+        req.session.data['disposal-site-journey-type'] === 'manual-entry' ||
+        (req.session.data['disposal-site-journey-type'] === 'both' && req.session.data['disposal-site-manual-entry-count'])) {
       // Redirect to manual entry review page
       res.redirect('manual-entry/review-manual-disposal-site-details#site-1-details');
     } else {
@@ -387,8 +411,10 @@ module.exports = function (router) {
       return res.redirect('new-disposal-details-site-2');
     }
 
-    // Check if this is manual entry journey
-    if (req.session.data['disposal-site-journey-type'] === 'manual-entry') {
+    // Check if this is manual entry journey (check visited flag to handle 'both' journey type)
+    if (req.session.data['has-visited-manual-disposal-site-locations'] || 
+        req.session.data['disposal-site-journey-type'] === 'manual-entry' ||
+        (req.session.data['disposal-site-journey-type'] === 'both' && req.session.data['disposal-site-manual-entry-count'])) {
       // Redirect to manual entry review page
       res.redirect('manual-entry/review-manual-disposal-site-details#site-2-details');
     } else {
@@ -432,8 +458,10 @@ module.exports = function (router) {
       return;
     }
 
-    // Check if this is manual entry journey
-    if (req.session.data['disposal-site-journey-type'] === 'manual-entry') {
+    // Check if this is manual entry journey (check visited flag to handle 'both' journey type)
+    if (req.session.data['has-visited-manual-disposal-site-locations'] || 
+        req.session.data['disposal-site-journey-type'] === 'manual-entry' ||
+        (req.session.data['disposal-site-journey-type'] === 'both' && req.session.data['disposal-site-manual-entry-count'])) {
       // Redirect to manual entry review page
       res.redirect('manual-entry/review-manual-disposal-site-details#site-2-details');
     } else {
@@ -489,8 +517,10 @@ module.exports = function (router) {
       return;
     }
 
-    // Check if this is manual entry journey
-    if (req.session.data['disposal-site-journey-type'] === 'manual-entry') {
+    // Check if this is manual entry journey (check visited flag to handle 'both' journey type)
+    if (req.session.data['has-visited-manual-disposal-site-locations'] || 
+        req.session.data['disposal-site-journey-type'] === 'manual-entry' ||
+        (req.session.data['disposal-site-journey-type'] === 'both' && req.session.data['disposal-site-manual-entry-count'])) {
       // Redirect to manual entry review page
       res.redirect('manual-entry/review-manual-disposal-site-details#site-2-details');
     } else {
@@ -574,15 +604,20 @@ module.exports = function (router) {
     delete req.session.data['has-visited-new-disposal-site-locations'];
     delete req.session.data['new-disposal-sites-all-complete'];
     
-    // Clear journey type to allow switching
-    delete req.session.data['disposal-site-journey-type'];
-    
     // Reset the sample disposal sites status
     req.session.data['sample-disposal-sites-completed'] = false;
     req.session.data['sample-disposal-sites-in-progress'] = false;
     
-    // Redirect to sample plan start page (task list)
-    res.redirect('../../sample-plan-start-page');
+    // Redirect based on journey type
+    if (req.session.data['disposal-site-journey-type'] === 'both') {
+      // Clear journey type since we're deleting new sites only
+      delete req.session.data['disposal-site-journey-type'];
+      res.redirect('../disposal-sites-and-details');
+    } else {
+      // Clear journey type to allow switching
+      delete req.session.data['disposal-site-journey-type'];
+      res.redirect('../../sample-plan-start-page');
+    }
   });
 
 };

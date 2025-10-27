@@ -118,7 +118,14 @@ Sample plan start page
 
 		<li class="govuk-task-list__item govuk-task-list__item--with-link">
 		  <div class="govuk-task-list__name-and-hint">
-			{% if data['disposal-site-journey-type'] == 'new' %}
+			{% if data['disposal-site-journey-type'] == 'both' %}
+			  {# Route to sub-task list if user selected both #}
+			  <a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" 
+				 href="disposal-site-locations/disposal-sites-and-details" 
+				 aria-describedby="disposal-sites-status">
+				Disposal sites and details
+			  </a>
+			{% elif data['disposal-site-journey-type'] == 'new' %}
 			  {# Route to new disposal site file upload review if that's the active journey #}
 			  {% if data['has-visited-new-disposal-site-locations'] %}
 				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" 
@@ -262,7 +269,14 @@ Sample plan start page
 
 		<li class="govuk-task-list__item govuk-task-list__item--with-link">
 		  <div class="govuk-task-list__name-and-hint">
-			{% if data['disposal-site-journey-type'] == 'new' %}
+			{% if data['disposal-site-journey-type'] == 'both' %}
+			  {# Route to sub-task list if user selected both #}
+			  <a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" 
+				 href="disposal-site-locations/disposal-sites-and-details" 
+				 aria-describedby="disposal-sites-status">
+				Disposal sites and details
+			  </a>
+			{% elif data['disposal-site-journey-type'] == 'new' %}
 			  {# Route to new disposal site file upload review if that's the active journey #}
 			  {% if data['has-visited-new-disposal-site-locations'] %}
 				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" 

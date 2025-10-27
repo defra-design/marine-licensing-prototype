@@ -60,6 +60,11 @@ Where do you want to dispose of the material?
                             value: "Request a new disposal site to be designated",
                             text: "Request a new disposal site to be designated",
                             checked: data['sample-plan-where-dispose-material'] === "Request a new disposal site to be designated"
+                        },
+                        {
+                            value: "Use an existing designated disposal site and request a new disposal site to be designated",
+                            text: "Use an existing designated disposal site and request a new disposal site to be designated",
+                            checked: data['sample-plan-where-dispose-material'] === "Use an existing designated disposal site and request a new disposal site to be designated"
                         }
                     ],
                     name: "sample-plan-where-dispose-material",
@@ -73,7 +78,7 @@ Where do you want to dispose of the material?
                     text: "Continue"
                 }) }}
                 
-                <a class="govuk-link govuk-link--no-visited-state" href="">Cancel</a>
+                <a class="govuk-link govuk-link--no-visited-state" href="../sample-plan-start-page">Cancel</a>
             </div>
 
         </form>
