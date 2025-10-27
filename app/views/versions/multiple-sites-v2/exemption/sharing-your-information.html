@@ -8,7 +8,7 @@
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-Sharing your information publicly
+Sharing your project information publicly
 {% endset %}
 
 <!-- Setting the heading caption -->
@@ -18,15 +18,15 @@ Sharing your information publicly
 
 <!-- Setting the smaller secondary heading lower down the page -->
 {% set questionHeadingTextHTML %}
-Do you consent to the MMO publishing your information publicly?
+Do you consent to the MMO publishing your project information publicly?
 {% endset %}
 
 <!-- Set the text for the error type -->
 {% set errorTextHTML %}
 {% if data['errortypeone'] == "true" %}
-Select whether you consent to the MMO publishing your information publicly
+Select whether you consent to the MMO publishing your project information publicly
 {% elif data['errortypetwo'] == "true" %}
-Enter details of why you do not consent to your information being published
+Enter details of why you do not consent to your project information being published
 {% endif %}
 {% endset %}
 
@@ -51,13 +51,13 @@ name: "exemption-public-register-text-area",
 value: data['exemption-public-register-text-area'],
 
 label: {
-text: "Provide details of why you do not consent to your information being published",
+text: "Provide details of why you do not consent to your project information being published",
 classes: "govuk-label",
 isPageHeading: false
 },
 
 errorMessage: null if data['errortypetwo'] != "true"
-else { text: "Enter details of why you do not consent to your information being published" }
+else { text: "Enter details of why you do not consent to your project information being published" }
 }) }}
 {% endset -%}
 
@@ -115,7 +115,7 @@ else { text: "Enter details of why you do not consent to your information being 
 			},
 
 			errorMessage: null if data['errortypeone'] != "true"
-			else { html: "Select whether you consent to the MMO publishing your information publicly" },
+			else { html: "Select whether you consent to the MMO publishing your project information publicly" },
 
 			items:
 			[
