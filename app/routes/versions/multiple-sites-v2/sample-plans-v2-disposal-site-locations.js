@@ -887,7 +887,14 @@ module.exports = function (router) {
     req.session.data['samplePlansSection'] = section;
     // Store the site number for the template
     req.session.data['delete-site-number'] = req.query.site;
-    res.render(`versions/${version}/${section}/${subSection}/delete-site`);
+    
+    // Explicitly save session before rendering to ensure the site number is available in the template
+    req.session.save(function(err) {
+      if (err) {
+        console.error('Session save error on delete-site GET:', err);
+      }
+      res.render(`versions/${version}/${section}/${subSection}/delete-site`);
+    });
   });
 
   // Delete site router (POST)
