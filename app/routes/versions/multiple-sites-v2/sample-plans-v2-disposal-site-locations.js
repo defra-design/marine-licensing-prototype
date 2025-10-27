@@ -979,8 +979,7 @@ module.exports = function (router) {
       // Redirect based on journey type
       if (req.session.data['disposal-site-journey-type'] === 'both') {
         // User selected both - redirect to sub-task list
-        // Clear journey type since we're deleting existing sites only
-        delete req.session.data['disposal-site-journey-type'];
+        // Keep journey type as 'both' so new disposal site Continue buttons still work correctly
         res.redirect('disposal-sites-and-details');
       } else {
         // Clear journey type to allow switching
