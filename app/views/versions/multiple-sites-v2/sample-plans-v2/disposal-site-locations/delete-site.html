@@ -23,7 +23,7 @@ Are you sure you want to delete this site?
       {{ pageHeadingTextHTML }}
     </h1>
 
-    {% set siteNumber = query.site | int or 1 %}
+    {% set siteNumber = data['delete-site-number'] | int or 1 %}
     
     <div class="govuk-inset-text">
       {% if siteNumber == 1 %}
@@ -34,7 +34,7 @@ Are you sure you want to delete this site?
     </div>
  
     <form action="delete-site-router" method="post" novalidate>
-      <input type="hidden" name="site" value="{{ query.site }}">
+      <input type="hidden" name="site" value="{{ data['delete-site-number'] }}">
       
       <div class="govuk-button-group govuk-!-margin-top-7">
         {{ govukButton({

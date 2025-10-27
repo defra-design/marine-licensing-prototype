@@ -885,6 +885,8 @@ module.exports = function (router) {
 
   router.get(`/versions/${version}/${section}/${subSection}/delete-site`, function (req, res) {
     req.session.data['samplePlansSection'] = section;
+    // Store the site number for the template
+    req.session.data['delete-site-number'] = req.query.site;
     res.render(`versions/${version}/${section}/${subSection}/delete-site`);
   });
 
@@ -894,20 +896,79 @@ module.exports = function (router) {
     const siteNumber = parseInt(req.body.site) || 1;
     const hasSite2 = req.session.data['sample-disposal-site-2-selected'];
     
+    // Debug logging
+    console.log('DELETE SITE - Site number from form:', req.body.site);
+    console.log('DELETE SITE - Parsed site number:', siteNumber);
+    console.log('DELETE SITE - Has Site 2:', hasSite2);
+    
     if (siteNumber === 2) {
-      // Deleting Site 2 - simply clear Site 2 data
-      clearSite2CompletionFlags(req.session);
+      // Deleting Site 2 - clear only Site 2 data, leave Site 1 completely untouched
+      
+      // Clear Site 2 completion flags only
+      req.session.data['sample-disposal-site-2-material-type-completed'] = false;
+      req.session.data['sample-disposal-site-2-disposal-method-completed'] = false;
+      req.session.data['sample-disposal-site-2-maximum-volume-completed'] = false;
+      req.session.data['sample-disposal-site-2-beneficial-use-completed'] = false;
       req.session.data['sample-disposal-site-2-selected'] = false;
       
-      // Clear Site 2 location data
+      // Clear Site 2 form data only
+      delete req.session.data['sample-disposal-details-site-2-material-type'];
+      delete req.session.data['sample-disposal-details-site-2-material-type-other'];
+      delete req.session.data['sample-disposal-details-site-2-method'];
+      delete req.session.data['sample-disposal-details-site-2-method-other'];
+      delete req.session.data['sample-disposal-site-2-total-volume'];
+      delete req.session.data['sample-disposal-site-2-beneficial-use'];
+      delete req.session.data['sample-disposal-site-2-beneficial-use-description'];
+      
+      // Clear Site 2 location data only
       delete req.session.data['selected-disposal-site-2-code'];
       delete req.session.data['selected-disposal-site-2-name'];
       delete req.session.data['selected-disposal-site-2-country'];
       delete req.session.data['selected-disposal-site-2-sea-area'];
       delete req.session.data['selected-disposal-site-2-status'];
       
-      // Redirect back to review page
-      res.redirect('review-disposal-site-details');
+      // Clear Site 2 error states only
+      delete req.session.data['sample-disposal-details-site-2-errorthispage'];
+      delete req.session.data['sample-disposal-details-site-2-material-type-error'];
+      delete req.session.data['sample-disposal-details-site-2-method-error'];
+      delete req.session.data['sample-disposal-details-site-2-method-other-error'];
+      delete req.session.data['sample-disposal-details-site-2-material-type-other-error'];
+      delete req.session.data['sample-disposal-site-2-maximum-volume-errorthispage'];
+      delete req.session.data['sample-disposal-site-2-total-volume-error'];
+      delete req.session.data['sample-disposal-site-2-beneficial-use-errorthispage'];
+      delete req.session.data['sample-disposal-site-2-beneficial-use-error'];
+      delete req.session.data['sample-disposal-site-2-beneficial-use-description-error'];
+      
+      // Recalculate overall completion status based on Site 1 (which should still have its data)
+      const site1MaterialTypeComplete = req.session.data['sample-disposal-site-material-type-completed'];
+      const site1DisposalMethodComplete = req.session.data['sample-disposal-site-disposal-method-completed'];
+      const site1MaximumVolumeComplete = req.session.data['sample-disposal-site-1-maximum-volume-completed'];
+      const site1BeneficialUseComplete = req.session.data['sample-disposal-site-1-beneficial-use-completed'];
+      const site1Complete = site1MaterialTypeComplete && site1DisposalMethodComplete && 
+                           site1MaximumVolumeComplete && site1BeneficialUseComplete;
+      
+      // Only update overall status if journey type is NOT 'both' (sub-task list handles combined status for 'both')
+      if (req.session.data['disposal-site-journey-type'] !== 'both') {
+        if (site1Complete) {
+          req.session.data['sample-disposal-sites-completed'] = true;
+          req.session.data['sample-disposal-sites-in-progress'] = false;
+        } else {
+          req.session.data['sample-disposal-sites-in-progress'] = true;
+          req.session.data['sample-disposal-sites-completed'] = false;
+        }
+      }
+      
+      // Clear the delete site number
+      delete req.session.data['delete-site-number'];
+      
+      // Save session explicitly before redirect to ensure all changes are persisted
+      req.session.save(function(err) {
+        if (err) {
+          console.error('Session save error:', err);
+        }
+        // Redirect back to review page
+        res.redirect('review-disposal-site-details');
+      });
     } else if (siteNumber === 1 && hasSite2) {
       // Deleting Site 1 when Site 2 exists - move Site 2 data to Site 1
       
