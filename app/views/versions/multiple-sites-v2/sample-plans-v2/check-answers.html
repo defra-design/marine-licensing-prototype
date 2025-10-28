@@ -433,6 +433,8 @@
                                             {% set materialTypes = (materialTypes.push('Non-dredged sediments'), materialTypes) %}
                                         {% elif type == 'organic-material' %}
                                             {% set materialTypes = (materialTypes.push('Organic material of natural origin'), materialTypes) %}
+                                        {% elif type == 'remediation-dredged-material' %}
+                                            {% set materialTypes = (materialTypes.push('Remediation (environmental) dredged material'), materialTypes) %}
                                         {% elif type == 'other' and data['dredging-details-site-1-material-type-other'] %}
                                             {% set materialTypes = (materialTypes.push('Other: ' + data['dredging-details-site-1-material-type-other']), materialTypes) %}
                                         {% endif %}
