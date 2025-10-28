@@ -610,8 +610,8 @@ module.exports = function (router) {
     
     // Redirect based on journey type
     if (req.session.data['disposal-site-journey-type'] === 'both') {
-      // Clear journey type since we're deleting new sites only
-      delete req.session.data['disposal-site-journey-type'];
+      // Keep journey type as 'both' since user still has existing sites
+      // (Only deleting new sites, not existing ones)
       res.redirect('../disposal-sites-and-details');
     } else {
       // Clear journey type to allow switching
