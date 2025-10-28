@@ -762,6 +762,10 @@ module.exports = function (router) {
 
   router.get(`/versions/${version}/${section}/check-answers`, function (req, res) {
     req.session.data['samplePlansSection'] = section;
+    
+    // Clear any interrupted journey flags when manually navigating to check answers
+    delete req.session.data['dredging-cya-journey-interrupted'];
+    
     res.render(`versions/${version}/${section}/check-answers`);
   });
 
