@@ -586,14 +586,14 @@
             </div>
         </div>-->
 
-        <!-- Disposal site 1 details section -->
+        <!-- Existing disposal site 1 details section -->
         <div class="govuk-summary-card">
             <div class="govuk-summary-card__title-wrapper">
-                <h2 class="govuk-summary-card__title">Disposal site 1 details</h2>
+                <h2 class="govuk-summary-card__title">Existing disposal site 1 details</h2>
                 {% if data['samplePlanApplicationSubmitted'] != "true" %}
                 <div class="govuk-summary-card__actions">
                     <a class="govuk-link govuk-link--no-visited-state" href="">
-                        Change<span class="govuk-visually-hidden"> disposal site 1</span>
+                        Change<span class="govuk-visually-hidden"> existing disposal site 1</span>
                     </a>
                 </div>
                 {% endif %}
@@ -700,25 +700,27 @@
                             Proposed method of disposal
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            {% if data['sample-disposal-site-disposal-method-completed'] %}
-                                {% set methods = [] %}
-                                {% if data['sample-disposal-details-site-1-method'] %}
-                                    {% for method in data['sample-disposal-details-site-1-method'] %}
-                                        {% if method == 'contained-disposal' %}
-                                            {% set methods = (methods.push('Contained disposal'), methods) %}
-                                        {% elif method == 'disposal-at-sea-or-offshore' %}
-                                            {% set methods = (methods.push('Disposal at sea or offshore disposal'), methods) %}
-                                        {% elif method == 'onshore-disposal-or-treatment' %}
-                                            {% set methods = (methods.push('Onshore disposal or treatment'), methods) %}
-                                        {% elif method == 'other' and data['sample-disposal-details-site-1-method-other'] %}
-                                            {% set methods = (methods.push('Other: ' + data['sample-disposal-details-site-1-method-other']), methods) %}
-                                        {% endif %}
-                                    {% endfor %}
-                                {% endif %}
-                                {{ methods | join('<br>') | safe if methods.length > 0 else 'Not provided' }}
-                            {% else %}
-                                Not provided
+                            {% set methods = [] %}
+                            {% if data['sample-disposal-details-site-1-method'] %}
+                                {% for method in data['sample-disposal-details-site-1-method'] %}
+                                    {% if method == 'backhoe-dredger' %}
+                                        {% set methods = (methods.push('Backhoe dredger'), methods) %}
+                                    {% elif method == 'bottom-dumping-hopper' %}
+                                        {% set methods = (methods.push('Bottom dumping (hopper)'), methods) %}
+                                    {% elif method == 'direct-pumping-trailing-suction' %}
+                                        {% set methods = (methods.push('Direct pumping from trailing suction hopper dredger'), methods) %}
+                                    {% elif method == 'pump-out-floating-pipeline' %}
+                                        {% set methods = (methods.push('Pump-out via floating pipeline'), methods) %}
+                                    {% elif method == 'rainbowing' %}
+                                        {% set methods = (methods.push('Rainbowing'), methods) %}
+                                    {% elif method == 'split-hopper-barge' %}
+                                        {% set methods = (methods.push('Split hopper barge'), methods) %}
+                                    {% elif method == 'other' and data['sample-disposal-details-site-1-method-other'] %}
+                                        {% set methods = (methods.push('Other: ' + data['sample-disposal-details-site-1-method-other']), methods) %}
+                                    {% endif %}
+                                {% endfor %}
                             {% endif %}
+                            {{ methods | join('<br>') | safe if methods.length > 0 else 'Not provided' }}
                         </dd>
                     </div>
 
@@ -766,15 +768,15 @@
             </div>
         </div>
 
-        <!-- Disposal site 2 details section (conditional) -->
+        <!-- Existing disposal site 2 details section (conditional) -->
         {% if data['sample-disposal-site-2-selected'] %}
         <div class="govuk-summary-card">
             <div class="govuk-summary-card__title-wrapper">
-                <h2 class="govuk-summary-card__title">Disposal site 2 details</h2>
+                <h2 class="govuk-summary-card__title">Existing disposal site 2 details</h2>
                 {% if data['samplePlanApplicationSubmitted'] != "true" %}
                 <div class="govuk-summary-card__actions">
                     <a class="govuk-link govuk-link--no-visited-state" href="">
-                        Change<span class="govuk-visually-hidden"> disposal site 2</span>
+                        Change<span class="govuk-visually-hidden"> existing disposal site 2</span>
                     </a>
                 </div>
                 {% endif %}
@@ -881,10 +883,201 @@
                             Proposed method of disposal
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            {% if data['sample-disposal-site-2-disposal-method-completed'] %}
+                            {% set methods = [] %}
+                            {% if data['sample-disposal-details-site-2-method'] %}
+                                {% for method in data['sample-disposal-details-site-2-method'] %}
+                                    {% if method == 'backhoe-dredger' %}
+                                        {% set methods = (methods.push('Backhoe dredger'), methods) %}
+                                    {% elif method == 'bottom-dumping-hopper' %}
+                                        {% set methods = (methods.push('Bottom dumping (hopper)'), methods) %}
+                                    {% elif method == 'direct-pumping-trailing-suction' %}
+                                        {% set methods = (methods.push('Direct pumping from trailing suction hopper dredger'), methods) %}
+                                    {% elif method == 'pump-out-floating-pipeline' %}
+                                        {% set methods = (methods.push('Pump-out via floating pipeline'), methods) %}
+                                    {% elif method == 'rainbowing' %}
+                                        {% set methods = (methods.push('Rainbowing'), methods) %}
+                                    {% elif method == 'split-hopper-barge' %}
+                                        {% set methods = (methods.push('Split hopper barge'), methods) %}
+                                    {% elif method == 'other' and data['sample-disposal-details-site-2-method-other'] %}
+                                        {% set methods = (methods.push('Other: ' + data['sample-disposal-details-site-2-method-other']), methods) %}
+                                    {% endif %}
+                                {% endfor %}
+                            {% endif %}
+                            {{ methods | join('<br>') | safe if methods.length > 0 else 'Not provided' }}
+                        </dd>
+                    </div>
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Maximum disposal volume
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['sample-disposal-site-2-maximum-volume-completed'] %}
+                                {% if data['sample-disposal-site-2-total-volume'] %}
+                                    {{ data['sample-disposal-site-2-total-volume'] | addCommas }} {{ 'cubic metre' if data['sample-disposal-site-2-total-volume'] == '1' else 'cubic metres' }}, total volume over the full licence period
+                                {% endif %}
+                                {% if data['sample-disposal-site-2-annual-volume'] %}
+                                    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+                                    {{ data['sample-disposal-site-2-annual-volume'] | addCommas }} {{ 'cubic metre' if data['sample-disposal-site-2-annual-volume'] == '1' else 'cubic metres' }}, annual volume
+                                {% endif %}
+                                {% if data['sample-disposal-site-2-volume-per-campaign'] and data['sample-disposal-site-2-campaigns-per-year'] %}
+                                    <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+                                    {{ data['sample-disposal-site-2-volume-per-campaign'] | addCommas }} {{ 'cubic metre' if data['sample-disposal-site-2-volume-per-campaign'] == '1' else 'cubic metres' }}, volume per campaign<br>
+                                    {{ data['sample-disposal-site-2-campaigns-per-year'] }} {{ 'campaign' if data['sample-disposal-site-2-campaigns-per-year'] == '1' else 'campaigns' }} per year
+                                {% endif %}
+                            {% else %}
+                                Not provided
+                            {% endif %}
+                        </dd>
+                    </div>
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Beneficial use
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['sample-disposal-site-2-beneficial-use-completed'] %}
+                                {% if data['sample-disposal-site-2-beneficial-use'] == 'yes' %}
+                                    Yes: {{ data['sample-disposal-site-2-beneficial-use-description'] }}
+                                {% else %}
+                                    No
+                                {% endif %}
+                            {% else %}
+                                Not provided
+                            {% endif %}
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+        {% endif %}
+        {% endif %}
+
+        <!-- New file upload disposal site section -->
+        {% if data['has-visited-new-disposal-site-locations'] and (data['disposal-site-journey-type'] == 'new' or data['disposal-site-journey-type'] == 'both') %}
+        <!-- Providing the new disposal site location section -->
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">
+                    Providing the new disposal site location
+                </h2>
+                {% if data['samplePlanApplicationSubmitted'] != "true" %}
+                <div class="govuk-summary-card__actions">
+                    <a class="govuk-link govuk-link--no-visited-state" href="">
+                        Change<span class="govuk-visually-hidden"> how you provide the new disposal site location</span>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Method of providing site location
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            File uploaded
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            File type
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['new-disposal-file-type'] == 'kml' %}
+                                KML
+                            {% elif data['new-disposal-file-type'] == 'shapefile' %}
+                                Shapefile
+                            {% else %}
+                                Shapefile
+                            {% endif %}
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            File uploaded
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['new-disposal-file-type'] == 'kml' %}
+                                new-disposal-site-coordinates.kml
+                            {% else %}
+                                new-disposal-site-coordinates.zip
+                            {% endif %}
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">New disposal site 1 details</h2>
+                {% if data['samplePlanApplicationSubmitted'] != "true" %}
+                <div class="govuk-summary-card__actions">
+                    <a class="govuk-link govuk-link--no-visited-state" href="">
+                        Change<span class="govuk-visually-hidden"> new disposal site 1 details</span>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Site name
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ data['new-disposal-site-1-name'] or 'South channel disposal site' }}
+                        </dd>
+                    </div>
+                    
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key map-label">
+                            Map view
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            <img src="/public/images/map-4-points.jpg" alt="Map showing new disposal site 1 location" />
+                        </dd>
+                    </div>
+
+                    <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+                        <dt class="govuk-summary-list__key">
+                            Type of material being disposed
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['new-disposal-details-site-1-completed'] %}
+                                {% set materialTypes = [] %}
+                                {% if data['new-disposal-details-site-1-material-type'] %}
+                                    {% for type in data['new-disposal-details-site-1-material-type'] %}
+                                        {% if type == 'capital-dredged-material' %}
+                                            {% set materialTypes = (materialTypes.push('Capital dredged material'), materialTypes) %}
+                                        {% elif type == 'maintenance-dredged-material' %}
+                                            {% set materialTypes = (materialTypes.push('Maintenance dredged material'), materialTypes) %}
+                                        {% elif type == 'non-dredged-sediments' %}
+                                            {% set materialTypes = (materialTypes.push('Non-dredged sediments'), materialTypes) %}
+                                        {% elif type == 'organic-material' %}
+                                            {% set materialTypes = (materialTypes.push('Organic material of natural origin (for example, seaweed)'), materialTypes) %}
+                                        {% elif type == 'other' and data['new-disposal-details-site-1-material-type-other'] %}
+                                            {% set materialTypes = (materialTypes.push('Other: ' + data['new-disposal-details-site-1-material-type-other']), materialTypes) %}
+                                        {% endif %}
+                                    {% endfor %}
+                                {% endif %}
+                                {{ materialTypes | join('<br>') | safe if materialTypes.length > 0 else 'Not provided' }}
+                            {% else %}
+                                Not provided
+                            {% endif %}
+                        </dd>
+                    </div>
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Proposed method of disposal
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['new-disposal-details-site-1-completed'] %}
                                 {% set methods = [] %}
-                                {% if data['sample-disposal-details-site-2-method'] %}
-                                    {% for method in data['sample-disposal-details-site-2-method'] %}
+                                {% if data['new-disposal-details-site-1-method'] %}
+                                    {% for method in data['new-disposal-details-site-1-method'] %}
                                         {% if method == 'backhoe-dredger' %}
                                             {% set methods = (methods.push('Backhoe dredger'), methods) %}
                                         {% elif method == 'bottom-dumping-hopper' %}
@@ -897,8 +1090,8 @@
                                             {% set methods = (methods.push('Rainbowing'), methods) %}
                                         {% elif method == 'split-hopper-barge' %}
                                             {% set methods = (methods.push('Split hopper barge'), methods) %}
-                                        {% elif method == 'other' and data['sample-disposal-details-site-2-method-other'] %}
-                                            {% set methods = (methods.push('Other: ' + data['sample-disposal-details-site-2-method-other']), methods) %}
+                                        {% elif method == 'other' and data['new-disposal-details-site-1-method-other'] %}
+                                            {% set methods = (methods.push('Other: ' + data['new-disposal-details-site-1-method-other']), methods) %}
                                         {% endif %}
                                     {% endfor %}
                                 {% endif %}
@@ -908,10 +1101,324 @@
                             {% endif %}
                         </dd>
                     </div>
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Maximum proposed disposal volume
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['new-disposal-maximum-volume-completed'] %}
+                                {% if data['new-disposal-site-1-total-volume'] %}
+                                    {{ data['new-disposal-site-1-total-volume'] | addCommas }} cubic metres, total volume over the full licence period
+                                {% endif %}
+                            {% else %}
+                                Not provided
+                            {% endif %}
+                        </dd>
+                    </div>
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Beneficial use
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['new-disposal-beneficial-use-completed'] %}
+                                {% if data['new-disposal-site-1-beneficial-use'] == 'yes' %}
+                                    Yes: {{ data['new-disposal-site-1-beneficial-use-description'] }}
+                                {% else %}
+                                    No
+                                {% endif %}
+                            {% else %}
+                                Not provided
+                            {% endif %}
+                        </dd>
+                    </div>
                 </dl>
             </div>
         </div>
         {% endif %}
+
+        <!-- Manual entry disposal sites section -->
+        {% if data['has-visited-manual-disposal-site-locations'] and (data['disposal-site-journey-type'] == 'manual-entry' or data['disposal-site-journey-type'] == 'both') %}
+        <!-- Providing the new disposal site location section -->
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">
+                    Providing the new disposal site location
+                </h2>
+                {% if data['samplePlanApplicationSubmitted'] != "true" %}
+                <div class="govuk-summary-card__actions">
+                    <a class="govuk-link govuk-link--no-visited-state" href="">
+                        Change<span class="govuk-visually-hidden"> how you provide the new disposal site location</span>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Method of providing site location
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            Enter the coordinates of the site manually
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        {% set siteCount = data['disposal-site-manual-entry-count'] | int %}
+        {% if not siteCount or siteCount == 0 %}
+            {% set siteCount = 1 %}
+        {% endif %}
+        
+        {% for siteNum in range(1, siteCount + 1) %}
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">New disposal site {{ siteNum }} details</h2>
+                {% if data['samplePlanApplicationSubmitted'] != "true" %}
+                <div class="govuk-summary-card__actions">
+                    <a class="govuk-link govuk-link--no-visited-state" href="">
+                        Change<span class="govuk-visually-hidden"> new disposal site {{ siteNum }} details</span>
+                    </a>
+                </div>
+                {% endif %}
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Site name
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ data['new-disposal-site-' + siteNum + '-name'] or 'Not provided' }}
+                        </dd>
+                    </div>
+                    
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Single or multiple sets of coordinates
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% set entryMethod = data['new-disposal-site-' + siteNum + '-coordinate-entry-method'] %}
+                            {% if entryMethod == 'Enter one set of coordinates and a width to create a circular site' %}
+                                Manually enter one set of coordinates and a width to create a circular site
+                            {% elif entryMethod == 'Enter multiple sets of coordinates to mark the boundary of the site' %}
+                                Manually enter multiple sets of coordinates to mark the boundary of the site
+                            {% else %}
+                                Not provided
+                            {% endif %}
+                        </dd>
+                    </div>
+                    
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Coordinate system
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% set coordinateSystem = data['new-disposal-site-' + siteNum + '-coordinate-system'] %}
+                            {% if coordinateSystem == 'WGS84 (World Geodetic System 1984)' %}
+                                WGS84 (World Geodetic System 1984)<br>Latitude and longitude
+                            {% elif coordinateSystem == 'British National Grid (OSGB36)' %}
+                                British National Grid (OSGB36)<br>Eastings and Northings
+                            {% else %}
+                                Not provided
+                            {% endif %}
+                        </dd>
+                    </div>
+                    
+                    {% if entryMethod == 'Enter one set of coordinates and a width to create a circular site' %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Coordinates at centre site
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                {% set centreLat = data['new-disposal-site-' + siteNum + '-centre-latitude'] %}
+                                {% set centreLong = data['new-disposal-site-' + siteNum + '-centre-longitude'] %}
+                                {% if centreLat and centreLong %}
+                                    {{ centreLat }}, {{ centreLong }}
+                                {% else %}
+                                    Not provided
+                                {% endif %}
+                            </dd>
+                        </div>
+                        
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                Width of circular site
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                {% set width = data['new-disposal-site-' + siteNum + '-width'] %}
+                                {% if width %}
+                                    {{ width }} metres
+                                {% else %}
+                                    Not provided
+                                {% endif %}
+                            </dd>
+                        </div>
+                    {% elif entryMethod == 'Enter multiple sets of coordinates to mark the boundary of the site' %}
+                        {% set lastPointNum = 0 %}
+                        {% for i in range(1, 6) %}
+                            {% if data['new-disposal-site-' + siteNum + '-point-' + i + '-latitude'] and data['new-disposal-site-' + siteNum + '-point-' + i + '-longitude'] %}
+                                {% set lastPointNum = i %}
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% for pointNum in range(1, 6) %}
+                            {% set pointLat = data['new-disposal-site-' + siteNum + '-point-' + pointNum + '-latitude'] %}
+                            {% set pointLong = data['new-disposal-site-' + siteNum + '-point-' + pointNum + '-longitude'] %}
+                            
+                            {% if pointLat and pointLong %}
+                                <div class="govuk-summary-list__row {% if pointNum < lastPointNum %}govuk-summary-list__row--no-border{% endif %}">
+                                    <dt class="govuk-summary-list__key">
+                                        {% if pointNum == 1 %}
+                                        Start and end points
+                                        {% else %}
+                                        Point {{ pointNum }}
+                                        {% endif %}
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                        {{ pointLat }}, {{ pointLong }}
+                                    </dd>
+                                </div>
+                            {% elif pointNum <= 3 %}
+                                <div class="govuk-summary-list__row {% if pointNum < 3 %}govuk-summary-list__row--no-border{% endif %}">
+                                    <dt class="govuk-summary-list__key">
+                                        {% if pointNum == 1 %}
+                                        Start and end points
+                                        {% else %}
+                                        Point {{ pointNum }}
+                                        {% endif %}
+                                    </dt>
+                                    <dd class="govuk-summary-list__value">
+                                        Not provided
+                                    </dd>
+                                </div>
+                            {% endif %}
+                        {% endfor %}
+                    {% endif %}
+                    
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key map-label">
+                            Map view
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if entryMethod == 'Enter one set of coordinates and a width to create a circular site' %}
+                                <img src="/public/images/map-circle.jpg" alt="Map showing new disposal site {{ siteNum }} as circular area" />
+                            {% else %}
+                                {% set pointCount = 0 %}
+                                {% for i in range(1, 6) %}
+                                    {% if data['new-disposal-site-' + siteNum + '-point-' + i + '-latitude'] %}
+                                        {% set pointCount = pointCount + 1 %}
+                                    {% endif %}
+                                {% endfor %}
+                                {% if pointCount == 3 %}
+                                    <img src="/public/images/map-3-points.jpg" alt="Map showing new disposal site {{ siteNum }} with 3 coordinate points" />
+                                {% elif pointCount == 4 %}
+                                    <img src="/public/images/map-4-points.jpg" alt="Map showing new disposal site {{ siteNum }} with 4 coordinate points" />
+                                {% elif pointCount == 5 %}
+                                    <img src="/public/images/map-5-points.jpg" alt="Map showing new disposal site {{ siteNum }} with 5 coordinate points" />
+                                {% else %}
+                                    <img src="/public/images/map-drawn.jpg" alt="Map showing new disposal site {{ siteNum }}" />
+                                {% endif %}
+                            {% endif %}
+                        </dd>
+                    </div>
+
+                    <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+                        <dt class="govuk-summary-list__key">
+                            Type of material being disposed
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['new-disposal-details-site-' + siteNum + '-material-type'] %}
+                                {% set materialTypes = [] %}
+                                {% for type in data['new-disposal-details-site-' + siteNum + '-material-type'] %}
+                                    {% if type == 'capital-dredged-material' %}
+                                        {% set materialTypes = (materialTypes.push('Capital dredged material'), materialTypes) %}
+                                    {% elif type == 'maintenance-dredged-material' %}
+                                        {% set materialTypes = (materialTypes.push('Maintenance dredged material'), materialTypes) %}
+                                    {% elif type == 'non-dredged-sediments' %}
+                                        {% set materialTypes = (materialTypes.push('Non-dredged sediments'), materialTypes) %}
+                                    {% elif type == 'organic-material' %}
+                                        {% set materialTypes = (materialTypes.push('Organic material of natural origin (for example, seaweed)'), materialTypes) %}
+                                    {% elif type == 'other' and data['new-disposal-details-site-' + siteNum + '-material-type-other'] %}
+                                        {% set materialTypes = (materialTypes.push('Other: ' + data['new-disposal-details-site-' + siteNum + '-material-type-other']), materialTypes) %}
+                                    {% endif %}
+                                {% endfor %}
+                                {{ materialTypes | join('<br>') | safe if materialTypes.length > 0 else 'Not provided' }}
+                            {% else %}
+                                Not provided
+                            {% endif %}
+                        </dd>
+                    </div>
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Proposed method of disposal
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['new-disposal-details-site-' + siteNum + '-method'] %}
+                                {% set methods = [] %}
+                                {% for method in data['new-disposal-details-site-' + siteNum + '-method'] %}
+                                    {% if method == 'backhoe-dredger' %}
+                                        {% set methods = (methods.push('Backhoe dredger'), methods) %}
+                                    {% elif method == 'bottom-dumping-hopper' %}
+                                        {% set methods = (methods.push('Bottom dumping (hopper)'), methods) %}
+                                    {% elif method == 'direct-pumping-trailing-suction' %}
+                                        {% set methods = (methods.push('Direct pumping from trailing suction hopper dredger'), methods) %}
+                                    {% elif method == 'pump-out-floating-pipeline' %}
+                                        {% set methods = (methods.push('Pump-out via floating pipeline'), methods) %}
+                                    {% elif method == 'rainbowing' %}
+                                        {% set methods = (methods.push('Rainbowing'), methods) %}
+                                    {% elif method == 'split-hopper-barge' %}
+                                        {% set methods = (methods.push('Split hopper barge'), methods) %}
+                                    {% elif method == 'side-casting' %}
+                                        {% set methods = (methods.push('Side casting'), methods) %}
+                                    {% elif method == 'other' and data['new-disposal-details-site-' + siteNum + '-method-other'] %}
+                                        {% set methods = (methods.push('Other: ' + data['new-disposal-details-site-' + siteNum + '-method-other']), methods) %}
+                                    {% endif %}
+                                {% endfor %}
+                                {{ methods | join('<br>') | safe if methods.length > 0 else 'Not provided' }}
+                            {% else %}
+                                Not provided
+                            {% endif %}
+                        </dd>
+                    </div>
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Maximum proposed disposal volume
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['new-disposal-site-' + siteNum + '-total-volume'] %}
+                                {{ data['new-disposal-site-' + siteNum + '-total-volume'] | addCommas }} cubic metres, total volume over the full licence period
+                            {% else %}
+                                Not provided
+                            {% endif %}
+                        </dd>
+                    </div>
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Beneficial use
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['new-disposal-site-' + siteNum + '-beneficial-use'] %}
+                                {% if data['new-disposal-site-' + siteNum + '-beneficial-use'] == 'yes' %}
+                                    Yes: {{ data['new-disposal-site-' + siteNum + '-beneficial-use-description'] }}
+                                {% else %}
+                                    No
+                                {% endif %}
+                            {% else %}
+                                Not provided
+                            {% endif %}
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+        {% endfor %}
         {% endif %}
 
         <!-- Fee estimate section -->
