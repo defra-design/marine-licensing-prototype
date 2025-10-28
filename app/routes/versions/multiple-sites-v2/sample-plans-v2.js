@@ -345,6 +345,13 @@ module.exports = function (router) {
     req.session.data['sample-plan-errortypeone'] = "false";
     req.session.data['isSamplePlansSection'] = true;
     
+    // Capture query parameter if coming from check answers
+    if (req.query.camefromcheckanswers === 'true') {
+      req.session.data['camefromcheckanswers'] = 'true';
+      // Store the current selection to detect changes later
+      req.session.data['previous-licence-type'] = req.session.data['sample-plan-new-or-existing-licence'];
+    }
+    
     res.render(`versions/${version}/${section}/new-or-existing-licence`);
   });
 
@@ -366,7 +373,35 @@ module.exports = function (router) {
     // Save the licence type selection
     req.session.data['sample-plan-new-or-existing-licence'] = licenceType;
     
+    // Handle check answers flow
+    const previousType = req.session.data['previous-licence-type'];
+    const cameFromCYA = req.session.data['camefromcheckanswers'] === 'true';
+
+    // If coming from CYA and selection hasn't changed, bounce back
+    if (cameFromCYA && previousType && previousType === licenceType) {
+      req.session.data['camefromcheckanswers'] = false;
+      delete req.session.data['previous-licence-type'];
+      return res.redirect('check-answers');
+    }
+
+    // If selection changed, clear old data
+    if (cameFromCYA && previousType && previousType !== licenceType) {
+      if (previousType === 'New marine licence') {
+        // Clear new licence data
+        delete req.session.data['sample-plan-licence-length-years'];
+        delete req.session.data['sample-plan-licence-length-months'];
+      } else if (previousType === 'Existing marine licence') {
+        // Clear existing licence data
+        delete req.session.data['sample-plan-licence-number'];
+        delete req.session.data['sample-plan-licence-expiry-day'];
+        delete req.session.data['sample-plan-licence-expiry-month'];
+        delete req.session.data['sample-plan-licence-expiry-year'];
+      }
+      delete req.session.data['previous-licence-type'];
+    }
+    
     // Conditional routing based on selection
+    // NOTE: Don't clear camefromcheckanswers flag here - it passes through to next page
     if (licenceType === 'New marine licence') {
       res.redirect('new-licence-length');
     } else if (licenceType === 'Existing marine licence') {
@@ -388,6 +423,11 @@ module.exports = function (router) {
     req.session.data['sample-plan-errortypeone'] = "false";
     req.session.data['isSamplePlansSection'] = true;
     
+    // Capture the query parameter if coming from check answers
+    if (req.query.camefromcheckanswers === 'true') {
+      req.session.data['camefromcheckanswers'] = 'true';
+    }
+    
     res.render(`versions/${version}/${section}/new-licence-length`);
   });
 
@@ -407,10 +447,17 @@ module.exports = function (router) {
       return res.redirect('new-licence-length');
     }
 
-    // Save the licence length data and redirect back to task list
+    // Save the licence length data
     req.session.data['sample-plan-licence-length-years'] = years;
     req.session.data['sample-plan-licence-length-months'] = months;
-    res.redirect('sample-plan-start-page');
+    
+    // Check if we need to return to check answers
+    if (req.session.data['camefromcheckanswers'] === 'true') {
+      req.session.data['camefromcheckanswers'] = false;
+      res.redirect('check-answers');
+    } else {
+      res.redirect('sample-plan-start-page');
+    }
   });
 
   ///////////////////////////////////////////
@@ -424,6 +471,11 @@ module.exports = function (router) {
     req.session.data['sample-plan-errortypeone'] = "false";
     req.session.data['sample-plan-errortypetwo'] = "false";
     req.session.data['isSamplePlansSection'] = true;
+    
+    // Capture the query parameter if coming from check answers
+    if (req.query.camefromcheckanswers === 'true') {
+      req.session.data['camefromcheckanswers'] = 'true';
+    }
     
     res.render(`versions/${version}/${section}/existing-licence-expiry`);
   });
@@ -458,12 +510,19 @@ module.exports = function (router) {
       return res.redirect('existing-licence-expiry');
     }
 
-    // Save the licence expiry data and redirect back to task list
+    // Save the licence expiry data
     req.session.data['sample-plan-licence-expiry-day'] = day;
     req.session.data['sample-plan-licence-expiry-month'] = month;
     req.session.data['sample-plan-licence-expiry-year'] = year;
     req.session.data['sample-plan-licence-number'] = licenceNumber;
-    res.redirect('sample-plan-start-page');
+    
+    // Check if we need to return to check answers
+    if (req.session.data['camefromcheckanswers'] === 'true') {
+      req.session.data['camefromcheckanswers'] = false;
+      res.redirect('check-answers');
+    } else {
+      res.redirect('sample-plan-start-page');
+    }
   });
 
   ///////////////////////////////////////////
@@ -703,6 +762,10 @@ module.exports = function (router) {
 
   router.get(`/versions/${version}/${section}/check-answers`, function (req, res) {
     req.session.data['samplePlansSection'] = section;
+    
+    // Clear any interrupted journey flags when manually navigating to check answers
+    delete req.session.data['dredging-cya-journey-interrupted'];
+    
     res.render(`versions/${version}/${section}/check-answers`);
   });
 

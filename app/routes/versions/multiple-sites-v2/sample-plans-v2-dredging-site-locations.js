@@ -100,6 +100,14 @@ module.exports = function (router) {
   /////////////////////////////////////////////////////////
   router.get(`/versions/${version}/${section}/${subsection}/review-dredging-site-details`, function (req, res) {
     req.session.data['samplePlansSection'] = section;
+    
+    // Capture the query parameter if coming from check answers
+    if (req.query.camefromcheckanswers === 'true') {
+      req.session.data['camefromcheckanswers'] = 'true';
+      // Clear any previous interrupted flag - this is a fresh journey from CYA
+      delete req.session.data['dredging-cya-journey-interrupted'];
+    }
+    
     res.render(`versions/${version}/${section}/${subsection}/review-dredging-site-details`);
   });
 
@@ -114,14 +122,37 @@ module.exports = function (router) {
     const dredgeDepthComplete = req.session.data['dredging-details-site-1-depth-completed'];
     
     // Set the overall completion status
-    if (site1DredgingComplete && maximumVolumeComplete && dredgeDepthComplete) {
+    const allComplete = site1DredgingComplete && maximumVolumeComplete && dredgeDepthComplete;
+    
+    if (allComplete) {
       req.session.data['dredging-sites-all-complete'] = true;
     } else {
       req.session.data['dredging-sites-all-complete'] = false;
     }
     
-    // Redirect back to task list (sample plan start page)
-    res.redirect('../sample-plan-start-page');
+    // Check if we need to return to check answers
+    const cameFromCYA = req.session.data['camefromcheckanswers'] === 'true';
+    const journeyInterrupted = req.session.data['dredging-cya-journey-interrupted'] === true;
+    
+    if (cameFromCYA) {
+      req.session.data['camefromcheckanswers'] = false;
+      
+      // Only return to check-answers if task is complete
+      if (allComplete) {
+        res.redirect('../check-answers#providing-dredge-site-location');
+      } else {
+        // Task became incomplete - set interrupted flag and return to task list
+        req.session.data['dredging-cya-journey-interrupted'] = true;
+        res.redirect('../sample-plan-start-page');
+      }
+    } else if (journeyInterrupted) {
+      // Journey was previously interrupted - always go to task list even if now complete
+      // User must manually click "Check your answers" from task list to get back to CYA
+      res.redirect('../sample-plan-start-page');
+    } else {
+      // Normal flow - redirect back to task list
+      res.redirect('../sample-plan-start-page');
+    }
   });
 
   /////////////////////////////////////////////////////////
@@ -534,6 +565,12 @@ module.exports = function (router) {
 
   // Delete all sites router (POST)
   router.post(`/versions/${version}/${section}/${subsection}/delete-all-sites-router`, function (req, res) {
+    // If coming from CYA, set interrupted flag before clearing data
+    if (req.session.data['camefromcheckanswers'] === 'true') {
+      req.session.data['dredging-cya-journey-interrupted'] = true;
+      req.session.data['camefromcheckanswers'] = false;
+    }
+    
     // Clear all dredging site location data
     
     // File upload journey data
