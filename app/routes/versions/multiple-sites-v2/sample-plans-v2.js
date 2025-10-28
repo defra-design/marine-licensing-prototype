@@ -206,6 +206,12 @@ module.exports = function (router) {
     req.session.data['sample-plan-errortypeone'] = "false";
     req.session.data['sample-plan-errortypetwo'] = "false";
     req.session.data['sample-plan-errortypethree'] = "false";
+    
+    // Capture the query parameter if coming from check answers
+    if (req.query.camefromcheckanswers === 'true') {
+      req.session.data['camefromcheckanswers'] = 'true';
+    }
+    
     res.render(`versions/${version}/${section}/project-background`);
   });
 
@@ -238,7 +244,14 @@ module.exports = function (router) {
     }
 
     req.session.data['sample-plan-project-background-completed'] = "true";
-    res.redirect('sample-plan-start-page');
+    
+    // Check if we need to return to check answers
+    if (req.session.data['camefromcheckanswers'] === 'true') {
+      req.session.data['camefromcheckanswers'] = false;
+      res.redirect('check-answers');
+    } else {
+      res.redirect('sample-plan-start-page');
+    }
   });
 
   ///////////////////////////////////////////
@@ -286,6 +299,11 @@ module.exports = function (router) {
     req.session.data['sample-plan-errortypeone'] = "false";
     req.session.data['isSamplePlansSection'] = true;
     
+    // Capture the query parameter if coming from check answers
+    if (req.query.camefromcheckanswers === 'true') {
+      req.session.data['camefromcheckanswers'] = 'true';
+    }
+    
     res.render(`versions/${version}/${section}/project-name`);
   });
 
@@ -304,9 +322,16 @@ module.exports = function (router) {
       return res.redirect('project-name');
     }
 
-    // Save the project name and redirect back to task list
+    // Save the project name
     req.session.data['sample-plan-project-name-text-input'] = projectName;
-    res.redirect('sample-plan-start-page');
+    
+    // Check if we need to return to check answers
+    if (req.session.data['camefromcheckanswers'] === 'true') {
+      req.session.data['camefromcheckanswers'] = false;
+      res.redirect('check-answers');
+    } else {
+      res.redirect('sample-plan-start-page');
+    }
   });
 
   ///////////////////////////////////////////
