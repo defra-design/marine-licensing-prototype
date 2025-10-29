@@ -560,7 +560,7 @@
         </div>-->
 
         <!-- Existing disposal site 1 details section -->
-        <div class="govuk-summary-card">
+        <div id="disposal-site-1-details" class="govuk-summary-card">
             <div class="govuk-summary-card__title-wrapper">
                 <h2 class="govuk-summary-card__title">Existing disposal site 1 details</h2>
                 {% if data['samplePlanApplicationSubmitted'] != "true" %}
@@ -743,12 +743,12 @@
 
         <!-- Existing disposal site 2 details section (conditional) -->
         {% if data['sample-disposal-site-2-selected'] %}
-        <div class="govuk-summary-card">
+        <div id="disposal-site-2-details" class="govuk-summary-card">
             <div class="govuk-summary-card__title-wrapper">
                 <h2 class="govuk-summary-card__title">Existing disposal site 2 details</h2>
                 {% if data['samplePlanApplicationSubmitted'] != "true" %}
                 <div class="govuk-summary-card__actions">
-                    <a class="govuk-link govuk-link--no-visited-state" href="disposal-site-locations/review-disposal-site-details?camefromcheckanswers=true#disposal-site-2-details">
+                    <a class="govuk-link govuk-link--no-visited-state" href="disposal-site-locations/review-disposal-site-details?camefromcheckanswers=true&site=2">
                         Change<span class="govuk-visually-hidden"> existing disposal site 2</span>
                     </a>
                 </div>
@@ -929,7 +929,7 @@
         <!-- New file upload disposal site section -->
         {% if data['has-visited-new-disposal-site-locations'] and (data['disposal-site-journey-type'] == 'new' or data['disposal-site-journey-type'] == 'both') %}
         <!-- Providing the new disposal site location section -->
-        <div class="govuk-summary-card">
+        <div id="site-location" class="govuk-summary-card">
             <div class="govuk-summary-card__title-wrapper">
                 <h2 class="govuk-summary-card__title">
                     Providing the new disposal site location
@@ -1114,7 +1114,7 @@
         <!-- Manual entry disposal sites section -->
         {% if data['has-visited-manual-disposal-site-locations'] and (data['disposal-site-journey-type'] == 'manual-entry' or data['disposal-site-journey-type'] == 'both') %}
         <!-- Providing the new disposal site location section -->
-        <div class="govuk-summary-card">
+        <div id="site-location" class="govuk-summary-card">
             <div class="govuk-summary-card__title-wrapper">
                 <h2 class="govuk-summary-card__title">
                     Providing the new disposal site location{% if siteCount > 1 %}s{% endif %}
@@ -1152,7 +1152,7 @@
                 <h2 class="govuk-summary-card__title">New disposal site {{ siteNum }} details</h2>
                 {% if data['samplePlanApplicationSubmitted'] != "true" %}
                 <div class="govuk-summary-card__actions">
-                    <a class="govuk-link govuk-link--no-visited-state" href="disposal-site-locations/new-disposal-sites/manual-entry/review-manual-disposal-site-details?camefromcheckanswers=true#site-{{ siteNum }}-details">
+                    <a class="govuk-link govuk-link--no-visited-state" href="disposal-site-locations/new-disposal-sites/manual-entry/review-manual-disposal-site-details?camefromcheckanswers=true">
                         Change<span class="govuk-visually-hidden"> new disposal site {{ siteNum }} details</span>
                     </a>
                 </div>

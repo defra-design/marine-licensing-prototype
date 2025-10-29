@@ -384,6 +384,8 @@ module.exports = function (router) {
     // Capture the query parameter if coming from check answers
     if (req.query.camefromcheckanswers === 'true') {
       req.session.data['camefromcheckanswers'] = 'true';
+      // Store which site is being changed (1 or 2) for returning to correct anchor
+      req.session.data['cya-disposal-site-number'] = req.query.site || '1';
       // Clear any previous interrupted flag - this is a fresh journey from CYA
       delete req.session.data['disposal-cya-journey-interrupted'];
     }
@@ -475,10 +477,15 @@ module.exports = function (router) {
       
       // Only return to check-answers if task is complete
       if (allSitesComplete) {
-        res.redirect('../check-answers#disposal-site-1-details');
+        // Return to the specific site card that was originally changed
+        const siteNumber = req.session.data['cya-disposal-site-number'] || '1';
+        const anchor = siteNumber === '2' ? 'disposal-site-2-details' : 'disposal-site-1-details';
+        delete req.session.data['cya-disposal-site-number']; // Clean up
+        res.redirect(`../check-answers#${anchor}`);
       } else {
         // Task became incomplete - set interrupted flag and return to appropriate hub
         req.session.data['disposal-cya-journey-interrupted'] = true;
+        delete req.session.data['cya-disposal-site-number']; // Clean up
         if (req.session.data['disposal-site-journey-type'] === 'both') {
           res.redirect('disposal-sites-and-details');
         } else {
