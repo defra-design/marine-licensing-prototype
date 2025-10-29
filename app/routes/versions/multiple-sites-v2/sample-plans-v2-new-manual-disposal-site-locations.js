@@ -509,6 +509,13 @@ module.exports = function (router) {
   router.get(`/versions/${version}/${section}/${subSection}/${newSubSection}/${manualSubSection}/review-manual-disposal-site-details`, function (req, res) {
     req.session.data['samplePlansSection'] = section;
     
+    // Capture the query parameter if coming from check answers
+    if (req.query.camefromcheckanswers === 'true') {
+      req.session.data['camefromcheckanswers'] = 'true';
+      // Clear any previous interrupted flag - this is a fresh journey from CYA
+      delete req.session.data['manual-disposal-cya-journey-interrupted'];
+    }
+    
     // Mark that user has visited the review page
     req.session.data['has-visited-manual-disposal-site-locations'] = true;
     
@@ -587,11 +594,40 @@ module.exports = function (router) {
       }
     }
     
-    // Redirect based on journey type
-    if (req.session.data['disposal-site-journey-type'] === 'both') {
-      res.redirect('../../disposal-sites-and-details');
+    // Check if we need to return to check answers
+    const cameFromCYA = req.session.data['camefromcheckanswers'] === 'true';
+    const journeyInterrupted = req.session.data['manual-disposal-cya-journey-interrupted'] === true;
+    
+    if (cameFromCYA) {
+      req.session.data['camefromcheckanswers'] = false;
+      
+      // Only return to check-answers if task is complete
+      if (allComplete) {
+        res.redirect('../../../check-answers#site-location');
+      } else {
+        // Task became incomplete - set interrupted flag and return to appropriate hub
+        req.session.data['manual-disposal-cya-journey-interrupted'] = true;
+        if (req.session.data['disposal-site-journey-type'] === 'both') {
+          res.redirect('../../disposal-sites-and-details');
+        } else {
+          res.redirect('../../../sample-plan-start-page');
+        }
+      }
+    } else if (journeyInterrupted) {
+      // Journey was previously interrupted - always go to appropriate hub even if now complete
+      // User must manually click "Check your answers" from hub to get back to CYA
+      if (req.session.data['disposal-site-journey-type'] === 'both') {
+        res.redirect('../../disposal-sites-and-details');
+      } else {
+        res.redirect('../../../sample-plan-start-page');
+      }
     } else {
-      res.redirect('../../../sample-plan-start-page');
+      // Normal flow - redirect based on journey type
+      if (req.session.data['disposal-site-journey-type'] === 'both') {
+        res.redirect('../../disposal-sites-and-details');
+      } else {
+        res.redirect('../../../sample-plan-start-page');
+      }
     }
   });
 
@@ -619,17 +655,35 @@ module.exports = function (router) {
       // Scenario 1: Deleting Site 2 - clear Site 2 data only
       clearManualEntrySite2Data(req.session);
       req.session.data['disposal-site-manual-entry-count'] = 1;
+      
+      // If coming from CYA, set interrupted flag since site was deleted
+      if (req.session.data['camefromcheckanswers'] === 'true') {
+        req.session.data['manual-disposal-cya-journey-interrupted'] = true;
+      }
+      
       res.redirect('review-manual-disposal-site-details');
       
     } else if (siteNumber === 1 && siteCount >= 2) {
       // Scenario 2: Deleting Site 1 when Site 2 exists - move Site 2 to Site 1
       moveManualEntrySite2ToSite1(req.session);
       req.session.data['disposal-site-manual-entry-count'] = 1;
+      
+      // If coming from CYA, set interrupted flag since site was deleted
+      if (req.session.data['camefromcheckanswers'] === 'true') {
+        req.session.data['manual-disposal-cya-journey-interrupted'] = true;
+      }
+      
       res.redirect('review-manual-disposal-site-details');
       
     } else {
       // Scenario 3: Deleting only site - clear all and return to task list
       clearAllManualEntryData(req.session);
+      
+      // If coming from CYA, set interrupted flag since all sites were deleted
+      if (req.session.data['camefromcheckanswers'] === 'true') {
+        req.session.data['manual-disposal-cya-journey-interrupted'] = true;
+      }
+      
       res.redirect('../../../sample-plan-start-page');
     }
   });

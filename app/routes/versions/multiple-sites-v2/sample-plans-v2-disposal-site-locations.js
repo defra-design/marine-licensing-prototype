@@ -381,6 +381,13 @@ module.exports = function (router) {
   router.get(`/versions/${version}/${section}/${subSection}/review-disposal-site-details`, function (req, res) {
     req.session.data['samplePlansSection'] = section;
     
+    // Capture the query parameter if coming from check answers
+    if (req.query.camefromcheckanswers === 'true') {
+      req.session.data['camefromcheckanswers'] = 'true';
+      // Clear any previous interrupted flag - this is a fresh journey from CYA
+      delete req.session.data['disposal-cya-journey-interrupted'];
+    }
+    
     // If URL parameters are provided (coming from site selection), store them and redirect
     if (req.query.code || req.query.name || req.query.country || req.query.seaArea || req.query.status) {
       // Check if this is a second site being added
@@ -459,11 +466,40 @@ module.exports = function (router) {
       }
     }
     
-    // Redirect based on journey type
-    if (req.session.data['disposal-site-journey-type'] === 'both') {
-      res.redirect('disposal-sites-and-details');
+    // Check if we need to return to check answers
+    const cameFromCYA = req.session.data['camefromcheckanswers'] === 'true';
+    const journeyInterrupted = req.session.data['disposal-cya-journey-interrupted'] === true;
+    
+    if (cameFromCYA) {
+      req.session.data['camefromcheckanswers'] = false;
+      
+      // Only return to check-answers if task is complete
+      if (allSitesComplete) {
+        res.redirect('../check-answers#disposal-site-1-details');
+      } else {
+        // Task became incomplete - set interrupted flag and return to appropriate hub
+        req.session.data['disposal-cya-journey-interrupted'] = true;
+        if (req.session.data['disposal-site-journey-type'] === 'both') {
+          res.redirect('disposal-sites-and-details');
+        } else {
+          res.redirect('../sample-plan-start-page');
+        }
+      }
+    } else if (journeyInterrupted) {
+      // Journey was previously interrupted - always go to appropriate hub even if now complete
+      // User must manually click "Check your answers" from hub to get back to CYA
+      if (req.session.data['disposal-site-journey-type'] === 'both') {
+        res.redirect('disposal-sites-and-details');
+      } else {
+        res.redirect('../sample-plan-start-page');
+      }
     } else {
-      res.redirect('../sample-plan-start-page');
+      // Normal flow - redirect based on journey type
+      if (req.session.data['disposal-site-journey-type'] === 'both') {
+        res.redirect('disposal-sites-and-details');
+      } else {
+        res.redirect('../sample-plan-start-page');
+      }
     }
   });
 
@@ -974,6 +1010,11 @@ module.exports = function (router) {
       // Clear the delete site number
       delete req.session.data['delete-site-number'];
       
+      // If coming from CYA, set interrupted flag since site was deleted
+      if (req.session.data['camefromcheckanswers'] === 'true') {
+        req.session.data['disposal-cya-journey-interrupted'] = true;
+      }
+      
       // Save session explicitly before redirect to ensure all changes are persisted
       req.session.save(function(err) {
         if (err) {
@@ -1020,6 +1061,11 @@ module.exports = function (router) {
       delete req.session.data['selected-disposal-site-2-sea-area'];
       delete req.session.data['selected-disposal-site-2-status'];
       
+      // If coming from CYA, set interrupted flag since site was deleted
+      if (req.session.data['camefromcheckanswers'] === 'true') {
+        req.session.data['disposal-cya-journey-interrupted'] = true;
+      }
+      
       // Redirect back to review page
       res.redirect('review-disposal-site-details');
     } else {
@@ -1049,6 +1095,11 @@ module.exports = function (router) {
       req.session.data['sample-disposal-sites-completed'] = false;
       req.session.data['sample-disposal-sites-in-progress'] = false;
       req.session.data['has-visited-disposal-site-review'] = false;
+      
+      // If coming from CYA, set interrupted flag since all sites were deleted
+      if (req.session.data['camefromcheckanswers'] === 'true') {
+        req.session.data['disposal-cya-journey-interrupted'] = true;
+      }
       
       // Redirect based on journey type
       if (req.session.data['disposal-site-journey-type'] === 'both') {
