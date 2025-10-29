@@ -1395,7 +1395,7 @@
         {% endif %}
 
         <!-- Fee estimate section -->
-        <div class="govuk-summary-card">
+        <div id="fee-estimate" class="govuk-summary-card">
             <div class="govuk-summary-card__title-wrapper">
                 <h2 class="govuk-summary-card__title">Fee estimate</h2>
             </div>
@@ -1410,7 +1410,7 @@
                         </dd>
                         {% if data['samplePlanApplicationSubmitted'] != "true" %}
                         <dd class="govuk-summary-list__actions">
-                            <a class="govuk-link govuk-link--no-visited-state" href="">
+                            <a class="govuk-link govuk-link--no-visited-state" href="fee-estimate?camefromcheckanswers=true">
                                 Change<span class="govuk-visually-hidden"> fee estimate accepted</span>
                             </a>
                         </dd>

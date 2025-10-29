@@ -721,6 +721,11 @@ module.exports = function (router) {
     req.session.data['sample-plan-errortypetwo'] = "false";
     req.session.data['isSamplePlansSection'] = true;
     
+    // Capture the query parameter if coming from check answers
+    if (req.query.camefromcheckanswers === 'true') {
+      req.session.data['camefromcheckanswers'] = 'true';
+    }
+    
     res.render(`versions/${version}/${section}/fee-estimate`);
   });
 
@@ -759,14 +764,27 @@ module.exports = function (router) {
       req.session.data['sample-plan-fee-estimate-rejected'] = "false";
     }
 
+    // Check if coming from CYA
+    const cameFromCYA = req.session.data['camefromcheckanswers'] === 'true';
+    
     // Conditional routing based on fee acceptance
     if (req.session.data['fee-acceptance'] === 'yes') {
-      res.redirect('sample-plan-start-page');
+      if (cameFromCYA) {
+        // Clear the flag and return to CYA with anchor to fee estimate card
+        req.session.data['camefromcheckanswers'] = false;
+        res.redirect('check-answers#fee-estimate');
+      } else {
+        // Normal flow - go to task list
+        res.redirect('sample-plan-start-page');
+      }
     } else if (req.session.data['fee-acceptance'] === 'no') {
+      // Break the CYA connection - clear the flag and go to normal flow
+      req.session.data['camefromcheckanswers'] = false;
       // Redirect to the "are you sure" confirmation page
       res.redirect('fee-are-you-sure');
     } else {
       // Fallback
+      req.session.data['camefromcheckanswers'] = false;
       res.redirect('sample-plan-start-page');
     }
   });
