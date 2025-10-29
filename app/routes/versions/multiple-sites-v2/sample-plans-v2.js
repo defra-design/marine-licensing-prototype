@@ -299,11 +299,12 @@ module.exports = function (router) {
     req.session.data['sample-plan-errortypeone'] = "false";
     req.session.data['isSamplePlansSection'] = true;
     
+    // Always store the current selection to detect changes later
+    req.session.data['previous-activity-type'] = req.session.data['sample-plan-which-activity'];
+    
     // Capture the query parameter if coming from check answers
     if (req.query.camefromcheckanswers === 'true') {
       req.session.data['camefromcheckanswers'] = 'true';
-      // Store the current selection to detect changes later
-      req.session.data['previous-activity-type'] = req.session.data['sample-plan-which-activity'];
     }
     
     res.render(`versions/${version}/${section}/which-activity`);
@@ -375,7 +376,74 @@ module.exports = function (router) {
       }
     }
 
-    // Normal flow (not from CYA) - just save and redirect to task list
+    // Normal flow (not from CYA) - from task list
+    // Only process warnings if we have a previous activity to compare against
+    if (previousActivity && previousActivity !== activitySelection) {
+      // Check if tasks have been started to determine if we need warnings
+      const isDredgeTaskStarted = req.session.data['has-visited-dredging-site-locations'];
+      const isDisposalTaskStarted = req.session.data['sample-disposal-sites-completed'] || 
+                                     req.session.data['sample-disposal-sites-in-progress'] || 
+                                     req.session.data['has-visited-disposal-site-review'] || 
+                                     req.session.data['has-visited-new-disposal-site-locations'] || 
+                                     req.session.data['has-visited-manual-disposal-site-locations'];
+
+      // Scenario A: "Marine dredging and disposal" → "Marine disposal" (delete dredge if started)
+      if (previousActivity === 'Marine dredging and disposal' && activitySelection === 'Marine disposal') {
+        if (isDredgeTaskStarted) {
+          req.session.data['activity-change-warning-type'] = 'delete-dredge';
+          req.session.data['activity-change-new-type'] = activitySelection;
+          return res.redirect('change-activity-type-warning');
+        } else {
+          req.session.data['sample-plan-which-activity'] = activitySelection;
+          return res.redirect('sample-plan-start-page');
+        }
+      }
+
+      // Scenario B: "Marine dredging and disposal" → "Marine dredging" (delete disposal if started)
+      if (previousActivity === 'Marine dredging and disposal' && activitySelection === 'Marine dredging') {
+        if (isDisposalTaskStarted) {
+          req.session.data['activity-change-warning-type'] = 'delete-disposal';
+          req.session.data['activity-change-new-type'] = activitySelection;
+          return res.redirect('change-activity-type-warning');
+        } else {
+          req.session.data['sample-plan-which-activity'] = activitySelection;
+          return res.redirect('sample-plan-start-page');
+        }
+      }
+
+      // Scenario C: "Marine disposal" → "Marine dredging" (delete disposal if started)
+      if (previousActivity === 'Marine disposal' && activitySelection === 'Marine dredging') {
+        if (isDisposalTaskStarted) {
+          req.session.data['activity-change-warning-type'] = 'delete-disposal';
+          req.session.data['activity-change-new-type'] = activitySelection;
+          return res.redirect('change-activity-type-warning');
+        } else {
+          req.session.data['sample-plan-which-activity'] = activitySelection;
+          return res.redirect('sample-plan-start-page');
+        }
+      }
+
+      // Scenario D: "Marine dredging" → "Marine disposal" (delete dredge if started)
+      if (previousActivity === 'Marine dredging' && activitySelection === 'Marine disposal') {
+        if (isDredgeTaskStarted) {
+          req.session.data['activity-change-warning-type'] = 'delete-dredge';
+          req.session.data['activity-change-new-type'] = activitySelection;
+          return res.redirect('change-activity-type-warning');
+        } else {
+          req.session.data['sample-plan-which-activity'] = activitySelection;
+          return res.redirect('sample-plan-start-page');
+        }
+      }
+
+      // Scenario E: Single activity → "Marine dredging and disposal" (no deletion needed)
+      if (activitySelection === 'Marine dredging and disposal' && 
+          (previousActivity === 'Marine disposal' || previousActivity === 'Marine dredging')) {
+        req.session.data['sample-plan-which-activity'] = activitySelection;
+        return res.redirect('sample-plan-start-page');
+      }
+    }
+
+    // Scenario F: No change or default - just save and redirect
     req.session.data['sample-plan-which-activity'] = activitySelection;
     res.redirect('sample-plan-start-page');
   });
