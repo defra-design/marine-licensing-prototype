@@ -1,4 +1,4 @@
-{% extends "../layouts/sample-plans.html" %}
+{% extends "../layouts/sample-plans-v2.html" %}
 
 {% block header %}
   {% from "govuk/components/header/macro.njk" import govukHeader %}
@@ -11,12 +11,19 @@
       serviceName: "Get a plan for sediment sample analysis",
       navigation: [
         {
+          href: "homepage",
+          text: "Home",
+          active: false
+        },
+        {
           href: "projects",
-          text: "Projects"
+          text: "Projects",
+          active: false
         },
         {
           href: "#",
-          text: "Defra account"
+          text: "Defra account",
+          active: false
         },
         {
           href: "sign-in",

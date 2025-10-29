@@ -1,4 +1,4 @@
-{% extends "../layouts/sample-plans.html" %}
+{% extends "../layouts/sample-plans-v2.html" %}
 
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
@@ -17,9 +17,14 @@
   serviceName: "Get permission for marine work",
   navigation: [
     {
+      href: "homepage",
+      text: "Home",
+      active: false
+    },
+    {
       href: "projects",
       text: "Projects",
-	  active: true
+      active: true
     },
     {
       href: "#",
