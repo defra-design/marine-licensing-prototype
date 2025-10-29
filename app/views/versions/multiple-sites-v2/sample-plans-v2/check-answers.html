@@ -208,11 +208,15 @@
                 {% if data['sample-plan-new-or-existing-licence'] == "New marine licence" %}
                     {% set licenceLengthText = "" %}
                     {% if data['sample-plan-licence-length-years'] and data['sample-plan-licence-length-months'] %}
-                        {% set licenceLengthText = data['sample-plan-licence-length-years'] + " years " + data['sample-plan-licence-length-months'] + " months" %}
+                        {% set yearText = " year " if data['sample-plan-licence-length-years'] == "1" else " years " %}
+                        {% set monthText = " month" if data['sample-plan-licence-length-months'] == "1" else " months" %}
+                        {% set licenceLengthText = data['sample-plan-licence-length-years'] + yearText + data['sample-plan-licence-length-months'] + monthText %}
                     {% elif data['sample-plan-licence-length-years'] %}
-                        {% set licenceLengthText = data['sample-plan-licence-length-years'] + " years 0 months" %}
+                        {% set yearText = " year " if data['sample-plan-licence-length-years'] == "1" else " years " %}
+                        {% set licenceLengthText = data['sample-plan-licence-length-years'] + yearText + "0 months" %}
                     {% elif data['sample-plan-licence-length-months'] %}
-                        {% set licenceLengthText = "0 years " + data['sample-plan-licence-length-months'] + " months" %}
+                        {% set monthText = " month" if data['sample-plan-licence-length-months'] == "1" else " months" %}
+                        {% set licenceLengthText = "0 years " + data['sample-plan-licence-length-months'] + monthText %}
                     {% else %}
                         {% set licenceLengthText = "5 years 0 months" %}
                     {% endif %}
