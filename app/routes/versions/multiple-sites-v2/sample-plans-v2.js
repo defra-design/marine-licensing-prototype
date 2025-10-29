@@ -121,6 +121,12 @@ module.exports = function (router) {
     if (isChangingOrg) {
       req.session.data['changing-organisation'] = 'true';
     }
+    
+    // Store the return destination if provided
+    const returnTo = req.query.returnTo;
+    if (returnTo) {
+      req.session.data['organisation-selector-return-to'] = returnTo;
+    }
 
     const allOrganisations = [
       {value: "Brighton Marina Operations", text: "Brighton Marina Operations"},
@@ -150,13 +156,22 @@ module.exports = function (router) {
       req.session.data['sample-plan-errortypeone'] = "true";
       res.redirect('organisation-selector');
     } else {
-      // If the user is changing their organisation, redirect to the projects page
+      // If the user is changing their organisation, redirect to the return destination
       if (req.session.data['changing-organisation'] === 'true') {
         // Toggle the alternative project view
         req.session.data['alternativeProjectView'] = req.session.data['alternativeProjectView'] === 'true' ? 'false' : 'true';
         // Reset the flag
         delete req.session.data['changing-organisation'];
-        res.redirect('projects');
+        
+        // Check if there's a stored return destination
+        const returnTo = req.session.data['organisation-selector-return-to'];
+        if (returnTo) {
+          delete req.session.data['organisation-selector-return-to'];
+          res.redirect(returnTo);
+        } else {
+          // Default to projects page
+          res.redirect('projects');
+        }
       } else {
         // Check if there's a stored goto destination
         const gotoPage = req.session.data['goto-after-org-selector'];
