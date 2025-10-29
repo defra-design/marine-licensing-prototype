@@ -299,6 +299,14 @@ module.exports = function (router) {
     req.session.data['sample-plan-errortypeone'] = "false";
     req.session.data['isSamplePlansSection'] = true;
     
+    // Always store the current selection to detect changes later
+    req.session.data['previous-activity-type'] = req.session.data['sample-plan-which-activity'];
+    
+    // Capture the query parameter if coming from check answers
+    if (req.query.camefromcheckanswers === 'true') {
+      req.session.data['camefromcheckanswers'] = 'true';
+    }
+    
     res.render(`versions/${version}/${section}/which-activity`);
   });
 
@@ -317,8 +325,263 @@ module.exports = function (router) {
       return res.redirect('which-activity');
     }
 
-    // Save the activity selection and redirect to task list
+    // Handle check answers flow
+    const previousActivity = req.session.data['previous-activity-type'];
+    const cameFromCYA = req.session.data['camefromcheckanswers'] === 'true';
+
+    // Scenario 1: No change - bounce back to CYA
+    if (cameFromCYA && previousActivity && previousActivity === activitySelection) {
+      req.session.data['camefromcheckanswers'] = false;
+      delete req.session.data['previous-activity-type'];
+      return res.redirect('check-answers');
+    }
+
+    // If coming from CYA and selection has changed, handle the scenarios
+    if (cameFromCYA && previousActivity && previousActivity !== activitySelection) {
+      // Scenario 2: "Marine dredging and disposal" → "Marine disposal" (delete dredge data)
+      if (previousActivity === 'Marine dredging and disposal' && activitySelection === 'Marine disposal') {
+        req.session.data['activity-change-warning-type'] = 'delete-dredge';
+        req.session.data['activity-change-new-type'] = activitySelection;
+        return res.redirect('change-activity-type-warning');
+      }
+
+      // Scenario 3: "Marine dredging and disposal" → "Marine dredging" (delete disposal data)
+      if (previousActivity === 'Marine dredging and disposal' && activitySelection === 'Marine dredging') {
+        req.session.data['activity-change-warning-type'] = 'delete-disposal';
+        req.session.data['activity-change-new-type'] = activitySelection;
+        return res.redirect('change-activity-type-warning');
+      }
+
+      // Scenario 4-5: Expanding to "Marine dredging and disposal" (no deletion, break CYA, go to task list)
+      if (activitySelection === 'Marine dredging and disposal' && 
+          (previousActivity === 'Marine disposal' || previousActivity === 'Marine dredging')) {
+        req.session.data['sample-plan-which-activity'] = activitySelection;
+        req.session.data['camefromcheckanswers'] = false;
+        delete req.session.data['previous-activity-type'];
+        return res.redirect('sample-plan-start-page');
+      }
+
+      // Scenario 6: "Marine disposal" → "Marine dredging" (delete disposal data)
+      if (previousActivity === 'Marine disposal' && activitySelection === 'Marine dredging') {
+        req.session.data['activity-change-warning-type'] = 'delete-disposal';
+        req.session.data['activity-change-new-type'] = activitySelection;
+        return res.redirect('change-activity-type-warning');
+      }
+
+      // Scenario 7: "Marine dredging" → "Marine disposal" (delete dredge data)
+      if (previousActivity === 'Marine dredging' && activitySelection === 'Marine disposal') {
+        req.session.data['activity-change-warning-type'] = 'delete-dredge';
+        req.session.data['activity-change-new-type'] = activitySelection;
+        return res.redirect('change-activity-type-warning');
+      }
+    }
+
+    // Normal flow (not from CYA) - from task list
+    // Only process warnings if we have a previous activity to compare against
+    if (previousActivity && previousActivity !== activitySelection) {
+      // Check if tasks have been started to determine if we need warnings
+      const isDredgeTaskStarted = req.session.data['has-visited-dredging-site-locations'];
+      const isDisposalTaskStarted = req.session.data['sample-disposal-sites-completed'] || 
+                                     req.session.data['sample-disposal-sites-in-progress'] || 
+                                     req.session.data['has-visited-disposal-site-review'] || 
+                                     req.session.data['has-visited-new-disposal-site-locations'] || 
+                                     req.session.data['has-visited-manual-disposal-site-locations'];
+
+      // Scenario A: "Marine dredging and disposal" → "Marine disposal" (delete dredge if started)
+      if (previousActivity === 'Marine dredging and disposal' && activitySelection === 'Marine disposal') {
+        if (isDredgeTaskStarted) {
+          req.session.data['activity-change-warning-type'] = 'delete-dredge';
+          req.session.data['activity-change-new-type'] = activitySelection;
+          return res.redirect('change-activity-type-warning');
+        } else {
+          req.session.data['sample-plan-which-activity'] = activitySelection;
+          return res.redirect('sample-plan-start-page');
+        }
+      }
+
+      // Scenario B: "Marine dredging and disposal" → "Marine dredging" (delete disposal if started)
+      if (previousActivity === 'Marine dredging and disposal' && activitySelection === 'Marine dredging') {
+        if (isDisposalTaskStarted) {
+          req.session.data['activity-change-warning-type'] = 'delete-disposal';
+          req.session.data['activity-change-new-type'] = activitySelection;
+          return res.redirect('change-activity-type-warning');
+        } else {
+          req.session.data['sample-plan-which-activity'] = activitySelection;
+          return res.redirect('sample-plan-start-page');
+        }
+      }
+
+      // Scenario C: "Marine disposal" → "Marine dredging" (delete disposal if started)
+      if (previousActivity === 'Marine disposal' && activitySelection === 'Marine dredging') {
+        if (isDisposalTaskStarted) {
+          req.session.data['activity-change-warning-type'] = 'delete-disposal';
+          req.session.data['activity-change-new-type'] = activitySelection;
+          return res.redirect('change-activity-type-warning');
+        } else {
+          req.session.data['sample-plan-which-activity'] = activitySelection;
+          return res.redirect('sample-plan-start-page');
+        }
+      }
+
+      // Scenario D: "Marine dredging" → "Marine disposal" (delete dredge if started)
+      if (previousActivity === 'Marine dredging' && activitySelection === 'Marine disposal') {
+        if (isDredgeTaskStarted) {
+          req.session.data['activity-change-warning-type'] = 'delete-dredge';
+          req.session.data['activity-change-new-type'] = activitySelection;
+          return res.redirect('change-activity-type-warning');
+        } else {
+          req.session.data['sample-plan-which-activity'] = activitySelection;
+          return res.redirect('sample-plan-start-page');
+        }
+      }
+
+      // Scenario E: Single activity → "Marine dredging and disposal" (no deletion needed)
+      if (activitySelection === 'Marine dredging and disposal' && 
+          (previousActivity === 'Marine disposal' || previousActivity === 'Marine dredging')) {
+        req.session.data['sample-plan-which-activity'] = activitySelection;
+        return res.redirect('sample-plan-start-page');
+      }
+    }
+
+    // Scenario F: No change or default - just save and redirect
     req.session.data['sample-plan-which-activity'] = activitySelection;
+    res.redirect('sample-plan-start-page');
+  });
+
+  ///////////////////////////////////////////
+  // Change activity type warning page
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/change-activity-type-warning`, function (req, res) {
+    req.session.data['samplePlansSection'] = section;
+    req.session.data['isSamplePlansSection'] = true;
+    res.render(`versions/${version}/${section}/change-activity-type-warning`);
+  });
+
+  // Change activity type warning router (POST)
+  router.post(`/versions/${version}/${section}/change-activity-type-warning-router`, function (req, res) {
+    const newActivityType = req.session.data['activity-change-new-type'];
+    const warningType = req.session.data['activity-change-warning-type'];
+
+    // Apply the activity change
+    req.session.data['sample-plan-which-activity'] = newActivityType;
+
+    // Clear appropriate session data based on warning type
+    if (warningType === 'delete-dredge') {
+      // Clear all dredge-related data
+      delete req.session.data['has-visited-dredging-site-locations'];
+      delete req.session.data['dredging-sites-all-complete'];
+      delete req.session.data['dredging-details-site-1-completed'];
+      delete req.session.data['dredging-details-site-1-material-type'];
+      delete req.session.data['dredging-details-site-1-material-type-other'];
+      delete req.session.data['dredging-details-site-1-method'];
+      delete req.session.data['dredging-details-site-1-method-other'];
+      delete req.session.data['dredging-details-site-1-depth'];
+      delete req.session.data['dredging-details-site-1-depth-completed'];
+      delete req.session.data['maximum-dredge-volume-completed'];
+      delete req.session.data['maximum-dredge-volume-total'];
+      delete req.session.data['maximum-dredge-volume-frequency'];
+      delete req.session.data['sample-plan-file-type'];
+    } else if (warningType === 'delete-disposal') {
+      // Clear all disposal-related data
+      delete req.session.data['sample-disposal-sites-completed'];
+      delete req.session.data['sample-disposal-sites-in-progress'];
+      delete req.session.data['has-visited-disposal-site-review'];
+      delete req.session.data['disposal-site-journey-type'];
+      delete req.session.data['has-visited-new-disposal-site-locations'];
+      delete req.session.data['has-visited-manual-disposal-site-locations'];
+      
+      // Clear existing disposal site data
+      delete req.session.data['selected-disposal-site-code'];
+      delete req.session.data['selected-disposal-site-name'];
+      delete req.session.data['selected-disposal-site-country'];
+      delete req.session.data['selected-disposal-site-sea-area'];
+      delete req.session.data['selected-disposal-site-status'];
+      
+      // Clear second disposal site data
+      delete req.session.data['sample-disposal-site-2-selected'];
+      delete req.session.data['selected-disposal-site-2-code'];
+      delete req.session.data['selected-disposal-site-2-name'];
+      delete req.session.data['selected-disposal-site-2-country'];
+      delete req.session.data['selected-disposal-site-2-sea-area'];
+      delete req.session.data['selected-disposal-site-2-status'];
+      
+      // Clear disposal details for existing sites
+      delete req.session.data['sample-disposal-site-material-type-completed'];
+      delete req.session.data['sample-disposal-details-site-1-material-type'];
+      delete req.session.data['sample-disposal-details-site-1-material-type-other'];
+      delete req.session.data['sample-disposal-details-site-1-method'];
+      delete req.session.data['sample-disposal-details-site-1-method-other'];
+      delete req.session.data['sample-disposal-site-1-maximum-volume-completed'];
+      delete req.session.data['sample-disposal-site-1-total-volume'];
+      delete req.session.data['sample-disposal-site-1-annual-volume'];
+      delete req.session.data['sample-disposal-site-1-volume-per-campaign'];
+      delete req.session.data['sample-disposal-site-1-campaigns-per-year'];
+      delete req.session.data['sample-disposal-site-1-beneficial-use-completed'];
+      delete req.session.data['sample-disposal-site-1-beneficial-use'];
+      delete req.session.data['sample-disposal-site-1-beneficial-use-description'];
+      
+      // Clear site 2 disposal details
+      delete req.session.data['sample-disposal-site-2-material-type-completed'];
+      delete req.session.data['sample-disposal-details-site-2-material-type'];
+      delete req.session.data['sample-disposal-details-site-2-material-type-other'];
+      delete req.session.data['sample-disposal-details-site-2-method'];
+      delete req.session.data['sample-disposal-details-site-2-method-other'];
+      delete req.session.data['sample-disposal-site-2-maximum-volume-completed'];
+      delete req.session.data['sample-disposal-site-2-total-volume'];
+      delete req.session.data['sample-disposal-site-2-annual-volume'];
+      delete req.session.data['sample-disposal-site-2-volume-per-campaign'];
+      delete req.session.data['sample-disposal-site-2-campaigns-per-year'];
+      delete req.session.data['sample-disposal-site-2-beneficial-use-completed'];
+      delete req.session.data['sample-disposal-site-2-beneficial-use'];
+      delete req.session.data['sample-disposal-site-2-beneficial-use-description'];
+      
+      // Clear new disposal site file upload data
+      delete req.session.data['new-disposal-file-type'];
+      delete req.session.data['new-disposal-details-site-1-completed'];
+      delete req.session.data['new-disposal-details-site-1-material-type'];
+      delete req.session.data['new-disposal-details-site-1-material-type-other'];
+      delete req.session.data['new-disposal-details-site-1-method'];
+      delete req.session.data['new-disposal-details-site-1-method-other'];
+      delete req.session.data['new-disposal-maximum-volume-completed'];
+      delete req.session.data['new-disposal-site-1-total-volume'];
+      delete req.session.data['new-disposal-beneficial-use-completed'];
+      delete req.session.data['new-disposal-site-1-beneficial-use'];
+      delete req.session.data['new-disposal-site-1-beneficial-use-description'];
+      delete req.session.data['new-disposal-site-1-name'];
+      
+      // Clear manual entry disposal site data
+      delete req.session.data['disposal-site-manual-entry-count'];
+      // Clear up to 5 manual entry sites (common maximum)
+      for (let i = 1; i <= 5; i++) {
+        delete req.session.data['new-disposal-site-' + i + '-name'];
+        delete req.session.data['new-disposal-site-' + i + '-coordinate-entry-method'];
+        delete req.session.data['new-disposal-site-' + i + '-coordinate-system'];
+        delete req.session.data['new-disposal-site-' + i + '-centre-latitude'];
+        delete req.session.data['new-disposal-site-' + i + '-centre-longitude'];
+        delete req.session.data['new-disposal-site-' + i + '-width'];
+        delete req.session.data['new-disposal-site-' + i + '-total-volume'];
+        delete req.session.data['new-disposal-site-' + i + '-beneficial-use'];
+        delete req.session.data['new-disposal-site-' + i + '-beneficial-use-description'];
+        delete req.session.data['new-disposal-details-site-' + i + '-material-type'];
+        delete req.session.data['new-disposal-details-site-' + i + '-material-type-other'];
+        delete req.session.data['new-disposal-details-site-' + i + '-method'];
+        delete req.session.data['new-disposal-details-site-' + i + '-method-other'];
+        // Clear multiple coordinate points
+        for (let j = 1; j <= 5; j++) {
+          delete req.session.data['new-disposal-site-' + i + '-point-' + j + '-latitude'];
+          delete req.session.data['new-disposal-site-' + i + '-point-' + j + '-longitude'];
+        }
+      }
+    }
+
+    // Clear CYA flag and warning flags
+    delete req.session.data['camefromcheckanswers'];
+    delete req.session.data['previous-activity-type'];
+    delete req.session.data['activity-change-warning-type'];
+    delete req.session.data['activity-change-new-type'];
+
+    // Redirect to task list
     res.redirect('sample-plan-start-page');
   });
 

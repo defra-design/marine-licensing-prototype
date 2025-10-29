@@ -1,0 +1,376 @@
+{% extends "layouts/main.html" %}
+
+{% block pageTitle %}
+  Content page template – {{ serviceName }} – GOV.UK Prototype Kit
+{% endblock %}
+
+{% block beforeContent %}
+  {{ govukBackLink({
+    text: "Back",
+    href: "javascript:window.history.back()"
+  }) }}
+{% endblock %}
+
+{% block content %}
+
+  <style>
+    .app-related-items {
+      border-top: 2px solid #1d70b8;
+      padding-top: 20px;
+    }
+  </style>
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+      <h1 class="govuk-heading-xl">
+        The scenarios for making complex changes in the sample plans journey
+      </h1>
+
+      <h2 class="govuk-heading-l" id="disposal-sites">
+        Changing disposal sites from Check your answers (CYA)
+      </h2>
+
+      <h3 class="govuk-heading-m">
+        Existing disposal sites
+      </h3>
+
+      <h4 class="govuk-heading-s">Change link behavior:</h4>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>Each site has its own individual change link</li>
+        <li>Returns to CYA anchored to the specific site details card that was changed</li>
+      </ul>
+
+      <h4 class="govuk-heading-s">Scenarios:</h4>
+
+      <p><strong>Scenario 1: Make changes and section remains COMPLETE</strong></p>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>User edits site details (coordinates, boundaries, etc.)</li>
+        <li>All existing disposal sites remain complete</li>
+        <li>→ Return to CYA (anchor to the specific existing site details card)</li>
+      </ul>
+
+      <p><strong>Scenario 2: Make changes that make section INCOMPLETE</strong></p>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>User deletes a site, or makes changes that break completion requirements</li>
+        <li>Break CYA connection</li>
+        <li>Route based on journey type:
+          <ul class="govuk-list govuk-list--bullet">
+            <li>Combined journey (new and existing sites): → Sub-task list</li>
+            <li>Single journey (existing sites only): → Main task list</li>
+          </ul>
+        </li>
+      </ul>
+
+      <p><strong>Scenario 3: User deletes a site</strong></p>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>Always breaks CYA connection</li>
+        <li>Always routes to appropriate hub (never back to CYA)</li>
+        <li>Route based on journey type:
+          <ul class="govuk-list govuk-list--bullet">
+            <li>Combined journey: → Sub-task list</li>
+            <li>Single journey: → Main task list</li>
+          </ul>
+        </li>
+      </ul>
+
+      <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
+      <h3 class="govuk-heading-m">
+        New disposal sites - file upload
+      </h3>
+
+      <h4 class="govuk-heading-s">Change link behavior:</h4>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>Change link on "Providing the new disposal site location" card</li>
+        <li>Change link on "New disposal site 1 details" card</li>
+        <li>Both return to CYA anchored to "Providing the new disposal site location" card</li>
+      </ul>
+
+      <h4 class="govuk-heading-s">Scenarios:</h4>
+
+      <p><strong>Scenario 1: Make changes and section remains COMPLETE</strong></p>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>User edits file upload or site details</li>
+        <li>File upload section stays complete</li>
+        <li>→ Return to CYA (anchor to "Providing the new disposal site location" card)</li>
+      </ul>
+
+      <p><strong>Scenario 2: Make changes that make section INCOMPLETE</strong></p>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>User removes file, changes entry method, or breaks completion</li>
+        <li>Break CYA connection</li>
+        <li>Route based on journey type:
+          <ul class="govuk-list govuk-list--bullet">
+            <li>Combined journey (new and existing sites): → Sub-task list</li>
+            <li>Single journey (new sites only): → Main task list</li>
+          </ul>
+        </li>
+      </ul>
+
+      <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
+      <h3 class="govuk-heading-m">
+        New disposal sites - manual entry
+      </h3>
+
+      <h4 class="govuk-heading-s">Change link behavior:</h4>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>Change link on "Providing the new disposal site location" card</li>
+        <li>Individual change links on each site card (Site 1, Site 2, etc.)</li>
+        <li>All return to CYA anchored to "Providing the new disposal site location" card</li>
+      </ul>
+
+      <h4 class="govuk-heading-s">Scenarios:</h4>
+
+      <p><strong>Scenario 1: Make changes and section remains COMPLETE</strong></p>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>User edits site coordinates, adds/removes sites</li>
+        <li>All manual entry sites remain complete</li>
+        <li>→ Return to CYA (anchor to "Providing the new disposal site location" card)</li>
+      </ul>
+
+      <p><strong>Scenario 2: Make changes that make section INCOMPLETE</strong></p>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>User deletes all sites, changes entry method, or leaves required fields empty</li>
+        <li>Break CYA connection</li>
+        <li>Route based on journey type:
+          <ul class="govuk-list govuk-list--bullet">
+            <li>Combined journey (new and existing sites): → Sub-task list</li>
+            <li>Single journey (new sites only): → Main task list</li>
+          </ul>
+        </li>
+      </ul>
+
+      <p><strong>Scenario 3: User deletes sites</strong></p>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>Always breaks CYA connection</li>
+        <li>Always routes to appropriate hub (never back to CYA)</li>
+        <li>Route based on journey type:
+          <ul class="govuk-list govuk-list--bullet">
+            <li>Combined journey: → Sub-task list</li>
+            <li>Single journey: → Main task list</li>
+          </ul>
+        </li>
+      </ul>
+
+      <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
+
+      <h3 class="govuk-heading-m">
+        Key journey types
+      </h3>
+
+      <h4 class="govuk-heading-s">Combined journey (new and existing sites together):</h4>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>User is providing both new and existing disposal sites</li>
+        <li>Has a sub-task list showing both sections</li>
+        <li>When incomplete from CYA: → Sub-task list (to complete whichever section is incomplete)</li>
+      </ul>
+
+      <h4 class="govuk-heading-s">Single journey (only one type):</h4>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>User is either providing only existing sites OR only new sites</li>
+        <li>No sub-task list (works directly from main task list)</li>
+        <li>When incomplete from CYA: → Main task list</li>
+      </ul>
+
+      <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
+
+      <h3 class="govuk-heading-m">
+        Key principles
+      </h3>
+
+      <ol class="govuk-list govuk-list--number">
+        <li><strong>Stay in CYA:</strong> Only if ALL changes keep the section complete</li>
+        <li><strong>Break CYA:</strong> When section becomes incomplete or sites are deleted</li>
+        <li><strong>Smart routing:</strong> Routes to sub-task list (combined) or main task list (single) based on journey type</li>
+        <li><strong>Anchoring:</strong> When returning to CYA, jumps directly to the relevant card the user was changing</li>
+      </ol>
+
+      <hr class="govuk-section-break govuk-section-break--xl govuk-section-break--visible">
+
+      <h2 class="govuk-heading-l" id="activity-type">
+        Changing activity type
+      </h2>
+
+      <h3 class="govuk-heading-m">
+        Task list scenarios (NOT from CYA change links)
+      </h3>
+
+      <p><strong>Scenario 1: "Marine dredging and disposal" → "Marine disposal"</strong></p>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>Check: Is dredge task in progress or completed?</li>
+        <li>If YES: Show warning → delete dredge data → go to task list</li>
+        <li>If NO (not yet started): Just change activity → go to task list (no warning)</li>
+      </ul>
+
+      <p><strong>Scenario 2: "Marine dredging and disposal" → "Marine dredging"</strong></p>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>Check: Is disposal task in progress or completed?</li>
+        <li>If YES: Show warning → delete disposal data → go to task list</li>
+        <li>If NO (not yet started): Just change activity → go to task list (no warning)</li>
+      </ul>
+
+      <p><strong>Scenario 3: "Marine disposal" → "Marine dredging"</strong></p>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>Check: Is disposal task in progress or completed?</li>
+        <li>If YES: Show warning → delete disposal data → go to task list</li>
+        <li>If NO (not yet started): Just change activity → go to task list (no warning)</li>
+      </ul>
+
+      <p><strong>Scenario 4: "Marine dredging" → "Marine disposal"</strong></p>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>Check: Is dredge task in progress or completed?</li>
+        <li>If YES: Show warning → delete dredge data → go to task list</li>
+        <li>If NO (not yet started): Just change activity → go to task list (no warning)</li>
+      </ul>
+
+      <p><strong>Scenario 5: "Marine disposal/dredging" → "Marine dredging and disposal"</strong></p>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>No deletion needed (just making more tasks available)</li>
+        <li>Just change activity → go to task list (no warning)</li>
+      </ul>
+
+      <p><strong>Scenario 6: No change</strong></p>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>Same selection → just go back to task list</li>
+      </ul>
+
+      <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
+      <h3 class="govuk-heading-m">
+        CYA scenarios (FROM check answers change links)
+      </h3>
+
+      <p><strong>Scenario 1: "Marine dredging and disposal" → "Marine disposal"</strong></p>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>No check needed - ALWAYS show warning</li>
+        <li>Show warning → delete dredge data → break CYA → go to task list</li>
+      </ul>
+
+      <p><strong>Scenario 2: "Marine dredging and disposal" → "Marine dredging"</strong></p>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>No check needed - ALWAYS show warning</li>
+        <li>Show warning → delete disposal data → break CYA → go to task list</li>
+      </ul>
+
+      <p><strong>Scenario 3: "Marine disposal" → "Marine dredging"</strong></p>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>No check needed - ALWAYS show warning</li>
+        <li>Show warning → delete disposal data → break CYA → go to task list</li>
+      </ul>
+
+      <p><strong>Scenario 4: "Marine dredging" → "Marine disposal"</strong></p>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>No check needed - ALWAYS show warning</li>
+        <li>Show warning → delete dredge data → break CYA → go to task list</li>
+      </ul>
+
+      <p><strong>Scenario 5: "Marine disposal/dredging" → "Marine dredging and disposal"</strong></p>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>No deletion needed (just making more tasks available)</li>
+        <li>Just change activity → break CYA → go to task list (no warning)</li>
+      </ul>
+
+      <p><strong>Scenario 6: No change</strong></p>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>Same selection → go back to CYA (maintain CYA connection)</li>
+      </ul>
+
+      <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
+      <h3 class="govuk-heading-m">
+        Key difference
+      </h3>
+
+      <ul class="govuk-list govuk-list--bullet">
+        <li><strong>From task list:</strong> Only warn if task has been started (in progress or completed)</li>
+        <li><strong>From CYA:</strong> Always warn when deleting data (regardless of task status, because you're already at CYA means you've made progress in the journey)</li>
+      </ul>
+
+    </div>
+
+    <div class="govuk-grid-column-one-third" id="sidebarContainer">
+      <aside class="app-related-items" id="stickyNav">
+        <h2 class="govuk-heading-s">On this page</h2>
+        <nav role="navigation" aria-labelledby="subsection-title">
+          <ul class="govuk-list govuk-list--spaced">
+            <li><a href="#disposal-sites" class="govuk-link--no-visited-state">Changing disposal sites from CYA</a></li>
+            <li><a href="#activity-type" class="govuk-link--no-visited-state">Changing activity type</a></li>
+          </ul>
+        </nav>
+      </aside>
+    </div>
+
+  </div>
+
+  <script>
+    // Make sidebar sticky using position: fixed with JavaScript positioning
+    (function() {
+      var nav = document.getElementById('stickyNav');
+      var container = document.getElementById('sidebarContainer');
+      if (!nav || !container) return;
+      
+      var originalOffset = null;
+      var originalWidth = null;
+      var isFixed = false;
+      
+      function calculatePosition() {
+        var rect = container.getBoundingClientRect();
+        var scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        
+        // Store original position on first run
+        if (originalOffset === null) {
+          originalOffset = rect.top + scrollTop;
+          originalWidth = rect.width;
+        }
+        
+        var threshold = originalOffset - 20; // 20px from top when scrolling
+        
+        if (scrollTop > threshold && !isFixed) {
+          // Switch to fixed
+          isFixed = true;
+          nav.style.position = 'fixed';
+          nav.style.top = '20px';
+          nav.style.left = rect.left + 'px';
+          nav.style.width = originalWidth + 'px';
+          nav.style.zIndex = '100';
+        } else if (scrollTop <= threshold && isFixed) {
+          // Switch back to static
+          isFixed = false;
+          nav.style.position = '';
+          nav.style.top = '';
+          nav.style.left = '';
+          nav.style.width = '';
+          nav.style.zIndex = '';
+        } else if (isFixed) {
+          // Update horizontal position if window resized while fixed
+          nav.style.left = rect.left + 'px';
+          nav.style.width = originalWidth + 'px';
+        }
+      }
+      
+      // Run on scroll
+      window.addEventListener('scroll', calculatePosition);
+      
+      // Run on resize
+      window.addEventListener('resize', function() {
+        if (isFixed) {
+          // Reset to recalculate
+          isFixed = false;
+          nav.style.position = '';
+          nav.style.top = '';
+          nav.style.left = '';
+          nav.style.width = '';
+          nav.style.zIndex = '';
+          originalOffset = null;
+        }
+        calculatePosition();
+      });
+      
+      // Run on load
+      calculatePosition();
+    })();
+  </script>
+
+{% endblock %}
