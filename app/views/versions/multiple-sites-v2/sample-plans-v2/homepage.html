@@ -19,7 +19,7 @@
       active: true
     },
     {
-      href: "projects?hideButtons=true",
+      href: "projects",
       text: "Projects",
       active: false
     },
@@ -38,13 +38,15 @@
 
 {% block beforeContent %}
     {% include "../includes/phase-banner.html" %}
+    {% if data['user_type'] === 'organisation' %}
     <div class="app-organisation-switcher">
-		<span class="govuk-body-s govuk-!-font-weight-bold app-organisation-switcher__name">Brighton Marina</span>
+		<span class="govuk-body-s govuk-!-font-weight-bold app-organisation-switcher__name">{{ data['organisation-name'] }}</span>
 
-				<a class="govuk-link app-organisation-switcher__link govuk-link--no-visited-state" href="organisation-selector-autocomplete?change=true">
+				<a class="govuk-link app-organisation-switcher__link govuk-link--no-visited-state" href="organisation-selector">
 					Change who you're representing
 				</a>
 	</div>
+    {% endif %}
 {% endblock %}
 
 <!-- Setting the big main heading at the top of the page -->
@@ -61,14 +63,14 @@ Home
 
 <div class="govuk-grid-row">
 	<div class="govuk-grid-column-full">
-		<span class="govuk-caption-l">Brighton Marina</span>
+		<span class="govuk-caption-l">{{ data['organisation-name'] }}</span>
 		<h1 class="govuk-heading-l">
 			{{ pageHeadingTextHTML }}
 		</h1>
 
 		<div class="govuk-grid-row">
 		<div class="govuk-grid-column-one-third">
-			<a href="projects?hideButtons=true" class="homepage-tile-card">
+			<a href="projects" class="homepage-tile-card">
 				<h2 class="govuk-heading-m homepage-tile-card__heading">View projects</h2>
 				<p class="govuk-body homepage-tile-card__description">View all of the existing projects in this account.</p>
 			</a>
@@ -82,7 +84,7 @@ Home
 			</div>
 
 		<div class="govuk-grid-column-one-third">
-			<a href="project-name-start?sample-plan-project-name-text-input=&user_type=organisation&organisation-name=Brighton Marina" class="homepage-tile-card">
+			<a href="project-name-start?sample-plan-project-name-text-input=" class="homepage-tile-card">
 				<h2 class="govuk-heading-m homepage-tile-card__heading">Get a plan for sediment sample analysis</h2>
 				<p class="govuk-body homepage-tile-card__description">Send information to get a plan for taking sediment samples for analysis.</p>
 			</a>

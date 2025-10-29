@@ -85,14 +85,26 @@ module.exports = function (router) {
 
   // Sign-in router (POST)
   router.post(`/versions/${version}/${section}/sign-in-router`, function (req, res) {
+    // Check if there's a goto parameter
+    const gotoPage = req.session.data['goto'];
+    
     // if a user is an org user then redirect to select an org
     if (req.session.data['user_type'] === 'organisation') {
       // Clear the flag to ensure this is treated as a new selection
       delete req.session.data['changing-organisation'];
+      // Store goto for later use
+      if (gotoPage) {
+        req.session.data['goto-after-org-selector'] = gotoPage;
+      }
       res.redirect('organisation-selector');
     } else {
-      // For prototype purposes, always redirect to project name start
-      res.redirect('project-name-start');
+      // For prototype purposes, redirect based on goto parameter or default to project name start
+      if (gotoPage === 'homepage') {
+        delete req.session.data['goto'];
+        res.redirect('homepage');
+      } else {
+        res.redirect('project-name-start');
+      }
     }
   });
 
@@ -146,8 +158,15 @@ module.exports = function (router) {
         delete req.session.data['changing-organisation'];
         res.redirect('projects');
       } else {
-        // Redirect to the project name start page for new users
-        res.redirect('project-name-start');
+        // Check if there's a stored goto destination
+        const gotoPage = req.session.data['goto-after-org-selector'];
+        if (gotoPage === 'homepage') {
+          delete req.session.data['goto-after-org-selector'];
+          res.redirect('homepage');
+        } else {
+          // Redirect to the project name start page for new users
+          res.redirect('project-name-start');
+        }
       }
     }
   });
