@@ -90,6 +90,14 @@ module.exports = function (router) {
   /////////////////////////////////////////////////////////
   router.get(`/versions/${version}/${section}/${subSection}/${newSubSection}/review-new-disposal-site-details`, function (req, res) {
     req.session.data['samplePlansSection'] = section;
+    
+    // Capture the query parameter if coming from check answers
+    if (req.query.camefromcheckanswers === 'true') {
+      req.session.data['camefromcheckanswers'] = 'true';
+      // Clear any previous interrupted flag - this is a fresh journey from CYA
+      delete req.session.data['new-disposal-cya-journey-interrupted'];
+    }
+    
     res.render(`versions/${version}/${section}/${subSection}/${newSubSection}/review-new-disposal-site-details`);
   });
 
@@ -103,8 +111,10 @@ module.exports = function (router) {
     const maximumVolumeComplete = req.session.data['new-disposal-maximum-volume-completed'];
     const beneficialUseComplete = req.session.data['new-disposal-beneficial-use-completed'];
     
+    const allComplete = detailsComplete && maximumVolumeComplete && beneficialUseComplete;
+    
     // Set the new disposal sites completion status
-    if (detailsComplete && maximumVolumeComplete && beneficialUseComplete) {
+    if (allComplete) {
       req.session.data['new-disposal-sites-all-complete'] = true;
     } else {
       req.session.data['new-disposal-sites-all-complete'] = false;
@@ -113,7 +123,7 @@ module.exports = function (router) {
     // Only set overall completion status if journey type is NOT 'both'
     // (sub-task list page handles combined status for 'both')
     if (req.session.data['disposal-site-journey-type'] !== 'both') {
-      if (detailsComplete && maximumVolumeComplete && beneficialUseComplete) {
+      if (allComplete) {
         req.session.data['sample-disposal-sites-completed'] = true;
         req.session.data['sample-disposal-sites-in-progress'] = false;
       } else {
@@ -122,11 +132,40 @@ module.exports = function (router) {
       }
     }
     
-    // Redirect based on journey type
-    if (req.session.data['disposal-site-journey-type'] === 'both') {
-      res.redirect('../disposal-sites-and-details');
+    // Check if we need to return to check answers
+    const cameFromCYA = req.session.data['camefromcheckanswers'] === 'true';
+    const journeyInterrupted = req.session.data['new-disposal-cya-journey-interrupted'] === true;
+    
+    if (cameFromCYA) {
+      req.session.data['camefromcheckanswers'] = false;
+      
+      // Only return to check-answers if task is complete
+      if (allComplete) {
+        res.redirect('../../check-answers#site-location');
+      } else {
+        // Task became incomplete - set interrupted flag and return to appropriate hub
+        req.session.data['new-disposal-cya-journey-interrupted'] = true;
+        if (req.session.data['disposal-site-journey-type'] === 'both') {
+          res.redirect('../disposal-sites-and-details');
+        } else {
+          res.redirect('../../sample-plan-start-page');
+        }
+      }
+    } else if (journeyInterrupted) {
+      // Journey was previously interrupted - always go to appropriate hub even if now complete
+      // User must manually click "Check your answers" from hub to get back to CYA
+      if (req.session.data['disposal-site-journey-type'] === 'both') {
+        res.redirect('../disposal-sites-and-details');
+      } else {
+        res.redirect('../../sample-plan-start-page');
+      }
     } else {
-      res.redirect('../../sample-plan-start-page');
+      // Normal flow - redirect based on journey type
+      if (req.session.data['disposal-site-journey-type'] === 'both') {
+        res.redirect('../disposal-sites-and-details');
+      } else {
+        res.redirect('../../sample-plan-start-page');
+      }
     }
   });
 

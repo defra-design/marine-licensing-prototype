@@ -208,11 +208,15 @@
                 {% if data['sample-plan-new-or-existing-licence'] == "New marine licence" %}
                     {% set licenceLengthText = "" %}
                     {% if data['sample-plan-licence-length-years'] and data['sample-plan-licence-length-months'] %}
-                        {% set licenceLengthText = data['sample-plan-licence-length-years'] + " years " + data['sample-plan-licence-length-months'] + " months" %}
+                        {% set yearText = " year " if data['sample-plan-licence-length-years'] == "1" else " years " %}
+                        {% set monthText = " month" if data['sample-plan-licence-length-months'] == "1" else " months" %}
+                        {% set licenceLengthText = data['sample-plan-licence-length-years'] + yearText + data['sample-plan-licence-length-months'] + monthText %}
                     {% elif data['sample-plan-licence-length-years'] %}
-                        {% set licenceLengthText = data['sample-plan-licence-length-years'] + " years 0 months" %}
+                        {% set yearText = " year " if data['sample-plan-licence-length-years'] == "1" else " years " %}
+                        {% set licenceLengthText = data['sample-plan-licence-length-years'] + yearText + "0 months" %}
                     {% elif data['sample-plan-licence-length-months'] %}
-                        {% set licenceLengthText = "0 years " + data['sample-plan-licence-length-months'] + " months" %}
+                        {% set monthText = " month" if data['sample-plan-licence-length-months'] == "1" else " months" %}
+                        {% set licenceLengthText = "0 years " + data['sample-plan-licence-length-months'] + monthText %}
                     {% else %}
                         {% set licenceLengthText = "5 years 0 months" %}
                     {% endif %}
@@ -560,12 +564,12 @@
         </div>-->
 
         <!-- Existing disposal site 1 details section -->
-        <div class="govuk-summary-card">
+        <div id="disposal-site-1-details" class="govuk-summary-card">
             <div class="govuk-summary-card__title-wrapper">
                 <h2 class="govuk-summary-card__title">Existing disposal site 1 details</h2>
                 {% if data['samplePlanApplicationSubmitted'] != "true" %}
                 <div class="govuk-summary-card__actions">
-                    <a class="govuk-link govuk-link--no-visited-state" href="">
+                    <a class="govuk-link govuk-link--no-visited-state" href="disposal-site-locations/review-disposal-site-details?camefromcheckanswers=true">
                         Change<span class="govuk-visually-hidden"> existing disposal site 1</span>
                     </a>
                 </div>
@@ -743,12 +747,12 @@
 
         <!-- Existing disposal site 2 details section (conditional) -->
         {% if data['sample-disposal-site-2-selected'] %}
-        <div class="govuk-summary-card">
+        <div id="disposal-site-2-details" class="govuk-summary-card">
             <div class="govuk-summary-card__title-wrapper">
                 <h2 class="govuk-summary-card__title">Existing disposal site 2 details</h2>
                 {% if data['samplePlanApplicationSubmitted'] != "true" %}
                 <div class="govuk-summary-card__actions">
-                    <a class="govuk-link govuk-link--no-visited-state" href="">
+                    <a class="govuk-link govuk-link--no-visited-state" href="disposal-site-locations/review-disposal-site-details?camefromcheckanswers=true&site=2">
                         Change<span class="govuk-visually-hidden"> existing disposal site 2</span>
                     </a>
                 </div>
@@ -929,14 +933,14 @@
         <!-- New file upload disposal site section -->
         {% if data['has-visited-new-disposal-site-locations'] and (data['disposal-site-journey-type'] == 'new' or data['disposal-site-journey-type'] == 'both') %}
         <!-- Providing the new disposal site location section -->
-        <div class="govuk-summary-card">
+        <div id="site-location" class="govuk-summary-card">
             <div class="govuk-summary-card__title-wrapper">
                 <h2 class="govuk-summary-card__title">
                     Providing the new disposal site location
                 </h2>
                 {% if data['samplePlanApplicationSubmitted'] != "true" %}
                 <div class="govuk-summary-card__actions">
-                    <a class="govuk-link govuk-link--no-visited-state" href="">
+                    <a class="govuk-link govuk-link--no-visited-state" href="disposal-site-locations/new-disposal-sites/review-new-disposal-site-details?camefromcheckanswers=true">
                         Change<span class="govuk-visually-hidden"> how you provide the new disposal site location</span>
                     </a>
                 </div>
@@ -987,7 +991,7 @@
                 <h2 class="govuk-summary-card__title">New disposal site 1 details</h2>
                 {% if data['samplePlanApplicationSubmitted'] != "true" %}
                 <div class="govuk-summary-card__actions">
-                    <a class="govuk-link govuk-link--no-visited-state" href="">
+                    <a class="govuk-link govuk-link--no-visited-state" href="disposal-site-locations/new-disposal-sites/review-new-disposal-site-details?camefromcheckanswers=true">
                         Change<span class="govuk-visually-hidden"> new disposal site 1 details</span>
                     </a>
                 </div>
@@ -1114,14 +1118,14 @@
         <!-- Manual entry disposal sites section -->
         {% if data['has-visited-manual-disposal-site-locations'] and (data['disposal-site-journey-type'] == 'manual-entry' or data['disposal-site-journey-type'] == 'both') %}
         <!-- Providing the new disposal site location section -->
-        <div class="govuk-summary-card">
+        <div id="site-location" class="govuk-summary-card">
             <div class="govuk-summary-card__title-wrapper">
                 <h2 class="govuk-summary-card__title">
                     Providing the new disposal site location{% if siteCount > 1 %}s{% endif %}
                 </h2>
                 {% if data['samplePlanApplicationSubmitted'] != "true" %}
                 <div class="govuk-summary-card__actions">
-                    <a class="govuk-link govuk-link--no-visited-state" href="">
+                    <a class="govuk-link govuk-link--no-visited-state" href="disposal-site-locations/new-disposal-sites/manual-entry/review-manual-disposal-site-details?camefromcheckanswers=true">
                         Change<span class="govuk-visually-hidden"> how you provide the new disposal site location</span>
                     </a>
                 </div>
@@ -1152,7 +1156,7 @@
                 <h2 class="govuk-summary-card__title">New disposal site {{ siteNum }} details</h2>
                 {% if data['samplePlanApplicationSubmitted'] != "true" %}
                 <div class="govuk-summary-card__actions">
-                    <a class="govuk-link govuk-link--no-visited-state" href="">
+                    <a class="govuk-link govuk-link--no-visited-state" href="disposal-site-locations/new-disposal-sites/manual-entry/review-manual-disposal-site-details?camefromcheckanswers=true">
                         Change<span class="govuk-visually-hidden"> new disposal site {{ siteNum }} details</span>
                     </a>
                 </div>
@@ -1395,7 +1399,7 @@
         {% endif %}
 
         <!-- Fee estimate section -->
-        <div class="govuk-summary-card">
+        <div id="fee-estimate" class="govuk-summary-card">
             <div class="govuk-summary-card__title-wrapper">
                 <h2 class="govuk-summary-card__title">Fee estimate</h2>
             </div>
@@ -1410,7 +1414,7 @@
                         </dd>
                         {% if data['samplePlanApplicationSubmitted'] != "true" %}
                         <dd class="govuk-summary-list__actions">
-                            <a class="govuk-link govuk-link--no-visited-state" href="">
+                            <a class="govuk-link govuk-link--no-visited-state" href="fee-estimate?camefromcheckanswers=true">
                                 Change<span class="govuk-visually-hidden"> fee estimate accepted</span>
                             </a>
                         </dd>

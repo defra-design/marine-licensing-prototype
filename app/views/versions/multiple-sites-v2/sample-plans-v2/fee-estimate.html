@@ -171,7 +171,9 @@ Fee estimate
 				<button class="govuk-button" data-module="govuk-button">
 					Save and continue
 				</button>
+				{% if data['camefromcheckanswers'] != 'true' %}
 				<a class="govuk-link" href="sample-plan-start-page">Cancel</a>
+				{% endif %}
 			</div>
 
 		</form>
