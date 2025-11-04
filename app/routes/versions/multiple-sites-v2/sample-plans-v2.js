@@ -129,6 +129,7 @@ module.exports = function (router) {
     }
 
     const allOrganisations = [
+      {value: "John Doe", text: "John Doe"},
       {value: "Brighton Marina Operations", text: "Brighton Marina Operations"},
       {value: "Grimsby Fish Dock Enterprise", text: "Grimsby Fish Dock Enterprise"},
       {value: "North East Wind Farms", text: "North East Wind Farms"},

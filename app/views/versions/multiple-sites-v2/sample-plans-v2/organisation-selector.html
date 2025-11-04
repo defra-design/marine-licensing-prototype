@@ -8,7 +8,7 @@
       classes: "govuk-header--full-width-border"
     }) }}
     {{ govukServiceNavigation({
-      serviceName: "Get a plan for sediment sample analysis",
+      serviceName: "Get permission for marine work",
       navigation: [
         {
           href: "homepage",
@@ -36,7 +36,7 @@
       classes: "govuk-header--full-width-border"
     }) }}
     {{ govukServiceNavigation({
-      serviceName: "Get a plan for sediment sample analysis"
+      serviceName: "Get permission for marine work"
     }) }}
   {% endif %}
 {% endblock %}
@@ -52,7 +52,7 @@
 
 <!-- Set the heading for the page -->
 {% set pageHeadingTextHTML %}
-Select the organisation this work is for
+Who do you want to represent?
 {% endset %}
 
 {% set errorText1HTML %}
@@ -109,9 +109,7 @@ Select the organisation this work is for
       classes: "govuk-fieldset__legend--l"
     }
   },
-  hint: {
-    text: "You can change the organisation later from the Projects page."
-  },
+
   items: organisations,
   errorMessage: {
     text: errorText1HTML
