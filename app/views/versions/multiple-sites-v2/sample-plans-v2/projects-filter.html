@@ -109,7 +109,8 @@ Projects
 				id: "team-member",
 				name: "teamMember",
 				label: {
-					text: "Select team member"
+					text: "Select team member",
+					classes: "govuk-visually-hidden"
 				},
 				items: [
 					{
@@ -143,6 +144,10 @@ Projects
 					border-left: none;
 					padding-left: 0;
 					margin-left: 0;
+				}
+				/* Target the specific 20px margin-bottom on govuk-form-group */
+				.govuk-form-group {
+					margin-bottom: 0 !important;
 				}
 			</style>
 
