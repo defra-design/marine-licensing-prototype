@@ -139,14 +139,21 @@ Projects
 				.project-filter-radios .govuk-radios__label {
 					white-space: nowrap;
 				}
-				/* Remove conditional reveal border for inline radios */
+				/* Remove conditional reveal border and spacing for inline radios */
 				.project-filter-radios .govuk-radios__conditional {
-					border-left: none;
-					padding-left: 0;
-					margin-left: 0;
+					border-left: none !important;
+					padding-left: 0 !important;
+					margin-left: 0 !important;
+					margin-bottom: 0 !important;
+					padding-bottom: 0 !important;
 				}
 				/* Target the specific 20px margin-bottom on govuk-form-group */
 				.govuk-form-group {
+					margin-bottom: 0 !important;
+				}
+				/* Remove button margins */
+				.govuk-button {
+					margin-top: 0 !important;
 					margin-bottom: 0 !important;
 				}
 			</style>
