@@ -1,0 +1,357 @@
+{% extends "../layouts/sample-plans-v2.html" %}
+
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+<!-- Set a variable to identify this specific page -->
+{% set currentPageId = "sample-plans-projects" %}
+
+{% block header %}
+{% from "govuk/components/header/macro.njk" import govukHeader %}
+{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
+
+{{ govukHeader({
+  classes: "govuk-header--full-width-border"
+}) }}
+{{ govukServiceNavigation({
+  serviceName: "Get permission for marine work",
+  serviceUrl: "/versions/multiple-sites-v2/sample-plans-v2/homepage",
+  navigation: [
+    {
+      href: "homepage",
+      text: "Home",
+      active: false
+    },
+    {
+      href: "projects",
+      text: "Projects",
+      active: true
+    },
+    {
+      href: "#",
+      text: "Defra account",
+      active: false
+    },
+    {
+      href: "/versions/multiple-sites-v2/sample-plans-v1/sign-in.html?goto=home",
+      text: "Sign out"
+    }
+  ]
+}) }}
+{% endblock %}
+
+{% block beforeContent %}
+	  	{% include "../includes/phase-banner.html" %}
+    {% if data['user_type'] === 'organisation' %}
+    <div class="app-organisation-switcher">
+		<span class="govuk-body-s govuk-!-font-weight-bold app-organisation-switcher__name">{{ data['organisation-name'] }}</span>
+
+				<a class="govuk-link app-organisation-switcher__link govuk-link--no-visited-state" href="organisation-selector?change=true&returnTo=projects">
+					Change who you're representing
+				</a>
+	</div>
+    {% endif %}
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+Projects
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - Get permission for marine work
+{% endblock %}
+
+{% block content %}
+
+<!-- Notification banner -->
+{% set notificationHtml %}
+  <p class="govuk-notification-banner__heading govuk-!-margin-bottom-3" style="width: 100%; max-width: none; margin: 0;">
+    You may need to log in to a different system to access some of your applications
+  </p>
+  <p class="govuk-body" style="width: 100%; max-width: none; margin: 0;">
+    <a class="govuk-notification-banner__link" href="#">Sign in to the Marine Case Management System</a> to view or manage information that is not available in this system.
+  </p>
+{% endset %}
+
+<!--<div style="width: 100%; max-width: 1280px; margin: 0 auto;">
+{{ govukNotificationBanner({
+  html: notificationHtml
+}) }}
+</div>-->
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-full">
+		<span class="govuk-caption-l">{{ data['organisation-name'] }}</span>
+		<h1 class="govuk-heading-l">
+			{{ pageHeadingTextHTML }}
+		</h1>
+
+		{% set isDeleteProject = data['deleteSamplePlanProject'] == "true" %}
+		{% set isUserSamplePlanProjectDeleted = data['userSamplePlanProjectDeleted'] == "true" %}
+		{% set isBranscombeProjectDeleted = data['branscombeProjectDeleted'] == "true" %}
+		{% set isAlternativeView = data['alternativeSamplePlanProjectView'] == "true" %}
+
+		{% if isDeleteProject %}
+
+		<p>You currently have no projects.</p>
+
+		{% else %}
+
+		<!-- Filter component -->
+		<div class="govuk-!-padding-4 govuk-!-margin-bottom-6" style="background-color: #f3f2f1;">
+			{% set teamMemberHtml %}
+			{{ govukSelect({
+				id: "team-member",
+				name: "teamMember",
+				label: {
+					text: "Select team member"
+				},
+				items: [
+					{
+						value: "",
+						text: "Select a team member",
+						selected: true
+					},
+					{
+						value: "alex-williams",
+						text: "Alex Williams"
+					},
+					{
+						value: "sarah-chen",
+						text: "Sarah Chen"
+					},
+					{
+						value: "james-thompson",
+						text: "James Thompson"
+					}
+				]
+			}) }}
+			{% endset %}
+
+			<div style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 20px;">
+				<div style="flex: 1; min-width: 300px;">
+					{{ govukRadios({
+						name: "projectFilter",
+						fieldset: {
+							legend: {
+								text: "Show projects",
+								classes: "govuk-fieldset__legend--m"
+							}
+						},
+						classes: "govuk-radios--small govuk-radios--inline",
+						items: [
+							{
+								value: "my-projects",
+								text: "My projects",
+								checked: true
+							},
+							{
+								value: "all-projects",
+								text: "All projects"
+							},
+							{
+								value: "specific-team-member",
+								text: "Specific team member",
+								conditional: {
+									html: teamMemberHtml
+								}
+							}
+						]
+					}) }}
+				</div>
+				<div>
+					{{ govukButton({
+						text: "Apply filters"
+					}) }}
+				</div>
+			</div>
+		</div>
+
+		<table class="govuk-table" data-module="moj-sortable-table">
+			<caption class="govuk-table__caption govuk-visually-hidden">{{ pageHeadingTextHTML }}</caption>
+			<thead class="govuk-table__head">
+			  <tr class="govuk-table__row">
+				<th scope="col" class="govuk-table__header" aria-sort="none">Project name</th>
+				<th scope="col" class="govuk-table__header" aria-sort="none">Type</th>
+				<th scope="col" class="govuk-table__header" aria-sort="none">Reference</th>
+				<th scope="col" class="govuk-table__header" aria-sort="descending">Status</th>
+				<th scope="col" class="govuk-table__header" aria-sort="none">Date submitted</th>
+				<th scope="col" class="govuk-table__header" aria-sort="none">Actions</th>
+			  </tr>
+			</thead>
+			<tbody class="govuk-table__body">
+				{% if not isDeleteProject and not isAlternativeView %}
+				<tr class="govuk-table__row">
+					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Tynemouth navigation dredge</th>
+					<td class="govuk-table__cell">
+						Sediment sample plan
+					</td>
+					<td class="govuk-table__cell" data-sort-value="001">
+						SAM/2025/00023
+					</td>
+					
+					<td class="govuk-table__cell" data-sort-value="001">
+						{{ govukTag({
+							text: "Sent"
+						}) }}
+					</td>
+					<td class="govuk-table__cell" data-sort-value="250820">20 Aug 2025</td>
+					<td class="govuk-table__cell" data-sort-value="View details">	
+						<a href="#" class="govuk-link--no-visited-state">View details</a>
+					</td>
+				</tr>
+				{% endif %}
+
+				{% if not isBranscombeProjectDeleted and not isDeleteProject and not isAlternativeView %}
+				<tr class="govuk-table__row">
+					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Branscombe bore holes</th>
+					<td class="govuk-table__cell">
+						Exempt activity notification
+					</td>
+					<td class="govuk-table__cell" data-sort-value="001">
+						-
+					</td>
+					
+					<td class="govuk-table__cell" data-sort-value="005">
+						{{ govukTag({
+							text: "Draft",
+							classes: "govuk-tag--light-blue"
+						}) }}
+					</td>
+					<td class="govuk-table__cell" data-sort-value="-">-</td>
+					<td class="govuk-table__cell" data-sort-value="Continue">	
+						<a href="#" class="govuk-link--no-visited-state govuk-!-margin-right-4">Continue</a> <a href="delete?project=branscombe-bore-holes" class="govuk-link--no-visited-state">Delete</a>
+					</td>
+				</tr>
+				{% endif %}
+
+				{% if not isDeleteProject and not isAlternativeView %}
+				<tr class="govuk-table__row">
+					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Worthing sediment samples</th>
+					<td class="govuk-table__cell">
+						Exempt activity notification
+					</td>
+					<td class="govuk-table__cell" data-sort-value="003">
+						EXE/2025/00002
+					</td>
+					
+					<td class="govuk-table__cell" data-sort-value="004">
+						{{ govukTag({
+							text: "Active",
+							classes: "govuk-tag--green"
+						}) }}
+					</td>
+					<td class="govuk-table__cell" data-sort-value="-">12 May 2025</td>
+					<td class="govuk-table__cell" data-sort-value="Continue">	
+						<a href="#" class="govuk-link--no-visited-state govuk-!-margin-right-4">View details</a>
+					</td>
+				</tr>
+				{% endif %}
+
+				{% if not isDeleteProject and isAlternativeView %}
+				<tr class="govuk-table__row">
+					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Worthing sediment sample</th>
+					<td class="govuk-table__cell">
+						Sediment sample plan
+					</td>
+					<td class="govuk-table__cell" data-sort-value="003">
+						EXE/2025/00002
+					</td>
+					
+					<td class="govuk-table__cell" data-sort-value="002">
+						{{ govukTag({
+							text: "Sent"
+						}) }}
+					</td>
+					<td class="govuk-table__cell" data-sort-value="250512">12 May 2025</td>
+					<td class="govuk-table__cell" data-sort-value="View details">	
+						<a href="#" class="govuk-link--no-visited-state">View details</a>
+					</td>
+				</tr>
+				{% endif %}
+
+				{% if not isDeleteProject and isAlternativeView %}
+				<tr class="govuk-table__row">
+					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Tynemouth navigation dredge</th>
+					<td class="govuk-table__cell">
+						Sediment sample plan
+					</td>
+					<td class="govuk-table__cell" data-sort-value="004">
+						SAM/2025/00023
+					</td>
+					
+					<td class="govuk-table__cell" data-sort-value="001">
+						{{ govukTag({
+							text: "Sent"
+						}) }}
+					</td>
+					<td class="govuk-table__cell" data-sort-value="250820">20 Aug 2025</td>
+					<td class="govuk-table__cell" data-sort-value="View details">	
+						<a href="#" class="govuk-link--no-visited-state">View details</a>
+					</td>
+				</tr>
+				{% endif %}
+
+				{% if not isUserSamplePlanProjectDeleted and not isDeleteProject and data['sample-plan-project-name-text-input'] %}
+				<tr class="govuk-table__row">
+					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">{{ data['sample-plan-project-name-text-input'] }}</th>
+					<td class="govuk-table__cell">
+						Sediment sample plan
+					</td>
+
+					{% if data['samplePlanApplicationSubmitted'] == "true" %}
+					<td class="govuk-table__cell" data-sort-value="005">
+						SAM/2025/00025
+					</td>
+					{% else %}
+					<td class="govuk-table__cell" data-sort-value="-">
+						-
+					</td>
+					{% endif %}
+				
+					{% if data['samplePlanApplicationSubmitted'] == "true" %}	
+						<td class="govuk-table__cell" data-sort-value="001">
+							{{ govukTag({
+								text: "Sent",
+								classes: "govuk-tag"
+							}) }}
+						</td>
+						<td class="govuk-table__cell" data-sort-value="250716">
+						{{ "today" | govukDate(truncate=true) }}
+						</td>
+					{% else %}
+						<td class="govuk-table__cell" data-sort-value="005">
+							{{ govukTag({
+								text: "Draft",
+								classes: "govuk-tag--light-blue"
+							}) }}
+						</td>
+						<td class="govuk-table__cell" data-sort-value="-">
+						-
+						</td>
+					{% endif %}
+					
+					{% if data['samplePlanApplicationSubmitted'] == "true" %}	
+						<td class="govuk-table__cell" data-sort-value="View details">
+							<a href="check-answers" class="govuk-link--no-visited-state">View details</a>
+						</td>
+					{% else %}
+						<td class="govuk-table__cell" data-sort-value="Continue">
+							<a href="sample-plan-start-page" class="govuk-link--no-visited-state govuk-!-margin-right-4">Continue</a> <a href="delete?project=sample-plan-user" class="govuk-link--no-visited-state">Delete</a>
+						</td>
+					{% endif %}
+				</tr>
+				{% endif %}			  
+			</tbody>
+		</table>
+
+		{% endif %}
+
+	</div>
+</div>
+{% endblock %}
