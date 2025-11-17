@@ -133,6 +133,19 @@ Projects
 			}) }}
 			{% endset %}
 
+			<style>
+				/* Prevent radio labels from wrapping */
+				.project-filter-radios .govuk-radios__label {
+					white-space: nowrap;
+				}
+				/* Remove conditional reveal border for inline radios */
+				.project-filter-radios .govuk-radios__conditional {
+					border-left: none;
+					padding-left: 0;
+					margin-left: 0;
+				}
+			</style>
+
 			<div style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 20px;">
 				<div style="flex: 1; min-width: 300px;">
 					{{ govukRadios({
@@ -140,10 +153,10 @@ Projects
 						fieldset: {
 							legend: {
 								text: "Show projects",
-								classes: "govuk-fieldset__legend--m"
+								classes: "govuk-fieldset__legend--s"
 							}
 						},
-						classes: "govuk-radios--small govuk-radios--inline",
+						classes: "govuk-radios--small govuk-radios--inline project-filter-radios",
 						items: [
 							{
 								value: "my-projects",
