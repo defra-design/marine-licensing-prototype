@@ -678,3 +678,36 @@ body.page-cookie-banner {
     float: none;
   }
 }
+
+/* ============================================================
+   Project Filter Panel - Desktop Layout
+   ============================================================ */
+
+/* Desktop layout (above 640px) - inline radios with compact conditional reveal */
+@media (min-width: 40.0625em) { // 641px and above
+  
+  /* Prevent radio labels from wrapping */
+  .project-filter-radios .govuk-radios__label {
+    white-space: nowrap;
+  }
+  
+  /* Remove conditional reveal border and spacing for inline radios */
+  .project-filter-radios .govuk-radios__conditional {
+    border-left: none !important;
+    padding-left: 0 !important;
+    margin-left: 0 !important;
+    margin-bottom: 0 !important;
+    padding-bottom: 0 !important;
+  }
+  
+  /* Target the specific 20px margin-bottom on govuk-form-group */
+  .govuk-form-group {
+    margin-bottom: 0 !important;
+  }
+  
+  /* Remove button margins for precise alignment */
+  .govuk-button {
+    margin-top: 0 !important;
+    margin-bottom: 5px !important;
+  }
+}
