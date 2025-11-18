@@ -318,7 +318,7 @@ Projects
 					</td>
 				</tr>
 
-				<tr class="govuk-table__row" data-creator="jon-doe alex-williams">
+				<tr class="govuk-table__row" data-creator="jon-doe">
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Portsmouth channel dredge sample</th>
 					<td class="govuk-table__cell">Sediment sample plan</td>
 					<td class="govuk-table__cell" data-sort-value="SAM-10007">SAM/2025/10007</td>
@@ -353,6 +353,8 @@ Projects
 			</tbody>
 		</table>
 
+		<p id="no-results-message" class="govuk-body" style="display: none;">There are no projects to display.</p>
+
 	</div>
 </div>
 
@@ -362,11 +364,14 @@ document.addEventListener('DOMContentLoaded', function() {
 	const personSelect = document.getElementById('person');
 	const applyButton = document.querySelector('.project-filter-button-wrapper button');
 	const tableRows = document.querySelectorAll('#projects-table tbody tr');
+	const projectsTable = document.getElementById('projects-table');
+	const noResultsMessage = document.getElementById('no-results-message');
 
 	// Function to filter projects
 	function filterProjects() {
 		const selectedFilter = document.querySelector('input[name="projectFilter"]:checked').value;
 		const selectedPerson = personSelect.value;
+		let visibleCount = 0;
 
 		tableRows.forEach(function(row) {
 			const creators = row.getAttribute('data-creator');
@@ -375,16 +380,19 @@ document.addEventListener('DOMContentLoaded', function() {
 				// Show only Jon Doe's projects
 				if (creators && creators.includes('jon-doe')) {
 					row.style.display = '';
+					visibleCount++;
 				} else {
 					row.style.display = 'none';
 				}
 			} else if (selectedFilter === 'all-projects') {
 				// Show all projects
 				row.style.display = '';
+				visibleCount++;
 			} else if (selectedFilter === 'specific-person' && selectedPerson) {
 				// Show projects for selected person
 				if (creators && creators.includes(selectedPerson)) {
 					row.style.display = '';
+					visibleCount++;
 				} else {
 					row.style.display = 'none';
 				}
@@ -393,6 +401,15 @@ document.addEventListener('DOMContentLoaded', function() {
 				row.style.display = 'none';
 			}
 		});
+
+		// Show/hide table and no results message based on visible count
+		if (visibleCount === 0) {
+			projectsTable.style.display = 'none';
+			noResultsMessage.style.display = 'block';
+		} else {
+			projectsTable.style.display = 'table';
+			noResultsMessage.style.display = 'none';
+		}
 	}
 
 	// Apply filter on button click
