@@ -690,24 +690,55 @@ body.page-cookie-banner {
   .project-filter-radios .govuk-radios__label {
     white-space: nowrap;
   }
+ /* Remove conditional reveal border and spacing for inline radios */
+ .project-filter-radios .govuk-radios__conditional {
+  border-left: none !important;
+  padding-left: 0 !important;
+  margin-left: 0 !important;
+  margin-bottom: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+/* Target the specific 20px margin-bottom on govuk-form-group */
+.govuk-form-group {
+  margin-bottom: 0 !important;
+}
+
+ /* Remove button margins for precise alignment */
+ .govuk-button {
+   margin-top: 0 !important;
+   margin-bottom: 5px !important;
+ }
+}
+
+
+
+/* Intermediate layout (below 1060px) - wrap button underneath */
+@media (max-width: 66.25em) { // Below 1060px
   
-  /* Remove conditional reveal border and spacing for inline radios */
-  .project-filter-radios .govuk-radios__conditional {
-    border-left: none !important;
-    padding-left: 0 !important;
-    margin-left: 0 !important;
-    margin-bottom: 0 !important;
-    padding-bottom: 0 !important;
+  /* Force button to wrap to next line */
+  .project-filter-button-wrapper {
+    flex-basis: 100% !important;
+    width: 100% !important;
+
+  }
+}
+
+/* Mobile layout (below 640px) - stack button underneath at full width */
+@media (max-width: 48em) { // Below 768px to ensure 640px is included
+  
+  /* Override flex container to stack vertically on mobile */
+  .project-filter-container {
+    display: block !important;
   }
   
-  /* Target the specific 20px margin-bottom on govuk-form-group */
-  .govuk-form-group {
-    margin-bottom: 0 !important;
+  /* Radio wrapper takes full width */
+  .project-filter-radios-wrapper {
+    width: 100% !important;
+    margin-bottom: 20px !important;
   }
   
-  /* Remove button margins for precise alignment */
-  .govuk-button {
-    margin-top: 0 !important;
-    margin-bottom: 5px !important;
-  }
+
+  
+
 }

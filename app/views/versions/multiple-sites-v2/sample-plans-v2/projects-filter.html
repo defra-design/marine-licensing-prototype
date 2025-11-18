@@ -115,7 +115,7 @@ Projects
 				items: [
 					{
 						value: "",
-						text: "Person",
+						text: "Select person",
 						selected: true
 					},
 					{
@@ -134,8 +134,8 @@ Projects
 			}) }}
 			{% endset %}
 
-			<div style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 20px;">
-				<div style="flex: 1; min-width: 300px;">
+			<div class="project-filter-container" style="display: flex; flex-wrap: wrap; align-items: flex-end; gap: 20px;">
+				<div class="project-filter-radios-wrapper" style="flex: 1; min-width: 300px;">
 					{{ govukRadios({
 						name: "projectFilter",
 						fieldset: {
@@ -165,7 +165,7 @@ Projects
 						]
 					}) }}
 				</div>
-				<div>
+				<div class="project-filter-button-wrapper">
 					{{ govukButton({
 						text: "Apply filters"
 					}) }}
