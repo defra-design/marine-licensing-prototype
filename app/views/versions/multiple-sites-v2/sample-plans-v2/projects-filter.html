@@ -104,18 +104,18 @@ Projects
 
 		<!-- Filter component -->
 		<div class="govuk-!-padding-4 govuk-!-margin-bottom-6" style="background-color: #f3f2f1;">
-			{% set teamMemberHtml %}
+			{% set personHtml %}
 			{{ govukSelect({
-				id: "team-member",
-				name: "teamMember",
+				id: "person",
+				name: "Person",
 				label: {
-					text: "Team member",
+					text: "Person",
 					classes: "govuk-visually-hidden"
 				},
 				items: [
 					{
 						value: "",
-						text: "Team member",
+						text: "Person",
 						selected: true
 					},
 					{
@@ -180,10 +180,10 @@ Projects
 								text: "All projects"
 							},
 							{
-								value: "specific-team-member",
-								text: "Projects by team member",
+								value: "specific-person",
+								text: "Projects by person",
 								conditional: {
-									html: teamMemberHtml
+									html: personHtml
 								}
 							}
 						]
