@@ -105,26 +105,26 @@ Projects
   </div>
 </div>
 
+<div class="moj-action-bar">
+	<div class="moj-action-bar__filter">
+	  <button class="govuk-button govuk-button--secondary moj-filter__toggle" type="button" data-aria-controls="moj-filter" aria-expanded="false">
+		Show filters
+	  </button>
+	  <span id="filter-status" class="govuk-body" style="margin-left: 15px;">Filtered by: My projects</span>
+	</div>
+  </div>
+
     <div class="moj-filter-layout">
-      <div class="moj-filter-layout__filter" id="moj-filter">
+      <div class="moj-filter-layout__filter" id="moj-filter"  style="display: none;">
         <div class="moj-filter" data-module="moj-filter">
           <div class="moj-filter__header">
             <div class="moj-filter__header-title">
-              <h2 class="govuk-heading-m">Filter</h2>
+              <h2 class="govuk-heading-m">Filters</h2>
             </div>
             <div class="moj-filter__header-action">
             </div>
           </div>
       <div class="moj-filter__content">
-        <div class="moj-filter__selected">
-          <div class="moj-filter__selected-heading">
-
-
-          </div>
-          <div id="selected-filter-tags">
-             <!-- Tags will be injected here by JS -->
-          </div>
-        </div>
         <div class="moj-filter__options">
           
           
@@ -191,7 +191,7 @@ Projects
               }
             ]
           }) }}
-		  <button type="submit" class="govuk-button govuk-!-margin-bottom-4" data-module="govuk-button" id="apply-filters-button">
+		  <button type="submit" class="govuk-button govuk-!-margin-bottom-4 govuk-!-margin-top-4" data-module="govuk-button" id="apply-filters-button">
             Apply filters
           </button>
         </div>
@@ -202,13 +202,7 @@ Projects
   </div>
 
   <div class="moj-filter-layout__content">
-    <div class="moj-action-bar">
-      <div class="moj-action-bar__filter">
-        <button class="govuk-button govuk-button--secondary moj-filter__toggle" type="button" data-aria-controls="moj-filter" aria-expanded="true">
-          Hide filter
-        </button>
-      </div>
-    </div>
+    
     <table class="govuk-table" data-module="moj-sortable-table" id="projects-table">
       <caption class="govuk-table__caption govuk-visually-hidden">{{ pageHeadingTextHTML }}</caption>
       <thead class="govuk-table__head">
@@ -409,7 +403,6 @@ document.addEventListener('DOMContentLoaded', function() {
   const tableRows = document.querySelectorAll('#projects-table tbody tr');
   const projectsTable = document.getElementById('projects-table');
   const noResultsMessage = document.getElementById('no-results-message');
-  const selectedFiltersContainer = document.getElementById('selected-filter-tags');
 
   // Map of person values to display names
   const personNames = {
@@ -419,45 +412,23 @@ document.addEventListener('DOMContentLoaded', function() {
     'sarah-chen': 'Sarah Chen'
   };
 
-  function updateSelectedFilterTags(selectedFilter, selectedPerson) {
-    selectedFiltersContainer.innerHTML = '';
-    let tags = [];
-
+  function updateFilterStatus(selectedFilter, selectedPerson) {
+    const filterStatus = document.getElementById('filter-status');
+    if (!filterStatus) return;
+    
+    let statusText = 'Filtered by: ';
+    
     if (selectedFilter === 'my-projects') {
-      tags.push({ text: 'My projects', value: 'my-projects', type: 'scope' });
+      statusText += 'My projects';
     } else if (selectedFilter === 'all-projects') {
-      tags.push({ text: 'All projects', value: 'all-projects', type: 'scope' });
+      statusText += 'All projects';
+    } else if (selectedFilter === 'specific-person' && selectedPerson && personNames[selectedPerson]) {
+      statusText += personNames[selectedPerson];
     } else if (selectedFilter === 'specific-person') {
-      if (selectedPerson && personNames[selectedPerson]) {
-        tags.push({ text: 'Person: ' + personNames[selectedPerson], value: selectedPerson, type: 'person' });
-      } else {
-        tags.push({ text: 'Projects by person', value: 'specific-person', type: 'scope' });
-      }
+      statusText += 'Projects by person';
     }
-
-    const ul = document.createElement('ul');
-    ul.className = 'moj-filter-tags';
-
-    tags.forEach(tag => {
-      const li = document.createElement('li');
-      const a = document.createElement('a');
-      a.className = 'moj-filter__tag';
-      a.href = '#';
-      a.innerHTML = `<span class="govuk-visually-hidden">Remove this filter</span> ${tag.text}`;
-      
-      a.addEventListener('click', function(e) {
-        e.preventDefault();
-        // Reset to default (My projects)
-        document.getElementById('filter-my').checked = true;
-        // Trigger update
-        filterProjects();
-      });
-
-      li.appendChild(a);
-      ul.appendChild(li);
-    });
-
-    selectedFiltersContainer.appendChild(ul);
+    
+    filterStatus.textContent = statusText;
   }
 
   // Function to filter projects
@@ -467,7 +438,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const selectedPerson = personSelect.value;
     let visibleCount = 0;
 
-    updateSelectedFilterTags(selectedFilter, selectedPerson);
+    updateFilterStatus(selectedFilter, selectedPerson);
 
     tableRows.forEach(function(row) {
       const creators = row.getAttribute('data-creator');
@@ -540,12 +511,12 @@ document.addEventListener('DOMContentLoaded', function() {
         // Hide the filter
         filterContainer.style.display = 'none';
         this.setAttribute('aria-expanded', 'false');
-        this.textContent = 'Show filter';
+        this.textContent = 'Show filters';
       } else {
         // Show the filter
         filterContainer.style.display = 'block';
         this.setAttribute('aria-expanded', 'true');
-        this.textContent = 'Hide filter';
+        this.textContent = 'Hide filters';
       }
     });
   }
