@@ -12,13 +12,17 @@
   {{ super() }}
   <style>
   @media (min-width: 48.0625em) {
-    /* Narrow the filter column by 115px (from default ~320px to ~205px) */
+    /* Narrow the filter column */
     .moj-filter-layout__filter {
       width: 300px;
       max-width: 300px;
-
     }
   }
+
+  .moj-filter__options  {
+  padding-bottom: 5px;
+}
+
   </style>
 {% endblock %}
 
@@ -168,7 +172,7 @@ Projects
             fieldset: {
               legend: {
                 text: "Filter projects",
-                classes: "govuk-fieldset__legend--s"
+                classes: "govuk-visually-hidden"
               }
             },
             classes: "govuk-radios--small",
