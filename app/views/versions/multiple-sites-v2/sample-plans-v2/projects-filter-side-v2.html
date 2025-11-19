@@ -110,7 +110,7 @@ Projects
 	  <button class="govuk-button govuk-button--secondary moj-filter__toggle" type="button" data-aria-controls="moj-filter" aria-expanded="false">
 		Show filters
 	  </button>
-	  <span id="filter-status" class="govuk-body" style="margin-left: 15px;">Filtered by: My projects</span>
+	  <span id="filter-status" class="govuk-body govuk-!-margin-left-3" role="status" aria-live="polite" aria-atomic="true">Filtered by: "My projects"</span>
 	</div>
   </div>
 
@@ -416,19 +416,19 @@ document.addEventListener('DOMContentLoaded', function() {
     const filterStatus = document.getElementById('filter-status');
     if (!filterStatus) return;
     
-    let statusText = 'Filtered by: ';
+    let filterValue = '';
     
     if (selectedFilter === 'my-projects') {
-      statusText += 'My projects';
+      filterValue = 'My projects';
     } else if (selectedFilter === 'all-projects') {
-      statusText += 'All projects';
+      filterValue = 'All projects';
     } else if (selectedFilter === 'specific-person' && selectedPerson && personNames[selectedPerson]) {
-      statusText += personNames[selectedPerson];
+      filterValue = personNames[selectedPerson];
     } else if (selectedFilter === 'specific-person') {
-      statusText += 'Projects by person';
+      filterValue = 'Projects by person';
     }
     
-    filterStatus.textContent = statusText;
+    filterStatus.innerHTML = '<strong>Filtered by:</strong> "' + filterValue + '"';
   }
 
   // Function to filter projects
