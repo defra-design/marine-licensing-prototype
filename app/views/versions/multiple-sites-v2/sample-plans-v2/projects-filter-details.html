@@ -7,6 +7,15 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/details/macro.njk" import govukDetails %}
 
+{% block head %}
+  {{ super() }}
+  <style>
+  .govuk-details {
+    margin-bottom: 0;
+  }
+  </style>
+{% endblock %}
+
 <!-- Set a variable to identify this specific page -->
 {% set currentPageId = "sample-plans-projects" %}
 
@@ -97,7 +106,7 @@ Projects
 		<span id="filter-status" class="govuk-body govuk-!-margin-bottom-3" role="status" aria-live="polite" aria-atomic="true" style="display: block;"><strong>Filtered by:</strong> "My projects"</span>
 
 		<!-- Filter component -->
-		<div class="govuk-!-padding-0 govuk-!-margin-bottom-0" style="background-color: #fff;">
+		<div class="govuk-!-padding-4 govuk-!-margin-bottom-6" style="background-color: #f3f2f1;">
 			{% set personHtml %}
 			{{ govukSelect({
 				id: "person",
