@@ -7,6 +7,15 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/details/macro.njk" import govukDetails %}
 
+{% block head %}
+  {{ super() }}
+  <style>
+  .govuk-details {
+    margin-bottom: 0;
+  }
+  </style>
+{% endblock %}
+
 <!-- Set a variable to identify this specific page -->
 {% set currentPageId = "sample-plans-projects" %}
 
@@ -93,8 +102,11 @@ Projects
 		</h1>
 
 
+		<!-- Filter status -->
+		<span id="filter-status" class="govuk-body govuk-!-margin-bottom-3" role="status" aria-live="polite" aria-atomic="true" style="display: block;"><strong>Filtered by:</strong> "My projects"</span>
+
 		<!-- Filter component -->
-		<div class="govuk-!-padding-0 govuk-!-margin-bottom-0" style="background-color: #fff;">
+		<div class="govuk-!-padding-4 govuk-!-margin-bottom-6" style="background-color: #f3f2f1;">
 			{% set personHtml %}
 			{{ govukSelect({
 				id: "person",
@@ -135,7 +147,7 @@ Projects
                     fieldset: {
                         legend: {
                             text: "Filter projects",
-                            classes: "govuk-fieldset__legend--s"
+                            classes: "govuk-fieldset__legend--s, govuk-visually-hidden"
                         }
                     },
                     classes: "govuk-radios--small",
@@ -151,7 +163,7 @@ Projects
                         },
                         {
                             value: "specific-person",
-                            text: "Projects by person",
+                            text: "Projects created by",
                             conditional: {
                                 html: personHtml
                             }
@@ -176,16 +188,16 @@ Projects
 		<table class="govuk-table" data-module="moj-sortable-table" id="projects-table">
 			<caption class="govuk-table__caption govuk-visually-hidden">{{ pageHeadingTextHTML }}</caption>
 			<thead class="govuk-table__head">
-			  <tr class="govuk-table__row">
-				<th scope="col" class="govuk-table__header" aria-sort="none">Project name</th>
-				<th scope="col" class="govuk-table__header" aria-sort="none">Type</th>
-				<th scope="col" class="govuk-table__header" aria-sort="none">Reference</th>
-				<th scope="col" class="govuk-table__header" aria-sort="descending">Status</th>
-				<th scope="col" class="govuk-table__header" aria-sort="none">Submitted</th>
-				<th scope="col" class="govuk-table__header" aria-sort="none">Owner</th>
-				<th scope="col" class="govuk-table__header" aria-sort="none">Actions</th>
-			  </tr>
-			</thead>
+				<tr class="govuk-table__row">
+				  <th scope="col" class="govuk-table__header" aria-sort="none">Project&nbsp;name</th>
+				  <th scope="col" class="govuk-table__header" aria-sort="none">Type</th>
+				  <th scope="col" class="govuk-table__header" aria-sort="none">Reference</th>
+				  <th scope="col" class="govuk-table__header" aria-sort="descending">Status</th>
+				  <th scope="col" class="govuk-table__header" aria-sort="none">Submitted&nbsp;on</th>
+				  <th scope="col" class="govuk-table__header" aria-sort="none">Created&nbsp;by</th>
+				  <th scope="col" class="govuk-table__header" aria-sort="none">Actions</th>
+				</tr>
+			  </thead>
 			<tbody class="govuk-table__body">
 				<!-- Exempt activity notifications -->
 				<tr class="govuk-table__row" data-creator="jon-doe">
@@ -373,11 +385,40 @@ document.addEventListener('DOMContentLoaded', function() {
 	const projectsTable = document.getElementById('projects-table');
 	const noResultsMessage = document.getElementById('no-results-message');
 
+	// Map of person values to display names
+	const personNames = {
+		'alex-williams': 'Alex Williams',
+		'james-thompson': 'James Thompson',
+		'jon-doe': 'Jon Doe',
+		'sarah-chen': 'Sarah Chen'
+	};
+
+	function updateFilterStatus(selectedFilter, selectedPerson) {
+		const filterStatus = document.getElementById('filter-status');
+		if (!filterStatus) return;
+		
+		let filterValue = '';
+		
+		if (selectedFilter === 'my-projects') {
+			filterValue = 'My projects';
+		} else if (selectedFilter === 'all-projects') {
+			filterValue = 'All projects';
+		} else if (selectedFilter === 'specific-person' && selectedPerson && personNames[selectedPerson]) {
+			filterValue = 'Projects created by ' + personNames[selectedPerson];
+		} else if (selectedFilter === 'specific-person') {
+			filterValue = 'Projects created by person';
+		}
+		
+		filterStatus.innerHTML = '<strong>Filtered by:</strong> "' + filterValue + '"';
+	}
+
 	// Function to filter projects
 	function filterProjects() {
 		const selectedFilter = document.querySelector('input[name="projectFilter"]:checked').value;
 		const selectedPerson = personSelect.value;
 		let visibleCount = 0;
+
+		updateFilterStatus(selectedFilter, selectedPerson);
 
 		tableRows.forEach(function(row) {
 			const creators = row.getAttribute('data-creator');
