@@ -141,13 +141,13 @@ Projects
 						classes: "govuk-radios--small govuk-radios--inline project-filter-radios",
 						items: [
 							{
-								value: "my-projects",
-								text: "My projects",
+								value: "all-projects",
+								text: "All projects",
 								checked: true
 							},
 							{
-								value: "all-projects",
-								text: "All projects"
+								value: "my-projects",
+								text: "My projects"
 							},
 							{
 								value: "specific-person",
@@ -380,14 +380,19 @@ document.addEventListener('DOMContentLoaded', function() {
 
 	// Function to filter projects
 	function filterProjects() {
-		const selectedFilter = document.querySelector('input[name="projectFilter"]:checked').value;
+		const selectedRadio = document.querySelector('input[name="projectFilter"]:checked');
+		const selectedFilter = selectedRadio ? selectedRadio.value : 'all-projects';
 		const selectedPerson = personSelect.value;
 		let visibleCount = 0;
 
 		tableRows.forEach(function(row) {
 			const creators = row.getAttribute('data-creator');
 			
-			if (selectedFilter === 'my-projects') {
+			if (selectedFilter === 'all-projects') {
+				// Show all projects
+				row.style.display = '';
+				visibleCount++;
+			} else if (selectedFilter === 'my-projects') {
 				// Show only Jon Doe's projects
 				if (creators && creators.includes('jon-doe')) {
 					row.style.display = '';
@@ -395,10 +400,6 @@ document.addEventListener('DOMContentLoaded', function() {
 				} else {
 					row.style.display = 'none';
 				}
-			} else if (selectedFilter === 'all-projects') {
-				// Show all projects
-				row.style.display = '';
-				visibleCount++;
 			} else if (selectedFilter === 'specific-person' && selectedPerson) {
 				// Show projects for selected person
 				if (creators && creators.includes(selectedPerson)) {

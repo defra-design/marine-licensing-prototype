@@ -103,7 +103,7 @@ Projects
 
 
 		<!-- Filter status -->
-		<span id="filter-status" class="govuk-body govuk-!-margin-bottom-3" role="status" aria-live="polite" aria-atomic="true" style="display: block;"><strong>Filtered by:</strong> "My projects"</span>
+		<span id="filter-status" class="govuk-body govuk-!-margin-bottom-3" role="status" aria-live="polite" aria-atomic="true" style="display: block;"><strong>Filtered by:</strong> "All projects"</span>
 
 		<!-- Filter component -->
 		<div class="govuk-!-padding-4 govuk-!-margin-bottom-6" style="background-color: #f3f2f1;">
@@ -153,13 +153,13 @@ Projects
                     classes: "govuk-radios--small",
                     items: [
                         {
-                            value: "my-projects",
-                            text: "My projects",
+                            value: "all-projects",
+                            text: "All projects",
                             checked: true
                         },
                         {
-                            value: "all-projects",
-                            text: "All projects"
+                            value: "my-projects",
+                            text: "My projects"
                         },
                         {
                             value: "specific-person",
@@ -399,10 +399,10 @@ document.addEventListener('DOMContentLoaded', function() {
 		
 		let filterValue = '';
 		
-		if (selectedFilter === 'my-projects') {
-			filterValue = 'My projects';
-		} else if (selectedFilter === 'all-projects') {
+		if (selectedFilter === 'all-projects') {
 			filterValue = 'All projects';
+		} else if (selectedFilter === 'my-projects') {
+			filterValue = 'My projects';
 		} else if (selectedFilter === 'specific-person' && selectedPerson && personNames[selectedPerson]) {
 			filterValue = 'Projects created by ' + personNames[selectedPerson];
 		} else if (selectedFilter === 'specific-person') {
@@ -414,7 +414,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
 	// Function to filter projects
 	function filterProjects() {
-		const selectedFilter = document.querySelector('input[name="projectFilter"]:checked').value;
+		const selectedRadio = document.querySelector('input[name="projectFilter"]:checked');
+		const selectedFilter = selectedRadio ? selectedRadio.value : 'all-projects';
 		const selectedPerson = personSelect.value;
 		let visibleCount = 0;
 
