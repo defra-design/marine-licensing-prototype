@@ -146,7 +146,7 @@ Projects
 						aria-expanded="false" 
 						aria-controls="filter-panel" 
 						data-module="govuk-button">
-					Show filters <span aria-hidden="true">+</span>
+					Show filters
 				</button>
 				<span id="filter-status" class="govuk-body" role="status" aria-live="polite" aria-atomic="true"><strong>Filtered by:</strong> "My projects"</span>
 			</div>
@@ -439,13 +439,13 @@ document.addEventListener('DOMContentLoaded', function() {
 				filterPanel.setAttribute('hidden', '');
 				buttonWrapper.classList.remove('is-expanded');
 				this.setAttribute('aria-expanded', 'false');
-				this.innerHTML = 'Show filters <span aria-hidden="true">+</span>';
+				this.innerHTML = 'Show filters';
 			} else {
 				// Show the panel
 				filterPanel.removeAttribute('hidden');
 				buttonWrapper.classList.add('is-expanded');
 				this.setAttribute('aria-expanded', 'true');
-				this.innerHTML = 'Hide filters <span aria-hidden="true">−</span>';
+				this.innerHTML = 'Hide filters';
 			}
 		});
 	}
