@@ -14,10 +14,20 @@
     margin-bottom: 20px;
   }
   
+  .filter-button-wrapper.is-expanded {
+    margin-bottom: 0;
+  }
+  
   #filter-toggle {
     margin-bottom: 0;
     margin-right: 15px;
     vertical-align: middle;
+  }
+  
+  #filter-toggle[aria-expanded="true"] {
+    box-shadow: none;
+    border-bottom: none;
+    padding-bottom: 18px;
   }
   
   #filter-status {
@@ -414,6 +424,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	// Handle filter toggle button
 	const toggleButton = document.getElementById('filter-toggle');
 	const filterPanel = document.getElementById('filter-panel');
+	const buttonWrapper = document.querySelector('.filter-button-wrapper');
 	
 	if (toggleButton && filterPanel) {
 		toggleButton.addEventListener('click', function() {
@@ -422,11 +433,13 @@ document.addEventListener('DOMContentLoaded', function() {
 			if (isExpanded) {
 				// Hide the panel
 				filterPanel.classList.remove('is-open');
+				buttonWrapper.classList.remove('is-expanded');
 				this.setAttribute('aria-expanded', 'false');
 				this.innerHTML = 'Show filters <span aria-hidden="true">+</span>';
 			} else {
 				// Show the panel
 				filterPanel.classList.add('is-open');
+				buttonWrapper.classList.add('is-expanded');
 				this.setAttribute('aria-expanded', 'true');
 				this.innerHTML = 'Hide filters <span aria-hidden="true">−</span>';
 			}
