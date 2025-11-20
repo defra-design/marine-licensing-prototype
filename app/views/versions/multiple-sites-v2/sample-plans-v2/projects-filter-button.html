@@ -22,6 +22,8 @@
     margin-bottom: 0;
     margin-right: 15px;
     vertical-align: middle;
+    padding: 13px;
+    width: auto !important;
   }
   
   #filter-toggle[aria-expanded="true"] {
@@ -40,12 +42,11 @@
   .filter-panel {
     background-color: #f3f2f1;
     padding: 20px;
-    display: none;
     margin-bottom: 30px;
   }
   
-  .filter-panel.is-open {
-    display: block;
+  .filter-panel[hidden] {
+    display: none;
   }
   </style>
 {% endblock %}
@@ -134,20 +135,23 @@ Projects
 		<h1 class="govuk-heading-l">
 			{{ pageHeadingTextHTML }}
 		</h1>
-
-
 		
 
 		<!-- Filter component -->
 		<div>
 			<div class="filter-button-wrapper">
-				<button type="button" class="govuk-button govuk-button--secondary" id="filter-toggle" aria-expanded="false" aria-controls="filter-panel" data-module="govuk-button">
+				<button type="button" 
+						class="govuk-button govuk-button--secondary" 
+						id="filter-toggle" 
+						aria-expanded="false" 
+						aria-controls="filter-panel" 
+						data-module="govuk-button">
 					Show filters <span aria-hidden="true">+</span>
 				</button>
 				<span id="filter-status" class="govuk-body" role="status" aria-live="polite" aria-atomic="true"><strong>Filtered by:</strong> "My projects"</span>
 			</div>
 			
-			<div class="filter-panel" id="filter-panel">
+			<div class="filter-panel" id="filter-panel" hidden>
 				{% set personHtml %}
 				{{ govukSelect({
 					id: "person",
@@ -432,13 +436,13 @@ document.addEventListener('DOMContentLoaded', function() {
 			
 			if (isExpanded) {
 				// Hide the panel
-				filterPanel.classList.remove('is-open');
+				filterPanel.setAttribute('hidden', '');
 				buttonWrapper.classList.remove('is-expanded');
 				this.setAttribute('aria-expanded', 'false');
 				this.innerHTML = 'Show filters <span aria-hidden="true">+</span>';
 			} else {
 				// Show the panel
-				filterPanel.classList.add('is-open');
+				filterPanel.removeAttribute('hidden');
 				buttonWrapper.classList.add('is-expanded');
 				this.setAttribute('aria-expanded', 'true');
 				this.innerHTML = 'Hide filters <span aria-hidden="true">−</span>';
