@@ -23,6 +23,10 @@
   padding-bottom: 5px;
 }
 
+  .moj-filter__toggle {
+    width: auto !important;
+  }
+
   </style>
 {% endblock %}
 
@@ -109,14 +113,19 @@ Projects
   </div>
 </div>
 
-<div class="moj-action-bar">
-	<div class="moj-action-bar__filter">
-	  <button class="govuk-button govuk-button--secondary moj-filter__toggle" type="button" data-aria-controls="moj-filter" aria-expanded="false">
-		Show filters
-	  </button>
-	  <span id="filter-status" class="govuk-body govuk-!-margin-left-3" role="status" aria-live="polite" aria-atomic="true">Filtered by: "My projects"</span>
-	</div>
-  </div>
+<style>
+@media (max-width: 48.0525em) {
+  .moj-action-bar__filter {
+    float: left;
+  }
+  .moj-action-bar__filter {
+  display: inline;
+  position: relative;
+}
+}
+
+
+</style>
 
     <div class="moj-filter-layout">
       <div class="moj-filter-layout__filter" id="moj-filter"  style="display: none;">
@@ -206,7 +215,14 @@ Projects
   </div>
 
   <div class="moj-filter-layout__content">
-    
+    <div class="moj-action-bar">
+      <div class="moj-action-bar__filter">
+        <button class="govuk-button govuk-button--secondary moj-filter__toggle" type="button" data-aria-controls="moj-filter" aria-expanded="false">
+        Show filters
+        </button>
+        <span id="filter-status" class="govuk-body govuk-!-margin-left-3" role="status" aria-live="polite" aria-atomic="true">Filtered by: "My projects"</span>
+      </div>
+      </div>
     <table class="govuk-table" data-module="moj-sortable-table" id="projects-table">
       <caption class="govuk-table__caption govuk-visually-hidden">{{ pageHeadingTextHTML }}</caption>
       <thead class="govuk-table__head">
