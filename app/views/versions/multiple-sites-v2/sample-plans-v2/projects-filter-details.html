@@ -93,6 +93,9 @@ Projects
 		</h1>
 
 
+		<!-- Filter status -->
+		<span id="filter-status" class="govuk-body govuk-!-margin-bottom-3" role="status" aria-live="polite" aria-atomic="true" style="display: block;"><strong>Filtered by:</strong> "My projects"</span>
+
 		<!-- Filter component -->
 		<div class="govuk-!-padding-0 govuk-!-margin-bottom-0" style="background-color: #fff;">
 			{% set personHtml %}
@@ -373,11 +376,40 @@ document.addEventListener('DOMContentLoaded', function() {
 	const projectsTable = document.getElementById('projects-table');
 	const noResultsMessage = document.getElementById('no-results-message');
 
+	// Map of person values to display names
+	const personNames = {
+		'alex-williams': 'Alex Williams',
+		'james-thompson': 'James Thompson',
+		'jon-doe': 'Jon Doe',
+		'sarah-chen': 'Sarah Chen'
+	};
+
+	function updateFilterStatus(selectedFilter, selectedPerson) {
+		const filterStatus = document.getElementById('filter-status');
+		if (!filterStatus) return;
+		
+		let filterValue = '';
+		
+		if (selectedFilter === 'my-projects') {
+			filterValue = 'My projects';
+		} else if (selectedFilter === 'all-projects') {
+			filterValue = 'All projects';
+		} else if (selectedFilter === 'specific-person' && selectedPerson && personNames[selectedPerson]) {
+			filterValue = 'Projects created by ' + personNames[selectedPerson];
+		} else if (selectedFilter === 'specific-person') {
+			filterValue = 'Projects created by person';
+		}
+		
+		filterStatus.innerHTML = '<strong>Filtered by:</strong> "' + filterValue + '"';
+	}
+
 	// Function to filter projects
 	function filterProjects() {
 		const selectedFilter = document.querySelector('input[name="projectFilter"]:checked').value;
 		const selectedPerson = personSelect.value;
 		let visibleCount = 0;
+
+		updateFilterStatus(selectedFilter, selectedPerson);
 
 		tableRows.forEach(function(row) {
 			const creators = row.getAttribute('data-creator');
