@@ -42,6 +42,17 @@
     display: none;
   }
   
+  /* Make radio buttons and checkboxes white on grey background */
+  .filter-panel .govuk-radios__label::before,
+  .filter-panel .govuk-checkboxes__label::before {
+    background-color: #ffffff !important;
+  }
+  
+  .filter-panel .govuk-radios__input:focus + .govuk-radios__label::before,
+  .filter-panel .govuk-checkboxes__input:focus + .govuk-checkboxes__label::before {
+    background-color: #ffffff !important;
+  }
+  
   /* Responsive layout for filters */
   .filter-panel {
     display: grid;
