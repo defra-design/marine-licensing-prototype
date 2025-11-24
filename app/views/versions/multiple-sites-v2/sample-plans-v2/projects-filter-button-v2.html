@@ -44,13 +44,37 @@
   
   /* Responsive layout for filters */
   @media (min-width: 40.0625em) {
-    .filter-panel .govuk-radios,
-    .filter-panel .govuk-checkboxes,
-    .filter-panel .govuk-form-group {
-      display: inline-block;
-      vertical-align: top;
-      margin-right: 30px;
-      max-width: 300px;
+    .filter-panel {
+      display: grid;
+      grid-template-columns: auto 1fr auto auto;
+      grid-gap: 30px;
+      align-items: start;
+    }
+    
+    .filter-panel .govuk-radios {
+      grid-column: 1;
+      grid-row: 1;
+    }
+    
+    .filter-inputs-container {
+      grid-column: 2;
+      grid-row: 1;
+    }
+    
+    #type-checkboxes-container {
+      grid-column: 3;
+      grid-row: 1;
+    }
+    
+    #status-checkboxes-container {
+      grid-column: 4;
+      grid-row: 1;
+    }
+    
+    .filter-actions {
+      grid-column: 1;
+      grid-row: 2;
+      margin-top: 10px;
     }
   }
   
@@ -63,6 +87,20 @@
   #results-count {
     margin-top: 20px;
     margin-bottom: 20px;
+  }
+  
+  .filter-checkboxes-group {
+    margin-bottom: 20px;
+  }
+  
+  .filter-inputs-container {
+    margin-bottom: 20px;
+  }
+  
+  @media (max-width: 40.0525em) {
+    .filter-actions {
+      margin-top: 20px;
+    }
   }
   </style>
 {% endblock %}
@@ -227,61 +265,55 @@ Projects
 					]
 				}) }}
 				
-				{{ govukInput({
-					label: {
-						text: "Project name",
-						classes: "govuk-label--s"
-					},
-					hint: {
-						text: "Can be partial name"
-					},
-					id: "filter-project-name",
-					name: "filter-project-name"
-				}) }}
+				<div class="filter-inputs-container">
+					{{ govukInput({
+						label: {
+							text: "Project name",
+							classes: "govuk-label--s"
+						},
+						hint: {
+							text: "Can be partial name"
+						},
+						id: "filter-project-name",
+						name: "filter-project-name"
+					}) }}
+					
+					{{ govukInput({
+						label: {
+							text: "Reference",
+							classes: "govuk-label--s"
+						},
+						hint: {
+							text: "Can be partial reference"
+						},
+						id: "filter-reference",
+						name: "filter-reference"
+					}) }}
+				</div>
 				
-				{{ govukInput({
-					label: {
-						text: "Reference",
-						classes: "govuk-label--s"
-					},
-					hint: {
-						text: "Can be partial reference"
-					},
-					id: "filter-reference",
-					name: "filter-reference"
-				}) }}
+				<div id="type-checkboxes-container" class="filter-checkboxes-group">
+					<fieldset class="govuk-fieldset">
+						<legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Type</legend>
+						<div class="govuk-checkboxes govuk-checkboxes--small" id="type-checkboxes"></div>
+					</fieldset>
+				</div>
 				
-				{{ govukCheckboxes({
-					name: "filter-type",
-					fieldset: {
-						legend: {
-							text: "Type",
-							classes: "govuk-fieldset__legend--s"
-						}
-					},
-					classes: "govuk-checkboxes--small",
-					items: []
-				}) }}
+				<div id="status-checkboxes-container" class="filter-checkboxes-group">
+					<fieldset class="govuk-fieldset">
+						<legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Status</legend>
+						<div class="govuk-checkboxes govuk-checkboxes--small" id="status-checkboxes"></div>
+					</fieldset>
+				</div>
 				
-				{{ govukCheckboxes({
-					name: "filter-status",
-					fieldset: {
-						legend: {
-							text: "Status",
-							classes: "govuk-fieldset__legend--s"
-						}
-					},
-					classes: "govuk-checkboxes--small",
-					items: []
-				}) }}
-				
-				{{ govukButton({
-					text: "Apply filters",
-					classes: "govuk-!-margin-bottom-0 govuk-!-margin-right-3",
-					id: "apply-filters-btn"
-				}) }}
-				
-				<a href="#" id="clear-filters" class="govuk-link govuk-link--no-visited-state">Clear filters</a>
+				<div class="filter-actions">
+					{{ govukButton({
+						text: "Apply filters",
+						classes: "govuk-!-margin-bottom-0 govuk-!-margin-right-3",
+						id: "apply-filters-btn"
+					}) }}
+					
+					<a href="#" id="clear-filters" class="govuk-link govuk-link--no-visited-state">Clear filters</a>
+				</div>
 			</div>
 		</div>
 		
@@ -535,9 +567,9 @@ document.addEventListener('DOMContentLoaded', function() {
 			if (type) types.add(type);
 		});
 		
-		const typeFieldset = document.querySelector('input[name="filter-type"]')?.closest('.govuk-checkboxes');
-		if (typeFieldset) {
-			typeFieldset.innerHTML = '';
+		const typeContainer = document.getElementById('type-checkboxes');
+		if (typeContainer) {
+			typeContainer.innerHTML = '';
 			let index = 0;
 			types.forEach(function(type) {
 				const item = document.createElement('div');
@@ -546,7 +578,7 @@ document.addEventListener('DOMContentLoaded', function() {
 					<input class="govuk-checkboxes__input" id="type-${index}" name="filter-type" type="checkbox" value="${type}">
 					<label class="govuk-label govuk-checkboxes__label" for="type-${index}">${type}</label>
 				`;
-				typeFieldset.appendChild(item);
+				typeContainer.appendChild(item);
 				index++;
 			});
 		}
@@ -560,9 +592,9 @@ document.addEventListener('DOMContentLoaded', function() {
 			if (status) statuses.add(status);
 		});
 		
-		const statusFieldset = document.querySelector('input[name="filter-status"]')?.closest('.govuk-checkboxes');
-		if (statusFieldset) {
-			statusFieldset.innerHTML = '';
+		const statusContainer = document.getElementById('status-checkboxes');
+		if (statusContainer) {
+			statusContainer.innerHTML = '';
 			let index = 0;
 			statuses.forEach(function(status) {
 				const item = document.createElement('div');
@@ -571,7 +603,7 @@ document.addEventListener('DOMContentLoaded', function() {
 					<input class="govuk-checkboxes__input" id="status-${index}" name="filter-status" type="checkbox" value="${status}">
 					<label class="govuk-label govuk-checkboxes__label" for="status-${index}">${status}</label>
 				`;
-				statusFieldset.appendChild(item);
+				statusContainer.appendChild(item);
 				index++;
 			});
 		}
