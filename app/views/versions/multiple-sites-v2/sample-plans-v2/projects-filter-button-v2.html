@@ -84,6 +84,46 @@
     margin-bottom: 20px;
   }
   
+  /* Filter tags styling */
+  .filter-tags-container {
+    display: none; /* Hidden by default */
+    margin-top: 15px;
+    margin-bottom: 20px;
+  }
+  
+  .filter-tags-container.show-tags {
+    display: block;
+  }
+  
+  .filter-tag {
+    display: inline-block;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    padding: 5px 10px;
+    background-color: #1d70b8;
+    color: #ffffff;
+    text-decoration: none;
+    border: 0;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 400;
+  }
+  
+  .filter-tag:hover {
+    background-color: #003078;
+  }
+  
+  .filter-tag:focus {
+    background-color: #003078;
+    outline: 3px solid #ffdd00;
+    outline-offset: 0;
+  }
+  
+  .filter-tag-remove {
+    margin-left: 8px;
+    font-weight: bold;
+  }
+  
   .filter-checkboxes-group {
     margin-bottom: 0;
   }
@@ -344,6 +384,8 @@ Projects
 		
 		<p id="results-count" class="govuk-body" style="margin-top: 20px;"><strong>10 results found in 'All Ramsgate Marina projects'</strong></p>
 
+		<div id="filter-tags-container" class="filter-tags-container"></div>
+
 		
 
 		<table class="govuk-table" data-module="moj-sortable-table" id="projects-table">
@@ -546,6 +588,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	const projectsTable = document.getElementById('projects-table');
 	const noResultsMessage = document.getElementById('no-results-message');
 	const resultsCount = document.getElementById('results-count');
+	const filterTagsContainer = document.getElementById('filter-tags-container');
 	
 	// Handle filter toggle button
 	const toggleButton = document.getElementById('filter-toggle');
@@ -562,12 +605,20 @@ document.addEventListener('DOMContentLoaded', function() {
 				buttonWrapper.classList.remove('is-expanded');
 				this.setAttribute('aria-expanded', 'false');
 				this.innerHTML = 'Show filters';
+				// Show filter tags when panel is hidden
+				if (filterTagsContainer) {
+					filterTagsContainer.classList.add('show-tags');
+				}
 			} else {
 				// Show the panel
 				filterPanel.removeAttribute('hidden');
 				buttonWrapper.classList.add('is-expanded');
 				this.setAttribute('aria-expanded', 'true');
 				this.innerHTML = 'Hide filters';
+				// Hide filter tags when panel is visible
+				if (filterTagsContainer) {
+					filterTagsContainer.classList.remove('show-tags');
+				}
 			}
 		});
 	}
@@ -633,7 +684,116 @@ document.addEventListener('DOMContentLoaded', function() {
 			});
 		}
 	}
+	
+	// Build filter tags based on active filters
+	function buildFilterTags() {
+		if (!filterTagsContainer) return;
+		
+		// Clear existing tags
+		filterTagsContainer.innerHTML = '';
+		
+		const tags = [];
+		
+		// Check Project name text input
+		const projectNameInput = document.getElementById('filter-project-name');
+		if (projectNameInput && projectNameInput.value) {
+			tags.push({
+				type: 'project-name',
+				label: 'Project name',
+				value: projectNameInput.value,
+				displayValue: projectNameInput.value
+			});
+		}
+		
+		// Check Reference text input
+		const referenceInput = document.getElementById('filter-reference');
+		if (referenceInput && referenceInput.value) {
+			tags.push({
+				type: 'reference',
+				label: 'Reference',
+				value: referenceInput.value,
+				displayValue: referenceInput.value
+			});
+		}
+		
+		// Check selected Type checkboxes
+		const selectedTypes = document.querySelectorAll('input[name="filter-type"]:checked');
+		selectedTypes.forEach(function(checkbox) {
+			tags.push({
+				type: 'type',
+				label: 'Type',
+				value: checkbox.value,
+				displayValue: checkbox.value
+			});
+		});
+		
+		// Check selected Status checkboxes
+		const selectedStatuses = document.querySelectorAll('input[name="filter-status"]:checked');
+		selectedStatuses.forEach(function(checkbox) {
+			tags.push({
+				type: 'status',
+				label: 'Status',
+				value: checkbox.value,
+				displayValue: checkbox.value
+			});
+		});
+		
+		// Check selected Person checkboxes (only when specific person radio is selected)
+		const specificPersonRadio = document.querySelector('input[name="projectFilter"][value="specific-person"]');
+		if (specificPersonRadio && specificPersonRadio.checked) {
+			const selectedPeople = document.querySelectorAll('input[name="filter-person"]:checked');
+			selectedPeople.forEach(function(checkbox) {
+				const displayName = personNames[checkbox.value] || checkbox.value;
+				tags.push({
+					type: 'person',
+					label: 'Person',
+					value: checkbox.value,
+					displayValue: displayName
+				});
+			});
+		}
+		
+		// Create tag elements
+		tags.forEach(function(tag) {
+			const tagButton = document.createElement('button');
+			tagButton.className = 'filter-tag';
+			tagButton.setAttribute('data-filter-type', tag.type);
+			tagButton.setAttribute('data-filter-value', tag.value);
+			tagButton.innerHTML = `${tag.label}: ${tag.displayValue}<span class="filter-tag-remove">×</span>`;
+			
+			// Add click handler to remove this filter
+			tagButton.addEventListener('click', function(e) {
+				e.preventDefault();
+				removeFilter(tag.type, tag.value);
+			});
+			
+			filterTagsContainer.appendChild(tagButton);
+		});
+	}
 
+	// Remove individual filter
+	function removeFilter(type, value) {
+		if (type === 'project-name') {
+			const projectNameInput = document.getElementById('filter-project-name');
+			if (projectNameInput) projectNameInput.value = '';
+		} else if (type === 'reference') {
+			const referenceInput = document.getElementById('filter-reference');
+			if (referenceInput) referenceInput.value = '';
+		} else if (type === 'type') {
+			const checkbox = document.querySelector(`input[name="filter-type"][value="${value}"]`);
+			if (checkbox) checkbox.checked = false;
+		} else if (type === 'status') {
+			const checkbox = document.querySelector(`input[name="filter-status"][value="${value}"]`);
+			if (checkbox) checkbox.checked = false;
+		} else if (type === 'person') {
+			const checkbox = document.querySelector(`input[name="filter-person"][value="${value}"]`);
+			if (checkbox) checkbox.checked = false;
+		}
+		
+		// Re-run filter
+		filterProjects();
+	}
+	
 	// Update results count display
 	function updateResultsCount(visibleCount) {
 		if (!resultsCount) return;
@@ -742,6 +902,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
 		// Update results count
 		updateResultsCount(visibleCount);
+		
+		// Build filter tags
+		buildFilterTags();
 
 		// Show/hide table and no results message based on visible count
 		if (visibleCount === 0) {
@@ -794,6 +957,11 @@ document.addEventListener('DOMContentLoaded', function() {
 	buildTypeCheckboxes();
 	buildStatusCheckboxes();
 	filterProjects();
+	
+	// Initially hide tags since filter panel is visible by default
+	if (filterTagsContainer) {
+		filterTagsContainer.classList.remove('show-tags');
+	}
 });
 </script>
 
