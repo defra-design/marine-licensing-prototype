@@ -342,7 +342,7 @@ Projects
 			</div>
 		</div>
 		
-		<p id="results-count" class="govuk-body" style="margin-top: 20px;"><strong>10 results found</strong></p>
+		<p id="results-count" class="govuk-body" style="margin-top: 20px;"><strong>10 results found in 'All Ramsgate Marina projects'</strong></p>
 
 		
 
@@ -639,37 +639,22 @@ document.addEventListener('DOMContentLoaded', function() {
 		if (!resultsCount) return;
 		
 		const selectedFilter = document.querySelector('input[name="projectFilter"]:checked').value;
-		const projectNameInput = document.getElementById('filter-project-name');
-		const referenceInput = document.getElementById('filter-reference');
-		const selectedTypes = Array.from(document.querySelectorAll('input[name="filter-type"]:checked'));
-		const selectedStatuses = Array.from(document.querySelectorAll('input[name="filter-status"]:checked'));
 		const selectedPeople = Array.from(document.querySelectorAll('input[name="filter-person"]:checked'));
-		
-		// Check if any additional filters are applied
-		const hasAdditionalFilters = (projectNameInput && projectNameInput.value) || 
-									  (referenceInput && referenceInput.value) ||
-									  selectedTypes.length > 0 || 
-									  selectedStatuses.length > 0;
 		
 		let message = '';
 		const resultText = visibleCount === 1 ? 'result' : 'results';
 		
-		if (hasAdditionalFilters) {
-			// Just show count when additional filters are applied
-			message = `<strong>${visibleCount} ${resultText} found</strong>`;
-		} else {
-			// Show count with context based on Show radio selection
-			if (selectedFilter === 'all-projects') {
-				message = `<strong>${visibleCount} ${resultText} found for 'All ${orgName} projects'</strong>`;
-			} else if (selectedFilter === 'my-projects') {
-				message = `<strong>${visibleCount} ${resultText} found for 'My projects'</strong>`;
-			} else if (selectedFilter === 'specific-person') {
-				if (selectedPeople.length > 0) {
-					const names = selectedPeople.map(cb => personNames[cb.value]).join(', ');
-					message = `<strong>${visibleCount} ${resultText} found for 'Projects by ${names}'</strong>`;
-				} else {
-					message = `<strong>${visibleCount} ${resultText} found for 'Projects by a specific person'</strong>`;
-				}
+		// Always show count with context based on Show radio selection
+		if (selectedFilter === 'all-projects') {
+			message = `<strong>${visibleCount} ${resultText} found in 'All ${orgName} projects'</strong>`;
+		} else if (selectedFilter === 'my-projects') {
+			message = `<strong>${visibleCount} ${resultText} found in 'My projects'</strong>`;
+		} else if (selectedFilter === 'specific-person') {
+			if (selectedPeople.length > 0) {
+				const names = selectedPeople.map(cb => personNames[cb.value]).join(', ');
+				message = `<strong>${visibleCount} ${resultText} found in 'Projects by ${names}'</strong>`;
+			} else {
+				message = `<strong>${visibleCount} ${resultText} found in 'Projects by a specific person'</strong>`;
 			}
 		}
 		
