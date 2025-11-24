@@ -22,7 +22,7 @@
   
   #filter-toggle {
     margin-bottom: 0;
-    padding: 13px;
+    padding: 11px 13px;
     width: auto !important;
   }
   
@@ -99,29 +99,40 @@
     display: inline-block;
     margin-right: 10px;
     margin-bottom: 10px;
-    padding: 5px 10px;
-    background-color: #1d70b8;
-    color: #ffffff;
+    padding: 6px 10px;
+    background-color: #f3f2f1;
+    color: #0b0c0c;
     text-decoration: none;
-    border: 0;
+    border: 1px solid #b1b4b6;
     cursor: pointer;
     font-size: 16px;
     font-weight: 400;
   }
   
   .filter-tag:hover {
-    background-color: #003078;
+    background-color: #0b0c0c;
+	color: #ffffff;
+	border: 1px solid #0b0c0c;
   }
   
   .filter-tag:focus {
-    background-color: #003078;
+    background-color: #dfd9d6;
     outline: 3px solid #ffdd00;
     outline-offset: 0;
   }
   
   .filter-tag-remove {
+    display: inline-block;
     margin-left: 8px;
-    font-weight: bold;
+    vertical-align: middle;
+    width: 11px;
+    height: 11px;
+  }
+  
+  .filter-tag-remove svg {
+    width: 100%;
+    height: 100%;
+    vertical-align: top;
   }
   
   .filter-checkboxes-group {
@@ -746,7 +757,7 @@ document.addEventListener('DOMContentLoaded', function() {
 				const displayName = personNames[checkbox.value] || checkbox.value;
 				tags.push({
 					type: 'person',
-					label: 'Person',
+					label: 'Projects by',
 					value: checkbox.value,
 					displayValue: displayName
 				});
@@ -759,7 +770,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			tagButton.className = 'filter-tag';
 			tagButton.setAttribute('data-filter-type', tag.type);
 			tagButton.setAttribute('data-filter-value', tag.value);
-			tagButton.innerHTML = `${tag.label}: ${tag.displayValue}<span class="filter-tag-remove">×</span>`;
+			tagButton.innerHTML = `${tag.label}: ${tag.displayValue}<span class="filter-tag-remove"><svg viewBox="0 0 13 13" xmlns="http://www.w3.org/2000/svg" focusable="false" aria-hidden="true"><path d="M0 0L13 13M13 0L0 13" fill="none" stroke="currentColor" stroke-width="2"></path></svg></span>`;
 			
 			// Add click handler to remove this filter
 			tagButton.addEventListener('click', function(e) {
@@ -788,6 +799,14 @@ document.addEventListener('DOMContentLoaded', function() {
 		} else if (type === 'person') {
 			const checkbox = document.querySelector(`input[name="filter-person"][value="${value}"]`);
 			if (checkbox) checkbox.checked = false;
+			
+			// Check if all person checkboxes are now unchecked
+			const remainingPeople = document.querySelectorAll('input[name="filter-person"]:checked');
+			if (remainingPeople.length === 0) {
+				// Switch back to "All projects" radio
+				const allProjectsRadio = document.querySelector('input[name="projectFilter"][value="all-projects"]');
+				if (allProjectsRadio) allProjectsRadio.checked = true;
+			}
 		}
 		
 		// Re-run filter
