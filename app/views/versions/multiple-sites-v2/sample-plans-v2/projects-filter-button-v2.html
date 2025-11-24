@@ -43,46 +43,30 @@
   }
   
   /* Responsive layout for filters */
-  @media (min-width: 40.0625em) {
-    .filter-panel {
-      display: grid;
-      grid-template-columns: auto 1fr auto auto;
-      grid-gap: 30px;
-      align-items: start;
-    }
-    
-    .filter-panel .govuk-radios {
-      grid-column: 1;
-      grid-row: 1;
-    }
-    
-    .filter-inputs-container {
-      grid-column: 2;
-      grid-row: 1;
-    }
-    
-    #type-checkboxes-container {
-      grid-column: 3;
-      grid-row: 1;
-    }
-    
-    #status-checkboxes-container {
-      grid-column: 4;
-      grid-row: 1;
-    }
-    
+  .filter-panel {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    column-gap: 30px;
+    /* row-gap: 15px; */
+    align-items: start;
+  }
+  
+  .filter-panel > * {
+    min-width: 260px;
+  }
+  
+  .filter-actions {
+    grid-column: 1;
+    margin-top: 10px;
+  }
+  
+  /* Ensure filter actions always start at the first column */
+  @supports (display: grid) {
     .filter-actions {
-      grid-column: 1;
-      grid-row: 2;
-      margin-top: 10px;
+      grid-column: 1 / -1;
     }
   }
   
-  #clear-filters {
-    display: inline-block;
-    vertical-align: middle;
-    line-height: 40px;
-  }
   
   #results-count {
     margin-top: 20px;
@@ -90,16 +74,43 @@
   }
   
   .filter-checkboxes-group {
-    margin-bottom: 20px;
+    margin-bottom: 0;
   }
   
   .filter-inputs-container {
-    margin-bottom: 20px;
+    margin-bottom: 0;
+  }
+
+  .filter-actions .govuk-button-group {
+    margin-bottom: 0;
   }
   
-  @media (max-width: 40.0525em) {
+  /* Mobile: stack everything */
+  @media (max-width: 600px) {
+    .filter-panel {
+      grid-template-columns: 1fr;
+    }
+    
+    .filter-panel > * {
+      min-width: 0;
+    }
+    
     .filter-actions {
       margin-top: 20px;
+    }
+  }
+  
+  /* Tablet/Medium: 2 columns */
+  @media (min-width: 601px) and (max-width: 1150px) {
+    .filter-panel {
+      grid-template-columns: repeat(2, minmax(260px, 1fr));
+    }
+  }
+  
+  /* Desktop/Wide: 4 columns */
+  @media (min-width: 1151px) {
+    .filter-panel {
+      grid-template-columns: repeat(4, minmax(260px, 1fr));
     }
   }
   </style>
@@ -292,10 +303,12 @@ Projects
 				</div>
 				
 				<div id="type-checkboxes-container" class="filter-checkboxes-group">
+					<div class="govuk-form-group">
 					<fieldset class="govuk-fieldset">
 						<legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Type</legend>
-						<div class="govuk-checkboxes govuk-checkboxes--small" id="type-checkboxes"></div>
-					</fieldset>
+							<div class="govuk-checkboxes govuk-checkboxes--small" id="type-checkboxes"></div>
+						</fieldset>
+					</div>
 				</div>
 				
 				<div id="status-checkboxes-container" class="filter-checkboxes-group">
@@ -306,13 +319,14 @@ Projects
 				</div>
 				
 				<div class="filter-actions">
-					{{ govukButton({
-						text: "Apply filters",
-						classes: "govuk-!-margin-bottom-0 govuk-!-margin-right-3",
-						id: "apply-filters-btn"
-					}) }}
-					
-					<a href="#" id="clear-filters" class="govuk-link govuk-link--no-visited-state">Clear filters</a>
+					<div class="govuk-button-group">
+						{{ govukButton({
+							text: "Apply filters",
+							id: "apply-filters-btn"
+						}) }}
+						
+						<a href="#" id="clear-filters" class="govuk-link govuk-link--no-visited-state">Clear filters</a>
+					</div>
 				</div>
 			</div>
 		</div>
