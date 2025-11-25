@@ -155,7 +155,7 @@ Projects
           
           {% set personHtml %}
           <fieldset class="govuk-fieldset">
-            <legend class="govuk-fieldset__legend">
+            <legend class="govuk-fieldset__legend govuk-visually-hidden">
               Select a person
             </legend>
             <p class="person-error-message" id="person-error-message">
@@ -211,7 +211,7 @@ Projects
                 <div class="govuk-radios__item">
                   <input class="govuk-checkboxes__input govuk-radios__input" id="filter-specific" name="projectFilter" type="radio" value="specific-person" data-aria-controls="conditional-specific-person">
                   <label class="govuk-label govuk-radios__label" for="filter-specific">
-                    Projects by a specific person
+                    Projects by owner
                   </label>
                 </div>
                 <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-specific-person">
@@ -226,7 +226,7 @@ Projects
               Project name
             </label>
             <div id="project-name-hint" class="govuk-hint">
-              Can be partial name
+				Enter full or partial name
             </div>
             <input class="govuk-input" id="project-name" name="project-name" type="text" aria-describedby="project-name-hint">
           </div>
@@ -236,7 +236,7 @@ Projects
               Reference
             </label>
             <div id="reference-hint" class="govuk-hint">
-              Can be partial reference
+				Enter full or partial name
             </div>
             <input class="govuk-input" id="reference" name="reference" type="text" aria-describedby="reference-hint">
           </div>
@@ -655,7 +655,7 @@ document.addEventListener('DOMContentLoaded', function() {
           const names = selectedPeople.map(cb => personNames[cb.value]).join(', ');
           message = `<strong>${visibleCount} ${resultText} found in 'Projects by ${names}'</strong>`;
         } else {
-          message = `<strong>${visibleCount} ${resultText} found in 'Projects by a specific person'</strong>`;
+          message = `<strong>${visibleCount} ${resultText} found in 'Projects by owner'</strong>`;
         }
       }
     }
