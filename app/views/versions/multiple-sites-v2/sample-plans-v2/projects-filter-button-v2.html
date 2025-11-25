@@ -296,15 +296,11 @@ Projects
 			
 			<div class="filter-panel" id="filter-panel">
 				{% set personHtml %}
-				<p class="person-error-message" id="person-error-message">
-					<span class="govuk-visually-hidden">Error:</span> Select a person to view their projects
-				</p>
 				{{ govukCheckboxes({
 					name: "filter-person",
 					fieldset: {
 						legend: {
-							text: "Person",
-							classes: "govuk-visually-hidden"
+							text: "Select a person"
 						}
 					},
 					classes: "govuk-checkboxes--small",
@@ -327,6 +323,9 @@ Projects
 						}
 					]
 				}) }}
+				<p class="person-error-message" id="person-error-message">
+					<span class="govuk-visually-hidden">Error:</span> Select a person to view their projects
+				</p>
 				{% endset %}
 
 				{{ govukRadios({
@@ -664,6 +663,23 @@ document.addEventListener('DOMContentLoaded', function() {
 	
 	// Track if error is currently showing
 	let errorIsShowing = false;
+	
+	// Reposition error message to appear after legend but before checkboxes
+	const personErrorMessage = document.getElementById('person-error-message');
+	if (personErrorMessage) {
+		// Find the fieldset containing the person checkboxes
+		const personFieldset = document.querySelector('input[name="filter-person"]')?.closest('.govuk-form-group')?.querySelector('.govuk-fieldset');
+		if (personFieldset) {
+			// Find the legend and the checkboxes div
+			const legend = personFieldset.querySelector('.govuk-fieldset__legend');
+			const checkboxesDiv = personFieldset.querySelector('.govuk-checkboxes');
+			
+			// Insert error message after legend but before checkboxes
+			if (legend && checkboxesDiv) {
+				legend.parentNode.insertBefore(personErrorMessage, checkboxesDiv);
+			}
+		}
+	}
 	
 	// Get organization name from page (from session data)
 	const orgCaption = document.querySelector('.govuk-caption-l');
