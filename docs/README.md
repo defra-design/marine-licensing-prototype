@@ -14,6 +14,8 @@ This directory contains comprehensive documentation for the marine licensing pro
 
 - **[Site Deletion Renumbering Implementation](site-deletion-renumbering-implementation.md)** - How the site deletion and renumbering feature was built
 - **[Cancel Functionality Implementation Guide](cancel-functionality-implementation-guide.md)** - Comprehensive guide for cancel link behavior
+- **[Projects Filter - MOJ Version](projects-filter-moj-version.md)** - Side panel filter implementation with MOJ Design System patterns
+- **[Projects Filter - Toggle Version](projects-filter-toggle-version.md)** - Horizontal expandable filter panel with responsive grid layout
 
 ### Quick Reference
 
