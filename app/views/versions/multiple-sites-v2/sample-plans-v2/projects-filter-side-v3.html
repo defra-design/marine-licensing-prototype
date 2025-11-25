@@ -154,35 +154,40 @@ Projects
           </button>
           
           {% set personHtml %}
-          <p class="person-error-message" id="person-error-message">
-            <span class="govuk-visually-hidden">Error:</span> Select a person to view their projects
-          </p>
-          <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
-            <div class="govuk-checkboxes__item">
-              <input class="govuk-checkboxes__input" id="person-alex" name="person" type="checkbox" value="alex-williams">
-              <label class="govuk-label govuk-checkboxes__label" for="person-alex">
-                Alex Williams <span class="person-count" data-person="alex-williams">(0)</span>
-              </label>
+          <fieldset class="govuk-fieldset">
+            <legend class="govuk-fieldset__legend">
+              Select a person
+            </legend>
+            <p class="person-error-message" id="person-error-message">
+              <span class="govuk-visually-hidden">Error:</span> Select a person to view their projects
+            </p>
+            <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+              <div class="govuk-checkboxes__item">
+                <input class="govuk-checkboxes__input" id="person-alex" name="person" type="checkbox" value="alex-williams">
+                <label class="govuk-label govuk-checkboxes__label" for="person-alex">
+                  Alex Williams <span class="person-count" data-person="alex-williams">(0)</span>
+                </label>
+              </div>
+              <div class="govuk-checkboxes__item">
+                <input class="govuk-checkboxes__input" id="person-james" name="person" type="checkbox" value="james-thompson">
+                <label class="govuk-label govuk-checkboxes__label" for="person-james">
+                  James Thompson <span class="person-count" data-person="james-thompson">(0)</span>
+                </label>
+              </div>
+              <div class="govuk-checkboxes__item">
+                <input class="govuk-checkboxes__input" id="person-jon" name="person" type="checkbox" value="jon-doe">
+                <label class="govuk-label govuk-checkboxes__label" for="person-jon">
+                  Jon Doe <span class="person-count" data-person="jon-doe">(0)</span>
+                </label>
+              </div>
+              <div class="govuk-checkboxes__item">
+                <input class="govuk-checkboxes__input" id="person-sarah" name="person" type="checkbox" value="sarah-chen">
+                <label class="govuk-label govuk-checkboxes__label" for="person-sarah">
+                  Sarah Chen <span class="person-count" data-person="sarah-chen">(0)</span>
+                </label>
+              </div>
             </div>
-            <div class="govuk-checkboxes__item">
-              <input class="govuk-checkboxes__input" id="person-james" name="person" type="checkbox" value="james-thompson">
-              <label class="govuk-label govuk-checkboxes__label" for="person-james">
-                James Thompson <span class="person-count" data-person="james-thompson">(0)</span>
-              </label>
-            </div>
-            <div class="govuk-checkboxes__item">
-              <input class="govuk-checkboxes__input" id="person-jon" name="person" type="checkbox" value="jon-doe">
-              <label class="govuk-label govuk-checkboxes__label" for="person-jon">
-                Jon Doe <span class="person-count" data-person="jon-doe">(0)</span>
-              </label>
-            </div>
-            <div class="govuk-checkboxes__item">
-              <input class="govuk-checkboxes__input" id="person-sarah" name="person" type="checkbox" value="sarah-chen">
-              <label class="govuk-label govuk-checkboxes__label" for="person-sarah">
-                Sarah Chen <span class="person-count" data-person="sarah-chen">(0)</span>
-              </label>
-            </div>
-          </div>
+          </fieldset>
           {% endset %}
 
           <div class="govuk-form-group">
