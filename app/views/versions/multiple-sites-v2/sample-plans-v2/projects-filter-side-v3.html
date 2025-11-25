@@ -1,0 +1,543 @@
+{% extends "../layouts/sample-plans-v2.html" %}
+
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/select/macro.njk" import govukSelect %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/header/macro.njk" import govukHeader %}
+{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
+
+<!-- Set a variable to identify this specific page -->
+{% set currentPageId = "sample-plans-projects" %}
+
+{% block header %}
+{{ govukHeader({
+  classes: "govuk-header--full-width-border"
+}) }}
+{{ govukServiceNavigation({
+  serviceName: "Get permission for marine work",
+  serviceUrl: "/versions/multiple-sites-v2/sample-plans-v2/homepage",
+  navigation: [
+    {
+      href: "homepage",
+      text: "Home",
+      active: false
+    },
+    {
+      href: "projects",
+      text: "Projects",
+      active: true
+    },
+    {
+      href: "#",
+      text: "Defra account",
+      active: false
+    },
+    {
+      href: "/versions/multiple-sites-v2/sample-plans-v1/sign-in.html?goto=home",
+      text: "Sign out"
+    }
+  ]
+}) }}
+{% endblock %}
+
+{% block beforeContent %}
+  {% include "../includes/phase-banner.html" %}
+  {% if data['user_type'] === 'organisation' %}
+  <div class="app-organisation-switcher">
+    <span class="govuk-body-s govuk-!-font-weight-bold app-organisation-switcher__name">{{ data['organisation-name'] }}</span>
+    <a class="govuk-link app-organisation-switcher__link govuk-link--no-visited-state" href="organisation-selector?change=true&returnTo=projects">
+      Change who you're representing
+    </a>
+  </div>
+  {% endif %}
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+Projects
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - Get permission for marine work
+{% endblock %}
+
+{% block content %}
+
+<!-- Notification banner -->
+{% set notificationHtml %}
+  <p class="govuk-notification-banner__heading govuk-!-margin-bottom-3" style="width: 100%; max-width: none; margin: 0;">
+    You may need to log in to a different system to access some of your applications
+  </p>
+  <p class="govuk-body" style="width: 100%; max-width: none; margin: 0;">
+    <a class="govuk-notification-banner__link" href="#">Sign in to the Marine Case Management System</a> to view or manage information that is not available in this system.
+  </p>
+{% endset %}
+
+<!--<div style="width: 100%; max-width: 1280px; margin: 0 auto;">
+{{ govukNotificationBanner({
+  html: notificationHtml
+}) }}
+</div>-->
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <span class="govuk-caption-l">{{ data['organisation-name'] }}</span>
+    <h1 class="govuk-heading-l">
+      {{ pageHeadingTextHTML }}
+    </h1>
+  </div>
+</div>
+
+    <div class="moj-filter-layout">
+      <div class="moj-filter-layout__filter" id="moj-filter">
+        <div class="moj-filter" data-module="moj-filter">
+          <div class="moj-filter__header">
+            <div class="moj-filter__header-title">
+              <h2 class="govuk-heading-m">Filter</h2>
+            </div>
+            <div class="moj-filter__header-action">
+            </div>
+          </div>
+      <div class="moj-filter__content">
+        <div class="moj-filter__selected">
+          <div class="moj-filter__selected-heading">
+            <div class="moj-filter__heading-title">
+              <h2 class="govuk-heading-m">Selected filters</h2>
+            </div>
+            <div class="moj-filter__heading-action">
+              <p><a class="govuk-link govuk-link--no-visited-state" href="#" id="clear-filters">Clear filters</a></p>
+            </div>
+          </div>
+          <div id="selected-filter-tags">
+             <!-- Tags will be injected here by JS -->
+          </div>
+        </div>
+        <div class="moj-filter__options">
+          <button type="submit" class="govuk-button govuk-!-margin-bottom-4" data-module="govuk-button" id="apply-filters-button">
+            Apply filters
+          </button>
+          
+          {% set personHtml %}
+          {{ govukSelect({
+            id: "person",
+            name: "Person",
+            label: {
+              text: "Person",
+              classes: "govuk-visually-hidden"
+            },
+            items: [
+              {
+                value: "",
+                text: "Select person",
+                selected: true
+              },
+              {
+                value: "alex-williams",
+                text: "Alex Williams"
+              },
+              {
+                value: "james-thompson",
+                text: "James Thompson"
+              },
+              {
+                value: "jon-doe",
+                text: "Jon Doe"
+              },
+              {
+                value: "sarah-chen",
+                text: "Sarah Chen"
+              }
+            ]
+          }) }}
+          {% endset %}
+
+          {{ govukRadios({
+            name: "projectFilter",
+            fieldset: {
+              legend: {
+                text: "Filter projects",
+                classes: "govuk-fieldset__legend--s"
+              }
+            },
+            classes: "govuk-radios--small",
+            items: [
+              {
+                value: "my-projects",
+                text: "My projects",
+                checked: true
+              },
+              {
+                value: "all-projects",
+                text: "All projects"
+              },
+              {
+                value: "specific-person",
+                text: "Projects by person",
+                conditional: {
+                  html: personHtml
+                }
+              }
+            ]
+          }) }}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="moj-filter-layout__content">
+    <div class="moj-action-bar">
+      <div class="moj-action-bar__filter">
+        <button class="govuk-button govuk-button--secondary moj-filter__toggle" type="button" data-aria-controls="moj-filter" aria-expanded="true">
+          Hide filter
+        </button>
+      </div>
+    </div>
+    <table class="govuk-table" data-module="moj-sortable-table" id="projects-table">
+      <caption class="govuk-table__caption govuk-visually-hidden">{{ pageHeadingTextHTML }}</caption>
+      <thead class="govuk-table__head">
+        <tr class="govuk-table__row">
+        <th scope="col" class="govuk-table__header" aria-sort="none">Project name</th>
+        <th scope="col" class="govuk-table__header" aria-sort="none">Type</th>
+        <th scope="col" class="govuk-table__header" aria-sort="none">Reference</th>
+        <th scope="col" class="govuk-table__header" aria-sort="descending">Status</th>
+        <th scope="col" class="govuk-table__header" aria-sort="none">Submitted</th>
+        <th scope="col" class="govuk-table__header" aria-sort="none">Owner</th>
+        <th scope="col" class="govuk-table__header" aria-sort="none">Actions</th>
+        </tr>
+      </thead>
+      <tbody class="govuk-table__body">
+        <!-- Exempt activity notifications -->
+        <tr class="govuk-table__row" data-creator="jon-doe">
+          <th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Branscombe bore holes</th>
+          <td class="govuk-table__cell">Exempt activity notification</td>
+          <td class="govuk-table__cell" data-sort-value="EXE-10002">EXE/2025/10002</td>
+          <td class="govuk-table__cell" data-sort-value="001">
+            {{ govukTag({
+              text: "Closed",
+              classes: "govuk-tag--green"
+            }) }}
+          </td>
+          <td class="govuk-table__cell" data-sort-value="250906">6 Sep 2025</td>
+          <td class="govuk-table__cell">Jon Doe</td>
+          <td class="govuk-table__cell">
+            <a href="#" class="govuk-link--no-visited-state">View details</a>
+          </td>
+        </tr>
+
+        <tr class="govuk-table__row" data-creator="jon-doe">
+          <th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Worthing sediment samples</th>
+          <td class="govuk-table__cell">Exempt activity notification</td>
+          <td class="govuk-table__cell" data-sort-value="EXE-10012">EXE/2025/10012</td>
+          <td class="govuk-table__cell" data-sort-value="001">
+            {{ govukTag({
+              text: "Closed",
+              classes: "govuk-tag--green"
+            }) }}
+          </td>
+          <td class="govuk-table__cell" data-sort-value="250911">11 Sep 2025</td>
+          <td class="govuk-table__cell">Jon Doe</td>
+          <td class="govuk-table__cell">
+            <a href="#" class="govuk-link--no-visited-state">View details</a>
+          </td>
+        </tr>
+
+        <tr class="govuk-table__row" data-creator="alex-williams">
+          <th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Plymouth harbour core samples</th>
+          <td class="govuk-table__cell">Exempt activity notification</td>
+          <td class="govuk-table__cell" data-sort-value="EXE-10023">EXE/2025/10023</td>
+          <td class="govuk-table__cell" data-sort-value="001">
+            {{ govukTag({
+              text: "Closed",
+              classes: "govuk-tag--green"
+            }) }}
+          </td>
+          <td class="govuk-table__cell" data-sort-value="250917">17 Sep 2025</td>
+          <td class="govuk-table__cell">Alex Williams</td>
+          <td class="govuk-table__cell">
+            <a href="#" class="govuk-link--no-visited-state">View details</a>
+          </td>
+        </tr>
+
+        <tr class="govuk-table__row" data-creator="sarah-chen">
+          <th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Sunderland marina maintenance dredge</th>
+          <td class="govuk-table__cell">Exempt activity notification</td>
+          <td class="govuk-table__cell" data-sort-value="EXE-10029">EXE/2025/10029</td>
+          <td class="govuk-table__cell" data-sort-value="001">
+            {{ govukTag({
+              text: "Closed",
+              classes: "govuk-tag--green"
+            }) }}
+          </td>
+          <td class="govuk-table__cell" data-sort-value="251101">1 Nov 2025</td>
+          <td class="govuk-table__cell">Sarah Chen</td>
+          <td class="govuk-table__cell">
+            <a href="#" class="govuk-link--no-visited-state">View details</a>
+          </td>
+        </tr>
+
+        <tr class="govuk-table__row" data-creator="sarah-chen">
+          <th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Teignmouth water quality sampling</th>
+          <td class="govuk-table__cell">Exempt activity notification</td>
+          <td class="govuk-table__cell" data-sort-value="EXE-10034">EXE/2025/10034</td>
+          <td class="govuk-table__cell" data-sort-value="001">
+            {{ govukTag({
+              text: "Closed",
+              classes: "govuk-tag--green"
+            }) }}
+          </td>
+          <td class="govuk-table__cell" data-sort-value="251109">9 Nov 2025</td>
+          <td class="govuk-table__cell">Sarah Chen</td>
+          <td class="govuk-table__cell">
+            <a href="#" class="govuk-link--no-visited-state">View details</a>
+          </td>
+        </tr>
+
+        <tr class="govuk-table__row" data-creator="jon-doe">
+          <th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Whitstable intertidal survey pits</th>
+          <td class="govuk-table__cell">Exempt activity notification</td>
+          <td class="govuk-table__cell" data-sort-value="EXE-10047">EXE/2025/10047</td>
+          <td class="govuk-table__cell" data-sort-value="003">
+            {{ govukTag({
+              text: "Draft",
+              classes: "govuk-tag--light-blue"
+            }) }}
+          </td>
+          <td class="govuk-table__cell" data-sort-value="-">-</td>
+          <td class="govuk-table__cell">Jon Doe</td>
+          <td class="govuk-table__cell">
+            <a href="#" class="govuk-link--no-visited-state govuk-!-margin-right-4">Continue</a> <a href="#" class="govuk-link--no-visited-state">Delete</a>
+          </td>
+        </tr>
+
+        <tr class="govuk-table__row" data-creator="alex-williams">
+          <th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Scarborough seabed grab samples</th>
+          <td class="govuk-table__cell">Exempt activity notification</td>
+          <td class="govuk-table__cell" data-sort-value="EXE-10051">EXE/2025/10051</td>
+          <td class="govuk-table__cell" data-sort-value="003">
+            {{ govukTag({
+              text: "Draft",
+              classes: "govuk-tag--light-blue"
+            }) }}
+          </td>
+          <td class="govuk-table__cell" data-sort-value="-">-</td>
+          <td class="govuk-table__cell">Alex Williams</td>
+          <td class="govuk-table__cell">
+            
+          </td>
+        </tr>
+
+        <!-- Sediment sample plans -->
+        <tr class="govuk-table__row" data-creator="jon-doe">
+          <th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Tyne estuary sampling</th>
+          <td class="govuk-table__cell">Sediment sample plan</td>
+          <td class="govuk-table__cell" data-sort-value="SAM-10002">SAM/2025/10002</td>
+          <td class="govuk-table__cell" data-sort-value="002">
+            {{ govukTag({
+              text: "Sent"
+            }) }}
+          </td>
+          <td class="govuk-table__cell" data-sort-value="251111">11 Nov 2025</td>
+          <td class="govuk-table__cell">Jon Doe</td>
+          <td class="govuk-table__cell">
+            <a href="#" class="govuk-link--no-visited-state">View details</a>
+          </td>
+        </tr>
+
+        <tr class="govuk-table__row" data-creator="jon-doe">
+          <th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Portsmouth channel dredge sample</th>
+          <td class="govuk-table__cell">Sediment sample plan</td>
+          <td class="govuk-table__cell" data-sort-value="SAM-10007">SAM/2025/10007</td>
+          <td class="govuk-table__cell" data-sort-value="002">
+            {{ govukTag({
+              text: "Sent"
+            }) }}
+          </td>
+          <td class="govuk-table__cell" data-sort-value="251117">17 Nov 2025</td>
+          <td class="govuk-table__cell">Jon Doe</td>
+          <td class="govuk-table__cell">
+            <a href="#" class="govuk-link--no-visited-state">View details</a>
+          </td>
+        </tr>
+
+        <tr class="govuk-table__row" data-creator="sarah-chen">
+          <th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Falmouth harbour pre-dredge analysis</th>
+          <td class="govuk-table__cell">Sediment sample plan</td>
+          <td class="govuk-table__cell" data-sort-value="SAM-10011">SAM/2025/10011</td>
+          <td class="govuk-table__cell" data-sort-value="003">
+            {{ govukTag({
+              text: "Draft",
+              classes: "govuk-tag--light-blue"
+            }) }}
+          </td>
+          <td class="govuk-table__cell" data-sort-value="-">-</td>
+          <td class="govuk-table__cell">Sarah Chen</td>
+          <td class="govuk-table__cell">
+            
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <p id="no-results-message" class="govuk-body" style="display: none;">There are no projects to display.</p>
+
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const filterRadios = document.querySelectorAll('input[name="projectFilter"]');
+  const personSelect = document.getElementById('person');
+  const applyButton = document.getElementById('apply-filters-button');
+  const clearFiltersLink = document.getElementById('clear-filters');
+  const tableRows = document.querySelectorAll('#projects-table tbody tr');
+  const projectsTable = document.getElementById('projects-table');
+  const noResultsMessage = document.getElementById('no-results-message');
+  const selectedFiltersContainer = document.getElementById('selected-filter-tags');
+
+  // Map of person values to display names
+  const personNames = {
+    'alex-williams': 'Alex Williams',
+    'james-thompson': 'James Thompson',
+    'jon-doe': 'Jon Doe',
+    'sarah-chen': 'Sarah Chen'
+  };
+
+  function updateSelectedFilterTags(selectedFilter, selectedPerson) {
+    selectedFiltersContainer.innerHTML = '';
+    let tags = [];
+
+    if (selectedFilter === 'my-projects') {
+      tags.push({ text: 'My projects', value: 'my-projects', type: 'scope' });
+    } else if (selectedFilter === 'all-projects') {
+      tags.push({ text: 'All projects', value: 'all-projects', type: 'scope' });
+    } else if (selectedFilter === 'specific-person') {
+      if (selectedPerson && personNames[selectedPerson]) {
+        tags.push({ text: 'Person: ' + personNames[selectedPerson], value: selectedPerson, type: 'person' });
+      } else {
+        tags.push({ text: 'Projects by person', value: 'specific-person', type: 'scope' });
+      }
+    }
+
+    const ul = document.createElement('ul');
+    ul.className = 'moj-filter-tags';
+
+    tags.forEach(tag => {
+      const li = document.createElement('li');
+      const a = document.createElement('a');
+      a.className = 'moj-filter__tag';
+      a.href = '#';
+      a.innerHTML = `<span class="govuk-visually-hidden">Remove this filter</span> ${tag.text}`;
+      
+      a.addEventListener('click', function(e) {
+        e.preventDefault();
+        // Reset to default (My projects)
+        document.getElementById('filter-my').checked = true;
+        // Trigger update
+        filterProjects();
+      });
+
+      li.appendChild(a);
+      ul.appendChild(li);
+    });
+
+    selectedFiltersContainer.appendChild(ul);
+  }
+
+  // Function to filter projects
+  function filterProjects() {
+    const selectedRadio = document.querySelector('input[name="projectFilter"]:checked');
+    const selectedFilter = selectedRadio ? selectedRadio.value : 'my-projects';
+    const selectedPerson = personSelect.value;
+    let visibleCount = 0;
+
+    updateSelectedFilterTags(selectedFilter, selectedPerson);
+
+    tableRows.forEach(function(row) {
+      const creators = row.getAttribute('data-creator');
+      
+      if (selectedFilter === 'my-projects') {
+        // Show only Jon Doe's projects
+        if (creators && creators.includes('jon-doe')) {
+          row.style.display = '';
+          visibleCount++;
+        } else {
+          row.style.display = 'none';
+        }
+      } else if (selectedFilter === 'all-projects') {
+        // Show all projects
+        row.style.display = '';
+        visibleCount++;
+      } else if (selectedFilter === 'specific-person' && selectedPerson) {
+        // Show projects for selected person
+        if (creators && creators.includes(selectedPerson)) {
+          row.style.display = '';
+          visibleCount++;
+        } else {
+          row.style.display = 'none';
+        }
+      } else if (selectedFilter === 'specific-person' && !selectedPerson) {
+        // If specific-person is selected but no person chosen, hide all (or show none? or show all?)
+        // Logic in original file was hide all
+        row.style.display = 'none';
+      }
+    });
+
+    // Show/hide table and no results message based on visible count
+    if (visibleCount === 0) {
+      projectsTable.style.display = 'none';
+      noResultsMessage.style.display = 'block';
+    } else {
+      projectsTable.style.display = 'table';
+      noResultsMessage.style.display = 'none';
+    }
+  }
+
+  // Apply filter on button click
+  applyButton.addEventListener('click', function(e) {
+    e.preventDefault();
+    filterProjects();
+  });
+
+  // Handle Clear Filters
+  if (clearFiltersLink) {
+    clearFiltersLink.addEventListener('click', function(e) {
+      e.preventDefault();
+      document.getElementById('filter-my').checked = true;
+      personSelect.value = "";
+      filterProjects();
+    });
+  }
+
+  // Initial filter on page load (show Jon Doe's projects by default)
+  filterProjects();
+
+  // Handle filter toggle button
+  const toggleButton = document.querySelector('.moj-filter__toggle');
+  const filterContainer = document.getElementById('moj-filter');
+  
+  if (toggleButton && filterContainer) {
+    toggleButton.addEventListener('click', function() {
+      const isExpanded = this.getAttribute('aria-expanded') === 'true';
+      
+      if (isExpanded) {
+        // Hide the filter
+        filterContainer.style.display = 'none';
+        this.setAttribute('aria-expanded', 'false');
+        this.textContent = 'Show filter';
+      } else {
+        // Show the filter
+        filterContainer.style.display = 'block';
+        this.setAttribute('aria-expanded', 'true');
+        this.textContent = 'Hide filter';
+      }
+    });
+  }
+});
+</script>
+
+
+{% endblock %}
+

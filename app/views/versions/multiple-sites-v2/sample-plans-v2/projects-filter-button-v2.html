@@ -84,6 +84,11 @@
     margin-bottom: 20px;
   }
   
+  #results-count.error-message {
+    color: #d4351c;
+    font-weight: 700;
+  }
+  
   /* Filter tags styling */
   .filter-tags-container {
     display: none; /* Hidden by default */
@@ -145,6 +150,18 @@
 
   .filter-actions .govuk-button-group {
     margin-bottom: 0;
+  }
+  
+  /* Error styling for person checkboxes - target the existing GOV.UK conditional panel */
+  .govuk-radios__conditional.error-state {
+    border-left-color: #d4351c;
+  }
+  
+  .person-error-message {
+    display: none;
+    color: #d4351c;
+    font-weight: 700;
+    margin-bottom: 15px;
   }
   
   /* Mobile: stack everything */
@@ -279,6 +296,9 @@ Projects
 			
 			<div class="filter-panel" id="filter-panel">
 				{% set personHtml %}
+				<p class="person-error-message" id="person-error-message">
+					<span class="govuk-visually-hidden">Error:</span> Select a person to view their projects
+				</p>
 				{{ govukCheckboxes({
 					name: "filter-person",
 					fieldset: {
@@ -809,12 +829,47 @@ document.addEventListener('DOMContentLoaded', function() {
 			}
 		}
 		
-		// Re-run filter
-		filterProjects();
+		// Clear error state and re-run filter
+		clearErrorState();
+		filterProjects(false);
+	}
+	
+	// Clear error state
+	function clearErrorState() {
+		// Target the GOV.UK conditional reveal panel
+		const conditionalPanel = document.querySelector('.govuk-radios__conditional');
+		const personErrorMessage = document.getElementById('person-error-message');
+		
+		if (conditionalPanel) {
+			conditionalPanel.classList.remove('error-state');
+		}
+		if (personErrorMessage) {
+			personErrorMessage.style.display = 'none';
+		}
+		if (resultsCount) {
+			resultsCount.classList.remove('error-message');
+		}
+	}
+	
+	// Show error state
+	function showErrorState() {
+		// Target the GOV.UK conditional reveal panel
+		const conditionalPanel = document.querySelector('.govuk-radios__conditional');
+		const personErrorMessage = document.getElementById('person-error-message');
+		
+		if (conditionalPanel) {
+			conditionalPanel.classList.add('error-state');
+		}
+		if (personErrorMessage) {
+			personErrorMessage.style.display = 'block';
+		}
+		if (resultsCount) {
+			resultsCount.classList.add('error-message');
+		}
 	}
 	
 	// Update results count display
-	function updateResultsCount(visibleCount) {
+	function updateResultsCount(visibleCount, isError) {
 		if (!resultsCount) return;
 		
 		const selectedFilter = document.querySelector('input[name="projectFilter"]:checked').value;
@@ -823,25 +878,30 @@ document.addEventListener('DOMContentLoaded', function() {
 		let message = '';
 		const resultText = visibleCount === 1 ? 'result' : 'results';
 		
-		// Always show count with context based on Show radio selection
-		if (selectedFilter === 'all-projects') {
-			message = `<strong>${visibleCount} ${resultText} found in 'All ${orgName} projects'</strong>`;
-		} else if (selectedFilter === 'my-projects') {
-			message = `<strong>${visibleCount} ${resultText} found in 'My projects'</strong>`;
-		} else if (selectedFilter === 'specific-person') {
-			if (selectedPeople.length > 0) {
-				const names = selectedPeople.map(cb => personNames[cb.value]).join(', ');
-				message = `<strong>${visibleCount} ${resultText} found in 'Projects by ${names}'</strong>`;
-			} else {
-				message = `<strong>${visibleCount} ${resultText} found in 'Projects by a specific person'</strong>`;
+		// Check for error state
+		if (isError) {
+			message = 'Select a person to view their projects';
+		} else {
+			// Always show count with context based on Show radio selection
+			if (selectedFilter === 'all-projects') {
+				message = `<strong>${visibleCount} ${resultText} found in 'All ${orgName} projects'</strong>`;
+			} else if (selectedFilter === 'my-projects') {
+				message = `<strong>${visibleCount} ${resultText} found in 'My projects'</strong>`;
+			} else if (selectedFilter === 'specific-person') {
+				if (selectedPeople.length > 0) {
+					const names = selectedPeople.map(cb => personNames[cb.value]).join(', ');
+					message = `<strong>${visibleCount} ${resultText} found in 'Projects by ${names}'</strong>`;
+				} else {
+					message = `<strong>${visibleCount} ${resultText} found in 'Projects by a specific person'</strong>`;
+				}
 			}
 		}
 		
 		resultsCount.innerHTML = message;
 	}
 
-	// Function to filter projects
-	function filterProjects() {
+	// Function to filter projects (with optional error checking)
+	function filterProjects(checkForErrors) {
 		const selectedFilter = document.querySelector('input[name="projectFilter"]:checked').value;
 		const projectNameInput = document.getElementById('filter-project-name');
 		const referenceInput = document.getElementById('filter-reference');
@@ -850,6 +910,24 @@ document.addEventListener('DOMContentLoaded', function() {
 		const selectedTypes = Array.from(document.querySelectorAll('input[name="filter-type"]:checked')).map(cb => cb.value);
 		const selectedStatuses = Array.from(document.querySelectorAll('input[name="filter-status"]:checked')).map(cb => cb.value);
 		const selectedPeople = Array.from(document.querySelectorAll('input[name="filter-person"]:checked')).map(cb => cb.value);
+		
+		// Check for error state (only when explicitly checking, i.e., on Apply filters)
+		let isError = false;
+		if (checkForErrors && selectedFilter === 'specific-person' && selectedPeople.length === 0) {
+			isError = true;
+			showErrorState();
+		} else {
+			clearErrorState();
+		}
+		
+		// If in error state, don't proceed with filtering
+		if (isError) {
+			updateResultsCount(0, true);
+			buildFilterTags();
+			projectsTable.style.display = 'none';
+			noResultsMessage.style.display = 'block';
+			return;
+		}
 		
 		let visibleCount = 0;
 
@@ -920,7 +998,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		});
 
 		// Update results count
-		updateResultsCount(visibleCount);
+		updateResultsCount(visibleCount, false);
 		
 		// Build filter tags
 		buildFilterTags();
@@ -959,23 +1037,44 @@ document.addEventListener('DOMContentLoaded', function() {
 			// Uncheck all Person checkboxes
 			document.querySelectorAll('input[name="filter-person"]').forEach(cb => cb.checked = false);
 			
-			// Re-run filter
-			filterProjects();
+			// Clear error state and re-run filter
+			clearErrorState();
+			filterProjects(false);
 		});
 	}
 
-	// Apply filter on button click
+	// Apply filter on button click (with error checking)
 	if (applyButton) {
 		applyButton.addEventListener('click', function(e) {
 			e.preventDefault();
-			filterProjects();
+			filterProjects(true);
+		});
+	}
+	
+	// Add change listeners to clear error state when user makes changes
+	filterRadios.forEach(function(radio) {
+		radio.addEventListener('change', function() {
+			clearErrorState();
+		});
+	});
+	
+	// Add change listener to person checkboxes (added after initialization)
+	function addPersonCheckboxListeners() {
+		const personCheckboxes = document.querySelectorAll('input[name="filter-person"]');
+		personCheckboxes.forEach(function(checkbox) {
+			checkbox.addEventListener('change', function() {
+				clearErrorState();
+			});
 		});
 	}
 
 	// Initialize: build dynamic checkboxes and run initial filter
 	buildTypeCheckboxes();
 	buildStatusCheckboxes();
-	filterProjects();
+	filterProjects(false); // Don't check for errors on initial load
+	
+	// Add person checkbox listeners after they exist
+	addPersonCheckboxListeners();
 	
 	// Initially hide tags since filter panel is visible by default
 	if (filterTagsContainer) {
