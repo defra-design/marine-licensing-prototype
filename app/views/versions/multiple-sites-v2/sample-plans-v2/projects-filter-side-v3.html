@@ -11,6 +11,39 @@
 <!-- Set a variable to identify this specific page -->
 {% set currentPageId = "sample-plans-projects" %}
 
+{% block head %}
+  {{ super() }}
+  <style>
+  /* Error styling for person checkboxes conditional panel */
+  .govuk-radios__conditional.error-state {
+    border-left-color: #d4351c;
+  }
+  
+  .person-error-message {
+    display: none;
+    color: #d4351c;
+    font-weight: 700;
+    margin-bottom: 15px;
+  }
+  
+  /* Results count styling */
+  #results-count {
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+  
+  #results-count.error-message {
+    color: #d4351c;
+    font-weight: 700;
+  }
+  
+  /* Full width button */
+  .govuk-button--full-width {
+    width: 100%;
+  }
+  </style>
+{% endblock %}
+
 {% block header %}
 {{ govukHeader({
   classes: "govuk-header--full-width-border"
@@ -116,72 +149,114 @@ Projects
           </div>
         </div>
         <div class="moj-filter__options">
-          <button type="submit" class="govuk-button govuk-!-margin-bottom-4" data-module="govuk-button" id="apply-filters-button">
+          <button type="submit" class="govuk-button govuk-button--full-width govuk-!-margin-bottom-4" data-module="govuk-button" id="apply-filters-button">
             Apply filters
           </button>
           
           {% set personHtml %}
-          {{ govukSelect({
-            id: "person",
-            name: "Person",
-            label: {
-              text: "Person",
-              classes: "govuk-visually-hidden"
-            },
-            items: [
-              {
-                value: "",
-                text: "Select person",
-                selected: true
-              },
-              {
-                value: "alex-williams",
-                text: "Alex Williams"
-              },
-              {
-                value: "james-thompson",
-                text: "James Thompson"
-              },
-              {
-                value: "jon-doe",
-                text: "Jon Doe"
-              },
-              {
-                value: "sarah-chen",
-                text: "Sarah Chen"
-              }
-            ]
-          }) }}
+          <p class="person-error-message" id="person-error-message">
+            <span class="govuk-visually-hidden">Error:</span> Select a person to view their projects
+          </p>
+          <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+            <div class="govuk-checkboxes__item">
+              <input class="govuk-checkboxes__input" id="person-alex" name="person" type="checkbox" value="alex-williams">
+              <label class="govuk-label govuk-checkboxes__label" for="person-alex">
+                Alex Williams <span class="person-count" data-person="alex-williams">(0)</span>
+              </label>
+            </div>
+            <div class="govuk-checkboxes__item">
+              <input class="govuk-checkboxes__input" id="person-james" name="person" type="checkbox" value="james-thompson">
+              <label class="govuk-label govuk-checkboxes__label" for="person-james">
+                James Thompson <span class="person-count" data-person="james-thompson">(0)</span>
+              </label>
+            </div>
+            <div class="govuk-checkboxes__item">
+              <input class="govuk-checkboxes__input" id="person-jon" name="person" type="checkbox" value="jon-doe">
+              <label class="govuk-label govuk-checkboxes__label" for="person-jon">
+                Jon Doe <span class="person-count" data-person="jon-doe">(0)</span>
+              </label>
+            </div>
+            <div class="govuk-checkboxes__item">
+              <input class="govuk-checkboxes__input" id="person-sarah" name="person" type="checkbox" value="sarah-chen">
+              <label class="govuk-label govuk-checkboxes__label" for="person-sarah">
+                Sarah Chen <span class="person-count" data-person="sarah-chen">(0)</span>
+              </label>
+            </div>
+          </div>
           {% endset %}
 
-          {{ govukRadios({
-            name: "projectFilter",
-            fieldset: {
-              legend: {
-                text: "Filter projects",
-                classes: "govuk-fieldset__legend--s"
-              }
-            },
-            classes: "govuk-radios--small",
-            items: [
-              {
-                value: "my-projects",
-                text: "My projects",
-                checked: true
-              },
-              {
-                value: "all-projects",
-                text: "All projects"
-              },
-              {
-                value: "specific-person",
-                text: "Projects by person",
-                conditional: {
-                  html: personHtml
-                }
-              }
-            ]
-          }) }}
+          <div class="govuk-form-group">
+            <fieldset class="govuk-fieldset">
+              <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+                Show
+              </legend>
+              <div class="govuk-radios govuk-radios--small" data-module="govuk-radios">
+                <div class="govuk-radios__item">
+                  <input class="govuk-checkboxes__input govuk-radios__input" id="filter-all" name="projectFilter" type="radio" value="all-projects" checked>
+                  <label class="govuk-label govuk-radios__label" for="filter-all">
+                    All {{ data['organisation-name'] or "Ramsgate Marina" }} projects <span id="count-all-projects">(0)</span>
+                  </label>
+                </div>
+                <div class="govuk-radios__item">
+                  <input class="govuk-checkboxes__input govuk-radios__input" id="filter-my" name="projectFilter" type="radio" value="my-projects">
+                  <label class="govuk-label govuk-radios__label" for="filter-my">
+                    My projects <span id="count-my-projects">(0)</span>
+                  </label>
+                </div>
+                <div class="govuk-radios__item">
+                  <input class="govuk-checkboxes__input govuk-radios__input" id="filter-specific" name="projectFilter" type="radio" value="specific-person" data-aria-controls="conditional-specific-person">
+                  <label class="govuk-label govuk-radios__label" for="filter-specific">
+                    Projects by a specific person
+                  </label>
+                </div>
+                <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-specific-person">
+                  {{ personHtml | safe }}
+                </div>
+              </div>
+            </fieldset>
+          </div>
+
+          <div class="govuk-form-group">
+            <label class="govuk-label govuk-label--s" for="project-name">
+              Project name
+            </label>
+            <div id="project-name-hint" class="govuk-hint">
+              Can be partial name
+            </div>
+            <input class="govuk-input" id="project-name" name="project-name" type="text" aria-describedby="project-name-hint">
+          </div>
+
+          <div class="govuk-form-group">
+            <label class="govuk-label govuk-label--s" for="reference">
+              Reference
+            </label>
+            <div id="reference-hint" class="govuk-hint">
+              Can be partial reference
+            </div>
+            <input class="govuk-input" id="reference" name="reference" type="text" aria-describedby="reference-hint">
+          </div>
+
+          <div class="govuk-form-group">
+            <fieldset class="govuk-fieldset">
+              <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+                Type
+              </legend>
+              <div id="type-checkboxes-container" class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+                <!-- Dynamically populated by JavaScript -->
+              </div>
+            </fieldset>
+          </div>
+
+          <div class="govuk-form-group">
+            <fieldset class="govuk-fieldset">
+              <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
+                Status
+              </legend>
+              <div id="status-checkboxes-container" class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+                <!-- Dynamically populated by JavaScript -->
+              </div>
+            </fieldset>
+          </div>
         </div>
       </div>
     </div>
@@ -195,6 +270,9 @@ Projects
         </button>
       </div>
     </div>
+    
+    <p id="results-count" class="govuk-body"><strong>10 results found in 'All Ramsgate Marina projects'</strong></p>
+    
     <table class="govuk-table" data-module="moj-sortable-table" id="projects-table">
       <caption class="govuk-table__caption govuk-visually-hidden">{{ pageHeadingTextHTML }}</caption>
       <thead class="govuk-table__head">
@@ -210,7 +288,7 @@ Projects
       </thead>
       <tbody class="govuk-table__body">
         <!-- Exempt activity notifications -->
-        <tr class="govuk-table__row" data-creator="jon-doe">
+        <tr class="govuk-table__row" data-creator="jon-doe" data-type="Exempt activity notification" data-status="Closed">
           <th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Branscombe bore holes</th>
           <td class="govuk-table__cell">Exempt activity notification</td>
           <td class="govuk-table__cell" data-sort-value="EXE-10002">EXE/2025/10002</td>
@@ -227,7 +305,7 @@ Projects
           </td>
         </tr>
 
-        <tr class="govuk-table__row" data-creator="jon-doe">
+        <tr class="govuk-table__row" data-creator="jon-doe" data-type="Exempt activity notification" data-status="Closed">
           <th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Worthing sediment samples</th>
           <td class="govuk-table__cell">Exempt activity notification</td>
           <td class="govuk-table__cell" data-sort-value="EXE-10012">EXE/2025/10012</td>
@@ -244,7 +322,7 @@ Projects
           </td>
         </tr>
 
-        <tr class="govuk-table__row" data-creator="alex-williams">
+        <tr class="govuk-table__row" data-creator="alex-williams" data-type="Exempt activity notification" data-status="Closed">
           <th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Plymouth harbour core samples</th>
           <td class="govuk-table__cell">Exempt activity notification</td>
           <td class="govuk-table__cell" data-sort-value="EXE-10023">EXE/2025/10023</td>
@@ -261,7 +339,7 @@ Projects
           </td>
         </tr>
 
-        <tr class="govuk-table__row" data-creator="sarah-chen">
+        <tr class="govuk-table__row" data-creator="sarah-chen" data-type="Exempt activity notification" data-status="Closed">
           <th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Sunderland marina maintenance dredge</th>
           <td class="govuk-table__cell">Exempt activity notification</td>
           <td class="govuk-table__cell" data-sort-value="EXE-10029">EXE/2025/10029</td>
@@ -278,7 +356,7 @@ Projects
           </td>
         </tr>
 
-        <tr class="govuk-table__row" data-creator="sarah-chen">
+        <tr class="govuk-table__row" data-creator="sarah-chen" data-type="Exempt activity notification" data-status="Closed">
           <th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Teignmouth water quality sampling</th>
           <td class="govuk-table__cell">Exempt activity notification</td>
           <td class="govuk-table__cell" data-sort-value="EXE-10034">EXE/2025/10034</td>
@@ -295,7 +373,7 @@ Projects
           </td>
         </tr>
 
-        <tr class="govuk-table__row" data-creator="jon-doe">
+        <tr class="govuk-table__row" data-creator="jon-doe" data-type="Exempt activity notification" data-status="Draft">
           <th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Whitstable intertidal survey pits</th>
           <td class="govuk-table__cell">Exempt activity notification</td>
           <td class="govuk-table__cell" data-sort-value="EXE-10047">EXE/2025/10047</td>
@@ -312,7 +390,7 @@ Projects
           </td>
         </tr>
 
-        <tr class="govuk-table__row" data-creator="alex-williams">
+        <tr class="govuk-table__row" data-creator="alex-williams" data-type="Exempt activity notification" data-status="Draft">
           <th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Scarborough seabed grab samples</th>
           <td class="govuk-table__cell">Exempt activity notification</td>
           <td class="govuk-table__cell" data-sort-value="EXE-10051">EXE/2025/10051</td>
@@ -330,7 +408,7 @@ Projects
         </tr>
 
         <!-- Sediment sample plans -->
-        <tr class="govuk-table__row" data-creator="jon-doe">
+        <tr class="govuk-table__row" data-creator="jon-doe" data-type="Sediment sample plan" data-status="Sent">
           <th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Tyne estuary sampling</th>
           <td class="govuk-table__cell">Sediment sample plan</td>
           <td class="govuk-table__cell" data-sort-value="SAM-10002">SAM/2025/10002</td>
@@ -346,7 +424,7 @@ Projects
           </td>
         </tr>
 
-        <tr class="govuk-table__row" data-creator="jon-doe">
+        <tr class="govuk-table__row" data-creator="jon-doe" data-type="Sediment sample plan" data-status="Sent">
           <th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Portsmouth channel dredge sample</th>
           <td class="govuk-table__cell">Sediment sample plan</td>
           <td class="govuk-table__cell" data-sort-value="SAM-10007">SAM/2025/10007</td>
@@ -362,7 +440,7 @@ Projects
           </td>
         </tr>
 
-        <tr class="govuk-table__row" data-creator="sarah-chen">
+        <tr class="govuk-table__row" data-creator="sarah-chen" data-type="Sediment sample plan" data-status="Draft">
           <th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Falmouth harbour pre-dredge analysis</th>
           <td class="govuk-table__cell">Sediment sample plan</td>
           <td class="govuk-table__cell" data-sort-value="SAM-10011">SAM/2025/10011</td>
@@ -389,13 +467,18 @@ Projects
 <script>
 document.addEventListener('DOMContentLoaded', function() {
   const filterRadios = document.querySelectorAll('input[name="projectFilter"]');
-  const personSelect = document.getElementById('person');
+  const personCheckboxes = document.querySelectorAll('input[name="person"]');
+  const projectNameInput = document.getElementById('project-name');
+  const referenceInput = document.getElementById('reference');
   const applyButton = document.getElementById('apply-filters-button');
   const clearFiltersLink = document.getElementById('clear-filters');
   const tableRows = document.querySelectorAll('#projects-table tbody tr');
   const projectsTable = document.getElementById('projects-table');
   const noResultsMessage = document.getElementById('no-results-message');
+  const resultsCount = document.getElementById('results-count');
   const selectedFiltersContainer = document.getElementById('selected-filter-tags');
+  const typeCheckboxesContainer = document.getElementById('type-checkboxes-container');
+  const statusCheckboxesContainer = document.getElementById('status-checkboxes-container');
 
   // Map of person values to display names
   const personNames = {
@@ -405,114 +488,535 @@ document.addEventListener('DOMContentLoaded', function() {
     'sarah-chen': 'Sarah Chen'
   };
 
-  function updateSelectedFilterTags(selectedFilter, selectedPerson) {
-    selectedFiltersContainer.innerHTML = '';
-    let tags = [];
+  // Function to count projects by criteria
+  function updateCounts() {
+    // Count by person
+    const personCounts = {
+      'alex-williams': 0,
+      'james-thompson': 0,
+      'jon-doe': 0,
+      'sarah-chen': 0
+    };
+    
+    let myProjectsCount = 0;
+    let allProjectsCount = 0;
+    
+    const typeCounts = {};
+    const statusCounts = {};
 
-    if (selectedFilter === 'my-projects') {
-      tags.push({ text: 'My projects', value: 'my-projects', type: 'scope' });
-    } else if (selectedFilter === 'all-projects') {
-      tags.push({ text: 'All projects', value: 'all-projects', type: 'scope' });
-    } else if (selectedFilter === 'specific-person') {
-      if (selectedPerson && personNames[selectedPerson]) {
-        tags.push({ text: 'Person: ' + personNames[selectedPerson], value: selectedPerson, type: 'person' });
+    tableRows.forEach(function(row) {
+      const creator = row.getAttribute('data-creator');
+      const type = row.getAttribute('data-type');
+      const status = row.getAttribute('data-status');
+      
+      // Count all projects
+      allProjectsCount++;
+      
+      // Count by creator
+      if (creator) {
+        Object.keys(personCounts).forEach(function(person) {
+          if (creator.includes(person)) {
+            personCounts[person]++;
+          }
+        });
+        
+        // Count "my projects" (jon-doe is current user)
+        if (creator.includes('jon-doe')) {
+          myProjectsCount++;
+        }
+      }
+      
+      // Count by type
+      if (type) {
+        typeCounts[type] = (typeCounts[type] || 0) + 1;
+      }
+      
+      // Count by status
+      if (status) {
+        statusCounts[status] = (statusCounts[status] || 0) + 1;
+      }
+    });
+
+    // Update Show radio counts
+    const countAllProjects = document.getElementById('count-all-projects');
+    const countMyProjects = document.getElementById('count-my-projects');
+    if (countAllProjects) countAllProjects.textContent = '(' + allProjectsCount + ')';
+    if (countMyProjects) countMyProjects.textContent = '(' + myProjectsCount + ')';
+
+    // Update person counts
+    Object.keys(personCounts).forEach(function(person) {
+      const countSpan = document.querySelector('.person-count[data-person="' + person + '"]');
+      if (countSpan) {
+        countSpan.textContent = '(' + personCounts[person] + ')';
+      }
+    });
+
+    // Update type counts
+    Object.keys(typeCounts).forEach(function(type) {
+      const checkbox = Array.from(document.querySelectorAll('input[name="type"]')).find(cb => cb.value === type);
+      if (checkbox) {
+        const label = document.querySelector('label[for="' + checkbox.id + '"]');
+        if (label) {
+          // Remove existing count if present
+          const existingCount = label.querySelector('.type-count');
+          if (existingCount) existingCount.remove();
+          
+          // Add new count
+          const countSpan = document.createElement('span');
+          countSpan.className = 'type-count';
+          countSpan.textContent = ' (' + typeCounts[type] + ')';
+          label.appendChild(countSpan);
+        }
+      }
+    });
+
+    // Update status counts
+    Object.keys(statusCounts).forEach(function(status) {
+      const checkbox = Array.from(document.querySelectorAll('input[name="status"]')).find(cb => cb.value === status);
+      if (checkbox) {
+        const label = document.querySelector('label[for="' + checkbox.id + '"]');
+        if (label) {
+          // Remove existing count if present
+          const existingCount = label.querySelector('.status-count');
+          if (existingCount) existingCount.remove();
+          
+          // Add new count
+          const countSpan = document.createElement('span');
+          countSpan.className = 'status-count';
+          countSpan.textContent = ' (' + statusCounts[status] + ')';
+          label.appendChild(countSpan);
+        }
+      }
+    });
+  }
+
+  // Get organization name from page
+  const orgCaption = document.querySelector('.govuk-caption-l');
+  const orgName = orgCaption ? orgCaption.textContent.trim() : 'Ramsgate Marina';
+
+  // Clear error state
+  function clearErrorState() {
+    const conditionalPanel = document.querySelector('.govuk-radios__conditional');
+    const personErrorMessage = document.getElementById('person-error-message');
+    
+    if (conditionalPanel) {
+      conditionalPanel.classList.remove('error-state');
+    }
+    if (personErrorMessage) {
+      personErrorMessage.style.display = 'none';
+    }
+    if (resultsCount) {
+      resultsCount.classList.remove('error-message');
+    }
+  }
+  
+  // Show error state
+  function showErrorState() {
+    const conditionalPanel = document.querySelector('.govuk-radios__conditional');
+    const personErrorMessage = document.getElementById('person-error-message');
+    
+    if (conditionalPanel) {
+      conditionalPanel.classList.add('error-state');
+    }
+    if (personErrorMessage) {
+      personErrorMessage.style.display = 'block';
+    }
+    if (resultsCount) {
+      resultsCount.classList.add('error-message');
+    }
+  }
+  
+  // Update results count display
+  function updateResultsCount(visibleCount, isError) {
+    if (!resultsCount) return;
+    
+    const selectedFilter = document.querySelector('input[name="projectFilter"]:checked').value;
+    const selectedPeople = Array.from(personCheckboxes).filter(cb => cb.checked);
+    
+    let message = '';
+    const resultText = visibleCount === 1 ? 'result' : 'results';
+    
+    // Check for error state
+    if (isError) {
+      message = '<strong>Select a person to view their projects</strong>';
+    } else {
+      // Always show count with context based on Show radio selection
+      if (selectedFilter === 'all-projects') {
+        message = `<strong>${visibleCount} ${resultText} found in 'All ${orgName} projects'</strong>`;
+      } else if (selectedFilter === 'my-projects') {
+        message = `<strong>${visibleCount} ${resultText} found in 'My projects'</strong>`;
+      } else if (selectedFilter === 'specific-person') {
+        if (selectedPeople.length > 0) {
+          const names = selectedPeople.map(cb => personNames[cb.value]).join(', ');
+          message = `<strong>${visibleCount} ${resultText} found in 'Projects by ${names}'</strong>`;
+        } else {
+          message = `<strong>${visibleCount} ${resultText} found in 'Projects by a specific person'</strong>`;
+        }
+      }
+    }
+    
+    resultsCount.innerHTML = message;
+  }
+
+  // Dynamically generate Type and Status checkboxes from table data
+  function generateDynamicCheckboxes() {
+    const types = new Set();
+    const statuses = new Set();
+
+    tableRows.forEach(function(row) {
+      const type = row.getAttribute('data-type');
+      const status = row.getAttribute('data-status');
+      if (type) types.add(type);
+      if (status) statuses.add(status);
+    });
+
+    // Generate Type checkboxes
+    let typeIndex = 0;
+    types.forEach(function(type) {
+      const typeId = 'type-' + typeIndex;
+      const typeValue = type;
+      const div = document.createElement('div');
+      div.className = 'govuk-checkboxes__item';
+      div.innerHTML = `
+        <input class="govuk-checkboxes__input" id="${typeId}" name="type" type="checkbox" value="${typeValue}">
+        <label class="govuk-label govuk-checkboxes__label" for="${typeId}">
+          ${type}
+        </label>
+      `;
+      typeCheckboxesContainer.appendChild(div);
+      typeIndex++;
+    });
+
+    // Generate Status checkboxes
+    let statusIndex = 0;
+    statuses.forEach(function(status) {
+      const statusId = 'status-' + statusIndex;
+      const statusValue = status;
+      const div = document.createElement('div');
+      div.className = 'govuk-checkboxes__item';
+      div.innerHTML = `
+        <input class="govuk-checkboxes__input" id="${statusId}" name="status" type="checkbox" value="${statusValue}">
+        <label class="govuk-label govuk-checkboxes__label" for="${statusId}">
+          ${status}
+        </label>
+      `;
+      statusCheckboxesContainer.appendChild(div);
+      statusIndex++;
+    });
+  }
+
+  // Generate dynamic checkboxes on load
+  generateDynamicCheckboxes();
+  
+  // Update counts after checkboxes are generated
+  updateCounts();
+  
+  // Add change listeners to radio buttons to clear person checkboxes and hide conditional panel
+  filterRadios.forEach(function(radio) {
+    radio.addEventListener('change', function() {
+      // Clear person checkboxes when switching away from "specific-person"
+      if (this.value !== 'specific-person') {
+        personCheckboxes.forEach(function(cb) {
+          cb.checked = false;
+        });
+        
+        // Hide the conditional reveal panel
+        const conditionalPanel = document.getElementById('conditional-specific-person');
+        if (conditionalPanel) {
+          conditionalPanel.classList.add('govuk-radios__conditional--hidden');
+        }
       } else {
-        tags.push({ text: 'Projects by person', value: 'specific-person', type: 'scope' });
+        // Show the conditional reveal panel when "specific-person" is selected
+        const conditionalPanel = document.getElementById('conditional-specific-person');
+        if (conditionalPanel) {
+          conditionalPanel.classList.remove('govuk-radios__conditional--hidden');
+        }
+      }
+      // Clear error state when changing
+      clearErrorState();
+    });
+  });
+
+  function updateSelectedFilterTags() {
+    selectedFiltersContainer.innerHTML = '';
+    
+    // Build categorized tags
+    const categories = [];
+    
+    // Project name category
+    const projectName = projectNameInput.value.trim();
+    if (projectName) {
+      categories.push({
+        heading: 'Project name',
+        items: [{ text: projectName, type: 'project-name' }]
+      });
+    }
+
+    // Reference category
+    const reference = referenceInput.value.trim();
+    if (reference) {
+      categories.push({
+        heading: 'Reference',
+        items: [{ text: reference, type: 'reference' }]
+      });
+    }
+
+    // Person category (only show if specific-person is selected)
+    const selectedFilter = document.querySelector('input[name="projectFilter"]:checked').value;
+    if (selectedFilter === 'specific-person') {
+      const selectedPersons = Array.from(personCheckboxes).filter(cb => cb.checked);
+      if (selectedPersons.length > 0) {
+        categories.push({
+          heading: 'Person',
+          items: selectedPersons.map(cb => ({ text: personNames[cb.value], type: 'person', value: cb.value }))
+        });
       }
     }
 
-    const ul = document.createElement('ul');
-    ul.className = 'moj-filter-tags';
+    // Type category
+    const typeCheckboxes = document.querySelectorAll('input[name="type"]');
+    const selectedTypes = Array.from(typeCheckboxes).filter(cb => cb.checked);
+    if (selectedTypes.length > 0) {
+      categories.push({
+        heading: 'Type',
+        items: selectedTypes.map(cb => ({ text: cb.value, type: 'type', value: cb.value }))
+      });
+    }
 
-    tags.forEach(tag => {
-      const li = document.createElement('li');
-      const a = document.createElement('a');
-      a.className = 'moj-filter__tag';
-      a.href = '#';
-      a.innerHTML = `<span class="govuk-visually-hidden">Remove this filter</span> ${tag.text}`;
-      
-      a.addEventListener('click', function(e) {
-        e.preventDefault();
-        // Reset to default (My projects)
-        document.getElementById('filter-my').checked = true;
-        // Trigger update
-        filterProjects();
+    // Status category
+    const statusCheckboxes = document.querySelectorAll('input[name="status"]');
+    const selectedStatuses = Array.from(statusCheckboxes).filter(cb => cb.checked);
+    if (selectedStatuses.length > 0) {
+      categories.push({
+        heading: 'Status',
+        items: selectedStatuses.map(cb => ({ text: cb.value, type: 'status', value: cb.value }))
+      });
+    }
+
+    if (categories.length === 0) {
+      return; // Don't show tags section if no filters
+    }
+
+    // Build the HTML for each category
+    categories.forEach(category => {
+      const heading = document.createElement('h3');
+      heading.className = 'govuk-heading-s govuk-!-margin-bottom-0';
+      heading.textContent = category.heading;
+      selectedFiltersContainer.appendChild(heading);
+
+      const ul = document.createElement('ul');
+      ul.className = 'moj-filter-tags';
+
+      category.items.forEach(item => {
+        const li = document.createElement('li');
+        const a = document.createElement('a');
+        a.className = 'moj-filter__tag';
+        a.href = '#';
+        a.innerHTML = `<span class="govuk-visually-hidden">Remove this filter</span> ${item.text}`;
+        
+        a.addEventListener('click', function(e) {
+          e.preventDefault();
+          
+          // Clear the specific filter
+          if (item.type === 'project-name') {
+            projectNameInput.value = '';
+          } else if (item.type === 'reference') {
+            referenceInput.value = '';
+          } else if (item.type === 'person') {
+            const checkbox = Array.from(personCheckboxes).find(cb => cb.value === item.value);
+            if (checkbox) checkbox.checked = false;
+          } else if (item.type === 'type') {
+            const typeCheckboxes = document.querySelectorAll('input[name="type"]');
+            const checkbox = Array.from(typeCheckboxes).find(cb => cb.value === item.value);
+            if (checkbox) checkbox.checked = false;
+          } else if (item.type === 'status') {
+            const statusCheckboxes = document.querySelectorAll('input[name="status"]');
+            const checkbox = Array.from(statusCheckboxes).find(cb => cb.value === item.value);
+            if (checkbox) checkbox.checked = false;
+          }
+          
+          // Re-filter
+          filterProjects(false);
+        });
+
+        li.appendChild(a);
+        ul.appendChild(li);
       });
 
-      li.appendChild(a);
-      ul.appendChild(li);
+      selectedFiltersContainer.appendChild(ul);
     });
-
-    selectedFiltersContainer.appendChild(ul);
   }
 
   // Function to filter projects
-  function filterProjects() {
+  function filterProjects(checkForErrors) {
     const selectedRadio = document.querySelector('input[name="projectFilter"]:checked');
-    const selectedFilter = selectedRadio ? selectedRadio.value : 'my-projects';
-    const selectedPerson = personSelect.value;
+    const selectedFilter = selectedRadio ? selectedRadio.value : 'all-projects';
+    
+    // Get filter values
+    const projectName = projectNameInput.value.trim().toLowerCase();
+    const reference = referenceInput.value.trim().toLowerCase();
+    const selectedPersons = Array.from(personCheckboxes).filter(cb => cb.checked).map(cb => cb.value);
+    
+    const typeCheckboxes = document.querySelectorAll('input[name="type"]');
+    const selectedTypes = Array.from(typeCheckboxes).filter(cb => cb.checked).map(cb => cb.value);
+    
+    const statusCheckboxes = document.querySelectorAll('input[name="status"]');
+    const selectedStatuses = Array.from(statusCheckboxes).filter(cb => cb.checked).map(cb => cb.value);
+    
+    // Check for error state (only when explicitly checking, i.e., on Apply filters)
+    let isError = false;
+    if (checkForErrors && selectedFilter === 'specific-person' && selectedPersons.length === 0) {
+      isError = true;
+      showErrorState();
+    } else {
+      clearErrorState();
+    }
+    
+    // If in error state, don't proceed with filtering
+    if (isError) {
+      updateSelectedFilterTags();
+      updateResultsCount(0, true);
+      projectsTable.style.display = 'none';
+      noResultsMessage.style.display = 'none';
+      if (resultsCount) resultsCount.style.display = 'block';
+      return;
+    }
+    
     let visibleCount = 0;
 
-    updateSelectedFilterTags(selectedFilter, selectedPerson);
+    updateSelectedFilterTags();
 
     tableRows.forEach(function(row) {
-      const creators = row.getAttribute('data-creator');
+      let show = true;
       
+      // Filter by Show radios (scope filter)
+      const creator = row.getAttribute('data-creator');
       if (selectedFilter === 'my-projects') {
-        // Show only Jon Doe's projects
-        if (creators && creators.includes('jon-doe')) {
-          row.style.display = '';
-          visibleCount++;
-        } else {
-          row.style.display = 'none';
+        // Show only Jon Doe's projects (current user)
+        if (!creator || !creator.includes('jon-doe')) {
+          show = false;
         }
-      } else if (selectedFilter === 'all-projects') {
-        // Show all projects
+      } else if (selectedFilter === 'specific-person') {
+        // Show only if creator matches one of selected persons
+        if (selectedPersons.length > 0) {
+          const matchesPerson = selectedPersons.some(person => creator && creator.includes(person));
+          if (!matchesPerson) {
+            show = false;
+          }
+        } else {
+          // No person selected, show nothing
+          show = false;
+        }
+      }
+      // all-projects shows everything (no filtering by creator)
+
+      // Filter by project name (AND logic)
+      if (show && projectName) {
+        const rowProjectName = row.querySelector('th').textContent.toLowerCase();
+        if (!rowProjectName.includes(projectName)) {
+          show = false;
+        }
+      }
+
+      // Filter by reference (AND logic)
+      if (show && reference) {
+        const rowReference = row.querySelectorAll('td')[1].textContent.toLowerCase();
+        if (!rowReference.includes(reference)) {
+          show = false;
+        }
+      }
+
+      // Filter by type (OR logic within type, AND across)
+      if (show && selectedTypes.length > 0) {
+        const rowType = row.getAttribute('data-type');
+        if (!selectedTypes.includes(rowType)) {
+          show = false;
+        }
+      }
+
+      // Filter by status (OR logic within status, AND across)
+      if (show && selectedStatuses.length > 0) {
+        const rowStatus = row.getAttribute('data-status');
+        if (!selectedStatuses.includes(rowStatus)) {
+          show = false;
+        }
+      }
+
+      // Show or hide row
+      if (show) {
         row.style.display = '';
         visibleCount++;
-      } else if (selectedFilter === 'specific-person' && selectedPerson) {
-        // Show projects for selected person
-        if (creators && creators.includes(selectedPerson)) {
-          row.style.display = '';
-          visibleCount++;
-        } else {
-          row.style.display = 'none';
-        }
-      } else if (selectedFilter === 'specific-person' && !selectedPerson) {
-        // If specific-person is selected but no person chosen, hide all (or show none? or show all?)
-        // Logic in original file was hide all
+      } else {
         row.style.display = 'none';
       }
     });
+
+    // Update results count
+    updateResultsCount(visibleCount, false);
 
     // Show/hide table and no results message based on visible count
     if (visibleCount === 0) {
       projectsTable.style.display = 'none';
       noResultsMessage.style.display = 'block';
+      if (resultsCount) resultsCount.style.display = 'none';
     } else {
       projectsTable.style.display = 'table';
       noResultsMessage.style.display = 'none';
+      if (resultsCount) resultsCount.style.display = 'block';
     }
   }
 
-  // Apply filter on button click
+  // Apply filter on button click (with error checking)
   applyButton.addEventListener('click', function(e) {
     e.preventDefault();
-    filterProjects();
+    filterProjects(true);
   });
 
   // Handle Clear Filters
   if (clearFiltersLink) {
     clearFiltersLink.addEventListener('click', function(e) {
       e.preventDefault();
-      document.getElementById('filter-my').checked = true;
-      personSelect.value = "";
-      filterProjects();
+      
+      // Reset to default "All projects"
+      const allProjectsRadio = document.querySelector('input[name="projectFilter"][value="all-projects"]');
+      if (allProjectsRadio) allProjectsRadio.checked = true;
+      
+      // Hide the conditional reveal panel
+      const conditionalPanel = document.getElementById('conditional-specific-person');
+      if (conditionalPanel) {
+        conditionalPanel.classList.add('govuk-radios__conditional--hidden');
+      }
+      
+      // Clear all inputs
+      projectNameInput.value = '';
+      referenceInput.value = '';
+      
+      // Uncheck all person checkboxes
+      personCheckboxes.forEach(cb => cb.checked = false);
+      
+      // Uncheck all type checkboxes
+      const typeCheckboxes = document.querySelectorAll('input[name="type"]');
+      typeCheckboxes.forEach(cb => cb.checked = false);
+      
+      // Uncheck all status checkboxes
+      const statusCheckboxes = document.querySelectorAll('input[name="status"]');
+      statusCheckboxes.forEach(cb => cb.checked = false);
+      
+      // Clear error state
+      clearErrorState();
+      filterProjects(false);
     });
   }
+  
+  // Add change listener to person checkboxes to clear error state
+  personCheckboxes.forEach(function(checkbox) {
+    checkbox.addEventListener('change', function() {
+      clearErrorState();
+    });
+  });
 
-  // Initial filter on page load (show Jon Doe's projects by default)
-  filterProjects();
+  // Initial filter on page load (show all projects by default, no error checking)
+  filterProjects(false);
 
   // Handle filter toggle button
   const toggleButton = document.querySelector('.moj-filter__toggle');
