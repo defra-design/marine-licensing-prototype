@@ -662,6 +662,9 @@ document.addEventListener('DOMContentLoaded', function() {
 		'sarah-chen': 'Sarah Chen'
 	};
 	
+	// Track if error is currently showing
+	let errorIsShowing = false;
+	
 	// Get organization name from page (from session data)
 	const orgCaption = document.querySelector('.govuk-caption-l');
 	const orgName = orgCaption ? orgCaption.textContent.trim() : 'Ramsgate Marina';
@@ -849,6 +852,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		if (resultsCount) {
 			resultsCount.classList.remove('error-message');
 		}
+		errorIsShowing = false;
 	}
 	
 	// Show error state
@@ -866,6 +870,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		if (resultsCount) {
 			resultsCount.classList.add('error-message');
 		}
+		errorIsShowing = true;
 	}
 	
 	// Update results count display
@@ -925,7 +930,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			updateResultsCount(0, true);
 			buildFilterTags();
 			projectsTable.style.display = 'none';
-			noResultsMessage.style.display = 'block';
+			noResultsMessage.style.display = 'none'; // Hide "There are no projects to display" when showing error
 			return;
 		}
 		
@@ -1000,6 +1005,11 @@ document.addEventListener('DOMContentLoaded', function() {
 		// Update results count
 		updateResultsCount(visibleCount, false);
 		
+		// Make sure results count is visible (in case it was hidden due to error)
+		if (resultsCount) {
+			resultsCount.style.display = 'block';
+		}
+		
 		// Build filter tags
 		buildFilterTags();
 
@@ -1021,6 +1031,12 @@ document.addEventListener('DOMContentLoaded', function() {
 			// Reset Show radio to "All projects"
 			const allProjectsRadio = document.querySelector('input[name="projectFilter"][value="all-projects"]');
 			if (allProjectsRadio) allProjectsRadio.checked = true;
+			
+			// Hide the conditional panel when clearing (since we're switching to "All projects")
+			const conditionalPanel = document.querySelector('.govuk-radios__conditional');
+			if (conditionalPanel) {
+				conditionalPanel.classList.add('govuk-radios__conditional--hidden');
+			}
 			
 			// Clear text inputs
 			const projectNameInput = document.getElementById('filter-project-name');
@@ -1051,10 +1067,38 @@ document.addEventListener('DOMContentLoaded', function() {
 		});
 	}
 	
-	// Add change listeners to clear error state when user makes changes
+	// Add change listeners to manage person checkboxes and conditional panel when radio changes
 	filterRadios.forEach(function(radio) {
 		radio.addEventListener('change', function() {
-			clearErrorState();
+			// If switching away from "specific-person", clear person checkboxes, hide conditional panel, and clear error
+			if (this.value !== 'specific-person') {
+				// If error was showing, hide results count until form is resubmitted
+				if (errorIsShowing) {
+					if (resultsCount) {
+						resultsCount.style.display = 'none';
+					}
+				}
+				// If no error, leave results count visible with old message
+				
+				// Clear error state when moving away from specific-person
+				clearErrorState();
+				
+				// Clear all person checkboxes
+				document.querySelectorAll('input[name="filter-person"]').forEach(cb => cb.checked = false);
+				
+				// Hide the conditional panel
+				const conditionalPanel = document.querySelector('.govuk-radios__conditional');
+				if (conditionalPanel) {
+					conditionalPanel.classList.add('govuk-radios__conditional--hidden');
+				}
+			} else {
+				// Show the conditional panel when "specific-person" is selected
+				const conditionalPanel = document.querySelector('.govuk-radios__conditional');
+				if (conditionalPanel) {
+					conditionalPanel.classList.remove('govuk-radios__conditional--hidden');
+				}
+				// Don't clear error state - keep it until Apply is clicked
+			}
 		});
 	});
 	
@@ -1063,7 +1107,7 @@ document.addEventListener('DOMContentLoaded', function() {
 		const personCheckboxes = document.querySelectorAll('input[name="filter-person"]');
 		personCheckboxes.forEach(function(checkbox) {
 			checkbox.addEventListener('change', function() {
-				clearErrorState();
+				// Don't clear error state - keep it until Apply is clicked
 			});
 		});
 	}
