@@ -300,7 +300,8 @@ Projects
 					name: "filter-person",
 					fieldset: {
 						legend: {
-							text: "Select a person"
+							text: "Select a person",
+							classes: "govuk-visually-hidden"
 						}
 					},
 					classes: "govuk-checkboxes--small",
@@ -349,7 +350,7 @@ Projects
 						},
 						{
 							value: "specific-person",
-							text: "Projects by a specific person",
+							text: "Projects by owner",
 							conditional: {
 								html: personHtml
 							}
@@ -364,7 +365,7 @@ Projects
 							classes: "govuk-label--s"
 						},
 						hint: {
-							text: "Can be partial name"
+							text: "Enter full or partial name"
 						},
 						id: "filter-project-name",
 						name: "filter-project-name"
@@ -376,7 +377,7 @@ Projects
 							classes: "govuk-label--s"
 						},
 						hint: {
-							text: "Can be partial reference"
+							text: "Enter full or partial namee"
 						},
 						id: "filter-reference",
 						name: "filter-reference"
