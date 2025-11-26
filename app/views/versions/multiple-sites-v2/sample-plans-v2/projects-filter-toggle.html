@@ -2,11 +2,15 @@
 
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
-{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
 
 {% block head %}
   {{ super() }}
-
+  <style>
+  .govuk-radios--inline .govuk-radios__label {
+    white-space: nowrap;
+  }
+  </style>
 {% endblock %}
 
 <!-- Set a variable to identify this specific page -->
@@ -95,24 +99,30 @@ Projects
 		</h1>
 		
 
-		<div class="filter-checkbox-wrapper">
-			{{ govukCheckboxes({
-				name: "show-all-projects",
-				classes: "govuk-checkboxes--small",
-				items: [
-					{
-						value: "true",
-						text: "Show all " + (data['organisation-name'] or "Ramsgate Marina") + " projects",
-						id: "show-all-projects-checkbox"
-					}
-				]
-			}) }}
-		</div>
+		{{ govukRadios({
+			name: "projectFilter",
+			fieldset: {
+				legend: {
+					text: "Show:",
+					classes: "govuk-fieldset__legend--s"
+				}
+			},
+			classes: "govuk-radios--small govuk-radios--inline",
+			items: [
+				{
+					value: "my-projects",
+					text: "My projects",
+					checked: true
+				},
+				{
+					value: "all-projects",
+					text: "All " + (data['organisation-name'] or "Ramsgate Marina") + " projects"
+				}
+			]
+		}) }}
 		
-		<h2 id="projects-heading" class="govuk-heading-m">My projects</h2>
-
 		<table class="govuk-table" data-module="moj-sortable-table" id="projects-table">
-			<caption class="govuk-table__caption govuk-visually-hidden">{{ pageHeadingTextHTML }}</caption>
+			<caption class="govuk-table__caption govuk-table__caption--m govuk-visually-hidden" id="projects-caption">My projects</caption>
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
 				  <th scope="col" class="govuk-table__header" aria-sort="none">Project&nbsp;name</th>
@@ -304,43 +314,44 @@ Projects
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-	const showAllCheckbox = document.getElementById('show-all-projects-checkbox');
+	const projectFilterRadios = document.querySelectorAll('input[name="projectFilter"]');
 	const tableRows = document.querySelectorAll('#projects-table tbody tr');
 	const projectsTable = document.getElementById('projects-table');
 	const noResultsMessage = document.getElementById('no-results-message');
-	const projectsHeading = document.getElementById('projects-heading');
+	const projectsCaption = document.getElementById('projects-caption');
 	
 	// Get organization name from page (from session data)
 	const orgCaption = document.querySelector('.govuk-caption-l');
 	const orgName = orgCaption ? orgCaption.textContent.trim() : 'Ramsgate Marina';
 	
-	// Update heading display
-	function updateHeading(showingAll) {
-		if (!projectsHeading) return;
+	// Update caption display
+	function updateCaption(selectedFilter) {
+		if (!projectsCaption) return;
 		
-		if (showingAll) {
-			projectsHeading.textContent = `All ${orgName} projects`;
+		if (selectedFilter === 'all-projects') {
+			projectsCaption.textContent = `All ${orgName} projects`;
 		} else {
-			projectsHeading.textContent = 'My projects';
+			projectsCaption.textContent = 'My projects';
 		}
 	}
 	
 	// Function to filter projects
 	function filterProjects() {
-		const showAll = showAllCheckbox && showAllCheckbox.checked;
+		const selectedFilter = document.querySelector('input[name="projectFilter"]:checked');
+		const filterValue = selectedFilter ? selectedFilter.value : 'my-projects';
 		let visibleCount = 0;
 		
 		tableRows.forEach(function(row) {
 			const creator = row.getAttribute('data-creator');
 			let show = true;
 			
-			// If not showing all, only show Jon Doe's projects (current user)
-			if (!showAll) {
+			// If showing my projects, only show Jon Doe's projects (current user)
+			if (filterValue === 'my-projects') {
 				if (!creator || !creator.includes('jon-doe')) {
 					show = false;
 				}
 			}
-			// If showAll is true, show all projects (no filtering needed)
+			// If filterValue is 'all-projects', show all projects (no filtering needed)
 			
 			// Show/hide row
 			if (show) {
@@ -351,8 +362,8 @@ document.addEventListener('DOMContentLoaded', function() {
 			}
 		});
 		
-		// Update heading
-		updateHeading(showAll);
+		// Update caption
+		updateCaption(filterValue);
 		
 		// Show/hide table and no results message based on visible count
 		if (visibleCount === 0) {
@@ -364,12 +375,12 @@ document.addEventListener('DOMContentLoaded', function() {
 		}
 	}
 	
-	// Add change listener to checkbox
-	if (showAllCheckbox) {
-		showAllCheckbox.addEventListener('change', function() {
+	// Add change listener to radio buttons
+	projectFilterRadios.forEach(function(radio) {
+		radio.addEventListener('change', function() {
 			filterProjects();
 		});
-	}
+	});
 	
 	// Initialize: run initial filter (default to My projects)
 	filterProjects();
