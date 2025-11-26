@@ -6,12 +6,7 @@
 
 {% block head %}
   {{ super() }}
-  <style>
-  #results-count {
-    margin-top: 20px;
-    margin-bottom: 20px;
-  }
-  </style>
+
 {% endblock %}
 
 <!-- Set a variable to identify this specific page -->
@@ -100,21 +95,21 @@ Projects
 		</h1>
 		
 
-		{{ govukCheckboxes({
-			name: "show-all-projects",
-			classes: "govuk-checkboxes--small",
-			items: [
-				{
-					value: "true",
-					text: "Show all " + (data['organisation-name'] or "Ramsgate Marina") + " projects",
-					id: "show-all-projects-checkbox"
-				}
-			]
-		}) }}
+		<div class="filter-checkbox-wrapper">
+			{{ govukCheckboxes({
+				name: "show-all-projects",
+				classes: "govuk-checkboxes--small",
+				items: [
+					{
+						value: "true",
+						text: "Show all " + (data['organisation-name'] or "Ramsgate Marina") + " projects",
+						id: "show-all-projects-checkbox"
+					}
+				]
+			}) }}
+		</div>
 		
-		<p id="results-count" class="govuk-body" style="margin-top: 20px;"><strong>5 results found in 'My projects'</strong></p>
-
-		
+		<h2 id="projects-heading" class="govuk-heading-m">My projects</h2>
 
 		<table class="govuk-table" data-module="moj-sortable-table" id="projects-table">
 			<caption class="govuk-table__caption govuk-visually-hidden">{{ pageHeadingTextHTML }}</caption>
@@ -313,26 +308,21 @@ document.addEventListener('DOMContentLoaded', function() {
 	const tableRows = document.querySelectorAll('#projects-table tbody tr');
 	const projectsTable = document.getElementById('projects-table');
 	const noResultsMessage = document.getElementById('no-results-message');
-	const resultsCount = document.getElementById('results-count');
+	const projectsHeading = document.getElementById('projects-heading');
 	
 	// Get organization name from page (from session data)
 	const orgCaption = document.querySelector('.govuk-caption-l');
 	const orgName = orgCaption ? orgCaption.textContent.trim() : 'Ramsgate Marina';
 	
-	// Update results count display
-	function updateResultsCount(visibleCount, showingAll) {
-		if (!resultsCount) return;
-		
-		const resultText = visibleCount === 1 ? 'result' : 'results';
-		let message = '';
+	// Update heading display
+	function updateHeading(showingAll) {
+		if (!projectsHeading) return;
 		
 		if (showingAll) {
-			message = `<strong>${visibleCount} ${resultText} found in 'All ${orgName} projects'</strong>`;
+			projectsHeading.textContent = `All ${orgName} projects`;
 		} else {
-			message = `<strong>${visibleCount} ${resultText} found in 'My projects'</strong>`;
+			projectsHeading.textContent = 'My projects';
 		}
-		
-		resultsCount.innerHTML = message;
 	}
 	
 	// Function to filter projects
@@ -361,8 +351,8 @@ document.addEventListener('DOMContentLoaded', function() {
 			}
 		});
 		
-		// Update results count
-		updateResultsCount(visibleCount, showAll);
+		// Update heading
+		updateHeading(showAll);
 		
 		// Show/hide table and no results message based on visible count
 		if (visibleCount === 0) {
