@@ -8,6 +8,12 @@ module.exports = function (router) {
   //////// Site details index page (before you start)
   /////////////////////////////////////////////////////////
   router.get(`/versions/${version}/${section}/${subsection}/`, function (req, res) {
+    // If user has already visited and saved site details, go straight to review page
+    if (req.session.data['has-visited-site-details']) {
+      res.redirect('review-site-details');
+      return;
+    }
+    
     // Clear any incomplete journey states when starting fresh
     // Only clear if they haven't completed and saved the journey
     if (!req.session.data['has-visited-site-details']) {
@@ -87,6 +93,8 @@ module.exports = function (router) {
   router.post(`/versions/${version}/${section}/${subsection}/upload-file-router`, function (req, res) {
     // For prototype, redirect to review site details after file upload
     req.session.data['hasUploadedSiteFile'] = true;
+    // Mark that user has visited site details journey (reached review page)
+    req.session.data['has-visited-site-details'] = true;
     res.redirect('review-site-details');
   });
 

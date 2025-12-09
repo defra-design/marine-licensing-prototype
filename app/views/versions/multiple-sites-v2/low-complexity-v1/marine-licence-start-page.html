@@ -47,9 +47,17 @@ Marine licence start page
 		  </div>
 		  
 		  <div class="govuk-task-list__status" id="site-details-status">
-			<strong class="govuk-tag govuk-tag--blue">
-				Not yet started
-			</strong>
+			{% if data['low-complexity-site-name-completed'] and data['low-complexity-activity-description-completed'] and data['low-complexity-site-duration-completed'] and data['low-complexity-schedule-completed'] and data['low-complexity-impacts-completed'] %}
+				Completed
+			{% elif data['has-visited-site-details'] %}
+				<strong class="govuk-tag govuk-tag--light-blue">
+					In progress
+				</strong>
+			{% else %}
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+			{% endif %}
 		  </div>
 		</li>
 
