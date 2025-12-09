@@ -206,6 +206,141 @@ module.exports = function (router) {
   });
 
   ///////////////////////////////////////////
+  // Related permissions section
+  ///////////////////////////////////////////
+
+  // Related permissions index page
+  router.get(`/versions/${version}/${section}/related-permissions`, function (req, res) {
+    res.render(`versions/${version}/${section}/related-permissions/index`);
+  });
+
+  // Special legal powers page
+  router.get(`/versions/${version}/${section}/related-permissions/special-legal-powers`, function (req, res) {
+    // Clear error flags when navigating to the page
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errortypetwo'] = "false";
+    res.render(`versions/${version}/${section}/related-permissions/special-legal-powers`);
+  });
+
+  // Special legal powers router (POST)
+  router.post(`/versions/${version}/${section}/related-permissions/special-legal-powers-router`, function (req, res) {
+    // Clear error flags
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errortypetwo'] = "false";
+
+    // Get the radio value
+    const specialLegalPowers = req.session.data['low-complexity-special-legal-powers'];
+    const specialLegalPowersDetails = req.session.data['low-complexity-special-legal-powers-details'];
+
+    // Validate: check if radio is selected
+    if (!specialLegalPowers) {
+      // Set error flags
+      req.session.data['errorthispage'] = "true";
+      req.session.data['errortypeone'] = "true";
+      
+      // Redirect back to the same page with errors
+      res.redirect('special-legal-powers');
+    } else if (specialLegalPowers === 'Yes' && (!specialLegalPowersDetails || specialLegalPowersDetails.trim() === '')) {
+      // If Yes is selected, check if textarea has content
+      req.session.data['errorthispage'] = "true";
+      req.session.data['errortypetwo'] = "true";
+      
+      // Redirect back to the same page with errors
+      res.redirect('special-legal-powers');
+    } else {
+      // Validation passed - set completion flag and redirect to related permissions index
+      req.session.data['low-complexity-special-legal-powers-completed'] = true;
+      res.redirect('./');
+    }
+  });
+
+  // Other permissions page
+  router.get(`/versions/${version}/${section}/related-permissions/other-permissions`, function (req, res) {
+    // Clear error flags when navigating to the page
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errortypetwo'] = "false";
+    res.render(`versions/${version}/${section}/related-permissions/other-permissions`);
+  });
+
+  // Other permissions router (POST)
+  router.post(`/versions/${version}/${section}/related-permissions/other-permissions-router`, function (req, res) {
+    // Clear error flags
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errortypetwo'] = "false";
+
+    // Get the radio value
+    const otherPermissions = req.session.data['low-complexity-other-permissions'];
+    const otherPermissionsDetails = req.session.data['low-complexity-other-permissions-details'];
+
+    // Validate: check if radio is selected
+    if (!otherPermissions) {
+      // Set error flags
+      req.session.data['errorthispage'] = "true";
+      req.session.data['errortypeone'] = "true";
+      
+      // Redirect back to the same page with errors
+      res.redirect('other-permissions');
+    } else if (otherPermissions === 'Yes' && (!otherPermissionsDetails || otherPermissionsDetails.trim() === '')) {
+      // If Yes is selected, check if textarea has content
+      req.session.data['errorthispage'] = "true";
+      req.session.data['errortypetwo'] = "true";
+      
+      // Redirect back to the same page with errors
+      res.redirect('other-permissions');
+    } else {
+      // Validation passed - set completion flag and redirect to related permissions index
+      req.session.data['low-complexity-other-permissions-completed'] = true;
+      res.redirect('./');
+    }
+  });
+
+  // Consultation and advertising page
+  router.get(`/versions/${version}/${section}/related-permissions/consultation-and-advertising`, function (req, res) {
+    // Clear error flags when navigating to the page
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errortypetwo'] = "false";
+    res.render(`versions/${version}/${section}/related-permissions/consultation-and-advertising`);
+  });
+
+  // Consultation and advertising router (POST)
+  router.post(`/versions/${version}/${section}/related-permissions/consultation-and-advertising-router`, function (req, res) {
+    // Clear error flags
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errortypetwo'] = "false";
+
+    // Get the radio value
+    const consultation = req.session.data['low-complexity-consultation'];
+    const consultationDetails = req.session.data['low-complexity-consultation-details'];
+
+    // Validate: check if radio is selected
+    if (!consultation) {
+      // Set error flags
+      req.session.data['errorthispage'] = "true";
+      req.session.data['errortypeone'] = "true";
+      
+      // Redirect back to the same page with errors
+      res.redirect('consultation-and-advertising');
+    } else if (consultation === 'Yes' && (!consultationDetails || consultationDetails.trim() === '')) {
+      // If Yes is selected, check if textarea has content
+      req.session.data['errorthispage'] = "true";
+      req.session.data['errortypetwo'] = "true";
+      
+      // Redirect back to the same page with errors
+      res.redirect('consultation-and-advertising');
+    } else {
+      // Validation passed - set completion flag and redirect to related permissions index
+      req.session.data['low-complexity-consultation-completed'] = true;
+      res.redirect('./');
+    }
+  });
+
+  ///////////////////////////////////////////
   // Projects page
   ///////////////////////////////////////////
 }
