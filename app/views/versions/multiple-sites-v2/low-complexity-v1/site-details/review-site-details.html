@@ -142,26 +142,14 @@ Review site details
                         </dd>
                     </div>
 
-                    <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+                    <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
                             Type of activity
                         </dt>
                         <dd class="govuk-summary-list__value">
                             {% if data['low-complexity-type-of-activity-completed'] %}
                                 {% if data['low-complexity-type-of-activity'] == 'construction' %}
-                                    Construction, alteration or improvement of any works
-                                    {% if data['low-complexity-type-of-works'] and data['low-complexity-type-of-works'].length > 0 %}
-                                        <br>
-                                        {% for work in data['low-complexity-type-of-works'] %}
-                                            {% if work == 'construction-new' %}
-                                                <br>Construction of new works
-                                            {% elif work == 'maintenance-existing' %}
-                                                <br>Maintenance of existing works
-                                            {% elif work == 'alteration-improvement' %}
-                                                <br>Alteration or improvement of existing works
-                                            {% endif %}
-                                        {% endfor %}
-                                    {% endif %}
+                                    Construction, alteration or improvement of any works{% if data['low-complexity-type-of-works'] and data['low-complexity-type-of-works'].length > 0 %}:{% for work in data['low-complexity-type-of-works'] %}{% if work == 'construction-new' %} Construction of new works{% elif work == 'maintenance-existing' %} Maintenance of existing works{% elif work == 'alteration-improvement' %} Alteration or improvement of existing works{% endif %}{% if not loop.last %},{% endif %}{% endfor %}{% endif %}
                                 {% elif data['low-complexity-type-of-activity'] == 'deposit' %}
                                     Deposit of any substance or object
                                 {% elif data['low-complexity-type-of-activity'] == 'removal' %}
