@@ -37,6 +37,14 @@ module.exports = function (router) {
     }
   });
 
+  // Project name page (accessible from task list)
+  router.get(`/versions/${version}/${section}/project-name`, function (req, res) {
+    // Clear error flags when navigating to the page
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    res.render(`versions/${version}/${section}/project-name`);
+  });
+
   ///////////////////////////////////////////
   // Project details section
   ///////////////////////////////////////////

@@ -1,0 +1,76 @@
+{% extends "../../layouts/low-complexity.html" %}
+
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% if data['organisation-name'] %}
+        {% include "../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+What are the possible impacts of the activity?
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+{{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        
+        <form action="impacts-router" method="post" novalidate>
+            
+            <!-- Error summary -->
+            {% if data['low-complexity-impacts-errorthispage'] == "true" %}
+                {{ govukErrorSummary({
+                    titleText: "There is a problem",
+                    errorList: [
+                        {
+                            text: "Enter the possible impacts of the activity",
+                            href: "#low-complexity-impacts"
+                        }
+                    ]
+                }) }}
+            {% endif %}
+
+            <div class="govuk-form-group {% if data['low-complexity-impacts-errorthispage'] == 'true' %}govuk-form-group--error{% endif %}">
+                <h1 class="govuk-label-wrapper">
+                    <label class="govuk-label govuk-label--l" for="low-complexity-impacts">
+                        <span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}<span class="govuk-!-display-block">Site 1</span></span>
+                        {{ pageHeadingTextHTML }}
+                    </label>
+                </h1>
+
+                <div id="low-complexity-impacts-hint" class="govuk-hint">
+                    Include social, economic and environmental impacts and if there are no possible impacts explain the reasons why
+                </div>
+
+                {% if data['low-complexity-impacts-errorthispage'] == "true" %}
+                <p id="low-complexity-impacts-error" class="govuk-error-message">
+                    <span class="govuk-visually-hidden">Error:</span> Enter the possible impacts of the activity
+                </p>
+                {% endif %}
+
+                <textarea class="govuk-textarea {% if data['low-complexity-impacts-errorthispage'] == 'true' %}govuk-textarea--error{% endif %}" id="low-complexity-impacts" name="low-complexity-impacts" rows="5" aria-describedby="low-complexity-impacts-hint">{{ data['low-complexity-impacts'] }}</textarea>
+            </div>
+            
+            <div class="govuk-button-group">
+                {{ govukButton({
+                    text: "Save and continue"
+                }) }}
+            </div>
+
+        </form>
+
+    </div>
+</div>
+{% endblock %}
+
