@@ -53,19 +53,27 @@ Marine licence start page
 			  </div>
 			</li>
 
-			<li class="govuk-task-list__item govuk-task-list__item--with-link">
-			  <div class="govuk-task-list__name-and-hint">
-				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="project-details-status">
-				  Project details
-				</a>
-			  </div>
-			  
-			  <div class="govuk-task-list__status" id="project-details-status">
+		<li class="govuk-task-list__item govuk-task-list__item--with-link">
+		  <div class="govuk-task-list__name-and-hint">
+			<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="project-details/" aria-describedby="project-details-status">
+			  Project details
+			</a>
+		  </div>
+		  
+		  <div class="govuk-task-list__status" id="project-details-status">
+			{% if data['low-complexity-project-background-completed'] and data['low-complexity-duration-completed'] and data['low-complexity-dates-completed'] and data['low-complexity-cost-completed'] %}
+				Completed
+			{% elif data['low-complexity-project-background-completed'] or data['low-complexity-duration-completed'] or data['low-complexity-dates-completed'] or data['low-complexity-cost-completed'] %}
+				<strong class="govuk-tag govuk-tag--light-blue">
+					In progress
+				</strong>
+			{% else %}
 				<strong class="govuk-tag govuk-tag--blue">
 					Not yet started
 				</strong>
-			  </div>
-			</li>
+			{% endif %}
+		  </div>
+		</li>
 
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
 			  <div class="govuk-task-list__name-and-hint">
