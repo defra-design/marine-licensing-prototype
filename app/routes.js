@@ -103,6 +103,7 @@ require('./routes/versions/multiple-sites-v2/exemption.js')(router);
 require('./routes/versions/multiple-sites-v2/exemption-manual-entry.js')(router);
 require('./routes/versions/multiple-sites-v2/iat.js')(router);
 require('./routes/versions/multiple-sites-v2/iat-improved.js')(router);
+require('./routes/versions/multiple-sites-v2/low-complexity-v1.js')(router);
 require('./routes/versions/multiple-sites-v2/sample-plans-v1.js')(router);
 require('./routes/versions/multiple-sites-v2/sample-plans-v1-dredging-site-locations.js')(router);
 require('./routes/versions/multiple-sites-v2/sample-plans-v1-disposal-site-locations.js')(router);
