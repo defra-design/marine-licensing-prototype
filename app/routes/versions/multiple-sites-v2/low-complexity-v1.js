@@ -8,6 +8,9 @@ module.exports = function (router) {
   ///////////////////////////////////////////
 
   router.get(`/versions/${version}/${section}/project-name-start`, function (req, res) {
+    // Clear error flags when navigating to the page
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
     res.render(`versions/${version}/${section}/project-name-start`);
   });
 
@@ -45,6 +48,9 @@ module.exports = function (router) {
 
   // Project background page
   router.get(`/versions/${version}/${section}/project-details/project-background`, function (req, res) {
+    // Clear error flags when navigating to the page
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
     res.render(`versions/${version}/${section}/project-details/project-background`);
   });
 
@@ -74,6 +80,10 @@ module.exports = function (router) {
 
   // Duration page
   router.get(`/versions/${version}/${section}/project-details/duration`, function (req, res) {
+    // Clear error flags when navigating to the page
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errortypetwo'] = "false";
     res.render(`versions/${version}/${section}/project-details/duration`);
   });
 
@@ -82,16 +92,27 @@ module.exports = function (router) {
     // Clear error flags
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
+    req.session.data['errortypetwo'] = "false";
 
     // Get the duration values
     const durationYears = req.session.data['low-complexity-duration-years'];
     const durationMonths = req.session.data['low-complexity-duration-months'];
 
-    // Validate: check if BOTH fields have values
-    if (!durationYears || durationYears.trim() === '' || !durationMonths || durationMonths.trim() === '') {
+    // Validate: check if BOTH fields have values and track which fields are missing
+    const yearsEmpty = !durationYears || durationYears.trim() === '';
+    const monthsEmpty = !durationMonths || durationMonths.trim() === '';
+
+    if (yearsEmpty || monthsEmpty) {
       // Set error flags
       req.session.data['errorthispage'] = "true";
-      req.session.data['errortypeone'] = "true";
+      
+      // Set specific error flags for each field
+      if (yearsEmpty) {
+        req.session.data['errortypeone'] = "true"; // Years error
+      }
+      if (monthsEmpty) {
+        req.session.data['errortypetwo'] = "true"; // Months error
+      }
       
       // Redirect back to the same page with errors
       res.redirect('duration');
@@ -104,11 +125,17 @@ module.exports = function (router) {
 
   // Dates of marine works page
   router.get(`/versions/${version}/${section}/project-details/dates-of-marine-works`, function (req, res) {
+    // Clear error flags when navigating to the page
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
     res.render(`versions/${version}/${section}/project-details/dates-of-marine-works`);
   });
 
   // Cost of marine works page
   router.get(`/versions/${version}/${section}/project-details/cost-of-marine-works`, function (req, res) {
+    // Clear error flags when navigating to the page
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
     res.render(`versions/${version}/${section}/project-details/cost-of-marine-works`);
   });
 
