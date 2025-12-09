@@ -106,5 +106,210 @@ module.exports = function (router) {
     res.redirect('../marine-licence-start-page');
   });
 
+  /////////////////////////////////////////////////////////
+  //////// Site name page
+  /////////////////////////////////////////////////////////
+  router.get(`/versions/${version}/${section}/${subsection}/site-name`, function (req, res) {
+    res.render(`versions/${version}/${section}/${subsection}/site-name`);
+  });
+
+  // Site name router (POST)
+  router.post(`/versions/${version}/${section}/${subsection}/site-name-router`, function (req, res) {
+    // Clear any previous errors
+    req.session.data['low-complexity-site-name-errorthispage'] = "false";
+
+    // Check if site name is entered
+    if (!req.session.data['low-complexity-site-name'] || req.session.data['low-complexity-site-name'].trim() === '') {
+      req.session.data['low-complexity-site-name-errorthispage'] = "true";
+      res.redirect('site-name');
+      return;
+    }
+
+    // Mark as completed and redirect to review page
+    req.session.data['low-complexity-site-name-completed'] = true;
+    res.redirect('review-site-details#site-1-details');
+  });
+
+  /////////////////////////////////////////////////////////
+  //////// Activity description page
+  /////////////////////////////////////////////////////////
+  router.get(`/versions/${version}/${section}/${subsection}/activity-description`, function (req, res) {
+    res.render(`versions/${version}/${section}/${subsection}/activity-description`);
+  });
+
+  // Activity description router (POST)
+  router.post(`/versions/${version}/${section}/${subsection}/activity-description-router`, function (req, res) {
+    // Clear any previous errors
+    req.session.data['low-complexity-activity-description-errorthispage'] = "false";
+    delete req.session.data['low-complexity-activity-name-error'];
+    delete req.session.data['low-complexity-activity-description-error'];
+
+    let hasErrors = false;
+
+    // Validate activity name
+    if (!req.session.data['low-complexity-activity-name'] || req.session.data['low-complexity-activity-name'].trim() === '') {
+      req.session.data['low-complexity-activity-name-error'] = "Enter the activity name";
+      hasErrors = true;
+    }
+
+    // Validate activity description
+    if (!req.session.data['low-complexity-activity-description'] || req.session.data['low-complexity-activity-description'].trim() === '') {
+      req.session.data['low-complexity-activity-description-error'] = "Enter the activity description";
+      hasErrors = true;
+    }
+
+    if (hasErrors) {
+      req.session.data['low-complexity-activity-description-errorthispage'] = "true";
+      res.redirect('activity-description');
+      return;
+    }
+
+    // Mark as completed and redirect to review page
+    req.session.data['low-complexity-activity-description-completed'] = true;
+    res.redirect('review-site-details#site-1-details');
+  });
+
+  /////////////////////////////////////////////////////////
+  //////// Duration page
+  /////////////////////////////////////////////////////////
+  router.get(`/versions/${version}/${section}/${subsection}/duration`, function (req, res) {
+    res.render(`versions/${version}/${section}/${subsection}/duration`);
+  });
+
+  // Duration router (POST)
+  router.post(`/versions/${version}/${section}/${subsection}/duration-router`, function (req, res) {
+    // Clear any previous errors
+    req.session.data['low-complexity-duration-errorthispage'] = "false";
+    req.session.data['low-complexity-duration-years-error'] = "false";
+    req.session.data['low-complexity-duration-months-error'] = "false";
+    req.session.data['low-complexity-duration-weeks-error'] = "false";
+
+    let hasErrors = false;
+
+    // Check if all three fields are empty or missing
+    const yearsEmpty = !req.session.data['low-complexity-duration-years'] || req.session.data['low-complexity-duration-years'].trim() === '';
+    const monthsEmpty = !req.session.data['low-complexity-duration-months'] || req.session.data['low-complexity-duration-months'].trim() === '';
+    const weeksEmpty = !req.session.data['low-complexity-duration-weeks'] || req.session.data['low-complexity-duration-weeks'].trim() === '';
+
+    if (yearsEmpty) {
+      req.session.data['low-complexity-duration-years-error'] = "true";
+      hasErrors = true;
+    }
+
+    if (monthsEmpty) {
+      req.session.data['low-complexity-duration-months-error'] = "true";
+      hasErrors = true;
+    }
+
+    if (weeksEmpty) {
+      req.session.data['low-complexity-duration-weeks-error'] = "true";
+      hasErrors = true;
+    }
+
+    if (hasErrors) {
+      req.session.data['low-complexity-duration-errorthispage'] = "true";
+      res.redirect('duration');
+      return;
+    }
+
+    // Mark as completed and redirect to review page
+    req.session.data['low-complexity-duration-completed'] = true;
+    res.redirect('review-site-details#site-1-details');
+  });
+
+  /////////////////////////////////////////////////////////
+  //////// Schedule page
+  /////////////////////////////////////////////////////////
+  router.get(`/versions/${version}/${section}/${subsection}/schedule`, function (req, res) {
+    res.render(`versions/${version}/${section}/${subsection}/schedule`);
+  });
+
+  // Schedule router (POST)
+  router.post(`/versions/${version}/${section}/${subsection}/schedule-router`, function (req, res) {
+    // Clear any previous errors
+    req.session.data['low-complexity-schedule-errorthispage'] = "false";
+
+    // Check if schedule is entered
+    if (!req.session.data['low-complexity-schedule'] || req.session.data['low-complexity-schedule'].trim() === '') {
+      req.session.data['low-complexity-schedule-errorthispage'] = "true";
+      res.redirect('schedule');
+      return;
+    }
+
+    // Mark as completed and redirect to review page
+    req.session.data['low-complexity-schedule-completed'] = true;
+    res.redirect('review-site-details#site-1-details');
+  });
+
+  /////////////////////////////////////////////////////////
+  //////// Impacts page
+  /////////////////////////////////////////////////////////
+  router.get(`/versions/${version}/${section}/${subsection}/impacts`, function (req, res) {
+    res.render(`versions/${version}/${section}/${subsection}/impacts`);
+  });
+
+  // Impacts router (POST)
+  router.post(`/versions/${version}/${section}/${subsection}/impacts-router`, function (req, res) {
+    // Clear any previous errors
+    req.session.data['low-complexity-impacts-errorthispage'] = "false";
+
+    // Check if impacts is entered
+    if (!req.session.data['low-complexity-impacts'] || req.session.data['low-complexity-impacts'].trim() === '') {
+      req.session.data['low-complexity-impacts-errorthispage'] = "true";
+      res.redirect('impacts');
+      return;
+    }
+
+    // Mark as completed and redirect to review page
+    req.session.data['low-complexity-impacts-completed'] = true;
+    res.redirect('review-site-details#site-1-details');
+  });
+
+  /////////////////////////////////////////////////////////
+  //////// Delete all sites page
+  /////////////////////////////////////////////////////////
+  router.get(`/versions/${version}/${section}/${subsection}/delete-all-sites`, function (req, res) {
+    res.render(`versions/${version}/${section}/${subsection}/delete-all-sites`);
+  });
+
+  // Delete all sites router (POST)
+  router.post(`/versions/${version}/${section}/${subsection}/delete-all-sites-router`, function (req, res) {
+    // Clear all site details data
+    
+    // File upload journey data
+    delete req.session.data['low-complexity-site-location-method'];
+    delete req.session.data['low-complexity-file-type'];
+    delete req.session.data['hasUploadedSiteFile'];
+    
+    // Site name
+    delete req.session.data['low-complexity-site-name'];
+    delete req.session.data['low-complexity-site-name-completed'];
+    
+    // Activity description
+    delete req.session.data['low-complexity-activity-name'];
+    delete req.session.data['low-complexity-activity-description'];
+    delete req.session.data['low-complexity-activity-description-completed'];
+    
+    // Duration
+    delete req.session.data['low-complexity-duration-years'];
+    delete req.session.data['low-complexity-duration-months'];
+    delete req.session.data['low-complexity-duration-weeks'];
+    delete req.session.data['low-complexity-duration-completed'];
+    
+    // Schedule
+    delete req.session.data['low-complexity-schedule'];
+    delete req.session.data['low-complexity-schedule-completed'];
+    
+    // Impacts
+    delete req.session.data['low-complexity-impacts'];
+    delete req.session.data['low-complexity-impacts-completed'];
+    
+    // Overall completion flag
+    delete req.session.data['has-visited-site-details'];
+    
+    // Redirect to task list
+    res.redirect('../marine-licence-start-page');
+  });
+
 };
 

@@ -29,12 +29,252 @@ Review site details
             {{ pageHeadingTextHTML }}
         </h1>
         
-        {{ govukInsetText({
-            html: "The site details you've provided are saved.<br>You can return to this page and make changes at any time before you send your information."
-        }) }}
+        <!-- Check if all required fields are completed -->
+        {% set siteNameComplete = data['low-complexity-site-name-completed'] %}
+        {% set activityDescComplete = data['low-complexity-activity-description-completed'] %}
+        {% set durationComplete = data['low-complexity-duration-completed'] %}
+        {% set scheduleComplete = data['low-complexity-schedule-completed'] %}
+        {% set impactsComplete = data['low-complexity-impacts-completed'] %}
         
-        <!-- Summary cards will be added here later -->
-        <p class="govuk-body">Site details summary will be displayed here.</p>
+        {% set allComplete = siteNameComplete and activityDescComplete and durationComplete and scheduleComplete and impactsComplete %}
+        
+        {% if not allComplete %}
+            {{ govukInsetText({
+                html: "The site details you've provided are saved.<br>You must complete all sections marked <span class='govuk-tag govuk-tag--red govuk-!-margin-bottom-2 govuk-!-margin-top-2'>Incomplete</span> before you can send your information.<br>If you cannot finish now, you can return to this page later."
+            }) }}
+        {% else %}
+            {{ govukInsetText({
+                html: "The site details you've provided are saved.<br>You can return to this page and make changes at any time before you send your information."
+            }) }}
+        {% endif %}
+        
+        <!-- Providing the site location section -->
+        <div id="site-location" class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">
+                    Providing the site location
+                </h2>
+                <ul class="govuk-summary-card__actions">
+                    <li class="govuk-summary-card__action">
+                        <a class="govuk-link govuk-link--no-visited-state" href="delete-all-sites">
+                            Delete all site details<span class="govuk-visually-hidden"></span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Method of providing site location
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            File uploaded
+                        </dd>
+                        
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            File type
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['low-complexity-file-type'] == 'kml' %}
+                                KML
+                            {% elif data['low-complexity-file-type'] == 'shapefile' %}
+                                Shapefile
+                            {% else %}
+                                Shapefile
+                            {% endif %}
+                        </dd>
+                        
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            File uploaded
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['low-complexity-file-type'] == 'kml' %}
+                                my-site-location.kml
+                            {% else %}
+                                my-site-location.zip
+                            {% endif %}
+                        </dd>
+                        
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        <!-- Site 1 details section -->
+        <div id="site-1-details" class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">
+                    Site 1 details
+                </h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list govuk-summary-list--full-width">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Site name
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['low-complexity-site-name-completed'] and data['low-complexity-site-name'] %}
+                                {{ data['low-complexity-site-name'] }}
+                            {% else %}
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                            {% endif %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="site-name" class="govuk-link govuk-link--no-visited-state">
+                                {% if data['low-complexity-site-name-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> site name</span>
+                            </a>
+                        </dd>
+                    </div>
+                    
+                    <div class="govuk-summary-list__row govuk-summary-list__row--no-actions">
+                        <dt class="govuk-summary-list__key govuk-summary-list__key--full-width map-label">
+                            Map view
+                        </dt>
+                        <dd class="govuk-summary-list__value govuk-summary-list__value--full-width">
+                            <img src="/public/images/map-5-points.jpg" alt="Map showing site 1 location" />
+                        </dd>
+                    </div>
+
+                    <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+                        <dt class="govuk-summary-list__key">
+                            Type of activity
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="#" class="govuk-link govuk-link--no-visited-state">
+                                Add<span class="govuk-visually-hidden"> type of activity</span>
+                            </a>
+                        </dd>
+                    </div>
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Activity category
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="#" class="govuk-link govuk-link--no-visited-state govuk-visually-hidden">
+                                Add activity category
+                            </a>
+                        </dd>
+                    </div>
+
+                    <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+                        <dt class="govuk-summary-list__key">
+                            Activity name
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['low-complexity-activity-description-completed'] and data['low-complexity-activity-name'] %}
+                                {{ data['low-complexity-activity-name'] }}
+                            {% else %}
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                            {% endif %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="activity-description" class="govuk-link govuk-link--no-visited-state">
+                                {% if data['low-complexity-activity-description-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> activity name</span>
+                            </a>
+                        </dd>
+                    </div>
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Activity description
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['low-complexity-activity-description-completed'] and data['low-complexity-activity-description'] %}
+                                {{ data['low-complexity-activity-description'] }}
+                            {% else %}
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                            {% endif %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="activity-description" class="govuk-link govuk-link--no-visited-state govuk-visually-hidden">
+                                {% if data['low-complexity-activity-description-completed'] %}Change{% else %}Add{% endif %} activity description
+                            </a>
+                        </dd>
+                    </div>
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Duration
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['low-complexity-duration-completed'] %}
+                                {% set durationParts = [] %}
+                                {% if data['low-complexity-duration-years'] and data['low-complexity-duration-years'] != '0' %}
+                                    {% set durationParts = (durationParts.push(data['low-complexity-duration-years'] + ' ' + ('year' if data['low-complexity-duration-years'] == '1' else 'years')), durationParts) %}
+                                {% endif %}
+                                {% if data['low-complexity-duration-months'] and data['low-complexity-duration-months'] != '0' %}
+                                    {% set durationParts = (durationParts.push(data['low-complexity-duration-months'] + ' ' + ('month' if data['low-complexity-duration-months'] == '1' else 'months')), durationParts) %}
+                                {% endif %}
+                                {% if data['low-complexity-duration-weeks'] and data['low-complexity-duration-weeks'] != '0' %}
+                                    {% set durationParts = (durationParts.push(data['low-complexity-duration-weeks'] + ' ' + ('week' if data['low-complexity-duration-weeks'] == '1' else 'weeks')), durationParts) %}
+                                {% endif %}
+                                {{ durationParts | join(', ') if durationParts.length > 0 else 'Not provided' }}
+                            {% else %}
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                            {% endif %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="duration" class="govuk-link govuk-link--no-visited-state">
+                                {% if data['low-complexity-duration-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> duration</span>
+                            </a>
+                        </dd>
+                    </div>
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Schedule
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['low-complexity-schedule-completed'] and data['low-complexity-schedule'] %}
+                                {{ data['low-complexity-schedule'] }}
+                            {% else %}
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                            {% endif %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="schedule" class="govuk-link govuk-link--no-visited-state">
+                                {% if data['low-complexity-schedule-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> schedule</span>
+                            </a>
+                        </dd>
+                    </div>
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Possible impacts of the activity
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['low-complexity-impacts-completed'] and data['low-complexity-impacts'] %}
+                                {{ data['low-complexity-impacts'] }}
+                            {% else %}
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                            {% endif %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="impacts" class="govuk-link govuk-link--no-visited-state">
+                                {% if data['low-complexity-impacts-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> possible impacts of the activity</span>
+                            </a>
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        <p class="govuk-body govuk-!-margin-top-9">
+            <a href="#" class="govuk-link govuk-link--no-visited-state">Add another activity for site 1</a>
+        </p>
 
         <form action="review-site-details-router" method="post" novalidate>
             <div class="govuk-button-group">
@@ -47,4 +287,3 @@ Review site details
 </div>
 
 {% endblock %}
-
