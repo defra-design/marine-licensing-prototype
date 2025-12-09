@@ -128,7 +128,49 @@ module.exports = function (router) {
     // Clear error flags when navigating to the page
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
+    req.session.data['errortypetwo'] = "false";
     res.render(`versions/${version}/${section}/project-details/dates-of-marine-works`);
+  });
+
+  // Dates of marine works router (POST)
+  router.post(`/versions/${version}/${section}/project-details/dates-of-marine-works-router`, function (req, res) {
+    // Clear error flags
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errortypetwo'] = "false";
+
+    // Get the date values
+    const startDay = req.session.data['start-date-day'];
+    const startMonth = req.session.data['start-date-month'];
+    const startYear = req.session.data['start-date-year'];
+    const endDay = req.session.data['end-date-day'];
+    const endMonth = req.session.data['end-date-month'];
+    const endYear = req.session.data['end-date-year'];
+
+    let hasError = false;
+
+    // Check if start date has any empty fields
+    if (!startDay || startDay.trim() === '' || !startMonth || startMonth.trim() === '' || !startYear || startYear.trim() === '') {
+      req.session.data['errorthispage'] = "true";
+      req.session.data['errortypeone'] = "true";
+      hasError = true;
+    }
+
+    // Check if end date has any empty fields
+    if (!endDay || endDay.trim() === '' || !endMonth || endMonth.trim() === '' || !endYear || endYear.trim() === '') {
+      req.session.data['errorthispage'] = "true";
+      req.session.data['errortypetwo'] = "true";
+      hasError = true;
+    }
+
+    if (hasError) {
+      // Redirect back to the same page with errors
+      res.redirect('dates-of-marine-works');
+    } else {
+      // Validation passed - set completion flag and redirect to project details index
+      req.session.data['low-complexity-dates-completed'] = true;
+      res.redirect('./');
+    }
   });
 
   // Cost of marine works page
