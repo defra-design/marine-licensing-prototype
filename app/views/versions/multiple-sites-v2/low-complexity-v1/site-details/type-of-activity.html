@@ -1,0 +1,127 @@
+{% extends "../../layouts/low-complexity.html" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% if data['organisation-name'] %}
+        {% include "../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+Type of activity
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+{{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        
+        <form action="type-of-activity-router" method="post" novalidate>
+            
+            <!-- Error summary -->
+            {% if data['low-complexity-type-of-activity-errorthispage'] == "true" %}
+                {% set errorList = [] %}
+                {% if data['low-complexity-type-of-activity-error'] %}
+                    {% set errorList = (errorList.push({
+                        text: data['low-complexity-type-of-activity-error'],
+                        href: "#low-complexity-type-of-activity"
+                    }), errorList) %}
+                {% endif %}
+                {% if data['low-complexity-type-of-works-error'] %}
+                    {% set errorList = (errorList.push({
+                        text: data['low-complexity-type-of-works-error'],
+                        href: "#low-complexity-type-of-works"
+                    }), errorList) %}
+                {% endif %}
+                
+                {{ govukErrorSummary({
+                    titleText: "There is a problem",
+                    errorList: errorList
+                }) }}
+            {% endif %}
+
+            {% set constructionCheckboxesHtml %}
+                {{ govukCheckboxes({
+                    name: "low-complexity-type-of-works",
+                    fieldset: {
+                        legend: {
+                            text: "Select all type of works that apply",
+                            classes: "govuk-fieldset__legend--s"
+                        }
+                    },
+                    items: [
+                        {
+                            value: "construction-new",
+                            text: "Construction of new works"
+                        },
+                        {
+                            value: "maintenance-existing",
+                            text: "Maintenance of existing works"
+                        },
+                        {
+                            value: "alteration-improvement",
+                            text: "Alteration or improvement of existing works"
+                        }
+                    ],
+                    errorMessage: {
+                        text: data['low-complexity-type-of-works-error']
+                    } if data['low-complexity-type-of-works-error'],
+                    values: data['low-complexity-type-of-works']
+                }) }}
+            {% endset %}
+
+            {{ govukRadios({
+                name: "low-complexity-type-of-activity",
+                fieldset: {
+                    legend: {
+                        html: '<span class="govuk-caption-l">' + data['low-complexity-project-name-text-input'] + '<span class="govuk-!-display-block">Site 1</span></span>' + pageHeadingTextHTML,
+                        isPageHeading: true,
+                        classes: "govuk-fieldset__legend--l"
+                    }
+                },
+                items: [
+                    {
+                        value: "construction",
+                        text: "Construction, alteration or improvement of any works",
+                        conditional: {
+                            html: constructionCheckboxesHtml
+                        }
+                    },
+                    {
+                        value: "deposit",
+                        text: "Deposit of any substance or object"
+                    },
+                    {
+                        value: "removal",
+                        text: "Removal of any substance or object"
+                    }
+                ],
+                errorMessage: {
+                    text: data['low-complexity-type-of-activity-error']
+                } if data['low-complexity-type-of-activity-error'],
+                value: data['low-complexity-type-of-activity']
+            }) }}
+            
+            <div class="govuk-button-group">
+                {{ govukButton({
+                    text: "Save and continue"
+                }) }}
+            </div>
+
+        </form>
+
+    </div>
+</div>
+{% endblock %}
+

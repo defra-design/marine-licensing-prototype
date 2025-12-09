@@ -141,6 +141,52 @@ module.exports = function (router) {
   });
 
   /////////////////////////////////////////////////////////
+  //////// Type of activity page
+  /////////////////////////////////////////////////////////
+  router.get(`/versions/${version}/${section}/${subsection}/type-of-activity`, function (req, res) {
+    // Clear any previous errors
+    req.session.data['low-complexity-type-of-activity-errorthispage'] = "false";
+    delete req.session.data['low-complexity-type-of-activity-error'];
+    delete req.session.data['low-complexity-type-of-works-error'];
+    res.render(`versions/${version}/${section}/${subsection}/type-of-activity`);
+  });
+
+  // Type of activity router (POST)
+  router.post(`/versions/${version}/${section}/${subsection}/type-of-activity-router`, function (req, res) {
+    // Clear any previous errors
+    req.session.data['low-complexity-type-of-activity-errorthispage'] = "false";
+    delete req.session.data['low-complexity-type-of-activity-error'];
+    delete req.session.data['low-complexity-type-of-works-error'];
+
+    let hasErrors = false;
+
+    // Validate type of activity is selected
+    if (!req.session.data['low-complexity-type-of-activity']) {
+      req.session.data['low-complexity-type-of-activity-error'] = "Select a type of activity";
+      hasErrors = true;
+    } else if (req.session.data['low-complexity-type-of-activity'] === 'construction') {
+      // If construction is selected, validate that at least one checkbox is selected
+      if (!req.session.data['low-complexity-type-of-works'] || req.session.data['low-complexity-type-of-works'].length === 0) {
+        req.session.data['low-complexity-type-of-works-error'] = "Select the type of works that apply";
+        hasErrors = true;
+      }
+    } else {
+      // If not construction, clear the type of works checkboxes
+      delete req.session.data['low-complexity-type-of-works'];
+    }
+
+    if (hasErrors) {
+      req.session.data['low-complexity-type-of-activity-errorthispage'] = "true";
+      res.redirect('type-of-activity');
+      return;
+    }
+
+    // Mark as completed and redirect to review page
+    req.session.data['low-complexity-type-of-activity-completed'] = true;
+    res.redirect('review-site-details#site-1-details');
+  });
+
+  /////////////////////////////////////////////////////////
   //////// Activity description page
   /////////////////////////////////////////////////////////
   router.get(`/versions/${version}/${section}/${subsection}/activity-description`, function (req, res) {
@@ -307,6 +353,11 @@ module.exports = function (router) {
     // Site name
     delete req.session.data['low-complexity-site-name'];
     delete req.session.data['low-complexity-site-name-completed'];
+    
+    // Type of activity
+    delete req.session.data['low-complexity-type-of-activity'];
+    delete req.session.data['low-complexity-type-of-works'];
+    delete req.session.data['low-complexity-type-of-activity-completed'];
     
     // Activity description
     delete req.session.data['low-complexity-activity-name'];

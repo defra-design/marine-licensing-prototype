@@ -31,12 +31,13 @@ Review site details
         
         <!-- Check if all required fields are completed -->
         {% set siteNameComplete = data['low-complexity-site-name-completed'] %}
+        {% set typeOfActivityComplete = data['low-complexity-type-of-activity-completed'] %}
         {% set activityDescComplete = data['low-complexity-activity-description-completed'] %}
         {% set durationComplete = data['low-complexity-site-duration-completed'] %}
         {% set scheduleComplete = data['low-complexity-schedule-completed'] %}
         {% set impactsComplete = data['low-complexity-impacts-completed'] %}
         
-        {% set allComplete = siteNameComplete and activityDescComplete and durationComplete and scheduleComplete and impactsComplete %}
+        {% set allComplete = siteNameComplete and typeOfActivityComplete and activityDescComplete and durationComplete and scheduleComplete and impactsComplete %}
         
         {% if not allComplete %}
             {{ govukInsetText({
@@ -146,25 +147,33 @@ Review site details
                             Type of activity
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                            {% if data['low-complexity-type-of-activity-completed'] %}
+                                {% if data['low-complexity-type-of-activity'] == 'construction' %}
+                                    Construction, alteration or improvement of any works
+                                    {% if data['low-complexity-type-of-works'] and data['low-complexity-type-of-works'].length > 0 %}
+                                        <br>
+                                        {% for work in data['low-complexity-type-of-works'] %}
+                                            {% if work == 'construction-new' %}
+                                                <br>Construction of new works
+                                            {% elif work == 'maintenance-existing' %}
+                                                <br>Maintenance of existing works
+                                            {% elif work == 'alteration-improvement' %}
+                                                <br>Alteration or improvement of existing works
+                                            {% endif %}
+                                        {% endfor %}
+                                    {% endif %}
+                                {% elif data['low-complexity-type-of-activity'] == 'deposit' %}
+                                    Deposit of any substance or object
+                                {% elif data['low-complexity-type-of-activity'] == 'removal' %}
+                                    Removal of any substance or object
+                                {% endif %}
+                            {% else %}
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                            {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="#" class="govuk-link govuk-link--no-visited-state">
-                                Add<span class="govuk-visually-hidden"> type of activity</span>
-                            </a>
-                        </dd>
-                    </div>
-
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Activity category
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            <span class="govuk-tag govuk-tag--red">Incomplete</span>
-                        </dd>
-                        <dd class="govuk-summary-list__actions">
-                            <a href="#" class="govuk-link govuk-link--no-visited-state govuk-visually-hidden">
-                                Add activity category
+                            <a href="type-of-activity" class="govuk-link govuk-link--no-visited-state">
+                                {% if data['low-complexity-type-of-activity-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> type of activity</span>
                             </a>
                         </dd>
                     </div>
