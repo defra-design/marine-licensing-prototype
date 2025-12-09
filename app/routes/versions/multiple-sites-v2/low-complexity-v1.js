@@ -341,6 +341,143 @@ module.exports = function (router) {
   });
 
   ///////////////////////////////////////////
+  // Environmental assessments section
+  ///////////////////////////////////////////
+
+  // Environmental assessments index page
+  router.get(`/versions/${version}/${section}/environmental-assessments`, function (req, res) {
+    res.render(`versions/${version}/${section}/environmental-assessments/index`);
+  });
+
+  // European sites page
+  router.get(`/versions/${version}/${section}/environmental-assessments/european-sites`, function (req, res) {
+    // Clear error flags when navigating to the page
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    res.render(`versions/${version}/${section}/environmental-assessments/european-sites`);
+  });
+
+  // European sites router (POST)
+  router.post(`/versions/${version}/${section}/environmental-assessments/european-sites-router`, function (req, res) {
+    // Clear error flags
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    // Get the european sites value
+    const europeanSites = req.session.data['low-complexity-european-sites'];
+
+    // Validate: check if european sites is empty or undefined
+    if (!europeanSites || europeanSites.trim() === '') {
+      // Set error flags
+      req.session.data['errorthispage'] = "true";
+      req.session.data['errortypeone'] = "true";
+      
+      // Redirect back to the same page with errors
+      res.redirect('european-sites');
+    } else {
+      // Validation passed - set completion flag and redirect to environmental assessments index
+      req.session.data['low-complexity-european-sites-completed'] = true;
+      res.redirect('./');
+    }
+  });
+
+  // Marine Conservation Zones page
+  router.get(`/versions/${version}/${section}/environmental-assessments/marine-conservation-zones`, function (req, res) {
+    // Clear error flags when navigating to the page
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    res.render(`versions/${version}/${section}/environmental-assessments/marine-conservation-zones`);
+  });
+
+  // Marine Conservation Zones router (POST)
+  router.post(`/versions/${version}/${section}/environmental-assessments/marine-conservation-zones-router`, function (req, res) {
+    // Clear error flags
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    // Get the MCZ value
+    const mcz = req.session.data['low-complexity-mcz'];
+
+    // Validate: check if MCZ is empty or undefined
+    if (!mcz || mcz.trim() === '') {
+      // Set error flags
+      req.session.data['errorthispage'] = "true";
+      req.session.data['errortypeone'] = "true";
+      
+      // Redirect back to the same page with errors
+      res.redirect('marine-conservation-zones');
+    } else {
+      // Validation passed - set completion flag and redirect to environmental assessments index
+      req.session.data['low-complexity-mcz-completed'] = true;
+      res.redirect('./');
+    }
+  });
+
+  // Sites of special scientific interest page
+  router.get(`/versions/${version}/${section}/environmental-assessments/sites-of-special-scientific-interest`, function (req, res) {
+    // Clear error flags when navigating to the page
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    res.render(`versions/${version}/${section}/environmental-assessments/sites-of-special-scientific-interest`);
+  });
+
+  // Sites of special scientific interest router (POST)
+  router.post(`/versions/${version}/${section}/environmental-assessments/sites-of-special-scientific-interest-router`, function (req, res) {
+    // Clear error flags
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    // Get the SSSI value
+    const sssi = req.session.data['low-complexity-sssi'];
+
+    // Validate: check if SSSI is empty or undefined
+    if (!sssi || sssi.trim() === '') {
+      // Set error flags
+      req.session.data['errorthispage'] = "true";
+      req.session.data['errortypeone'] = "true";
+      
+      // Redirect back to the same page with errors
+      res.redirect('sites-of-special-scientific-interest');
+    } else {
+      // Validation passed - set completion flag and redirect to environmental assessments index
+      req.session.data['low-complexity-sssi-completed'] = true;
+      res.redirect('./');
+    }
+  });
+
+  // Water Framework Directive page
+  router.get(`/versions/${version}/${section}/environmental-assessments/water-framework-directive`, function (req, res) {
+    // Clear error flags when navigating to the page
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    res.render(`versions/${version}/${section}/environmental-assessments/water-framework-directive`);
+  });
+
+  // Water Framework Directive router (POST)
+  router.post(`/versions/${version}/${section}/environmental-assessments/water-framework-directive-router`, function (req, res) {
+    // Clear error flags
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    // Get the WFD value
+    const wfd = req.session.data['low-complexity-wfd'];
+
+    // Validate: check if WFD is empty or undefined
+    if (!wfd || wfd.trim() === '') {
+      // Set error flags
+      req.session.data['errorthispage'] = "true";
+      req.session.data['errortypeone'] = "true";
+      
+      // Redirect back to the same page with errors
+      res.redirect('water-framework-directive');
+    } else {
+      // Validation passed - set completion flag and redirect to environmental assessments index
+      req.session.data['low-complexity-wfd-completed'] = true;
+      res.redirect('./');
+    }
+  });
+
+  ///////////////////////////////////////////
   // Projects page
   ///////////////////////////////////////////
 }
