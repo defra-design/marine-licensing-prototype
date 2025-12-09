@@ -110,6 +110,8 @@ module.exports = function (router) {
   //////// Site name page
   /////////////////////////////////////////////////////////
   router.get(`/versions/${version}/${section}/${subsection}/site-name`, function (req, res) {
+    // Clear any previous errors
+    req.session.data['low-complexity-site-name-errorthispage'] = "false";
     res.render(`versions/${version}/${section}/${subsection}/site-name`);
   });
 
@@ -134,6 +136,10 @@ module.exports = function (router) {
   //////// Activity description page
   /////////////////////////////////////////////////////////
   router.get(`/versions/${version}/${section}/${subsection}/activity-description`, function (req, res) {
+    // Clear any previous errors
+    req.session.data['low-complexity-activity-description-errorthispage'] = "false";
+    delete req.session.data['low-complexity-activity-name-error'];
+    delete req.session.data['low-complexity-activity-description-error'];
     res.render(`versions/${version}/${section}/${subsection}/activity-description`);
   });
 
@@ -173,47 +179,52 @@ module.exports = function (router) {
   //////// Duration page
   /////////////////////////////////////////////////////////
   router.get(`/versions/${version}/${section}/${subsection}/duration`, function (req, res) {
+    // Clear any previous errors
+    req.session.data['low-complexity-site-duration-errorthispage'] = "false";
+    req.session.data['low-complexity-site-duration-years-error'] = "false";
+    req.session.data['low-complexity-site-duration-months-error'] = "false";
+    req.session.data['low-complexity-site-duration-weeks-error'] = "false";
     res.render(`versions/${version}/${section}/${subsection}/duration`);
   });
 
   // Duration router (POST)
   router.post(`/versions/${version}/${section}/${subsection}/duration-router`, function (req, res) {
     // Clear any previous errors
-    req.session.data['low-complexity-duration-errorthispage'] = "false";
-    req.session.data['low-complexity-duration-years-error'] = "false";
-    req.session.data['low-complexity-duration-months-error'] = "false";
-    req.session.data['low-complexity-duration-weeks-error'] = "false";
+    req.session.data['low-complexity-site-duration-errorthispage'] = "false";
+    req.session.data['low-complexity-site-duration-years-error'] = "false";
+    req.session.data['low-complexity-site-duration-months-error'] = "false";
+    req.session.data['low-complexity-site-duration-weeks-error'] = "false";
 
     let hasErrors = false;
 
     // Check if all three fields are empty or missing
-    const yearsEmpty = !req.session.data['low-complexity-duration-years'] || req.session.data['low-complexity-duration-years'].trim() === '';
-    const monthsEmpty = !req.session.data['low-complexity-duration-months'] || req.session.data['low-complexity-duration-months'].trim() === '';
-    const weeksEmpty = !req.session.data['low-complexity-duration-weeks'] || req.session.data['low-complexity-duration-weeks'].trim() === '';
+    const yearsEmpty = !req.session.data['low-complexity-site-duration-years'] || req.session.data['low-complexity-site-duration-years'].trim() === '';
+    const monthsEmpty = !req.session.data['low-complexity-site-duration-months'] || req.session.data['low-complexity-site-duration-months'].trim() === '';
+    const weeksEmpty = !req.session.data['low-complexity-site-duration-weeks'] || req.session.data['low-complexity-site-duration-weeks'].trim() === '';
 
     if (yearsEmpty) {
-      req.session.data['low-complexity-duration-years-error'] = "true";
+      req.session.data['low-complexity-site-duration-years-error'] = "true";
       hasErrors = true;
     }
 
     if (monthsEmpty) {
-      req.session.data['low-complexity-duration-months-error'] = "true";
+      req.session.data['low-complexity-site-duration-months-error'] = "true";
       hasErrors = true;
     }
 
     if (weeksEmpty) {
-      req.session.data['low-complexity-duration-weeks-error'] = "true";
+      req.session.data['low-complexity-site-duration-weeks-error'] = "true";
       hasErrors = true;
     }
 
     if (hasErrors) {
-      req.session.data['low-complexity-duration-errorthispage'] = "true";
+      req.session.data['low-complexity-site-duration-errorthispage'] = "true";
       res.redirect('duration');
       return;
     }
 
     // Mark as completed and redirect to review page
-    req.session.data['low-complexity-duration-completed'] = true;
+    req.session.data['low-complexity-site-duration-completed'] = true;
     res.redirect('review-site-details#site-1-details');
   });
 
@@ -221,6 +232,8 @@ module.exports = function (router) {
   //////// Schedule page
   /////////////////////////////////////////////////////////
   router.get(`/versions/${version}/${section}/${subsection}/schedule`, function (req, res) {
+    // Clear any previous errors
+    req.session.data['low-complexity-schedule-errorthispage'] = "false";
     res.render(`versions/${version}/${section}/${subsection}/schedule`);
   });
 
@@ -245,6 +258,8 @@ module.exports = function (router) {
   //////// Impacts page
   /////////////////////////////////////////////////////////
   router.get(`/versions/${version}/${section}/${subsection}/impacts`, function (req, res) {
+    // Clear any previous errors
+    req.session.data['low-complexity-impacts-errorthispage'] = "false";
     res.render(`versions/${version}/${section}/${subsection}/impacts`);
   });
 
@@ -291,10 +306,10 @@ module.exports = function (router) {
     delete req.session.data['low-complexity-activity-description-completed'];
     
     // Duration
-    delete req.session.data['low-complexity-duration-years'];
-    delete req.session.data['low-complexity-duration-months'];
-    delete req.session.data['low-complexity-duration-weeks'];
-    delete req.session.data['low-complexity-duration-completed'];
+    delete req.session.data['low-complexity-site-duration-years'];
+    delete req.session.data['low-complexity-site-duration-months'];
+    delete req.session.data['low-complexity-site-duration-weeks'];
+    delete req.session.data['low-complexity-site-duration-completed'];
     
     // Schedule
     delete req.session.data['low-complexity-schedule'];

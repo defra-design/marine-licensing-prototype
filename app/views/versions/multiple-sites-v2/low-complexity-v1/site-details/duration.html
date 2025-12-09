@@ -19,7 +19,7 @@ What is the maximum duration of the activity?
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
 {% block pageTitle %}
-{% if data['low-complexity-duration-errorthispage'] == "true" %}
+{% if data['low-complexity-site-duration-errorthispage'] == "true" %}
 Error:
 {% endif %}
 
@@ -30,7 +30,7 @@ Error:
 
 <div class="govuk-grid-row">
 	<div class="govuk-grid-column-two-thirds">
-		{% if data['low-complexity-duration-errorthispage'] == "true" %}
+		{% if data['low-complexity-site-duration-errorthispage'] == "true" %}
 		<div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1"
 			data-module="govuk-error-summary">
 			<h2 class="govuk-error-summary__title" id="error-summary-title">
@@ -38,7 +38,7 @@ Error:
 			</h2>
 			<div class="govuk-error-summary__body">
 				<ul class="govuk-list govuk-error-summary__list">
-					<li><a href="#low-complexity-duration-years">Enter the maximum duration of the activity</a></li>
+					<li><a href="#low-complexity-site-duration-years">Enter the maximum duration of the activity</a></li>
 				</ul>
 			</div>
 		</div>
@@ -48,8 +48,8 @@ Error:
 
 		<form action="duration-router" method="post" novalidate>
 
-			<div class="govuk-form-group {% if data['low-complexity-duration-errorthispage'] == 'true' %}govuk-form-group--error{% endif %}">
-				<fieldset class="govuk-fieldset" {% if data['low-complexity-duration-errorthispage'] == "true" %}aria-describedby="duration-error"{% endif %}>
+			<div class="govuk-form-group {% if data['low-complexity-site-duration-errorthispage'] == 'true' %}govuk-form-group--error{% endif %}">
+				<fieldset class="govuk-fieldset" {% if data['low-complexity-site-duration-errorthispage'] == "true" %}aria-describedby="duration-error"{% endif %}>
 					<legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
 						<h1 class="govuk-fieldset__heading">
 							<span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}<span class="govuk-!-display-block">Site 1</span></span>
@@ -59,7 +59,7 @@ Error:
 
 					<p class="govuk-body">Enter 0 in any text boxes that do not apply, for example, if the activity is 4 months and 3 weeks enter 0 in years</p>
 
-					{% if data['low-complexity-duration-errorthispage'] == "true" %}
+					{% if data['low-complexity-site-duration-errorthispage'] == "true" %}
 					<p id="duration-error" class="govuk-error-message">
 						<span class="govuk-visually-hidden">Error:</span> Enter the maximum duration of the activity
 					</p>
@@ -72,41 +72,41 @@ Error:
 						<div class="govuk-date-input" id="duration">
 							<div class="govuk-date-input__item">
 								<div class="govuk-form-group">
-									<label class="govuk-label govuk-date-input__label" for="low-complexity-duration-years">
+									<label class="govuk-label govuk-date-input__label" for="low-complexity-site-duration-years">
 										Years
 									</label>
-									<input class="govuk-input govuk-date-input__input govuk-input--width-2 {% if data['low-complexity-duration-years-error'] == 'true' %}govuk-input--error{% endif %}" 
-										id="low-complexity-duration-years" 
-										name="low-complexity-duration-years" 
+									<input class="govuk-input govuk-date-input__input govuk-input--width-2 {% if data['low-complexity-site-duration-years-error'] == 'true' %}govuk-input--error{% endif %}" 
+										id="low-complexity-site-duration-years" 
+										name="low-complexity-site-duration-years" 
 										type="text" 
 										inputmode="numeric"
-										value="{{ data['low-complexity-duration-years'] }}">
+										value="{{ data['low-complexity-site-duration-years'] }}">
 								</div>
 							</div>
 							<div class="govuk-date-input__item">
 								<div class="govuk-form-group">
-									<label class="govuk-label govuk-date-input__label" for="low-complexity-duration-months">
+									<label class="govuk-label govuk-date-input__label" for="low-complexity-site-duration-months">
 										Months
 									</label>
-									<input class="govuk-input govuk-date-input__input govuk-input--width-2 {% if data['low-complexity-duration-months-error'] == 'true' %}govuk-input--error{% endif %}" 
-										id="low-complexity-duration-months" 
-										name="low-complexity-duration-months" 
+									<input class="govuk-input govuk-date-input__input govuk-input--width-2 {% if data['low-complexity-site-duration-months-error'] == 'true' %}govuk-input--error{% endif %}" 
+										id="low-complexity-site-duration-months" 
+										name="low-complexity-site-duration-months" 
 										type="text" 
 										inputmode="numeric"
-										value="{{ data['low-complexity-duration-months'] }}">
+										value="{{ data['low-complexity-site-duration-months'] }}">
 								</div>
 							</div>
 							<div class="govuk-date-input__item">
 								<div class="govuk-form-group">
-									<label class="govuk-label govuk-date-input__label" for="low-complexity-duration-weeks">
+									<label class="govuk-label govuk-date-input__label" for="low-complexity-site-duration-weeks">
 										Weeks
 									</label>
-									<input class="govuk-input govuk-date-input__input govuk-input--width-2 {% if data['low-complexity-duration-weeks-error'] == 'true' %}govuk-input--error{% endif %}" 
-										id="low-complexity-duration-weeks" 
-										name="low-complexity-duration-weeks" 
+									<input class="govuk-input govuk-date-input__input govuk-input--width-2 {% if data['low-complexity-site-duration-weeks-error'] == 'true' %}govuk-input--error{% endif %}" 
+										id="low-complexity-site-duration-weeks" 
+										name="low-complexity-site-duration-weeks" 
 										type="text" 
 										inputmode="numeric"
-										value="{{ data['low-complexity-duration-weeks'] }}">
+										value="{{ data['low-complexity-site-duration-weeks'] }}">
 								</div>
 							</div>
 						</div>

@@ -59,7 +59,7 @@ What are the possible impacts of the activity?
                 </p>
                 {% endif %}
 
-                <textarea class="govuk-textarea" id="low-complexity-impacts" name="low-complexity-impacts" rows="5" aria-describedby="low-complexity-impacts-hint">{{ data['low-complexity-impacts'] }}</textarea>
+                <textarea class="govuk-textarea {% if data['low-complexity-impacts-errorthispage'] == 'true' %}govuk-textarea--error{% endif %}" id="low-complexity-impacts" name="low-complexity-impacts" rows="5" aria-describedby="low-complexity-impacts-hint">{{ data['low-complexity-impacts'] }}</textarea>
             </div>
             
             <div class="govuk-button-group">

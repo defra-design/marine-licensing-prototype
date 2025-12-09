@@ -59,7 +59,7 @@ What is the activity schedule?
                 </p>
                 {% endif %}
 
-                <textarea class="govuk-textarea" id="low-complexity-schedule" name="low-complexity-schedule" rows="5">{{ data['low-complexity-schedule'] }}</textarea>
+                <textarea class="govuk-textarea {% if data['low-complexity-schedule-errorthispage'] == 'true' %}govuk-textarea--error{% endif %}" id="low-complexity-schedule" name="low-complexity-schedule" rows="5">{{ data['low-complexity-schedule'] }}</textarea>
             </div>
             
             <div class="govuk-button-group">

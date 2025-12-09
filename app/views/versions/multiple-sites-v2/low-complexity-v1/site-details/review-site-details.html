@@ -32,7 +32,7 @@ Review site details
         <!-- Check if all required fields are completed -->
         {% set siteNameComplete = data['low-complexity-site-name-completed'] %}
         {% set activityDescComplete = data['low-complexity-activity-description-completed'] %}
-        {% set durationComplete = data['low-complexity-duration-completed'] %}
+        {% set durationComplete = data['low-complexity-site-duration-completed'] %}
         {% set scheduleComplete = data['low-complexity-schedule-completed'] %}
         {% set impactsComplete = data['low-complexity-impacts-completed'] %}
         
@@ -210,16 +210,16 @@ Review site details
                             Duration
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            {% if data['low-complexity-duration-completed'] %}
+                            {% if data['low-complexity-site-duration-completed'] %}
                                 {% set durationParts = [] %}
-                                {% if data['low-complexity-duration-years'] and data['low-complexity-duration-years'] != '0' %}
-                                    {% set durationParts = (durationParts.push(data['low-complexity-duration-years'] + ' ' + ('year' if data['low-complexity-duration-years'] == '1' else 'years')), durationParts) %}
+                                {% if data['low-complexity-site-duration-years'] and data['low-complexity-site-duration-years'] != '0' %}
+                                    {% set durationParts = (durationParts.push(data['low-complexity-site-duration-years'] + ' ' + ('year' if data['low-complexity-site-duration-years'] == '1' else 'years')), durationParts) %}
                                 {% endif %}
-                                {% if data['low-complexity-duration-months'] and data['low-complexity-duration-months'] != '0' %}
-                                    {% set durationParts = (durationParts.push(data['low-complexity-duration-months'] + ' ' + ('month' if data['low-complexity-duration-months'] == '1' else 'months')), durationParts) %}
+                                {% if data['low-complexity-site-duration-months'] and data['low-complexity-site-duration-months'] != '0' %}
+                                    {% set durationParts = (durationParts.push(data['low-complexity-site-duration-months'] + ' ' + ('month' if data['low-complexity-site-duration-months'] == '1' else 'months')), durationParts) %}
                                 {% endif %}
-                                {% if data['low-complexity-duration-weeks'] and data['low-complexity-duration-weeks'] != '0' %}
-                                    {% set durationParts = (durationParts.push(data['low-complexity-duration-weeks'] + ' ' + ('week' if data['low-complexity-duration-weeks'] == '1' else 'weeks')), durationParts) %}
+                                {% if data['low-complexity-site-duration-weeks'] and data['low-complexity-site-duration-weeks'] != '0' %}
+                                    {% set durationParts = (durationParts.push(data['low-complexity-site-duration-weeks'] + ' ' + ('week' if data['low-complexity-site-duration-weeks'] == '1' else 'weeks')), durationParts) %}
                                 {% endif %}
                                 {{ durationParts | join(', ') if durationParts.length > 0 else 'Not provided' }}
                             {% else %}
@@ -228,7 +228,7 @@ Review site details
                         </dd>
                         <dd class="govuk-summary-list__actions">
                             <a href="duration" class="govuk-link govuk-link--no-visited-state">
-                                {% if data['low-complexity-duration-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> duration</span>
+                                {% if data['low-complexity-site-duration-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> duration</span>
                             </a>
                         </dd>
                     </div>
@@ -272,12 +272,12 @@ Review site details
             </div>
         </div>
 
-        <p class="govuk-body govuk-!-margin-top-9">
-            <a href="#" class="govuk-link govuk-link--no-visited-state">Add another activity for site 1</a>
+        <p class="govuk-body">
+            <a href="#" class="govuk-button govuk-button--secondary">Add another activity for site 1</a>
         </p>
 
         <form action="review-site-details-router" method="post" novalidate>
-            <div class="govuk-button-group">
+            <div class="govuk-button-group govuk-!-margin-top-4">
                 {{ govukButton({
                     text: "Continue"
                 }) }}
