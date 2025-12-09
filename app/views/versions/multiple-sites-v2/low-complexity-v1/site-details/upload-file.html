@@ -1,0 +1,68 @@
+{% extends "../../layouts/low-complexity.html" %}
+
+{% from "govuk/components/file-upload/macro.njk" import govukFileUpload %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% if data['organisation-name'] %}
+        {% include "../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+<!-- Setting the smaller secondary heading lower down the page -->
+{% set pageHeadingTextHTML %}
+    {% if data['low-complexity-file-type'] == "kml" %}
+        Upload a KML file
+    {% elif data['low-complexity-file-type'] == "shapefile" %}
+        Upload a shapefile
+    {% endif %}
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <!-- go to routes.js for routing  -->
+        <form action="upload-file-router" method="post" novalidate>
+
+            <div class="govuk-form-group">
+                <span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
+                <h1 class="govuk-label-wrapper">
+                  <label class="govuk-label govuk-label--l" for="file-upload-1" id="file-upload-1-label">
+                    {{ pageHeadingTextHTML }}
+                  </label>
+                </h1>
+
+                    {% if data['low-complexity-file-type'] == "shapefile" %}
+                    <p>Upload a ZIP file containing all the files for your shapefile. Your shapefile must include .shp, .shx, .dbf and .prj files.</p>
+                    <p>You can include more than one site.</p>
+                    {% endif %}
+
+
+            {{ govukFileUpload({
+                id: "file-upload-1",
+                name: "fileUpload1",
+                javascript: true
+            }) }}
+
+            <div class="govuk-button-group">
+                {{ govukButton({
+                  text: "Save and continue"
+                }) }}
+                <a class="govuk-link govuk-link--no-visited-state" href="../marine-licence-start-page">Cancel</a>
+            </div>
+        </div>
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}
+

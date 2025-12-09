@@ -1,0 +1,50 @@
+{% extends "../../layouts/low-complexity.html" %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% if data['organisation-name'] %}
+        {% include "../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+<!-- Set the heading for the page -->
+{% set pageHeadingTextHTML %}
+Review site details
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
+        <h1 class="govuk-heading-l">
+            {{ pageHeadingTextHTML }}
+        </h1>
+        
+        {{ govukInsetText({
+            html: "The site details you've provided are saved.<br>You can return to this page and make changes at any time before you send your information."
+        }) }}
+        
+        <!-- Summary cards will be added here later -->
+        <p class="govuk-body">Site details summary will be displayed here.</p>
+
+        <form action="review-site-details-router" method="post" novalidate>
+            <div class="govuk-button-group">
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}
+
