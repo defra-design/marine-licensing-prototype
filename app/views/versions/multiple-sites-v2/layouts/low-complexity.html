@@ -11,12 +11,31 @@ https://prototype-kit.service.gov.uk/docs/how-to-use-layouts
 {% from "govuk/components/header/macro.njk" import govukHeader %}
 {% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
 
-<!-- project-name-start.html and home.html have their own headers -->
+<!-- project-name-start.html has its own header -->
 {{ govukHeader({
   classes: "govuk-header--full-width-border"
 }) }}
 {{ govukServiceNavigation({
-  serviceName: "Get permission for marine work"
+  serviceName: "Get permission for marine work",
+  navigation: [
+    {
+      href: "#",
+      text: "Home"
+    },
+    {
+      href: "#",
+      text: "Projects"
+    },
+    {
+      href: "#",
+      text: "Defra account",
+      active: false
+    },
+    {
+      href: "#",
+      text: "Sign out"
+    }
+  ]
 }) }}
 {% endblock %}
 
