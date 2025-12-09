@@ -181,6 +181,30 @@ module.exports = function (router) {
     res.render(`versions/${version}/${section}/project-details/cost-of-marine-works`);
   });
 
+  // Cost of marine works router (POST)
+  router.post(`/versions/${version}/${section}/project-details/cost-of-marine-works-router`, function (req, res) {
+    // Clear error flags
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    // Get the cost value
+    const cost = req.session.data['low-complexity-cost'];
+
+    // Validate: check if cost is empty or undefined
+    if (!cost || cost.trim() === '') {
+      // Set error flags
+      req.session.data['errorthispage'] = "true";
+      req.session.data['errortypeone'] = "true";
+      
+      // Redirect back to the same page with errors
+      res.redirect('cost-of-marine-works');
+    } else {
+      // Validation passed - set completion flag and redirect to project details index
+      req.session.data['low-complexity-cost-completed'] = true;
+      res.redirect('./');
+    }
+  });
+
   ///////////////////////////////////////////
   // Projects page
   ///////////////////////////////////////////
