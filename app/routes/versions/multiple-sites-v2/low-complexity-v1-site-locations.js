@@ -181,6 +181,40 @@ module.exports = function (router) {
       return;
     }
 
+    // If construction is selected (and validated), go to construction structures page
+    if (req.session.data['low-complexity-type-of-activity'] === 'construction') {
+      res.redirect('construction-structures');
+    } else {
+      // Mark as completed and redirect to review page for non-construction activities
+      req.session.data['low-complexity-type-of-activity-completed'] = true;
+      res.redirect('review-site-details#site-1-details');
+    }
+  });
+
+  /////////////////////////////////////////////////////////
+  //////// Construction structures page
+  /////////////////////////////////////////////////////////
+  router.get(`/versions/${version}/${section}/${subsection}/construction-structures`, function (req, res) {
+    // Clear any previous errors
+    req.session.data['low-complexity-construction-structures-errorthispage'] = "false";
+    delete req.session.data['low-complexity-construction-structures-error'];
+    res.render(`versions/${version}/${section}/${subsection}/construction-structures`);
+  });
+
+  // Construction structures router (POST)
+  router.post(`/versions/${version}/${section}/${subsection}/construction-structures-router`, function (req, res) {
+    // Clear any previous errors
+    req.session.data['low-complexity-construction-structures-errorthispage'] = "false";
+    delete req.session.data['low-complexity-construction-structures-error'];
+
+    // Validate at least one structure is selected
+    if (!req.session.data['low-complexity-construction-structures'] || req.session.data['low-complexity-construction-structures'].length === 0) {
+      req.session.data['low-complexity-construction-structures-errorthispage'] = "true";
+      req.session.data['low-complexity-construction-structures-error'] = "Select at least one type of structure";
+      res.redirect('construction-structures');
+      return;
+    }
+
     // Mark as completed and redirect to review page
     req.session.data['low-complexity-type-of-activity-completed'] = true;
     res.redirect('review-site-details#site-1-details');
@@ -357,6 +391,7 @@ module.exports = function (router) {
     // Type of activity
     delete req.session.data['low-complexity-type-of-activity'];
     delete req.session.data['low-complexity-type-of-works'];
+    delete req.session.data['low-complexity-construction-structures'];
     delete req.session.data['low-complexity-type-of-activity-completed'];
     
     // Activity description
