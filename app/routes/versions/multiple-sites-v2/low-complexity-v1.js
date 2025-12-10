@@ -491,11 +491,73 @@ module.exports = function (router) {
 
   // Sign-in GET route
   router.get(`/versions/${version}/${section}/sign-in`, function (req, res) {
+    // Clear all low-complexity session data for a fresh start
+    // We delete individual properties rather than replacing the entire session object
+    // to ensure session persistence works correctly
+    
+    // Clear project and journey data
+    delete req.session.data['low-complexity-project-name-text-input'];
+    delete req.session.data['low-complexity-project-background'];
+    delete req.session.data['low-complexity-project-background-completed'];
+    delete req.session.data['low-complexity-duration-years'];
+    delete req.session.data['low-complexity-duration-months'];
+    delete req.session.data['low-complexity-duration-completed'];
+    delete req.session.data['start-date-day'];
+    delete req.session.data['start-date-month'];
+    delete req.session.data['start-date-year'];
+    delete req.session.data['end-date-day'];
+    delete req.session.data['end-date-month'];
+    delete req.session.data['end-date-year'];
+    delete req.session.data['low-complexity-dates-completed'];
+    delete req.session.data['low-complexity-cost'];
+    delete req.session.data['low-complexity-cost-completed'];
+    
+    // Clear site details data
+    delete req.session.data['has-visited-site-details'];
+    delete req.session.data['low-complexity-site-name-completed'];
+    delete req.session.data['low-complexity-type-of-activity-completed'];
+    delete req.session.data['low-complexity-activity-description-completed'];
+    delete req.session.data['low-complexity-site-duration-completed'];
+    delete req.session.data['low-complexity-schedule-completed'];
+    delete req.session.data['low-complexity-impacts-completed'];
+    
+    // Clear environmental assessments data
+    delete req.session.data['low-complexity-european-sites'];
+    delete req.session.data['low-complexity-european-sites-completed'];
+    delete req.session.data['low-complexity-mcz'];
+    delete req.session.data['low-complexity-mcz-completed'];
+    delete req.session.data['low-complexity-sssi'];
+    delete req.session.data['low-complexity-sssi-completed'];
+    delete req.session.data['low-complexity-wfd'];
+    delete req.session.data['low-complexity-wfd-completed'];
+    
+    // Clear related permissions data
+    delete req.session.data['low-complexity-special-legal-powers'];
+    delete req.session.data['low-complexity-special-legal-powers-details'];
+    delete req.session.data['low-complexity-special-legal-powers-completed'];
+    delete req.session.data['low-complexity-other-permissions'];
+    delete req.session.data['low-complexity-other-permissions-details'];
+    delete req.session.data['low-complexity-other-permissions-completed'];
+    delete req.session.data['low-complexity-consultation'];
+    delete req.session.data['low-complexity-consultation-details'];
+    delete req.session.data['low-complexity-consultation-completed'];
+    
+    // Clear error flags
+    delete req.session.data['errorthispage'];
+    delete req.session.data['errortypeone'];
+    delete req.session.data['errortypetwo'];
+    
+    // Clear organisation data when user signs in
+    delete req.session.data['organisation-name'];
+    delete req.session.data['changing-organisation'];
+    delete req.session.data['organisation-selector-return-to'];
+    delete req.session.data['goto-after-org-selector'];
+    
     // Store user_type if provided (for organisation vs individual)
     if (req.query.user_type === 'organisation') {
       req.session.data['user_type'] = 'organisation';
     } else if (req.query.user_type === '') {
-      // Explicitly set to empty string if that's what was passed
+      // Explicitly clear user_type for individual users
       delete req.session.data['user_type'];
     }
     
@@ -503,10 +565,6 @@ module.exports = function (router) {
     if (req.query.goto) {
       req.session.data['goto'] = req.query.goto;
     }
-    
-    // Clear organisation data when user signs in
-    delete req.session.data['organisation-name'];
-    delete req.session.data['changing-organisation'];
     
     res.render(`versions/${version}/${section}/sign-in`);
   });
