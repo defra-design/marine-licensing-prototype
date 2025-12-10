@@ -149,9 +149,17 @@ Review site details
                         <dd class="govuk-summary-list__value">
                             {% if data['low-complexity-type-of-activity-completed'] %}
                                 {% if data['low-complexity-type-of-activity'] == 'construction' %}
-                                    Construction, alteration or improvement of any works{% if data['low-complexity-type-of-works'] and data['low-complexity-type-of-works'].length > 0 %}:{% for work in data['low-complexity-type-of-works'] %}{% if work == 'construction-new' %} Construction of new works{% elif work == 'maintenance-existing' %} Maintenance of existing works{% elif work == 'alteration-improvement' %} Alteration or improvement of existing works{% endif %}{% if not loop.last %},{% endif %}{% endfor %}{% endif %}
+                                    {% if data['low-complexity-type-of-works'] and data['low-complexity-type-of-works'].length > 0 %}
+                                        {% for work in data['low-complexity-type-of-works'] %}
+                                            {% if work == 'construction-new' %}Construction of new works
+                                            {% elif work == 'maintenance-existing' %}Maintenance of existing works
+                                            {% elif work == 'alteration-improvement' %}Alteration or improvement of existing works
+                                            {% endif %}
+                                            {% if not loop.last %}<br>{% endif %}
+                                        {% endfor %}
+                                    {% endif %}
                                     {% if data['low-complexity-construction-structures'] and data['low-complexity-construction-structures'].length > 0 %}
-                                        <br><br><strong>Structures:</strong>
+                                        <br><br>Structures:
                                         <ul class="govuk-list govuk-list--bullet govuk-!-margin-top-2">
                                         {% for structure in data['low-complexity-construction-structures'] %}
                                             <li>
