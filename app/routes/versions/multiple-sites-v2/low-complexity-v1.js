@@ -551,11 +551,11 @@ module.exports = function (router) {
 
     // Get list of organisations (using the same data structure as exemptions)
     const allOrganisations = [
-      { text: "Acme Marine Services Ltd", value: "Acme Marine Services Ltd" },
-      { text: "Blue Ocean Engineering", value: "Blue Ocean Engineering" },
-      { text: "Coastal Developments Inc", value: "Coastal Developments Inc" },
-      { text: "Deep Sea Contractors", value: "Deep Sea Contractors" },
-      { text: "Marine Solutions Group", value: "Marine Solutions Group" }
+      { value: "Sam Evans", text: "Sam Evans" },
+      { value: "Brighton Marina Operations", text: "Brighton Marina Operations" },
+      { value: "Grimsby Fish Dock Enterprise", text: "Grimsby Fish Dock Enterprise" },
+      { value: "North East Wind Farms", text: "North East Wind Farms" },
+      { value: "Ramsgate Marina", text: "Ramsgate Marina" }
     ];
 
     // Filter out current organisation if user is changing
