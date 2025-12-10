@@ -486,6 +486,140 @@ module.exports = function (router) {
   });
 
   ///////////////////////////////////////////
+  // Sign-in and Organisation Selector
+  ///////////////////////////////////////////
+
+  // Sign-in GET route
+  router.get(`/versions/${version}/${section}/sign-in`, function (req, res) {
+    // Store user_type if provided (for organisation vs individual)
+    if (req.query.user_type === 'organisation') {
+      req.session.data['user_type'] = 'organisation';
+    } else if (req.query.user_type === '') {
+      // Explicitly set to empty string if that's what was passed
+      delete req.session.data['user_type'];
+    }
+    
+    // Store goto parameter if provided (for returning to homepage after sign-out)
+    if (req.query.goto) {
+      req.session.data['goto'] = req.query.goto;
+    }
+    
+    // Clear organisation data when user signs in
+    delete req.session.data['organisation-name'];
+    delete req.session.data['changing-organisation'];
+    
+    res.render(`versions/${version}/${section}/sign-in`);
+  });
+
+  // Sign-in POST router
+  router.post(`/versions/${version}/${section}/sign-in-router`, function (req, res) {
+    // Check if there's a goto parameter
+    const gotoPage = req.session.data['goto'];
+    
+    // if a user is an org user then redirect to select an org
+    if (req.session.data['user_type'] === 'organisation') {
+      // Clear the flag to ensure this is treated as a new selection
+      delete req.session.data['changing-organisation'];
+      // Store goto for later use
+      if (gotoPage) {
+        req.session.data['goto-after-org-selector'] = gotoPage;
+      }
+      res.redirect('organisation-selector');
+    } else {
+      // For individual users, redirect based on goto parameter or default to project name start
+      if (gotoPage === 'homepage') {
+        delete req.session.data['goto'];
+        res.redirect('homepage');
+      } else {
+        res.redirect('project-name-start');
+      }
+    }
+  });
+
+  // Organisation selector GET route
+  router.get(`/versions/${version}/${section}/organisation-selector`, function (req, res) {
+    // Check if user is changing organisation (from homepage switcher)
+    const isChangingOrg = req.query.change === 'true';
+    if (isChangingOrg) {
+      req.session.data['changing-organisation'] = 'true';
+    }
+    
+    // Store returnTo parameter if provided
+    if (req.query.returnTo) {
+      req.session.data['organisation-selector-return-to'] = req.query.returnTo;
+    }
+
+    // Get list of organisations (using the same data structure as exemptions)
+    const allOrganisations = [
+      { value: "Sam Evans", text: "Sam Evans" },
+      { value: "Brighton Marina Operations", text: "Brighton Marina Operations" },
+      { value: "Grimsby Fish Dock Enterprise", text: "Grimsby Fish Dock Enterprise" },
+      { value: "North East Wind Farms", text: "North East Wind Farms" },
+      { value: "Ramsgate Marina", text: "Ramsgate Marina" }
+    ];
+
+    // Filter out current organisation if user is changing
+    const currentOrganisation = req.session.data['organisation-name'];
+    const organisations = allOrganisations.filter(org => org.value !== currentOrganisation);
+
+    res.render(`versions/${version}/${section}/organisation-selector`, {
+      organisations: organisations,
+      changingOrganisation: isChangingOrg
+    });
+  });
+
+  // Organisation selector POST router
+  router.post(`/versions/${version}/${section}/organisation-selector-router`, function (req, res) {
+    // Turn off errors by default
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    // Check if the radio button is selected
+    if (req.session.data['organisation-name'] === undefined) {
+      req.session.data['errorthispage'] = "true";
+      req.session.data['errortypeone'] = "true";
+      res.redirect('organisation-selector');
+    } else {
+      // If the user is changing their organisation, redirect to the return destination
+      if (req.session.data['changing-organisation'] === 'true') {
+        // Reset the flag
+        delete req.session.data['changing-organisation'];
+        
+        // Check if there's a stored return destination
+        const returnTo = req.session.data['organisation-selector-return-to'];
+        if (returnTo) {
+          delete req.session.data['organisation-selector-return-to'];
+          res.redirect(returnTo);
+        } else {
+          // Default to homepage
+          res.redirect('homepage');
+        }
+      } else {
+        // Check if there's a stored goto destination
+        const gotoPage = req.session.data['goto-after-org-selector'];
+        if (gotoPage === 'homepage') {
+          delete req.session.data['goto-after-org-selector'];
+          delete req.session.data['goto'];
+          res.redirect('homepage');
+        } else {
+          // Default to project-name-start for new users
+          delete req.session.data['goto-after-org-selector'];
+          res.redirect('project-name-start');
+        }
+      }
+    }
+  });
+
+  ///////////////////////////////////////////
+  // Homepage
+  ///////////////////////////////////////////
+
+  // Homepage GET route
+  router.get(`/versions/${version}/${section}/homepage`, function (req, res) {
+    res.render(`versions/${version}/${section}/homepage`);
+  });
+
+  ///////////////////////////////////////////
   // Projects page
   ///////////////////////////////////////////
 }

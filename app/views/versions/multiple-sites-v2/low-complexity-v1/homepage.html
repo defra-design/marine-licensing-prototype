@@ -1,0 +1,106 @@
+{% extends "../layouts/low-complexity.html" %}
+
+<!-- Set a variable to identify this specific page -->
+{% set currentPageId = "low-complexity-home" %}
+
+{% block header %}
+{% from "govuk/components/header/macro.njk" import govukHeader %}
+{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
+
+{{ govukHeader({
+  classes: "govuk-header--full-width-border"
+}) }}
+{{ govukServiceNavigation({
+  serviceName: "Get permission for marine work",
+  serviceUrl: "/versions/multiple-sites-v2/low-complexity-v1/homepage",
+  navigation: [
+    {
+      href: "homepage",
+      text: "Home",
+      active: true
+    },
+    {
+      href: "#",
+      text: "Projects",
+      active: false
+    },
+    {
+      href: "#",
+      text: "Defra account",
+      active: false
+    },
+    {
+      href: "sign-in?goto=homepage",
+      text: "Sign out"
+    }
+  ]
+}) }}
+{% endblock %}
+
+{% block beforeContent %}
+    {% include "../includes/phase-banner.html" %}
+    {% if data['user_type'] === 'organisation' %}
+    <div class="app-organisation-switcher">
+		<span class="govuk-body-s govuk-!-font-weight-bold app-organisation-switcher__name">{{ data['organisation-name'] }}</span>
+
+				<a class="govuk-link app-organisation-switcher__link govuk-link--no-visited-state" href="organisation-selector?change=true&returnTo=homepage">
+					Change who you're representing
+				</a>
+	</div>
+    {% endif %}
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+Home
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - Get permission for marine work
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-full">
+		<span class="govuk-caption-l">{{ data['organisation-name'] }}</span>
+		<h1 class="govuk-heading-l">
+			{{ pageHeadingTextHTML }}
+		</h1>
+
+		<div class="govuk-grid-row">
+		<div class="govuk-grid-column-one-half">
+			<a href="#" class="homepage-tile-card">
+				<h2 class="govuk-heading-m homepage-tile-card__heading">View projects</h2>
+				<p class="govuk-body homepage-tile-card__description">View all of the existing projects in this account.</p>
+			</a>
+		</div>
+
+		<div class="govuk-grid-column-one-half">
+			<a href="https://marinelicensing.marinemanagement.org.uk/mmofox5/journey/self-service/start" class="homepage-tile-card">
+				<h2 class="govuk-heading-m homepage-tile-card__heading">Check if I need a marine licence</h2>
+				<p class="govuk-body homepage-tile-card__description">Find out if an activity needs a marine licence or if it's exempt.</p>
+			</a>
+		</div>
+
+		<div class="govuk-grid-column-one-half">
+			<a href="project-name-start" class="homepage-tile-card">
+				<h2 class="govuk-heading-m homepage-tile-card__heading">Apply for a marine licence</h2>
+				<p class="govuk-body homepage-tile-card__description">Start a new marine licence application for low complexity activities.</p>
+			</a>
+		</div>
+
+		<div class="govuk-grid-column-one-half">
+			<a href="https://marinelicensing.marinemanagement.org.uk/mmofox5/fox/live/MMO_LOGIN/login" class="homepage-tile-card">
+				<h2 class="govuk-heading-m homepage-tile-card__heading">Sign in to the Marine Case Management System</h2>
+				<p class="govuk-body homepage-tile-card__description">View or manage projects not available in this account.</p>
+			</a>
+		</div>
+		</div>
+
+	</div>
+</div>
+{% endblock %}
+
+
