@@ -222,6 +222,48 @@ module.exports = function (router) {
     res.render(`versions/${version}/${section}/other-permissions/index`);
   });
 
+  // Harbour authority page
+  router.get(`/versions/${version}/${section}/other-permissions/harbour-authority`, function (req, res) {
+    // Clear error flags when navigating to the page
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errortypetwo'] = "false";
+    res.render(`versions/${version}/${section}/other-permissions/harbour-authority`);
+  });
+
+  // Harbour authority router (POST)
+  router.post(`/versions/${version}/${section}/other-permissions/harbour-authority-router`, function (req, res) {
+    // Clear error flags
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errortypetwo'] = "false";
+
+    // Get the radio value
+    const harbourAuthority = req.session.data['low-complexity-harbour-authority'];
+    const harbourAuthorityDetails = req.session.data['low-complexity-harbour-authority-details'];
+
+    // Validate: check if radio is selected
+    if (!harbourAuthority) {
+      // Set error flags
+      req.session.data['errorthispage'] = "true";
+      req.session.data['errortypeone'] = "true";
+      
+      // Redirect back to the same page with errors
+      res.redirect('harbour-authority');
+    } else if (harbourAuthority === 'Yes' && (!harbourAuthorityDetails || harbourAuthorityDetails.trim() === '')) {
+      // If Yes is selected, check if textarea has content
+      req.session.data['errorthispage'] = "true";
+      req.session.data['errortypetwo'] = "true";
+      
+      // Redirect back to the same page with errors
+      res.redirect('harbour-authority');
+    } else {
+      // Validation passed - set completion flag and redirect to other permissions index
+      req.session.data['low-complexity-harbour-authority-completed'] = true;
+      res.redirect('./');
+    }
+  });
+
   // Special legal powers page
   router.get(`/versions/${version}/${section}/other-permissions/special-legal-powers`, function (req, res) {
     // Clear error flags when navigating to the page
@@ -588,10 +630,13 @@ module.exports = function (router) {
     delete req.session.data['low-complexity-wfd-file-uploaded'];
     delete req.session.data['low-complexity-wfd-filename'];
     
-    // Clear related permissions data
+    // Clear other permissions data
     delete req.session.data['low-complexity-special-legal-powers'];
     delete req.session.data['low-complexity-special-legal-powers-details'];
     delete req.session.data['low-complexity-special-legal-powers-completed'];
+    delete req.session.data['low-complexity-harbour-authority'];
+    delete req.session.data['low-complexity-harbour-authority-details'];
+    delete req.session.data['low-complexity-harbour-authority-completed'];
     delete req.session.data['low-complexity-other-permissions'];
     delete req.session.data['low-complexity-other-permissions-details'];
     delete req.session.data['low-complexity-other-permissions-completed'];

@@ -15,7 +15,7 @@
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-Have you applied to, or got permission from, any other authorities in relation to this project?
+Is your project located in a harbour authority area?
 {% endset %}
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
@@ -27,17 +27,17 @@ Error:
 {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
 {% endblock %}
 
-{% set otherPermissionsTextarea %}
+{% set harbourAuthorityTextarea %}
 {{ govukTextarea({
-    id: "low-complexity-other-permissions-details",
-    name: "low-complexity-other-permissions-details",
-    value: data['low-complexity-other-permissions-details'],
+    id: "low-complexity-harbour-authority-details",
+    name: "low-complexity-harbour-authority-details",
+    value: data['low-complexity-harbour-authority-details'],
     rows: 5,
     label: {
-        text: "Include details of the organisations, relevant contact details and any reference numbers"
+        text: "Provide details of the harbour authority"
     },
     errorMessage: {
-        text: "Enter details of the organisations, relevant contact details and any reference numbers"
+        text: "Enter details of the harbour authority"
     } if data['errortypetwo'] == "true"
 }) }}
 {% endset %}
@@ -51,8 +51,8 @@ Error:
 			titleText: "There is a problem",
 			errorList: [
 				{
-					text: "Select if you have applied to, or got permission from, any other authorities in relation to this project" if data['errortypeone'] == "true" else "Enter details of the organisations, relevant contact details and any reference numbers",
-					href: "#low-complexity-other-permissions" if data['errortypeone'] == "true" else "#low-complexity-other-permissions-details"
+					text: "Select if your project is located in a harbour authority area" if data['errortypeone'] == "true" else "Enter details of the harbour authority",
+					href: "#low-complexity-harbour-authority" if data['errortypeone'] == "true" else "#low-complexity-harbour-authority-details"
 				}
 			]
 		}) }}
@@ -60,11 +60,11 @@ Error:
 
 		<!--  END OF 'error summary' -->
 
-		<form action="other-authorities-router" method="post" novalidate>
+		<form action="harbour-authority-router" method="post" novalidate>
 
 			{{ govukRadios({
-				name: "low-complexity-other-permissions",
-				id: "low-complexity-other-permissions",
+				name: "low-complexity-harbour-authority",
+				id: "low-complexity-harbour-authority",
 				fieldset: {
 					legend: {
 						html: '<span class="govuk-caption-l">' + data['low-complexity-project-name-text-input'] + '</span>' + pageHeadingTextHTML,
@@ -72,23 +72,26 @@ Error:
 						classes: "govuk-fieldset__legend--l"
 					}
 				},
+				hint: {
+					html: '<p class="govuk-body">A harbour authority is an organisation with legal powers to manage a harbour, and includes municipal, private and trust ports.</p><p class="govuk-body">Use the <a href="https://defra.maps.arcgis.com/apps/webappviewer/index.html?id=28f91021979447d3b43dc83e6e93094c&showLayers=Navigation" class="govuk-link" target="_blank" rel="noopener noreferrer">marine licensing interactive map (opens in new tab)</a> to find out if your project is located in a harbour authority area.</p>'
+				},
 				items: [
 					{
 						value: "Yes",
 						text: "Yes",
 						conditional: {
-							html: otherPermissionsTextarea
+							html: harbourAuthorityTextarea
 						},
-						checked: data['low-complexity-other-permissions'] == "Yes"
+						checked: data['low-complexity-harbour-authority'] == "Yes"
 					},
 					{
 						value: "No",
 						text: "No",
-						checked: data['low-complexity-other-permissions'] == "No"
+						checked: data['low-complexity-harbour-authority'] == "No"
 					}
 				],
 				errorMessage: {
-					text: "Select if you have applied to, or got permission from, any other authorities in relation to this project"
+					text: "Select if your project is located in a harbour authority area"
 				} if data['errortypeone'] == "true"
 			}) }}
 
@@ -122,4 +125,3 @@ Error:
 <!--  END OF ERROR LOGIC -->
 
 {% endblock %}
-

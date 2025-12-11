@@ -51,6 +51,24 @@ Other permissions
 
 		<li class="govuk-task-list__item govuk-task-list__item--with-link">
 		  <div class="govuk-task-list__name-and-hint">
+			<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="harbour-authority" aria-describedby="harbour-authority-status">
+			  Harbour authority
+			</a>
+		  </div>
+		  
+		  <div class="govuk-task-list__status" id="harbour-authority-status">
+			{% if data['low-complexity-harbour-authority-completed'] %}
+			Completed
+			{% else %}
+			<strong class="govuk-tag govuk-tag--blue">
+				Not yet started
+			</strong>
+			{% endif %}
+		  </div>
+		</li>
+
+		<li class="govuk-task-list__item govuk-task-list__item--with-link">
+		  <div class="govuk-task-list__name-and-hint">
 			<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="other-authorities" aria-describedby="other-authorities-status">
 			  Other authorities
 			</a>
