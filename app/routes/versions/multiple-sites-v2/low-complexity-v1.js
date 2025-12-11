@@ -517,6 +517,7 @@ module.exports = function (router) {
     delete req.session.data['low-complexity-site-name-completed'];
     delete req.session.data['low-complexity-type-of-activity'];
     delete req.session.data['low-complexity-type-of-works'];
+    delete req.session.data['low-complexity-type-of-works-previous'];
     delete req.session.data['low-complexity-construction-structures'];
     delete req.session.data['low-complexity-type-of-activity-completed'];
     delete req.session.data['low-complexity-activity-description-completed'];

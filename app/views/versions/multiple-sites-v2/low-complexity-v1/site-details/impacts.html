@@ -14,7 +14,7 @@
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-What are the possible impacts of the activity?
+What are the possible impacts of the activity and how will you reduce them?
 {% endset %}
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
@@ -49,17 +49,28 @@ What are the possible impacts of the activity?
                     </label>
                 </h1>
 
-                <div id="low-complexity-impacts-hint" class="govuk-hint">
-                    Include social, economic and environmental impacts and if there are no possible impacts explain the reasons why
+                <p class="govuk-body">Include any social, economic and environmental impacts.</p>
+
+                <p class="govuk-body">For example if:</p>
+                <ul class="govuk-list govuk-list--bullet">
+                    <li>you plan to avoid working at a time of year when certain species are present</li>
+                    <li>there is noise or disturbance to coastal communities then advance notice will be give to residents and work will only happen during the day</li>
+                    <li>a beach is closed it may affect hotels or restaurants so advance notice will be given to these businesses, marine work will be carried during off-season and beach access will be maintained where possible.</li>
+                </ul>
+
+                <p class="govuk-body">If there are no possible impacts you need to explain the reasons why.</p>
+
+                <div id="low-complexity-activity-description-hint" class="govuk-hint">
+                    Enter a maximum of 2,000 characters
                 </div>
 
                 {% if data['low-complexity-impacts-errorthispage'] == "true" %}
                 <p id="low-complexity-impacts-error" class="govuk-error-message">
-                    <span class="govuk-visually-hidden">Error:</span> Enter the possible impacts of the activity
+                    <span class="govuk-visually-hidden">Error:</span> Enter the possible impacts of the activity and how you will reduce them
                 </p>
                 {% endif %}
 
-                <textarea class="govuk-textarea {% if data['low-complexity-impacts-errorthispage'] == 'true' %}govuk-textarea--error{% endif %}" id="low-complexity-impacts" name="low-complexity-impacts" rows="5" aria-describedby="low-complexity-impacts-hint">{{ data['low-complexity-impacts'] }}</textarea>
+                <textarea class="govuk-textarea {% if data['low-complexity-impacts-errorthispage'] == 'true' %}govuk-textarea--error{% endif %}" id="low-complexity-impacts" name="low-complexity-impacts" rows="5" {% if data['low-complexity-impacts-errorthispage'] == 'true' %}aria-describedby="low-complexity-impacts-error"{% endif %}>{{ data['low-complexity-impacts'] }}</textarea>
             </div>
             
             <div class="govuk-button-group">
