@@ -43,6 +43,9 @@ What type of structure will you be working on?
         margin-top: 40px;
         margin-bottom: 15px;
     }
+    .govuk-checkboxes__divider:first-of-type {
+        margin-top: 0;
+    }
 </style>
 
 <div class="govuk-grid-row">
@@ -69,7 +72,7 @@ What type of structure will you be working on?
                     legend: {
                         html: '<span class="govuk-caption-l">' + data['low-complexity-project-name-text-input'] + '<span class="govuk-!-display-block">Site 1</span></span>' + pageHeadingTextHTML,
                         isPageHeading: true,
-                        classes: "govuk-fieldset__legend--l"
+                        classes: "govuk-fieldset__legend--l govuk-!-margin-bottom-6"
                     }
                 },
                 hint: {
