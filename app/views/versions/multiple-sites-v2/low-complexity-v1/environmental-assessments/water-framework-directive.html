@@ -1,7 +1,8 @@
 {% extends "../../layouts/low-complexity.html" %}
 
-{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
 
 {% block beforeContent %}
     {% include "../../includes/phase-banner.html" %}
@@ -13,7 +14,7 @@
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-How will your project impact the Water Framework Directive (WFD) and how will you reduce this impact?
+Is your project located up to 1 nautical mile out at sea?
 {% endset %}
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
@@ -38,7 +39,7 @@ Error:
 			<div class="govuk-error-summary__body">
 				<ul class="govuk-list govuk-error-summary__list">
 					{% if data['errortypeone'] == "true" %}
-					<li><a href="#low-complexity-wfd">Enter how your project will impact the Water Framework Directive (WFD) and how you will reduce this impact</a></li>
+					<li><a href="#low-complexity-wfd-nautical-mile">Select yes if your project is located up to 1 nautical mile out at sea</a></li>
 					{% endif %}
 				</ul>
 			</div>
@@ -49,28 +50,48 @@ Error:
 
 		<form action="water-framework-directive-router" method="post" novalidate>
 
-			{{ govukTextarea({
-				name: "low-complexity-wfd",
-				id: "low-complexity-wfd",
-				maxlength: 2000,
-				rows: 5,
-				label: {
-					html: '<span class="govuk-caption-l">' + data['low-complexity-project-name-text-input'] + '</span>' + pageHeadingTextHTML,
-					classes: "govuk-label--l",
-					isPageHeading: true
+			<span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
+			<h1 class="govuk-heading-l">{{ pageHeadingTextHTML }}</h1>
+
+			<p class="govuk-body">Use <a href="https://magic.defra.gov.uk/MagicMap.html" class="govuk-link" rel="noreferrer noopener" target="_blank">Magic maps (opens in new tab)</a> if you need to check how far out to sea your project is in nautical miles.</p>
+
+			{{ govukDetails({
+				summaryText: "Get help with using Magic Maps",
+				text: "Help text"
+			}) }}
+
+			{{ govukRadios({
+				name: "low-complexity-wfd-nautical-mile",
+				id: "low-complexity-wfd-nautical-mile",
+				fieldset: {
+					legend: {
+						text: pageHeadingTextHTML,
+						classes: "govuk-visually-hidden"
+					}
 				},
-				hint: {
-					text: "If there is no impact you need to explain the reasons why"
-				},
-				value: data['low-complexity-wfd'],
+				items: [
+					{
+						value: "Yes",
+						text: "Yes",
+						hint: {
+							text: "You need to include a Water Framework Directive assessment as part of your marine licence application"
+						},
+						checked: data['low-complexity-wfd-nautical-mile'] == "Yes"
+					},
+					{
+						value: "No",
+						text: "No",
+						checked: data['low-complexity-wfd-nautical-mile'] == "No"
+					}
+				],
 				errorMessage: {
-					text: "Enter how your project will impact the Water Framework Directive (WFD) and how you will reduce this impact"
+					text: "Select yes if your project is located up to 1 nautical mile out at sea"
 				} if data['errortypeone'] == "true"
 			}) }}
 
 			<div class="govuk-button-group">
 				{{ govukButton({
-					text: "Save and continue"
+					text: "Continue"
 				}) }}
 
 				<a class="govuk-link" href="javascript:history.back()">Cancel</a>
@@ -94,7 +115,7 @@ Error:
 			value="errorthispage=true&errortypeone=true&errortypetwo=false&errortypethree=false&errortypefour=false&errortypefive=false&errortypesix=false&"
 			{% if data['errortypeone']=='true' and data['errortypetwo'] !='true' and data['errortypethree'] !='true' and
 			data['errortypefour'] !='true' and data['errortypefive'] !='true' and data['errortypesix'] !='true'
-			%}selected{% endif %}>Error 1 - No answer entered</option>
+			%}selected{% endif %}>Error 1 - No radio selected</option>
 
 	</select>
 

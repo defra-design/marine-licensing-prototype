@@ -453,36 +453,86 @@ module.exports = function (router) {
     }
   });
 
-  // Water Framework Directive page
+  // Water Framework Directive - Smart routing from task list
   router.get(`/versions/${version}/${section}/environmental-assessments/water-framework-directive`, function (req, res) {
     // Clear error flags when navigating to the page
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
-    res.render(`versions/${version}/${section}/environmental-assessments/water-framework-directive`);
+    
+    // Check if coming from check answers page (change link)
+    const fromCheckAnswers = req.query.fromcheckanswers === 'true';
+    
+    // Smart routing: If file uploaded AND not coming from check answers, go to check answers
+    if (req.session.data['low-complexity-wfd-file-uploaded'] && !fromCheckAnswers) {
+      res.redirect('water-framework-directive-check-answers');
+    } else {
+      res.render(`versions/${version}/${section}/environmental-assessments/water-framework-directive`);
+    }
   });
 
-  // Water Framework Directive router (POST)
+  // Water Framework Directive Yes/No question router (POST)
   router.post(`/versions/${version}/${section}/environmental-assessments/water-framework-directive-router`, function (req, res) {
     // Clear error flags
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
 
-    // Get the WFD value
-    const wfd = req.session.data['low-complexity-wfd'];
+    // Get the nautical mile answer
+    const nauticalMile = req.session.data['low-complexity-wfd-nautical-mile'];
+    const fromCheckAnswers = req.query.fromcheckanswers === 'true';
 
-    // Validate: check if WFD is empty or undefined
-    if (!wfd || wfd.trim() === '') {
+    // Validate: check if radio is selected
+    if (!nauticalMile) {
       // Set error flags
       req.session.data['errorthispage'] = "true";
       req.session.data['errortypeone'] = "true";
       
       // Redirect back to the same page with errors
-      res.redirect('water-framework-directive');
-    } else {
-      // Validation passed - set completion flag and redirect to environmental assessments index
+      res.redirect('water-framework-directive' + (fromCheckAnswers ? '?fromcheckanswers=true' : ''));
+    } else if (nauticalMile === 'No') {
+      // If No, mark as complete and return to task list
       req.session.data['low-complexity-wfd-completed'] = true;
+      // Clear file upload data if it exists
+      delete req.session.data['low-complexity-wfd-file-uploaded'];
+      delete req.session.data['low-complexity-wfd-filename'];
       res.redirect('./');
+    } else if (nauticalMile === 'Yes') {
+      // If Yes, go to upload page (pass along fromcheckanswers if present)
+      if (fromCheckAnswers) {
+        res.redirect('water-framework-directive-upload?fromcheckanswers=true');
+      } else {
+        res.redirect('water-framework-directive-upload');
+      }
     }
+  });
+
+  // Water Framework Directive Upload page
+  router.get(`/versions/${version}/${section}/environmental-assessments/water-framework-directive-upload`, function (req, res) {
+    res.render(`versions/${version}/${section}/environmental-assessments/water-framework-directive-upload`);
+  });
+
+  // Water Framework Directive Upload router (POST)
+  router.post(`/versions/${version}/${section}/environmental-assessments/water-framework-directive-upload-router`, function (req, res) {
+    // Store filename (in real app, this would come from actual file upload)
+    // For prototype, we'll use a default filename
+    req.session.data['low-complexity-wfd-filename'] = 'WFD.pdf';
+    req.session.data['low-complexity-wfd-file-uploaded'] = true;
+    
+    // Always go to check answers after upload
+    res.redirect('water-framework-directive-check-answers');
+  });
+
+  // Water Framework Directive Check Answers page
+  router.get(`/versions/${version}/${section}/environmental-assessments/water-framework-directive-check-answers`, function (req, res) {
+    res.render(`versions/${version}/${section}/environmental-assessments/water-framework-directive-check-answers`);
+  });
+
+  // Water Framework Directive Check Answers router (POST)
+  router.post(`/versions/${version}/${section}/environmental-assessments/water-framework-directive-check-answers-router`, function (req, res) {
+    // Mark task as complete
+    req.session.data['low-complexity-wfd-completed'] = true;
+    
+    // Return to environmental assessments task list
+    res.redirect('./');
   });
 
   ///////////////////////////////////////////
@@ -534,6 +584,9 @@ module.exports = function (router) {
     delete req.session.data['low-complexity-sssi-completed'];
     delete req.session.data['low-complexity-wfd'];
     delete req.session.data['low-complexity-wfd-completed'];
+    delete req.session.data['low-complexity-wfd-nautical-mile'];
+    delete req.session.data['low-complexity-wfd-file-uploaded'];
+    delete req.session.data['low-complexity-wfd-filename'];
     
     // Clear related permissions data
     delete req.session.data['low-complexity-special-legal-powers'];

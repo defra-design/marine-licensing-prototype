@@ -1,0 +1,63 @@
+{% extends "../../layouts/low-complexity.html" %}
+
+{% from "govuk/components/file-upload/macro.njk" import govukFileUpload %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% if data['user_type'] === 'organisation' %}
+        {% include "../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link govuk-link--no-visited-state" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+Water Framework Directive (WDF) assessment
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-two-thirds">
+
+		<span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
+		<h1 class="govuk-heading-l">{{ pageHeadingTextHTML }}</h1>
+
+		<p class="govuk-body"><a href="https://www.gov.uk/guidance/marine-licensing-impact-assessments#water-framework-directive-wfd-regulations" class="govuk-link" rel="noreferrer noopener" target="_blank">Read the guidance on WDF (opens in new tab)</a> to find out how to do a WDF assessment and what to include in it.</p>
+
+		<form action="water-framework-directive-upload-router" method="post" novalidate>
+
+			<h2 class="govuk-heading-m">Upload a file</h2>
+
+			<p class="govuk-body">You can only upload a file that is a .doc, .jpeg, .pdf, or.XLS.</p>
+
+			{{ govukFileUpload({
+				id: "wfd-file-upload",
+				name: "wfdFileUpload",
+				label: {
+					text: "Choose file",
+					classes: "govuk-visually-hidden"
+				},
+				javascript: true
+			}) }}
+
+			<div class="govuk-button-group">
+				{{ govukButton({
+					text: "Continue"
+				}) }}
+
+				<a class="govuk-link govuk-link--no-visited-state" href="./index">Cancel</a>
+			</div>
+
+		</form>
+
+	</div>
+</div>
+
+{% endblock %}
