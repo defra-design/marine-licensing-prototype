@@ -515,6 +515,9 @@ module.exports = function (router) {
     // Clear site details data
     delete req.session.data['has-visited-site-details'];
     delete req.session.data['low-complexity-site-name-completed'];
+    delete req.session.data['low-complexity-type-of-activity'];
+    delete req.session.data['low-complexity-type-of-works'];
+    delete req.session.data['low-complexity-construction-structures'];
     delete req.session.data['low-complexity-type-of-activity-completed'];
     delete req.session.data['low-complexity-activity-description-completed'];
     delete req.session.data['low-complexity-site-duration-completed'];
@@ -680,4 +683,5 @@ module.exports = function (router) {
   ///////////////////////////////////////////
   // Projects page
   ///////////////////////////////////////////
+
 }
