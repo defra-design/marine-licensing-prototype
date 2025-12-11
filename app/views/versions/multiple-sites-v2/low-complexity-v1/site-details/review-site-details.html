@@ -152,11 +152,11 @@ Review site details
                                     {% if data['low-complexity-type-of-works'] %}
                                         {% if data['low-complexity-type-of-works'] == 'construction-new' %}Construction of new works
                                         {% elif data['low-complexity-type-of-works'] == 'maintenance-existing' %}Maintenance of existing works
-                                        {% elif data['low-complexity-type-of-works'] == 'alteration-improvement' %}Alteration or improvement of existing works
+                                        {% elif data['low-complexity-type-of-works'] == 'alteration-improvement' %}Alteration or improvement, including extending, of existing marine works
                                         {% endif %}
                                     {% endif %}
                                     {% if data['low-complexity-construction-structures'] and data['low-complexity-construction-structures'].length > 0 %}
-                                        <br><br>Structures:
+                                        <br><br>{% if data['low-complexity-type-of-works'] == 'construction-new' %}What you're constructing{% elif data['low-complexity-type-of-works'] == 'maintenance-existing' %}What you're maintaining{% elif data['low-complexity-type-of-works'] == 'alteration-improvement' %}What you're altering or improving{% endif %}:
                                         <ul class="govuk-list govuk-list--bullet govuk-!-margin-top-2">
                                         {% for structure in data['low-complexity-construction-structures'] %}
                                             <li>
