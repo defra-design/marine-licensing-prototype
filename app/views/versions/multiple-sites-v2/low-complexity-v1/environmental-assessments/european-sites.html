@@ -62,14 +62,15 @@ Error:
 
 			<p class="govuk-body">Describe any possible impact, for example and ways you plan to reduce these.</p>
 
-			<p class="govuk-body">If there is no impact you need to explain the reasons why.</p>
-
 			{{ govukTextarea({
 				name: "low-complexity-european-sites",
 				id: "low-complexity-european-sites",
 				maxlength: 2000,
 				rows: 5,
 				value: data['low-complexity-european-sites'],
+				hint: {
+					text: "If there is no impact you need to explain the reasons why."
+				},
 				errorMessage: {
 					text: "Enter how you have considered the impact your project may have on European sites and ways to reduce this"
 				} if data['errortypeone'] == "true"

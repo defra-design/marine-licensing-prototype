@@ -58,7 +58,7 @@ What is the activity schedule?
                     <span class="govuk-visually-hidden">Error:</span> Enter the activity schedule
                 </p>
                 {% endif %}
-
+                <div id="low-complexity-schedule-hint" class="govuk-hint">Enter a maximum of 2,000 characters</div>
                 <textarea class="govuk-textarea {% if data['low-complexity-schedule-errorthispage'] == 'true' %}govuk-textarea--error{% endif %}" id="low-complexity-schedule" name="low-complexity-schedule" rows="5">{{ data['low-complexity-schedule'] }}</textarea>
             </div>
             

@@ -15,11 +15,11 @@
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
 {% if data['low-complexity-type-of-works'] == 'construction-new' %}
-What type of structure will you be constructing?
+What are you constructing?
 {% elif data['low-complexity-type-of-works'] == 'maintenance-existing' %}
-What type of structure will you be maintaining?
+What are you maintaining?
 {% elif data['low-complexity-type-of-works'] == 'alteration-improvement' %}
-What type of structure will you be altering or improving?
+What are you altering or improving?
 {% else %}
 What type of structure will you be working on?
 {% endif %}
@@ -42,6 +42,9 @@ What type of structure will you be working on?
         line-height: 1.3125 !important;
         margin-top: 40px;
         margin-bottom: 15px;
+    }
+    .govuk-checkboxes__divider:first-of-type {
+        margin-top: 0;
     }
 </style>
 
@@ -69,7 +72,7 @@ What type of structure will you be working on?
                     legend: {
                         html: '<span class="govuk-caption-l">' + data['low-complexity-project-name-text-input'] + '<span class="govuk-!-display-block">Site 1</span></span>' + pageHeadingTextHTML,
                         isPageHeading: true,
-                        classes: "govuk-fieldset__legend--l"
+                        classes: "govuk-fieldset__legend--l govuk-!-margin-bottom-6"
                     }
                 },
                 hint: {
@@ -97,6 +100,41 @@ What type of structure will you be working on?
                     {
                         value: "tidal-flood-defence",
                         text: "Tidal flood defence structures (e.g., flood barriers, tidal gates, sluices)"
+                    },
+                    {
+                        divider: "Coastal or shore-based structures"
+                    },
+                    {
+                        value: "breakwater-mole-harbour",
+                        text: "Breakwater, mole or harbour protection structure"
+                    },
+                    {
+                        value: "bridge-supports",
+                        text: "Bridge or bridge supports in tidal waters"
+                    },
+                    {
+                        value: "causeway-embankment",
+                        text: "Causeway, embankment or coastal access ramp"
+                    },
+                    {
+                        value: "groyne",
+                        text: "Groyne"
+                    },
+                    {
+                        value: "jetty-pier-quay",
+                        text: "Jetty, pier or quay"
+                    },
+                    {
+                        value: "revetment",
+                        text: "Revetment (sloped coastal protection)"
+                    },
+                    {
+                        value: "sea-wall-coastal-wall",
+                        text: "Sea wall or coastal wall"
+                    },
+                    {
+                        value: "slipway-boat-ramp",
+                        text: "Slipway or boat ramp"
                     },
                     {
                         divider: "Floating or part-floating structures (fixed in place)"
@@ -161,41 +199,6 @@ What type of structure will you be working on?
                     {
                         value: "piles-piled-structures",
                         text: "Piles or piled structures"
-                    },
-                    {
-                        divider: "Shore-based or coastal structures"
-                    },
-                    {
-                        value: "breakwater-mole-harbour",
-                        text: "Breakwater, mole or harbour protection structure"
-                    },
-                    {
-                        value: "bridge-supports",
-                        text: "Bridge or bridge supports in tidal waters"
-                    },
-                    {
-                        value: "causeway-embankment",
-                        text: "Causeway, embankment or coastal access ramp"
-                    },
-                    {
-                        value: "groyne",
-                        text: "Groyne"
-                    },
-                    {
-                        value: "jetty-pier-quay",
-                        text: "Jetty, pier or quay"
-                    },
-                    {
-                        value: "revetment",
-                        text: "Revetment (sloped coastal protection)"
-                    },
-                    {
-                        value: "sea-wall-coastal-wall",
-                        text: "Sea wall or coastal wall"
-                    },
-                    {
-                        value: "slipway-boat-ramp",
-                        text: "Slipway or boat ramp"
                     }
                 ],
                 errorMessage: {
