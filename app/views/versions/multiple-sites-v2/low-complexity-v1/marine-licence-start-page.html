@@ -107,12 +107,12 @@ Marine licence start page
 
 		<li class="govuk-task-list__item govuk-task-list__item--with-link">
 		  <div class="govuk-task-list__name-and-hint">
-			<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="related-permissions/" aria-describedby="related-permissions-status">
-			  Related permissions
+			<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="other-permissions/" aria-describedby="other-permissions-status">
+			  Other permissions
 			</a>
 		  </div>
 		  
-		  <div class="govuk-task-list__status" id="related-permissions-status">
+		  <div class="govuk-task-list__status" id="other-permissions-status">
 			{% if data['low-complexity-special-legal-powers-completed'] and data['low-complexity-other-permissions-completed'] and data['low-complexity-consultation-completed'] %}
 				Completed
 			{% elif data['low-complexity-special-legal-powers-completed'] or data['low-complexity-other-permissions-completed'] or data['low-complexity-consultation-completed'] %}

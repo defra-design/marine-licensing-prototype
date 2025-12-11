@@ -214,25 +214,25 @@ module.exports = function (router) {
   });
 
   ///////////////////////////////////////////
-  // Related permissions section
+  // Other permissions section
   ///////////////////////////////////////////
 
-  // Related permissions index page
-  router.get(`/versions/${version}/${section}/related-permissions`, function (req, res) {
-    res.render(`versions/${version}/${section}/related-permissions/index`);
+  // Other permissions index page
+  router.get(`/versions/${version}/${section}/other-permissions`, function (req, res) {
+    res.render(`versions/${version}/${section}/other-permissions/index`);
   });
 
   // Special legal powers page
-  router.get(`/versions/${version}/${section}/related-permissions/special-legal-powers`, function (req, res) {
+  router.get(`/versions/${version}/${section}/other-permissions/special-legal-powers`, function (req, res) {
     // Clear error flags when navigating to the page
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
     req.session.data['errortypetwo'] = "false";
-    res.render(`versions/${version}/${section}/related-permissions/special-legal-powers`);
+    res.render(`versions/${version}/${section}/other-permissions/special-legal-powers`);
   });
 
   // Special legal powers router (POST)
-  router.post(`/versions/${version}/${section}/related-permissions/special-legal-powers-router`, function (req, res) {
+  router.post(`/versions/${version}/${section}/other-permissions/special-legal-powers-router`, function (req, res) {
     // Clear error flags
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
@@ -258,23 +258,23 @@ module.exports = function (router) {
       // Redirect back to the same page with errors
       res.redirect('special-legal-powers');
     } else {
-      // Validation passed - set completion flag and redirect to related permissions index
+      // Validation passed - set completion flag and redirect to other permissions index
       req.session.data['low-complexity-special-legal-powers-completed'] = true;
       res.redirect('./');
     }
   });
 
-  // Other permissions page
-  router.get(`/versions/${version}/${section}/related-permissions/other-permissions`, function (req, res) {
+  // Other authorities page
+  router.get(`/versions/${version}/${section}/other-permissions/other-authorities`, function (req, res) {
     // Clear error flags when navigating to the page
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
     req.session.data['errortypetwo'] = "false";
-    res.render(`versions/${version}/${section}/related-permissions/other-permissions`);
+    res.render(`versions/${version}/${section}/other-permissions/other-authorities`);
   });
 
-  // Other permissions router (POST)
-  router.post(`/versions/${version}/${section}/related-permissions/other-permissions-router`, function (req, res) {
+  // Other authorities router (POST)
+  router.post(`/versions/${version}/${section}/other-permissions/other-authorities-router`, function (req, res) {
     // Clear error flags
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
@@ -291,32 +291,32 @@ module.exports = function (router) {
       req.session.data['errortypeone'] = "true";
       
       // Redirect back to the same page with errors
-      res.redirect('other-permissions');
+      res.redirect('other-authorities');
     } else if (otherPermissions === 'Yes' && (!otherPermissionsDetails || otherPermissionsDetails.trim() === '')) {
       // If Yes is selected, check if textarea has content
       req.session.data['errorthispage'] = "true";
       req.session.data['errortypetwo'] = "true";
       
       // Redirect back to the same page with errors
-      res.redirect('other-permissions');
+      res.redirect('other-authorities');
     } else {
-      // Validation passed - set completion flag and redirect to related permissions index
+      // Validation passed - set completion flag and redirect to other permissions index
       req.session.data['low-complexity-other-permissions-completed'] = true;
       res.redirect('./');
     }
   });
 
   // Consultation and advertising page
-  router.get(`/versions/${version}/${section}/related-permissions/consultation-and-advertising`, function (req, res) {
+  router.get(`/versions/${version}/${section}/other-permissions/consultation-and-advertising`, function (req, res) {
     // Clear error flags when navigating to the page
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
     req.session.data['errortypetwo'] = "false";
-    res.render(`versions/${version}/${section}/related-permissions/consultation-and-advertising`);
+    res.render(`versions/${version}/${section}/other-permissions/consultation-and-advertising`);
   });
 
   // Consultation and advertising router (POST)
-  router.post(`/versions/${version}/${section}/related-permissions/consultation-and-advertising-router`, function (req, res) {
+  router.post(`/versions/${version}/${section}/other-permissions/consultation-and-advertising-router`, function (req, res) {
     // Clear error flags
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
@@ -342,7 +342,7 @@ module.exports = function (router) {
       // Redirect back to the same page with errors
       res.redirect('consultation-and-advertising');
     } else {
-      // Validation passed - set completion flag and redirect to related permissions index
+      // Validation passed - set completion flag and redirect to other permissions index
       req.session.data['low-complexity-consultation-completed'] = true;
       res.redirect('./');
     }
