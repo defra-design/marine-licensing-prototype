@@ -158,6 +158,15 @@ module.exports = function (router) {
     delete req.session.data['low-complexity-type-of-activity-error'];
     delete req.session.data['low-complexity-type-of-works-error'];
 
+    // Store the previous type of works value to detect changes
+    const previousTypeOfWorks = req.session.data['low-complexity-type-of-works-previous'];
+    const currentTypeOfWorks = req.session.data['low-complexity-type-of-works'];
+
+    // If type of works has changed, clear construction structures
+    if (previousTypeOfWorks && currentTypeOfWorks && previousTypeOfWorks !== currentTypeOfWorks) {
+      delete req.session.data['low-complexity-construction-structures'];
+    }
+
     let hasErrors = false;
 
     // Validate type of activity is selected
@@ -165,14 +174,15 @@ module.exports = function (router) {
       req.session.data['low-complexity-type-of-activity-error'] = "Select a type of activity";
       hasErrors = true;
     } else if (req.session.data['low-complexity-type-of-activity'] === 'construction') {
-      // If construction is selected, validate that at least one checkbox is selected
-      if (!req.session.data['low-complexity-type-of-works'] || req.session.data['low-complexity-type-of-works'].length === 0) {
-        req.session.data['low-complexity-type-of-works-error'] = "Select the type of works that apply";
+      // If construction is selected, validate that a radio button is selected
+      if (!req.session.data['low-complexity-type-of-works']) {
+        req.session.data['low-complexity-type-of-works-error'] = "Select the type of works";
         hasErrors = true;
       }
     } else {
-      // If not construction, clear the type of works checkboxes
+      // If not construction, clear the type of works radio and structures
       delete req.session.data['low-complexity-type-of-works'];
+      delete req.session.data['low-complexity-construction-structures'];
     }
 
     if (hasErrors) {
@@ -180,6 +190,9 @@ module.exports = function (router) {
       res.redirect('type-of-activity');
       return;
     }
+
+    // Store current type of works as previous for next comparison
+    req.session.data['low-complexity-type-of-works-previous'] = req.session.data['low-complexity-type-of-works'];
 
     // If construction is selected (and validated), go to construction structures page
     if (req.session.data['low-complexity-type-of-activity'] === 'construction') {
@@ -391,6 +404,7 @@ module.exports = function (router) {
     // Type of activity
     delete req.session.data['low-complexity-type-of-activity'];
     delete req.session.data['low-complexity-type-of-works'];
+    delete req.session.data['low-complexity-type-of-works-previous'];
     delete req.session.data['low-complexity-construction-structures'];
     delete req.session.data['low-complexity-type-of-activity-completed'];
     
