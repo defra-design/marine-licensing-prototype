@@ -14,7 +14,15 @@
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
+{% if data['low-complexity-type-of-works'] == 'construction-new' %}
+What type of structure will you be constructing?
+{% elif data['low-complexity-type-of-works'] == 'maintenance-existing' %}
+What type of structure will you be maintaining?
+{% elif data['low-complexity-type-of-works'] == 'alteration-improvement' %}
+What type of structure will you be altering or improving?
+{% else %}
 What type of structure will you be working on?
+{% endif %}
 {% endset %}
 
 <!-- Text that show in the browser tab. Does NOT need changing -->

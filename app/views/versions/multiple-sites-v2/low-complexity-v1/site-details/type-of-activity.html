@@ -51,12 +51,12 @@ Type of activity
                 }) }}
             {% endif %}
 
-            {% set constructionCheckboxesHtml %}
-                {{ govukCheckboxes({
+            {% set constructionRadiosHtml %}
+                {{ govukRadios({
                     name: "low-complexity-type-of-works",
                     fieldset: {
                         legend: {
-                            text: "Select all type of works that apply"
+                            text: "Select the type of works"
                         }
                     },
                     items: [
@@ -76,7 +76,7 @@ Type of activity
                     errorMessage: {
                         text: data['low-complexity-type-of-works-error']
                     } if data['low-complexity-type-of-works-error'],
-                    values: data['low-complexity-type-of-works']
+                    value: data['low-complexity-type-of-works']
                 }) }}
             {% endset %}
 
@@ -94,7 +94,7 @@ Type of activity
                         value: "construction",
                         text: "Construction, alteration or improvement of any works",
                         conditional: {
-                            html: constructionCheckboxesHtml
+                            html: constructionRadiosHtml
                         }
                     },
                     {

@@ -149,14 +149,11 @@ Review site details
                         <dd class="govuk-summary-list__value">
                             {% if data['low-complexity-type-of-activity-completed'] %}
                                 {% if data['low-complexity-type-of-activity'] == 'construction' %}
-                                    {% if data['low-complexity-type-of-works'] and data['low-complexity-type-of-works'].length > 0 %}
-                                        {% for work in data['low-complexity-type-of-works'] %}
-                                            {% if work == 'construction-new' %}Construction of new works
-                                            {% elif work == 'maintenance-existing' %}Maintenance of existing works
-                                            {% elif work == 'alteration-improvement' %}Alteration or improvement of existing works
-                                            {% endif %}
-                                            {% if not loop.last %}<br>{% endif %}
-                                        {% endfor %}
+                                    {% if data['low-complexity-type-of-works'] %}
+                                        {% if data['low-complexity-type-of-works'] == 'construction-new' %}Construction of new works
+                                        {% elif data['low-complexity-type-of-works'] == 'maintenance-existing' %}Maintenance of existing works
+                                        {% elif data['low-complexity-type-of-works'] == 'alteration-improvement' %}Alteration or improvement of existing works
+                                        {% endif %}
                                     {% endif %}
                                     {% if data['low-complexity-construction-structures'] and data['low-complexity-construction-structures'].length > 0 %}
                                         <br><br>Structures:
