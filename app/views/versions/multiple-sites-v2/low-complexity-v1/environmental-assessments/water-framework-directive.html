@@ -55,10 +55,17 @@ Error:
 
 			<p class="govuk-body">Use <a href="https://magic.defra.gov.uk/MagicMap.html" class="govuk-link" rel="noreferrer noopener" target="_blank">Magic maps (opens in new tab)</a> if you need to check how far out to sea your project is in nautical miles.</p>
 
-			{{ govukDetails({
-				summaryText: "Get help with using Magic Maps",
-				text: "Help text"
-			}) }}
+		{{ govukDetails({
+			summaryText: "Get help with using Magic Maps",
+			html: "<ol class='govuk-list govuk-list--number'>
+				<li>Zoom in to the area on the map where your project is located.</li>
+				<li>Select the measurement tool in the top right.</li>
+				<li>Select the first ruler icon.</li>
+				<li>Click on the edge of the map where you want to start measuring your location from.</li>
+				<li>Then draw a line as far as you think the distance is. Double click on it to stop drawing.</li>
+				<li>To convert the measurement to nautical miles, go to the unit box on the right and select nautical miles from the drop-down. You can then extend or shorten the line to check how far 1 nautical mile is.</li>
+			</ol>"
+		}) }}
 
 			{{ govukRadios({
 				name: "low-complexity-wfd-nautical-mile",
