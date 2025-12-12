@@ -11,18 +11,13 @@
     <a class="govuk-back-link govuk-link--no-visited-state" href="javascript:history.back()">Back</a>
 {% endblock %}
 
-<!-- Setting the big main heading at the top of the page -->
-{% set pageHeadingTextHTML %}
-How have you considered the impact your project may have on European sites and ways to reduce this?
-{% endset %}
-
 <!-- Text that show in the browser tab. Does NOT need changing -->
 {% block pageTitle %}
 {% if data['errorthispage'] == "true" %}
 Error:
 {% endif %}
 
-{{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+How have you assessed the impact of your project on European sites and how you'll reduce this impact? - {{ data['headerNameExemption'] }}
 {% endblock %}
 
 {% block content %}
@@ -38,7 +33,7 @@ Error:
 			<div class="govuk-error-summary__body">
 				<ul class="govuk-list govuk-error-summary__list">
 					{% if data['errortypeone'] == "true" %}
-					<li><a href="#low-complexity-european-sites">Enter how you have considered the impact your project may have on European sites and ways to reduce this</a></li>
+					<li><a href="#low-complexity-european-sites">Enter how you've assessed the impact of your project on European sites and how you'll reduce this impact</a></li>
 					{% endif %}
 				</ul>
 			</div>
@@ -50,29 +45,39 @@ Error:
 		<form action="european-sites-router" method="post" novalidate>
 
 			<span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
-			<h1 class="govuk-label-wrapper">
-				<label class="govuk-label govuk-label--l" for="low-complexity-european-sites">
-					{{ pageHeadingTextHTML }}
-				</label>
-			</h1>
+			<h1 class="govuk-heading-l">How have you assessed the impact of your project on European sites and how you'll reduce this impact?</h1>
 
-			<p class="govuk-body">A European site is protected by the Conservation of Habitats and Species Regulations 2017. This is also known as Habitats Regulations.</p>
+			<p class="govuk-body">A European site is an area designated to protect rare habitats and species. These include Special Areas of Conservation and Special protected areas.</p>
 
-			<p class="govuk-body"><a href="https://www.gov.uk/guidance/marine-licensing-impact-assessments#habitats-regulations-assessment" class="govuk-link" target="_blank" rel="noopener noreferrer">Read the guidance on Habitats Regulation Assessment (opens in new tab)</a> to find out how to check if your project is near a designated site and what information you need to include in this application.</p>
+			<p class="govuk-body">These sites are protected by the Conservation of Habitats and Species Regulations 2017. This is also known as Habitats Regulations.</p>
 
-			<p class="govuk-body">Describe any possible impact, for example and ways you plan to reduce these.</p>
+			<p class="govuk-body"><a href="https://www.gov.uk/guidance/marine-licensing-impact-assessments#habitats-regulations-assessment" class="govuk-link" target="_blank" rel="noopener noreferrer">Read the guidance on Habitats Regulation Assessment (opens in new tab)</a> to find out how to check if your project is near a designated site.</p>
+
+			<p class="govuk-body">If your project could affect a protected wildlife site, you need to explain any impacts and what you'll do to reduce them.</p>
+
+			<p class="govuk-body">For example, the impact of construction noise is that it could disturb nesting seabirds. To reduce this impact work will take place outside of breeding season and machinery will be kept at least 200m from the protected area.</p>
+
+			<h2 class="govuk-heading-s">If there's no impact</h2>
+
+			<p class="govuk-body">If you do not think this applicable to your project and there is no impact you need to explain the reasons why.</p>
+
+			<p class="govuk-body">For example, the work is 5km from the nearest protected site and involves repairs above the high water mark. So there will be no impact as there is no disturbance to marine habitats or species.</p>
 
 			{{ govukTextarea({
 				name: "low-complexity-european-sites",
 				id: "low-complexity-european-sites",
+				label: {
+					text: "Explain how you've assessed the impact of your project on European sites and how you'll reduce this impact",
+					classes: "govuk-label--s"
+				},
+				hint: {
+					text: "Enter a maximum of 2,000 characters"
+				},
 				maxlength: 2000,
 				rows: 5,
 				value: data['low-complexity-european-sites'],
-				hint: {
-					text: "If there is no impact you need to explain the reasons why."
-				},
 				errorMessage: {
-					text: "Enter how you have considered the impact your project may have on European sites and ways to reduce this"
+					text: "Enter how you've assessed the impact of your project on European sites and how you'll reduce this impact"
 				} if data['errortypeone'] == "true"
 			}) }}
 
