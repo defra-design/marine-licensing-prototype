@@ -239,39 +239,20 @@ module.exports = function (router) {
   router.get(`/versions/${version}/${section}/${subsection}/activity-description`, function (req, res) {
     // Clear any previous errors
     req.session.data['low-complexity-activity-description-errorthispage'] = "false";
-    delete req.session.data['low-complexity-activity-name-error'];
-    delete req.session.data['low-complexity-activity-description-error'];
     res.render(`versions/${version}/${section}/${subsection}/activity-description`);
   });
 
   // Activity description router (POST)
   router.post(`/versions/${version}/${section}/${subsection}/activity-description-router`, function (req, res) {
-    // Clear any previous errors
-    req.session.data['low-complexity-activity-description-errorthispage'] = "false";
-    delete req.session.data['low-complexity-activity-name-error'];
-    delete req.session.data['low-complexity-activity-description-error'];
-
-    let hasErrors = false;
-
-    // Validate activity name
-    if (!req.session.data['low-complexity-activity-name'] || req.session.data['low-complexity-activity-name'].trim() === '') {
-      req.session.data['low-complexity-activity-name-error'] = "Enter the activity name";
-      hasErrors = true;
-    }
-
     // Validate activity description
     if (!req.session.data['low-complexity-activity-description'] || req.session.data['low-complexity-activity-description'].trim() === '') {
-      req.session.data['low-complexity-activity-description-error'] = "Enter the activity description";
-      hasErrors = true;
-    }
-
-    if (hasErrors) {
       req.session.data['low-complexity-activity-description-errorthispage'] = "true";
       res.redirect('activity-description');
       return;
     }
 
-    // Mark as completed and redirect to review page
+    // Clear errors and mark as completed
+    req.session.data['low-complexity-activity-description-errorthispage'] = "false";
     req.session.data['low-complexity-activity-description-completed'] = true;
     res.redirect('review-site-details#site-1-details');
   });

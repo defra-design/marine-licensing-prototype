@@ -53,12 +53,14 @@ What is the activity schedule?
 
                 <p class="govuk-body">If any part of the activity needs to be completed by a certain date also include these details. And if there are any periods of time the activity cannot be carried out include these and the reason why.</p>
 
+                <div id="low-complexity-schedule-hint" class="govuk-hint">Enter a maximum of 2,000 characters</div>
+                
                 {% if data['low-complexity-schedule-errorthispage'] == "true" %}
                 <p id="low-complexity-schedule-error" class="govuk-error-message">
                     <span class="govuk-visually-hidden">Error:</span> Enter the activity schedule
                 </p>
                 {% endif %}
-                <div id="low-complexity-schedule-hint" class="govuk-hint">Enter a maximum of 2,000 characters</div>
+                
                 <textarea class="govuk-textarea {% if data['low-complexity-schedule-errorthispage'] == 'true' %}govuk-textarea--error{% endif %}" id="low-complexity-schedule" name="low-complexity-schedule" rows="5">{{ data['low-complexity-schedule'] }}</textarea>
             </div>
             

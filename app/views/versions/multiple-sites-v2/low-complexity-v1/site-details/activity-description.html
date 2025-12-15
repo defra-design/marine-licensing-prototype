@@ -1,6 +1,5 @@
 {% extends "../../layouts/low-complexity.html" %}
 
-{% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
@@ -31,71 +30,40 @@ Activity description
             
             <!-- Error summary -->
             {% if data['low-complexity-activity-description-errorthispage'] == "true" %}
-                {% set errorList = [] %}
-                {% if data['low-complexity-activity-name-error'] %}
-                    {% set errorList = (errorList.push({
-                        text: data['low-complexity-activity-name-error'],
-                        href: "#low-complexity-activity-name"
-                    }), errorList) %}
-                {% endif %}
-                {% if data['low-complexity-activity-description-error'] %}
-                    {% set errorList = (errorList.push({
-                        text: data['low-complexity-activity-description-error'],
-                        href: "#low-complexity-activity-description"
-                    }), errorList) %}
-                {% endif %}
-                
                 {{ govukErrorSummary({
                     titleText: "There is a problem",
-                    errorList: errorList
+                    errorList: [
+                        {
+                            text: "Enter the activity description",
+                            href: "#low-complexity-activity-description"
+                        }
+                    ]
                 }) }}
             {% endif %}
 
-            <span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}<span class="govuk-!-display-block">Site 1</span></span>
-            <h1 class="govuk-heading-l">
-                {{ pageHeadingTextHTML }}
-            </h1>
-
-            {{ govukInput({
-                label: {
-                    text: "Activity name",
-                    classes: "govuk-label--s"
-                },
-                hint: {
-                    text: "Enter a maximum of 250 characters"
-                },
-                id: "low-complexity-activity-name",
-                name: "low-complexity-activity-name",
-                value: data['low-complexity-activity-name'],
-                errorMessage: {
-                    text: data['low-complexity-activity-name-error']
-                } if data['low-complexity-activity-name-error']
-            }) }}
-
-            <div class="govuk-form-group {% if data['low-complexity-activity-description-error'] %}govuk-form-group--error{% endif %}">
-                <h2 class="govuk-label-wrapper">
-                    <label class="govuk-label govuk-label--s" for="low-complexity-activity-description">
-                        Describe the activity
+            <div class="govuk-form-group {% if data['low-complexity-activity-description-errorthispage'] == 'true' %}govuk-form-group--error{% endif %}">
+                <h1 class="govuk-label-wrapper">
+                    <label class="govuk-label govuk-label--l" for="low-complexity-activity-description">
+                        <span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}<span class="govuk-!-display-block">Site 1</span></span>
+                        {{ pageHeadingTextHTML }}
                     </label>
-                </h2>
-
-                
+                </h1>
 
                 <p class="govuk-body">This is a summary of what you're going to do and in what order. Include the equipment you'll use, how you'll transport materials and the maximum dimensions of the marine works and materials.</p>
 
                 <p class="govuk-body">For example, if you're constructing a sheet piled wall you need to tell us the maximum dimension of the wall, maximum dimension of the piles and the maximum number of piles.</p>
 
-                {% if data['low-complexity-activity-description-error'] %}
-                <p id="low-complexity-activity-description-error" class="govuk-error-message">
-                    <span class="govuk-visually-hidden">Error:</span> {{ data['low-complexity-activity-description-error'] }}
-                </p>
-                {% endif %}
-
                 <div id="low-complexity-activity-description-hint" class="govuk-hint">
                     Enter a maximum of 2,000 characters
                 </div>
+
+                {% if data['low-complexity-activity-description-errorthispage'] == "true" %}
+                <p id="low-complexity-activity-description-error" class="govuk-error-message">
+                    <span class="govuk-visually-hidden">Error:</span> Enter the activity description
+                </p>
+                {% endif %}
                 
-                <textarea class="govuk-textarea {% if data['low-complexity-activity-description-error'] %}govuk-textarea--error{% endif %}" id="low-complexity-activity-description" name="low-complexity-activity-description" rows="5" aria-describedby="low-complexity-activity-description-hint{% if data['low-complexity-activity-description-error'] %} low-complexity-activity-description-error{% endif %}">{{ data['low-complexity-activity-description'] }}</textarea>
+                <textarea class="govuk-textarea {% if data['low-complexity-activity-description-errorthispage'] == 'true' %}govuk-textarea--error{% endif %}" id="low-complexity-activity-description" name="low-complexity-activity-description" rows="5" aria-describedby="low-complexity-activity-description-hint{% if data['low-complexity-activity-description-errorthispage'] == 'true' %} low-complexity-activity-description-error{% endif %}">{{ data['low-complexity-activity-description'] }}</textarea>
             </div>
             
             <div class="govuk-button-group">
