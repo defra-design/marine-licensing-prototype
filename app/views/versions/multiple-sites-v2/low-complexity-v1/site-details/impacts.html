@@ -14,7 +14,7 @@
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-What are the possible impacts of the activity and how will you reduce them?
+How have you assessed the impact of the activity and how will you reduce this?
 {% endset %}
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
@@ -34,43 +34,48 @@ What are the possible impacts of the activity and how will you reduce them?
                     titleText: "There is a problem",
                     errorList: [
                         {
-                            text: "Enter the possible impacts of the activity",
+                            text: "Enter how you've assessed the impact of your activity and how you'll reduce this impact",
                             href: "#low-complexity-impacts"
                         }
                     ]
                 }) }}
             {% endif %}
 
+            <span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}<span class="govuk-!-display-block">Site 1</span></span>
+            <h1 class="govuk-heading-l">
+                {{ pageHeadingTextHTML }}
+            </h1>
+
+            <p class="govuk-body">Include any economic, environmental impacts and social impacts.</p>
+
+            <p class="govuk-body">For example, the impact of the activity is closing a beach may affect hotels or restaurants. To reduce this impact advance notice will be given to these businesses, work will only be carried out off-season and beach access will be maintained where possible.</p>
+
+            <p class="govuk-body">For example, the impact of the activity is there may be disturbance to overwintering birds. To reduce this impact work will be avoided at a time of year when certain species are present.</p>
+
+            <p class="govuk-body">For example, the impact of the activity is noise or disturbance to coastal communities. To reduce this impact advance notice will be given to residents and work will only happen during the day.</p>
+
+            <h2 class="govuk-heading-s">If there's no impact</h2>
+            
+            <p class="govuk-body">If you do not think this applicable to your project and there is no impact you need to explain the reasons why.</p>
+
+            <p class="govuk-body">For example, this is routine maintenance of an existing pontoon, replacing worn fixings and boards. The impacts were assessed by inspecting the site and reviewing previous maintenance records. The work uses hand tools only, all materials stay on the pontoon structure, and nothing will enter the water. There will be no impact on the seabed or marine life, or to neighbouring properties or businesses.</p>
+
             <div class="govuk-form-group {% if data['low-complexity-impacts-errorthispage'] == 'true' %}govuk-form-group--error{% endif %}">
-                <h1 class="govuk-label-wrapper">
-                    <label class="govuk-label govuk-label--l" for="low-complexity-impacts">
-                        <span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}<span class="govuk-!-display-block">Site 1</span></span>
-                        {{ pageHeadingTextHTML }}
-                    </label>
-                </h1>
+                <label class="govuk-label govuk-label--s" for="low-complexity-impacts">
+                    Explain how you've assessed the impact of your activity and how you'll reduce this impact
+                </label>
 
-                <p class="govuk-body">If there are no possible impacts you need to explain the reasons why.</p>
-
-                <p class="govuk-body">Include any social, economic and environmental impacts.</p>
-
-                <p class="govuk-body">For example if:</p>
-                <ul class="govuk-list govuk-list--bullet">
-                    <li>there may be disturbance to wildlife you'll avoid working at a time of year when certain species are present</li>
-                    <li>there is noise or disturbance to coastal communities then advance notice will be give to residents and work will only happen during the day</li>
-                    <li>a beach is closed it may affect hotels or restaurants so advance notice will be given to these businesses, marine work will be carried out during off-season and beach access will be maintained where possible.</li>
-                </ul>
-
-                <div id="low-complexity-activity-description-hint" class="govuk-hint">
+                <div id="low-complexity-impacts-hint" class="govuk-hint">
                     Enter a maximum of 2,000 characters
                 </div>
 
                 {% if data['low-complexity-impacts-errorthispage'] == "true" %}
                 <p id="low-complexity-impacts-error" class="govuk-error-message">
-                    <span class="govuk-visually-hidden">Error:</span> Enter the possible impacts of the activity and how you will reduce them
+                    <span class="govuk-visually-hidden">Error:</span> Enter how you've assessed the impact of your activity and how you'll reduce this impact
                 </p>
                 {% endif %}
 
-                <textarea class="govuk-textarea {% if data['low-complexity-impacts-errorthispage'] == 'true' %}govuk-textarea--error{% endif %}" id="low-complexity-impacts" name="low-complexity-impacts" rows="5" {% if data['low-complexity-impacts-errorthispage'] == 'true' %}aria-describedby="low-complexity-impacts-error"{% endif %}>{{ data['low-complexity-impacts'] }}</textarea>
+                <textarea class="govuk-textarea {% if data['low-complexity-impacts-errorthispage'] == 'true' %}govuk-textarea--error{% endif %}" id="low-complexity-impacts" name="low-complexity-impacts" rows="5" {% if data['low-complexity-impacts-errorthispage'] == 'true' %}aria-describedby="low-complexity-impacts-hint low-complexity-impacts-error"{% else %}aria-describedby="low-complexity-impacts-hint"{% endif %}>{{ data['low-complexity-impacts'] }}</textarea>
             </div>
             
             <div class="govuk-button-group">
