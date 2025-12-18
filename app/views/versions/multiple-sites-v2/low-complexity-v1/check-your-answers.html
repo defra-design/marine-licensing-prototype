@@ -1,0 +1,628 @@
+{% extends "../layouts/low-complexity.html" %}
+
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block beforeContent %}
+    {% include "../includes/phase-banner.html" %}
+    {% if data['user_type'] === 'organisation' %}
+        {% include "../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link govuk-link--no-visited-state" href="javascript:history.back()">Go back to marine licence start page</a>
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+Check your answers before sending your application
+{% endset %}
+
+<!-- Format start date -->
+{% set startDateFormatted %}
+{{ data['start-date-day'] }} {{ data['start-date-month'] | toMonth }} {{ data['start-date-year'] }}
+{% endset %}
+
+<!-- Format end date -->
+{% set endDateFormatted %}
+{{ data['end-date-day'] }} {{ data['end-date-month'] | toMonth }} {{ data['end-date-year'] }}
+{% endset %}
+
+<!-- Format project duration -->
+{% set durationFormatted %}
+{% if data['low-complexity-duration-years'] | int > 0 and data['low-complexity-duration-months'] | int > 0 %}
+{{ data['low-complexity-duration-years'] }} year{% if data['low-complexity-duration-years'] | int != 1 %}s{% endif %}, {{ data['low-complexity-duration-months'] }} month{% if data['low-complexity-duration-months'] | int != 1 %}s{% endif %}
+{% elif data['low-complexity-duration-years'] | int > 0 %}
+{{ data['low-complexity-duration-years'] }} year{% if data['low-complexity-duration-years'] | int != 1 %}s{% endif %}
+{% elif data['low-complexity-duration-months'] | int > 0 %}
+{{ data['low-complexity-duration-months'] }} month{% if data['low-complexity-duration-months'] | int != 1 %}s{% endif %}
+{% endif %}
+{% endset %}
+
+<!-- Format site activity duration -->
+{% set siteDurationFormatted %}
+{% set durationParts = [] %}
+{% if data['low-complexity-site-duration-years'] and data['low-complexity-site-duration-years'] != '0' %}
+{% set durationParts = (durationParts.push(data['low-complexity-site-duration-years'] + ' ' + ('year' if data['low-complexity-site-duration-years'] == '1' else 'years')), durationParts) %}
+{% endif %}
+{% if data['low-complexity-site-duration-months'] and data['low-complexity-site-duration-months'] != '0' %}
+{% set durationParts = (durationParts.push(data['low-complexity-site-duration-months'] + ' ' + ('month' if data['low-complexity-site-duration-months'] == '1' else 'months')), durationParts) %}
+{% endif %}
+{% if data['low-complexity-site-duration-weeks'] and data['low-complexity-site-duration-weeks'] != '0' %}
+{% set durationParts = (durationParts.push(data['low-complexity-site-duration-weeks'] + ' ' + ('week' if data['low-complexity-site-duration-weeks'] == '1' else 'weeks')), durationParts) %}
+{% endif %}
+{{ durationParts | join(', ') if durationParts.length > 0 else 'Not provided' }}
+{% endset %}
+
+<!-- Format type of activity -->
+{% set typeOfActivityFormatted %}
+{% if data['low-complexity-type-of-activity'] == 'construction' %}
+{% if data['low-complexity-type-of-works'] %}
+{% if data['low-complexity-type-of-works'] == 'construction-new' %}Construction of new works
+{% elif data['low-complexity-type-of-works'] == 'maintenance-existing' %}Maintenance of existing works
+{% elif data['low-complexity-type-of-works'] == 'alteration-improvement' %}Alteration or improvement, including extending, of existing marine works
+{% endif %}
+{% endif %}
+{% if data['low-complexity-construction-structures'] and data['low-complexity-construction-structures'].length > 0 %}
+<br><br>{% if data['low-complexity-type-of-works'] == 'construction-new' %}What you're constructing{% elif data['low-complexity-type-of-works'] == 'maintenance-existing' %}What you're maintaining{% elif data['low-complexity-type-of-works'] == 'alteration-improvement' %}What you're altering or improving{% endif %}:
+<ul class="govuk-list govuk-list--bullet govuk-!-margin-top-2">
+{% for structure in data['low-complexity-construction-structures'] %}
+<li>
+{% if structure == 'jetty-pier-quay' %}Jetty, pier or quay
+{% elif structure == 'slipway-boat-ramp' %}Slipway or boat ramp
+{% elif structure == 'sea-wall-coastal-wall' %}Sea wall or coastal wall
+{% elif structure == 'revetment' %}Revetment (sloped coastal protection)
+{% elif structure == 'groyne' %}Groyne
+{% elif structure == 'breakwater-mole-harbour' %}Breakwater, mole or harbour protection structure
+{% elif structure == 'bridge-supports' %}Bridge or bridge supports in tidal waters
+{% elif structure == 'causeway-embankment' %}Causeway, embankment or coastal access ramp
+{% elif structure == 'pontoons-walkways' %}Pontoons or floating walkways
+{% elif structure == 'floating-breakwaters' %}Floating breakwaters or wave attenuators
+{% elif structure == 'piles-piled-structures' %}Piles or piled structures
+{% elif structure == 'foundations-platforms' %}Foundations for offshore platforms or similar structures
+{% elif structure == 'artificial-reefs' %}Artificial reefs or habitat structures
+{% elif structure == 'hard-coastal-defence' %}Hard coastal defence structures such as rock armour or concrete units
+{% elif structure == 'tidal-flood-defence' %}Tidal flood defence structures (e.g., flood barriers, tidal gates, sluices)
+{% elif structure == 'outfalls-diffusers' %}Outfalls or diffusers
+{% elif structure == 'intakes' %}Intakes
+{% elif structure == 'pipelines-ducts' %}Pipelines or ducts
+{% elif structure == 'subsea-cables' %}Subsea cables requiring protective construction
+{% elif structure == 'culverts-channels' %}Culverts or constructed tidal channels
+{% elif structure == 'tidal-energy-devices' %}Tidal energy devices or foundations
+{% elif structure == 'wave-energy-foundations' %}Wave energy device foundations
+{% elif structure == 'offshore-wind-foundations' %}Fixed offshore wind foundations
+{% elif structure == 'aquaculture-piled-structures' %}Piled or fixed aquaculture structures
+{% elif structure == 'aquaculture-trestles' %}Aquaculture trestles or fixed walkways
+{% endif %}
+</li>
+{% endfor %}
+</ul>
+{% endif %}
+{% elif data['low-complexity-type-of-activity'] == 'deposit' %}
+Deposit of any substance or object
+{% elif data['low-complexity-type-of-activity'] == 'removal' %}
+Removal of any substance or object
+{% endif %}
+{% endset %}
+
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-full">
+		<span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
+		<h1 class="govuk-heading-l">
+			{{ pageHeadingTextHTML }}
+		</h1>
+
+		{{ govukSummaryList({
+			card: {
+				title: {
+					text: "Project details"
+				}
+			},
+			rows: [
+				{
+					key: {
+						text: "Project name"
+					},
+					value: {
+						text: data['low-complexity-project-name-text-input']
+					},
+					actions: {
+						items: [
+							{
+								href: "project-name",
+								text: "Change",
+								visuallyHiddenText: "project name",
+								classes: "govuk-link--no-visited-state"
+							}
+						]
+					}
+				},
+				{
+					key: {
+						text: "Project background"
+					},
+					value: {
+						text: data['low-complexity-project-background']
+					},
+					actions: {
+						items: [
+							{
+								href: "project-details/project-background",
+								text: "Change",
+								visuallyHiddenText: "project background",
+								classes: "govuk-link--no-visited-state"
+							}
+						]
+					}
+				},
+				{
+					key: {
+						text: "Duration of project"
+					},
+					value: {
+						html: durationFormatted | trim
+					},
+					actions: {
+						items: [
+							{
+								href: "project-details/duration",
+								text: "Change",
+								visuallyHiddenText: "duration of project",
+								classes: "govuk-link--no-visited-state"
+							}
+						]
+					}
+				},
+				{
+					key: {
+						text: "Dates of marine works"
+					},
+					value: {
+						html: (startDateFormatted | trim) + " to " + (endDateFormatted | trim)
+					},
+					actions: {
+						items: [
+							{
+								href: "project-details/dates-of-marine-works",
+								text: "Change",
+								visuallyHiddenText: "dates of marine works",
+								classes: "govuk-link--no-visited-state"
+							}
+						]
+					}
+				},
+				{
+					key: {
+						text: "Cost of marine works"
+					},
+					value: {
+						text: "£" + (data['low-complexity-cost'] | addCommas)
+					},
+					actions: {
+						items: [
+							{
+								href: "project-details/cost-of-marine-works",
+								text: "Change",
+								visuallyHiddenText: "cost of marine works",
+								classes: "govuk-link--no-visited-state"
+							}
+						]
+					}
+				}
+			]
+		}) }}
+
+		<!-- Providing the site location card -->
+		<div class="govuk-summary-card">
+			<div class="govuk-summary-card__title-wrapper">
+				<h2 class="govuk-summary-card__title">
+					Providing the site location
+				</h2>
+				<ul class="govuk-summary-card__actions">
+					<li class="govuk-summary-card__action">
+						<a class="govuk-link govuk-link--no-visited-state" href="site-details/review-site-details">
+							Change<span class="govuk-visually-hidden"> providing the site location</span>
+						</a>
+					</li>
+				</ul>
+			</div>
+			<div class="govuk-summary-card__content">
+				<dl class="govuk-summary-list">
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							Method of providing site location
+						</dt>
+						<dd class="govuk-summary-list__value">
+							File upload
+						</dd>
+					</div>
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							File type
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{% if data['low-complexity-file-type'] == 'kml' %}
+								KML
+							{% elif data['low-complexity-file-type'] == 'shapefile' %}
+								Shapefile
+							{% else %}
+								Shapefile
+							{% endif %}
+						</dd>
+					</div>
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							File uploaded
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{% if data['low-complexity-file-type'] == 'kml' %}
+								my-site-location.kml
+							{% else %}
+								my-site-location.zip
+							{% endif %}
+						</dd>
+					</div>
+				</dl>
+			</div>
+		</div>
+
+		<!-- Site 1 details card -->
+		<div class="govuk-summary-card">
+			<div class="govuk-summary-card__title-wrapper">
+				<h2 class="govuk-summary-card__title">
+					Site 1 details
+				</h2>
+				<ul class="govuk-summary-card__actions">
+					<li class="govuk-summary-card__action">
+						<a class="govuk-link govuk-link--no-visited-state" href="site-details/review-site-details">
+							Change<span class="govuk-visually-hidden"> site 1 details</span>
+						</a>
+					</li>
+				</ul>
+			</div>
+			<div class="govuk-summary-card__content">
+				<dl class="govuk-summary-list">
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							Site name
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ data['low-complexity-site-name'] }}
+						</dd>
+					</div>
+					
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key map-label">
+							Map view
+						</dt>
+						<dd class="govuk-summary-list__value">
+							<img src="/public/images/map-5-points.jpg" alt="Map showing site 1 location" />
+						</dd>
+					</div>
+
+					<div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+						<dt class="govuk-summary-list__key">
+							Type of activity
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ typeOfActivityFormatted | safe }}
+						</dd>
+					</div>
+
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							Activity description
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ data['low-complexity-activity-description'] }}
+						</dd>
+					</div>
+
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							Duration of activity
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ siteDurationFormatted | trim }}
+						</dd>
+					</div>
+
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							Activity schedule
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ data['low-complexity-schedule'] }}
+						</dd>
+					</div>
+
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							Possible impacts of the activity and ways to reduce them
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ data['low-complexity-impacts'] }}
+						</dd>
+					</div>
+				</dl>
+			</div>
+		</div>
+
+		<!-- Environmental assessments card -->
+		<div class="govuk-summary-card">
+			<div class="govuk-summary-card__title-wrapper">
+				<h2 class="govuk-summary-card__title">
+					Environmental assessments
+				</h2>
+			</div>
+			<div class="govuk-summary-card__content">
+				<dl class="govuk-summary-list">
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							How have you assessed the impact of your project on European sites and how you'll reduce this impact?
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ data['low-complexity-european-sites'] }}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							<a class="govuk-link govuk-link--no-visited-state" href="environmental-assessments/european-sites">
+								Change<span class="govuk-visually-hidden"> how you've assessed the impact on European sites</span>
+							</a>
+						</dd>
+					</div>
+
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							How have you assessed the impact of your project on Marine Conservation Zones (MCZs) and how you'll reduce this impact?
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ data['low-complexity-mcz'] }}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							<a class="govuk-link govuk-link--no-visited-state" href="environmental-assessments/marine-conservation-zones">
+								Change<span class="govuk-visually-hidden"> how you've assessed the impact on Marine Conservation Zones</span>
+							</a>
+						</dd>
+					</div>
+
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							How have you assessed the impact of your project on sites of special scientific interest (SSSI) and how you'll reduce this impact?
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ data['low-complexity-sssi'] }}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							<a class="govuk-link govuk-link--no-visited-state" href="environmental-assessments/sites-of-special-scientific-interest">
+								Change<span class="govuk-visually-hidden"> how you've assessed the impact on sites of special scientific interest</span>
+							</a>
+						</dd>
+					</div>
+
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							Is your project located up to 1 nautical mile out at sea?
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ data['low-complexity-wfd-nautical-mile'] }}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							<a class="govuk-link govuk-link--no-visited-state" href="environmental-assessments/water-framework-directive">
+								Change<span class="govuk-visually-hidden"> if your project is located up to 1 nautical mile out at sea</span>
+							</a>
+						</dd>
+					</div>
+
+					{% if data['low-complexity-wfd-nautical-mile'] == 'Yes' %}
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							Uploaded Water Framework Directive assessment
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{% if data['low-complexity-wfd-filename'] %}
+								{{ data['low-complexity-wfd-filename'] }}
+							{% else %}
+								WFD.pdf
+							{% endif %}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							<a class="govuk-link govuk-link--no-visited-state" href="environmental-assessments/water-framework-directive-upload">
+								Change<span class="govuk-visually-hidden"> uploaded Water Framework Directive assessment</span>
+							</a>
+						</dd>
+					</div>
+					{% endif %}
+				</dl>
+			</div>
+		</div>
+
+		<!-- Other permissions card -->
+		<div class="govuk-summary-card">
+			<div class="govuk-summary-card__title-wrapper">
+				<h2 class="govuk-summary-card__title">
+					Other permissions
+				</h2>
+			</div>
+			<div class="govuk-summary-card__content">
+				<dl class="govuk-summary-list">
+					<div class="govuk-summary-list__row{% if data['low-complexity-special-legal-powers'] == 'Yes' %} govuk-summary-list__row--no-border{% endif %}">
+						<dt class="govuk-summary-list__key">
+							Does your organisation have special legal powers to do any of this project?
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ data['low-complexity-special-legal-powers'] }}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							<a class="govuk-link govuk-link--no-visited-state" href="other-permissions/special-legal-powers">
+								Change<span class="govuk-visually-hidden"> if your organisation has special legal powers</span>
+							</a>
+						</dd>
+					</div>
+
+					{% if data['low-complexity-special-legal-powers'] == 'Yes' %}
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							Provide details of the legal powers including the relevant legislation
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ data['low-complexity-special-legal-powers-details'] }}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							<a class="govuk-link govuk-link--no-visited-state govuk-visually-hidden" href="other-permissions/special-legal-powers">
+								Change<span class="govuk-visually-hidden"> details of the legal powers</span>
+							</a>
+						</dd>
+					</div>
+					{% endif %}
+
+					<div class="govuk-summary-list__row{% if data['low-complexity-harbour-authority'] == 'Yes' %} govuk-summary-list__row--no-border{% endif %}">
+						<dt class="govuk-summary-list__key">
+							Is your project located in a harbour authority area?
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ data['low-complexity-harbour-authority'] }}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							<a class="govuk-link govuk-link--no-visited-state" href="other-permissions/harbour-authority">
+								Change<span class="govuk-visually-hidden"> if your project is located in a harbour authority area</span>
+							</a>
+						</dd>
+					</div>
+
+					{% if data['low-complexity-harbour-authority'] == 'Yes' %}
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							Provide details of the harbour authority
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ data['low-complexity-harbour-authority-details'] }}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							<a class="govuk-link govuk-link--no-visited-state govuk-visually-hidden" href="other-permissions/harbour-authority">
+								Change<span class="govuk-visually-hidden"> details of the harbour authority</span>
+							</a>
+						</dd>
+					</div>
+					{% endif %}
+
+					<div class="govuk-summary-list__row{% if data['low-complexity-other-permissions'] == 'Yes' %} govuk-summary-list__row--no-border{% endif %}">
+						<dt class="govuk-summary-list__key">
+							Have you applied to, or got permission from, any other authorities in relation to this project?
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ data['low-complexity-other-permissions'] }}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							<a class="govuk-link govuk-link--no-visited-state" href="other-permissions/other-authorities">
+								Change<span class="govuk-visually-hidden"> if you've applied to other authorities</span>
+							</a>
+						</dd>
+					</div>
+
+					{% if data['low-complexity-other-permissions'] == 'Yes' %}
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							Include details of the organisations, relevant contact details and any reference numbers
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ data['low-complexity-other-permissions-details'] }}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							<a class="govuk-link govuk-link--no-visited-state govuk-visually-hidden" href="other-permissions/other-authorities">
+								Change<span class="govuk-visually-hidden"> details of other authorities</span>
+							</a>
+						</dd>
+					</div>
+					{% endif %}
+
+					<div class="govuk-summary-list__row{% if data['low-complexity-consultation'] == 'Yes' %} govuk-summary-list__row--no-border{% endif %}">
+						<dt class="govuk-summary-list__key">
+							Have you consulted with any public groups or organisations before making this application?
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ data['low-complexity-consultation'] }}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							<a class="govuk-link govuk-link--no-visited-state" href="other-permissions/consultation-and-advertising">
+								Change<span class="govuk-visually-hidden"> if you've consulted with public groups or organisations</span>
+							</a>
+						</dd>
+					</div>
+
+					{% if data['low-complexity-consultation'] == 'Yes' %}
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							Provide details of who you spoke to and the advice given
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ data['low-complexity-consultation-details'] }}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							<a class="govuk-link govuk-link--no-visited-state govuk-visually-hidden" href="other-permissions/consultation-and-advertising">
+								Change<span class="govuk-visually-hidden"> details of who you consulted</span>
+							</a>
+						</dd>
+					</div>
+					{% endif %}
+				</dl>
+			</div>
+		</div>
+
+		<!-- Sharing your project information publicly card -->
+		<div class="govuk-summary-card">
+			<div class="govuk-summary-card__title-wrapper">
+				<h2 class="govuk-summary-card__title">
+					Sharing your project information publicly
+				</h2>
+			</div>
+			<div class="govuk-summary-card__content">
+				<dl class="govuk-summary-list">
+					<div class="govuk-summary-list__row{% if data['low-complexity-sharing-information'] == 'Yes' %} govuk-summary-list__row--no-border{% endif %}">
+						<dt class="govuk-summary-list__key">
+							Is there any reason your information cannot be shared publicly?
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ data['low-complexity-sharing-information'] }}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							<a class="govuk-link govuk-link--no-visited-state" href="sharing-your-project-information-publicly">
+								Change<span class="govuk-visually-hidden"> if there is any reason your information cannot be shared publicly</span>
+							</a>
+						</dd>
+					</div>
+
+					{% if data['low-complexity-sharing-information'] == 'Yes' %}
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							Provide details of why you do not consent to your project information being published
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ data['low-complexity-sharing-information-details'] }}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							<a class="govuk-link govuk-link--no-visited-state govuk-visually-hidden" href="sharing-your-project-information-publicly">
+								Change<span class="govuk-visually-hidden"> details of why you do not consent</span>
+							</a>
+						</dd>
+					</div>
+					{% endif %}
+				</dl>
+			</div>
+		</div>
+
+		<form action="declaration" method="post" novalidate>
+			{{ govukButton({
+				text: "Continue"
+			}) }}
+		</form>
+
+	</div>
+</div>
+{% endblock %}
+

@@ -391,6 +391,57 @@ module.exports = function (router) {
   });
 
   ///////////////////////////////////////////
+  // Sharing your project information publicly
+  ///////////////////////////////////////////
+
+  // Sharing your project information publicly GET route
+  router.get(`/versions/${version}/${section}/sharing-your-project-information-publicly`, function (req, res) {
+    // Clear error flags when navigating to the page
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errortypetwo'] = "false";
+    res.render(`versions/${version}/${section}/sharing-your-project-information-publicly`);
+  });
+
+  // Sharing your project information publicly router (POST)
+  router.post(`/versions/${version}/${section}/sharing-your-project-information-publicly-router`, function (req, res) {
+    // Clear error flags
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errortypetwo'] = "false";
+
+    // Get the radio value
+    const sharingConsent = req.session.data['low-complexity-sharing-information'];
+    const sharingDetails = req.session.data['low-complexity-sharing-information-details'];
+
+    // Validate: check if radio is selected
+    if (!sharingConsent) {
+      // Set error flags
+      req.session.data['errorthispage'] = "true";
+      req.session.data['errortypeone'] = "true";
+      
+      // Redirect back to the same page with errors
+      res.redirect('sharing-your-project-information-publicly');
+    } else if (sharingConsent === 'Yes' && (!sharingDetails || sharingDetails.trim() === '')) {
+      // If Yes is selected, check if textarea has content
+      req.session.data['errorthispage'] = "true";
+      req.session.data['errortypetwo'] = "true";
+      
+      // Redirect back to the same page with errors
+      res.redirect('sharing-your-project-information-publicly');
+    } else {
+      // Validation passed - set completion flag and redirect to task list
+      req.session.data['low-complexity-sharing-information-completed'] = true;
+      res.redirect('marine-licence-start-page');
+    }
+  });
+
+  // Check your answers GET route (shell)
+  router.get(`/versions/${version}/${section}/check-your-answers`, function (req, res) {
+    res.render(`versions/${version}/${section}/check-your-answers`);
+  });
+
+  ///////////////////////////////////////////
   // Environmental assessments section
   ///////////////////////////////////////////
 
@@ -643,6 +694,11 @@ module.exports = function (router) {
     delete req.session.data['low-complexity-consultation'];
     delete req.session.data['low-complexity-consultation-details'];
     delete req.session.data['low-complexity-consultation-completed'];
+    
+    // Clear sharing information data
+    delete req.session.data['low-complexity-sharing-information'];
+    delete req.session.data['low-complexity-sharing-information-details'];
+    delete req.session.data['low-complexity-sharing-information-completed'];
     
     // Clear error flags
     delete req.session.data['errorthispage'];
