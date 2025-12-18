@@ -573,6 +573,48 @@ Removal of any substance or object
 			</div>
 		</div>
 
+		<!-- Sharing your project information publicly card -->
+		<div class="govuk-summary-card">
+			<div class="govuk-summary-card__title-wrapper">
+				<h2 class="govuk-summary-card__title">
+					Sharing your project information publicly
+				</h2>
+			</div>
+			<div class="govuk-summary-card__content">
+				<dl class="govuk-summary-list">
+					<div class="govuk-summary-list__row{% if data['low-complexity-sharing-information'] == 'Yes' %} govuk-summary-list__row--no-border{% endif %}">
+						<dt class="govuk-summary-list__key">
+							Is there any reason your information cannot be shared publicly?
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ data['low-complexity-sharing-information'] }}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							<a class="govuk-link govuk-link--no-visited-state" href="sharing-your-project-information-publicly">
+								Change<span class="govuk-visually-hidden"> if there is any reason your information cannot be shared publicly</span>
+							</a>
+						</dd>
+					</div>
+
+					{% if data['low-complexity-sharing-information'] == 'Yes' %}
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							Provide details of why you do not consent to your project information being published
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ data['low-complexity-sharing-information-details'] }}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							<a class="govuk-link govuk-link--no-visited-state govuk-visually-hidden" href="sharing-your-project-information-publicly">
+								Change<span class="govuk-visually-hidden"> details of why you do not consent</span>
+							</a>
+						</dd>
+					</div>
+					{% endif %}
+				</dl>
+			</div>
+		</div>
+
 	</div>
 </div>
 {% endblock %}
