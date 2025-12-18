@@ -129,20 +129,32 @@ Marine licence start page
 		  </div>
 		</li>
 
-			<li class="govuk-task-list__item govuk-task-list__item--with-link">
-			  <div class="govuk-task-list__name-and-hint">
-				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="how-we-use-information-status">
-				  How we use your project information
-				</a>
-			  </div>
-			  
-			  <div class="govuk-task-list__status" id="how-we-use-information-status">
+		<li class="govuk-task-list__item govuk-task-list__item--with-link">
+		  <div class="govuk-task-list__name-and-hint">
+			<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="sharing-your-project-information-publicly" aria-describedby="sharing-information-status">
+			  Sharing your project information publicly
+			</a>
+		  </div>
+		  
+		  <div class="govuk-task-list__status" id="sharing-information-status">
+			{% if data['low-complexity-sharing-information-completed'] %}
+				Completed
+			{% else %}
 				<strong class="govuk-tag govuk-tag--blue">
 					Not yet started
 				</strong>
-			  </div>
-			</li>
-		</ul>
+			{% endif %}
+		  </div>
+		</li>
+	</ul>
+
+	{% if data['low-complexity-project-background-completed'] and data['low-complexity-duration-completed'] and data['low-complexity-dates-completed'] and data['low-complexity-cost-completed'] and data['low-complexity-site-name-completed'] and data['low-complexity-type-of-activity-completed'] and data['low-complexity-activity-description-completed'] and data['low-complexity-site-duration-completed'] and data['low-complexity-schedule-completed'] and data['low-complexity-impacts-completed'] and data['low-complexity-european-sites-completed'] and data['low-complexity-mcz-completed'] and data['low-complexity-sssi-completed'] and data['low-complexity-wfd-completed'] and data['low-complexity-special-legal-powers-completed'] and data['low-complexity-harbour-authority-completed'] and data['low-complexity-other-permissions-completed'] and data['low-complexity-consultation-completed'] and data['low-complexity-sharing-information-completed'] %}
+	<form action="check-your-answers" method="post">
+		<button class="govuk-button" data-module="govuk-button">
+			Check and send your application
+		</button>
+	</form>
+	{% endif %}
 
 	</div>
 </div>

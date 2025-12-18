@@ -1,0 +1,143 @@
+{% extends "../layouts/low-complexity.html" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% block beforeContent %}
+    {% include "../includes/phase-banner.html" %}
+    {% if data['user_type'] === 'organisation' %}
+        {% include "../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link govuk-link--no-visited-state" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+Sharing your project information publicly
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+{% if data['errorthispage'] == "true" %}
+Error:
+{% endif %}
+
+{{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% set sharingDetailsTextarea %}
+{{ govukTextarea({
+    id: "low-complexity-sharing-information-details",
+    name: "low-complexity-sharing-information-details",
+    value: data['low-complexity-sharing-information-details'],
+    rows: 5,
+    label: {
+        text: "Provide details of why you do not consent to your project information being published"
+    },
+    errorMessage: {
+        text: "Enter details of why you do not consent"
+    } if data['errortypetwo'] == "true"
+}) }}
+{% endset %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-two-thirds">
+		{% if data['errorthispage'] == "true" %}
+		{{ govukErrorSummary({
+			titleText: "There is a problem",
+			errorList: [
+				{
+					text: "Select if there is any reason your information cannot be shared publicly" if data['errortypeone'] == "true" else "Enter details of why you do not consent",
+					href: "#low-complexity-sharing-information" if data['errortypeone'] == "true" else "#low-complexity-sharing-information-details"
+				}
+			]
+		}) }}
+		{% endif %}
+
+		<!--  END OF 'error summary' -->
+
+		<span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
+		<h1 class="govuk-heading-l">
+			{{ pageHeadingTextHTML }}
+		</h1>
+
+		<p class="govuk-body">The MMO must keep a register of information relating to applications and licences it's responsible for. This register must be made available to the public.</p>
+
+		<p class="govuk-body">We will not publish your email address, phone number or the cost of your marine works.</p>
+
+		<h2 class="govuk-heading-m">Information that cannot be publicly shared</h2>
+
+		<p class="govuk-body">Information on your application will not be published on the MMO's public register if the:</p>
+
+		<ul class="govuk-list govuk-list--bullet">
+			<li>Secretary of State decides publishing it contains sensitive information that would be a threat to national security</li>
+			<li>MMO decides the information is commercially sensitive</li>
+		</ul>
+
+		<form action="sharing-your-project-information-publicly-router" method="post" novalidate>
+
+			{{ govukRadios({
+				name: "low-complexity-sharing-information",
+				id: "low-complexity-sharing-information",
+				fieldset: {
+					legend: {
+						text: "Is there any reason your information cannot be shared publicly?",
+						isPageHeading: false,
+						classes: "govuk-fieldset__legend--m"
+					}
+				},
+				items: [
+					{
+						value: "Yes",
+						text: "Yes",
+						conditional: {
+							html: sharingDetailsTextarea
+						},
+						checked: data['low-complexity-sharing-information'] == "Yes"
+					},
+					{
+						value: "No",
+						text: "No",
+						checked: data['low-complexity-sharing-information'] == "No"
+					}
+				],
+				errorMessage: {
+					text: "Select if there is any reason your information cannot be shared publicly"
+				} if data['errortypeone'] == "true"
+			}) }}
+
+			<div class="govuk-button-group">
+				{{ govukButton({
+					text: "Save and continue"
+				}) }}
+
+				<a class="govuk-link" href="javascript:history.back()">Cancel</a>
+			</div>
+
+		</form>
+
+	</div>
+</div>
+
+<!-- ERROR LOGIC  drop down to toggle states  -->
+<form method="post" action="#" class="for4" style=" float: left; position: relative; bottom:-325px; padding-bottom: 30px;  ">
+
+	<select style="height:30px;" onchange="window.location.href='?'+this.value">
+
+		<option value="errorthispage=false&errortypeone=false&errortypetwo=false&" {% if data['errorthispage'] != "true" %}selected{% endif %}>Errors - Off</option>
+
+		<option value="errorthispage=true&errortypeone=true&errortypetwo=false&" {% if data['errortypeone'] == 'true' and data['errortypetwo'] != 'true' %}selected{% endif %}>Error 1 - No radio selected</option>
+
+		<option value="errorthispage=true&errortypeone=false&errortypetwo=true&" {% if data['errortypeone'] != 'true' and data['errortypetwo'] == 'true' %}selected{% endif %}>Error 2 - Textarea left blank</option>
+
+	</select>
+
+</form>
+<!--  END OF ERROR LOGIC -->
+
+{% endblock %}
+
