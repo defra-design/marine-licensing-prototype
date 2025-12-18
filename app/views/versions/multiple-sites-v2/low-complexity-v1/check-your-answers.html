@@ -353,6 +353,226 @@ Removal of any substance or object
 			</div>
 		</div>
 
+		<!-- Environmental assessments card -->
+		<div class="govuk-summary-card">
+			<div class="govuk-summary-card__title-wrapper">
+				<h2 class="govuk-summary-card__title">
+					Environmental assessments
+				</h2>
+			</div>
+			<div class="govuk-summary-card__content">
+				<dl class="govuk-summary-list">
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							How have you assessed the impact of your project on European sites and how you'll reduce this impact?
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ data['low-complexity-european-sites'] }}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							<a class="govuk-link govuk-link--no-visited-state" href="environmental-assessments/european-sites">
+								Change<span class="govuk-visually-hidden"> how you've assessed the impact on European sites</span>
+							</a>
+						</dd>
+					</div>
+
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							How have you assessed the impact of your project on Marine Conservation Zones (MCZs) and how you'll reduce this impact?
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ data['low-complexity-mcz'] }}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							<a class="govuk-link govuk-link--no-visited-state" href="environmental-assessments/marine-conservation-zones">
+								Change<span class="govuk-visually-hidden"> how you've assessed the impact on Marine Conservation Zones</span>
+							</a>
+						</dd>
+					</div>
+
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							How have you assessed the impact of your project on sites of special scientific interest (SSSI) and how you'll reduce this impact?
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ data['low-complexity-sssi'] }}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							<a class="govuk-link govuk-link--no-visited-state" href="environmental-assessments/sites-of-special-scientific-interest">
+								Change<span class="govuk-visually-hidden"> how you've assessed the impact on sites of special scientific interest</span>
+							</a>
+						</dd>
+					</div>
+
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							Is your project located up to 1 nautical mile out at sea?
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ data['low-complexity-wfd-nautical-mile'] }}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							<a class="govuk-link govuk-link--no-visited-state" href="environmental-assessments/water-framework-directive">
+								Change<span class="govuk-visually-hidden"> if your project is located up to 1 nautical mile out at sea</span>
+							</a>
+						</dd>
+					</div>
+
+					{% if data['low-complexity-wfd-nautical-mile'] == 'Yes' %}
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							Uploaded Water Framework Directive assessment
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{% if data['low-complexity-wfd-filename'] %}
+								{{ data['low-complexity-wfd-filename'] }}
+							{% else %}
+								WFD.pdf
+							{% endif %}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							<a class="govuk-link govuk-link--no-visited-state" href="environmental-assessments/water-framework-directive-upload">
+								Change<span class="govuk-visually-hidden"> uploaded Water Framework Directive assessment</span>
+							</a>
+						</dd>
+					</div>
+					{% endif %}
+				</dl>
+			</div>
+		</div>
+
+		<!-- Other permissions card -->
+		<div class="govuk-summary-card">
+			<div class="govuk-summary-card__title-wrapper">
+				<h2 class="govuk-summary-card__title">
+					Other permissions
+				</h2>
+			</div>
+			<div class="govuk-summary-card__content">
+				<dl class="govuk-summary-list">
+					<div class="govuk-summary-list__row{% if data['low-complexity-special-legal-powers'] == 'Yes' %} govuk-summary-list__row--no-border{% endif %}">
+						<dt class="govuk-summary-list__key">
+							Does your organisation have special legal powers to do any of this project?
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ data['low-complexity-special-legal-powers'] }}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							<a class="govuk-link govuk-link--no-visited-state" href="other-permissions/special-legal-powers">
+								Change<span class="govuk-visually-hidden"> if your organisation has special legal powers</span>
+							</a>
+						</dd>
+					</div>
+
+					{% if data['low-complexity-special-legal-powers'] == 'Yes' %}
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							Provide details of the legal powers including the relevant legislation
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ data['low-complexity-special-legal-powers-details'] }}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							<a class="govuk-link govuk-link--no-visited-state govuk-visually-hidden" href="other-permissions/special-legal-powers">
+								Change<span class="govuk-visually-hidden"> details of the legal powers</span>
+							</a>
+						</dd>
+					</div>
+					{% endif %}
+
+					<div class="govuk-summary-list__row{% if data['low-complexity-harbour-authority'] == 'Yes' %} govuk-summary-list__row--no-border{% endif %}">
+						<dt class="govuk-summary-list__key">
+							Is your project located in a harbour authority area?
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ data['low-complexity-harbour-authority'] }}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							<a class="govuk-link govuk-link--no-visited-state" href="other-permissions/harbour-authority">
+								Change<span class="govuk-visually-hidden"> if your project is located in a harbour authority area</span>
+							</a>
+						</dd>
+					</div>
+
+					{% if data['low-complexity-harbour-authority'] == 'Yes' %}
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							Provide details of the harbour authority
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ data['low-complexity-harbour-authority-details'] }}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							<a class="govuk-link govuk-link--no-visited-state govuk-visually-hidden" href="other-permissions/harbour-authority">
+								Change<span class="govuk-visually-hidden"> details of the harbour authority</span>
+							</a>
+						</dd>
+					</div>
+					{% endif %}
+
+					<div class="govuk-summary-list__row{% if data['low-complexity-other-permissions'] == 'Yes' %} govuk-summary-list__row--no-border{% endif %}">
+						<dt class="govuk-summary-list__key">
+							Have you applied to, or got permission from, any other authorities in relation to this project?
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ data['low-complexity-other-permissions'] }}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							<a class="govuk-link govuk-link--no-visited-state" href="other-permissions/other-authorities">
+								Change<span class="govuk-visually-hidden"> if you've applied to other authorities</span>
+							</a>
+						</dd>
+					</div>
+
+					{% if data['low-complexity-other-permissions'] == 'Yes' %}
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							Include details of the organisations, relevant contact details and any reference numbers
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ data['low-complexity-other-permissions-details'] }}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							<a class="govuk-link govuk-link--no-visited-state govuk-visually-hidden" href="other-permissions/other-authorities">
+								Change<span class="govuk-visually-hidden"> details of other authorities</span>
+							</a>
+						</dd>
+					</div>
+					{% endif %}
+
+					<div class="govuk-summary-list__row{% if data['low-complexity-consultation'] == 'Yes' %} govuk-summary-list__row--no-border{% endif %}">
+						<dt class="govuk-summary-list__key">
+							Have you consulted with any public groups or organisations before making this application?
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ data['low-complexity-consultation'] }}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							<a class="govuk-link govuk-link--no-visited-state" href="other-permissions/consultation-and-advertising">
+								Change<span class="govuk-visually-hidden"> if you've consulted with public groups or organisations</span>
+							</a>
+						</dd>
+					</div>
+
+					{% if data['low-complexity-consultation'] == 'Yes' %}
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							Provide details of who you spoke to and the advice given
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ data['low-complexity-consultation-details'] }}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							<a class="govuk-link govuk-link--no-visited-state govuk-visually-hidden" href="other-permissions/consultation-and-advertising">
+								Change<span class="govuk-visually-hidden"> details of who you consulted</span>
+							</a>
+						</dd>
+					</div>
+					{% endif %}
+				</dl>
+			</div>
+		</div>
+
 	</div>
 </div>
 {% endblock %}
