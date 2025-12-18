@@ -1,6 +1,7 @@
 {% extends "../layouts/low-complexity.html" %}
 
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% block beforeContent %}
     {% include "../includes/phase-banner.html" %}
@@ -614,6 +615,12 @@ Removal of any substance or object
 				</dl>
 			</div>
 		</div>
+
+		<form action="declaration" method="post" novalidate>
+			{{ govukButton({
+				text: "Continue"
+			}) }}
+		</form>
 
 	</div>
 </div>
