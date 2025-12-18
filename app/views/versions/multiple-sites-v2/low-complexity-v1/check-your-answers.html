@@ -1,5 +1,7 @@
 {% extends "../layouts/low-complexity.html" %}
 
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+
 {% block beforeContent %}
     {% include "../includes/phase-banner.html" %}
     {% if data['user_type'] === 'organisation' %}
@@ -12,6 +14,28 @@
 {% set pageHeadingTextHTML %}
 Check your answers before sending your application
 {% endset %}
+
+<!-- Format start date -->
+{% set startDateFormatted %}
+{{ data['start-date-day'] }} {{ data['start-date-month'] | toMonth }} {{ data['start-date-year'] }}
+{% endset %}
+
+<!-- Format end date -->
+{% set endDateFormatted %}
+{{ data['end-date-day'] }} {{ data['end-date-month'] | toMonth }} {{ data['end-date-year'] }}
+{% endset %}
+
+<!-- Format duration -->
+{% set durationFormatted %}
+{% if data['low-complexity-duration-years'] | int > 0 and data['low-complexity-duration-months'] | int > 0 %}
+{{ data['low-complexity-duration-years'] }} year{% if data['low-complexity-duration-years'] | int != 1 %}s{% endif %}, {{ data['low-complexity-duration-months'] }} month{% if data['low-complexity-duration-months'] | int != 1 %}s{% endif %}
+{% elif data['low-complexity-duration-years'] | int > 0 %}
+{{ data['low-complexity-duration-years'] }} year{% if data['low-complexity-duration-years'] | int != 1 %}s{% endif %}
+{% elif data['low-complexity-duration-months'] | int > 0 %}
+{{ data['low-complexity-duration-months'] }} month{% if data['low-complexity-duration-months'] | int != 1 %}s{% endif %}
+{% endif %}
+{% endset %}
+
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
 {% block pageTitle %}
@@ -27,7 +51,97 @@ Check your answers before sending your application
 			{{ pageHeadingTextHTML }}
 		</h1>
 
-		<p class="govuk-body">This is a placeholder page for checking and submitting your marine licence application.</p>
+		<h2 class="govuk-heading-m">Project details</h2>
+
+		{{ govukSummaryList({
+			rows: [
+				{
+					key: {
+						text: "Project name"
+					},
+					value: {
+						text: data['low-complexity-project-name-text-input']
+					},
+					actions: {
+						items: [
+							{
+								href: "project-name",
+								text: "Change",
+								visuallyHiddenText: "project name"
+							}
+						]
+					}
+				},
+				{
+					key: {
+						text: "Project background"
+					},
+					value: {
+						text: data['low-complexity-project-background']
+					},
+					actions: {
+						items: [
+							{
+								href: "project-details/project-background",
+								text: "Change",
+								visuallyHiddenText: "project background"
+							}
+						]
+					}
+				},
+				{
+					key: {
+						text: "Duration of project"
+					},
+					value: {
+						html: durationFormatted | trim
+					},
+					actions: {
+						items: [
+							{
+								href: "project-details/duration",
+								text: "Change",
+								visuallyHiddenText: "duration of project"
+							}
+						]
+					}
+				},
+				{
+					key: {
+						text: "Dates of marine works"
+					},
+					value: {
+						html: (startDateFormatted | trim) + " to " + (endDateFormatted | trim)
+					},
+					actions: {
+						items: [
+							{
+								href: "project-details/dates-of-marine-works",
+								text: "Change",
+								visuallyHiddenText: "dates of marine works"
+							}
+						]
+					}
+				},
+				{
+					key: {
+						text: "Cost of marine works"
+					},
+					value: {
+						text: "£" + (data['low-complexity-cost'] | addCommas)
+					},
+					actions: {
+						items: [
+							{
+								href: "project-details/cost-of-marine-works",
+								text: "Change",
+								visuallyHiddenText: "cost of marine works"
+							}
+						]
+					}
+				}
+			]
+		}) }}
 
 	</div>
 </div>
