@@ -316,7 +316,7 @@ Projects
 						},
 						{
 							value: "jon-doe",
-							text: "Jon Doe"
+							text: "John Smith"
 						},
 						{
 							value: "sarah-chen",
@@ -445,7 +445,7 @@ Projects
 						}) }}
 					</td>
 					<td class="govuk-table__cell" data-sort-value="250906">6 Sep 2025</td>
-					<td class="govuk-table__cell">Jon Doe</td>
+					<td class="govuk-table__cell">John Smith</td>
 					<td class="govuk-table__cell">
 						<a href="#" class="govuk-link--no-visited-state">View details</a>
 					</td>
@@ -462,7 +462,7 @@ Projects
 						}) }}
 					</td>
 					<td class="govuk-table__cell" data-sort-value="250911">11 Sep 2025</td>
-					<td class="govuk-table__cell">Jon Doe</td>
+					<td class="govuk-table__cell">John Smith</td>
 					<td class="govuk-table__cell">
 						<a href="#" class="govuk-link--no-visited-state">View details</a>
 					</td>
@@ -530,7 +530,7 @@ Projects
 						}) }}
 					</td>
 					<td class="govuk-table__cell" data-sort-value="-">-</td>
-					<td class="govuk-table__cell">Jon Doe</td>
+					<td class="govuk-table__cell">John Smith</td>
 					<td class="govuk-table__cell">
 						<a href="#" class="govuk-link--no-visited-state govuk-!-margin-right-4">Continue</a> <a href="#" class="govuk-link--no-visited-state">Delete</a>
 					</td>
@@ -564,7 +564,7 @@ Projects
 						}) }}
 					</td>
 					<td class="govuk-table__cell" data-sort-value="251111">11 Nov 2025</td>
-					<td class="govuk-table__cell">Jon Doe</td>
+					<td class="govuk-table__cell">John Smith</td>
 					<td class="govuk-table__cell">
 						<a href="#" class="govuk-link--no-visited-state">View details</a>
 					</td>
@@ -580,7 +580,7 @@ Projects
 						}) }}
 					</td>
 					<td class="govuk-table__cell" data-sort-value="251117">17 Nov 2025</td>
-					<td class="govuk-table__cell">Jon Doe</td>
+					<td class="govuk-table__cell">John Smith</td>
 					<td class="govuk-table__cell">
 						<a href="#" class="govuk-link--no-visited-state">View details</a>
 					</td>
@@ -658,7 +658,7 @@ document.addEventListener('DOMContentLoaded', function() {
 	const personNames = {
 		'alex-williams': 'Alex Williams',
 		'james-thompson': 'James Thompson',
-		'jon-doe': 'Jon Doe',
+		'jon-doe': 'John Smith',
 		'sarah-chen': 'Sarah Chen'
 	};
 	
@@ -964,7 +964,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			
 			// Apply Show radio filter
 			if (selectedFilter === 'my-projects') {
-				// Show only Jon Doe's projects (assuming current user)
+				// Show only John Smith's projects (assuming current user)
 				if (!creator || !creator.includes('jon-doe')) {
 					show = false;
 				}
