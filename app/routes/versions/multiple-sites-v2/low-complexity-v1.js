@@ -312,6 +312,11 @@ module.exports = function (router) {
     const harbourAuthority = req.session.data['low-complexity-harbour-authority'];
     const harbourAuthorityDetails = req.session.data['low-complexity-harbour-authority-details'];
 
+    // If "No" is selected, clear the textarea data
+    if (harbourAuthority === 'No') {
+      delete req.session.data['low-complexity-harbour-authority-details'];
+    }
+
     // Validate: check if radio is selected
     if (!harbourAuthority) {
       // Set error flags
@@ -366,6 +371,11 @@ module.exports = function (router) {
     // Get the radio value
     const specialLegalPowers = req.session.data['low-complexity-special-legal-powers'];
     const specialLegalPowersDetails = req.session.data['low-complexity-special-legal-powers-details'];
+
+    // If "No" is selected, clear the textarea data
+    if (specialLegalPowers === 'No') {
+      delete req.session.data['low-complexity-special-legal-powers-details'];
+    }
 
     // Validate: check if radio is selected
     if (!specialLegalPowers) {
@@ -422,6 +432,11 @@ module.exports = function (router) {
     const otherPermissions = req.session.data['low-complexity-other-permissions'];
     const otherPermissionsDetails = req.session.data['low-complexity-other-permissions-details'];
 
+    // If "No" is selected, clear the textarea data
+    if (otherPermissions === 'No') {
+      delete req.session.data['low-complexity-other-permissions-details'];
+    }
+
     // Validate: check if radio is selected
     if (!otherPermissions) {
       // Set error flags
@@ -476,6 +491,11 @@ module.exports = function (router) {
     // Get the radio value
     const consultation = req.session.data['low-complexity-consultation'];
     const consultationDetails = req.session.data['low-complexity-consultation-details'];
+
+    // If "No" is selected, clear the textarea data
+    if (consultation === 'No') {
+      delete req.session.data['low-complexity-consultation-details'];
+    }
 
     // Validate: check if radio is selected
     if (!consultation) {
@@ -535,6 +555,11 @@ module.exports = function (router) {
     // Get the radio value
     const sharingConsent = req.session.data['low-complexity-sharing-information'];
     const sharingDetails = req.session.data['low-complexity-sharing-information-details'];
+
+    // If "No" is selected, clear the textarea data
+    if (sharingConsent === 'No') {
+      delete req.session.data['low-complexity-sharing-information-details'];
+    }
 
     // Validate: check if radio is selected
     if (!sharingConsent) {
