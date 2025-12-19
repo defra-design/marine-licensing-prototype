@@ -84,7 +84,9 @@ Error:
                     text: "Save and continue"
                 }) }}
 
-                <a class="govuk-link" href="javascript:history.back()">Cancel</a>
+                {% if data['camefromcheckanswers'] != 'true' %}
+                <a class="govuk-link govuk-link--no-visited-state" href="javascript:history.back()">Cancel</a>
+                {% endif %}
             </div>
 
         </form>

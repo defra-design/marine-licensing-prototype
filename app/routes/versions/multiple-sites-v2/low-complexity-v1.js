@@ -32,8 +32,14 @@ module.exports = function (router) {
       // Redirect back to the same page with errors
       res.redirect('project-name-start');
     } else {
-      // Validation passed - redirect to next page (doesn't exist yet)
-      res.redirect('marine-licence-start-page');
+      // Check if we need to return to check answers
+      if (req.session.data['camefromcheckanswers'] === 'true') {
+        req.session.data['camefromcheckanswers'] = false;
+        res.redirect('check-your-answers');
+      } else {
+        // Validation passed - redirect to next page
+        res.redirect('marine-licence-start-page');
+      }
     }
   });
 
@@ -42,6 +48,12 @@ module.exports = function (router) {
     // Clear error flags when navigating to the page
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
+    
+    // Capture the query parameter if coming from check answers
+    if (req.query.camefromcheckanswers === 'true') {
+      req.session.data['camefromcheckanswers'] = 'true';
+    }
+    
     res.render(`versions/${version}/${section}/project-name`);
   });
 
@@ -59,6 +71,12 @@ module.exports = function (router) {
     // Clear error flags when navigating to the page
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
+    
+    // Capture the query parameter if coming from check answers
+    if (req.query.camefromcheckanswers === 'true') {
+      req.session.data['camefromcheckanswers'] = 'true';
+    }
+    
     res.render(`versions/${version}/${section}/project-details/project-background`);
   });
 
@@ -80,9 +98,16 @@ module.exports = function (router) {
       // Redirect back to the same page with errors
       res.redirect('project-background');
     } else {
-      // Validation passed - set completion flag and redirect to project details index
+      // Validation passed - set completion flag
       req.session.data['low-complexity-project-background-completed'] = true;
-      res.redirect('./');
+      
+      // Check if we need to return to check answers
+      if (req.session.data['camefromcheckanswers'] === 'true') {
+        req.session.data['camefromcheckanswers'] = false;
+        res.redirect('../check-your-answers');
+      } else {
+        res.redirect('./');
+      }
     }
   });
 
@@ -92,6 +117,12 @@ module.exports = function (router) {
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
     req.session.data['errortypetwo'] = "false";
+    
+    // Capture the query parameter if coming from check answers
+    if (req.query.camefromcheckanswers === 'true') {
+      req.session.data['camefromcheckanswers'] = 'true';
+    }
+    
     res.render(`versions/${version}/${section}/project-details/duration`);
   });
 
@@ -125,9 +156,16 @@ module.exports = function (router) {
       // Redirect back to the same page with errors
       res.redirect('duration');
     } else {
-      // Validation passed - set completion flag and redirect to project details index
+      // Validation passed - set completion flag
       req.session.data['low-complexity-duration-completed'] = true;
-      res.redirect('./');
+      
+      // Check if we need to return to check answers
+      if (req.session.data['camefromcheckanswers'] === 'true') {
+        req.session.data['camefromcheckanswers'] = false;
+        res.redirect('../check-your-answers');
+      } else {
+        res.redirect('./');
+      }
     }
   });
 
@@ -137,6 +175,12 @@ module.exports = function (router) {
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
     req.session.data['errortypetwo'] = "false";
+    
+    // Capture the query parameter if coming from check answers
+    if (req.query.camefromcheckanswers === 'true') {
+      req.session.data['camefromcheckanswers'] = 'true';
+    }
+    
     res.render(`versions/${version}/${section}/project-details/dates-of-marine-works`);
   });
 
@@ -175,9 +219,16 @@ module.exports = function (router) {
       // Redirect back to the same page with errors
       res.redirect('dates-of-marine-works');
     } else {
-      // Validation passed - set completion flag and redirect to project details index
+      // Validation passed - set completion flag
       req.session.data['low-complexity-dates-completed'] = true;
-      res.redirect('./');
+      
+      // Check if we need to return to check answers
+      if (req.session.data['camefromcheckanswers'] === 'true') {
+        req.session.data['camefromcheckanswers'] = false;
+        res.redirect('../check-your-answers');
+      } else {
+        res.redirect('./');
+      }
     }
   });
 
@@ -186,6 +237,12 @@ module.exports = function (router) {
     // Clear error flags when navigating to the page
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
+    
+    // Capture the query parameter if coming from check answers
+    if (req.query.camefromcheckanswers === 'true') {
+      req.session.data['camefromcheckanswers'] = 'true';
+    }
+    
     res.render(`versions/${version}/${section}/project-details/cost-of-marine-works`);
   });
 
@@ -207,9 +264,16 @@ module.exports = function (router) {
       // Redirect back to the same page with errors
       res.redirect('cost-of-marine-works');
     } else {
-      // Validation passed - set completion flag and redirect to project details index
+      // Validation passed - set completion flag
       req.session.data['low-complexity-cost-completed'] = true;
-      res.redirect('./');
+      
+      // Check if we need to return to check answers
+      if (req.session.data['camefromcheckanswers'] === 'true') {
+        req.session.data['camefromcheckanswers'] = false;
+        res.redirect('../check-your-answers');
+      } else {
+        res.redirect('./');
+      }
     }
   });
 
