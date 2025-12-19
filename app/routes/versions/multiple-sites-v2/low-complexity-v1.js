@@ -665,12 +665,8 @@ module.exports = function (router) {
     }
     
     // Smart routing logic
-    // If coming from main check-your-answers with file uploaded, go to WFD check-answers
-    if (fromMainCheckAnswers && req.session.data['low-complexity-wfd-file-uploaded']) {
-      res.redirect('water-framework-directive-check-answers?camefromcheckanswers=true');
-    }
-    // If file uploaded AND not coming from WFD check-answers, go to WFD check-answers
-    else if (req.session.data['low-complexity-wfd-file-uploaded'] && !fromCheckAnswers) {
+    // If file uploaded AND not coming from WFD check-answers AND not coming from main check-answers, go to WFD check-answers
+    if (req.session.data['low-complexity-wfd-file-uploaded'] && !fromCheckAnswers && !fromMainCheckAnswers) {
       res.redirect('water-framework-directive-check-answers');
     }
     // Otherwise render the question page
@@ -725,10 +721,12 @@ module.exports = function (router) {
       
       // If file already exists and coming from any check answers, skip upload
       if (fileAlreadyUploaded && (fromMainCheckAnswers || fromWFDCheckAnswers)) {
-        // Go back to WFD check-answers
         if (fromMainCheckAnswers) {
-          res.redirect('water-framework-directive-check-answers?camefromcheckanswers=true');
+          // Go directly back to main check-your-answers (skip WFD check-answers)
+          req.session.data['camefromcheckanswers'] = false;
+          res.redirect('../check-your-answers');
         } else {
+          // Coming from WFD check-answers, return there
           res.redirect('water-framework-directive-check-answers');
         }
       } else {
