@@ -37,7 +37,11 @@ module.exports = function (router) {
         req.session.data['camefromcheckanswers'] = false;
         res.redirect('check-your-answers');
       } else {
-        // Validation passed - redirect to next page
+        // Validation passed - initialize draft application tracking
+        req.session.data['low-complexity-application-status'] = 'draft';
+        req.session.data['low-complexity-application-reference'] = '-';
+        
+        // Redirect to next page
         res.redirect('marine-licence-start-page');
       }
     }
@@ -596,6 +600,33 @@ module.exports = function (router) {
   });
 
   ///////////////////////////////////////////
+  // Declaration
+  ///////////////////////////////////////////
+
+  // Declaration POST router
+  router.post(`/versions/${version}/${section}/declaration-router`, function (req, res) {
+    // Mark application as sent
+    req.session.data['low-complexity-application-status'] = 'sent';
+    req.session.data['low-complexity-application-reference'] = 'MLA/2025/10025';
+    
+    // Set submission date to current date
+    const today = new Date();
+    const day = today.getDate();
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const month = months[today.getMonth()];
+    const year = today.getFullYear();
+    req.session.data['low-complexity-submission-date'] = `${day} ${month} ${year}`;
+    
+    // Also store sort value for submitted date (YYMMDD format)
+    const sortYear = year.toString().slice(-2);
+    const sortMonth = (today.getMonth() + 1).toString().padStart(2, '0');
+    const sortDay = day.toString().padStart(2, '0');
+    req.session.data['low-complexity-submission-date-sort'] = `${sortYear}${sortMonth}${sortDay}`;
+    
+    res.redirect('confirmation');
+  });
+
+  ///////////////////////////////////////////
   // Environmental assessments section
   ///////////////////////////////////////////
 
@@ -1095,5 +1126,10 @@ module.exports = function (router) {
   ///////////////////////////////////////////
   // Projects page
   ///////////////////////////////////////////
+
+  // Projects GET route
+  router.get(`/versions/${version}/${section}/projects`, function (req, res) {
+    res.render(`versions/${version}/${section}/projects`);
+  });
 
 }
