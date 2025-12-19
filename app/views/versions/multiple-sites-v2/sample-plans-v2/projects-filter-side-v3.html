@@ -177,7 +177,7 @@ Projects
               <div class="govuk-checkboxes__item">
                 <input class="govuk-checkboxes__input" id="person-jon" name="person" type="checkbox" value="jon-doe">
                 <label class="govuk-label govuk-checkboxes__label" for="person-jon">
-                  Jon Doe <span class="person-count" data-person="jon-doe">(0)</span>
+                  John Smith <span class="person-count" data-person="jon-doe">(0)</span>
                 </label>
               </div>
               <div class="govuk-checkboxes__item">
@@ -304,7 +304,7 @@ Projects
             }) }}
           </td>
           <td class="govuk-table__cell" data-sort-value="250906">6 Sep 2025</td>
-          <td class="govuk-table__cell">Jon Doe</td>
+          <td class="govuk-table__cell">John Smith</td>
           <td class="govuk-table__cell">
             <a href="#" class="govuk-link--no-visited-state">View details</a>
           </td>
@@ -321,7 +321,7 @@ Projects
             }) }}
           </td>
           <td class="govuk-table__cell" data-sort-value="250911">11 Sep 2025</td>
-          <td class="govuk-table__cell">Jon Doe</td>
+          <td class="govuk-table__cell">John Smith</td>
           <td class="govuk-table__cell">
             <a href="#" class="govuk-link--no-visited-state">View details</a>
           </td>
@@ -389,7 +389,7 @@ Projects
             }) }}
           </td>
           <td class="govuk-table__cell" data-sort-value="-">-</td>
-          <td class="govuk-table__cell">Jon Doe</td>
+          <td class="govuk-table__cell">John Smith</td>
           <td class="govuk-table__cell">
             <a href="#" class="govuk-link--no-visited-state govuk-!-margin-right-4">Continue</a> <a href="#" class="govuk-link--no-visited-state">Delete</a>
           </td>
@@ -423,7 +423,7 @@ Projects
             }) }}
           </td>
           <td class="govuk-table__cell" data-sort-value="251111">11 Nov 2025</td>
-          <td class="govuk-table__cell">Jon Doe</td>
+          <td class="govuk-table__cell">John Smith</td>
           <td class="govuk-table__cell">
             <a href="#" class="govuk-link--no-visited-state">View details</a>
           </td>
@@ -439,7 +439,7 @@ Projects
             }) }}
           </td>
           <td class="govuk-table__cell" data-sort-value="251117">17 Nov 2025</td>
-          <td class="govuk-table__cell">Jon Doe</td>
+          <td class="govuk-table__cell">John Smith</td>
           <td class="govuk-table__cell">
             <a href="#" class="govuk-link--no-visited-state">View details</a>
           </td>
@@ -489,7 +489,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const personNames = {
     'alex-williams': 'Alex Williams',
     'james-thompson': 'James Thompson',
-    'jon-doe': 'Jon Doe',
+    'jon-doe': 'John Smith',
     'sarah-chen': 'Sarah Chen'
   };
 
@@ -897,7 +897,7 @@ document.addEventListener('DOMContentLoaded', function() {
       // Filter by Show radios (scope filter)
       const creator = row.getAttribute('data-creator');
       if (selectedFilter === 'my-projects') {
-        // Show only Jon Doe's projects (current user)
+        // Show only John Smith's projects (current user)
         if (!creator || !creator.includes('jon-doe')) {
           show = false;
         }

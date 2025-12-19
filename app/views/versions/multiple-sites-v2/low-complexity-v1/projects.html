@@ -137,7 +137,7 @@ Projects
 						{% endif %}
 					</td>
 					<td class="govuk-table__cell" data-sort-value="{% if data['low-complexity-submission-date-sort'] %}{{ data['low-complexity-submission-date-sort'] }}{% else %}-{% endif %}">{% if data['low-complexity-submission-date'] %}{{ data['low-complexity-submission-date'] }}{% else %}-{% endif %}</td>
-					<td class="govuk-table__cell">Jon Doe</td>
+					<td class="govuk-table__cell">John Smith</td>
 					<td class="govuk-table__cell">
 						{% if data['low-complexity-application-status'] == 'sent' %}
 						<a href="#" class="govuk-link--no-visited-state">View details</a>
@@ -160,7 +160,7 @@ Projects
 						}) }}
 					</td>
 					<td class="govuk-table__cell" data-sort-value="250906">6 Sep 2025</td>
-					<td class="govuk-table__cell">Jon Doe</td>
+					<td class="govuk-table__cell">John Smith</td>
 					<td class="govuk-table__cell">
 						<a href="#" class="govuk-link--no-visited-state">View details</a>
 					</td>
@@ -177,7 +177,7 @@ Projects
 						}) }}
 					</td>
 					<td class="govuk-table__cell" data-sort-value="250911">11 Sep 2025</td>
-					<td class="govuk-table__cell">Jon Doe</td>
+					<td class="govuk-table__cell">John Smith</td>
 					<td class="govuk-table__cell">
 						<a href="#" class="govuk-link--no-visited-state">View details</a>
 					</td>
@@ -234,7 +234,7 @@ Projects
 					</td>
 				</tr>
 
-				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="Whitstable intertidal survey pits" data-type="Exempt activity notification" data-reference="EXE-10047" data-status="Draft">
+				<tr class="govuk-table__row" data-creator="sarah-chen" data-project-name="Whitstable intertidal survey pits" data-type="Exempt activity notification" data-reference="EXE-10047" data-status="Draft">
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Whitstable intertidal survey pits</th>
 					<td class="govuk-table__cell">Exempt activity notification</td>
 					<td class="govuk-table__cell" data-sort-value="EXE-10047">EXE/2025/10047</td>
@@ -245,7 +245,7 @@ Projects
 						}) }}
 					</td>
 					<td class="govuk-table__cell" data-sort-value="-">-</td>
-					<td class="govuk-table__cell">Jon Doe</td>
+					<td class="govuk-table__cell">Sarah Chen</td>
 					<td class="govuk-table__cell">
 						<a href="#" class="govuk-link--no-visited-state govuk-!-margin-right-4">Continue</a> <a href="#" class="govuk-link--no-visited-state">Delete</a>
 					</td>
@@ -279,7 +279,7 @@ Projects
 						}) }}
 					</td>
 					<td class="govuk-table__cell" data-sort-value="251111">11 Nov 2025</td>
-					<td class="govuk-table__cell">Jon Doe</td>
+					<td class="govuk-table__cell">John Smith</td>
 					<td class="govuk-table__cell">
 						<a href="#" class="govuk-link--no-visited-state">View details</a>
 					</td>
@@ -295,7 +295,7 @@ Projects
 						}) }}
 					</td>
 					<td class="govuk-table__cell" data-sort-value="251117">17 Nov 2025</td>
-					<td class="govuk-table__cell">Jon Doe</td>
+					<td class="govuk-table__cell">John Smith</td>
 					<td class="govuk-table__cell">
 						<a href="#" class="govuk-link--no-visited-state">View details</a>
 					</td>
@@ -358,7 +358,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			const creator = row.getAttribute('data-creator');
 			let show = true;
 			
-			// If showing my projects, only show Jon Doe's projects (current user)
+			// If showing my projects, only show John Smith's projects (current user)
 			if (filterValue === 'my-projects') {
 				if (!creator || !creator.includes('jon-doe')) {
 					show = false;
