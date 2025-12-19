@@ -519,6 +519,12 @@ module.exports = function (router) {
     // Clear error flags when navigating to the page
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
+    
+    // Capture the query parameter if coming from check answers
+    if (req.query.camefromcheckanswers === 'true') {
+      req.session.data['camefromcheckanswers'] = 'true';
+    }
+    
     res.render(`versions/${version}/${section}/environmental-assessments/european-sites`);
   });
 
@@ -540,9 +546,16 @@ module.exports = function (router) {
       // Redirect back to the same page with errors
       res.redirect('european-sites');
     } else {
-      // Validation passed - set completion flag and redirect to environmental assessments index
+      // Validation passed - set completion flag
       req.session.data['low-complexity-european-sites-completed'] = true;
-      res.redirect('./');
+      
+      // Check if we need to return to check answers
+      if (req.session.data['camefromcheckanswers'] === 'true') {
+        req.session.data['camefromcheckanswers'] = false;
+        res.redirect('../check-your-answers');
+      } else {
+        res.redirect('./');
+      }
     }
   });
 
@@ -551,6 +564,12 @@ module.exports = function (router) {
     // Clear error flags when navigating to the page
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
+    
+    // Capture the query parameter if coming from check answers
+    if (req.query.camefromcheckanswers === 'true') {
+      req.session.data['camefromcheckanswers'] = 'true';
+    }
+    
     res.render(`versions/${version}/${section}/environmental-assessments/marine-conservation-zones`);
   });
 
@@ -572,9 +591,16 @@ module.exports = function (router) {
       // Redirect back to the same page with errors
       res.redirect('marine-conservation-zones');
     } else {
-      // Validation passed - set completion flag and redirect to environmental assessments index
+      // Validation passed - set completion flag
       req.session.data['low-complexity-mcz-completed'] = true;
-      res.redirect('./');
+      
+      // Check if we need to return to check answers
+      if (req.session.data['camefromcheckanswers'] === 'true') {
+        req.session.data['camefromcheckanswers'] = false;
+        res.redirect('../check-your-answers');
+      } else {
+        res.redirect('./');
+      }
     }
   });
 
@@ -583,6 +609,12 @@ module.exports = function (router) {
     // Clear error flags when navigating to the page
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
+    
+    // Capture the query parameter if coming from check answers
+    if (req.query.camefromcheckanswers === 'true') {
+      req.session.data['camefromcheckanswers'] = 'true';
+    }
+    
     res.render(`versions/${version}/${section}/environmental-assessments/sites-of-special-scientific-interest`);
   });
 
@@ -604,9 +636,16 @@ module.exports = function (router) {
       // Redirect back to the same page with errors
       res.redirect('sites-of-special-scientific-interest');
     } else {
-      // Validation passed - set completion flag and redirect to environmental assessments index
+      // Validation passed - set completion flag
       req.session.data['low-complexity-sssi-completed'] = true;
-      res.redirect('./');
+      
+      // Check if we need to return to check answers
+      if (req.session.data['camefromcheckanswers'] === 'true') {
+        req.session.data['camefromcheckanswers'] = false;
+        res.redirect('../check-your-answers');
+      } else {
+        res.redirect('./');
+      }
     }
   });
 
@@ -616,11 +655,17 @@ module.exports = function (router) {
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
     
-    // Check if coming from check answers page (change link)
+    // Check if coming from check answers pages (change links)
     const fromCheckAnswers = req.query.fromcheckanswers === 'true';
+    const fromMainCheckAnswers = req.query.camefromcheckanswers === 'true';
     
-    // Smart routing: If file uploaded AND not coming from check answers, go to check answers
-    if (req.session.data['low-complexity-wfd-file-uploaded'] && !fromCheckAnswers) {
+    // Capture the query parameter if coming from main check answers
+    if (fromMainCheckAnswers) {
+      req.session.data['camefromcheckanswers'] = 'true';
+    }
+    
+    // Smart routing: If file uploaded AND not coming from any check answers, go to WFD check answers
+    if (req.session.data['low-complexity-wfd-file-uploaded'] && !fromCheckAnswers && !fromMainCheckAnswers) {
       res.redirect('water-framework-directive-check-answers');
     } else {
       res.render(`versions/${version}/${section}/environmental-assessments/water-framework-directive`);
@@ -636,6 +681,7 @@ module.exports = function (router) {
     // Get the nautical mile answer
     const nauticalMile = req.session.data['low-complexity-wfd-nautical-mile'];
     const fromCheckAnswers = req.query.fromcheckanswers === 'true';
+    const fromMainCheckAnswers = req.session.data['camefromcheckanswers'] === 'true';
 
     // Validate: check if radio is selected
     if (!nauticalMile) {
@@ -643,18 +689,34 @@ module.exports = function (router) {
       req.session.data['errorthispage'] = "true";
       req.session.data['errortypeone'] = "true";
       
-      // Redirect back to the same page with errors
-      res.redirect('water-framework-directive' + (fromCheckAnswers ? '?fromcheckanswers=true' : ''));
+      // Redirect back to the same page with errors, preserving the check answers context
+      if (fromMainCheckAnswers) {
+        res.redirect('water-framework-directive?camefromcheckanswers=true');
+      } else if (fromCheckAnswers) {
+        res.redirect('water-framework-directive?fromcheckanswers=true');
+      } else {
+        res.redirect('water-framework-directive');
+      }
     } else if (nauticalMile === 'No') {
-      // If No, mark as complete and return to task list
+      // If No, mark as complete
       req.session.data['low-complexity-wfd-completed'] = true;
       // Clear file upload data if it exists
       delete req.session.data['low-complexity-wfd-file-uploaded'];
       delete req.session.data['low-complexity-wfd-filename'];
-      res.redirect('./');
+      
+      // Check if we need to return to main check answers
+      if (fromMainCheckAnswers) {
+        req.session.data['camefromcheckanswers'] = false;
+        res.redirect('../check-your-answers');
+      } else {
+        res.redirect('./');
+      }
     } else if (nauticalMile === 'Yes') {
-      // If Yes, go to upload page (pass along fromcheckanswers if present)
-      if (fromCheckAnswers) {
+      // If Yes, go to upload page
+      if (fromMainCheckAnswers) {
+        // Pass along to upload page
+        res.redirect('water-framework-directive-upload?camefromcheckanswers=true');
+      } else if (fromCheckAnswers) {
         res.redirect('water-framework-directive-upload?fromcheckanswers=true');
       } else {
         res.redirect('water-framework-directive-upload');
@@ -664,6 +726,11 @@ module.exports = function (router) {
 
   // Water Framework Directive Upload page
   router.get(`/versions/${version}/${section}/environmental-assessments/water-framework-directive-upload`, function (req, res) {
+    // Capture the query parameter if coming from main check answers
+    if (req.query.camefromcheckanswers === 'true') {
+      req.session.data['camefromcheckanswers'] = 'true';
+    }
+    
     res.render(`versions/${version}/${section}/environmental-assessments/water-framework-directive-upload`);
   });
 
@@ -674,12 +741,24 @@ module.exports = function (router) {
     req.session.data['low-complexity-wfd-filename'] = 'WFD.pdf';
     req.session.data['low-complexity-wfd-file-uploaded'] = true;
     
-    // Always go to check answers after upload
-    res.redirect('water-framework-directive-check-answers');
+    // Check if coming from main check answers and pass through to WFD check answers
+    const fromMainCheckAnswers = req.session.data['camefromcheckanswers'] === 'true';
+    
+    if (fromMainCheckAnswers) {
+      res.redirect('water-framework-directive-check-answers?camefromcheckanswers=true');
+    } else {
+      // Always go to WFD check answers after upload
+      res.redirect('water-framework-directive-check-answers');
+    }
   });
 
   // Water Framework Directive Check Answers page
   router.get(`/versions/${version}/${section}/environmental-assessments/water-framework-directive-check-answers`, function (req, res) {
+    // Capture the query parameter if coming from main check answers
+    if (req.query.camefromcheckanswers === 'true') {
+      req.session.data['camefromcheckanswers'] = 'true';
+    }
+    
     res.render(`versions/${version}/${section}/environmental-assessments/water-framework-directive-check-answers`);
   });
 
@@ -688,8 +767,14 @@ module.exports = function (router) {
     // Mark task as complete
     req.session.data['low-complexity-wfd-completed'] = true;
     
-    // Return to environmental assessments task list
-    res.redirect('./');
+    // Check if we need to return to main check answers
+    if (req.session.data['camefromcheckanswers'] === 'true') {
+      req.session.data['camefromcheckanswers'] = false;
+      res.redirect('../check-your-answers');
+    } else {
+      // Return to environmental assessments task list
+      res.redirect('./');
+    }
   });
 
   ///////////////////////////////////////////
