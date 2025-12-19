@@ -292,6 +292,12 @@ module.exports = function (router) {
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
     req.session.data['errortypetwo'] = "false";
+    
+    // Capture the query parameter if coming from check answers
+    if (req.query.camefromcheckanswers === 'true') {
+      req.session.data['camefromcheckanswers'] = 'true';
+    }
+    
     res.render(`versions/${version}/${section}/other-permissions/harbour-authority`);
   });
 
@@ -322,9 +328,16 @@ module.exports = function (router) {
       // Redirect back to the same page with errors
       res.redirect('harbour-authority');
     } else {
-      // Validation passed - set completion flag and redirect to other permissions index
+      // Validation passed - set completion flag
       req.session.data['low-complexity-harbour-authority-completed'] = true;
-      res.redirect('./');
+      
+      // Check if we need to return to check answers
+      if (req.session.data['camefromcheckanswers'] === 'true') {
+        req.session.data['camefromcheckanswers'] = false;
+        res.redirect('../check-your-answers#other-permissions');
+      } else {
+        res.redirect('./');
+      }
     }
   });
 
@@ -334,6 +347,12 @@ module.exports = function (router) {
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
     req.session.data['errortypetwo'] = "false";
+    
+    // Capture the query parameter if coming from check answers
+    if (req.query.camefromcheckanswers === 'true') {
+      req.session.data['camefromcheckanswers'] = 'true';
+    }
+    
     res.render(`versions/${version}/${section}/other-permissions/special-legal-powers`);
   });
 
@@ -364,9 +383,16 @@ module.exports = function (router) {
       // Redirect back to the same page with errors
       res.redirect('special-legal-powers');
     } else {
-      // Validation passed - set completion flag and redirect to other permissions index
+      // Validation passed - set completion flag
       req.session.data['low-complexity-special-legal-powers-completed'] = true;
-      res.redirect('./');
+      
+      // Check if we need to return to check answers
+      if (req.session.data['camefromcheckanswers'] === 'true') {
+        req.session.data['camefromcheckanswers'] = false;
+        res.redirect('../check-your-answers#other-permissions');
+      } else {
+        res.redirect('./');
+      }
     }
   });
 
@@ -376,6 +402,12 @@ module.exports = function (router) {
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
     req.session.data['errortypetwo'] = "false";
+    
+    // Capture the query parameter if coming from check answers
+    if (req.query.camefromcheckanswers === 'true') {
+      req.session.data['camefromcheckanswers'] = 'true';
+    }
+    
     res.render(`versions/${version}/${section}/other-permissions/other-authorities`);
   });
 
@@ -406,9 +438,16 @@ module.exports = function (router) {
       // Redirect back to the same page with errors
       res.redirect('other-authorities');
     } else {
-      // Validation passed - set completion flag and redirect to other permissions index
+      // Validation passed - set completion flag
       req.session.data['low-complexity-other-permissions-completed'] = true;
-      res.redirect('./');
+      
+      // Check if we need to return to check answers
+      if (req.session.data['camefromcheckanswers'] === 'true') {
+        req.session.data['camefromcheckanswers'] = false;
+        res.redirect('../check-your-answers#other-permissions');
+      } else {
+        res.redirect('./');
+      }
     }
   });
 
@@ -418,6 +457,12 @@ module.exports = function (router) {
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
     req.session.data['errortypetwo'] = "false";
+    
+    // Capture the query parameter if coming from check answers
+    if (req.query.camefromcheckanswers === 'true') {
+      req.session.data['camefromcheckanswers'] = 'true';
+    }
+    
     res.render(`versions/${version}/${section}/other-permissions/consultation-and-advertising`);
   });
 
@@ -448,9 +493,16 @@ module.exports = function (router) {
       // Redirect back to the same page with errors
       res.redirect('consultation-and-advertising');
     } else {
-      // Validation passed - set completion flag and redirect to other permissions index
+      // Validation passed - set completion flag
       req.session.data['low-complexity-consultation-completed'] = true;
-      res.redirect('./');
+      
+      // Check if we need to return to check answers
+      if (req.session.data['camefromcheckanswers'] === 'true') {
+        req.session.data['camefromcheckanswers'] = false;
+        res.redirect('../check-your-answers#other-permissions');
+      } else {
+        res.redirect('./');
+      }
     }
   });
 
