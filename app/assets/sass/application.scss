@@ -316,9 +316,7 @@
 .page-home, .page-sample-plans-projects, .page-low-complexity-projects {
   .govuk-width-container,
   .govuk-header__container,
-  .govuk-header__navigation,
-  .govuk-footer__container,
-  .govuk-footer__meta {
+  .govuk-header__navigation {
     max-width: 1280px;
     margin-left: auto;
     margin-right: auto;
@@ -329,6 +327,24 @@
       padding-left: 30px;
       padding-right: 30px;
     }
+  }
+  
+  // Footer special handling - allow container to be full width, constrain the meta content
+  .govuk-footer__container {
+    max-width: none !important;
+    padding: 0 !important;
+  }
+  
+  .govuk-footer__meta {
+    max-width: 1280px !important;
+    margin-left: auto;
+    margin-right: auto;
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+  }
+  
+  .govuk-footer__meta-item {
+    margin: 0 !important;
   }
   
   // Override other widths specifically for home page
