@@ -125,7 +125,7 @@ Projects
 				{% if data['low-complexity-project-name-text-input'] %}
 				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="{{ data['low-complexity-project-name-text-input'] }}" data-type="Marine licence" data-reference="{% if data['low-complexity-application-status'] == 'sent' %}MLA-10025{% else %}-{% endif %}" data-status="{% if data['low-complexity-application-status'] == 'sent' %}Sent{% else %}Draft{% endif %}">
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">{{ data['low-complexity-project-name-text-input'] }}</th>
-					<td class="govuk-table__cell">Marine licence</td>
+					<td class="govuk-table__cell">Marine licence application</td>
 					<td class="govuk-table__cell" data-sort-value="{% if data['low-complexity-application-status'] == 'sent' %}MLA-10025{% else %}-{% endif %}">{% if data['low-complexity-application-status'] == 'sent' %}MLA/2025/10025{% else %}-{% endif %}</td>
 					<td class="govuk-table__cell" data-sort-value="{% if data['low-complexity-application-status'] == 'sent' %}002{% else %}003{% endif %}">
 						{% if data['low-complexity-application-status'] == 'sent' %}
@@ -141,7 +141,7 @@ Projects
 					</td>
 					<td class="govuk-table__cell" data-sort-value="{% if data['low-complexity-submission-date-sort'] %}{{ data['low-complexity-submission-date-sort'] }}{% else %}-{% endif %}">{% if data['low-complexity-submission-date'] %}{{ data['low-complexity-submission-date'] }}{% else %}-{% endif %}</td>
 					{% if data['user_type'] === 'organisation' %}
-					<td class="govuk-table__cell">John Smith</td>
+					<td class="govuk-table__cell">Sam Evans</td>
 					{% endif %}
 					<td class="govuk-table__cell">
 						{% if data['low-complexity-application-status'] == 'sent' %}
@@ -166,7 +166,7 @@ Projects
 					</td>
 					<td class="govuk-table__cell" data-sort-value="250906">6 Sep 2025</td>
 					{% if data['user_type'] === 'organisation' %}
-					<td class="govuk-table__cell">John Smith</td>
+					<td class="govuk-table__cell">Sam Evans</td>
 					{% endif %}
 					<td class="govuk-table__cell">
 						<a href="#" class="govuk-link--no-visited-state">View details</a>
@@ -185,7 +185,7 @@ Projects
 					</td>
 					<td class="govuk-table__cell" data-sort-value="250911">11 Sep 2025</td>
 					{% if data['user_type'] === 'organisation' %}
-					<td class="govuk-table__cell">John Smith</td>
+					<td class="govuk-table__cell">Sam Evans</td>
 					{% endif %}
 					<td class="govuk-table__cell">
 						<a href="#" class="govuk-link--no-visited-state">View details</a>
@@ -288,7 +288,7 @@ Projects
 				</tr>
 
 				<!-- Sediment sample plans -->
-				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="Tyne estuary sampling" data-type="Sediment sample plan" data-reference="SAM-10002" data-status="Sent">
+				<!--<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="Tyne estuary sampling" data-type="Sediment sample plan" data-reference="SAM-10002" data-status="Sent">
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Tyne estuary sampling</th>
 					<td class="govuk-table__cell">Sediment sample plan</td>
 					<td class="govuk-table__cell" data-sort-value="SAM-10002">SAM/2025/10002</td>
@@ -299,7 +299,7 @@ Projects
 					</td>
 					<td class="govuk-table__cell" data-sort-value="251111">11 Nov 2025</td>
 					{% if data['user_type'] === 'organisation' %}
-					<td class="govuk-table__cell">John Smith</td>
+					<td class="govuk-table__cell">Sam Evans</td>
 					{% endif %}
 					<td class="govuk-table__cell">
 						<a href="#" class="govuk-link--no-visited-state">View details</a>
@@ -317,7 +317,7 @@ Projects
 					</td>
 					<td class="govuk-table__cell" data-sort-value="251117">17 Nov 2025</td>
 					{% if data['user_type'] === 'organisation' %}
-					<td class="govuk-table__cell">John Smith</td>
+					<td class="govuk-table__cell">Sam Evans</td>
 					{% endif %}
 					<td class="govuk-table__cell">
 						<a href="#" class="govuk-link--no-visited-state">View details</a>
@@ -341,7 +341,7 @@ Projects
 					<td class="govuk-table__cell">
 						
 					</td>
-				</tr>
+				</tr>-->
 			</tbody>
 		</table>
 
@@ -383,7 +383,7 @@ document.addEventListener('DOMContentLoaded', function() {
 			const creator = row.getAttribute('data-creator');
 			let show = true;
 			
-			// If showing my projects, only show John Smith's projects (current user)
+			// If showing my projects, only show Sam Evans's projects (current user)
 			if (filterValue === 'my-projects') {
 				if (!creator || !creator.includes('jon-doe')) {
 					show = false;

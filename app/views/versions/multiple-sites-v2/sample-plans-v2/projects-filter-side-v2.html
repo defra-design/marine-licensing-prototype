@@ -165,7 +165,7 @@ Projects
               },
               {
                 value: "jon-doe",
-                text: "John Smith"
+                text: "Sam Evans"
               },
               {
                 value: "sarah-chen",
@@ -249,7 +249,7 @@ Projects
             }) }}
           </td>
           <td class="govuk-table__cell" data-sort-value="250906">6 Sep 2025</td>
-          <td class="govuk-table__cell">John Smith</td>
+          <td class="govuk-table__cell">Sam Evans</td>
           <td class="govuk-table__cell">
             <a href="#" class="govuk-link--no-visited-state">View details</a>
           </td>
@@ -266,7 +266,7 @@ Projects
             }) }}
           </td>
           <td class="govuk-table__cell" data-sort-value="250911">11 Sep 2025</td>
-          <td class="govuk-table__cell">John Smith</td>
+          <td class="govuk-table__cell">Sam Evans</td>
           <td class="govuk-table__cell">
             <a href="#" class="govuk-link--no-visited-state">View details</a>
           </td>
@@ -334,7 +334,7 @@ Projects
             }) }}
           </td>
           <td class="govuk-table__cell" data-sort-value="-">-</td>
-          <td class="govuk-table__cell">John Smith</td>
+          <td class="govuk-table__cell">Sam Evans</td>
           <td class="govuk-table__cell">
             <a href="#" class="govuk-link--no-visited-state govuk-!-margin-right-4">Continue</a> <a href="#" class="govuk-link--no-visited-state">Delete</a>
           </td>
@@ -368,7 +368,7 @@ Projects
             }) }}
           </td>
           <td class="govuk-table__cell" data-sort-value="251111">11 Nov 2025</td>
-          <td class="govuk-table__cell">John Smith</td>
+          <td class="govuk-table__cell">Sam Evans</td>
           <td class="govuk-table__cell">
             <a href="#" class="govuk-link--no-visited-state">View details</a>
           </td>
@@ -384,7 +384,7 @@ Projects
             }) }}
           </td>
           <td class="govuk-table__cell" data-sort-value="251117">17 Nov 2025</td>
-          <td class="govuk-table__cell">John Smith</td>
+          <td class="govuk-table__cell">Sam Evans</td>
           <td class="govuk-table__cell">
             <a href="#" class="govuk-link--no-visited-state">View details</a>
           </td>
@@ -428,7 +428,7 @@ document.addEventListener('DOMContentLoaded', function() {
   const personNames = {
     'alex-williams': 'Alex Williams',
     'james-thompson': 'James Thompson',
-    'jon-doe': 'John Smith',
+    'jon-doe': 'Sam Evans',
     'sarah-chen': 'Sarah Chen'
   };
 
@@ -464,7 +464,7 @@ document.addEventListener('DOMContentLoaded', function() {
       const creators = row.getAttribute('data-creator');
       
       if (selectedFilter === 'my-projects') {
-        // Show only John Smith's projects
+        // Show only Sam Evans's projects
         if (creators && creators.includes('jon-doe')) {
           row.style.display = '';
           visibleCount++;
@@ -516,7 +516,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
   }
 
-  // Initial filter on page load (show John Smith's projects by default)
+  // Initial filter on page load (show Sam Evans's projects by default)
   filterProjects();
 
   // Handle filter toggle button
