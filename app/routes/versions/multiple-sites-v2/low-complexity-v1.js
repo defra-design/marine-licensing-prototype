@@ -516,6 +516,12 @@ module.exports = function (router) {
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
     req.session.data['errortypetwo'] = "false";
+    
+    // Capture the query parameter if coming from check answers
+    if (req.query.camefromcheckanswers === 'true') {
+      req.session.data['camefromcheckanswers'] = 'true';
+    }
+    
     res.render(`versions/${version}/${section}/sharing-your-project-information-publicly`);
   });
 
@@ -546,9 +552,16 @@ module.exports = function (router) {
       // Redirect back to the same page with errors
       res.redirect('sharing-your-project-information-publicly');
     } else {
-      // Validation passed - set completion flag and redirect to task list
+      // Validation passed - set completion flag
       req.session.data['low-complexity-sharing-information-completed'] = true;
-      res.redirect('marine-licence-start-page');
+      
+      // Check if we need to return to check answers
+      if (req.session.data['camefromcheckanswers'] === 'true') {
+        req.session.data['camefromcheckanswers'] = false;
+        res.redirect('check-your-answers#sharing-your-project-information-publicly');
+      } else {
+        res.redirect('marine-licence-start-page');
+      }
     }
   });
 
