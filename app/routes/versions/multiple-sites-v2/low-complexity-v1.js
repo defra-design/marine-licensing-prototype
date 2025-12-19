@@ -664,10 +664,17 @@ module.exports = function (router) {
       req.session.data['camefromcheckanswers'] = 'true';
     }
     
-    // Smart routing: If file uploaded AND not coming from any check answers, go to WFD check answers
-    if (req.session.data['low-complexity-wfd-file-uploaded'] && !fromCheckAnswers && !fromMainCheckAnswers) {
+    // Smart routing logic
+    // If coming from main check-your-answers with file uploaded, go to WFD check-answers
+    if (fromMainCheckAnswers && req.session.data['low-complexity-wfd-file-uploaded']) {
+      res.redirect('water-framework-directive-check-answers?camefromcheckanswers=true');
+    }
+    // If file uploaded AND not coming from WFD check-answers, go to WFD check-answers
+    else if (req.session.data['low-complexity-wfd-file-uploaded'] && !fromCheckAnswers) {
       res.redirect('water-framework-directive-check-answers');
-    } else {
+    }
+    // Otherwise render the question page
+    else {
       res.render(`versions/${version}/${section}/environmental-assessments/water-framework-directive`);
     }
   });
@@ -712,14 +719,27 @@ module.exports = function (router) {
         res.redirect('./');
       }
     } else if (nauticalMile === 'Yes') {
-      // If Yes, go to upload page
-      if (fromMainCheckAnswers) {
-        // Pass along to upload page
-        res.redirect('water-framework-directive-upload?camefromcheckanswers=true');
-      } else if (fromCheckAnswers) {
-        res.redirect('water-framework-directive-upload?fromcheckanswers=true');
+      // Check if file already uploaded and coming from check answers
+      const fileAlreadyUploaded = req.session.data['low-complexity-wfd-file-uploaded'];
+      const fromWFDCheckAnswers = req.query.fromcheckanswers === 'true';
+      
+      // If file already exists and coming from any check answers, skip upload
+      if (fileAlreadyUploaded && (fromMainCheckAnswers || fromWFDCheckAnswers)) {
+        // Go back to WFD check-answers
+        if (fromMainCheckAnswers) {
+          res.redirect('water-framework-directive-check-answers?camefromcheckanswers=true');
+        } else {
+          res.redirect('water-framework-directive-check-answers');
+        }
       } else {
-        res.redirect('water-framework-directive-upload');
+        // Need to upload file (first time or user is going through fresh)
+        if (fromMainCheckAnswers) {
+          res.redirect('water-framework-directive-upload?camefromcheckanswers=true');
+        } else if (fromWFDCheckAnswers) {
+          res.redirect('water-framework-directive-upload?fromcheckanswers=true');
+        } else {
+          res.redirect('water-framework-directive-upload');
+        }
       }
     }
   });
