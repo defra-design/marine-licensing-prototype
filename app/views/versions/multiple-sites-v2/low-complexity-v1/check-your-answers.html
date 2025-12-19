@@ -8,7 +8,7 @@
     {% if data['user_type'] === 'organisation' %}
         {% include "../includes/organisation-switcher.html" %}
     {% endif %}
-    <a class="govuk-back-link govuk-link--no-visited-state" href="javascript:history.back()">Go back to marine licence start page</a>
+    <a class="govuk-back-link govuk-link--no-visited-state" href="marine-licence-start-page">Go back to marine licence start page</a>
 {% endblock %}
 
 <!-- Setting the big main heading at the top of the page -->
@@ -219,14 +219,14 @@ Removal of any substance or object
 		}) }}
 
 		<!-- Providing the site location card -->
-		<div class="govuk-summary-card">
+		<div id="site-location" class="govuk-summary-card">
 			<div class="govuk-summary-card__title-wrapper">
 				<h2 class="govuk-summary-card__title">
 					Providing the site location
 				</h2>
 				<ul class="govuk-summary-card__actions">
 					<li class="govuk-summary-card__action">
-						<a class="govuk-link govuk-link--no-visited-state" href="site-details/review-site-details">
+						<a class="govuk-link govuk-link--no-visited-state" href="site-details/review-site-details?camefromcheckanswers=true">
 							Change<span class="govuk-visually-hidden"> providing the site location</span>
 						</a>
 					</li>
@@ -273,14 +273,14 @@ Removal of any substance or object
 		</div>
 
 		<!-- Site 1 details card -->
-		<div class="govuk-summary-card">
+		<div id="site-1-details" class="govuk-summary-card">
 			<div class="govuk-summary-card__title-wrapper">
 				<h2 class="govuk-summary-card__title">
 					Site 1 details
 				</h2>
 				<ul class="govuk-summary-card__actions">
 					<li class="govuk-summary-card__action">
-						<a class="govuk-link govuk-link--no-visited-state" href="site-details/review-site-details">
+						<a class="govuk-link govuk-link--no-visited-state" href="site-details/review-site-details?camefromcheckanswers=true">
 							Change<span class="govuk-visually-hidden"> site 1 details</span>
 						</a>
 					</li>
@@ -357,7 +357,7 @@ Removal of any substance or object
 		<!-- Environmental assessments card -->
 		<div class="govuk-summary-card">
 			<div class="govuk-summary-card__title-wrapper">
-				<h2 class="govuk-summary-card__title">
+				<h2 class="govuk-summary-card__title" id="environmental-assessments">
 					Environmental assessments
 				</h2>
 			</div>
@@ -371,7 +371,7 @@ Removal of any substance or object
 							{{ data['low-complexity-european-sites'] }}
 						</dd>
 						<dd class="govuk-summary-list__actions">
-							<a class="govuk-link govuk-link--no-visited-state" href="environmental-assessments/european-sites">
+							<a class="govuk-link govuk-link--no-visited-state" href="environmental-assessments/european-sites?camefromcheckanswers=true">
 								Change<span class="govuk-visually-hidden"> how you've assessed the impact on European sites</span>
 							</a>
 						</dd>
@@ -385,7 +385,7 @@ Removal of any substance or object
 							{{ data['low-complexity-mcz'] }}
 						</dd>
 						<dd class="govuk-summary-list__actions">
-							<a class="govuk-link govuk-link--no-visited-state" href="environmental-assessments/marine-conservation-zones">
+							<a class="govuk-link govuk-link--no-visited-state" href="environmental-assessments/marine-conservation-zones?camefromcheckanswers=true">
 								Change<span class="govuk-visually-hidden"> how you've assessed the impact on Marine Conservation Zones</span>
 							</a>
 						</dd>
@@ -399,7 +399,7 @@ Removal of any substance or object
 							{{ data['low-complexity-sssi'] }}
 						</dd>
 						<dd class="govuk-summary-list__actions">
-							<a class="govuk-link govuk-link--no-visited-state" href="environmental-assessments/sites-of-special-scientific-interest">
+							<a class="govuk-link govuk-link--no-visited-state" href="environmental-assessments/sites-of-special-scientific-interest?camefromcheckanswers=true">
 								Change<span class="govuk-visually-hidden"> how you've assessed the impact on sites of special scientific interest</span>
 							</a>
 						</dd>
@@ -413,7 +413,7 @@ Removal of any substance or object
 							{{ data['low-complexity-wfd-nautical-mile'] }}
 						</dd>
 						<dd class="govuk-summary-list__actions">
-							<a class="govuk-link govuk-link--no-visited-state" href="environmental-assessments/water-framework-directive">
+							<a class="govuk-link govuk-link--no-visited-state" href="environmental-assessments/water-framework-directive?camefromcheckanswers=true">
 								Change<span class="govuk-visually-hidden"> if your project is located up to 1 nautical mile out at sea</span>
 							</a>
 						</dd>
@@ -432,7 +432,7 @@ Removal of any substance or object
 							{% endif %}
 						</dd>
 						<dd class="govuk-summary-list__actions">
-							<a class="govuk-link govuk-link--no-visited-state" href="environmental-assessments/water-framework-directive-upload">
+							<a class="govuk-link govuk-link--no-visited-state" href="environmental-assessments/water-framework-directive-upload?camefromcheckanswers=true">
 								Change<span class="govuk-visually-hidden"> uploaded Water Framework Directive assessment</span>
 							</a>
 						</dd>
@@ -445,7 +445,7 @@ Removal of any substance or object
 		<!-- Other permissions card -->
 		<div class="govuk-summary-card">
 			<div class="govuk-summary-card__title-wrapper">
-				<h2 class="govuk-summary-card__title">
+				<h2 class="govuk-summary-card__title" id="other-permissions">
 					Other permissions
 				</h2>
 			</div>
@@ -459,7 +459,7 @@ Removal of any substance or object
 							{{ data['low-complexity-special-legal-powers'] }}
 						</dd>
 						<dd class="govuk-summary-list__actions">
-							<a class="govuk-link govuk-link--no-visited-state" href="other-permissions/special-legal-powers">
+							<a class="govuk-link govuk-link--no-visited-state" href="other-permissions/special-legal-powers?camefromcheckanswers=true">
 								Change<span class="govuk-visually-hidden"> if your organisation has special legal powers</span>
 							</a>
 						</dd>
@@ -489,7 +489,7 @@ Removal of any substance or object
 							{{ data['low-complexity-harbour-authority'] }}
 						</dd>
 						<dd class="govuk-summary-list__actions">
-							<a class="govuk-link govuk-link--no-visited-state" href="other-permissions/harbour-authority">
+							<a class="govuk-link govuk-link--no-visited-state" href="other-permissions/harbour-authority?camefromcheckanswers=true">
 								Change<span class="govuk-visually-hidden"> if your project is located in a harbour authority area</span>
 							</a>
 						</dd>
@@ -519,7 +519,7 @@ Removal of any substance or object
 							{{ data['low-complexity-other-permissions'] }}
 						</dd>
 						<dd class="govuk-summary-list__actions">
-							<a class="govuk-link govuk-link--no-visited-state" href="other-permissions/other-authorities">
+							<a class="govuk-link govuk-link--no-visited-state" href="other-permissions/other-authorities?camefromcheckanswers=true">
 								Change<span class="govuk-visually-hidden"> if you've applied to other authorities</span>
 							</a>
 						</dd>
@@ -549,7 +549,7 @@ Removal of any substance or object
 							{{ data['low-complexity-consultation'] }}
 						</dd>
 						<dd class="govuk-summary-list__actions">
-							<a class="govuk-link govuk-link--no-visited-state" href="other-permissions/consultation-and-advertising">
+							<a class="govuk-link govuk-link--no-visited-state" href="other-permissions/consultation-and-advertising?camefromcheckanswers=true">
 								Change<span class="govuk-visually-hidden"> if you've consulted with public groups or organisations</span>
 							</a>
 						</dd>
@@ -577,7 +577,7 @@ Removal of any substance or object
 		<!-- Sharing your project information publicly card -->
 		<div class="govuk-summary-card">
 			<div class="govuk-summary-card__title-wrapper">
-				<h2 class="govuk-summary-card__title">
+				<h2 class="govuk-summary-card__title" id="sharing-your-project-information-publicly">
 					Sharing your project information publicly
 				</h2>
 			</div>
@@ -591,7 +591,7 @@ Removal of any substance or object
 							{{ data['low-complexity-sharing-information'] }}
 						</dd>
 						<dd class="govuk-summary-list__actions">
-							<a class="govuk-link govuk-link--no-visited-state" href="sharing-your-project-information-publicly">
+							<a class="govuk-link govuk-link--no-visited-state" href="sharing-your-project-information-publicly?camefromcheckanswers=true">
 								Change<span class="govuk-visually-hidden"> if there is any reason your information cannot be shared publicly</span>
 							</a>
 						</dd>

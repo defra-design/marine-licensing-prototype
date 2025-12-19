@@ -292,6 +292,12 @@ module.exports = function (router) {
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
     req.session.data['errortypetwo'] = "false";
+    
+    // Capture the query parameter if coming from check answers
+    if (req.query.camefromcheckanswers === 'true') {
+      req.session.data['camefromcheckanswers'] = 'true';
+    }
+    
     res.render(`versions/${version}/${section}/other-permissions/harbour-authority`);
   });
 
@@ -305,6 +311,11 @@ module.exports = function (router) {
     // Get the radio value
     const harbourAuthority = req.session.data['low-complexity-harbour-authority'];
     const harbourAuthorityDetails = req.session.data['low-complexity-harbour-authority-details'];
+
+    // If "No" is selected, clear the textarea data
+    if (harbourAuthority === 'No') {
+      delete req.session.data['low-complexity-harbour-authority-details'];
+    }
 
     // Validate: check if radio is selected
     if (!harbourAuthority) {
@@ -322,9 +333,16 @@ module.exports = function (router) {
       // Redirect back to the same page with errors
       res.redirect('harbour-authority');
     } else {
-      // Validation passed - set completion flag and redirect to other permissions index
+      // Validation passed - set completion flag
       req.session.data['low-complexity-harbour-authority-completed'] = true;
-      res.redirect('./');
+      
+      // Check if we need to return to check answers
+      if (req.session.data['camefromcheckanswers'] === 'true') {
+        req.session.data['camefromcheckanswers'] = false;
+        res.redirect('../check-your-answers#other-permissions');
+      } else {
+        res.redirect('./');
+      }
     }
   });
 
@@ -334,6 +352,12 @@ module.exports = function (router) {
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
     req.session.data['errortypetwo'] = "false";
+    
+    // Capture the query parameter if coming from check answers
+    if (req.query.camefromcheckanswers === 'true') {
+      req.session.data['camefromcheckanswers'] = 'true';
+    }
+    
     res.render(`versions/${version}/${section}/other-permissions/special-legal-powers`);
   });
 
@@ -347,6 +371,11 @@ module.exports = function (router) {
     // Get the radio value
     const specialLegalPowers = req.session.data['low-complexity-special-legal-powers'];
     const specialLegalPowersDetails = req.session.data['low-complexity-special-legal-powers-details'];
+
+    // If "No" is selected, clear the textarea data
+    if (specialLegalPowers === 'No') {
+      delete req.session.data['low-complexity-special-legal-powers-details'];
+    }
 
     // Validate: check if radio is selected
     if (!specialLegalPowers) {
@@ -364,9 +393,16 @@ module.exports = function (router) {
       // Redirect back to the same page with errors
       res.redirect('special-legal-powers');
     } else {
-      // Validation passed - set completion flag and redirect to other permissions index
+      // Validation passed - set completion flag
       req.session.data['low-complexity-special-legal-powers-completed'] = true;
-      res.redirect('./');
+      
+      // Check if we need to return to check answers
+      if (req.session.data['camefromcheckanswers'] === 'true') {
+        req.session.data['camefromcheckanswers'] = false;
+        res.redirect('../check-your-answers#other-permissions');
+      } else {
+        res.redirect('./');
+      }
     }
   });
 
@@ -376,6 +412,12 @@ module.exports = function (router) {
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
     req.session.data['errortypetwo'] = "false";
+    
+    // Capture the query parameter if coming from check answers
+    if (req.query.camefromcheckanswers === 'true') {
+      req.session.data['camefromcheckanswers'] = 'true';
+    }
+    
     res.render(`versions/${version}/${section}/other-permissions/other-authorities`);
   });
 
@@ -389,6 +431,11 @@ module.exports = function (router) {
     // Get the radio value
     const otherPermissions = req.session.data['low-complexity-other-permissions'];
     const otherPermissionsDetails = req.session.data['low-complexity-other-permissions-details'];
+
+    // If "No" is selected, clear the textarea data
+    if (otherPermissions === 'No') {
+      delete req.session.data['low-complexity-other-permissions-details'];
+    }
 
     // Validate: check if radio is selected
     if (!otherPermissions) {
@@ -406,9 +453,16 @@ module.exports = function (router) {
       // Redirect back to the same page with errors
       res.redirect('other-authorities');
     } else {
-      // Validation passed - set completion flag and redirect to other permissions index
+      // Validation passed - set completion flag
       req.session.data['low-complexity-other-permissions-completed'] = true;
-      res.redirect('./');
+      
+      // Check if we need to return to check answers
+      if (req.session.data['camefromcheckanswers'] === 'true') {
+        req.session.data['camefromcheckanswers'] = false;
+        res.redirect('../check-your-answers#other-permissions');
+      } else {
+        res.redirect('./');
+      }
     }
   });
 
@@ -418,6 +472,12 @@ module.exports = function (router) {
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
     req.session.data['errortypetwo'] = "false";
+    
+    // Capture the query parameter if coming from check answers
+    if (req.query.camefromcheckanswers === 'true') {
+      req.session.data['camefromcheckanswers'] = 'true';
+    }
+    
     res.render(`versions/${version}/${section}/other-permissions/consultation-and-advertising`);
   });
 
@@ -431,6 +491,11 @@ module.exports = function (router) {
     // Get the radio value
     const consultation = req.session.data['low-complexity-consultation'];
     const consultationDetails = req.session.data['low-complexity-consultation-details'];
+
+    // If "No" is selected, clear the textarea data
+    if (consultation === 'No') {
+      delete req.session.data['low-complexity-consultation-details'];
+    }
 
     // Validate: check if radio is selected
     if (!consultation) {
@@ -448,9 +513,16 @@ module.exports = function (router) {
       // Redirect back to the same page with errors
       res.redirect('consultation-and-advertising');
     } else {
-      // Validation passed - set completion flag and redirect to other permissions index
+      // Validation passed - set completion flag
       req.session.data['low-complexity-consultation-completed'] = true;
-      res.redirect('./');
+      
+      // Check if we need to return to check answers
+      if (req.session.data['camefromcheckanswers'] === 'true') {
+        req.session.data['camefromcheckanswers'] = false;
+        res.redirect('../check-your-answers#other-permissions');
+      } else {
+        res.redirect('./');
+      }
     }
   });
 
@@ -464,6 +536,12 @@ module.exports = function (router) {
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
     req.session.data['errortypetwo'] = "false";
+    
+    // Capture the query parameter if coming from check answers
+    if (req.query.camefromcheckanswers === 'true') {
+      req.session.data['camefromcheckanswers'] = 'true';
+    }
+    
     res.render(`versions/${version}/${section}/sharing-your-project-information-publicly`);
   });
 
@@ -477,6 +555,11 @@ module.exports = function (router) {
     // Get the radio value
     const sharingConsent = req.session.data['low-complexity-sharing-information'];
     const sharingDetails = req.session.data['low-complexity-sharing-information-details'];
+
+    // If "No" is selected, clear the textarea data
+    if (sharingConsent === 'No') {
+      delete req.session.data['low-complexity-sharing-information-details'];
+    }
 
     // Validate: check if radio is selected
     if (!sharingConsent) {
@@ -494,9 +577,16 @@ module.exports = function (router) {
       // Redirect back to the same page with errors
       res.redirect('sharing-your-project-information-publicly');
     } else {
-      // Validation passed - set completion flag and redirect to task list
+      // Validation passed - set completion flag
       req.session.data['low-complexity-sharing-information-completed'] = true;
-      res.redirect('marine-licence-start-page');
+      
+      // Check if we need to return to check answers
+      if (req.session.data['camefromcheckanswers'] === 'true') {
+        req.session.data['camefromcheckanswers'] = false;
+        res.redirect('check-your-answers#sharing-your-project-information-publicly');
+      } else {
+        res.redirect('marine-licence-start-page');
+      }
     }
   });
 
@@ -519,6 +609,12 @@ module.exports = function (router) {
     // Clear error flags when navigating to the page
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
+    
+    // Capture the query parameter if coming from check answers
+    if (req.query.camefromcheckanswers === 'true') {
+      req.session.data['camefromcheckanswers'] = 'true';
+    }
+    
     res.render(`versions/${version}/${section}/environmental-assessments/european-sites`);
   });
 
@@ -540,9 +636,16 @@ module.exports = function (router) {
       // Redirect back to the same page with errors
       res.redirect('european-sites');
     } else {
-      // Validation passed - set completion flag and redirect to environmental assessments index
+      // Validation passed - set completion flag
       req.session.data['low-complexity-european-sites-completed'] = true;
-      res.redirect('./');
+      
+      // Check if we need to return to check answers
+      if (req.session.data['camefromcheckanswers'] === 'true') {
+        req.session.data['camefromcheckanswers'] = false;
+        res.redirect('../check-your-answers#environmental-assessments');
+      } else {
+        res.redirect('./');
+      }
     }
   });
 
@@ -551,6 +654,12 @@ module.exports = function (router) {
     // Clear error flags when navigating to the page
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
+    
+    // Capture the query parameter if coming from check answers
+    if (req.query.camefromcheckanswers === 'true') {
+      req.session.data['camefromcheckanswers'] = 'true';
+    }
+    
     res.render(`versions/${version}/${section}/environmental-assessments/marine-conservation-zones`);
   });
 
@@ -572,9 +681,16 @@ module.exports = function (router) {
       // Redirect back to the same page with errors
       res.redirect('marine-conservation-zones');
     } else {
-      // Validation passed - set completion flag and redirect to environmental assessments index
+      // Validation passed - set completion flag
       req.session.data['low-complexity-mcz-completed'] = true;
-      res.redirect('./');
+      
+      // Check if we need to return to check answers
+      if (req.session.data['camefromcheckanswers'] === 'true') {
+        req.session.data['camefromcheckanswers'] = false;
+        res.redirect('../check-your-answers#environmental-assessments');
+      } else {
+        res.redirect('./');
+      }
     }
   });
 
@@ -583,6 +699,12 @@ module.exports = function (router) {
     // Clear error flags when navigating to the page
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
+    
+    // Capture the query parameter if coming from check answers
+    if (req.query.camefromcheckanswers === 'true') {
+      req.session.data['camefromcheckanswers'] = 'true';
+    }
+    
     res.render(`versions/${version}/${section}/environmental-assessments/sites-of-special-scientific-interest`);
   });
 
@@ -604,9 +726,16 @@ module.exports = function (router) {
       // Redirect back to the same page with errors
       res.redirect('sites-of-special-scientific-interest');
     } else {
-      // Validation passed - set completion flag and redirect to environmental assessments index
+      // Validation passed - set completion flag
       req.session.data['low-complexity-sssi-completed'] = true;
-      res.redirect('./');
+      
+      // Check if we need to return to check answers
+      if (req.session.data['camefromcheckanswers'] === 'true') {
+        req.session.data['camefromcheckanswers'] = false;
+        res.redirect('../check-your-answers#environmental-assessments');
+      } else {
+        res.redirect('./');
+      }
     }
   });
 
@@ -616,13 +745,22 @@ module.exports = function (router) {
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
     
-    // Check if coming from check answers page (change link)
+    // Check if coming from check answers pages (change links)
     const fromCheckAnswers = req.query.fromcheckanswers === 'true';
+    const fromMainCheckAnswers = req.query.camefromcheckanswers === 'true';
     
-    // Smart routing: If file uploaded AND not coming from check answers, go to check answers
-    if (req.session.data['low-complexity-wfd-file-uploaded'] && !fromCheckAnswers) {
+    // Capture the query parameter if coming from main check answers
+    if (fromMainCheckAnswers) {
+      req.session.data['camefromcheckanswers'] = 'true';
+    }
+    
+    // Smart routing logic
+    // If file uploaded AND not coming from WFD check-answers AND not coming from main check-answers, go to WFD check-answers
+    if (req.session.data['low-complexity-wfd-file-uploaded'] && !fromCheckAnswers && !fromMainCheckAnswers) {
       res.redirect('water-framework-directive-check-answers');
-    } else {
+    }
+    // Otherwise render the question page
+    else {
       res.render(`versions/${version}/${section}/environmental-assessments/water-framework-directive`);
     }
   });
@@ -636,6 +774,7 @@ module.exports = function (router) {
     // Get the nautical mile answer
     const nauticalMile = req.session.data['low-complexity-wfd-nautical-mile'];
     const fromCheckAnswers = req.query.fromcheckanswers === 'true';
+    const fromMainCheckAnswers = req.session.data['camefromcheckanswers'] === 'true';
 
     // Validate: check if radio is selected
     if (!nauticalMile) {
@@ -643,27 +782,63 @@ module.exports = function (router) {
       req.session.data['errorthispage'] = "true";
       req.session.data['errortypeone'] = "true";
       
-      // Redirect back to the same page with errors
-      res.redirect('water-framework-directive' + (fromCheckAnswers ? '?fromcheckanswers=true' : ''));
+      // Redirect back to the same page with errors, preserving the check answers context
+      if (fromMainCheckAnswers) {
+        res.redirect('water-framework-directive?camefromcheckanswers=true');
+      } else if (fromCheckAnswers) {
+        res.redirect('water-framework-directive?fromcheckanswers=true');
+      } else {
+        res.redirect('water-framework-directive');
+      }
     } else if (nauticalMile === 'No') {
-      // If No, mark as complete and return to task list
+      // If No, mark as complete
       req.session.data['low-complexity-wfd-completed'] = true;
       // Clear file upload data if it exists
       delete req.session.data['low-complexity-wfd-file-uploaded'];
       delete req.session.data['low-complexity-wfd-filename'];
-      res.redirect('./');
-    } else if (nauticalMile === 'Yes') {
-      // If Yes, go to upload page (pass along fromcheckanswers if present)
-      if (fromCheckAnswers) {
-        res.redirect('water-framework-directive-upload?fromcheckanswers=true');
+      
+      // Check if we need to return to main check answers
+      if (fromMainCheckAnswers) {
+        req.session.data['camefromcheckanswers'] = false;
+        res.redirect('../check-your-answers#environmental-assessments');
       } else {
-        res.redirect('water-framework-directive-upload');
+        res.redirect('./');
+      }
+    } else if (nauticalMile === 'Yes') {
+      // Check if file already uploaded and coming from check answers
+      const fileAlreadyUploaded = req.session.data['low-complexity-wfd-file-uploaded'];
+      const fromWFDCheckAnswers = req.query.fromcheckanswers === 'true';
+      
+      // If file already exists and coming from any check answers, skip upload
+      if (fileAlreadyUploaded && (fromMainCheckAnswers || fromWFDCheckAnswers)) {
+        if (fromMainCheckAnswers) {
+          // Go directly back to main check-your-answers (skip WFD check-answers)
+          req.session.data['camefromcheckanswers'] = false;
+          res.redirect('../check-your-answers#environmental-assessments');
+        } else {
+          // Coming from WFD check-answers, return there
+          res.redirect('water-framework-directive-check-answers');
+        }
+      } else {
+        // Need to upload file (first time or user is going through fresh)
+        if (fromMainCheckAnswers) {
+          res.redirect('water-framework-directive-upload?camefromcheckanswers=true');
+        } else if (fromWFDCheckAnswers) {
+          res.redirect('water-framework-directive-upload?fromcheckanswers=true');
+        } else {
+          res.redirect('water-framework-directive-upload');
+        }
       }
     }
   });
 
   // Water Framework Directive Upload page
   router.get(`/versions/${version}/${section}/environmental-assessments/water-framework-directive-upload`, function (req, res) {
+    // Capture the query parameter if coming from main check answers
+    if (req.query.camefromcheckanswers === 'true') {
+      req.session.data['camefromcheckanswers'] = 'true';
+    }
+    
     res.render(`versions/${version}/${section}/environmental-assessments/water-framework-directive-upload`);
   });
 
@@ -674,12 +849,24 @@ module.exports = function (router) {
     req.session.data['low-complexity-wfd-filename'] = 'WFD.pdf';
     req.session.data['low-complexity-wfd-file-uploaded'] = true;
     
-    // Always go to check answers after upload
-    res.redirect('water-framework-directive-check-answers');
+    // Check if coming from main check answers and pass through to WFD check answers
+    const fromMainCheckAnswers = req.session.data['camefromcheckanswers'] === 'true';
+    
+    if (fromMainCheckAnswers) {
+      res.redirect('water-framework-directive-check-answers?camefromcheckanswers=true');
+    } else {
+      // Always go to WFD check answers after upload
+      res.redirect('water-framework-directive-check-answers');
+    }
   });
 
   // Water Framework Directive Check Answers page
   router.get(`/versions/${version}/${section}/environmental-assessments/water-framework-directive-check-answers`, function (req, res) {
+    // Capture the query parameter if coming from main check answers
+    if (req.query.camefromcheckanswers === 'true') {
+      req.session.data['camefromcheckanswers'] = 'true';
+    }
+    
     res.render(`versions/${version}/${section}/environmental-assessments/water-framework-directive-check-answers`);
   });
 
@@ -688,8 +875,14 @@ module.exports = function (router) {
     // Mark task as complete
     req.session.data['low-complexity-wfd-completed'] = true;
     
-    // Return to environmental assessments task list
-    res.redirect('./');
+    // Check if we need to return to main check answers
+    if (req.session.data['camefromcheckanswers'] === 'true') {
+      req.session.data['camefromcheckanswers'] = false;
+      res.redirect('../check-your-answers#environmental-assessments');
+    } else {
+      // Return to environmental assessments task list
+      res.redirect('./');
+    }
   });
 
   ///////////////////////////////////////////

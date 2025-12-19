@@ -102,6 +102,11 @@ module.exports = function (router) {
   //////// Review site details page
   /////////////////////////////////////////////////////////
   router.get(`/versions/${version}/${section}/${subsection}/review-site-details`, function (req, res) {
+    // Capture the query parameter if coming from check answers
+    if (req.query.camefromcheckanswers === 'true') {
+      req.session.data['camefromcheckanswers'] = 'true';
+    }
+    
     res.render(`versions/${version}/${section}/${subsection}/review-site-details`);
   });
 
@@ -110,8 +115,14 @@ module.exports = function (router) {
     // Mark that user has visited site details journey
     req.session.data['has-visited-site-details'] = true;
     
-    // Redirect back to task list
-    res.redirect('../marine-licence-start-page');
+    // Check if we need to return to check answers
+    if (req.session.data['camefromcheckanswers'] === 'true') {
+      req.session.data['camefromcheckanswers'] = false;
+      res.redirect('../check-your-answers#site-location');
+    } else {
+      // Normal flow - redirect back to task list
+      res.redirect('../marine-licence-start-page');
+    }
   });
 
   /////////////////////////////////////////////////////////
