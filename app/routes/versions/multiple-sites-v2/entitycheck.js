@@ -41,6 +41,9 @@ module.exports = function (router) {
   });
 
   router.post(`/versions/${version}/${section}/who-is-this-exemption-notification-for-router`, function (req, res) {
+    // Clear error flags at start of POST
+    req.session.data['entity-check-who-is-for-errorthispage'] = "false";
+    
     const whoIsFor = req.session.data['entity-check-who-is-for'];
     
     // Validate selection
@@ -49,9 +52,6 @@ module.exports = function (router) {
       res.redirect('who-is-this-exemption-notification-for');
       return;
     }
-    
-    // Clear error
-    req.session.data['entity-check-who-is-for-errorthispage'] = "false";
     
     // Branch based on selection
     if (whoIsFor === 'myself') {
