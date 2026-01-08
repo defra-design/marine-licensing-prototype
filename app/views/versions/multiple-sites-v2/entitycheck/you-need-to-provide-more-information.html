@@ -1,9 +1,18 @@
 {% extends "layouts/main.html" %}
 
-{% set serviceName = "Marine licence interactive assistance tool" %}
-
 {% block pageTitle %}
-  You need to provide more information, but you do not need a marine licence – {{ serviceName }} – GOV.UK Prototype Kit
+  You need to provide more information, but you do not need a marine licence – Marine licence interactive assistance tool – GOV.UK Prototype Kit
+{% endblock %}
+
+{% block header %}
+{{ govukHeader({
+  serviceName: "Marine licence interactive assistance tool",
+  classes: "govuk-header--full-width-border"
+}) }}
+{% endblock %}
+
+{% block beforeContent %}
+   
 {% endblock %}
 
 {% block content %}
@@ -11,7 +20,7 @@
   <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
-      <h1 class="govuk-heading-xl">
+      <h1 class="govuk-heading-l">
         You need to provide more information, but you do not need a marine licence
       </h1>
 
@@ -24,7 +33,7 @@
       </h2>
 
       <p class="govuk-body">
-        This is a 'beta' service - <a href="#" class="govuk-link" target="_blank" rel="noopener noreferrer">find out what this means for you (opens in new tab)</a>.
+        This is a 'beta' service - <a href="https://www.gov.uk/help/beta" class="govuk-link" target="_blank" rel="noopener noreferrer">find out what this means for you (opens in new tab)</a>.
       </p>
 
       <p class="govuk-body">
