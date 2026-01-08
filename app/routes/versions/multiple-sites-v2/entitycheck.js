@@ -13,9 +13,7 @@ module.exports = function (router) {
 
   // Continue router (POST)
   router.post(`/versions/${version}/${section}/continue-router`, function (req, res) {
-    // Add routing logic here as needed
-    // For now, redirect to a placeholder
-    res.redirect('next-page');
+    res.redirect('who-is-this-exemption-notification-for');
   });
 
   ///////////////////////////////////////////
@@ -33,7 +31,62 @@ module.exports = function (router) {
   });
 
   ///////////////////////////////////////////
-  // Add additional routes below
+  // Who is this exemption notification for?
   ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/who-is-this-exemption-notification-for`, function (req, res) {
+    // Clear error flags on page load
+    req.session.data['entity-check-who-is-for-errorthispage'] = "false";
+    res.render(`versions/${version}/${section}/who-is-this-exemption-notification-for`);
+  });
+
+  router.post(`/versions/${version}/${section}/who-is-this-exemption-notification-for-router`, function (req, res) {
+    const whoIsFor = req.session.data['entity-check-who-is-for'];
+    
+    // Validate selection
+    if (!whoIsFor) {
+      req.session.data['entity-check-who-is-for-errorthispage'] = "true";
+      res.redirect('who-is-this-exemption-notification-for');
+      return;
+    }
+    
+    // Clear error
+    req.session.data['entity-check-who-is-for-errorthispage'] = "false";
+    
+    // Branch based on selection
+    if (whoIsFor === 'myself') {
+      res.redirect('sign-in');
+    } else if (whoIsFor === 'business') {
+      res.redirect('creating-a-defra-account-as-employee');
+    } else if (whoIsFor === 'client') {
+      res.redirect('creating-a-defra-account-as-agent');
+    }
+  });
+
+  ///////////////////////////////////////////
+  // Creating a Defra account pages
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/creating-a-defra-account-as-employee`, function (req, res) {
+    res.render(`versions/${version}/${section}/creating-a-defra-account-as-employee`);
+  });
+
+  router.get(`/versions/${version}/${section}/creating-a-defra-account-as-agent`, function (req, res) {
+    res.render(`versions/${version}/${section}/creating-a-defra-account-as-agent`);
+  });
+
+  ///////////////////////////////////////////
+  // Sign in page
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/sign-in`, function (req, res) {
+    res.render(`versions/${version}/${section}/sign-in`);
+  });
+
+  router.post(`/versions/${version}/${section}/sign-in-router`, function (req, res) {
+    // Handle sign-in submission
+    // For now, redirect to a placeholder
+    res.redirect('signed-in-placeholder');
+  });
 
 }
