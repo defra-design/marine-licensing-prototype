@@ -1,0 +1,75 @@
+{% extends "layouts/main.html" %}
+
+{% set serviceName = "Marine licence interactive assistance tool" %}
+
+{% block pageTitle %}
+  You need to provide more information, but you do not need a marine licence – {{ serviceName }} – GOV.UK Prototype Kit
+{% endblock %}
+
+{% block content %}
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+      <h1 class="govuk-heading-xl">
+        You need to provide more information, but you do not need a marine licence
+      </h1>
+
+      <p class="govuk-body">
+        Based on your answers, your activity is exempt under <a href="https://www.legislation.gov.uk/uksi/2011/409/article/17A" class="govuk-link" target="_blank" rel="noopener noreferrer">Article 17a of the Marine Licensing (Exempted Activities) Order 2011 (opens in new tab)</a>.
+      </p>
+
+      <h2 class="govuk-heading-m">
+        Your activity is only exempt on the condition that you provide further information before starting.
+      </h2>
+
+      <p class="govuk-body">
+        This is a 'beta' service - <a href="#" class="govuk-link" target="_blank" rel="noopener noreferrer">find out what this means for you (opens in new tab)</a>.
+      </p>
+
+      <p class="govuk-body">
+        To use the service, you'll need:
+      </p>
+
+      <ul class="govuk-list govuk-list--bullet">
+        <li>details of the site where the activity will take place</li>
+        <li>information about what the activity involves</li>
+        <li>start and end dates for your activity</li>
+      </ul>
+
+      <h2 class="govuk-heading-m">
+        How to access this service:
+      </h2>
+
+      <ol class="govuk-list govuk-list--number">
+        <li>
+          <p class="govuk-body">
+            Sign in to, or create, a GOV.UK One Login or Government Gateway account. You'll use your One Login or Government Gateway account to sign into this service each time you visit.
+          </p>
+          <p class="govuk-body">
+            If you're accessing this service as an organisation do not use your personal One Login or Government Gateway account.
+          </p>
+        </li>
+        <li>
+          <p class="govuk-body">
+            You then need to create a Defra account, if you do not already have one, to send us your information. You can use your business or organisation details. <a href="#" class="govuk-link" target="_blank" rel="noopener noreferrer">Find out how to create a Defra account (opens in new tab)</a>.
+          </p>
+        </li>
+      </ol>
+
+      <form action="continue-router" method="post" novalidate>
+        
+        {{ govukButton({
+          text: "Continue"
+        }) }}
+        
+      </form>
+
+      <p class="govuk-body">
+        <a href="#" class="govuk-link">Download a PDF of your answers</a>
+      </p>
+
+    </div>
+  </div>
+
+{% endblock %}
