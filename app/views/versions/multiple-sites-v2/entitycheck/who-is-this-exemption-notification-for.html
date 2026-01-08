@@ -1,0 +1,151 @@
+{% extends "layouts/main.html" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+
+{% block pageTitle %}
+  Who is this exemption notification for? - Get permission for marine work
+{% endblock %}
+
+{% block header %}
+{% from "govuk/components/header/macro.njk" import govukHeader %}
+{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
+
+{{ govukHeader({
+  classes: "govuk-header--full-width-border"
+}) }}
+{{ govukServiceNavigation({
+  serviceName: "Get permission for marine work"
+}) }}
+{% endblock %}
+
+{% block beforeContent %}
+  {% include "../includes/phase-banner.html" %}
+{% endblock %}
+
+{% block content %}
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+      <!-- Error summary -->
+      {% if data['entity-check-who-is-for-errorthispage'] == "true" %}
+        {{ govukErrorSummary({
+          titleText: "There is a problem",
+          errorList: [
+            {
+              text: "Select who this exemption notification is for",
+              href: "#entity-check-who-is-for"
+            }
+          ]
+        }) }}
+      {% endif %}
+
+      <form action="who-is-this-exemption-notification-for-router" method="post" novalidate>
+        
+        <!-- Wrapping div with conditional error class -->
+        <div class="govuk-form-group {% if data['entity-check-who-is-for-errorthispage'] == 'true' %}govuk-form-group--error{% endif %}">
+          
+          <!-- H1 heading outside radios -->
+          <h1 class="govuk-heading-l">
+            Who is this exemption notification for?
+          </h1>
+
+          <!-- Warning component between heading and radios -->
+          {{ govukWarningText({
+            text: "If you do not set up your Defra account correctly your exemption notification will not be valid. This is because it will not be registered to the person or organisation the exemption is for.",
+            iconFallbackText: "Warning"
+          }) }}
+
+          <!-- Manual error message -->
+          {% if data['entity-check-who-is-for-errorthispage'] == "true" %}
+            <p id="entity-check-who-is-for-error" class="govuk-error-message">
+              <span class="govuk-visually-hidden">Error:</span> Select who this exemption notification is for
+            </p>
+          {% endif %}
+
+          <!-- Radios with visually hidden legend -->
+          {{ govukRadios({
+            name: "entity-check-who-is-for",
+            id: "entity-check-who-is-for",
+            fieldset: {
+              legend: {
+                text: "Who is this exemption notification for?",
+                isPageHeading: false,
+                classes: "govuk-visually-hidden"
+              }
+            },
+            items: [
+              {
+                value: "myself",
+                text: "Myself as an individual",
+                hint: {
+                  text: "You're notifying us personally and this is not work related"
+                }
+              },
+              {
+                value: "business",
+                text: "The business or organisation I work or volunteer for",
+                hint: {
+                  text: "You're an employee or contractor working on behalf of the business or organisation you work for"
+                }
+              },
+              {
+                value: "client",
+                text: "A client",
+                hint: {
+                  text: "You're an agent or third-party working on behalf of another person or organisation"
+                }
+              }
+            ],
+            value: data['entity-check-who-is-for'],
+            errorMessage: null
+          }) }}
+        </div>
+        
+        {{ govukButton({
+          text: "Continue"
+        }) }}
+        
+      </form>
+
+    </div>
+  </div>
+
+  <script>
+    // Clear errors if a radio button is selected (handles browser back button cache)
+    document.addEventListener('DOMContentLoaded', function() {
+      var radios = document.querySelectorAll('input[name="entity-check-who-is-for"]');
+      var isSelected = false;
+      
+      radios.forEach(function(radio) {
+        if (radio.checked) {
+          isSelected = true;
+        }
+      });
+      
+      if (isSelected) {
+        // Hide error summary
+        var errorSummary = document.querySelector('.govuk-error-summary');
+        if (errorSummary) {
+          errorSummary.style.display = 'none';
+        }
+        
+        // Remove error class from form group
+        var formGroup = document.querySelector('.govuk-form-group--error');
+        if (formGroup) {
+          formGroup.classList.remove('govuk-form-group--error');
+        }
+        
+        // Hide inline error message
+        var errorMessage = document.getElementById('entity-check-who-is-for-error');
+        if (errorMessage) {
+          errorMessage.style.display = 'none';
+        }
+      }
+    });
+  </script>
+
+{% endblock %}

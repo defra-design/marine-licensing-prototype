@@ -1,0 +1,68 @@
+{% extends "layouts/main.html" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+
+{% block pageTitle %}
+  Creating a Defra account as an agent or third party working on behalf of someone else - Get permission for marine work
+{% endblock %}
+
+{% block header %}
+{% from "govuk/components/header/macro.njk" import govukHeader %}
+{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
+
+{{ govukHeader({
+  classes: "govuk-header--full-width-border"
+}) }}
+{{ govukServiceNavigation({
+  serviceName: "Get permission for marine work"
+}) }}
+{% endblock %}
+
+{% block beforeContent %}
+  {% include "../includes/phase-banner.html" %}
+  <a class="govuk-back-link" href="javascript:window.history.back()">Back</a>
+{% endblock %}
+
+{% block content %}
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+      <h1 class="govuk-heading-l">
+        Creating a Defra account as an agent or third party working on behalf of someone else
+      </h1>
+
+      <p class="govuk-body">
+        You cannot create a Defra account as an agent or third party working on behalf of someone else.
+      </p>
+
+      <p class="govuk-body">
+        You need to get the individual or organisation you're representing to create the account, if they do not already have one, and invite you to it as an intermediary.
+      </p>
+
+      <p class="govuk-body">
+        To create an account, first they need to sign in to, or create, a GOV.UK One Login or Government Gateway account. Then select <a href="https://your-account.defra.gov.uk/management/sign-out-successful" class="govuk-link" target="_blank" rel="noopener noreferrer">Get Permission for Marine Work (opens in new tab)</a> from the list and create a Defra account.
+      </p>
+
+      <p class="govuk-body">
+        <a href="adding-users-to-a-defra-account-as-an-admin" class="govuk-link" target="_blank" rel="noopener noreferrer">How to add users to a Defra account (opens in new tab)</a>.
+      </p>
+
+      {{ govukWarningText({
+        text: "If you do not set up your Defra account correctly your exemption notification will not be valid. This is because it will not be registered to the person or organisation the exemption is for.",
+        iconFallbackText: "Warning"
+      }) }}
+
+      <form action="sign-in" method="get" novalidate>
+        
+        {{ govukButton({
+          text: "Continue"
+        }) }}
+        
+      </form>
+
+    </div>
+  </div>
+
+{% endblock %}

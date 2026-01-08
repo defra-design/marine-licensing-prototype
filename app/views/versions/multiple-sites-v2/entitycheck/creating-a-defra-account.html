@@ -1,0 +1,160 @@
+{% extends "layouts/main.html" %}
+
+{% block pageTitle %}
+  Creating a Defra account – GOV.UK Prototype Kit
+{% endblock %}
+
+{% block header %}
+{{ govukHeader({
+  classes: "govuk-header--full-width-border"
+}) }}
+{% endblock %}
+
+{% block beforeContent %}
+{{ govukBreadcrumbs({
+  items: [
+    {
+      text: "Home",
+      href: "#"
+    },
+    {
+      text: "Environment",
+      href: "#"
+    },
+    {
+      text: "Marine",
+      href: "#"
+    },
+    {
+      text: "Marine licences",
+      href: "#"
+    }
+  ]
+}) }}
+{% endblock %}
+
+{% block content %}
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      
+      <span class="govuk-caption-l">Guidance</span>
+      <h1 class="govuk-heading-l">
+        Creating a Defra account
+      </h1>
+
+      <p class="govuk-body-l">
+        Find out how to create a Defra account so you can notify the Marine Management Organisation (MMO) about an exempt activity.
+      </p>
+
+      <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-top-3 govuk-!-margin-bottom-6">
+
+    </div>
+  </div>
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+      <h2 class="govuk-heading-m">
+        How to create a Defra account
+      </h2>
+
+      <p class="govuk-body">
+        You need a Defra account to notify the MMO about exempt activities. A Defra account lets you register with a range of online services from Defra and related organisations.
+      </p>
+
+      <p class="govuk-body">
+        If you do not set up your Defra account correctly your exemption notification will not be valid. This is because it will not be registered to the person or organisation the exemption is for.
+      </p>
+
+      <h3 class="govuk-heading-s">
+        Who can create a Defra account
+      </h3>
+
+      <p class="govuk-body">
+        You can create a Defra account as an individual, registered company or organisation, charity or sole trader.
+      </p>
+
+      <h3 class="govuk-heading-s">
+        Creating a Defra account as an individual
+      </h3>
+
+      <p class="govuk-body">
+        You should only create a Defra account as an individual if the account is for your personal use. If you're creating a Defra account for the organisation you work for you need to create an organisation account.
+      </p>
+
+      <h3 class="govuk-heading-s">
+        Creating a Defra account as an employee of a business or organisation
+      </h3>
+
+      <p class="govuk-body">
+        If you're creating a Defra account for the organisation you work for you need to create an organisation account. If you create the account as an individual it will be set up incorrectly as it will be registered to you personally, not the organisation you work for.
+      </p>
+
+      <h3 class="govuk-heading-s">
+        Creating a Defra account as an agent or third party working on behalf of someone else
+      </h3>
+
+      <p class="govuk-body">
+        You cannot create a Defra account as an agent or third party working on behalf of someone else. You need to get the individual or organisation you're representing to create the account. If they do not already have one, and invite you to it as an intermediary.
+      </p>
+
+      <p class="govuk-body">
+        To create an account, first they need to sign in to, or create, a GOV.UK One Login or Government Gateway account. Then select <a href="https://your-account.defra.gov.uk/management/sign-out-successful" class="govuk-link">Get Permission for Marine Work</a> from the list and create a Defra account.
+      </p>
+
+      <h2 class="govuk-heading-m">
+        Inviting other people to a Defra account
+      </h2>
+
+      {{ govukDetails({
+        summaryText: "How to invite other people to join a Defra account",
+        html: "
+          <p class='govuk-body'>
+            The first person to register for a Defra account will be the account admin. They can invite and remove other team members or third parties and manage the account. They can also give admin rights to other team members.
+          </p>
+          <p class='govuk-body'>
+            We recommend there are at least 2 account admins to prevent issues accessing and managing the account.
+          </p>
+        "
+      }) }}
+
+      <h2 class="govuk-heading-m">
+        If your organisation already has a Defra account
+      </h2>
+
+      {{ govukDetails({
+        summaryText: "How to request to join the existing account",
+        html: "
+          <p class='govuk-body'>
+            If your organisation has already registered for a Defra account you cannot create a new one. You need to contact the account admin and request to join the account. If you do not know who the account admin is we can forward them your request.
+          </p>
+        "
+      }) }}
+
+      <h2 class="govuk-heading-m">
+        Before you start
+      </h2>
+
+      <p class="govuk-body">
+        To create a Defra account you need to provide:
+      </p>
+
+      <ul class="govuk-list govuk-list--bullet">
+        <li>email address, phone number and postal address</li>
+        <li>One Login or Government Gateway user ID and password. If you do not have a One Login or Government Gateway account, you can create one in the next step.</li>
+      </ul>
+
+      <p class="govuk-body">
+        If you're registering on behalf of a business or organisation, you also need to provide:
+      </p>
+
+      <ul class="govuk-list govuk-list--bullet">
+        <li>main contact details for your business or organisation (for example, head office contact details)</li>
+        <li>Companies House number if the business or organisation is a limited company</li>
+      </ul>
+
+    </div>
+  </div>
+
+{% endblock %}
