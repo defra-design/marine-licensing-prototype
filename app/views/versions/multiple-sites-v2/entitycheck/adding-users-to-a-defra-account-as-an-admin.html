@@ -1,0 +1,153 @@
+{% extends "layouts/main.html" %}
+
+{% block pageTitle %}
+  Adding users to a Defra account as an admin – GOV.UK Prototype Kit
+{% endblock %}
+
+{% block header %}
+{{ govukHeader({
+  classes: "govuk-header--full-width-border"
+}) }}
+{% endblock %}
+
+{% block beforeContent %}
+{{ govukBreadcrumbs({
+  items: [
+    {
+      text: "Home",
+      href: "#"
+    },
+    {
+      text: "Environment",
+      href: "#"
+    },
+    {
+      text: "Marine",
+      href: "#"
+    },
+    {
+      text: "Marine licences",
+      href: "#"
+    }
+  ]
+}) }}
+{% endblock %}
+
+{% block content %}
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+      
+      <span class="govuk-caption-l">Guidance</span>
+      <h1 class="govuk-heading-l">
+        Adding users to a Defra account as an admin
+      </h1>
+
+      <p class="govuk-body-l">
+        Read guidance on how to invite users to your Defra account and give them access to Get permission for marine work.
+      </p>
+
+      <hr class="govuk-section-break govuk-section-break--visible govuk-!-margin-top-3 govuk-!-margin-bottom-6">
+
+    </div>
+  </div>
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+      <h2 class="govuk-heading-m">
+        How to add users to your Defra account as an admin
+      </h2>
+
+      <p class="govuk-body">
+        As an account admin you can invite and remove other team members or third parties and manage a Defra account. You can also give admin rights to other team members.
+      </p>
+
+      <p class="govuk-body">
+        We recommend there are at least 2 account admins to prevent issues accessing and managing the account.
+      </p>
+
+      <p class="govuk-body">
+        Adding users is a 2-step process. First you invite the user to join the account as a team member or intermediary (third party) user and give them account access.
+      </p>
+
+      <p class="govuk-body">
+        Once they've registered you then assign them service access which will either be as an admin or standard user. Intermediaries can only be added as standard users and cannot access the account dashboard.
+      </p>
+
+      <h3 class="govuk-heading-s">
+        Adding a new user (account access)
+      </h3>
+
+      <ol class="govuk-list govuk-list--number">
+        <li>Go to your Defra account and select the <strong>Manage</strong> link next to the organisation account you want to add a user to.</li>
+        <li>Select either <strong>Manage team access</strong> or <strong>Manage intermediary access</strong>.</li>
+        <li>Select either <strong>Add a team member</strong> or <strong>Add an intermediary</strong>.</li>
+        <li>Enter the email address of the new user and select <strong>Continue</strong>.</li>
+      </ol>
+
+      <h3 class="govuk-heading-s">
+        What happens next
+      </h3>
+
+      <ol class="govuk-list govuk-list--number">
+        <li>You'll be notified that an invitation has been sent to the user and that they must respond to it within 30 days before it expires.</li>
+        <li>Select <strong>Continue</strong>.</li>
+      </ol>
+
+      <h2 class="govuk-heading-m">
+        Giving a new user service access
+      </h2>
+
+      <p class="govuk-body">
+        Once the new user is registered you need to give them access to the service.
+      </p>
+
+      <p class="govuk-body">
+        You can either do this:
+      </p>
+
+      <ul class="govuk-list govuk-list--bullet">
+        <li>using the Give this person access to the use online services link in the email notification sent to you</li>
+        <li>through their profile page.</li>
+      </ul>
+
+      <h3 class="govuk-heading-s">
+        Using the email link to give a new user service access
+      </h3>
+
+      <ol class="govuk-list govuk-list--number">
+        <li>Select the <strong>Give this person access</strong> to the use online services link in the email notification sent to you</li>
+        <li>This will take you to the user's profile page. Select <strong>Give account access</strong>.</li>
+        <li>Choose if you want to give team members <strong>Admin</strong> or <strong>Standard user</strong> access. For intermediaries you can only select Standard user.</li>
+        <li>Select <strong>Continue</strong>.</li>
+        <li>Select the service <strong>Get Permission for marine works</strong> even if this is the only available option then select <strong>Continue</strong>.</li>
+        <li>Select the service role for the new user.</li>
+      </ol>
+
+      <p class="govuk-body">
+        You'll then be notified that the user now has access. The new user will get an email confirming that their access is fully set up.
+      </p>
+
+      <h3 class="govuk-heading-s">
+        Giving a new user service access through the Defra account dashboard
+      </h3>
+
+      <ol class="govuk-list govuk-list--number">
+        <li>From the Defra account dashboard select <strong>Manage</strong> next to the organisation record.</li>
+        <li>Select either <strong>Manage team access</strong> or <strong>Manage intermediary access</strong>.</li>
+        <li>Select the user's name and select <strong>Give account access</strong>.</li>
+        <li>For team members, choose either <strong>Admin</strong> or <strong>Standard user</strong>. For intermediaries you can only select Standard user.</li>
+        <li>Select <strong>Give service access</strong>.</li>
+        <li>Select the service <strong>Get permission for marine works</strong> even if this is the only available option then select <strong>Continue</strong>.</li>
+        <li>Select the service role for the new user.</li>
+      </ol>
+
+      <p class="govuk-body">
+        You'll then be notified that the user now has access. The new user will get an email confirming that their access is fully set up.
+      </p>
+
+    </div>
+  </div>
+
+{% endblock %}
