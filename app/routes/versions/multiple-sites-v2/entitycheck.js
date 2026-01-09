@@ -165,6 +165,8 @@ module.exports = function (router) {
   router.get(`/versions/${version}/${section}/confirm-organisation-notification`, function (req, res) {
     // Clear error flags on page load
     req.session.data['confirm-organisation-notification-errorthispage'] = "false";
+    // Set organisation name for display
+    req.session.data['organisation-name'] = 'Ocean Dredging';
     res.render(`versions/${version}/${section}/confirm-organisation-notification`);
   });
 
@@ -200,6 +202,8 @@ module.exports = function (router) {
   router.get(`/versions/${version}/${section}/confirm-agent-notification`, function (req, res) {
     // Clear error flags on page load
     req.session.data['confirm-agent-notification-errorthispage'] = "false";
+    // Set organisation name for display
+    req.session.data['organisation-name'] = 'Brighton Marina';
     res.render(`versions/${version}/${section}/confirm-agent-notification`);
   });
 
