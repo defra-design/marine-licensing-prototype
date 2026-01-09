@@ -3,10 +3,9 @@
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
-{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 
 {% block pageTitle %}
-  {% if data['confirm-organisation-notification-errorthispage'] == "true" %}Error: {% endif %}Confirm you're notifying us as an employee, volunteer or contractor of this organisation - Get permission for marine work
+  {% if data['confirm-organisation-notification-errorthispage'] == "true" %}Error: {% endif %}Are you notifying us as an employee, volunteer or contractor of Ocean Dredging? - Get permission for marine work
 {% endblock %}
 
 {% block header %}
@@ -39,67 +38,47 @@
           titleText: "There is a problem",
           errorList: [
             {
-              text: "Select if you are notifying us as an employee, volunteer or contractor of this organisation",
+              text: "Select if you are notifying us as an employee, volunteer or contractor of Ocean Dredging",
               href: "#confirm-organisation-notification"
             }
           ]
         }) }}
       {% endif %}
 
-      <h1 class="govuk-heading-l">
-        Confirm you're notifying us as an employee, volunteer or contractor of this organisation
-      </h1>
-
-      {{ govukInsetText({
-        text: "You are signed in as Sam Evans working for Ocean Dredging."
-      }) }}
-
-      <p class="govuk-body">
-        This exemption notification will be registered in the name of Ocean Dredging.
-      </p>
-
       <form action="confirm-organisation-notification-router" method="post" novalidate>
         
-        <!-- Wrapping div with conditional error class -->
-        <div class="govuk-form-group {% if data['confirm-organisation-notification-errorthispage'] == 'true' %}govuk-form-group--error{% endif %}">
-          
-          <fieldset class="govuk-fieldset">
-            <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
-              <h2 class="govuk-fieldset__heading">
-                Are you notifying us as an employee, volunteer or contractor of this organisation?
-              </h2>
-            </legend>
-
-            <!-- Manual error message -->
-            {% if data['confirm-organisation-notification-errorthispage'] == "true" %}
-              <p id="confirm-organisation-notification-error" class="govuk-error-message">
-                <span class="govuk-visually-hidden">Error:</span> Select if you are notifying us as an employee, volunteer or contractor of this organisation
-              </p>
-            {% endif %}
-
-            <!-- Radios -->
-            {{ govukRadios({
-              name: "confirm-organisation-notification",
-              id: "confirm-organisation-notification",
-              items: [
-                {
-                  value: "yes",
-                  text: "Yes"
-                },
-                {
-                  value: "agent",
-                  text: "No, I'm notifying you as an agent or third party (intermediary) for an organisation"
-                },
-                {
-                  value: "myself",
-                  text: "No, I’m notifying you about a personal project"
-                }
-              ],
-              value: data['confirm-organisation-notification'],
-              errorMessage: null
-            }) }}
-          </fieldset>
-        </div>
+        {{ govukRadios({
+          name: "confirm-organisation-notification",
+          id: "confirm-organisation-notification",
+          fieldset: {
+            legend: {
+              text: "Are you notifying us as an employee, volunteer or contractor of Ocean Dredging?",
+              isPageHeading: true,
+              classes: "govuk-fieldset__legend--l"
+            }
+          },
+          items: [
+            {
+              value: "yes",
+              text: "Yes",
+              hint: {
+                text: "This exemption notification will be registered in the name of Ocean Dredging"
+              }
+            },
+            {
+              value: "agent",
+              text: "No, I'm notifying you as an agent or third party (intermediary) for an organisation"
+            },
+            {
+              value: "myself",
+              text: "No, I'm notifying you about a personal project"
+            }
+          ],
+          value: data['confirm-organisation-notification'],
+          errorMessage: {
+            text: "Select if you are notifying us as an employee, volunteer or contractor of Ocean Dredging"
+          } if data['confirm-organisation-notification-errorthispage'] == "true" else null
+        }) }}
         
         {{ govukButton({
           text: "Continue"
@@ -136,7 +115,7 @@
         }
         
         // Hide inline error message
-        var errorMessage = document.getElementById('confirm-organisation-notification-error');
+        var errorMessage = document.querySelector('.govuk-error-message');
         if (errorMessage) {
           errorMessage.style.display = 'none';
         }
