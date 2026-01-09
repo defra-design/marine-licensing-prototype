@@ -8,6 +8,18 @@ module.exports = function (router) {
   ///////////////////////////////////////////
 
   router.get(`/versions/${version}/${section}/you-need-to-provide-more-information`, function (req, res) {
+    // Clear error flags and entity check data when entering the journey
+    delete req.session.data['entity-check-who-is-for-errorthispage'];
+    delete req.session.data['entity-check-who-is-for'];
+    
+    // Store user_type if provided (for organisation vs individual)
+    if (req.query.user_type === 'organisation') {
+      req.session.data['user_type'] = 'organisation';
+    } else if (req.query.user_type === '') {
+      // Explicitly clear user_type for individual users
+      delete req.session.data['user_type'];
+    }
+    
     res.render(`versions/${version}/${section}/you-need-to-provide-more-information`);
   });
 
