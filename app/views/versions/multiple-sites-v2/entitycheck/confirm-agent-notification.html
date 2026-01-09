@@ -23,7 +23,9 @@
 
 {% block beforeContent %}
   {% include "../includes/phase-banner.html" %}
-  {% include "../includes/organisation-switcher.html" %}
+  <div class="app-organisation-switcher">
+    <span class="govuk-body-s govuk-!-font-weight-bold app-organisation-switcher__name">Brighton Marina</span>
+  </div>
 {% endblock %}
 
 {% block content %}
@@ -94,7 +96,7 @@
                 },
                 {
                   value: "myself",
-                  text: "No, I'm notifying you as myself personally"
+                  text: "No, I’m notifying you about a personal project"
                 }
               ],
               value: data['confirm-agent-notification'],

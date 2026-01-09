@@ -23,7 +23,9 @@
 
 {% block beforeContent %}
   {% include "../includes/phase-banner.html" %}
-  {% include "../includes/organisation-switcher.html" %}
+  <div class="app-organisation-switcher">
+    <span class="govuk-body-s govuk-!-font-weight-bold app-organisation-switcher__name">Ocean Dredging</span>
+  </div>
 {% endblock %}
 
 {% block content %}
@@ -85,16 +87,12 @@
                   text: "Yes"
                 },
                 {
-                  value: "different-organisation",
-                  text: "No, I need to represent a different organisation"
-                },
-                {
                   value: "agent",
                   text: "No, I'm notifying you as an agent or third party (intermediary) for an organisation"
                 },
                 {
                   value: "myself",
-                  text: "No, I'm notifying you as myself personally"
+                  text: "No, I’m notifying you about a personal project"
                 }
               ],
               value: data['confirm-organisation-notification'],

@@ -3,7 +3,7 @@
 {% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
 
 {% block pageTitle %}
-  You need to create a Defra account as an individual - Get permission for marine work
+  You need to select the correct organisation you're notifying us on behalf of - Get permission for marine work
 {% endblock %}
 
 {% block header %}
@@ -45,16 +45,16 @@
     <div class="govuk-grid-column-two-thirds">
 
       <h1 class="govuk-heading-l">
-        You need to create a Defra account as an individual
+        You need to select the correct organisation you're notifying us on behalf of
       </h1>
 
       {{ govukWarningText({
-        text: "If you do not set up your Defra account correctly your exemption notification will not be valid. This is because it will not be registered to the person the exemption is for.",
+        text: "If you do not set up your Defra account correctly your exemption notification will not be valid. This is because it will not be registered to the organisation the exemption is for.",
         iconFallbackText: "Warning"
       }) }}
 
       <p class="govuk-body">
-        If you're creating a Defra account for personal use when you're registering you need to select as an individual when you register.
+        You need to go back to your Defra account and select the organisation this exemption notification is for.
       </p>
 
       <p class="govuk-body">
