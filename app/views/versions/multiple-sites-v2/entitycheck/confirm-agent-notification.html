@@ -6,7 +6,7 @@
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 
 {% block pageTitle %}
-  {% if data['confirm-organisation-notification-errorthispage'] == "true" %}Error: {% endif %}Confirm you're notifying us as an employee, volunteer or contractor of this organisation - Get permission for marine work
+  {% if data['confirm-agent-notification-errorthispage'] == "true" %}Error: {% endif %}Confirm you're notifying us as an agent or third party (intermediary) - Get permission for marine work
 {% endblock %}
 
 {% block header %}
@@ -31,53 +31,54 @@
     <div class="govuk-grid-column-two-thirds">
 
       <!-- Error summary -->
-      {% if data['confirm-organisation-notification-errorthispage'] == "true" %}
+      {% if data['confirm-agent-notification-errorthispage'] == "true" %}
         {{ govukErrorSummary({
           titleText: "There is a problem",
           errorList: [
             {
-              text: "Select if you are notifying us as an employee, volunteer or contractor of this organisation",
-              href: "#confirm-organisation-notification"
+              text: "Select if you are notifying us as an intermediary on behalf of this organisation",
+              href: "#confirm-agent-notification"
             }
           ]
         }) }}
       {% endif %}
 
+      <span class="govuk-caption-l">Brighton Marina</span>
       <h1 class="govuk-heading-l">
-        Confirm you're notifying us as an employee, volunteer or contractor of this organisation
+        Confirm you're notifying us as an agent or third party (intermediary)
       </h1>
 
       {{ govukInsetText({
-        text: "You are signed in as Sam Evans working for Ocean Dredging."
+        text: "You are signed in as Sam Evans working as an intermediary for Brighton Marina."
       }) }}
 
       <p class="govuk-body">
-        This exemption notification will be registered in the name of Ocean Dredging.
+        This exemption notification will be registered in the name of Brighton Marina.
       </p>
 
-      <form action="confirm-organisation-notification-router" method="post" novalidate>
+      <form action="confirm-agent-notification-router" method="post" novalidate>
         
         <!-- Wrapping div with conditional error class -->
-        <div class="govuk-form-group {% if data['confirm-organisation-notification-errorthispage'] == 'true' %}govuk-form-group--error{% endif %}">
+        <div class="govuk-form-group {% if data['confirm-agent-notification-errorthispage'] == 'true' %}govuk-form-group--error{% endif %}">
           
           <fieldset class="govuk-fieldset">
             <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
               <h2 class="govuk-fieldset__heading">
-                Are you notifying us as an employee, volunteer or contractor of this organisation?
+                Are you notifying us as an intermediary on behalf of this organisation?
               </h2>
             </legend>
 
             <!-- Manual error message -->
-            {% if data['confirm-organisation-notification-errorthispage'] == "true" %}
-              <p id="confirm-organisation-notification-error" class="govuk-error-message">
-                <span class="govuk-visually-hidden">Error:</span> Select if you are notifying us as an employee, volunteer or contractor of this organisation
+            {% if data['confirm-agent-notification-errorthispage'] == "true" %}
+              <p id="confirm-agent-notification-error" class="govuk-error-message">
+                <span class="govuk-visually-hidden">Error:</span> Select if you are notifying us as an intermediary on behalf of this organisation
               </p>
             {% endif %}
 
             <!-- Radios -->
             {{ govukRadios({
-              name: "confirm-organisation-notification",
-              id: "confirm-organisation-notification",
+              name: "confirm-agent-notification",
+              id: "confirm-agent-notification",
               items: [
                 {
                   value: "yes",
@@ -88,15 +89,15 @@
                   text: "No, I need to represent a different organisation"
                 },
                 {
-                  value: "agent",
-                  text: "No, I'm notifying you as an agent or third party (intermediary) for an organisation"
+                  value: "employee",
+                  text: "No, I'm notifying you as an employee, volunteer or contractor of an organisation"
                 },
                 {
                   value: "myself",
                   text: "No, I'm notifying you as myself personally"
                 }
               ],
-              value: data['confirm-organisation-notification'],
+              value: data['confirm-agent-notification'],
               errorMessage: null
             }) }}
           </fieldset>
@@ -114,7 +115,7 @@
   <script>
     // Clear errors if a radio button is selected (handles browser back button cache)
     document.addEventListener('DOMContentLoaded', function() {
-      var radios = document.querySelectorAll('input[name="confirm-organisation-notification"]');
+      var radios = document.querySelectorAll('input[name="confirm-agent-notification"]');
       var isSelected = false;
       
       radios.forEach(function(radio) {
@@ -137,7 +138,7 @@
         }
         
         // Hide inline error message
-        var errorMessage = document.getElementById('confirm-organisation-notification-error');
+        var errorMessage = document.getElementById('confirm-agent-notification-error');
         if (errorMessage) {
           errorMessage.style.display = 'none';
         }
