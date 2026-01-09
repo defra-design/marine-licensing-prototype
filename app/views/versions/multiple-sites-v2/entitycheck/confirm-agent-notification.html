@@ -3,10 +3,9 @@
 {% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
-{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 
 {% block pageTitle %}
-  {% if data['confirm-agent-notification-errorthispage'] == "true" %}Error: {% endif %}Confirm you're notifying us as an agent or third party (intermediary) - Get permission for marine work
+  {% if data['confirm-agent-notification-errorthispage'] == "true" %}Error: {% endif %}Are you notifying us as an agent or third party (intermediary) for Brighton Marina? - Get permission for marine work
 {% endblock %}
 
 {% block header %}
@@ -39,71 +38,51 @@
           titleText: "There is a problem",
           errorList: [
             {
-              text: "Select if you are notifying us as an intermediary on behalf of this organisation",
+              text: "Select if you are notifying us as an agent or third party (intermediary) for Brighton Marina",
               href: "#confirm-agent-notification"
             }
           ]
         }) }}
       {% endif %}
 
-      <h1 class="govuk-heading-l">
-        Confirm you're notifying us as an agent or third party (intermediary)
-      </h1>
-
-      {{ govukInsetText({
-        text: "You are signed in as Sam Evans working as an intermediary for Brighton Marina."
-      }) }}
-
-      <p class="govuk-body">
-        This exemption notification will be registered in the name of Brighton Marina.
-      </p>
-
       <form action="confirm-agent-notification-router" method="post" novalidate>
         
-        <!-- Wrapping div with conditional error class -->
-        <div class="govuk-form-group {% if data['confirm-agent-notification-errorthispage'] == 'true' %}govuk-form-group--error{% endif %}">
-          
-          <fieldset class="govuk-fieldset">
-            <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
-              <h2 class="govuk-fieldset__heading">
-                Are you notifying us as an intermediary on behalf of this organisation?
-              </h2>
-            </legend>
-
-            <!-- Manual error message -->
-            {% if data['confirm-agent-notification-errorthispage'] == "true" %}
-              <p id="confirm-agent-notification-error" class="govuk-error-message">
-                <span class="govuk-visually-hidden">Error:</span> Select if you are notifying us as an intermediary on behalf of this organisation
-              </p>
-            {% endif %}
-
-            <!-- Radios -->
-            {{ govukRadios({
-              name: "confirm-agent-notification",
-              id: "confirm-agent-notification",
-              items: [
-                {
-                  value: "yes",
-                  text: "Yes"
-                },
-                {
-                  value: "different-organisation",
-                  text: "No, I need to represent a different organisation"
-                },
-                {
-                  value: "employee",
-                  text: "No, I'm notifying you as an employee, volunteer or contractor of an organisation"
-                },
-                {
-                  value: "myself",
-                  text: "No, I’m notifying you about a personal project"
-                }
-              ],
-              value: data['confirm-agent-notification'],
-              errorMessage: null
-            }) }}
-          </fieldset>
-        </div>
+        {{ govukRadios({
+          name: "confirm-agent-notification",
+          id: "confirm-agent-notification",
+          fieldset: {
+            legend: {
+              text: "Are you notifying us as an agent or third party (intermediary) for Brighton Marina?",
+              isPageHeading: true,
+              classes: "govuk-fieldset__legend--l"
+            }
+          },
+          items: [
+            {
+              value: "yes",
+              text: "Yes",
+              hint: {
+                text: "This exemption notification will be registered in the name of Brighton Marina"
+              }
+            },
+            {
+              value: "different-organisation",
+              text: "No, I need to represent a different organisation"
+            },
+            {
+              value: "employee",
+              text: "No, I'm notifying you as an employee, volunteer or contractor of an organisation"
+            },
+            {
+              value: "myself",
+              text: "No, I'm notifying you about a personal project"
+            }
+          ],
+          value: data['confirm-agent-notification'],
+          errorMessage: {
+            text: "Select if you are notifying us as an agent or third party (intermediary) for Brighton Marina"
+          } if data['confirm-agent-notification-errorthispage'] == "true" else null
+        }) }}
         
         {{ govukButton({
           text: "Continue"
@@ -140,7 +119,7 @@
         }
         
         // Hide inline error message
-        var errorMessage = document.getElementById('confirm-agent-notification-error');
+        var errorMessage = document.querySelector('.govuk-error-message');
         if (errorMessage) {
           errorMessage.style.display = 'none';
         }
