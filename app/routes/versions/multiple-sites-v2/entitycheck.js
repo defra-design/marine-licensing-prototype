@@ -191,6 +191,10 @@ module.exports = function (router) {
     res.render(`versions/${version}/${section}/need-to-create-defra-account-as-individual`);
   });
 
+  router.get(`/versions/${version}/${section}/need-to-select-correct-organisation`, function (req, res) {
+    res.render(`versions/${version}/${section}/need-to-select-correct-organisation`);
+  });
+
   ///////////////////////////////////////////
   // Confirm organisation notification page
   ///////////////////////////////////////////
@@ -263,7 +267,7 @@ module.exports = function (router) {
     if (confirmNotification === 'yes') {
       res.redirect('project-name-start');
     } else if (confirmNotification === 'different-organisation') {
-      res.redirect('need-client-to-invite-you');
+      res.redirect('need-to-select-correct-organisation');
     } else if (confirmNotification === 'employee') {
       res.redirect('need-to-create-defra-account-as-employee');
     } else if (confirmNotification === 'myself') {

@@ -1,0 +1,67 @@
+{% extends "layouts/main.html" %}
+
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+
+{% block pageTitle %}
+  You need to select the correct organisation you're notifying us on behalf of - Get permission for marine work
+{% endblock %}
+
+{% block header %}
+{% from "govuk/components/header/macro.njk" import govukHeader %}
+{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
+
+{{ govukHeader({
+  classes: "govuk-header--full-width-border"
+}) }}
+{{ govukServiceNavigation({
+  serviceName: "Get permission for marine work",
+  navigation: [
+    {
+      href: "#",
+      text: "Defra account",
+      active: false
+    },
+    {
+      href: "/versions/multiple-sites-v2/exemption/sign-in.html?goto=home",
+      text: "Sign out"
+    }
+  ]
+}) }}
+{% endblock %}
+
+{% block beforeContent %}
+  {% include "../includes/phase-banner.html" %}
+  {% if data['organisation-name'] %}
+  <div class="app-organisation-switcher">
+    <span class="govuk-body-s govuk-!-font-weight-bold app-organisation-switcher__name">{{ data['organisation-name'] }}</span>
+  </div>
+  {% endif %}
+  <a class="govuk-back-link" href="javascript:window.history.back()">Back</a>
+{% endblock %}
+
+{% block content %}
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+      <h1 class="govuk-heading-l">
+        You need to select the correct organisation you're notifying us on behalf of
+      </h1>
+
+      {{ govukWarningText({
+        text: "If you do not set up your Defra account correctly your exemption notification will not be valid. This is because it will not be registered to the organisation the exemption is for.",
+        iconFallbackText: "Warning"
+      }) }}
+
+      <p class="govuk-body">
+        You need to go back to your Defra account and select the organisation this exemption notification is for.
+      </p>
+
+      <p class="govuk-body">
+        <a href="#" class="govuk-link">Go to your Defra account</a>
+      </p>
+
+    </div>
+  </div>
+
+{% endblock %}
