@@ -1,0 +1,70 @@
+{% extends "layouts/main.html" %}
+
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+
+{% block pageTitle %}
+  You need to create a Defra account as an employee, volunteer or contractor of a business or organisation - Get permission for marine work
+{% endblock %}
+
+{% block header %}
+{% from "govuk/components/header/macro.njk" import govukHeader %}
+{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
+
+{{ govukHeader({
+  classes: "govuk-header--full-width-border"
+}) }}
+{{ govukServiceNavigation({
+  serviceName: "Get permission for marine work",
+  navigation: [
+    {
+      href: "/versions/multiple-sites-v2/exemption/home",
+      text: "Home"
+    },
+    {
+      href: "/versions/multiple-sites-v2/exemption/home",
+      text: "Projects"
+    },
+    {
+      href: "#",
+      text: "Defra account",
+      active: false
+    },
+    {
+      href: "/versions/multiple-sites-v2/exemption/sign-in.html?goto=home",
+      text: "Sign out"
+    }
+  ]
+}) }}
+{% endblock %}
+
+{% block beforeContent %}
+  {% include "../includes/phase-banner.html" %}
+  <a class="govuk-back-link" href="javascript:window.history.back()">Back</a>
+{% endblock %}
+
+{% block content %}
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+      <h1 class="govuk-heading-l">
+        You need to create a Defra account as an employee, volunteer or contractor of a business or organisation
+      </h1>
+
+      {{ govukWarningText({
+        text: "If you do not set up your Defra account correctly your exemption notification will not be valid. This is because it will not be registered to the person or organisation the exemption is for.",
+        iconFallbackText: "Warning"
+      }) }}
+
+      <p class="govuk-body">
+        If you're creating a Defra account for the organisation you work for you when you're registering you need to select as a business or organisation and confirm you have permission to create an account on their behalf.
+      </p>
+
+      <p class="govuk-body">
+        <a href="#" class="govuk-link">Go to your Defra account</a>
+      </p>
+
+    </div>
+  </div>
+
+{% endblock %}

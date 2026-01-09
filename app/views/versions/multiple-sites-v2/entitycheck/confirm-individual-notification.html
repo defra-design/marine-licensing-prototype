@@ -1,0 +1,152 @@
+{% extends "layouts/main.html" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+
+{% block pageTitle %}
+  {% if data['confirm-individual-notification-errorthispage'] == "true" %}Error: {% endif %}Confirm you're notifying us as an individual - Get permission for marine work
+{% endblock %}
+
+{% block header %}
+{% from "govuk/components/header/macro.njk" import govukHeader %}
+{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
+
+{{ govukHeader({
+  classes: "govuk-header--full-width-border"
+}) }}
+{{ govukServiceNavigation({
+  serviceName: "Get permission for marine work"
+}) }}
+{% endblock %}
+
+{% block beforeContent %}
+  {% include "../includes/phase-banner.html" %}
+{% endblock %}
+
+{% block content %}
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+      <!-- Error summary -->
+      {% if data['confirm-individual-notification-errorthispage'] == "true" %}
+        {{ govukErrorSummary({
+          titleText: "There is a problem",
+          errorList: [
+            {
+              text: "Select if you are notifying us for yourself",
+              href: "#confirm-individual-notification"
+            }
+          ]
+        }) }}
+      {% endif %}
+
+      <h1 class="govuk-heading-l">
+        Confirm you're notifying us as an individual
+      </h1>
+
+      {{ govukInsetText({
+        text: "You are signed in as Sam Evans."
+      }) }}
+
+      {{ govukWarningText({
+        text: "This Defra account is for an individual. This means the exemption notification will be in your name personally, not an organisation's name.",
+        iconFallbackText: "Warning"
+      }) }}
+
+      <form action="confirm-individual-notification-router" method="post" novalidate>
+        
+        <!-- Wrapping div with conditional error class -->
+        <div class="govuk-form-group {% if data['confirm-individual-notification-errorthispage'] == 'true' %}govuk-form-group--error{% endif %}">
+          
+          <fieldset class="govuk-fieldset">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+              <h2 class="govuk-fieldset__heading">
+                Are you notifying us for yourself?
+              </h2>
+            </legend>
+
+            <!-- Manual error message -->
+            {% if data['confirm-individual-notification-errorthispage'] == "true" %}
+              <p id="confirm-individual-notification-error" class="govuk-error-message">
+                <span class="govuk-visually-hidden">Error:</span> Select if you are notifying us for yourself
+              </p>
+            {% endif %}
+
+            <!-- Radios -->
+            {{ govukRadios({
+              name: "confirm-individual-notification",
+              id: "confirm-individual-notification",
+              items: [
+                {
+                  value: "myself",
+                  text: "Yes, I'm notifying you for myself personally"
+                },
+                {
+                  value: "organisation",
+                  text: "No, I'm notifying you for an organisation I work or volunteer for",
+                  hint: {
+                    text: "You're an employee or contractor working on behalf of the business or organisation you work for"
+                  }
+                },
+                {
+                  value: "client",
+                  text: "No, I'm notifying you as an intermediary for a client",
+                  hint: {
+                    text: "You're an agent or third-party working on behalf of another person or organisation"
+                  }
+                }
+              ],
+              value: data['confirm-individual-notification'],
+              errorMessage: null
+            }) }}
+          </fieldset>
+        </div>
+        
+        {{ govukButton({
+          text: "Continue"
+        }) }}
+        
+      </form>
+
+    </div>
+  </div>
+
+  <script>
+    // Clear errors if a radio button is selected (handles browser back button cache)
+    document.addEventListener('DOMContentLoaded', function() {
+      var radios = document.querySelectorAll('input[name="confirm-individual-notification"]');
+      var isSelected = false;
+      
+      radios.forEach(function(radio) {
+        if (radio.checked) {
+          isSelected = true;
+        }
+      });
+      
+      if (isSelected) {
+        // Hide error summary
+        var errorSummary = document.querySelector('.govuk-error-summary');
+        if (errorSummary) {
+          errorSummary.style.display = 'none';
+        }
+        
+        // Remove error class from form group
+        var formGroup = document.querySelector('.govuk-form-group--error');
+        if (formGroup) {
+          formGroup.classList.remove('govuk-form-group--error');
+        }
+        
+        // Hide inline error message
+        var errorMessage = document.getElementById('confirm-individual-notification-error');
+        if (errorMessage) {
+          errorMessage.style.display = 'none';
+        }
+      }
+    });
+  </script>
+
+{% endblock %}

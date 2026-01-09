@@ -97,8 +97,53 @@ module.exports = function (router) {
 
   router.post(`/versions/${version}/${section}/sign-in-router`, function (req, res) {
     // Handle sign-in submission
-    // For now, redirect to a placeholder
-    res.redirect('signed-in-placeholder');
+    // Redirect to confirm individual notification page
+    res.redirect('confirm-individual-notification');
+  });
+
+  ///////////////////////////////////////////
+  // Confirm individual notification page
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/confirm-individual-notification`, function (req, res) {
+    // Clear error flags on page load
+    req.session.data['confirm-individual-notification-errorthispage'] = "false";
+    res.render(`versions/${version}/${section}/confirm-individual-notification`);
+  });
+
+  router.post(`/versions/${version}/${section}/confirm-individual-notification-router`, function (req, res) {
+    // Clear error flags at start of POST
+    req.session.data['confirm-individual-notification-errorthispage'] = "false";
+    
+    const confirmNotification = req.session.data['confirm-individual-notification'];
+    
+    // Validate selection
+    if (!confirmNotification) {
+      req.session.data['confirm-individual-notification-errorthispage'] = "true";
+      res.redirect('confirm-individual-notification');
+      return;
+    }
+    
+    // Branch based on selection
+    if (confirmNotification === 'myself') {
+      res.redirect('../exemption/project-name-start');
+    } else if (confirmNotification === 'organisation') {
+      res.redirect('need-to-create-defra-account-as-employee');
+    } else if (confirmNotification === 'client') {
+      res.redirect('need-client-to-invite-you');
+    }
+  });
+
+  ///////////////////////////////////////////
+  // Guidance pages for signed-in users
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/need-to-create-defra-account-as-employee`, function (req, res) {
+    res.render(`versions/${version}/${section}/need-to-create-defra-account-as-employee`);
+  });
+
+  router.get(`/versions/${version}/${section}/need-client-to-invite-you`, function (req, res) {
+    res.render(`versions/${version}/${section}/need-client-to-invite-you`);
   });
 
 }
