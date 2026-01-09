@@ -1,0 +1,148 @@
+{% extends "layouts/main.html" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+
+{% block pageTitle %}
+  {% if data['confirm-organisation-notification-errorthispage'] == "true" %}Error: {% endif %}Confirm you're notifying us as an employee, volunteer or contractor of this organisation - Get permission for marine work
+{% endblock %}
+
+{% block header %}
+{% from "govuk/components/header/macro.njk" import govukHeader %}
+{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
+
+{{ govukHeader({
+  classes: "govuk-header--full-width-border"
+}) }}
+{{ govukServiceNavigation({
+  serviceName: "Get permission for marine work"
+}) }}
+{% endblock %}
+
+{% block beforeContent %}
+  {% include "../includes/phase-banner.html" %}
+{% endblock %}
+
+{% block content %}
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+      <!-- Error summary -->
+      {% if data['confirm-organisation-notification-errorthispage'] == "true" %}
+        {{ govukErrorSummary({
+          titleText: "There is a problem",
+          errorList: [
+            {
+              text: "Select if you are notifying us as an employee, volunteer or contractor of this organisation",
+              href: "#confirm-organisation-notification"
+            }
+          ]
+        }) }}
+      {% endif %}
+
+      <h1 class="govuk-heading-l">
+        Confirm you're notifying us as an employee, volunteer or contractor of this organisation
+      </h1>
+
+      {{ govukInsetText({
+        text: "You are signed in as Joe Bloggs working for Ocean Dredging."
+      }) }}
+
+      <p class="govuk-body">
+        This exemption notification will be registered in the name of Ocean Dredging.
+      </p>
+
+      <form action="confirm-organisation-notification-router" method="post" novalidate>
+        
+        <!-- Wrapping div with conditional error class -->
+        <div class="govuk-form-group {% if data['confirm-organisation-notification-errorthispage'] == 'true' %}govuk-form-group--error{% endif %}">
+          
+          <fieldset class="govuk-fieldset">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+              <h2 class="govuk-fieldset__heading">
+                Are you notifying us as an employee, volunteer or contractor of this organisation?
+              </h2>
+            </legend>
+
+            <!-- Manual error message -->
+            {% if data['confirm-organisation-notification-errorthispage'] == "true" %}
+              <p id="confirm-organisation-notification-error" class="govuk-error-message">
+                <span class="govuk-visually-hidden">Error:</span> Select if you are notifying us as an employee, volunteer or contractor of this organisation
+              </p>
+            {% endif %}
+
+            <!-- Radios -->
+            {{ govukRadios({
+              name: "confirm-organisation-notification",
+              id: "confirm-organisation-notification",
+              items: [
+                {
+                  value: "yes",
+                  text: "Yes"
+                },
+                {
+                  value: "different-organisation",
+                  text: "No, I need to represent a different organisation"
+                },
+                {
+                  value: "agent",
+                  text: "No, I'm notifying you as an agent or third party (intermediary) for an organisation"
+                },
+                {
+                  value: "myself",
+                  text: "No, I'm notifying you as myself personally"
+                }
+              ],
+              value: data['confirm-organisation-notification'],
+              errorMessage: null
+            }) }}
+          </fieldset>
+        </div>
+        
+        {{ govukButton({
+          text: "Continue"
+        }) }}
+        
+      </form>
+
+    </div>
+  </div>
+
+  <script>
+    // Clear errors if a radio button is selected (handles browser back button cache)
+    document.addEventListener('DOMContentLoaded', function() {
+      var radios = document.querySelectorAll('input[name="confirm-organisation-notification"]');
+      var isSelected = false;
+      
+      radios.forEach(function(radio) {
+        if (radio.checked) {
+          isSelected = true;
+        }
+      });
+      
+      if (isSelected) {
+        // Hide error summary
+        var errorSummary = document.querySelector('.govuk-error-summary');
+        if (errorSummary) {
+          errorSummary.style.display = 'none';
+        }
+        
+        // Remove error class from form group
+        var formGroup = document.querySelector('.govuk-form-group--error');
+        if (formGroup) {
+          formGroup.classList.remove('govuk-form-group--error');
+        }
+        
+        // Hide inline error message
+        var errorMessage = document.getElementById('confirm-organisation-notification-error');
+        if (errorMessage) {
+          errorMessage.style.display = 'none';
+        }
+      }
+    });
+  </script>
+
+{% endblock %}

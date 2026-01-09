@@ -97,8 +97,12 @@ module.exports = function (router) {
 
   router.post(`/versions/${version}/${section}/sign-in-router`, function (req, res) {
     // Handle sign-in submission
-    // Redirect to confirm individual notification page
-    res.redirect('confirm-individual-notification');
+    // Branch based on user_type
+    if (req.session.data['user_type'] === 'organisation') {
+      res.redirect('confirm-organisation-notification');
+    } else {
+      res.redirect('confirm-individual-notification');
+    }
   });
 
   ///////////////////////////////////////////
@@ -144,6 +148,45 @@ module.exports = function (router) {
 
   router.get(`/versions/${version}/${section}/need-client-to-invite-you`, function (req, res) {
     res.render(`versions/${version}/${section}/need-client-to-invite-you`);
+  });
+
+  router.get(`/versions/${version}/${section}/need-to-create-defra-account-as-individual`, function (req, res) {
+    res.render(`versions/${version}/${section}/need-to-create-defra-account-as-individual`);
+  });
+
+  ///////////////////////////////////////////
+  // Confirm organisation notification page
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/confirm-organisation-notification`, function (req, res) {
+    // Clear error flags on page load
+    req.session.data['confirm-organisation-notification-errorthispage'] = "false";
+    res.render(`versions/${version}/${section}/confirm-organisation-notification`);
+  });
+
+  router.post(`/versions/${version}/${section}/confirm-organisation-notification-router`, function (req, res) {
+    // Clear error flags at start of POST
+    req.session.data['confirm-organisation-notification-errorthispage'] = "false";
+    
+    const confirmNotification = req.session.data['confirm-organisation-notification'];
+    
+    // Validate selection
+    if (!confirmNotification) {
+      req.session.data['confirm-organisation-notification-errorthispage'] = "true";
+      res.redirect('confirm-organisation-notification');
+      return;
+    }
+    
+    // Branch based on selection
+    if (confirmNotification === 'yes') {
+      res.redirect('../exemption/project-name-start');
+    } else if (confirmNotification === 'different-organisation') {
+      res.redirect('need-to-create-defra-account-as-employee');
+    } else if (confirmNotification === 'agent') {
+      res.redirect('need-client-to-invite-you');
+    } else if (confirmNotification === 'myself') {
+      res.redirect('need-to-create-defra-account-as-individual');
+    }
   });
 
 }
