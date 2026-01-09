@@ -134,7 +134,7 @@ module.exports = function (router) {
     
     // Branch based on selection
     if (confirmNotification === 'myself') {
-      res.redirect('../exemption/project-name-start');
+      res.redirect('project-name-start');
     } else if (confirmNotification === 'organisation') {
       res.redirect('need-to-create-defra-account-as-employee');
     } else if (confirmNotification === 'client') {
@@ -185,7 +185,7 @@ module.exports = function (router) {
     
     // Branch based on selection
     if (confirmNotification === 'yes') {
-      res.redirect('../exemption/project-name-start');
+      res.redirect('project-name-start');
     } else if (confirmNotification === 'different-organisation') {
       res.redirect('need-to-create-defra-account-as-employee');
     } else if (confirmNotification === 'agent') {
@@ -222,7 +222,7 @@ module.exports = function (router) {
     
     // Branch based on selection
     if (confirmNotification === 'yes') {
-      res.redirect('../exemption/project-name-start');
+      res.redirect('project-name-start');
     } else if (confirmNotification === 'different-organisation') {
       res.redirect('need-client-to-invite-you');
     } else if (confirmNotification === 'employee') {
@@ -230,6 +230,14 @@ module.exports = function (router) {
     } else if (confirmNotification === 'myself') {
       res.redirect('need-to-create-defra-account-as-individual');
     }
+  });
+
+  ///////////////////////////////////////////
+  // Project name page (end of test journey)
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/project-name-start`, function (req, res) {
+    res.render(`versions/${version}/${section}/project-name-start`);
   });
 
 }
