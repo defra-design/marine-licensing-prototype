@@ -1,6 +1,7 @@
 {% extends "layouts/main.html" %}
 
 {% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% block pageTitle %}
   You need to create a Defra account as an individual - Get permission for marine work
@@ -36,7 +37,6 @@
     <span class="govuk-body-s govuk-!-font-weight-bold app-organisation-switcher__name">{{ data['organisation-name'] }}</span>
   </div>
   {% endif %}
-  <a class="govuk-back-link" href="javascript:window.history.back()">Back</a>
 {% endblock %}
 
 {% block content %}
@@ -57,9 +57,10 @@
         If you're creating a Defra account for personal use when you're registering you need to select as an individual when you register.
       </p>
 
-      <p class="govuk-body">
-        <a href="#" class="govuk-link">Go to your Defra account</a>
-      </p>
+      {{ govukButton({
+        text: "Go to your Defra account",
+        href: "#"
+      }) }}
 
     </div>
   </div>
