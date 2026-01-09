@@ -8,9 +8,39 @@ module.exports = function (router) {
   ///////////////////////////////////////////
 
   router.get(`/versions/${version}/${section}/you-need-to-provide-more-information`, function (req, res) {
-    // Clear error flags and entity check data when entering the journey
-    delete req.session.data['entity-check-who-is-for-errorthispage'];
+    // Clear ALL entity check session data for a fresh start
+    // We delete individual properties rather than replacing the entire session object
+    // to ensure session persistence works correctly
+    
+    // Clear who is this for page data
     delete req.session.data['entity-check-who-is-for'];
+    delete req.session.data['entity-check-who-is-for-errorthispage'];
+    
+    // Clear confirmation page data and error flags
+    delete req.session.data['confirm-individual-notification'];
+    delete req.session.data['confirm-individual-notification-errorthispage'];
+    delete req.session.data['confirm-organisation-notification'];
+    delete req.session.data['confirm-organisation-notification-errorthispage'];
+    delete req.session.data['confirm-agent-notification'];
+    delete req.session.data['confirm-agent-notification-errorthispage'];
+    
+    // Clear organisation data
+    delete req.session.data['organisation-name'];
+    delete req.session.data['changing-organisation'];
+    delete req.session.data['organisation-selector-return-to'];
+    delete req.session.data['goto-after-org-selector'];
+    
+    // Clear project name data (if they got to the end)
+    delete req.session.data['exemption-project-name-text-input'];
+    
+    // Clear error flags
+    delete req.session.data['errorthispage'];
+    delete req.session.data['errortypeone'];
+    delete req.session.data['errortypetwo'];
+    delete req.session.data['errortypethree'];
+    delete req.session.data['errortypefour'];
+    delete req.session.data['errortypefive'];
+    delete req.session.data['errortypesix'];
     
     // Store user_type if provided (for organisation vs individual vs agent)
     if (req.query.user_type === 'organisation') {
@@ -132,6 +162,9 @@ module.exports = function (router) {
       return;
     }
     
+    // Clear organisation name for individual users
+    delete req.session.data['organisation-name'];
+    
     // Branch based on selection
     if (confirmNotification === 'myself') {
       res.redirect('project-name-start');
@@ -183,6 +216,9 @@ module.exports = function (router) {
       return;
     }
     
+    // Set organisation name for guidance pages
+    req.session.data['organisation-name'] = 'Ocean Dredging';
+    
     // Branch based on selection
     if (confirmNotification === 'yes') {
       res.redirect('project-name-start');
@@ -219,6 +255,9 @@ module.exports = function (router) {
       res.redirect('confirm-agent-notification');
       return;
     }
+    
+    // Set organisation name for guidance pages
+    req.session.data['organisation-name'] = 'Brighton Marina';
     
     // Branch based on selection
     if (confirmNotification === 'yes') {
