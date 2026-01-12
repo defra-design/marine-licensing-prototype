@@ -1,0 +1,110 @@
+{% extends "../../layouts/low-complexity.html" %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% if data['user_type'] === 'organisation' %}
+        {% include "../../includes/organisation-switcher.html" %}
+    {% endif %}
+    {{ govukBackLink({
+        text: "Back to marine licence start page",
+        href: "../marine-licence-start-page"
+    }) }}
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+Project details
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-two-thirds">
+		<span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
+		<h1 class="govuk-heading-l">
+			{{ pageHeadingTextHTML }}
+		</h1>
+
+		<ul class="govuk-task-list">
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="project-background" aria-describedby="project-background-status">
+				  Project background
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="project-background-status">
+				{% if data['low-complexity-project-background-completed'] %}
+				Completed
+				{% else %}
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+				{% endif %}
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="duration" aria-describedby="duration-status">
+				  Duration of project
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="duration-status">
+				{% if data['low-complexity-duration-completed'] %}
+				Completed
+				{% else %}
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+				{% endif %}
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="dates-of-marine-works" aria-describedby="dates-status">
+				  Dates of marine works
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="dates-status">
+				{% if data['low-complexity-dates-completed'] %}
+				Completed
+				{% else %}
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+				{% endif %}
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="cost-of-marine-works" aria-describedby="cost-status">
+				  Cost of marine works
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="cost-status">
+				{% if data['low-complexity-cost-completed'] %}
+				Completed
+				{% else %}
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+				{% endif %}
+			  </div>
+			</li>
+		</ul>
+
+	</div>
+</div>
+{% endblock %}
+
