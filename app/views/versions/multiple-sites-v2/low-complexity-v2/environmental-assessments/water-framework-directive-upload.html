@@ -1,0 +1,60 @@
+{% extends "../../layouts/low-complexity.html" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% if data['user_type'] === 'organisation' %}
+        {% include "../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link govuk-link--no-visited-state" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+Upload your Water Framework Directive assessment
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-two-thirds">
+
+		<form action="water-framework-directive-upload-router" method="post" novalidate>
+
+			<div class="govuk-form-group">
+				<h1 class="govuk-label-wrapper">
+					<label class="govuk-label govuk-label--l" for="wfd-file-upload">
+						<span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
+						{{ pageHeadingTextHTML }}
+					</label>
+				</h1>
+
+				<div id="wfd-file-upload-hint" class="govuk-hint">
+					You can only upload a file that is a doc, .jpeg, .pdf, or .xls.
+				</div>
+
+				<div class="govuk-drop-zone" data-module="govuk-file-upload">
+					<input class="govuk-file-upload" id="wfd-file-upload" name="wfdFileUpload" type="file" aria-describedby="wfd-file-upload-hint">
+				</div>
+			</div>
+
+			<div class="govuk-button-group">
+				{{ govukButton({
+					text: "Continue"
+				}) }}
+
+				<a class="govuk-link govuk-link--no-visited-state" href="./index">Cancel</a>
+			</div>
+
+		</form>
+
+	</div>
+</div>
+
+{% endblock %}

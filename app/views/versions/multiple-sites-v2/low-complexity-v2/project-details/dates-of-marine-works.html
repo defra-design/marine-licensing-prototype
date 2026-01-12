@@ -1,0 +1,156 @@
+{% extends "../../layouts/low-complexity.html" %}
+
+{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% if data['user_type'] === 'organisation' %}
+        {% include "../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link govuk-link--no-visited-state" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+What are the dates of the marine works?
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+{% if data['errorthispage'] == "true" %}
+Error:
+{% endif %}
+
+{{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-two-thirds">
+		{% if data['errorthispage'] == "true" %}
+		<div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1"
+			data-module="govuk-error-summary">
+			<h2 class="govuk-error-summary__title" id="error-summary-title">
+				There is a problem
+			</h2>
+			<div class="govuk-error-summary__body">
+				<ul class="govuk-list govuk-error-summary__list">
+					{% if data['errortypeone'] == "true" %}
+					<li><a href="#start-date-day">Enter a complete start date</a></li>
+					{% endif %}
+					{% if data['errortypetwo'] == "true" %}
+					<li><a href="#end-date-day">Enter a complete end date</a></li>
+					{% endif %}
+				</ul>
+			</div>
+		</div>
+		{% endif %}
+
+		<!--  END OF 'error summary' -->
+
+		<span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
+		
+		<h1 class="govuk-heading-l">
+			{{ pageHeadingTextHTML }}
+		</h1>
+
+		<p class="govuk-body">These are the start and end dates for the marine works, not the total project</p>
+
+		<form action="dates-of-marine-works-router" method="post" novalidate>
+
+			{{ govukDateInput({
+				idPrefix: "start-date",
+				namePrefix: "start-date",
+				fieldset: {
+					legend: {
+						text: "Start date",
+						isPageHeading: false,
+						classes: "govuk-fieldset__legend--s"
+					}
+				},
+				hint: {
+					text: "For example, 27 7 2026"
+				},
+				errorMessage: {
+					text: "Enter a complete start date"
+				} if data['errortypeone'] == "true",
+				items: [
+					{ name: "day", classes: "govuk-input--width-2", value: data['start-date-day'], attributes: { autocomplete: "off", inputmode: "numeric" } },
+					{ name: "month", classes: "govuk-input--width-2", value: data['start-date-month'], attributes: { autocomplete: "off", inputmode: "numeric" } },
+					{ name: "year", classes: "govuk-input--width-4", value: data['start-date-year'], attributes: { autocomplete: "off", inputmode: "numeric" } }
+				]
+			}) }}
+
+			{{ govukDateInput({
+				idPrefix: "end-date",
+				namePrefix: "end-date",
+				fieldset: {
+					legend: {
+						text: "End date",
+						isPageHeading: false,
+						classes: "govuk-fieldset__legend--s"
+					}
+				},
+				hint: {
+					text: "For example, 27 8 2026"
+				},
+				errorMessage: {
+					text: "Enter a complete end date"
+				} if data['errortypetwo'] == "true",
+				items: [
+					{ name: "day", classes: "govuk-input--width-2", value: data['end-date-day'], attributes: { autocomplete: "off", inputmode: "numeric" } },
+					{ name: "month", classes: "govuk-input--width-2", value: data['end-date-month'], attributes: { autocomplete: "off", inputmode: "numeric" } },
+					{ name: "year", classes: "govuk-input--width-4", value: data['end-date-year'], attributes: { autocomplete: "off", inputmode: "numeric" } }
+				]
+			}) }}
+
+			<div class="govuk-button-group">
+				{{ govukButton({
+					text: "Save and continue"
+				}) }}
+
+				{% if data['camefromcheckanswers'] != 'true' %}
+				<a class="govuk-link govuk-link--no-visited-state" href="javascript:history.back()">Cancel</a>
+				{% endif %}
+			</div>
+
+		</form>
+
+	</div>
+</div>
+
+<!-- ERROR LOGIC  drop down to toggle states  -->
+<form method="post" action="#" class="for4" style=" float: left; position: relative; bottom:-325px; padding-bottom: 30px;  ">
+
+	<select style="height:30px;" onchange="window.location.href='?'+this.value">
+
+		<option
+			value="errorthispage=false&errortypeone=false&errortypetwo=false&errortypethree=false&errortypefour=false&errortypefive=false&errortypesix=false&"
+			{% if data['errorthispage'] !="true" %}selected{% endif %}>Errors - Off</option>
+
+		<option
+			value="errorthispage=true&errortypeone=true&errortypetwo=false&errortypethree=false&errortypefour=false&errortypefive=false&errortypesix=false&"
+			{% if data['errortypeone']=='true' and data['errortypetwo'] !='true' and data['errortypethree'] !='true' and
+			data['errortypefour'] !='true' and data['errortypefive'] !='true' and data['errortypesix'] !='true'
+			%}selected{% endif %}>Error 1 - Start date missing</option>
+
+		<option
+			value="errorthispage=true&errortypeone=false&errortypetwo=true&errortypethree=false&errortypefour=false&errortypefive=false&errortypesix=false&"
+			{% if data['errortypeone']!='true' and data['errortypetwo'] =='true' and data['errortypethree'] !='true' and
+			data['errortypefour'] !='true' and data['errortypefive'] !='true' and data['errortypesix'] !='true'
+			%}selected{% endif %}>Error 2 - End date missing</option>
+
+		<option
+			value="errorthispage=true&errortypeone=true&errortypetwo=true&errortypethree=false&errortypefour=false&errortypefive=false&errortypesix=false&"
+			{% if data['errortypeone']=='true' and data['errortypetwo'] =='true' and data['errortypethree'] !='true' and
+			data['errortypefour'] !='true' and data['errortypefive'] !='true' and data['errortypesix'] !='true'
+			%}selected{% endif %}>Error 3 - Both dates missing</option>
+
+	</select>
+
+</form>
+<!--  END OF ERROR LOGIC -->
+
+{% endblock %}

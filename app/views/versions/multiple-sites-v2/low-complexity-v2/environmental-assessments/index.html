@@ -1,0 +1,111 @@
+{% extends "../../layouts/low-complexity.html" %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% if data['user_type'] === 'organisation' %}
+        {% include "../../includes/organisation-switcher.html" %}
+    {% endif %}
+    {{ govukBackLink({
+        text: "Back to marine licence start page",
+        href: "../marine-licence-start-page"
+    }) }}
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+Environmental assessments
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-two-thirds">
+		<span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
+		<h1 class="govuk-heading-l">
+			{{ pageHeadingTextHTML }}
+		</h1>
+
+		<ul class="govuk-task-list">
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="european-sites" aria-describedby="european-sites-status">
+				  European sites
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="european-sites-status">
+				{% if data['low-complexity-european-sites-completed'] %}
+				Completed
+				{% else %}
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+				{% endif %}
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="marine-conservation-zones" aria-describedby="mcz-status">
+				  Marine Conservation Zone Assessment
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="mcz-status">
+				{% if data['low-complexity-mcz-completed'] %}
+				Completed
+				{% else %}
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+				{% endif %}
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="sites-of-special-scientific-interest" aria-describedby="sssi-status">
+				  Sites of special scientific interest
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="sssi-status">
+				{% if data['low-complexity-sssi-completed'] %}
+				Completed
+				{% else %}
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+				{% endif %}
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="water-framework-directive" aria-describedby="wfd-status">
+					Water Framework Directive assessment
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="wfd-status">
+				{% if data['low-complexity-wfd-completed'] %}
+				Completed
+				{% else %}
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+				{% endif %}
+			  </div>
+			</li>
+		</ul>
+
+	</div>
+</div>
+{% endblock %}
+
+

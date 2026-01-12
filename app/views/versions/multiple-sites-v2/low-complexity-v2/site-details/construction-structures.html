@@ -1,0 +1,221 @@
+{% extends "../../layouts/low-complexity.html" %}
+
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% if data['organisation-name'] %}
+        {% include "../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+{% if data['low-complexity-type-of-works'] == 'construction-new' %}
+What are you constructing?
+{% elif data['low-complexity-type-of-works'] == 'maintenance-existing' %}
+What are you maintaining?
+{% elif data['low-complexity-type-of-works'] == 'alteration-improvement' %}
+What are you altering or improving?
+{% else %}
+What type of structure will you be working on?
+{% endif %}
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+{{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+<style>
+    .govuk-checkboxes__divider {
+        font-weight: 700;
+        max-width: none !important;
+        width: 100% !important;
+        display: block !important;
+        text-align: left !important;
+        font-size: 1.125rem !important;
+        line-height: 1.3125 !important;
+        margin-top: 40px;
+        margin-bottom: 15px;
+    }
+    .govuk-checkboxes__divider:first-of-type {
+        margin-top: 0;
+    }
+</style>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        
+        <form action="construction-structures-router" method="post" novalidate>
+            
+            <!-- Error summary -->
+            {% if data['low-complexity-construction-structures-errorthispage'] == "true" %}
+                {{ govukErrorSummary({
+                    titleText: "There is a problem",
+                    errorList: [
+                        {
+                            text: data['low-complexity-construction-structures-error'],
+                            href: "#low-complexity-construction-structures"
+                        }
+                    ]
+                }) }}
+            {% endif %}
+
+            {{ govukCheckboxes({
+                name: "low-complexity-construction-structures",
+                fieldset: {
+                    legend: {
+                        html: '<span class="govuk-caption-l">' + data['low-complexity-project-name-text-input'] + '<span class="govuk-!-display-block">Site 1</span></span>' + pageHeadingTextHTML,
+                        isPageHeading: true,
+                        classes: "govuk-fieldset__legend--l govuk-!-margin-bottom-6"
+                    }
+                },
+                hint: {
+                    text: "Select all that apply"
+                },
+                items: [
+                    {
+                        divider: "Aquaculture"
+                    },
+                    {
+                        value: "aquaculture-trestles",
+                        text: "Aquaculture trestles or fixed walkways"
+                    },
+                    {
+                        value: "aquaculture-piled-structures",
+                        text: "Piled or fixed aquaculture structures"
+                    },
+                    {
+                        divider: "Coastal defence works"
+                    },
+                    {
+                        value: "hard-coastal-defence",
+                        text: "Hard coastal defence structures such as rock armour or concrete units"
+                    },
+                    {
+                        value: "tidal-flood-defence",
+                        text: "Tidal flood defence structures (e.g., flood barriers, tidal gates, sluices)"
+                    },
+                    {
+                        divider: "Coastal or shore-based structures"
+                    },
+                    {
+                        value: "breakwater-mole-harbour",
+                        text: "Breakwater, mole or harbour protection structure"
+                    },
+                    {
+                        value: "bridge-supports",
+                        text: "Bridge or bridge supports in tidal waters"
+                    },
+                    {
+                        value: "causeway-embankment",
+                        text: "Causeway, embankment or coastal access ramp"
+                    },
+                    {
+                        value: "groyne",
+                        text: "Groyne"
+                    },
+                    {
+                        value: "jetty-pier-quay",
+                        text: "Jetty, pier or quay"
+                    },
+                    {
+                        value: "revetment",
+                        text: "Revetment (sloped coastal protection)"
+                    },
+                    {
+                        value: "sea-wall-coastal-wall",
+                        text: "Sea wall or coastal wall"
+                    },
+                    {
+                        value: "slipway-boat-ramp",
+                        text: "Slipway or boat ramp"
+                    },
+                    {
+                        divider: "Floating or part-floating structures (fixed in place)"
+                    },
+                    {
+                        value: "floating-breakwaters",
+                        text: "Floating breakwaters or wave attenuators"
+                    },
+                    {
+                        value: "pontoons-walkways",
+                        text: "Pontoons or floating walkways"
+                    },
+                    {
+                        divider: "Marine energy structures"
+                    },
+                    {
+                        value: "offshore-wind-foundations",
+                        text: "Fixed offshore wind foundations"
+                    },
+                    {
+                        value: "tidal-energy-devices",
+                        text: "Tidal energy devices or foundations"
+                    },
+                    {
+                        value: "wave-energy-foundations",
+                        text: "Wave energy device foundations"
+                    },
+                    {
+                        divider: "Marine utilities and infrastructure"
+                    },
+                    {
+                        value: "culverts-channels",
+                        text: "Culverts or constructed tidal channels"
+                    },
+                    {
+                        value: "intakes",
+                        text: "Intakes"
+                    },
+                    {
+                        value: "outfalls-diffusers",
+                        text: "Outfalls or diffusers"
+                    },
+                    {
+                        value: "pipelines-ducts",
+                        text: "Pipelines or ducts"
+                    },
+                    {
+                        value: "subsea-cables",
+                        text: "Subsea cables requiring protective construction"
+                    },
+                    {
+                        divider: "Seabed-fixed structures"
+                    },
+                    {
+                        value: "artificial-reefs",
+                        text: "Artificial reefs or habitat structures"
+                    },
+                    {
+                        value: "foundations-platforms",
+                        text: "Foundations for offshore platforms or similar structures"
+                    },
+                    {
+                        value: "piles-piled-structures",
+                        text: "Piles or piled structures"
+                    }
+                ],
+                errorMessage: {
+                    text: data['low-complexity-construction-structures-error']
+                } if data['low-complexity-construction-structures-error'],
+                values: data['low-complexity-construction-structures']
+            }) }}
+            
+            <div class="govuk-button-group">
+                {{ govukButton({
+                    text: "Save and continue"
+                }) }}
+            </div>
+
+        </form>
+
+    </div>
+</div>
+{% endblock %}
+

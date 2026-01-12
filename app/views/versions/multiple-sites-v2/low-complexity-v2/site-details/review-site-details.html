@@ -1,0 +1,308 @@
+{% extends "../../layouts/low-complexity.html" %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% if data['organisation-name'] %}
+        {% include "../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+<!-- Set the heading for the page -->
+{% set pageHeadingTextHTML %}
+Review site details
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
+        <h1 class="govuk-heading-l">
+            {{ pageHeadingTextHTML }}
+        </h1>
+        
+        <!-- Check if all required fields are completed -->
+        {% set siteNameComplete = data['low-complexity-site-name-completed'] %}
+        {% set typeOfActivityComplete = data['low-complexity-type-of-activity-completed'] %}
+        {% set activityDescComplete = data['low-complexity-activity-description-completed'] %}
+        {% set durationComplete = data['low-complexity-site-duration-completed'] %}
+        {% set scheduleComplete = data['low-complexity-schedule-completed'] %}
+        {% set impactsComplete = data['low-complexity-impacts-completed'] %}
+        
+        {% set allComplete = siteNameComplete and typeOfActivityComplete and activityDescComplete and durationComplete and scheduleComplete and impactsComplete %}
+        
+        {% if not allComplete %}
+            {{ govukInsetText({
+                html: "The site details you've provided are saved.<br>You must complete all sections marked <span class='govuk-tag govuk-tag--red govuk-!-margin-bottom-2 govuk-!-margin-top-2'>Incomplete</span> before you can send your information.<br>If you cannot finish now, you can return to this page later."
+            }) }}
+        {% else %}
+            {{ govukInsetText({
+                html: "The site details you've provided are saved.<br>You can return to this page and make changes at any time before you send your information."
+            }) }}
+        {% endif %}
+        
+        <!-- Providing the site location section -->
+        <div id="site-location" class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">
+                    Providing the site location
+                </h2>
+                <ul class="govuk-summary-card__actions">
+                    <li class="govuk-summary-card__action">
+                        <a class="govuk-link govuk-link--no-visited-state" href="delete-all-sites">
+                            Delete all site details<span class="govuk-visually-hidden"></span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Method of providing site location
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            File uploaded
+                        </dd>
+                        
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            File type
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['low-complexity-file-type'] == 'kml' %}
+                                KML
+                            {% elif data['low-complexity-file-type'] == 'shapefile' %}
+                                Shapefile
+                            {% else %}
+                                Shapefile
+                            {% endif %}
+                        </dd>
+                        
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            File uploaded
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['low-complexity-file-type'] == 'kml' %}
+                                my-site-location.kml
+                            {% else %}
+                                my-site-location.zip
+                            {% endif %}
+                        </dd>
+                        
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        <!-- Site 1 details section -->
+        <div id="site-1-details" class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">
+                    Site 1 details
+                </h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list govuk-summary-list--full-width">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Site name
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['low-complexity-site-name-completed'] and data['low-complexity-site-name'] %}
+                                {{ data['low-complexity-site-name'] }}
+                            {% else %}
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                            {% endif %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="site-name" class="govuk-link govuk-link--no-visited-state">
+                                {% if data['low-complexity-site-name-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> site name</span>
+                            </a>
+                        </dd>
+                    </div>
+                    
+                    <div class="govuk-summary-list__row govuk-summary-list__row--no-actions">
+                        <dt class="govuk-summary-list__key govuk-summary-list__key--full-width map-label">
+                            Map view
+                        </dt>
+                        <dd class="govuk-summary-list__value govuk-summary-list__value--full-width">
+                            <img src="/public/images/map-5-points.jpg" alt="Map showing site 1 location" />
+                        </dd>
+                    </div>
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Type of activity
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['low-complexity-type-of-activity-completed'] %}
+                                {% if data['low-complexity-type-of-activity'] == 'construction' %}
+                                    {% if data['low-complexity-type-of-works'] %}
+                                        {% if data['low-complexity-type-of-works'] == 'construction-new' %}Construction of new works
+                                        {% elif data['low-complexity-type-of-works'] == 'maintenance-existing' %}Maintenance of existing works
+                                        {% elif data['low-complexity-type-of-works'] == 'alteration-improvement' %}Alteration or improvement, including extending, of existing marine works
+                                        {% endif %}
+                                    {% endif %}
+                                    {% if data['low-complexity-construction-structures'] and data['low-complexity-construction-structures'].length > 0 %}
+                                        <br><br>{% if data['low-complexity-type-of-works'] == 'construction-new' %}What you're constructing{% elif data['low-complexity-type-of-works'] == 'maintenance-existing' %}What you're maintaining{% elif data['low-complexity-type-of-works'] == 'alteration-improvement' %}What you're altering or improving{% endif %}:
+                                        <ul class="govuk-list govuk-list--bullet govuk-!-margin-top-2">
+                                        {% for structure in data['low-complexity-construction-structures'] %}
+                                            <li>
+                                                {% if structure == 'jetty-pier-quay' %}Jetty, pier or quay
+                                                {% elif structure == 'slipway-boat-ramp' %}Slipway or boat ramp
+                                                {% elif structure == 'sea-wall-coastal-wall' %}Sea wall or coastal wall
+                                                {% elif structure == 'revetment' %}Revetment (sloped coastal protection)
+                                                {% elif structure == 'groyne' %}Groyne
+                                                {% elif structure == 'breakwater-mole-harbour' %}Breakwater, mole or harbour protection structure
+                                                {% elif structure == 'bridge-supports' %}Bridge or bridge supports in tidal waters
+                                                {% elif structure == 'causeway-embankment' %}Causeway, embankment or coastal access ramp
+                                                {% elif structure == 'pontoons-walkways' %}Pontoons or floating walkways
+                                                {% elif structure == 'floating-breakwaters' %}Floating breakwaters or wave attenuators
+                                                {% elif structure == 'piles-piled-structures' %}Piles or piled structures
+                                                {% elif structure == 'foundations-platforms' %}Foundations for offshore platforms or similar structures
+                                                {% elif structure == 'artificial-reefs' %}Artificial reefs or habitat structures
+                                                {% elif structure == 'hard-coastal-defence' %}Hard coastal defence structures such as rock armour or concrete units
+                                                {% elif structure == 'tidal-flood-defence' %}Tidal flood defence structures (e.g., flood barriers, tidal gates, sluices)
+                                                {% elif structure == 'outfalls-diffusers' %}Outfalls or diffusers
+                                                {% elif structure == 'intakes' %}Intakes
+                                                {% elif structure == 'pipelines-ducts' %}Pipelines or ducts
+                                                {% elif structure == 'subsea-cables' %}Subsea cables requiring protective construction
+                                                {% elif structure == 'culverts-channels' %}Culverts or constructed tidal channels
+                                                {% elif structure == 'tidal-energy-devices' %}Tidal energy devices or foundations
+                                                {% elif structure == 'wave-energy-foundations' %}Wave energy device foundations
+                                                {% elif structure == 'offshore-wind-foundations' %}Fixed offshore wind foundations
+                                                {% elif structure == 'aquaculture-piled-structures' %}Piled or fixed aquaculture structures
+                                                {% elif structure == 'aquaculture-trestles' %}Aquaculture trestles or fixed walkways
+                                                {% endif %}
+                                            </li>
+                                        {% endfor %}
+                                        </ul>
+                                    {% endif %}
+                                {% elif data['low-complexity-type-of-activity'] == 'deposit' %}
+                                    Deposit of any substance or object
+                                {% elif data['low-complexity-type-of-activity'] == 'removal' %}
+                                    Removal of any substance or object
+                                {% endif %}
+                            {% else %}
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                            {% endif %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="type-of-activity" class="govuk-link govuk-link--no-visited-state">
+                                {% if data['low-complexity-type-of-activity-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> type of activity</span>
+                            </a>
+                        </dd>
+                    </div>
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Activity description
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['low-complexity-activity-description-completed'] and data['low-complexity-activity-description'] %}
+                                {{ data['low-complexity-activity-description'] }}
+                            {% else %}
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                            {% endif %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="activity-description" class="govuk-link govuk-link--no-visited-state">
+                                {% if data['low-complexity-activity-description-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> activity description</span>
+                            </a>
+                        </dd>
+                    </div>
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Duration of activity
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['low-complexity-site-duration-completed'] %}
+                                {% set durationParts = [] %}
+                                {% if data['low-complexity-site-duration-years'] and data['low-complexity-site-duration-years'] != '0' %}
+                                    {% set durationParts = (durationParts.push(data['low-complexity-site-duration-years'] + ' ' + ('year' if data['low-complexity-site-duration-years'] == '1' else 'years')), durationParts) %}
+                                {% endif %}
+                                {% if data['low-complexity-site-duration-months'] and data['low-complexity-site-duration-months'] != '0' %}
+                                    {% set durationParts = (durationParts.push(data['low-complexity-site-duration-months'] + ' ' + ('month' if data['low-complexity-site-duration-months'] == '1' else 'months')), durationParts) %}
+                                {% endif %}
+                                {% if data['low-complexity-site-duration-weeks'] and data['low-complexity-site-duration-weeks'] != '0' %}
+                                    {% set durationParts = (durationParts.push(data['low-complexity-site-duration-weeks'] + ' ' + ('week' if data['low-complexity-site-duration-weeks'] == '1' else 'weeks')), durationParts) %}
+                                {% endif %}
+                                {{ durationParts | join(', ') if durationParts.length > 0 else 'Not provided' }}
+                            {% else %}
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                            {% endif %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="duration" class="govuk-link govuk-link--no-visited-state">
+                                {% if data['low-complexity-site-duration-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> duration</span>
+                            </a>
+                        </dd>
+                    </div>
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Activity schedule
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['low-complexity-schedule-completed'] and data['low-complexity-schedule'] %}
+                                {{ data['low-complexity-schedule'] }}
+                            {% else %}
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                            {% endif %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="schedule" class="govuk-link govuk-link--no-visited-state">
+                                {% if data['low-complexity-schedule-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> schedule</span>
+                            </a>
+                        </dd>
+                    </div>
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Possible impacts of the activity and ways to reduce them
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['low-complexity-impacts-completed'] and data['low-complexity-impacts'] %}
+                                {{ data['low-complexity-impacts'] }}
+                            {% else %}
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                            {% endif %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="impacts" class="govuk-link govuk-link--no-visited-state">
+                                {% if data['low-complexity-impacts-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> possible impacts of the activity</span>
+                            </a>
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        <p class="govuk-body">
+            <a href="#" class="govuk-button govuk-button--secondary">Add another activity for site 1</a>
+        </p>
+
+        <form action="review-site-details-router" method="post" novalidate>
+            <div class="govuk-button-group govuk-!-margin-top-4">
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+            </div>
+        </form>
+    </div>
+</div>
+
+{% endblock %}

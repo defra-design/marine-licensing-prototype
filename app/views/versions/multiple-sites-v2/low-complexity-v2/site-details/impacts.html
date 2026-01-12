@@ -1,0 +1,92 @@
+{% extends "../../layouts/low-complexity.html" %}
+
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% if data['organisation-name'] %}
+        {% include "../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+How have you assessed the impact of the activity and how will you reduce this?
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+{{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        
+        <form action="impacts-router" method="post" novalidate>
+            
+            <!-- Error summary -->
+            {% if data['low-complexity-impacts-errorthispage'] == "true" %}
+                {{ govukErrorSummary({
+                    titleText: "There is a problem",
+                    errorList: [
+                        {
+                            text: "Enter how you've assessed the impact of your activity and how you'll reduce this impact",
+                            href: "#low-complexity-impacts"
+                        }
+                    ]
+                }) }}
+            {% endif %}
+
+            <span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}<span class="govuk-!-display-block">Site 1</span></span>
+            <h1 class="govuk-heading-l">
+                {{ pageHeadingTextHTML }}
+            </h1>
+
+            <p class="govuk-body">Include any economic, environmental and social impacts.</p>
+
+            <p class="govuk-body">For example, the impact of the activity is closing a beach which may affect hotels or restaurants. To reduce this impact advance notice will be given to these businesses, work will only be carried out off-season and beach access will be maintained where possible.</p>
+
+            <p class="govuk-body">For example, the impact of the activity is there may be disturbance to overwintering birds. To reduce this impact work will be avoided at a time of year when certain species are present.</p>
+
+            <p class="govuk-body">For example, the impact of the activity is noise or disturbance to coastal communities. To reduce this impact advance notice will be given to residents and work will only happen during the day.</p>
+
+            <h2 class="govuk-heading-m">If there's no impact</h2>
+            
+            <p class="govuk-body">If you do not think this applicable to your project and there is no impact you need to explain the reasons why.</p>
+
+            <p class="govuk-body">For example, this is routine maintenance of an existing pontoon, replacing worn fixings and boards. The impacts were assessed by inspecting the site and reviewing previous maintenance records. The work uses hand tools only, all materials stay on the pontoon structure, and nothing will enter the water. There will be no impact on the seabed or marine life, or to neighbouring properties or businesses.</p>
+
+            <div class="govuk-form-group {% if data['low-complexity-impacts-errorthispage'] == 'true' %}govuk-form-group--error{% endif %}">
+                <label class="govuk-label govuk-label--m" for="low-complexity-impacts">
+                    Explain how you've assessed the impact of your activity and how you'll reduce this impact
+                </label>
+
+                <div id="low-complexity-impacts-hint" class="govuk-hint">
+                    Enter a maximum of 2,000 characters
+                </div>
+
+                {% if data['low-complexity-impacts-errorthispage'] == "true" %}
+                <p id="low-complexity-impacts-error" class="govuk-error-message">
+                    <span class="govuk-visually-hidden">Error:</span> Enter how you've assessed the impact of your activity and how you'll reduce this impact
+                </p>
+                {% endif %}
+
+                <textarea class="govuk-textarea {% if data['low-complexity-impacts-errorthispage'] == 'true' %}govuk-textarea--error{% endif %}" id="low-complexity-impacts" name="low-complexity-impacts" rows="5" {% if data['low-complexity-impacts-errorthispage'] == 'true' %}aria-describedby="low-complexity-impacts-hint low-complexity-impacts-error"{% else %}aria-describedby="low-complexity-impacts-hint"{% endif %}>{{ data['low-complexity-impacts'] }}</textarea>
+            </div>
+            
+            <div class="govuk-button-group">
+                {{ govukButton({
+                    text: "Save and continue"
+                }) }}
+            </div>
+
+        </form>
+
+    </div>
+</div>
+{% endblock %}
+

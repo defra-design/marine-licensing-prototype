@@ -1,0 +1,78 @@
+{% extends "../../layouts/low-complexity.html" %}
+
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% if data['organisation-name'] %}
+        {% include "../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+What is the activity schedule?
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+{{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        
+        <form action="schedule-router" method="post" novalidate>
+            
+            <!-- Error summary -->
+            {% if data['low-complexity-schedule-errorthispage'] == "true" %}
+                {{ govukErrorSummary({
+                    titleText: "There is a problem",
+                    errorList: [
+                        {
+                            text: "Enter the activity schedule",
+                            href: "#low-complexity-schedule"
+                        }
+                    ]
+                }) }}
+            {% endif %}
+
+            <div class="govuk-form-group {% if data['low-complexity-schedule-errorthispage'] == 'true' %}govuk-form-group--error{% endif %}">
+                <h1 class="govuk-label-wrapper">
+                    <label class="govuk-label govuk-label--l" for="low-complexity-schedule">
+                        <span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}<span class="govuk-!-display-block">Site 1</span></span>
+                        {{ pageHeadingTextHTML }}
+                    </label>
+                </h1>
+
+                <p class="govuk-body">This is the schedule for when this activity will happen. For example, it will take 12 weeks and be carried out Monday to Friday, 9am to 4pm for 7 hours each day.</p>
+
+                <p class="govuk-body">If any part of the activity needs to be completed by a certain date also include these details. And if there are any periods of time the activity cannot be carried out include these and the reason why.</p>
+
+                <div id="low-complexity-schedule-hint" class="govuk-hint">Enter a maximum of 2,000 characters</div>
+                
+                {% if data['low-complexity-schedule-errorthispage'] == "true" %}
+                <p id="low-complexity-schedule-error" class="govuk-error-message">
+                    <span class="govuk-visually-hidden">Error:</span> Enter the activity schedule
+                </p>
+                {% endif %}
+                
+                <textarea class="govuk-textarea {% if data['low-complexity-schedule-errorthispage'] == 'true' %}govuk-textarea--error{% endif %}" id="low-complexity-schedule" name="low-complexity-schedule" rows="5">{{ data['low-complexity-schedule'] }}</textarea>
+            </div>
+            
+            <div class="govuk-button-group">
+                {{ govukButton({
+                    text: "Save and continue"
+                }) }}
+            </div>
+
+        </form>
+
+    </div>
+</div>
+{% endblock %}
+

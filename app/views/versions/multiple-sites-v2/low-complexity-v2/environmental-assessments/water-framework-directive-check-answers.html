@@ -1,0 +1,78 @@
+{% extends "../../layouts/low-complexity.html" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% if data['user_type'] === 'organisation' %}
+        {% include "../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link govuk-link--no-visited-state" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+Check your answers for Water Framework Directive assessment
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-two-thirds">
+
+		<span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
+		<h1 class="govuk-heading-l">{{ pageHeadingTextHTML }}</h1>
+
+		<dl class="govuk-summary-list">
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					Is your project located up to 1 nautical mile out at sea?
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ data['low-complexity-wfd-nautical-mile'] }}
+				</dd>
+				<dd class="govuk-summary-list__actions">
+					<a class="govuk-link" href="water-framework-directive?fromcheckanswers=true">
+						Change<span class="govuk-visually-hidden"> if your project is located up to 1 nautical mile out at sea</span>
+					</a>
+				</dd>
+			</div>
+
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					Uploaded file
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{% if data['low-complexity-wfd-filename'] %}
+						{{ data['low-complexity-wfd-filename'] }}
+					{% else %}
+						WFD.pdf
+					{% endif %}
+				</dd>
+				<dd class="govuk-summary-list__actions">
+					<a class="govuk-link" href="water-framework-directive-upload?fromcheckanswers=true">
+						Change<span class="govuk-visually-hidden"> uploaded file</span>
+					</a>
+				</dd>
+			</div>
+		</dl>
+
+		<form action="water-framework-directive-check-answers-router" method="post" novalidate>
+			<div class="govuk-button-group">
+				{{ govukButton({
+					text: "Save and continue"
+				}) }}
+
+				<!-- <a class="govuk-link govuk-link--no-visited-state" href="./index">Cancel</a> -->
+			</div>
+		</form>
+
+	</div>
+</div>
+
+{% endblock %}
