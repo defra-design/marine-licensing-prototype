@@ -1,0 +1,146 @@
+{% extends "layouts/main.html" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+
+{% block pageTitle %}
+  Check you are set up to apply for your client - Get permission for marine work
+{% endblock %}
+
+{% block header %}
+{% from "govuk/components/header/macro.njk" import govukHeader %}
+
+{{ govukHeader({
+  classes: "govuk-header--full-width-border"
+}) }}
+{% endblock %}
+
+{% block beforeContent %}
+  {% include "../includes/phase-banner.html" %}
+  <a href="who-is-this-exemption-notification-for" class="govuk-back-link">Back</a>
+{% endblock %}
+
+{% block content %}
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+      <!-- Error summary -->
+      {% if data['client-setup-check-errorthispage'] == "true" %}
+        {{ govukErrorSummary({
+          titleText: "There is a problem",
+          errorList: [
+            {
+              text: "Select if your client has fully linked you to their Defra account",
+              href: "#client-setup-check"
+            }
+          ]
+        }) }}
+      {% endif %}
+
+      <!-- H1 heading -->
+      <h1 class="govuk-heading-l">
+        Check you are set up to apply for your client
+      </h1>
+
+      <!-- Warning component -->
+      {{ govukWarningText({
+        text: "If you do not set up your Defra account correctly your exemption notification will not be valid. This is because it will not be registered to the organisation the exemption is for.",
+        iconFallbackText: "Warning"
+      }) }}
+
+      <p class="govuk-body">
+        To submit a notification for a client, they must invite you to their account as an intermediary and give you access to the 'Get permission for marine work' service. You cannot use a personal individual account.
+      </p>
+
+      <form action="check-you-are-set-up-to-apply-for-your-client-router" method="post" novalidate>
+        
+        <!-- Wrapping div with conditional error class -->
+        <div class="govuk-form-group {% if data['client-setup-check-errorthispage'] == 'true' %}govuk-form-group--error{% endif %}">
+          
+          <fieldset class="govuk-fieldset">
+            <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+              <h2 class="govuk-fieldset__heading">
+                Has your client fully linked you to their Defra account?
+              </h2>
+            </legend>
+
+            <!-- Manual error message -->
+            {% if data['client-setup-check-errorthispage'] == "true" %}
+              <p id="client-setup-check-error" class="govuk-error-message">
+                <span class="govuk-visually-hidden">Error:</span> Select if your client has fully linked you to their Defra account
+              </p>
+            {% endif %}
+
+            <!-- Radios -->
+            {{ govukRadios({
+              name: "client-setup-check",
+              id: "client-setup-check",
+              items: [
+                {
+                  value: "yes",
+                  text: "Yes",
+                  hint: {
+                    text: "You have accepted their email invitation and they have given you access to the 'Get permission for marine work' service"
+                  }
+                },
+                {
+                  value: "no",
+                  text: "No",
+                  hint: {
+                    text: "I have not received an invitation or I do not have access to the service yet"
+                  }
+                }
+              ],
+              value: data['client-setup-check'],
+              errorMessage: null
+            }) }}
+          </fieldset>
+        </div>
+        
+        {{ govukButton({
+          text: "Continue"
+        }) }}
+        
+      </form>
+
+    </div>
+  </div>
+
+  <script>
+    // Clear errors if a radio button is selected (handles browser back button cache)
+    document.addEventListener('DOMContentLoaded', function() {
+      var radios = document.querySelectorAll('input[name="client-setup-check"]');
+      var isSelected = false;
+      
+      radios.forEach(function(radio) {
+        if (radio.checked) {
+          isSelected = true;
+        }
+      });
+      
+      if (isSelected) {
+        // Hide error summary
+        var errorSummary = document.querySelector('.govuk-error-summary');
+        if (errorSummary) {
+          errorSummary.style.display = 'none';
+        }
+        
+        // Remove error class from form group
+        var formGroup = document.querySelector('.govuk-form-group--error');
+        if (formGroup) {
+          formGroup.classList.remove('govuk-form-group--error');
+        }
+        
+        // Hide inline error message
+        var errorMessage = document.getElementById('client-setup-check-error');
+        if (errorMessage) {
+          errorMessage.style.display = 'none';
+        }
+      }
+    });
+  </script>
+
+{% endblock %}

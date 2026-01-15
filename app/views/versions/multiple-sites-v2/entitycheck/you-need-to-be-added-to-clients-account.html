@@ -1,0 +1,72 @@
+{% extends "layouts/main.html" %}
+
+{% block pageTitle %}
+  You need to be added to your client's account - Get permission for marine work
+{% endblock %}
+
+{% block header %}
+{% from "govuk/components/header/macro.njk" import govukHeader %}
+{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
+
+{{ govukHeader({
+  classes: "govuk-header--full-width-border"
+}) }}
+{{ govukServiceNavigation({
+  serviceName: "Get permission for marine work",
+  navigation: [
+    {
+      text: "Defra account",
+      href: "#"
+    },
+    {
+      text: "Sign out",
+      href: "#"
+    }
+  ]
+}) }}
+{% endblock %}
+
+{% block beforeContent %}
+  {% include "../includes/phase-banner.html" %}
+{% endblock %}
+
+{% block content %}
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+      <h1 class="govuk-heading-l">
+        You need to be added to your client's account
+      </h1>
+
+      <p class="govuk-body">
+        You cannot submit a notification until your client has set you up.
+      </p>
+
+      <h2 class="govuk-heading-m">
+        What needs to happen
+      </h2>
+
+      <p class="govuk-body">
+        You must ask your client to:
+      </p>
+
+      <ol class="govuk-list govuk-list--number">
+        <li>Register for a Defra account (if they do not already have one).</li>
+        <li>Go to 'Manage account users'.</li>
+        <li>Invite you as an intermediary.</li>
+        <li>Give you access to the 'Get permission for marine work' service.</li>
+      </ol>
+
+      <p class="govuk-body">
+        Once you have received the invitation email and accepted it, you can return to this service.
+      </p>
+
+      <p class="govuk-body">
+        <a href="adding-users-to-a-defra-account-as-an-admin" class="govuk-link">How to add users to a Defra account</a>.
+      </p>
+
+    </div>
+  </div>
+
+{% endblock %}

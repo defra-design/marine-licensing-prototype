@@ -16,6 +16,14 @@ module.exports = function (router) {
     delete req.session.data['entity-check-who-is-for'];
     delete req.session.data['entity-check-who-is-for-errorthispage'];
     
+    // Clear client setup check data
+    delete req.session.data['client-setup-check'];
+    delete req.session.data['client-setup-check-errorthispage'];
+    
+    // Clear organisation setup check data
+    delete req.session.data['organisation-setup-check'];
+    delete req.session.data['organisation-setup-check-errorthispage'];
+    
     // Clear confirmation page data and error flags
     delete req.session.data['confirm-individual-notification'];
     delete req.session.data['confirm-individual-notification-errorthispage'];
@@ -101,10 +109,98 @@ module.exports = function (router) {
     if (whoIsFor === 'myself') {
       res.redirect('sign-in');
     } else if (whoIsFor === 'business') {
-      res.redirect('creating-a-defra-account-as-employee');
+      res.redirect('check-you-are-set-up-to-apply-for-your-organisation');
     } else if (whoIsFor === 'client') {
-      res.redirect('creating-a-defra-account-as-agent');
+      res.redirect('check-you-are-set-up-to-apply-for-your-client');
     }
+  });
+
+  ///////////////////////////////////////////
+  // Check you are set up to apply for your client
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/check-you-are-set-up-to-apply-for-your-client`, function (req, res) {
+    // Clear error flags on page load
+    req.session.data['client-setup-check-errorthispage'] = "false";
+    res.render(`versions/${version}/${section}/check-you-are-set-up-to-apply-for-your-client`);
+  });
+
+  router.post(`/versions/${version}/${section}/check-you-are-set-up-to-apply-for-your-client-router`, function (req, res) {
+    // Clear error flags at start of POST
+    req.session.data['client-setup-check-errorthispage'] = "false";
+    
+    const clientSetupCheck = req.session.data['client-setup-check'];
+    
+    // Validate selection
+    if (!clientSetupCheck) {
+      req.session.data['client-setup-check-errorthispage'] = "true";
+      res.redirect('check-you-are-set-up-to-apply-for-your-client');
+      return;
+    }
+    
+    // Branch based on selection
+    if (clientSetupCheck === 'yes') {
+      res.redirect('sign-in');
+    } else if (clientSetupCheck === 'no') {
+      res.redirect('you-need-to-be-added-to-clients-account');
+    }
+  });
+
+  ///////////////////////////////////////////
+  // You need to be added to your client's account
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/you-need-to-be-added-to-clients-account`, function (req, res) {
+    res.render(`versions/${version}/${section}/you-need-to-be-added-to-clients-account`);
+  });
+
+  ///////////////////////////////////////////
+  // Check you are set up to apply for your organisation
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/check-you-are-set-up-to-apply-for-your-organisation`, function (req, res) {
+    // Clear error flags on page load
+    req.session.data['organisation-setup-check-errorthispage'] = "false";
+    res.render(`versions/${version}/${section}/check-you-are-set-up-to-apply-for-your-organisation`);
+  });
+
+  router.post(`/versions/${version}/${section}/check-you-are-set-up-to-apply-for-your-organisation-router`, function (req, res) {
+    // Clear error flags at start of POST
+    req.session.data['organisation-setup-check-errorthispage'] = "false";
+    
+    const organisationSetupCheck = req.session.data['organisation-setup-check'];
+    
+    // Validate selection
+    if (!organisationSetupCheck) {
+      req.session.data['organisation-setup-check-errorthispage'] = "true";
+      res.redirect('check-you-are-set-up-to-apply-for-your-organisation');
+      return;
+    }
+    
+    // Branch based on selection
+    if (organisationSetupCheck === 'yes') {
+      res.redirect('sign-in');
+    } else if (organisationSetupCheck === 'register-new') {
+      res.redirect('register-a-new-defra-account-for-your-organisation');
+    } else if (organisationSetupCheck === 'need-to-be-added') {
+      res.redirect('you-need-to-be-added-to-your-organisations-account');
+    }
+  });
+
+  ///////////////////////////////////////////
+  // Register a new Defra account for your organisation
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/register-a-new-defra-account-for-your-organisation`, function (req, res) {
+    res.render(`versions/${version}/${section}/register-a-new-defra-account-for-your-organisation`);
+  });
+
+  ///////////////////////////////////////////
+  // You need to be added to your organisation's account
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/you-need-to-be-added-to-your-organisations-account`, function (req, res) {
+    res.render(`versions/${version}/${section}/you-need-to-be-added-to-your-organisations-account`);
   });
 
   ///////////////////////////////////////////
@@ -113,10 +209,6 @@ module.exports = function (router) {
 
   router.get(`/versions/${version}/${section}/creating-a-defra-account-as-employee`, function (req, res) {
     res.render(`versions/${version}/${section}/creating-a-defra-account-as-employee`);
-  });
-
-  router.get(`/versions/${version}/${section}/creating-a-defra-account-as-agent`, function (req, res) {
-    res.render(`versions/${version}/${section}/creating-a-defra-account-as-agent`);
   });
 
   ///////////////////////////////////////////
@@ -131,11 +223,71 @@ module.exports = function (router) {
     // Handle sign-in submission
     // Branch based on user_type
     if (req.session.data['user_type'] === 'organisation') {
-      res.redirect('confirm-organisation-notification');
+      res.redirect('organisation-selector');
     } else if (req.session.data['user_type'] === 'agent') {
-      res.redirect('confirm-agent-notification');
+      res.redirect('organisation-selector');
     } else {
       res.redirect('confirm-individual-notification');
+    }
+  });
+
+  ///////////////////////////////////////////
+  // Organisation selector
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/organisation-selector`, function (req, res) {
+    // Clear error flags on page load
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    
+    // Define organisations based on user_type
+    let organisations = [];
+    
+    if (req.session.data['user_type'] === 'organisation') {
+      organisations = [
+        { text: "Sam Evans", value: "Sam Evans" },
+        { text: "Ocean Dredging", value: "Ocean Dredging" }
+      ];
+    } else if (req.session.data['user_type'] === 'agent') {
+      organisations = [
+        { text: "Sam Evans", value: "Sam Evans" },
+        { text: "Brighton Marina", value: "Brighton Marina" }
+      ];
+    }
+    
+    res.render(`versions/${version}/${section}/organisation-selector`, {
+      organisations: organisations
+    });
+  });
+
+  router.post(`/versions/${version}/${section}/organisation-selector-router`, function (req, res) {
+    // Clear error flags at start of POST
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    
+    const organisationName = req.session.data['organisation-name'];
+    
+    // Validate selection
+    if (!organisationName) {
+      req.session.data['errorthispage'] = "true";
+      req.session.data['errortypeone'] = "true";
+      res.redirect('organisation-selector');
+      return;
+    }
+    
+    // Branch based on user_type and selection
+    if (req.session.data['user_type'] === 'organisation') {
+      if (organisationName === 'Ocean Dredging') {
+        res.redirect('confirm-organisation-notification');
+      } else if (organisationName === 'Sam Evans') {
+        res.redirect('confirm-individual-notification');
+      }
+    } else if (req.session.data['user_type'] === 'agent') {
+      if (organisationName === 'Brighton Marina') {
+        res.redirect('confirm-agent-notification');
+      } else if (organisationName === 'Sam Evans') {
+        res.redirect('confirm-individual-notification');
+      }
     }
   });
 
