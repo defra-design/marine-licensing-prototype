@@ -5,7 +5,7 @@
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 
 {% block pageTitle %}
-  {% if data['confirm-agent-notification-errorthispage'] == "true" %}Error: {% endif %}Are you notifying us as an agent or third party (intermediary) for Brighton Marina? - Get permission for marine work
+  {% if data['confirm-agent-notification-errorthispage'] == "true" %}Error: {% endif %}Are you notifying us as an agent or intermediary for Brighton Marina? - Get permission for marine work
 {% endblock %}
 
 {% block header %}
@@ -38,7 +38,7 @@
           titleText: "There is a problem",
           errorList: [
             {
-              text: "Select if you are notifying us as an agent or third party (intermediary) for Brighton Marina",
+              text: "Select if you are notifying us as an agent or intermediary for Brighton Marina",
               href: "#confirm-agent-notification"
             }
           ]
@@ -52,7 +52,7 @@
           id: "confirm-agent-notification",
           fieldset: {
             legend: {
-              text: "Are you notifying us as an agent or third party (intermediary) for Brighton Marina?",
+              text: "Are you notifying us as an agent or intermediary for Brighton Marina?",
               isPageHeading: true,
               classes: "govuk-fieldset__legend--l"
             }
@@ -80,7 +80,7 @@
           ],
           value: data['confirm-agent-notification'],
           errorMessage: {
-            text: "Select if you are notifying us as an agent or third party (intermediary) for Brighton Marina"
+            text: "Select if you are notifying us as an agent or intermediary for Brighton Marina"
           } if data['confirm-agent-notification-errorthispage'] == "true" else null
         }) }}
         
