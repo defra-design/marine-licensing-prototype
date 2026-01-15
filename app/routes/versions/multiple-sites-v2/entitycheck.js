@@ -16,6 +16,10 @@ module.exports = function (router) {
     delete req.session.data['entity-check-who-is-for'];
     delete req.session.data['entity-check-who-is-for-errorthispage'];
     
+    // Clear client setup check data
+    delete req.session.data['client-setup-check'];
+    delete req.session.data['client-setup-check-errorthispage'];
+    
     // Clear confirmation page data and error flags
     delete req.session.data['confirm-individual-notification'];
     delete req.session.data['confirm-individual-notification-errorthispage'];
@@ -103,8 +107,47 @@ module.exports = function (router) {
     } else if (whoIsFor === 'business') {
       res.redirect('creating-a-defra-account-as-employee');
     } else if (whoIsFor === 'client') {
-      res.redirect('creating-a-defra-account-as-agent');
+      res.redirect('check-you-are-set-up-to-apply-for-your-client');
     }
+  });
+
+  ///////////////////////////////////////////
+  // Check you are set up to apply for your client
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/check-you-are-set-up-to-apply-for-your-client`, function (req, res) {
+    // Clear error flags on page load
+    req.session.data['client-setup-check-errorthispage'] = "false";
+    res.render(`versions/${version}/${section}/check-you-are-set-up-to-apply-for-your-client`);
+  });
+
+  router.post(`/versions/${version}/${section}/check-you-are-set-up-to-apply-for-your-client-router`, function (req, res) {
+    // Clear error flags at start of POST
+    req.session.data['client-setup-check-errorthispage'] = "false";
+    
+    const clientSetupCheck = req.session.data['client-setup-check'];
+    
+    // Validate selection
+    if (!clientSetupCheck) {
+      req.session.data['client-setup-check-errorthispage'] = "true";
+      res.redirect('check-you-are-set-up-to-apply-for-your-client');
+      return;
+    }
+    
+    // Branch based on selection
+    if (clientSetupCheck === 'yes') {
+      res.redirect('sign-in');
+    } else if (clientSetupCheck === 'no') {
+      res.redirect('you-need-to-be-added-to-clients-account');
+    }
+  });
+
+  ///////////////////////////////////////////
+  // You need to be added to your client's account
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/you-need-to-be-added-to-clients-account`, function (req, res) {
+    res.render(`versions/${version}/${section}/you-need-to-be-added-to-clients-account`);
   });
 
   ///////////////////////////////////////////
@@ -113,10 +156,6 @@ module.exports = function (router) {
 
   router.get(`/versions/${version}/${section}/creating-a-defra-account-as-employee`, function (req, res) {
     res.render(`versions/${version}/${section}/creating-a-defra-account-as-employee`);
-  });
-
-  router.get(`/versions/${version}/${section}/creating-a-defra-account-as-agent`, function (req, res) {
-    res.render(`versions/${version}/${section}/creating-a-defra-account-as-agent`);
   });
 
   ///////////////////////////////////////////
