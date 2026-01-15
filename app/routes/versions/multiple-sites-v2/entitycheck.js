@@ -223,11 +223,71 @@ module.exports = function (router) {
     // Handle sign-in submission
     // Branch based on user_type
     if (req.session.data['user_type'] === 'organisation') {
-      res.redirect('confirm-organisation-notification');
+      res.redirect('organisation-selector');
     } else if (req.session.data['user_type'] === 'agent') {
-      res.redirect('confirm-agent-notification');
+      res.redirect('organisation-selector');
     } else {
       res.redirect('confirm-individual-notification');
+    }
+  });
+
+  ///////////////////////////////////////////
+  // Organisation selector
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/organisation-selector`, function (req, res) {
+    // Clear error flags on page load
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    
+    // Define organisations based on user_type
+    let organisations = [];
+    
+    if (req.session.data['user_type'] === 'organisation') {
+      organisations = [
+        { text: "Sam Evans", value: "Sam Evans" },
+        { text: "Ocean Dredging", value: "Ocean Dredging" }
+      ];
+    } else if (req.session.data['user_type'] === 'agent') {
+      organisations = [
+        { text: "Sam Evans", value: "Sam Evans" },
+        { text: "Brighton Marina", value: "Brighton Marina" }
+      ];
+    }
+    
+    res.render(`versions/${version}/${section}/organisation-selector`, {
+      organisations: organisations
+    });
+  });
+
+  router.post(`/versions/${version}/${section}/organisation-selector-router`, function (req, res) {
+    // Clear error flags at start of POST
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    
+    const organisationName = req.session.data['organisation-name'];
+    
+    // Validate selection
+    if (!organisationName) {
+      req.session.data['errorthispage'] = "true";
+      req.session.data['errortypeone'] = "true";
+      res.redirect('organisation-selector');
+      return;
+    }
+    
+    // Branch based on user_type and selection
+    if (req.session.data['user_type'] === 'organisation') {
+      if (organisationName === 'Ocean Dredging') {
+        res.redirect('confirm-organisation-notification');
+      } else if (organisationName === 'Sam Evans') {
+        res.redirect('confirm-individual-notification');
+      }
+    } else if (req.session.data['user_type'] === 'agent') {
+      if (organisationName === 'Brighton Marina') {
+        res.redirect('confirm-agent-notification');
+      } else if (organisationName === 'Sam Evans') {
+        res.redirect('confirm-individual-notification');
+      }
     }
   });
 
