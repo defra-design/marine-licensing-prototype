@@ -20,7 +20,7 @@
 {% endblock %}
 
 {% block beforeContent %}
-  {% include "../includes/phase-banner.html" %}
+
 {% endblock %}
 
 {% block content %}
@@ -60,9 +60,6 @@
               classes: "govuk-fieldset__legend--l"
             }
           },
-          hint: {
-            text: "You can change who you're representing later from the Projects page."
-          },
           items: organisations,
           errorMessage: {
             text: "Select who you're representing"
@@ -73,9 +70,34 @@
           {{ govukButton({
             text: "Continue"
           }) }}
+          <a class="govuk-link" href="#">An organisation not listed</a>
         </div>
 
       </form>
+
+      {% from "govuk/components/details/macro.njk" import govukDetails %}
+
+      {{ govukDetails({
+        summaryText: "Need more help?",
+        html: '
+          <p class="govuk-body">Contact Get permission for marine work by phone or email.</p>
+          <p class="govuk-body">
+            <strong>Email:</strong><br>
+            <a href="#" class="govuk-link">marine.consents@marinemanagement.org.uk</a>
+          </p>
+          <p class="govuk-body">
+            <strong>Telephone:</strong><br>
+            0191 376 2791
+          </p>
+          <p class="govuk-body">
+            <strong>Service opening times:</strong><br>
+            Opening hours Mon-Thurs 9am-4:30pm and Friday 9am-4pm
+          </p>
+          <p class="govuk-body">
+            <a href="#" class="govuk-link" target="_blank" rel="noopener noreferrer">Find out about call charges (opens in new tab)</a>
+          </p>
+        '
+      }) }}
 
     </div>
   </div>
