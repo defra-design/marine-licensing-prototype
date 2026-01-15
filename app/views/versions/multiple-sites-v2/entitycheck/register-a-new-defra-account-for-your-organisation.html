@@ -1,0 +1,77 @@
+{% extends "layouts/main.html" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block pageTitle %}
+  Register a new Defra account for your organisation - Get permission for marine work
+{% endblock %}
+
+{% block header %}
+{% from "govuk/components/header/macro.njk" import govukHeader %}
+{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
+
+{{ govukHeader({
+  classes: "govuk-header--full-width-border"
+}) }}
+{{ govukServiceNavigation({
+  serviceName: "Get permission for marine work",
+  navigation: [
+    {
+      text: "Sign out",
+      href: "#"
+    }
+  ]
+}) }}
+{% endblock %}
+
+{% block beforeContent %}
+  {% include "../includes/phase-banner.html" %}
+{% endblock %}
+
+{% block content %}
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+      <h1 class="govuk-heading-l">
+        Register a new Defra account for your organisation
+      </h1>
+
+      <p class="govuk-body">
+        You are about to sign in or register. You must create an account specifically for the business or organisation.
+      </p>
+
+      <h2 class="govuk-heading-m">
+        What you will need
+      </h2>
+
+      <p class="govuk-body">
+        To register an organisation, you will need:
+      </p>
+
+      <ul class="govuk-list govuk-list--bullet">
+        <li>the Companies House number (if the business is limited)</li>
+        <li>the main contact details for your business (address and phone number)</li>
+        <li>a Government Gateway user ID or GOV.UK One Login for the business</li>
+      </ul>
+
+      <p class="govuk-body">
+        If you do not have a Government Gateway ID or One Login for the business, you can create one in the next step.
+      </p>
+
+      <p class="govuk-body">
+        <a href="creating-a-defra-account" class="govuk-link" target="_blank" rel="noopener noreferrer">How to create a Defra account (opens in new tab)</a>.
+      </p>
+
+      <form action="sign-in" method="get" novalidate>
+        
+        {{ govukButton({
+          text: "Continue"
+        }) }}
+        
+      </form>
+
+    </div>
+  </div>
+
+{% endblock %}

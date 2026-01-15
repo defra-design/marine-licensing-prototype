@@ -20,6 +20,10 @@ module.exports = function (router) {
     delete req.session.data['client-setup-check'];
     delete req.session.data['client-setup-check-errorthispage'];
     
+    // Clear organisation setup check data
+    delete req.session.data['organisation-setup-check'];
+    delete req.session.data['organisation-setup-check-errorthispage'];
+    
     // Clear confirmation page data and error flags
     delete req.session.data['confirm-individual-notification'];
     delete req.session.data['confirm-individual-notification-errorthispage'];
@@ -105,7 +109,7 @@ module.exports = function (router) {
     if (whoIsFor === 'myself') {
       res.redirect('sign-in');
     } else if (whoIsFor === 'business') {
-      res.redirect('creating-a-defra-account-as-employee');
+      res.redirect('check-you-are-set-up-to-apply-for-your-organisation');
     } else if (whoIsFor === 'client') {
       res.redirect('check-you-are-set-up-to-apply-for-your-client');
     }
@@ -148,6 +152,55 @@ module.exports = function (router) {
 
   router.get(`/versions/${version}/${section}/you-need-to-be-added-to-clients-account`, function (req, res) {
     res.render(`versions/${version}/${section}/you-need-to-be-added-to-clients-account`);
+  });
+
+  ///////////////////////////////////////////
+  // Check you are set up to apply for your organisation
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/check-you-are-set-up-to-apply-for-your-organisation`, function (req, res) {
+    // Clear error flags on page load
+    req.session.data['organisation-setup-check-errorthispage'] = "false";
+    res.render(`versions/${version}/${section}/check-you-are-set-up-to-apply-for-your-organisation`);
+  });
+
+  router.post(`/versions/${version}/${section}/check-you-are-set-up-to-apply-for-your-organisation-router`, function (req, res) {
+    // Clear error flags at start of POST
+    req.session.data['organisation-setup-check-errorthispage'] = "false";
+    
+    const organisationSetupCheck = req.session.data['organisation-setup-check'];
+    
+    // Validate selection
+    if (!organisationSetupCheck) {
+      req.session.data['organisation-setup-check-errorthispage'] = "true";
+      res.redirect('check-you-are-set-up-to-apply-for-your-organisation');
+      return;
+    }
+    
+    // Branch based on selection
+    if (organisationSetupCheck === 'yes') {
+      res.redirect('sign-in');
+    } else if (organisationSetupCheck === 'register-new') {
+      res.redirect('register-a-new-defra-account-for-your-organisation');
+    } else if (organisationSetupCheck === 'need-to-be-added') {
+      res.redirect('you-need-to-be-added-to-your-organisations-account');
+    }
+  });
+
+  ///////////////////////////////////////////
+  // Register a new Defra account for your organisation
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/register-a-new-defra-account-for-your-organisation`, function (req, res) {
+    res.render(`versions/${version}/${section}/register-a-new-defra-account-for-your-organisation`);
+  });
+
+  ///////////////////////////////////////////
+  // You need to be added to your organisation's account
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/you-need-to-be-added-to-your-organisations-account`, function (req, res) {
+    res.render(`versions/${version}/${section}/you-need-to-be-added-to-your-organisations-account`);
   });
 
   ///////////////////////////////////////////
