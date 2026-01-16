@@ -1,0 +1,73 @@
+{% extends "layouts/main.html" %}
+
+{% block pageTitle %}
+  There are no other organisations available for you to enrol - Get permission for marine work
+{% endblock %}
+
+{% block header %}
+{% from "govuk/components/header/macro.njk" import govukHeader %}
+{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
+
+{{ govukHeader({
+  classes: "govuk-header--full-width-border"
+}) }}
+{{ govukServiceNavigation({
+  serviceName: "Get permission for marine work",
+  navigation: [
+    {
+      href: "/versions/multiple-sites-v2/exemption/sign-in.html?goto=home",
+      text: "Sign out"
+    }
+  ]
+}) }}
+{% endblock %}
+
+{% block beforeContent %}
+
+{% endblock %}
+
+{% block content %}
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+      <h1 class="govuk-heading-l">
+        There are no other organisations available for you to enrol
+      </h1>
+
+      <p class="govuk-body">
+        If you expected to see other options to enrol, you will need to speak to the account administrator of that organisation to make sure you have the right access to enrol them.
+      </p>
+
+      <p class="govuk-body">
+        <a href="#" class="govuk-link">Sign out</a>
+      </p>
+
+      {% from "govuk/components/details/macro.njk" import govukDetails %}
+
+      {{ govukDetails({
+        summaryText: "Need more help?",
+        html: '
+          <p class="govuk-body">Contact Get permission for marine work by phone or email.</p>
+          <p class="govuk-body">
+            <strong>Email:</strong><br>
+            <a href="#" class="govuk-link">marine.consents@marinemanagement.org.uk</a>
+          </p>
+          <p class="govuk-body">
+            <strong>Telephone:</strong><br>
+            0191 376 2791
+          </p>
+          <p class="govuk-body">
+            <strong>Service opening times:</strong><br>
+            Opening hours Mon-Thurs 9am-4:30pm and Friday 9am-4pm
+          </p>
+          <p class="govuk-body">
+            <a href="#" class="govuk-link" target="_blank" rel="noopener noreferrer">Find out about call charges (opens in new tab)</a>
+          </p>
+        '
+      }) }}
+
+    </div>
+  </div>
+
+{% endblock %}

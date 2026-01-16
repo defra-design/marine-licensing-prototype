@@ -292,6 +292,14 @@ module.exports = function (router) {
   });
 
   ///////////////////////////////////////////
+  // No other organisations available
+  ///////////////////////////////////////////
+
+  router.get(`/versions/${version}/${section}/no-other-organisations-available`, function (req, res) {
+    res.render(`versions/${version}/${section}/no-other-organisations-available`);
+  });
+
+  ///////////////////////////////////////////
   // Confirm individual notification page
   ///////////////////////////////////////////
 
