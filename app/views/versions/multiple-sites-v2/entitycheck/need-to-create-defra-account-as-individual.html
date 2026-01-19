@@ -15,18 +15,7 @@
   classes: "govuk-header--full-width-border"
 }) }}
 {{ govukServiceNavigation({
-  serviceName: "Get permission for marine work",
-  navigation: [
-    {
-      href: "#",
-      text: "Defra account",
-      active: false
-    },
-    {
-      href: "/versions/multiple-sites-v2/exemption/sign-in.html?goto=home",
-      text: "Sign out"
-    }
-  ]
+  serviceName: "Get permission for marine work"
 }) }}
 {% endblock %}
 
@@ -37,6 +26,7 @@
     <span class="govuk-body-s govuk-!-font-weight-bold app-organisation-switcher__name">{{ data['organisation-name'] }}</span>
   </div>
   {% endif %}
+  <a class="govuk-back-link" href="javascript:window.history.back()">Back</a>
 {% endblock %}
 
 {% block content %}
