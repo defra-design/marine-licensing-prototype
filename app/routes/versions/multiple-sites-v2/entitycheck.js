@@ -426,10 +426,8 @@ module.exports = function (router) {
     // Branch based on selection
     if (confirmNotification === 'yes') {
       res.redirect('project-name-start');
-    } else if (confirmNotification === 'different-organisation') {
+    } else if (confirmNotification === 'different-client') {
       res.redirect('need-to-select-correct-organisation');
-    } else if (confirmNotification === 'employee') {
-      res.redirect('need-to-create-defra-account-as-employee');
     } else if (confirmNotification === 'myself') {
       res.redirect('need-to-create-defra-account-as-individual');
     }
