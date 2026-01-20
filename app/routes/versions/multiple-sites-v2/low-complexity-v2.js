@@ -1132,4 +1132,41 @@ module.exports = function (router) {
     res.render(`versions/${version}/${section}/projects`);
   });
 
+  // Projects withdraw GET route (for demo)
+  router.get(`/versions/${version}/${section}/projects-withdraw`, function (req, res) {
+    res.render(`versions/${version}/${section}/projects-withdraw`);
+  });
+
+  ///////////////////////////////////////////
+  // Withdraw functionality
+  ///////////////////////////////////////////
+
+  // Withdraw GET route
+  router.get(`/versions/${version}/${section}/withdraw`, function (req, res) {
+    // Store the project identifier from query parameter
+    if (req.query.project) {
+      req.session.data['project'] = req.query.project;
+    }
+    res.render(`versions/${version}/${section}/withdraw`);
+  });
+
+  // Withdraw POST router
+  router.post(`/versions/${version}/${section}/withdraw-router`, function (req, res) {
+    // Get the project identifier
+    const projectToWithdraw = req.query.project || req.session.data['project'];
+    
+    // Set a flag to hide the withdrawn project
+    if (projectToWithdraw === 'branscombe') {
+      req.session.data['withdrawn-branscombe'] = 'true';
+    } else if (projectToWithdraw === 'worthing') {
+      req.session.data['withdrawn-worthing'] = 'true';
+    }
+    
+    // Clear the project data
+    delete req.session.data['project'];
+    
+    // Redirect back to projects page
+    res.redirect('projects-withdraw');
+  });
+
 }
