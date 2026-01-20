@@ -154,47 +154,65 @@ Projects
 				{% endif %}
 
 				<!-- Exempt activity notifications -->
-				{% if data['withdrawn-branscombe'] != 'true' %}
-				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="Branscombe bore holes" data-type="Exempt activity notification" data-reference="EXE-10002" data-status="Closed" id="project-branscombe">
+				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="Branscombe bore holes" data-type="Exempt activity notification" data-reference="EXE-10002" data-status="{% if data['withdrawn-branscombe'] == 'true' %}Withdrawn{% else %}Closed{% endif %}" id="project-branscombe">
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Branscombe bore holes</th>
 					<td class="govuk-table__cell">Exempt activity notification</td>
 					<td class="govuk-table__cell" data-sort-value="EXE-10002">EXE/2025/10002</td>
-					<td class="govuk-table__cell" data-sort-value="001">
+					<td class="govuk-table__cell" data-sort-value="{% if data['withdrawn-branscombe'] == 'true' %}004{% else %}001{% endif %}">
+						{% if data['withdrawn-branscombe'] == 'true' %}
+						{{ govukTag({
+							text: "Withdrawn",
+							classes: "govuk-tag--grey"
+						}) }}
+						{% else %}
 						{{ govukTag({
 							text: "Closed",
 							classes: "govuk-tag--green"
 						}) }}
+						{% endif %}
 					</td>
 					<td class="govuk-table__cell" data-sort-value="250906">6 Sep 2025</td>
 					{% if data['user_type'] === 'organisation' %}
 					<td class="govuk-table__cell">Sam Evans</td>
 					{% endif %}
 					<td class="govuk-table__cell">
+						{% if data['withdrawn-branscombe'] == 'true' %}
+						<a href="#" class="govuk-link--no-visited-state">View details</a>
+						{% else %}
 						<a href="#" class="govuk-link--no-visited-state govuk-!-margin-right-4">View details</a> <a href="withdraw?project=branscombe" class="govuk-link--no-visited-state">Withdraw</a>
+						{% endif %}
 					</td>
 				</tr>
-				{% endif %}
 
-				{% if data['withdrawn-worthing'] != 'true' %}
-				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="Worthing sediment samples" data-type="Exempt activity notification" data-reference="EXE-10012" data-status="Closed" id="project-worthing">
+				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="Worthing sediment samples" data-type="Exempt activity notification" data-reference="EXE-10012" data-status="{% if data['withdrawn-worthing'] == 'true' %}Withdrawn{% else %}Closed{% endif %}" id="project-worthing">
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Worthing sediment samples</th>
 					<td class="govuk-table__cell">Exempt activity notification</td>
 					<td class="govuk-table__cell" data-sort-value="EXE-10012">EXE/2025/10012</td>
-					<td class="govuk-table__cell" data-sort-value="001">
+					<td class="govuk-table__cell" data-sort-value="{% if data['withdrawn-worthing'] == 'true' %}004{% else %}001{% endif %}">
+						{% if data['withdrawn-worthing'] == 'true' %}
+						{{ govukTag({
+							text: "Withdrawn",
+							classes: "govuk-tag--grey"
+						}) }}
+						{% else %}
 						{{ govukTag({
 							text: "Closed",
 							classes: "govuk-tag--green"
 						}) }}
+						{% endif %}
 					</td>
 					<td class="govuk-table__cell" data-sort-value="250911">11 Sep 2025</td>
 					{% if data['user_type'] === 'organisation' %}
 					<td class="govuk-table__cell">Sam Evans</td>
 					{% endif %}
 					<td class="govuk-table__cell">
+						{% if data['withdrawn-worthing'] == 'true' %}
+						<a href="#" class="govuk-link--no-visited-state">View details</a>
+						{% else %}
 						<a href="#" class="govuk-link--no-visited-state govuk-!-margin-right-4">View details</a> <a href="withdraw?project=worthing" class="govuk-link--no-visited-state">Withdraw</a>
+						{% endif %}
 					</td>
 				</tr>
-				{% endif %}
 
 				<tr class="govuk-table__row" data-creator="alex-williams" data-project-name="Plymouth harbour core samples" data-type="Exempt activity notification" data-reference="EXE-10023" data-status="Closed">
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Plymouth harbour core samples</th>
