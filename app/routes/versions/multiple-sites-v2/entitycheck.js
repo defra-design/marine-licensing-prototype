@@ -306,6 +306,8 @@ module.exports = function (router) {
   router.get(`/versions/${version}/${section}/confirm-individual-notification`, function (req, res) {
     // Clear error flags on page load
     req.session.data['confirm-individual-notification-errorthispage'] = "false";
+    // Set organisation name for display
+    req.session.data['organisation-name'] = 'Sam Evans';
     res.render(`versions/${version}/${section}/confirm-individual-notification`);
   });
 
@@ -322,8 +324,8 @@ module.exports = function (router) {
       return;
     }
     
-    // Clear organisation name for individual users
-    delete req.session.data['organisation-name'];
+    // Set organisation name for guidance pages
+    req.session.data['organisation-name'] = 'Sam Evans';
     
     // Branch based on selection
     if (confirmNotification === 'myself') {
