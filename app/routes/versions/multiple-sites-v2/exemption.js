@@ -124,11 +124,11 @@ router.post('/' + version + section + 'sign-in-router', function (req, res) {
     } else {
         // Check if user came from sign-out (goto=home parameter)
         if (req.session.data['goto'] === 'home') {
-            // Clear the goto parameter and redirect to projects
+            // Clear the goto parameter and redirect to homepage
             delete req.session.data['goto'];
-            res.redirect('projects');
+            res.redirect('homepage');
         } else {
-            // Redirect to the project name page for new users
+            // Redirect to the project name page for new users (e.g., coming from exemption checker)
             res.redirect('project-name-start');
         }
     }
@@ -156,11 +156,11 @@ router.post('/' + version + section + 'organisation-selector-router', function (
         } else {
             // Check if user came from sign-out (goto=home parameter)
             if (req.session.data['goto'] === 'home') {
-                // Clear the goto parameter and redirect to home
+                // Clear the goto parameter and redirect to homepage
                 delete req.session.data['goto'];
-                res.redirect('projects');
+                res.redirect('homepage');
             } else {
-                // Redirect to the project name page for new users
+                // Redirect to the project name page for new users (e.g., coming from exemption checker)
                 res.redirect('project-name-start');
             }
         }
@@ -3548,11 +3548,11 @@ router.post('/' + version + section + 'organisation-selector-autocomplete-router
         } else {
             // Check if user came from sign-out (goto=home parameter)
             if (req.session.data['goto'] === 'home') {
-                // Clear the goto parameter and redirect to home
+                // Clear the goto parameter and redirect to homepage
                 delete req.session.data['goto'];
-                res.redirect('projects');
+                res.redirect('homepage');
             } else {
-                // Redirect to the project name page for new users
+                // Redirect to the project name page for new users (e.g., coming from exemption checker)
                 res.redirect('project-name-start');
             }
         }
