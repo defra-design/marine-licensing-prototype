@@ -1155,7 +1155,13 @@ module.exports = function (router) {
     if (req.query.return) {
       req.session.data['return-page'] = req.query.return;
     }
-    res.render(`versions/${version}/${section}/withdraw`);
+    
+    // Render with local variables to ensure data is available immediately
+    res.render(`versions/${version}/${section}/withdraw`, {
+      projectFromQuery: req.query.project,
+      projectTypeFromQuery: req.query.type,
+      returnPageFromQuery: req.query.return
+    });
   });
 
   // Withdraw POST router
