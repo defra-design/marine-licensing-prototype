@@ -124,9 +124,9 @@ router.post('/' + version + section + 'sign-in-router', function (req, res) {
     } else {
         // Check if user came from sign-out (goto=home parameter)
         if (req.session.data['goto'] === 'home') {
-            // Clear the goto parameter and redirect to home
+            // Clear the goto parameter and redirect to projects
             delete req.session.data['goto'];
-            res.redirect('home');
+            res.redirect('projects');
         } else {
             // Redirect to the project name page for new users
             res.redirect('project-name-start');
@@ -152,13 +152,13 @@ router.post('/' + version + section + 'organisation-selector-router', function (
             req.session.data['alternativeProjectView'] = req.session.data['alternativeProjectView'] === 'true' ? 'false' : 'true';
             // Reset the flag
             delete req.session.data['changing-organisation'];
-            res.redirect('home');
+            res.redirect('projects');
         } else {
             // Check if user came from sign-out (goto=home parameter)
             if (req.session.data['goto'] === 'home') {
                 // Clear the goto parameter and redirect to home
                 delete req.session.data['goto'];
-                res.redirect('home');
+                res.redirect('projects');
             } else {
                 // Redirect to the project name page for new users
                 res.redirect('project-name-start');
@@ -1023,11 +1023,11 @@ router.post('/' + version + section + 'delete-router', function (req, res) {
     }
     
     // Redirect to Your projects page
-    res.redirect('home');
+    res.redirect('projects');
 });
 
-// Home page initialization - ensure project deletion flags are properly set
-router.get('/' + version + section + 'home', function (req, res) {
+// Projects page initialization - ensure project deletion flags are properly set
+router.get('/' + version + section + 'projects', function (req, res) {
     // Clear site details journey flag - user has left site details section
     delete req.session.data['inSiteDetailsJourney'];
     
@@ -1047,10 +1047,17 @@ router.get('/' + version + section + 'home', function (req, res) {
     // Pass the URL parameter directly to the template for immediate effect
     const deleteProjectsParam = req.query['delete-projects'] === 'true';
     
-    // Render the home page with additional context
-    res.render(version + section + 'home', {
+    // Render the projects page with additional context
+    res.render(version + section + 'projects', {
         deleteProjectsParam: deleteProjectsParam
     });
+});
+
+// Homepage route handler
+router.get('/' + version + section + 'homepage', function (req, res) {
+    // Clear site details journey flag - user has left site details section
+    delete req.session.data['inSiteDetailsJourney'];
+    res.render(version + section + 'homepage');
 });
 
 // Manual site name router
@@ -3537,13 +3544,13 @@ router.post('/' + version + section + 'organisation-selector-autocomplete-router
             req.session.data['alternativeProjectView'] = req.session.data['alternativeProjectView'] === 'true' ? 'false' : 'true';
             // Reset the flag
             delete req.session.data['changing-organisation'];
-            res.redirect('home');
+            res.redirect('projects');
         } else {
             // Check if user came from sign-out (goto=home parameter)
             if (req.session.data['goto'] === 'home') {
                 // Clear the goto parameter and redirect to home
                 delete req.session.data['goto'];
-                res.redirect('home');
+                res.redirect('projects');
             } else {
                 // Redirect to the project name page for new users
                 res.redirect('project-name-start');
