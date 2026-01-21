@@ -650,7 +650,7 @@ router.get('/' + version + section + 'single-site-file-upload-start', function (
     // Set up session for single-site file upload
     req.session.data['exemption-project-name-text-input'] = 'Worthing sea sample';
     req.session.data['exempt-information-1-status'] = 'completed';
-    req.session.data['headerNameExemption'] = 'Apply for a marine licence';
+    req.session.data['headerNameExemption'] = 'Get permission for marine work';
     req.session.data['exemption'] = 'sample-notification';
     
     // Force single-site generation by setting upload count to 1
@@ -738,7 +738,7 @@ router.post('/' + version + section + 'project-name-router', function (req, res)
 });
 
 router.get('/' + version + section + 'project-name', function (req, res) {
-    req.session.data['headerNameExemption'] = 'Apply for a marine licence';
+    req.session.data['headerNameExemption'] = 'Get permission for marine work';
     res.render(version + section + 'project-name');
 });
 
