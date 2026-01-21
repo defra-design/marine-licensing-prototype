@@ -14,7 +14,7 @@
 
 {% block beforeContent %}
     {% include "../includes/phase-banner.html" %}
-    {% if data['user_type'] === 'organisation' or data['user_type'] === 'agent' %}
+    {% if data['organisation-name'] %}
         {% include "../includes/organisation-switcher.html" %}
     {% endif %}
 {% endblock %}
