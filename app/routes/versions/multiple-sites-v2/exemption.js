@@ -967,9 +967,8 @@ router.post('/' + version + section + 'map-router', function (req, res) {
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 router.post('/' + version + section + 'check-answers-router', function (req, res) {
-    req.session.data['applicationSubmitted'] = 'true';
-    // Redirect to review location page
-    res.redirect('confirmation');
+    // Redirect to declaration page
+    res.redirect('declaration');
 });
 
 //////////////////////////////////////////////////////////////////////////////////////////////
@@ -977,6 +976,15 @@ router.post('/' + version + section + 'check-answers-router', function (req, res
 /////////////////////////////////////////////////////////////////////////////////////////////
 
 router.post('/' + version + section + 'check-answers-router', function (req, res) {
+    // Redirect to declaration page
+    res.redirect('declaration');
+});
+
+//////////////////////////////////////////////////////////////////////////////////////////////
+// Declaration router
+/////////////////////////////////////////////////////////////////////////////////////////////
+
+router.post('/' + version + section + 'declaration-router', function (req, res) {
     req.session.data['applicationSubmitted'] = 'true';
     // Redirect to confirmation page
     res.redirect('confirmation');
