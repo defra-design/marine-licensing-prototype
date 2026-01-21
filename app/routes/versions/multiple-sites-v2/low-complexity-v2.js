@@ -1147,6 +1147,10 @@ module.exports = function (router) {
     if (req.query.project) {
       req.session.data['project'] = req.query.project;
     }
+    // Store the project type from query parameter
+    if (req.query.type) {
+      req.session.data['project-type'] = req.query.type;
+    }
     res.render(`versions/${version}/${section}/withdraw`);
   });
 
@@ -1164,6 +1168,7 @@ module.exports = function (router) {
     
     // Clear the project data
     delete req.session.data['project'];
+    delete req.session.data['project-type'];
     
     // Redirect back to projects page
     res.redirect('projects-withdraw');

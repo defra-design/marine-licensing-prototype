@@ -27,11 +27,11 @@ Are you sure you want to withdraw this project?
 
     <div class="govuk-inset-text">
       {% if data['project'] == 'branscombe' %}
-        Branscombe bore holes
+        {% if data['project-type'] %}{{ data['project-type'] }}: {% endif %}Branscombe bore holes
       {% elif data['project'] == 'worthing' %}
-        Worthing sediment samples
+        {% if data['project-type'] %}{{ data['project-type'] }}: {% endif %}Worthing sediment samples
       {% else %}
-        Project name
+        {% if data['project-type'] %}{{ data['project-type'] }}: {% endif %}Project name
       {% endif %}
     </div>
  
