@@ -11,6 +11,10 @@
 Are you sure you want to withdraw this project?
 {% endset %}
 
+{# Set project type from passed variable or session data #}
+{% set projectType = projectTypeFromQuery or data['project-type'] %}
+{% set currentProject = projectFromQuery or data['project'] %}
+
 {% block pageTitle %}
     {{ pageHeadingTextHTML }} - Get permission for marine work
 {% endblock %}
@@ -26,22 +30,22 @@ Are you sure you want to withdraw this project?
     </h1>
 
     <div class="govuk-inset-text">
-      {% if data['project'] == 'branscombe' %}
-        Branscombe bore holes
-      {% elif data['project'] == 'worthing' %}
-        Worthing sediment samples
+      {% if currentProject == 'branscombe' %}
+        {% if projectType %}{{ projectType }}: {% endif %}Branscombe bore holes
+      {% elif currentProject == 'worthing' %}
+        {% if projectType %}{{ projectType }}: {% endif %}Worthing sediment samples
       {% else %}
-        Project name
+        {% if projectType %}{{ projectType }}: {% endif %}Project name
       {% endif %}
     </div>
  
-    <form action="withdraw-router?project={{ data['project'] }}" method="post" novalidate>
+    <form action="withdraw-router?project={{ currentProject }}" method="post" novalidate>
       <div class="govuk-button-group govuk-!-margin-top-7">
         {{ govukButton({
           text: "Yes, withdraw project",
 		  classes: "govuk-button--warning"
         }) }}
-        <a class="govuk-link govuk-link--no-visited-state" href="projects-withdraw">Cancel</a>
+        <a class="govuk-link govuk-link--no-visited-state" href="{% if returnPageFromQuery or data['return-page'] %}{{ returnPageFromQuery or data['return-page'] }}{% else %}projects{% endif %}">Cancel</a>
     </div>
     </form>
 
