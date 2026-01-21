@@ -41,7 +41,7 @@ Are you sure you want to withdraw this project?
           text: "Yes, withdraw project",
 		  classes: "govuk-button--warning"
         }) }}
-        <a class="govuk-link govuk-link--no-visited-state" href="projects-withdraw">Cancel</a>
+        <a class="govuk-link govuk-link--no-visited-state" href="{% if data['return-page'] %}{{ data['return-page'] }}{% else %}projects{% endif %}">Cancel</a>
     </div>
     </form>
 
