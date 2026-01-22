@@ -50,12 +50,12 @@
 
       <!-- Warning component -->
       {{ govukWarningText({
-        text: "If you do not set up your Defra account correctly your exemption notification will not be valid. This is because it will not be registered to the organisation the exemption is for.",
+        text: "If you do not set up your Defra account correctly your exempt activity notification will not be valid. This is because it will not be registered to the organisation the exemption is for.",
         iconFallbackText: "Warning"
       }) }}
 
       <p class="govuk-body">
-        To submit a notification for a business or organisation, you must have a Defra account linked to that organisation. You cannot use a personal individual account.
+        To submit an exemption for an organisation, you must have a Defra account linked to that organisation. You cannot use a personal individual account.
       </p>
 
       <form action="check-you-are-set-up-to-apply-for-your-organisation-router" method="post" novalidate>
@@ -84,24 +84,15 @@
               items: [
                 {
                   value: "yes",
-                  text: "Yes, I have an account",
-                  hint: {
-                    text: "I can already sign in to my organisation's account"
-                  }
+                  text: "Yes, I can sign in to my organisation's account"
                 },
                 {
                   value: "register-new",
-                  text: "No, I need to register a new organisation",
-                  hint: {
-                    text: "I am the first person setting up the account for my organisation"
-                  }
+                  text: "No, I need to create a new account for my organisation"
                 },
                 {
                   value: "need-to-be-added",
-                  text: "No, I need to be added to an existing account",
-                  hint: {
-                    text: "My organisation already has an account but I cannot access it yet"
-                  }
+                  text: "No, I need to be added to my organisation's existing account"
                 }
               ],
               value: data['organisation-setup-check'],

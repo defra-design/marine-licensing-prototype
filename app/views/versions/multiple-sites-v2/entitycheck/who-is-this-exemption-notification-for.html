@@ -6,7 +6,7 @@
 {% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
 
 {% block pageTitle %}
-  Who is this exemption notification for? - Get permission for marine work
+  Who is this exempt activity notification for? - Get permission for marine work
 {% endblock %}
 
 {% block header %}
@@ -36,7 +36,7 @@
           titleText: "There is a problem",
           errorList: [
             {
-              text: "Select who this exemption notification is for",
+              text: "Select who this exempt activity notification is for",
               href: "#entity-check-who-is-for"
             }
           ]
@@ -50,19 +50,19 @@
           
           <!-- H1 heading outside radios -->
           <h1 class="govuk-heading-l">
-            Who is this exemption notification for?
+            Who is this exempt activity notification for?
           </h1>
 
           <!-- Warning component between heading and radios -->
           {{ govukWarningText({
-            text: "If you do not set up your Defra account correctly your exemption notification will not be valid. This is because it will not be registered to the person or organisation the exemption is for.",
+            text: "If you do not set up your Defra account correctly your exempt activity notification will not be valid. This is because it will not be registered to the person or organisation the exemption is for.",
             iconFallbackText: "Warning"
           }) }}
 
           <!-- Manual error message -->
           {% if data['entity-check-who-is-for-errorthispage'] == "true" %}
             <p id="entity-check-who-is-for-error" class="govuk-error-message">
-              <span class="govuk-visually-hidden">Error:</span> Select who this exemption notification is for
+              <span class="govuk-visually-hidden">Error:</span> Select who this exempt activity notification is for
             </p>
           {% endif %}
 
@@ -72,7 +72,7 @@
             id: "entity-check-who-is-for",
             fieldset: {
               legend: {
-                text: "Who is this exemption notification for?",
+                text: "Who is this exempt activity notification for?",
                 isPageHeading: false,
                 classes: "govuk-visually-hidden"
               }
@@ -80,21 +80,15 @@
             items: [
               {
                 value: "myself",
-                text: "Myself as an individual",
-                hint: {
-                  text: "You're notifying us about a personal project"
-                }
+                text: "Myself as an individual - it's a personal project"
               },
               {
                 value: "business",
-                text: "The business or organisation I work or volunteer for"
+                text: "The organisation I work for"
               },
               {
                 value: "client",
-                text: "A client",
-                hint: {
-                  text: "You're an agent or intermediary working on behalf of another organisation"
-                }
+                text: "A client - you're an agent or intermediary notifying us on behalf of another organisation"
               }
             ],
             value: data['entity-check-who-is-for'],
