@@ -179,7 +179,7 @@ Projects
 						{% if data['withdrawn-branscombe'] == 'true' %}
 						<a href="#" class="govuk-link--no-visited-state">View details</a>
 						{% else %}
-						<a href="#" class="govuk-link--no-visited-state govuk-!-margin-right-4">View details</a> <a href="withdraw?project=branscombe&type=Exempt activity notification&return=projects" class="govuk-link--no-visited-state">Withdraw</a>
+						<a href="#" class="govuk-link--no-visited-state govuk-!-margin-right-4">View details</a> <a href="withdraw?project=branscombe&name=Branscombe bore holes&type=Exempt activity notification&return=projects" class="govuk-link--no-visited-state">Withdraw</a>
 						{% endif %}
 					</td>
 				</tr>
@@ -209,7 +209,7 @@ Projects
 						{% if data['withdrawn-worthing'] == 'true' %}
 						<a href="#" class="govuk-link--no-visited-state">View details</a>
 						{% else %}
-						<a href="#" class="govuk-link--no-visited-state govuk-!-margin-right-4">View details</a> <a href="withdraw?project=worthing&type=Exempt activity notification&return=projects" class="govuk-link--no-visited-state">Withdraw</a>
+						<a href="#" class="govuk-link--no-visited-state govuk-!-margin-right-4">View details</a> <a href="withdraw?project=worthing&name=Worthing sediment samples&type=Exempt activity notification&return=projects" class="govuk-link--no-visited-state">Withdraw</a>
 						{% endif %}
 					</td>
 				</tr>
@@ -271,7 +271,8 @@ Projects
 					</td>
 				</tr>
 
-				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="Whitstable intertidal survey pits" data-type="Exempt activity notification" data-reference="-" data-status="Draft">
+				{% if data['deleted-whitstable'] != 'true' %}
+				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="Whitstable intertidal survey pits" data-type="Exempt activity notification" data-reference="-" data-status="Draft" id="project-whitstable">
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Whitstable intertidal survey pits</th>
 					<td class="govuk-table__cell">Exempt activity notification</td>
 					<td class="govuk-table__cell" data-sort-value="-">-</td>
@@ -286,9 +287,10 @@ Projects
 					<td class="govuk-table__cell">Sam Evans</td>
 					{% endif %}
 					<td class="govuk-table__cell">
-						<a href="#" class="govuk-link--no-visited-state govuk-!-margin-right-4">Continue</a> <a href="#" class="govuk-link--no-visited-state">Delete</a>
+						<a href="#" class="govuk-link--no-visited-state govuk-!-margin-right-4">Continue</a> <a href="delete?project=whitstable&name=Whitstable intertidal survey pits&type=Exempt activity notification&return=projects" class="govuk-link--no-visited-state">Delete</a>
 					</td>
 				</tr>
+				{% endif %}
 
 				<tr class="govuk-table__row" data-creator="alex-williams" data-project-name="Scarborough seabed grab samples" data-type="Exempt activity notification" data-reference="-" data-status="Draft">
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Scarborough seabed grab samples</th>

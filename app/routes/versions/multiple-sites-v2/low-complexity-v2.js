@@ -1138,6 +1138,61 @@ module.exports = function (router) {
   });
 
   ///////////////////////////////////////////
+  // Delete functionality
+  ///////////////////////////////////////////
+
+  // Delete GET route
+  router.get(`/versions/${version}/${section}/delete`, function (req, res) {
+    // Store the project identifier from query parameter
+    if (req.query.project) {
+      req.session.data['project'] = req.query.project;
+    }
+    // Store the project type from query parameter
+    if (req.query.type) {
+      req.session.data['project-type'] = req.query.type;
+    }
+    // Store the project name from query parameter
+    if (req.query.name) {
+      req.session.data['project-name'] = req.query.name;
+    }
+    // Store the return page from query parameter
+    if (req.query.return) {
+      req.session.data['return-page'] = req.query.return;
+    }
+    
+    // Render with local variables to ensure data is available immediately
+    res.render(`versions/${version}/${section}/delete`, {
+      projectFromQuery: req.query.project,
+      projectTypeFromQuery: req.query.type,
+      projectNameFromQuery: req.query.name,
+      returnPageFromQuery: req.query.return
+    });
+  });
+
+  // Delete POST router
+  router.post(`/versions/${version}/${section}/delete-router`, function (req, res) {
+    // Get the project identifier
+    const projectToDelete = req.query.project || req.session.data['project'];
+    
+    // Set a flag to hide the deleted project (dynamic based on project identifier)
+    if (projectToDelete) {
+      req.session.data[`deleted-${projectToDelete}`] = 'true';
+    }
+    
+    // Get the return page
+    const returnPage = req.session.data['return-page'] || 'projects';
+    
+    // Clear the project data
+    delete req.session.data['project'];
+    delete req.session.data['project-type'];
+    delete req.session.data['project-name'];
+    delete req.session.data['return-page'];
+    
+    // Redirect back to the appropriate projects page
+    res.redirect(returnPage);
+  });
+
+  ///////////////////////////////////////////
   // Withdraw functionality
   ///////////////////////////////////////////
 
@@ -1151,6 +1206,10 @@ module.exports = function (router) {
     if (req.query.type) {
       req.session.data['project-type'] = req.query.type;
     }
+    // Store the project name from query parameter
+    if (req.query.name) {
+      req.session.data['project-name'] = req.query.name;
+    }
     // Store the return page from query parameter
     if (req.query.return) {
       req.session.data['return-page'] = req.query.return;
@@ -1160,6 +1219,7 @@ module.exports = function (router) {
     res.render(`versions/${version}/${section}/withdraw`, {
       projectFromQuery: req.query.project,
       projectTypeFromQuery: req.query.type,
+      projectNameFromQuery: req.query.name,
       returnPageFromQuery: req.query.return
     });
   });
@@ -1169,11 +1229,9 @@ module.exports = function (router) {
     // Get the project identifier
     const projectToWithdraw = req.query.project || req.session.data['project'];
     
-    // Set a flag to mark the project as withdrawn
-    if (projectToWithdraw === 'branscombe') {
-      req.session.data['withdrawn-branscombe'] = 'true';
-    } else if (projectToWithdraw === 'worthing') {
-      req.session.data['withdrawn-worthing'] = 'true';
+    // Set a flag to mark the project as withdrawn (dynamic based on project identifier)
+    if (projectToWithdraw) {
+      req.session.data[`withdrawn-${projectToWithdraw}`] = 'true';
     }
     
     // Get the return page
@@ -1182,6 +1240,7 @@ module.exports = function (router) {
     // Clear the project data
     delete req.session.data['project'];
     delete req.session.data['project-type'];
+    delete req.session.data['project-name'];
     delete req.session.data['return-page'];
     
     // Redirect back to the appropriate projects page

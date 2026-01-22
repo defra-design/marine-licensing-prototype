@@ -8,13 +8,14 @@
 {% endblock %}
 
 {% set pageHeadingTextHTML %}
-Are you sure you want to withdraw this project?
+Are you sure you want to delete this project?
 {% endset %}
 
 {# Set project details from passed variables or session data #}
 {% set projectType = projectTypeFromQuery or data['project-type'] %}
 {% set currentProject = projectFromQuery or data['project'] %}
 {% set projectName = projectNameFromQuery or data['project-name'] %}
+{% set returnPage = returnPageFromQuery or data['return-page'] %}
 
 {% block pageTitle %}
     {{ pageHeadingTextHTML }} - Get permission for marine work
@@ -32,17 +33,17 @@ Are you sure you want to withdraw this project?
 
     <div class="govuk-inset-text">
       {# Uncomment the line below to show the application type prefix #}
-      {% if projectType %}{{ projectType }}: {% endif %}
+      {# {% if projectType %}{{ projectType }}: {% endif %} #}
       {{ projectName or "Project name" }}
     </div>
- <p>If you withdraw this exempt activity notification it will not be valid. You'll need to create a new one for any future activity.</p>
-    <form action="withdraw-router?project={{ currentProject }}" method="post" novalidate>
+ 
+    <form action="delete-router?project={{ currentProject }}" method="post" novalidate>
       <div class="govuk-button-group govuk-!-margin-top-7">
         {{ govukButton({
-          text: "Yes, withdraw project",
+          text: "Yes, delete project",
 		  classes: "govuk-button--warning"
         }) }}
-        <a class="govuk-link govuk-link--no-visited-state" href="{% if returnPageFromQuery or data['return-page'] %}{{ returnPageFromQuery or data['return-page'] }}{% else %}projects{% endif %}">Cancel</a>
+        <a class="govuk-link govuk-link--no-visited-state" href="{% if returnPage %}{{ returnPage }}{% else %}projects{% endif %}">Cancel</a>
     </div>
     </form>
 
