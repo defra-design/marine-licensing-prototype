@@ -1,7 +1,10 @@
 {% extends "layouts/main.html" %}
 
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
 {% block pageTitle %}
-  You need to be added to your organisation's account - Get permission for marine work
+  You need to create or get invited to a Defra account - Get permission for marine work
 {% endblock %}
 
 {% block header %}
@@ -27,34 +30,50 @@
     <div class="govuk-grid-column-two-thirds">
 
       <h1 class="govuk-heading-l">
-        You need to be added to your organisation's account
+        You need to create or get invited to a Defra account
       </h1>
 
-      <p class="govuk-body">
-        You cannot submit an exemption until your organisation has set you up.
-      </p>
+      {{ govukWarningText({
+        text: "If you do not set up your Defra account correctly your exempt activity notification will not be valid. This is because it will not be registered to the organisation the exemption is for.",
+        iconFallbackText: "Warning"
+      }) }}
 
       <h2 class="govuk-heading-m">
-        What needs to happen
+        Create a Defra account
       </h2>
 
       <p class="govuk-body">
-        You must ask an administrator of your organisation's Defra account to:
+        You need to create a new Defra account for your organisation. You can invite colleagues to this account once you've created it.
       </p>
 
-      <ol class="govuk-list govuk-list--number">
-        <li>Go to 'Manage account users'.</li>
-        <li>Invite you as a team member.</li>
-        <li>Give you access to the 'Get permission for marine work' service.</li>
-      </ol>
+      <ul class="govuk-list">
+        <li>
+          <a href="creating-a-defra-account" class="govuk-link">How to create a Defra account</a>
+        </li>
+      </ul>
+
+      <h2 class="govuk-heading-m">
+        Get invited to an existing Defra account
+      </h2>
 
       <p class="govuk-body">
-        Once you have received the invitation email and accepted it, you can return to this service.
+        Ask your organisation's Defra account administrator to invite you to your organisation's Defra account.
       </p>
 
       <p class="govuk-body">
-        <a href="adding-users-to-a-defra-account-as-an-admin" class="govuk-link">How to add users to a Defra account</a>.
+        If you're already invited to your organisation's Defra account, check the exemption is for the <a href="organisation-selector" class="govuk-link">right organisation</a>.
       </p>
+
+      <ul class="govuk-list">
+        <li>
+          <a href="adding-users-to-a-defra-account-as-an-admin" class="govuk-link">How to add users to a Defra account</a>
+        </li>
+      </ul>
+
+      {{ govukButton({
+        text: "Go to your Defra account",
+        classes: "govuk-!-margin-top-3"
+      }) }}
 
     </div>
   </div>
