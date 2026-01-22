@@ -38,7 +38,7 @@ Are you sure you want to withdraw this project?
         {% if projectType %}{{ projectType }}: {% endif %}Project name
       {% endif %}
     </div>
- 
+ <p>If you withdraw this exempt activity notification it will not be valid. You'll need to create a new one for any future activity.</p>
     <form action="withdraw-router?project={{ currentProject }}" method="post" novalidate>
       <div class="govuk-button-group govuk-!-margin-top-7">
         {{ govukButton({
