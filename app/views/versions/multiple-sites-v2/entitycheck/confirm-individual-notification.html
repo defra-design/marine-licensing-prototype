@@ -27,7 +27,6 @@
   <div class="app-organisation-switcher">
     <span class="govuk-body-s govuk-!-font-weight-bold app-organisation-switcher__name">Sam Evans</span>
   </div>
-  <a class="govuk-back-link" href="javascript:window.history.back()">Back</a>
 {% endblock %}
 
 {% block content %}
@@ -53,7 +52,7 @@
       </h1>
 
       {{ govukWarningText({
-        text: "This Defra account is for an individual. This means the exemption notification will be in your name personally, not an organisation's name.",
+        text: "This Defra account is for an individual. This means the exempt activity notification will be in your name personally, not an organisation's name.",
         iconFallbackText: "Warning"
       }) }}
 
@@ -87,17 +86,11 @@
                 },
                 {
                   value: "organisation",
-                  text: "No, I'm notifying you for an organisation I work or volunteer for",
-                  hint: {
-                    text: "You're an employee or contractor working on behalf of the business or organisation you work for"
-                  }
+                  text: "No, I'm notifying you for an organisation I work for"
                 },
                 {
                   value: "client",
-                  text: "No, I'm notifying you as an intermediary for a client",
-                  hint: {
-                    text: "You're an agent or third-party working on behalf of another organisation"
-                  }
+                  text: "No, I'm notifying you as an agent or intermediary for a client"
                 }
               ],
               value: data['confirm-individual-notification'],

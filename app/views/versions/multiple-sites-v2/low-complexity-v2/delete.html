@@ -33,7 +33,7 @@ Are you sure you want to delete this project?
 
     <div class="govuk-inset-text">
       {# Uncomment the line below to show the application type prefix #}
-      {# {% if projectType %}{{ projectType }}: {% endif %} #}
+      {% if projectType %}{{ projectType }}: {% endif %}
       {{ projectName or "Project name" }}
     </div>
  
