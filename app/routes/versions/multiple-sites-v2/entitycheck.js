@@ -332,8 +332,6 @@ module.exports = function (router) {
       res.redirect('project-name-start');
     } else if (confirmNotification === 'organisation') {
       res.redirect('need-to-create-defra-account-as-employee');
-    } else if (confirmNotification === 'client') {
-      res.redirect('need-client-to-invite-you');
     }
   });
 
@@ -390,8 +388,6 @@ module.exports = function (router) {
       res.redirect('project-name-start');
     } else if (confirmNotification === 'different-organisation') {
       res.redirect('need-to-create-defra-account-as-employee');
-    } else if (confirmNotification === 'agent') {
-      res.redirect('need-client-to-invite-you');
     } else if (confirmNotification === 'myself') {
       res.redirect('need-to-create-defra-account-as-individual');
     }
@@ -428,8 +424,8 @@ module.exports = function (router) {
     // Branch based on selection
     if (confirmNotification === 'yes') {
       res.redirect('project-name-start');
-    } else if (confirmNotification === 'different-client') {
-      res.redirect('need-to-select-correct-organisation');
+    } else if (confirmNotification === 'different-organisation') {
+      res.redirect('need-to-create-defra-account-as-employee');
     } else if (confirmNotification === 'myself') {
       res.redirect('need-to-create-defra-account-as-individual');
     }
