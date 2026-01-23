@@ -4,7 +4,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% block pageTitle %}
-  You need to create a Defra account as an employee, volunteer or contractor of a business or organisation - Get permission for marine work
+  Exempt activity notification for an organisation - Get permission for marine work
 {% endblock %}
 
 {% block header %}
@@ -15,29 +15,13 @@
   classes: "govuk-header--full-width-border"
 }) }}
 {{ govukServiceNavigation({
-  serviceName: "Get permission for marine work",
-  navigation: [
-    {
-      href: "#",
-      text: "Defra account",
-      active: false
-    },
-    {
-      href: "/versions/multiple-sites-v2/exemption/sign-in.html?goto=home",
-      text: "Sign out"
-    }
-  ]
+  serviceName: "Get permission for marine work"
 }) }}
 {% endblock %}
 
 {% block beforeContent %}
   {% include "../includes/phase-banner.html" %}
-  {% if data['organisation-name'] %}
-  <div class="app-organisation-switcher">
-    <span class="govuk-body-s govuk-!-font-weight-bold app-organisation-switcher__name">{{ data['organisation-name'] }}</span>
-  </div>
   <a class="govuk-back-link" href="javascript:window.history.back()">Back</a>
-  {% endif %}
 {% endblock %}
 
 {% block content %}
@@ -46,21 +30,85 @@
     <div class="govuk-grid-column-two-thirds">
 
       <h1 class="govuk-heading-l">
-        You need to create a Defra account as an employee, volunteer or contractor of a business or organisation
+        Exempt activity notification for an organisation
       </h1>
 
       {{ govukWarningText({
-        text: "If you do not set up your Defra account correctly your exemption notification will not be valid. This is because it will not be registered to the organisation the exemption is for.",
+        text: "If you do not set up your Defra account correctly your exempt activity notification will not be valid. This is because it will not be registered to the organisation the exemption is for.",
         iconFallbackText: "Warning"
       }) }}
 
       <p class="govuk-body">
-        If you're creating a Defra account for the organisation you work for you when you're registering you need to select as a business or organisation and confirm you have permission to create an account on their behalf.
+        If you're already registered with the organisation the exemption is for, you can <a href="organisation-selector" class="govuk-link">select the correct organisation</a>.
       </p>
 
+      <h2 class="govuk-heading-m">
+        You work for the organisation
+      </h2>
+
+      <h3 class="govuk-heading-s">
+        If the organisation does not have a Defra account
+      </h3>
+
+      <p class="govuk-body">
+        You need to create a new Defra account for your organisation. You can invite colleagues to this account once you've created it.
+      </p>
+
+      <h3 class="govuk-heading-s">
+        Get invited to an existing Defra account
+      </h3>
+
+      <p class="govuk-body">
+        Ask your organisation's Defra account administrator to invite you to your organisation's Defra account.
+      </p>
+
+      <h2 class="govuk-heading-m">
+        You're the agent or intermediary for a client organisation
+      </h2>
+
+      <h3 class="govuk-heading-s">
+        If your client already has a Defra account
+      </h3>
+
+      <p class="govuk-body">
+        You need to ask your client to invite you to their Defra account as an intermediary.
+      </p>
+
+      <h3 class="govuk-heading-s">
+        If your client does not have a Defra account
+      </h3>
+
+      <p class="govuk-body">
+        Ask your client to create a Defra account and invite you to it as an intermediary.
+      </p>
+
+      <p class="govuk-body">
+        To create an account, your client needs to:
+      </p>
+
+      <ol class="govuk-list govuk-list--number">
+        <li>Sign in to, or create a GOV.UK One Login or Government Gateway account.</li>
+        <li>Select <strong>Get permission for marine work</strong>.</li>
+        <li>Create a Defra account.</li>
+        <li>Invite you to their account as an intermediary.</li>
+      </ol>
+
+      <h2 class="govuk-heading-m">
+        Guidance
+      </h2>
+
+      <ul class="govuk-list">
+        <li>
+          <a href="creating-a-defra-account" class="govuk-link">How to create a Defra account</a>
+        </li>
+        <li>
+          <a href="adding-users-to-a-defra-account-as-an-admin" class="govuk-link">How to add users to a Defra account</a>
+        </li>
+      </ul>
+
       {{ govukButton({
-        text: "Go to your Defra account",
-        href: "#"
+        text: "Sign out",
+        classes: "govuk-!-margin-top-3"
       }) }}
 
     </div>
