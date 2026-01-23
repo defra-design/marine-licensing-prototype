@@ -4,7 +4,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% block pageTitle %}
-  You need to create a Defra account as an individual - Get permission for marine work
+  Exempt activity notification for an individual - Get permission for marine work
 {% endblock %}
 
 {% block header %}
@@ -21,11 +21,6 @@
 
 {% block beforeContent %}
   {% include "../includes/phase-banner.html" %}
-  {% if data['organisation-name'] %}
-  <div class="app-organisation-switcher">
-    <span class="govuk-body-s govuk-!-font-weight-bold app-organisation-switcher__name">{{ data['organisation-name'] }}</span>
-  </div>
-  {% endif %}
   <a class="govuk-back-link" href="javascript:window.history.back()">Back</a>
 {% endblock %}
 
@@ -35,22 +30,37 @@
     <div class="govuk-grid-column-two-thirds">
 
       <h1 class="govuk-heading-l">
-        You need to create a Defra account as an individual
+        Exempt activity notification for an individual
       </h1>
 
       {{ govukWarningText({
-        text: "If you do not set up your Defra account correctly your exemption notification will not be valid. This is because it will not be registered to the person the exemption is for.",
+        text: "If you do not set up your Defra account correctly your exempt activity notification will not be valid. This is because it will not be registered to the person the exemption is for.",
         iconFallbackText: "Warning"
       }) }}
 
       <p class="govuk-body">
-        If you're creating a Defra account for personal use when you're registering you need to select as an individual when you register.
+        If you’re already registered as an individual, go back and select your individual account.
       </p>
+
+      <h2 class="govuk-heading-m">
+        Create an individual Defra account
+      </h2>
+
+      <p class="govuk-body">
+        If you're creating a Defra account for personal use, select an individual account when you're registering.
+      </p>
+
+      <ol class="govuk-list govuk-list--number">
+        <li>Go to <a href="#" class="govuk-link">Your Defra account</a>.</li>
+        <li>Select <strong>Register a new account</strong> in the <strong>Your accounts</strong> section.</li>
+        <li>Select an <strong>Individual account</strong> for personal use.</li>
+        <li>Continue the Defra account creation process.</li>
+      </ol>
 
       {{ govukButton({
         text: "Go to your Defra account",
-        href: "#",
-        classes: "govuk-!-margin-top-3"
+        classes: "govuk-!-margin-top-3",
+        href: "#"
       }) }}
 
     </div>
