@@ -1,6 +1,7 @@
 {% extends "../layouts/low-complexity.html" %}
 
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
 
 {% block beforeContent %}
     {% include "../includes/phase-banner.html" %}
@@ -36,7 +37,11 @@ Are you sure you want to withdraw this project?
       {{ projectName or "Project name" }}
     </div>
  <p>If you withdraw this exempt activity notification it will not be valid. You'll need to create a new one for any future activity.</p>
+
+ <p>Do not withdraw this project if the activity has already been carried out.</p>
+ 
     <form action="withdraw-router?project={{ currentProject }}" method="post" novalidate>
+      
       <div class="govuk-button-group govuk-!-margin-top-7">
         {{ govukButton({
           text: "Yes, withdraw project",
