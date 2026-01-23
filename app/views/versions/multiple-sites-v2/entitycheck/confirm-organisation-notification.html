@@ -5,7 +5,7 @@
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 
 {% block pageTitle %}
-  {% if data['confirm-organisation-notification-errorthispage'] == "true" %}Error: {% endif %}Are you notifying us as an employee, volunteer or contractor of Ocean Dredging? - Get permission for marine work
+  {% if data['confirm-organisation-notification-errorthispage'] == "true" %}Error: {% endif %}Are you notifying us as an employee of Ocean Dredging? - Get permission for marine work
 {% endblock %}
 
 {% block header %}
@@ -39,7 +39,7 @@
           titleText: "There is a problem",
           errorList: [
             {
-              text: "Select if you are notifying us as an employee, volunteer or contractor of Ocean Dredging",
+              text: "Select if you are notifying us as an employee of Ocean Dredging",
               href: "#confirm-organisation-notification"
             }
           ]
@@ -53,7 +53,7 @@
           id: "confirm-organisation-notification",
           fieldset: {
             legend: {
-              text: "Are you notifying us as an employee, volunteer or contractor of Ocean Dredging?",
+              text: "Are you notifying us as an employee of Ocean Dredging?",
               isPageHeading: true,
               classes: "govuk-fieldset__legend--l"
             }
@@ -74,7 +74,7 @@
           ],
           value: data['confirm-organisation-notification'],
           errorMessage: {
-            text: "Select if you are notifying us as an employee, volunteer or contractor of Ocean Dredging"
+            text: "Select if you are notifying us as an employee of Ocean Dredging"
           } if data['confirm-organisation-notification-errorthispage'] == "true" else null
         }) }}
         
