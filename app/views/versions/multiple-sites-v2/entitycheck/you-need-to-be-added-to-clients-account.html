@@ -1,10 +1,8 @@
 {% extends "layouts/main.html" %}
 
-{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
-{% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% block pageTitle %}
-  You need to get your client to invite you to their Defra account - Get permission for marine work
+  You need to be added to your client's account - Get permission for marine work
 {% endblock %}
 
 {% block header %}
@@ -15,17 +13,7 @@
   classes: "govuk-header--full-width-border"
 }) }}
 {{ govukServiceNavigation({
-  serviceName: "Get permission for marine work",
-  navigation: [
-    {
-      text: "Defra account",
-      href: "#"
-    },
-    {
-      text: "Sign out",
-      href: "#"
-    }
-  ]
+  serviceName: "Get permission for marine work"
 }) }}
 {% endblock %}
 
@@ -40,61 +28,40 @@
     <div class="govuk-grid-column-two-thirds">
 
       <h1 class="govuk-heading-l">
-        You need to get your client to invite you to their Defra account
+        You need to be added to your client's account
       </h1>
 
-      {{ govukWarningText({
-        text: "If you do not set up your Defra account correctly your exempt activity notification will not be valid. This is because it will not be registered to the organisation the exemption is for.",
-        iconFallbackText: "Warning"
-      }) }}
-
       <p class="govuk-body">
-        You cannot create a Defra account as an agent or third party working on behalf of a client.
+        You cannot submit an exemption until your client has set you up.
       </p>
 
       <h2 class="govuk-heading-m">
-        If your client already has a Defra account
+        What needs to happen
       </h2>
 
       <p class="govuk-body">
-        You need to ask your client to invite you to their Defra account as an intermediary.
+        Ask your client to take the following steps:
+      </p>
+
+      <ul class="govuk-list govuk-list--bullet">
+        <li><a href="https://get-permission-for-marine-work.defra.gov.uk/" class="govuk-link">Sign in to or create a Defra account</a> for their <strong>business or organisation</strong>.</li>
+        <li>They'll create a Defra account using GOV UK Login or Government Gateway.</li>
+        <li>Invite you as an intermediary under <strong>Manage account users</strong>.</li>
+        <li>Give you access to the <strong>Get permission for marine work</strong> service.</li>
+      </ul>
+
+      <p class="govuk-body">
+        Once you've received the invitation email and accepted it, you can return to this service.
       </p>
 
       <ul class="govuk-list">
         <li>
           <a href="creating-a-defra-account" class="govuk-link">How to create a Defra account</a>
         </li>
-      </ul>
-
-      <h2 class="govuk-heading-m">
-        If your client does not have a Defra account
-      </h2>
-
-      <p class="govuk-body">
-        Ask your client to create a Defra account and invite you to it as an intermediary.
-      </p>
-
-      <p class="govuk-body">
-        To create an account, your client needs to:
-      </p>
-
-      <ol class="govuk-list govuk-list--number">
-        <li>Sign in to, or create a GOV.UK One Login or Government Gateway account.</li>
-        <li>Select <strong>Get permission for marine work</strong>.</li>
-        <li>Create a Defra account.</li>
-        <li>Invite you to their account as an intermediary.</li>
-      </ol>
-
-      <ul class="govuk-list">
         <li>
           <a href="adding-users-to-a-defra-account-as-an-admin" class="govuk-link">How to add users to a Defra account</a>
         </li>
       </ul>
-
-      {{ govukButton({
-        text: "Sign out",
-        classes: "govuk-!-margin-top-3"
-      }) }}
 
     </div>
   </div>

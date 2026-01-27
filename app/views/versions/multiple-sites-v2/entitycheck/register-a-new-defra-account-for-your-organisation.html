@@ -54,14 +54,17 @@
         If you do not have a Government Gateway ID or One Login, you can create one in the next step.
       </p>
 
-      <p class="govuk-body">
-        <a href="creating-a-defra-account" class="govuk-link" target="_blank" rel="noopener noreferrer">How to create a Defra account (opens in new tab)</a>.
-      </p>
+      <ul class="govuk-list">
+        <li>
+          <a href="creating-a-defra-account" class="govuk-link" target="_blank" rel="noopener noreferrer">How to create a Defra account (opens in new tab)</a>
+        </li>
+      </ul>
 
       <form action="sign-in" method="get" novalidate>
         
         {{ govukButton({
-          text: "Continue"
+          text: "Continue",
+          classes: "govuk-!-margin-top-3"
         }) }}
         
       </form>
