@@ -17,6 +17,7 @@
     {% if data['organisation-name'] %}
         {% include "../includes/organisation-switcher.html" %}
     {% endif %}
+    <a class="govuk-back-link" href="javascript:window.history.back()">Back</a>
 {% endblock %}
 
 <!-- Setting the big main heading at the top of the page -->
@@ -66,6 +67,8 @@ Error:
         <!--  END OF 'error summary' -->
 
         <form action="#" method="post" novalidate>
+
+            <span class="govuk-caption-l">Exempt activity notification</span>
 
             {{ govukInput({
             label: 
