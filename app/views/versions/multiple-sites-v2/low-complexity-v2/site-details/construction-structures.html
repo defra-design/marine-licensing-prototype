@@ -3,6 +3,7 @@
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
 
 {% block beforeContent %}
     {% include "../../includes/phase-banner.html" %}
@@ -27,8 +28,26 @@ What type of structure will you be working on?
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
 {% block pageTitle %}
+{% if data['low-complexity-construction-structures-errorthispage'] == "true" %}
+Error:
+{% endif %}
+
 {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
 {% endblock %}
+
+{% set otherStructuresTextarea %}
+{{ govukTextarea({
+    id: "low-complexity-construction-structures-other-details",
+    name: "low-complexity-construction-structures-other-details",
+    value: data['low-complexity-construction-structures-other-details'],
+    label: {
+        text: "Provide details"
+    },
+    errorMessage: {
+        text: "Enter details of the other structures"
+    } if data['low-complexity-construction-structures-errortypetwo'] == "true"
+}) }}
+{% endset %}
 
 {% block content %}
 <style>
@@ -59,8 +78,8 @@ What type of structure will you be working on?
                     titleText: "There is a problem",
                     errorList: [
                         {
-                            text: data['low-complexity-construction-structures-error'],
-                            href: "#low-complexity-construction-structures"
+                            text: data['low-complexity-construction-structures-error'] if data['low-complexity-construction-structures-errortypeone'] == "true" else "Enter details of the other structures",
+                            href: "#low-complexity-construction-structures" if data['low-complexity-construction-structures-errortypeone'] == "true" else "#low-complexity-construction-structures-other-details"
                         }
                     ]
                 }) }}
@@ -199,11 +218,21 @@ What type of structure will you be working on?
                     {
                         value: "piles-piled-structures",
                         text: "Piles or piled structures"
+                    },
+                    {
+                        divider: "Other structures"
+                    },
+                    {
+                        value: "other-structures",
+                        text: "Other structures not listed above",
+                        conditional: {
+                            html: otherStructuresTextarea
+                        }
                     }
                 ],
                 errorMessage: {
                     text: data['low-complexity-construction-structures-error']
-                } if data['low-complexity-construction-structures-error'],
+                } if data['low-complexity-construction-structures-errortypeone'] == "true",
                 values: data['low-complexity-construction-structures']
             }) }}
             
@@ -217,5 +246,22 @@ What type of structure will you be working on?
 
     </div>
 </div>
+
+<!-- ERROR LOGIC  drop down to toggle states  -->
+<form method="post" action="#" class="for4" style=" float: left; position: relative; bottom:-325px; padding-bottom: 30px;  ">
+
+	<select style="height:30px;" onchange="window.location.href='?'+this.value">
+
+		<option value="low-complexity-construction-structures-errorthispage=false&low-complexity-construction-structures-errortypeone=false&low-complexity-construction-structures-errortypetwo=false&" {% if data['low-complexity-construction-structures-errorthispage'] != "true" %}selected{% endif %}>Errors - Off</option>
+
+		<option value="low-complexity-construction-structures-errorthispage=true&low-complexity-construction-structures-errortypeone=true&low-complexity-construction-structures-errortypetwo=false&" {% if data['low-complexity-construction-structures-errortypeone'] == 'true' and data['low-complexity-construction-structures-errortypetwo'] != 'true' %}selected{% endif %}>Error 1 - No checkbox selected</option>
+
+		<option value="low-complexity-construction-structures-errorthispage=true&low-complexity-construction-structures-errortypeone=false&low-complexity-construction-structures-errortypetwo=true&" {% if data['low-complexity-construction-structures-errortypeone'] != 'true' and data['low-complexity-construction-structures-errortypetwo'] == 'true' %}selected{% endif %}>Error 2 - Textarea left blank</option>
+
+	</select>
+
+</form>
+<!--  END OF ERROR LOGIC -->
+
 {% endblock %}
 

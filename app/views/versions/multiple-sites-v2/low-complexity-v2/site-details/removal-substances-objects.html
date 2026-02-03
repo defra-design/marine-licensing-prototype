@@ -1,0 +1,296 @@
+{% extends "../../layouts/low-complexity.html" %}
+
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% if data['organisation-name'] %}
+        {% include "../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+What substance or objects will you be removing?
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+{% if data['low-complexity-removal-substances-objects-errorthispage'] == "true" %}
+Error:
+{% endif %}
+
+{{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% set otherSubstancesTextarea %}
+{{ govukTextarea({
+    id: "low-complexity-removal-substances-objects-other-details",
+    name: "low-complexity-removal-substances-objects-other-details",
+    value: data['low-complexity-removal-substances-objects-other-details'],
+    label: {
+        text: "Provide details"
+    },
+    errorMessage: {
+        text: "Enter details of the other substances or objects"
+    } if data['low-complexity-removal-substances-objects-errortypetwo'] == "true"
+}) }}
+{% endset %}
+
+{% block content %}
+<style>
+    .govuk-checkboxes__divider {
+        font-weight: 700;
+        max-width: none !important;
+        width: 100% !important;
+        display: block !important;
+        text-align: left !important;
+        font-size: 1.125rem !important;
+        line-height: 1.3125 !important;
+        margin-top: 40px;
+        margin-bottom: 15px;
+    }
+    .govuk-checkboxes__divider:first-of-type {
+        margin-top: 0;
+    }
+</style>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        
+        <form action="removal-substances-objects-router" method="post" novalidate>
+            
+            <!-- Error summary -->
+            {% if data['low-complexity-removal-substances-objects-errorthispage'] == "true" %}
+                {{ govukErrorSummary({
+                    titleText: "There is a problem",
+                    errorList: [
+                        {
+                            text: data['low-complexity-removal-substances-objects-error'] if data['low-complexity-removal-substances-objects-errortypeone'] == "true" else "Enter details of the other substances or objects",
+                            href: "#low-complexity-removal-substances-objects" if data['low-complexity-removal-substances-objects-errortypeone'] == "true" else "#low-complexity-removal-substances-objects-other-details"
+                        }
+                    ]
+                }) }}
+            {% endif %}
+
+            {{ govukCheckboxes({
+                name: "low-complexity-removal-substances-objects",
+                fieldset: {
+                    legend: {
+                        html: '<span class="govuk-caption-l">' + data['low-complexity-project-name-text-input'] + '<span class="govuk-!-display-block">Site 1</span></span>' + pageHeadingTextHTML,
+                        isPageHeading: true,
+                        classes: "govuk-fieldset__legend--l govuk-!-margin-bottom-6"
+                    }
+                },
+                hint: {
+                    text: "Select all that apply"
+                },
+                items: [
+                    {
+                        divider: "Debris, waste or abandoned items"
+                    },
+                    {
+                        value: "abandoned-fishing-equipment",
+                        text: "Abandoned fishing equipment"
+                    },
+                    {
+                        value: "marine-litter-debris",
+                        text: "Marine litter and debris"
+                    },
+                    {
+                        value: "rocks-boulders-obstructions",
+                        text: "Rocks, boulders or obstructions"
+                    },
+                    {
+                        divider: "Decommissioning"
+                    },
+                    {
+                        value: "aquaculture-equipment",
+                        text: "Aquaculture equipment (trestles, cages, poles etc.)"
+                    },
+                    {
+                        value: "artificial-reefs",
+                        text: "Artificial reefs or habitat structures"
+                    },
+                    {
+                        value: "breakwater-mole-harbour",
+                        text: "Breakwater, mole or harbour protection structure"
+                    },
+                    {
+                        value: "bridge-supports",
+                        text: "Bridge or bridge supports in tidal waters"
+                    },
+                    {
+                        value: "causeway-embankment",
+                        text: "Causeway, embankment or coastal access ramp"
+                    },
+                    {
+                        value: "culverts-channels",
+                        text: "Culverts or constructed tidal channels"
+                    },
+                    {
+                        value: "offshore-wind-foundations",
+                        text: "Fixed offshore wind foundations"
+                    },
+                    {
+                        value: "floating-breakwaters",
+                        text: "Floating breakwaters or wave attenuators"
+                    },
+                    {
+                        value: "foundation-components",
+                        text: "Foundation components (e.g. anchors, small footings)"
+                    },
+                    {
+                        value: "foundations-platforms",
+                        text: "Foundations for offshore platforms or similar structures"
+                    },
+                    {
+                        value: "groyne",
+                        text: "Groyne"
+                    },
+                    {
+                        value: "hard-coastal-defence",
+                        text: "Hard coastal defence structures such as rock armour or concrete units"
+                    },
+                    {
+                        value: "intakes",
+                        text: "Intakes"
+                    },
+                    {
+                        value: "jetty-pier-quay",
+                        text: "Jetty, pier or quay"
+                    },
+                    {
+                        value: "outfalls-diffusers",
+                        text: "Outfalls or diffusers"
+                    },
+                    {
+                        value: "pipelines-ducts",
+                        text: "Pipelines or ducts"
+                    },
+                    {
+                        value: "piles-piled-structures",
+                        text: "Piles or piled structures"
+                    },
+                    {
+                        value: "pontoons-walkways-decommissioning",
+                        text: "Pontoons or floating walkways"
+                    },
+                    {
+                        value: "revetment",
+                        text: "Revetment (sloped coastal protection)"
+                    },
+                    {
+                        value: "sea-wall-coastal-wall",
+                        text: "Sea wall or coastal wall"
+                    },
+                    {
+                        value: "slipway-boat-ramp",
+                        text: "Slipway or boat ramp"
+                    },
+                    {
+                        value: "subsea-cables",
+                        text: "Subsea cables requiring protective construction"
+                    },
+                    {
+                        value: "tidal-energy-devices",
+                        text: "Tidal energy devices or foundations"
+                    },
+                    {
+                        value: "tidal-flood-defence",
+                        text: "Tidal flood defence structures (e.g. flood barriers, tidal gates, sluices)"
+                    },
+                    {
+                        value: "wave-energy-foundations",
+                        text: "Wave energy device foundations"
+                    },
+                    {
+                        divider: "Deposited objects"
+                    },
+                    {
+                        value: "aids-to-navigation",
+                        text: "Aids to navigation"
+                    },
+                    {
+                        value: "habitat-pods",
+                        text: "Habitat pods or artificial reef units"
+                    },
+                    {
+                        value: "moorings",
+                        text: "Moorings"
+                    },
+                    {
+                        value: "pontoons-floating-structures",
+                        text: "Pontoons or floating structures"
+                    },
+                    {
+                        value: "scientific-instruments",
+                        text: "Scientific instruments"
+                    },
+                    {
+                        value: "survey-markers",
+                        text: "Survey markers or temporary works equipment"
+                    },
+                    {
+                        divider: "Items of historical interest"
+                    },
+                    {
+                        value: "wrecks-archaeological",
+                        text: "Wrecks or items or archaeological remains"
+                    },
+                    {
+                        divider: "Research"
+                    },
+                    {
+                        value: "sediment-samples",
+                        text: "Sediment samples"
+                    },
+                    {
+                        divider: "Other substances or objects"
+                    },
+                    {
+                        value: "other-substances-objects",
+                        text: "Other substances or objects not listed above",
+                        conditional: {
+                            html: otherSubstancesTextarea
+                        }
+                    }
+                ],
+                errorMessage: {
+                    text: data['low-complexity-removal-substances-objects-error']
+                } if data['low-complexity-removal-substances-objects-errortypeone'] == "true",
+                values: data['low-complexity-removal-substances-objects']
+            }) }}
+            
+            <div class="govuk-button-group">
+                {{ govukButton({
+                    text: "Save and continue"
+                }) }}
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+<!-- ERROR LOGIC  drop down to toggle states  -->
+<form method="post" action="#" class="for4" style=" float: left; position: relative; bottom:-325px; padding-bottom: 30px;  ">
+
+	<select style="height:30px;" onchange="window.location.href='?'+this.value">
+
+		<option value="low-complexity-removal-substances-objects-errorthispage=false&low-complexity-removal-substances-objects-errortypeone=false&low-complexity-removal-substances-objects-errortypetwo=false&" {% if data['low-complexity-removal-substances-objects-errorthispage'] != "true" %}selected{% endif %}>Errors - Off</option>
+
+		<option value="low-complexity-removal-substances-objects-errorthispage=true&low-complexity-removal-substances-objects-errortypeone=true&low-complexity-removal-substances-objects-errortypetwo=false&" {% if data['low-complexity-removal-substances-objects-errortypeone'] == 'true' and data['low-complexity-removal-substances-objects-errortypetwo'] != 'true' %}selected{% endif %}>Error 1 - No checkbox selected</option>
+
+		<option value="low-complexity-removal-substances-objects-errorthispage=true&low-complexity-removal-substances-objects-errortypeone=false&low-complexity-removal-substances-objects-errortypetwo=true&" {% if data['low-complexity-removal-substances-objects-errortypeone'] != 'true' and data['low-complexity-removal-substances-objects-errortypetwo'] == 'true' %}selected{% endif %}>Error 2 - Textarea left blank</option>
+
+	</select>
+
+</form>
+<!--  END OF ERROR LOGIC -->
+
+{% endblock %}

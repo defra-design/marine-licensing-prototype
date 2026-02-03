@@ -44,6 +44,18 @@ Type of activity
                         href: "#low-complexity-type-of-works"
                     }), errorList) %}
                 {% endif %}
+                {% if data['low-complexity-deposit-type-error'] %}
+                    {% set errorList = (errorList.push({
+                        text: data['low-complexity-deposit-type-error'],
+                        href: "#low-complexity-deposit-type"
+                    }), errorList) %}
+                {% endif %}
+                {% if data['low-complexity-removal-type-error'] %}
+                    {% set errorList = (errorList.push({
+                        text: data['low-complexity-removal-type-error'],
+                        href: "#low-complexity-removal-type"
+                    }), errorList) %}
+                {% endif %}
                 
                 {{ govukErrorSummary({
                     titleText: "There is a problem",
@@ -80,6 +92,68 @@ Type of activity
                 }) }}
             {% endset %}
 
+            {% set depositRadiosHtml %}
+                {{ govukRadios({
+                    name: "low-complexity-deposit-type",
+                    fieldset: {
+                        legend: {
+                            text: "Select the type of deposit"
+                        }
+                    },
+                    items: [
+                        {
+                            value: "continuation-existing",
+                            text: "Continuation of existing deposit activity"
+                        },
+                        {
+                            value: "deposit-new",
+                            text: "Deposit of something new"
+                        },
+                        {
+                            value: "replacing-existing",
+                            text: "Replacing existing object"
+                        }
+                    ],
+                    errorMessage: {
+                        text: data['low-complexity-deposit-type-error']
+                    } if data['low-complexity-deposit-type-error'],
+                    value: data['low-complexity-deposit-type']
+                }) }}
+            {% endset %}
+
+            {% set removalRadiosHtml %}
+                {{ govukRadios({
+                    name: "low-complexity-removal-type",
+                    fieldset: {
+                        legend: {
+                            text: "Select the type of removal"
+                        }
+                    },
+                    items: [
+                        {
+                            value: "one-off-first-time",
+                            text: "One off first time removal"
+                        },
+                        {
+                            value: "ongoing-routine",
+                            text: "Removal as part of an ongoing or routine activity"
+                        },
+                        {
+                            value: "removal-replacement",
+                            text: "Removal for replacement"
+                        },
+                        {
+                            value: "removal-relocation",
+                            text: "Removal for relocation"
+                        }
+                    ],
+                    errorMessage: {
+                        text: data['low-complexity-removal-type-error']
+                    } if data['low-complexity-removal-type-error'],
+                    value: data['low-complexity-removal-type']
+                }) }}
+            {% endset %}
+
             {{ govukRadios({
                 name: "low-complexity-type-of-activity",
                 fieldset: {
@@ -99,11 +173,17 @@ Type of activity
                     },
                     {
                         value: "deposit",
-                        text: "Deposit of any substance or object"
+                        text: "Deposit of any substance or object",
+                        conditional: {
+                            html: depositRadiosHtml
+                        }
                     },
                     {
                         value: "removal",
-                        text: "Removal of any substance or object"
+                        text: "Removal of any substance or object",
+                        conditional: {
+                            html: removalRadiosHtml
+                        }
                     }
                 ],
                 errorMessage: {

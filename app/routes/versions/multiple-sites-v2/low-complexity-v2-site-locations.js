@@ -159,6 +159,8 @@ module.exports = function (router) {
     req.session.data['low-complexity-type-of-activity-errorthispage'] = "false";
     delete req.session.data['low-complexity-type-of-activity-error'];
     delete req.session.data['low-complexity-type-of-works-error'];
+    delete req.session.data['low-complexity-deposit-type-error'];
+    delete req.session.data['low-complexity-removal-type-error'];
     res.render(`versions/${version}/${section}/${subsection}/type-of-activity`);
   });
 
@@ -168,6 +170,8 @@ module.exports = function (router) {
     req.session.data['low-complexity-type-of-activity-errorthispage'] = "false";
     delete req.session.data['low-complexity-type-of-activity-error'];
     delete req.session.data['low-complexity-type-of-works-error'];
+    delete req.session.data['low-complexity-deposit-type-error'];
+    delete req.session.data['low-complexity-removal-type-error'];
 
     // Store the previous type of works value to detect changes
     const previousTypeOfWorks = req.session.data['low-complexity-type-of-works-previous'];
@@ -176,6 +180,7 @@ module.exports = function (router) {
     // If type of works has changed, clear construction structures
     if (previousTypeOfWorks && currentTypeOfWorks && previousTypeOfWorks !== currentTypeOfWorks) {
       delete req.session.data['low-complexity-construction-structures'];
+      delete req.session.data['low-complexity-construction-structures-other-details'];
     }
 
     let hasErrors = false;
@@ -190,10 +195,44 @@ module.exports = function (router) {
         req.session.data['low-complexity-type-of-works-error'] = "Select the type of works";
         hasErrors = true;
       }
-    } else {
-      // If not construction, clear the type of works radio and structures
+      // Clear deposit and removal types and related data
+      delete req.session.data['low-complexity-deposit-type'];
+      delete req.session.data['low-complexity-removal-type'];
+      delete req.session.data['low-complexity-removal-substances-objects'];
+      delete req.session.data['low-complexity-removal-substances-objects-other-details'];
+    } else if (req.session.data['low-complexity-type-of-activity'] === 'deposit') {
+      // If deposit is selected, validate that a deposit type is selected
+      if (!req.session.data['low-complexity-deposit-type']) {
+        req.session.data['low-complexity-deposit-type-error'] = "Select the type of deposit";
+        hasErrors = true;
+      }
+      // Clear construction and removal types and related data
       delete req.session.data['low-complexity-type-of-works'];
       delete req.session.data['low-complexity-construction-structures'];
+      delete req.session.data['low-complexity-construction-structures-other-details'];
+      delete req.session.data['low-complexity-removal-type'];
+      delete req.session.data['low-complexity-removal-substances-objects'];
+      delete req.session.data['low-complexity-removal-substances-objects-other-details'];
+    } else if (req.session.data['low-complexity-type-of-activity'] === 'removal') {
+      // If removal is selected, validate that a removal type is selected
+      if (!req.session.data['low-complexity-removal-type']) {
+        req.session.data['low-complexity-removal-type-error'] = "Select the type of removal";
+        hasErrors = true;
+      }
+      // Clear construction and deposit types and related data
+      delete req.session.data['low-complexity-type-of-works'];
+      delete req.session.data['low-complexity-construction-structures'];
+      delete req.session.data['low-complexity-construction-structures-other-details'];
+      delete req.session.data['low-complexity-deposit-type'];
+    } else {
+      // If other type, clear all sub-types and related data
+      delete req.session.data['low-complexity-type-of-works'];
+      delete req.session.data['low-complexity-construction-structures'];
+      delete req.session.data['low-complexity-construction-structures-other-details'];
+      delete req.session.data['low-complexity-deposit-type'];
+      delete req.session.data['low-complexity-removal-type'];
+      delete req.session.data['low-complexity-removal-substances-objects'];
+      delete req.session.data['low-complexity-removal-substances-objects-other-details'];
     }
 
     if (hasErrors) {
@@ -205,11 +244,13 @@ module.exports = function (router) {
     // Store current type of works as previous for next comparison
     req.session.data['low-complexity-type-of-works-previous'] = req.session.data['low-complexity-type-of-works'];
 
-    // If construction is selected (and validated), go to construction structures page
+    // Route based on activity type
     if (req.session.data['low-complexity-type-of-activity'] === 'construction') {
       res.redirect('construction-structures');
+    } else if (req.session.data['low-complexity-type-of-activity'] === 'removal') {
+      res.redirect('removal-substances-objects');
     } else {
-      // Mark as completed and redirect to review page for non-construction activities
+      // Mark as completed and redirect to review page for other activities (e.g., deposit)
       req.session.data['low-complexity-type-of-activity-completed'] = true;
       res.redirect('review-site-details#site-1-details');
     }
@@ -221,6 +262,8 @@ module.exports = function (router) {
   router.get(`/versions/${version}/${section}/${subsection}/construction-structures`, function (req, res) {
     // Clear any previous errors
     req.session.data['low-complexity-construction-structures-errorthispage'] = "false";
+    req.session.data['low-complexity-construction-structures-errortypeone'] = "false";
+    req.session.data['low-complexity-construction-structures-errortypetwo'] = "false";
     delete req.session.data['low-complexity-construction-structures-error'];
     res.render(`versions/${version}/${section}/${subsection}/construction-structures`);
   });
@@ -229,14 +272,79 @@ module.exports = function (router) {
   router.post(`/versions/${version}/${section}/${subsection}/construction-structures-router`, function (req, res) {
     // Clear any previous errors
     req.session.data['low-complexity-construction-structures-errorthispage'] = "false";
+    req.session.data['low-complexity-construction-structures-errortypeone'] = "false";
+    req.session.data['low-complexity-construction-structures-errortypetwo'] = "false";
     delete req.session.data['low-complexity-construction-structures-error'];
 
     // Validate at least one structure is selected
     if (!req.session.data['low-complexity-construction-structures'] || req.session.data['low-complexity-construction-structures'].length === 0) {
       req.session.data['low-complexity-construction-structures-errorthispage'] = "true";
+      req.session.data['low-complexity-construction-structures-errortypeone'] = "true";
       req.session.data['low-complexity-construction-structures-error'] = "Select at least one type of structure";
       res.redirect('construction-structures');
       return;
+    }
+
+    // Check if "other-structures" is selected and validate textarea
+    const structures = req.session.data['low-complexity-construction-structures'];
+    const isOtherSelected = Array.isArray(structures) && structures.includes('other-structures');
+    
+    if (isOtherSelected) {
+      const otherDetails = req.session.data['low-complexity-construction-structures-other-details'];
+      if (!otherDetails || otherDetails.trim() === '') {
+        req.session.data['low-complexity-construction-structures-errorthispage'] = "true";
+        req.session.data['low-complexity-construction-structures-errortypetwo'] = "true";
+        res.redirect('construction-structures');
+        return;
+      }
+    }
+
+    // Mark as completed and redirect to review page
+    req.session.data['low-complexity-type-of-activity-completed'] = true;
+    res.redirect('review-site-details#site-1-details');
+  });
+
+  /////////////////////////////////////////////////////////
+  //////// Removal substances/objects page
+  /////////////////////////////////////////////////////////
+  router.get(`/versions/${version}/${section}/${subsection}/removal-substances-objects`, function (req, res) {
+    // Clear any previous errors
+    req.session.data['low-complexity-removal-substances-objects-errorthispage'] = "false";
+    req.session.data['low-complexity-removal-substances-objects-errortypeone'] = "false";
+    req.session.data['low-complexity-removal-substances-objects-errortypetwo'] = "false";
+    delete req.session.data['low-complexity-removal-substances-objects-error'];
+    res.render(`versions/${version}/${section}/${subsection}/removal-substances-objects`);
+  });
+
+  // Removal substances/objects router (POST)
+  router.post(`/versions/${version}/${section}/${subsection}/removal-substances-objects-router`, function (req, res) {
+    // Clear any previous errors
+    req.session.data['low-complexity-removal-substances-objects-errorthispage'] = "false";
+    req.session.data['low-complexity-removal-substances-objects-errortypeone'] = "false";
+    req.session.data['low-complexity-removal-substances-objects-errortypetwo'] = "false";
+    delete req.session.data['low-complexity-removal-substances-objects-error'];
+
+    // Validate at least one item is selected
+    if (!req.session.data['low-complexity-removal-substances-objects'] || req.session.data['low-complexity-removal-substances-objects'].length === 0) {
+      req.session.data['low-complexity-removal-substances-objects-errorthispage'] = "true";
+      req.session.data['low-complexity-removal-substances-objects-errortypeone'] = "true";
+      req.session.data['low-complexity-removal-substances-objects-error'] = "Select at least one substance or object";
+      res.redirect('removal-substances-objects');
+      return;
+    }
+
+    // Check if "other-substances-objects" is selected and validate textarea
+    const substances = req.session.data['low-complexity-removal-substances-objects'];
+    const isOtherSelected = Array.isArray(substances) && substances.includes('other-substances-objects');
+    
+    if (isOtherSelected) {
+      const otherDetails = req.session.data['low-complexity-removal-substances-objects-other-details'];
+      if (!otherDetails || otherDetails.trim() === '') {
+        req.session.data['low-complexity-removal-substances-objects-errorthispage'] = "true";
+        req.session.data['low-complexity-removal-substances-objects-errortypetwo'] = "true";
+        res.redirect('removal-substances-objects');
+        return;
+      }
     }
 
     // Mark as completed and redirect to review page
@@ -397,7 +505,12 @@ module.exports = function (router) {
     delete req.session.data['low-complexity-type-of-activity'];
     delete req.session.data['low-complexity-type-of-works'];
     delete req.session.data['low-complexity-type-of-works-previous'];
+    delete req.session.data['low-complexity-deposit-type'];
+    delete req.session.data['low-complexity-removal-type'];
     delete req.session.data['low-complexity-construction-structures'];
+    delete req.session.data['low-complexity-construction-structures-other-details'];
+    delete req.session.data['low-complexity-removal-substances-objects'];
+    delete req.session.data['low-complexity-removal-substances-objects-other-details'];
     delete req.session.data['low-complexity-type-of-activity-completed'];
     
     // Activity description
