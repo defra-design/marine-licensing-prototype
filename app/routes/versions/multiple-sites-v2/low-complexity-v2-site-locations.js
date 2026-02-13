@@ -197,6 +197,8 @@ module.exports = function (router) {
       }
       // Clear deposit and removal types and related data
       delete req.session.data['low-complexity-deposit-type'];
+      delete req.session.data['low-complexity-deposit-substances-objects'];
+      delete req.session.data['low-complexity-deposit-substances-objects-other-details'];
       delete req.session.data['low-complexity-removal-type'];
       delete req.session.data['low-complexity-removal-substances-objects'];
       delete req.session.data['low-complexity-removal-substances-objects-other-details'];
@@ -224,12 +226,16 @@ module.exports = function (router) {
       delete req.session.data['low-complexity-construction-structures'];
       delete req.session.data['low-complexity-construction-structures-other-details'];
       delete req.session.data['low-complexity-deposit-type'];
+      delete req.session.data['low-complexity-deposit-substances-objects'];
+      delete req.session.data['low-complexity-deposit-substances-objects-other-details'];
     } else {
       // If other type, clear all sub-types and related data
       delete req.session.data['low-complexity-type-of-works'];
       delete req.session.data['low-complexity-construction-structures'];
       delete req.session.data['low-complexity-construction-structures-other-details'];
       delete req.session.data['low-complexity-deposit-type'];
+      delete req.session.data['low-complexity-deposit-substances-objects'];
+      delete req.session.data['low-complexity-deposit-substances-objects-other-details'];
       delete req.session.data['low-complexity-removal-type'];
       delete req.session.data['low-complexity-removal-substances-objects'];
       delete req.session.data['low-complexity-removal-substances-objects-other-details'];
@@ -247,10 +253,12 @@ module.exports = function (router) {
     // Route based on activity type
     if (req.session.data['low-complexity-type-of-activity'] === 'construction') {
       res.redirect('construction-structures');
+    } else if (req.session.data['low-complexity-type-of-activity'] === 'deposit') {
+      res.redirect('deposit-substances-objects');
     } else if (req.session.data['low-complexity-type-of-activity'] === 'removal') {
       res.redirect('removal-substances-objects');
     } else {
-      // Mark as completed and redirect to review page for other activities (e.g., deposit)
+      // Mark as completed and redirect to review page for other activities
       req.session.data['low-complexity-type-of-activity-completed'] = true;
       res.redirect('review-site-details#site-1-details');
     }
@@ -295,6 +303,54 @@ module.exports = function (router) {
         req.session.data['low-complexity-construction-structures-errorthispage'] = "true";
         req.session.data['low-complexity-construction-structures-errortypetwo'] = "true";
         res.redirect('construction-structures');
+        return;
+      }
+    }
+
+    // Mark as completed and redirect to review page
+    req.session.data['low-complexity-type-of-activity-completed'] = true;
+    res.redirect('review-site-details#site-1-details');
+  });
+
+  /////////////////////////////////////////////////////////
+  //////// Deposit substances/objects page
+  /////////////////////////////////////////////////////////
+  router.get(`/versions/${version}/${section}/${subsection}/deposit-substances-objects`, function (req, res) {
+    // Clear any previous errors
+    req.session.data['low-complexity-deposit-substances-objects-errorthispage'] = "false";
+    req.session.data['low-complexity-deposit-substances-objects-errortypeone'] = "false";
+    req.session.data['low-complexity-deposit-substances-objects-errortypetwo'] = "false";
+    delete req.session.data['low-complexity-deposit-substances-objects-error'];
+    res.render(`versions/${version}/${section}/${subsection}/deposit-substances-objects`);
+  });
+
+  // Deposit substances/objects router (POST)
+  router.post(`/versions/${version}/${section}/${subsection}/deposit-substances-objects-router`, function (req, res) {
+    // Clear any previous errors
+    req.session.data['low-complexity-deposit-substances-objects-errorthispage'] = "false";
+    req.session.data['low-complexity-deposit-substances-objects-errortypeone'] = "false";
+    req.session.data['low-complexity-deposit-substances-objects-errortypetwo'] = "false";
+    delete req.session.data['low-complexity-deposit-substances-objects-error'];
+
+    // Validate at least one item is selected
+    if (!req.session.data['low-complexity-deposit-substances-objects'] || req.session.data['low-complexity-deposit-substances-objects'].length === 0) {
+      req.session.data['low-complexity-deposit-substances-objects-errorthispage'] = "true";
+      req.session.data['low-complexity-deposit-substances-objects-errortypeone'] = "true";
+      req.session.data['low-complexity-deposit-substances-objects-error'] = "Select at least one type of substance or object";
+      res.redirect('deposit-substances-objects');
+      return;
+    }
+
+    // Check if "other-deposits" is selected and validate textarea
+    const deposits = req.session.data['low-complexity-deposit-substances-objects'];
+    const isOtherSelected = Array.isArray(deposits) && deposits.includes('other-deposits');
+    
+    if (isOtherSelected) {
+      const otherDetails = req.session.data['low-complexity-deposit-substances-objects-other-details'];
+      if (!otherDetails || otherDetails.trim() === '') {
+        req.session.data['low-complexity-deposit-substances-objects-errorthispage'] = "true";
+        req.session.data['low-complexity-deposit-substances-objects-errortypetwo'] = "true";
+        res.redirect('deposit-substances-objects');
         return;
       }
     }
@@ -506,6 +562,8 @@ module.exports = function (router) {
     delete req.session.data['low-complexity-type-of-works'];
     delete req.session.data['low-complexity-type-of-works-previous'];
     delete req.session.data['low-complexity-deposit-type'];
+    delete req.session.data['low-complexity-deposit-substances-objects'];
+    delete req.session.data['low-complexity-deposit-substances-objects-other-details'];
     delete req.session.data['low-complexity-removal-type'];
     delete req.session.data['low-complexity-construction-structures'];
     delete req.session.data['low-complexity-construction-structures-other-details'];

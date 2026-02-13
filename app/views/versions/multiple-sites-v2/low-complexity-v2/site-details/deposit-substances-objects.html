@@ -1,0 +1,202 @@
+{% extends "../../layouts/low-complexity.html" %}
+
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% if data['organisation-name'] %}
+        {% include "../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+What type of substance or objects will you be depositing?
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+{% if data['low-complexity-deposit-substances-objects-errorthispage'] == "true" %}
+Error:
+{% endif %}
+
+{{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% set otherDepositsTextarea %}
+{{ govukTextarea({
+    id: "low-complexity-deposit-substances-objects-other-details",
+    name: "low-complexity-deposit-substances-objects-other-details",
+    value: data['low-complexity-deposit-substances-objects-other-details'],
+    label: {
+        text: "Provide details"
+    },
+    errorMessage: {
+        text: "Enter details of the other deposits"
+    } if data['low-complexity-deposit-substances-objects-errortypetwo'] == "true"
+}) }}
+{% endset %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        
+        <form action="deposit-substances-objects-router" method="post" novalidate>
+            
+            <!-- Error summary -->
+            {% if data['low-complexity-deposit-substances-objects-errorthispage'] == "true" %}
+                {{ govukErrorSummary({
+                    titleText: "There is a problem",
+                    errorList: [
+                        {
+                            text: data['low-complexity-deposit-substances-objects-error'] if data['low-complexity-deposit-substances-objects-errortypeone'] == "true" else "Enter details of the other deposits",
+                            href: "#low-complexity-deposit-substances-objects" if data['low-complexity-deposit-substances-objects-errortypeone'] == "true" else "#low-complexity-deposit-substances-objects-other-details"
+                        }
+                    ]
+                }) }}
+            {% endif %}
+
+            {{ govukCheckboxes({
+                name: "low-complexity-deposit-substances-objects",
+                fieldset: {
+                    legend: {
+                        html: '<span class="govuk-caption-l">' + data['low-complexity-project-name-text-input'] + '<span class="govuk-!-display-block">Site 1</span></span>' + pageHeadingTextHTML,
+                        isPageHeading: true,
+                        classes: "govuk-fieldset__legend--l govuk-!-margin-bottom-6"
+                    }
+                },
+                hint: {
+                    text: "Select all that apply"
+                },
+                items: [
+                    {
+                        value: "aids-to-navigation",
+                        text: "Aids to navigation"
+                    },
+                    {
+                        value: "dredged-material-beach-management",
+                        text: "Alternative use of dredged material – beach management"
+                    },
+                    {
+                        value: "dredged-material-habitat-creation",
+                        text: "Alternative use of dredged material – habitat creation"
+                    },
+                    {
+                        value: "dredged-material-land-reclamation",
+                        text: "Alternative use of dredged material – land reclamation or construction fill"
+                    },
+                    {
+                        value: "anchoring-systems",
+                        text: "Anchoring systems"
+                    },
+                    {
+                        value: "burial-at-sea",
+                        text: "Burial at sea"
+                    },
+                    {
+                        value: "disposal-dredged-material",
+                        text: "Disposal of dredged material to sea"
+                    },
+                    {
+                        value: "disposal-fish-waste",
+                        text: "Disposal of fish waste"
+                    },
+                    {
+                        value: "disposal-shellfish-waste",
+                        text: "Disposal of shellfish waste"
+                    },
+                    {
+                        value: "explosive-substances",
+                        text: "Explosive substances or articles"
+                    },
+                    {
+                        value: "fireworks",
+                        text: "Fireworks"
+                    },
+                    {
+                        value: "habitat-pods",
+                        text: "Habitat pods, artificial habitat units or reef cubes"
+                    },
+                    {
+                        value: "marine-restoration-materials",
+                        text: "Marine restoration materials (e.g. oyster shells, cobbles, gravel for habitat creation)"
+                    },
+                    {
+                        value: "marker-posts",
+                        text: "Markers posts"
+                    },
+                    {
+                        value: "moorings",
+                        text: "Moorings"
+                    },
+                    {
+                        value: "pontoons",
+                        text: "Pontoons"
+                    },
+                    {
+                        value: "protective-mattresses",
+                        text: "Protective mattresses or rock bags"
+                    },
+                    {
+                        value: "scientific-instruments",
+                        text: "Scientific instruments"
+                    },
+                    {
+                        value: "seeding-materials",
+                        text: "Seeding materials (e.g. shellfish seed for habitat enhancement)"
+                    },
+                    {
+                        value: "temporary-works-equipment",
+                        text: "Temporary works equipment"
+                    },
+                    {
+                        value: "tracers-dyes",
+                        text: "Use of tracers or dyes"
+                    },
+                    {
+                        value: "other-deposits",
+                        text: "Other deposits not listed above",
+                        conditional: {
+                            html: otherDepositsTextarea
+                        }
+                    }
+                ],
+                errorMessage: {
+                    text: data['low-complexity-deposit-substances-objects-error']
+                } if data['low-complexity-deposit-substances-objects-errortypeone'] == "true",
+                values: data['low-complexity-deposit-substances-objects']
+            }) }}
+            
+            <div class="govuk-button-group">
+                {{ govukButton({
+                    text: "Save and continue"
+                }) }}
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+<!-- ERROR LOGIC  drop down to toggle states  -->
+<form method="post" action="#" class="for4" style=" float: left; position: relative; bottom:-325px; padding-bottom: 30px;  ">
+
+	<select style="height:30px;" onchange="window.location.href='?'+this.value">
+
+		<option value="low-complexity-deposit-substances-objects-errorthispage=false&low-complexity-deposit-substances-objects-errortypeone=false&low-complexity-deposit-substances-objects-errortypetwo=false&" {% if data['low-complexity-deposit-substances-objects-errorthispage'] != "true" %}selected{% endif %}>Errors - Off</option>
+
+		<option value="low-complexity-deposit-substances-objects-errorthispage=true&low-complexity-deposit-substances-objects-errortypeone=true&low-complexity-deposit-substances-objects-errortypetwo=false&" {% if data['low-complexity-deposit-substances-objects-errortypeone'] == 'true' and data['low-complexity-deposit-substances-objects-errortypetwo'] != 'true' %}selected{% endif %}>Error 1 - No checkbox selected</option>
+
+		<option value="low-complexity-deposit-substances-objects-errorthispage=true&low-complexity-deposit-substances-objects-errortypeone=false&low-complexity-deposit-substances-objects-errortypetwo=true&" {% if data['low-complexity-deposit-substances-objects-errortypeone'] != 'true' and data['low-complexity-deposit-substances-objects-errortypetwo'] == 'true' %}selected{% endif %}>Error 2 - Textarea left blank</option>
+
+	</select>
+
+</form>
+<!--  END OF ERROR LOGIC -->
+
+{% endblock %}
