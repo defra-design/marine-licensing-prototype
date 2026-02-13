@@ -1,0 +1,570 @@
+{% extends "../../layouts/low-complexity.html" %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% if data['user_type'] === 'organisation' %}
+        {% include "../../includes/organisation-switcher.html" %}
+    {% endif %}
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+Marine Plan Policies
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+
+<style>
+	.govuk-task-list__status {
+		white-space: nowrap;
+	}
+</style>
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-two-thirds">
+		<span class="govuk-caption-l">Dawlish sea defence extension</span>
+		<h1 class="govuk-heading-l">
+			{{ pageHeadingTextHTML }}
+		</h1>
+
+		<h2 class="govuk-heading-m">Environmental protection and impacts</h2>
+		<ul class="govuk-task-list">
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-bio-1-status">
+				  Biodiversity 1 (S-BIO-1)
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="s-bio-1-status">
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-bio-2-status">
+				  Biodiversity 2 (S-BIO-2)
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="s-bio-2-status">
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-bio-3-status">
+				  Biodiversity 3 (S-BIO-3)
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="s-bio-3-status">
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-bio-4-status">
+				  Biodiversity 4 (S-BIO-4)
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="s-bio-4-status">
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-dist-1-status">
+				  Disturbance 1 (S-DIST-1)
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="s-dist-1-status">
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-wq-1-status">
+				  Water quality 1 (S-WQ-1)
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="s-wq-1-status">
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-wq-2-status">
+				  Water quality 2 (S-WQ-2)
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="s-wq-2-status">
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-ml-1-status">
+				  Marine litter 1 (S-ML-1)
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="s-ml-1-status">
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-ml-2-status">
+				  Marine litter 2 (S-ML-2)
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="s-ml-2-status">
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-nis-1-status">
+				  Invasive non-native species 1 (S-NIS-1)
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="s-nis-1-status">
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-uwn-1-status">
+				  Underwater noise 1 (S-UWN-1)
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="s-uwn-1-status">
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-uwn-2-status">
+				  Underwater noise 2 (S-UWN-2)
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="s-uwn-2-status">
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+			  </div>
+			</li>
+		</ul>
+
+		<h2 class="govuk-heading-m">Climate and cumulative considerations</h2>
+		<ul class="govuk-task-list">
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-cc-1-status">
+				  Climate change 1 (S-CC-1)
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="s-cc-1-status">
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-cc-2-status">
+				  Climate change 2 (S-CC-2)
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="s-cc-2-status">
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-cc-3-status">
+				  Climate change 3 (S-CC-3)
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="s-cc-3-status">
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-cc-4-status">
+				  Climate change 4 (S-CC-4)
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="s-cc-4-status">
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-co-1-status">
+				  Co-existence 1 (S-CO-1)
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="s-co-1-status">
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+			  </div>
+			</li>
+		</ul>
+
+		<h2 class="govuk-heading-m">Marine activities and infrastructure</h2>
+		<ul class="govuk-task-list">
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-agg-4-status">
+				  Aggregates 4 (S-AGG-4)
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="s-agg-4-status">
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-dd-2-status">
+				  Dredging and disposal 2 (S-DD-2)
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="s-dd-2-status">
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-cab-1-status">
+				  Cables 1 (S-CAB-1)
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="s-cab-1-status">
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-cab-2-status">
+				  Cables 2 (S-CAB-2)
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="s-cab-2-status">
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-inf-1-status">
+				  Infrastructure 1 (S-INF-1)
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="s-inf-1-status">
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-ren-1-status">
+				  Renewables 1 (S-REN-1)
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="s-ren-1-status">
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-ps-1-status">
+				  Ports, harbours and shipping 1 (S-PS-1)
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="s-ps-1-status">
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-aq-2-status">
+				  Aquaculture 2 (S-AQ-2)
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="s-aq-2-status">
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+			  </div>
+			</li>
+		</ul>
+
+		<h2 class="govuk-heading-m">Access, fisheries and sea use</h2>
+		<ul class="govuk-task-list">
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-acc-1-status">
+				  Access 1 (S-ACC-1)
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="s-acc-1-status">
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-acc-2-status">
+				  Access 2 (S-ACC-2)
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="s-acc-2-status">
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-fish-1-status">
+				  Fisheries 1 (S-FISH-1)
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="s-fish-1-status">
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-fish-2-status">
+				  Fisheries 2 (S-FISH-2)
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="s-fish-2-status">
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-fish-4-status">
+				  Fisheries 4 (S-FISH-4)
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="s-fish-4-status">
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+			  </div>
+			</li>
+		</ul>
+
+		<h2 class="govuk-heading-m">Social, economic and cultural considerations</h2>
+		<ul class="govuk-task-list">
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-emp-1-status">
+				  Employment 1 (S-EMP-1)
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="s-emp-1-status">
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-emp-2-status">
+				  Employment 2 (S-EMP-2)
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="s-emp-2-status">
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-tr-1-status">
+				  Tourism and recreation 1 (S-TR-1)
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="s-tr-1-status">
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-tr-2-status">
+				  Tourism and recreation 2 (S-TR-2)
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="s-tr-2-status">
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-scp-1-status">
+				  Seascape and landscape 1 (S-SCP-1)
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="s-scp-1-status">
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-her-1-status">
+				  Heritage assets 1 (S-HER-1)
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="s-her-1-status">
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-soc-1-status">
+				  Knowledge, understanding, appreciation and enjoyment 1 (S-SOC-1)
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="s-soc-1-status">
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+			  </div>
+			</li>
+		</ul>
+
+	</div>
+</div>
+{% endblock %}
