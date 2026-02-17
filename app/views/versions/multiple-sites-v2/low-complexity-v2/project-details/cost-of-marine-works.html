@@ -1,7 +1,8 @@
 {% extends "../../layouts/low-complexity.html" %}
 
-{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 
 {% block beforeContent %}
     {% include "../../includes/phase-banner.html" %}
@@ -13,7 +14,7 @@
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-What is the cost of the marine works?
+The approximate cost of the marine works
 {% endset %}
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
@@ -30,45 +31,52 @@ Error:
 <div class="govuk-grid-row">
 	<div class="govuk-grid-column-two-thirds">
 		{% if data['errorthispage'] == "true" %}
-		<div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1"
-			data-module="govuk-error-summary">
-			<h2 class="govuk-error-summary__title" id="error-summary-title">
-				There is a problem
-			</h2>
-			<div class="govuk-error-summary__body">
-				<ul class="govuk-list govuk-error-summary__list">
-					{% if data['errortypeone'] == "true" %}
-					<li><a href="#low-complexity-cost">Enter the cost of the marine works</a></li>
-					{% endif %}
-				</ul>
-			</div>
-		</div>
+		{{ govukErrorSummary({
+			titleText: "There is a problem",
+			errorList: [
+				{
+					text: "Select which cost band applies to the marine works",
+					href: "#low-complexity-cost"
+				}
+			]
+		}) }}
 		{% endif %}
 
 		<!--  END OF 'error summary' -->
 
 		<form action="cost-of-marine-works-router" method="post" novalidate>
 
-			{{ govukInput({
-				label: {
-					html: '<span class="govuk-caption-l">' + data['low-complexity-project-name-text-input'] + '</span>' + pageHeadingTextHTML,
-					classes: "govuk-label--l",
-					isPageHeading: true
-				},
-				hint: {
-					text: "This is for the cost of the marine works part of the project, not the total cost of the project"
-				},
-				prefix: {
-					text: "£"
-				},
-				id: "low-complexity-cost",
+			<span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
+			<h1 class="govuk-heading-l">{{ pageHeadingTextHTML }}</h1>
+
+			{{ govukRadios({
 				name: "low-complexity-cost",
-				classes: "govuk-input--width-10",
-				spellcheck: false,
-				autocomplete: "off",
-				value: data['low-complexity-cost'],
+				id: "low-complexity-cost",
+				fieldset: {
+					legend: {
+						text: "Which cost band applies to the marine works?",
+						classes: "govuk-fieldset__legend--m"
+					}
+				},
+				items: [
+					{
+						value: "0-49999",
+						text: "£0 to £49,999",
+						checked: data['low-complexity-cost'] == "0-49999"
+					},
+					{
+						value: "50000-999999",
+						text: "£50,000 to £999,999",
+						checked: data['low-complexity-cost'] == "50000-999999"
+					},
+					{
+						value: "1000000-over",
+						text: "£1 million or over",
+						checked: data['low-complexity-cost'] == "1000000-over"
+					}
+				],
 				errorMessage: {
-					text: "Enter the cost of the marine works"
+					text: "Select which cost band applies to the marine works"
 				} if data['errortypeone'] == "true"
 			}) }}
 
