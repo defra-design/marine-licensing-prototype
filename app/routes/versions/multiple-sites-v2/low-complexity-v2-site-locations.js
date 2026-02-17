@@ -519,6 +519,47 @@ module.exports = function (router) {
   });
 
   /////////////////////////////////////////////////////////
+  //////// Months of activity page
+  /////////////////////////////////////////////////////////
+  router.get(`/versions/${version}/${section}/${subsection}/months-of-activity`, function (req, res) {
+    // Clear any previous errors
+    req.session.data['low-complexity-months-of-activity-errorthispage'] = "false";
+    req.session.data['low-complexity-months-of-activity-errortypeone'] = "false";
+    req.session.data['low-complexity-months-of-activity-errortypetwo'] = "false";
+    res.render(`versions/${version}/${section}/${subsection}/months-of-activity`);
+  });
+
+  // Months of activity router (POST)
+  router.post(`/versions/${version}/${section}/${subsection}/months-of-activity-router`, function (req, res) {
+    // Clear any previous errors
+    req.session.data['low-complexity-months-of-activity-errorthispage'] = "false";
+    req.session.data['low-complexity-months-of-activity-errortypeone'] = "false";
+    req.session.data['low-complexity-months-of-activity-errortypetwo'] = "false";
+
+    // Validate radio selection
+    if (!req.session.data['low-complexity-months-of-activity']) {
+      req.session.data['low-complexity-months-of-activity-errorthispage'] = "true";
+      req.session.data['low-complexity-months-of-activity-errortypeone'] = "true";
+      res.redirect('months-of-activity');
+      return;
+    }
+
+    // If Yes is selected, validate textarea
+    if (req.session.data['low-complexity-months-of-activity'] === 'Yes') {
+      if (!req.session.data['low-complexity-months-of-activity-details'] || req.session.data['low-complexity-months-of-activity-details'].trim() === '') {
+        req.session.data['low-complexity-months-of-activity-errorthispage'] = "true";
+        req.session.data['low-complexity-months-of-activity-errortypetwo'] = "true";
+        res.redirect('months-of-activity');
+        return;
+      }
+    }
+
+    // Mark as completed and redirect to review page
+    req.session.data['low-complexity-months-of-activity-completed'] = true;
+    res.redirect('review-site-details#site-1-activity-details');
+  });
+
+  /////////////////////////////////////////////////////////
   //////// Schedule page
   /////////////////////////////////////////////////////////
   router.get(`/versions/${version}/${section}/${subsection}/schedule`, function (req, res) {
@@ -618,6 +659,11 @@ module.exports = function (router) {
     delete req.session.data['low-complexity-date-completed-by'];
     delete req.session.data['low-complexity-date-completed-by-details'];
     delete req.session.data['low-complexity-date-completed-by-completed'];
+    
+    // Months of activity
+    delete req.session.data['low-complexity-months-of-activity'];
+    delete req.session.data['low-complexity-months-of-activity-details'];
+    delete req.session.data['low-complexity-months-of-activity-completed'];
     
     // Schedule
     delete req.session.data['low-complexity-schedule'];

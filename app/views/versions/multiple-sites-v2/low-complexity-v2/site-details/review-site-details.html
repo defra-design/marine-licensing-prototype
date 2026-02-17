@@ -35,10 +35,11 @@ Review site details
         {% set activityDescComplete = data['low-complexity-activity-description-completed'] %}
         {% set durationComplete = data['low-complexity-site-duration-completed'] %}
         {% set dateCompletedByComplete = data['low-complexity-date-completed-by-completed'] %}
+        {% set monthsOfActivityComplete = data['low-complexity-months-of-activity-completed'] %}
         {% set scheduleComplete = data['low-complexity-schedule-completed'] %}
         {% set impactsComplete = data['low-complexity-impacts-completed'] %}
         
-        {% set allComplete = siteNameComplete and typeOfActivityComplete and activityDescComplete and durationComplete and dateCompletedByComplete and scheduleComplete and impactsComplete %}
+        {% set allComplete = siteNameComplete and typeOfActivityComplete and activityDescComplete and durationComplete and dateCompletedByComplete and monthsOfActivityComplete and scheduleComplete and impactsComplete %}
         
         {% if not allComplete %}
             {{ govukInsetText({
@@ -271,7 +272,7 @@ Review site details
 
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
-                            Date completed by
+                            Does any part of the activity need to be completed by a certain date?
                         </dt>
                         <dd class="govuk-summary-list__value">
                             {% if data['low-complexity-date-completed-by-completed'] %}
@@ -286,21 +287,29 @@ Review site details
                         </dd>
                         <dd class="govuk-summary-list__actions">
                             <a href="date-completed-by" class="govuk-link govuk-link--no-visited-state">
-                                {% if data['low-complexity-date-completed-by-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> date completed by</span>
+                                {% if data['low-complexity-date-completed-by-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> does any part of the activity need to be completed by a certain date?</span>
                             </a>
                         </dd>
                     </div>
 
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
-                            Months of activity
+                            Will the activity be limited to specific months of the year?
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                            {% if data['low-complexity-months-of-activity-completed'] %}
+                                {% if data['low-complexity-months-of-activity'] == 'Yes' %}
+                                    Yes<br>{{ data['low-complexity-months-of-activity-details'] }}
+                                {% else %}
+                                    No
+                                {% endif %}
+                            {% else %}
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                            {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="#" class="govuk-link govuk-link--no-visited-state">
-                                Add<span class="govuk-visually-hidden"> months of activity</span>
+                            <a href="months-of-activity" class="govuk-link govuk-link--no-visited-state">
+                                {% if data['low-complexity-months-of-activity-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> will the activity be limited to specific months of the year?</span>
                             </a>
                         </dd>
                     </div>
