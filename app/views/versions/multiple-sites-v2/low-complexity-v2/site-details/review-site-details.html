@@ -34,10 +34,11 @@ Review site details
         {% set typeOfActivityComplete = data['low-complexity-type-of-activity-completed'] %}
         {% set activityDescComplete = data['low-complexity-activity-description-completed'] %}
         {% set durationComplete = data['low-complexity-site-duration-completed'] %}
+        {% set dateCompletedByComplete = data['low-complexity-date-completed-by-completed'] %}
         {% set scheduleComplete = data['low-complexity-schedule-completed'] %}
         {% set impactsComplete = data['low-complexity-impacts-completed'] %}
         
-        {% set allComplete = siteNameComplete and typeOfActivityComplete and activityDescComplete and durationComplete and scheduleComplete and impactsComplete %}
+        {% set allComplete = siteNameComplete and typeOfActivityComplete and activityDescComplete and durationComplete and dateCompletedByComplete and scheduleComplete and impactsComplete %}
         
         {% if not allComplete %}
             {{ govukInsetText({
@@ -264,6 +265,28 @@ Review site details
                         <dd class="govuk-summary-list__actions">
                             <a href="duration" class="govuk-link govuk-link--no-visited-state">
                                 {% if data['low-complexity-site-duration-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> duration</span>
+                            </a>
+                        </dd>
+                    </div>
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Date completed by
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['low-complexity-date-completed-by-completed'] %}
+                                {% if data['low-complexity-date-completed-by'] == 'Yes' %}
+                                    Yes<br>{{ data['low-complexity-date-completed-by-details'] }}
+                                {% else %}
+                                    No
+                                {% endif %}
+                            {% else %}
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                            {% endif %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="date-completed-by" class="govuk-link govuk-link--no-visited-state">
+                                {% if data['low-complexity-date-completed-by-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> date completed by</span>
                             </a>
                         </dd>
                     </div>

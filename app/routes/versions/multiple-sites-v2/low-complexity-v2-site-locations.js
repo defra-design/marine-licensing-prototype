@@ -148,7 +148,7 @@ module.exports = function (router) {
 
     // Mark as completed and redirect to review page
     req.session.data['low-complexity-site-name-completed'] = true;
-    res.redirect('review-site-details#site-1-details');
+    res.redirect('review-site-details#site-1');
   });
 
   /////////////////////////////////////////////////////////
@@ -260,7 +260,7 @@ module.exports = function (router) {
     } else {
       // Mark as completed and redirect to review page for other activities
       req.session.data['low-complexity-type-of-activity-completed'] = true;
-      res.redirect('review-site-details#site-1-details');
+      res.redirect('review-site-details#site-1-activity-details');
     }
   });
 
@@ -309,7 +309,7 @@ module.exports = function (router) {
 
     // Mark as completed and redirect to review page
     req.session.data['low-complexity-type-of-activity-completed'] = true;
-    res.redirect('review-site-details#site-1-details');
+    res.redirect('review-site-details#site-1-activity-details');
   });
 
   /////////////////////////////////////////////////////////
@@ -357,7 +357,7 @@ module.exports = function (router) {
 
     // Mark as completed and redirect to review page
     req.session.data['low-complexity-type-of-activity-completed'] = true;
-    res.redirect('review-site-details#site-1-details');
+    res.redirect('review-site-details#site-1-activity-details');
   });
 
   /////////////////////////////////////////////////////////
@@ -405,7 +405,7 @@ module.exports = function (router) {
 
     // Mark as completed and redirect to review page
     req.session.data['low-complexity-type-of-activity-completed'] = true;
-    res.redirect('review-site-details#site-1-details');
+    res.redirect('review-site-details#site-1-activity-details');
   });
 
   /////////////////////////////////////////////////////////
@@ -429,7 +429,7 @@ module.exports = function (router) {
     // Clear errors and mark as completed
     req.session.data['low-complexity-activity-description-errorthispage'] = "false";
     req.session.data['low-complexity-activity-description-completed'] = true;
-    res.redirect('review-site-details#site-1-details');
+    res.redirect('review-site-details#site-1-activity-details');
   });
 
   /////////////////////////////////////////////////////////
@@ -474,7 +474,48 @@ module.exports = function (router) {
 
     // Mark as completed and redirect to review page
     req.session.data['low-complexity-site-duration-completed'] = true;
-    res.redirect('review-site-details#site-1-details');
+    res.redirect('review-site-details#site-1-activity-details');
+  });
+
+  /////////////////////////////////////////////////////////
+  //////// Date completed by page
+  /////////////////////////////////////////////////////////
+  router.get(`/versions/${version}/${section}/${subsection}/date-completed-by`, function (req, res) {
+    // Clear any previous errors
+    req.session.data['low-complexity-date-completed-by-errorthispage'] = "false";
+    req.session.data['low-complexity-date-completed-by-errortypeone'] = "false";
+    req.session.data['low-complexity-date-completed-by-errortypetwo'] = "false";
+    res.render(`versions/${version}/${section}/${subsection}/date-completed-by`);
+  });
+
+  // Date completed by router (POST)
+  router.post(`/versions/${version}/${section}/${subsection}/date-completed-by-router`, function (req, res) {
+    // Clear any previous errors
+    req.session.data['low-complexity-date-completed-by-errorthispage'] = "false";
+    req.session.data['low-complexity-date-completed-by-errortypeone'] = "false";
+    req.session.data['low-complexity-date-completed-by-errortypetwo'] = "false";
+
+    // Validate radio selection
+    if (!req.session.data['low-complexity-date-completed-by']) {
+      req.session.data['low-complexity-date-completed-by-errorthispage'] = "true";
+      req.session.data['low-complexity-date-completed-by-errortypeone'] = "true";
+      res.redirect('date-completed-by');
+      return;
+    }
+
+    // If Yes is selected, validate textarea
+    if (req.session.data['low-complexity-date-completed-by'] === 'Yes') {
+      if (!req.session.data['low-complexity-date-completed-by-details'] || req.session.data['low-complexity-date-completed-by-details'].trim() === '') {
+        req.session.data['low-complexity-date-completed-by-errorthispage'] = "true";
+        req.session.data['low-complexity-date-completed-by-errortypetwo'] = "true";
+        res.redirect('date-completed-by');
+        return;
+      }
+    }
+
+    // Mark as completed and redirect to review page
+    req.session.data['low-complexity-date-completed-by-completed'] = true;
+    res.redirect('review-site-details#site-1-activity-details');
   });
 
   /////////////////////////////////////////////////////////
@@ -500,7 +541,7 @@ module.exports = function (router) {
 
     // Mark as completed and redirect to review page
     req.session.data['low-complexity-schedule-completed'] = true;
-    res.redirect('review-site-details#site-1-details');
+    res.redirect('review-site-details#site-1-activity-details');
   });
 
   /////////////////////////////////////////////////////////
@@ -526,7 +567,7 @@ module.exports = function (router) {
 
     // Mark as completed and redirect to review page
     req.session.data['low-complexity-impacts-completed'] = true;
-    res.redirect('review-site-details#site-1-details');
+    res.redirect('review-site-details#site-1-activity-details');
   });
 
   /////////////////////////////////////////////////////////
@@ -572,6 +613,11 @@ module.exports = function (router) {
     delete req.session.data['low-complexity-site-duration-years'];
     delete req.session.data['low-complexity-site-duration-months'];
     delete req.session.data['low-complexity-site-duration-completed'];
+    
+    // Date completed by
+    delete req.session.data['low-complexity-date-completed-by'];
+    delete req.session.data['low-complexity-date-completed-by-details'];
+    delete req.session.data['low-complexity-date-completed-by-completed'];
     
     // Schedule
     delete req.session.data['low-complexity-schedule'];
