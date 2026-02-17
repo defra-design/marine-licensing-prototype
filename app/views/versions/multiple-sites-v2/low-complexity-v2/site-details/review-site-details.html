@@ -34,10 +34,11 @@ Review site details
         {% set typeOfActivityComplete = data['low-complexity-type-of-activity-completed'] %}
         {% set activityDescComplete = data['low-complexity-activity-description-completed'] %}
         {% set durationComplete = data['low-complexity-site-duration-completed'] %}
-        {% set scheduleComplete = data['low-complexity-schedule-completed'] %}
-        {% set impactsComplete = data['low-complexity-impacts-completed'] %}
+        {% set dateCompletedByComplete = data['low-complexity-date-completed-by-completed'] %}
+        {% set monthsOfActivityComplete = data['low-complexity-months-of-activity-completed'] %}
+        {% set workingHoursComplete = data['low-complexity-working-hours-completed'] %}
         
-        {% set allComplete = siteNameComplete and typeOfActivityComplete and activityDescComplete and durationComplete and scheduleComplete and impactsComplete %}
+        {% set allComplete = siteNameComplete and typeOfActivityComplete and activityDescComplete and durationComplete and dateCompletedByComplete and monthsOfActivityComplete and workingHoursComplete %}
         
         {% if not allComplete %}
             {{ govukInsetText({
@@ -106,12 +107,19 @@ Review site details
             </div>
         </div>
 
-        <!-- Site 1 details section -->
-        <div id="site-1-details" class="govuk-summary-card">
+        <!-- Site 1 section -->
+        <div id="site-1" class="govuk-summary-card">
             <div class="govuk-summary-card__title-wrapper">
                 <h2 class="govuk-summary-card__title">
-                    Site 1 details
+                    Site 1
                 </h2>
+                <ul class="govuk-summary-card__actions">
+                    <li class="govuk-summary-card__action">
+                        <a class="govuk-link govuk-link--no-visited-state" href="#">
+                            Change site location<span class="govuk-visually-hidden"> for site 1</span>
+                        </a>
+                    </li>
+                </ul>
             </div>
             <div class="govuk-summary-card__content">
                 <dl class="govuk-summary-list govuk-summary-list--full-width">
@@ -141,7 +149,19 @@ Review site details
                             <img src="/public/images/map-5-points.jpg" alt="Map showing site 1 location" />
                         </dd>
                     </div>
+                </dl>
+            </div>
+        </div>
 
+        <!-- Site 1 activity details section -->
+        <div id="site-1-activity-details" class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">
+                    Site 1 activity details
+                </h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
                             Type of activity
@@ -226,7 +246,7 @@ Review site details
 
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
-                            Duration of activity
+                            Maximum duration of activity
                         </dt>
                         <dd class="govuk-summary-list__value">
                             {% if data['low-complexity-site-duration-completed'] %}
@@ -236,9 +256,6 @@ Review site details
                                 {% endif %}
                                 {% if data['low-complexity-site-duration-months'] and data['low-complexity-site-duration-months'] != '0' %}
                                     {% set durationParts = (durationParts.push(data['low-complexity-site-duration-months'] + ' ' + ('month' if data['low-complexity-site-duration-months'] == '1' else 'months')), durationParts) %}
-                                {% endif %}
-                                {% if data['low-complexity-site-duration-weeks'] and data['low-complexity-site-duration-weeks'] != '0' %}
-                                    {% set durationParts = (durationParts.push(data['low-complexity-site-duration-weeks'] + ' ' + ('week' if data['low-complexity-site-duration-weeks'] == '1' else 'weeks')), durationParts) %}
                                 {% endif %}
                                 {{ durationParts | join(', ') if durationParts.length > 0 else 'Not provided' }}
                             {% else %}
@@ -254,36 +271,62 @@ Review site details
 
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
-                            Activity schedule
+                            Does any part of the activity need to be completed by a certain date?
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            {% if data['low-complexity-schedule-completed'] and data['low-complexity-schedule'] %}
-                                {{ data['low-complexity-schedule'] }}
+                            {% if data['low-complexity-date-completed-by-completed'] %}
+                                {% if data['low-complexity-date-completed-by'] == 'Yes' %}
+                                    Yes<br>{{ data['low-complexity-date-completed-by-details'] }}
+                                {% else %}
+                                    No
+                                {% endif %}
                             {% else %}
                                 <span class="govuk-tag govuk-tag--red">Incomplete</span>
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="schedule" class="govuk-link govuk-link--no-visited-state">
-                                {% if data['low-complexity-schedule-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> schedule</span>
+                            <a href="date-completed-by" class="govuk-link govuk-link--no-visited-state">
+                                {% if data['low-complexity-date-completed-by-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> does any part of the activity need to be completed by a certain date?</span>
                             </a>
                         </dd>
                     </div>
 
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
-                            Possible impacts of the activity and ways to reduce them
+                            Will the activity be limited to specific months of the year?
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            {% if data['low-complexity-impacts-completed'] and data['low-complexity-impacts'] %}
-                                {{ data['low-complexity-impacts'] }}
+                            {% if data['low-complexity-months-of-activity-completed'] %}
+                                {% if data['low-complexity-months-of-activity'] == 'Yes' %}
+                                    Yes<br>{{ data['low-complexity-months-of-activity-details'] }}
+                                {% else %}
+                                    No
+                                {% endif %}
                             {% else %}
                                 <span class="govuk-tag govuk-tag--red">Incomplete</span>
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="impacts" class="govuk-link govuk-link--no-visited-state">
-                                {% if data['low-complexity-impacts-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> possible impacts of the activity</span>
+                            <a href="months-of-activity" class="govuk-link govuk-link--no-visited-state">
+                                {% if data['low-complexity-months-of-activity-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> will the activity be limited to specific months of the year?</span>
+                            </a>
+                        </dd>
+                    </div>
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Proposed working hours
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            {% if data['low-complexity-working-hours-completed'] and data['low-complexity-working-hours'] %}
+                                {{ data['low-complexity-working-hours'] }}
+                            {% else %}
+                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                            {% endif %}
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="working-hours" class="govuk-link govuk-link--no-visited-state">
+                                {% if data['low-complexity-working-hours-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> proposed working hours</span>
                             </a>
                         </dd>
                     </div>

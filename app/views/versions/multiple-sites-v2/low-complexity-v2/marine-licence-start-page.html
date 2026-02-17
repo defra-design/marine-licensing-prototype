@@ -21,12 +21,16 @@ Marine licence start page
 
 <div class="govuk-grid-row">
 	<div class="govuk-grid-column-two-thirds">
-		<span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
+		<span class="govuk-caption-l">Marine licence</span>
 		<h1 class="govuk-heading-l">
-			{{ pageHeadingTextHTML }}
+			{{ data['low-complexity-project-name-text-input'] }}
 		</h1>
 		<p class="govuk-body">When you provide your information you'll need to complete all sections before you can send your application.</p>
+
+		<p>You'll be able to start the Marine plan policy section once you have completed the site details section.</p>
 		<p class="govuk-body">Your progress will be saved as you go if you need to come back later.</p>
+
+		<h2 class="govuk-heading-m">Project details</h2>
 		<ul class="govuk-task-list">
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
 			  <div class="govuk-task-list__name-and-hint">
@@ -41,114 +45,285 @@ Marine licence start page
 			</li>
 
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
-				<div class="govuk-task-list__name-and-hint">
-				  <a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="project-details/" aria-describedby="project-details-status">
-					Project details
-				  </a>
-				</div>
-				
-				<div class="govuk-task-list__status" id="project-details-status">
-				  {% if data['low-complexity-project-background-completed'] and data['low-complexity-duration-completed'] and data['low-complexity-dates-completed'] and data['low-complexity-cost-completed'] %}
-					  Completed
-				  {% elif data['low-complexity-project-background-completed'] or data['low-complexity-duration-completed'] or data['low-complexity-dates-completed'] or data['low-complexity-cost-completed'] %}
-					  <strong class="govuk-tag govuk-tag--light-blue">
-						  In progress
-					  </strong>
-				  {% else %}
-					  <strong class="govuk-tag govuk-tag--blue">
-						  Not yet started
-					  </strong>
-				  {% endif %}
-				</div>
-			  </li>
-
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="project-details/project-background" aria-describedby="project-background-status">
+				  Project background
+				</a>
+			  </div>
 			  
-		<li class="govuk-task-list__item govuk-task-list__item--with-link">
-		  <div class="govuk-task-list__name-and-hint">
-			<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="site-details/" aria-describedby="site-details-status">
-			  Site details
-			</a>
-		  </div>
-		  
-		  <div class="govuk-task-list__status" id="site-details-status">
-			{% if data['low-complexity-site-name-completed'] and data['low-complexity-type-of-activity-completed'] and data['low-complexity-activity-description-completed'] and data['low-complexity-site-duration-completed'] and data['low-complexity-schedule-completed'] and data['low-complexity-impacts-completed'] %}
+			  <div class="govuk-task-list__status" id="project-background-status">
+				{% if data['low-complexity-project-background-completed'] %}
 				Completed
-			{% elif data['has-visited-site-details'] %}
-				<strong class="govuk-tag govuk-tag--light-blue">
-					In progress
-				</strong>
-			{% else %}
+				{% else %}
 				<strong class="govuk-tag govuk-tag--blue">
 					Not yet started
 				</strong>
-			{% endif %}
-		  </div>
-		</li>
+				{% endif %}
+			  </div>
+			</li>
 
-		<li class="govuk-task-list__item govuk-task-list__item--with-link">
-		  <div class="govuk-task-list__name-and-hint">
-			<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="environmental-assessments/" aria-describedby="environmental-assessments-status">
-			  Environmental assessments
-			</a>
-		  </div>
-		  
-		  <div class="govuk-task-list__status" id="environmental-assessments-status">
-			{% if data['low-complexity-european-sites-completed'] and data['low-complexity-mcz-completed'] and data['low-complexity-sssi-completed'] and data['low-complexity-wfd-completed'] %}
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="project-details/dates-of-marine-works" aria-describedby="dates-status">
+				  Dates of marine works
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="dates-status">
+				{% if data['low-complexity-dates-completed'] %}
 				Completed
-			{% elif data['low-complexity-european-sites-completed'] or data['low-complexity-mcz-completed'] or data['low-complexity-sssi-completed'] or data['low-complexity-wfd-completed'] %}
-				<strong class="govuk-tag govuk-tag--light-blue">
-					In progress
-				</strong>
-			{% else %}
+				{% else %}
 				<strong class="govuk-tag govuk-tag--blue">
 					Not yet started
 				</strong>
-			{% endif %}
-		  </div>
-		</li>
+				{% endif %}
+			  </div>
+			</li>
 
-		<li class="govuk-task-list__item govuk-task-list__item--with-link">
-		  <div class="govuk-task-list__name-and-hint">
-			<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="other-permissions/" aria-describedby="other-permissions-status">
-			  Other permissions
-			</a>
-		  </div>
-		  
-		  <div class="govuk-task-list__status" id="other-permissions-status">
-			{% if data['low-complexity-special-legal-powers-completed'] and data['low-complexity-harbour-authority-completed'] and data['low-complexity-other-permissions-completed'] and data['low-complexity-consultation-completed'] %}
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="project-details/cost-of-marine-works" aria-describedby="cost-status">
+				  Approximate cost of marine works
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="cost-status">
+				{% if data['low-complexity-cost-completed'] %}
 				Completed
-			{% elif data['low-complexity-special-legal-powers-completed'] or data['low-complexity-harbour-authority-completed'] or data['low-complexity-other-permissions-completed'] or data['low-complexity-consultation-completed'] %}
-				<strong class="govuk-tag govuk-tag--light-blue">
-					In progress
-				</strong>
-			{% else %}
+				{% else %}
 				<strong class="govuk-tag govuk-tag--blue">
 					Not yet started
 				</strong>
-			{% endif %}
-		  </div>
-		</li>
+				{% endif %}
+			  </div>
+			</li>
+		</ul>
 
-		<li class="govuk-task-list__item govuk-task-list__item--with-link">
-		  <div class="govuk-task-list__name-and-hint">
-			<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="sharing-your-project-information-publicly" aria-describedby="sharing-information-status">
-			  Sharing your project information publicly
-			</a>
-		  </div>
-		  
-		  <div class="govuk-task-list__status" id="sharing-information-status">
-			{% if data['low-complexity-sharing-information-completed'] %}
+		<h2 class="govuk-heading-m">Site details</h2>
+		<ul class="govuk-task-list">
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="site-details/" aria-describedby="site-details-status">
+				  Site details
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="site-details-status">
+				{% if data['low-complexity-site-name-completed'] and data['low-complexity-type-of-activity-completed'] and data['low-complexity-activity-description-completed'] and data['low-complexity-site-duration-completed'] and data['low-complexity-date-completed-by-completed'] and data['low-complexity-months-of-activity-completed'] and data['low-complexity-working-hours-completed'] %}
+					Completed
+				{% elif data['has-visited-site-details'] %}
+					<strong class="govuk-tag govuk-tag--light-blue">
+						In progress
+					</strong>
+				{% else %}
+					<strong class="govuk-tag govuk-tag--blue">
+						Not yet started
+					</strong>
+				{% endif %}
+			  </div>
+			</li>
+		</ul>
+
+		<h2 class="govuk-heading-m">Marine plan policies</h2>
+
+		<p class="govuk-body">Read the <a href="#" class="govuk-link">Marine plan policies guidance</a> before you start.</p>
+
+		<ul class="govuk-task-list">
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				{% if data['low-complexity-site-name-completed'] and data['low-complexity-type-of-activity-completed'] and data['low-complexity-activity-description-completed'] and data['low-complexity-site-duration-completed'] and data['low-complexity-date-completed-by-completed'] and data['low-complexity-months-of-activity-completed'] and data['low-complexity-working-hours-completed'] %}
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="marine-plan-policies/" aria-describedby="marine-plan-policies-status">
+				  Marine plan policies considerations
+				</a>
+				{% else %}
+				<span>Marine plan policies considerations</span>
+				{% endif %}
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="marine-plan-policies-status">
+				{% if data['low-complexity-site-name-completed'] and data['low-complexity-type-of-activity-completed'] and data['low-complexity-activity-description-completed'] and data['low-complexity-site-duration-completed'] and data['low-complexity-date-completed-by-completed'] and data['low-complexity-months-of-activity-completed'] and data['low-complexity-working-hours-completed'] %}
+					<strong class="govuk-tag govuk-tag--blue">
+						Not yet started
+					</strong>
+				{% else %}
+					Cannot start yet
+				{% endif %}
+			  </div>
+			</li>
+		</ul>
+
+		<h2 class="govuk-heading-m">Environmental assessments</h2>
+		<ul class="govuk-task-list">
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="environmental-assessments/european-sites" aria-describedby="european-sites-status">
+				  European sites
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="european-sites-status">
+				{% if data['low-complexity-european-sites-completed'] %}
 				Completed
-			{% else %}
+				{% else %}
 				<strong class="govuk-tag govuk-tag--blue">
 					Not yet started
 				</strong>
-			{% endif %}
-		  </div>
-		</li>
-	</ul>
+				{% endif %}
+			  </div>
+			</li>
 
-	{% if data['low-complexity-project-background-completed'] and data['low-complexity-duration-completed'] and data['low-complexity-dates-completed'] and data['low-complexity-cost-completed'] and data['low-complexity-site-name-completed'] and data['low-complexity-type-of-activity-completed'] and data['low-complexity-activity-description-completed'] and data['low-complexity-site-duration-completed'] and data['low-complexity-schedule-completed'] and data['low-complexity-impacts-completed'] and data['low-complexity-european-sites-completed'] and data['low-complexity-mcz-completed'] and data['low-complexity-sssi-completed'] and data['low-complexity-wfd-completed'] and data['low-complexity-special-legal-powers-completed'] and data['low-complexity-harbour-authority-completed'] and data['low-complexity-other-permissions-completed'] and data['low-complexity-consultation-completed'] and data['low-complexity-sharing-information-completed'] %}
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="environmental-assessments/marine-conservation-zones" aria-describedby="mcz-status">
+				  Marine Conservation Zone Assessment
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="mcz-status">
+				{% if data['low-complexity-mcz-completed'] %}
+				Completed
+				{% else %}
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+				{% endif %}
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="environmental-assessments/sites-of-special-scientific-interest" aria-describedby="sssi-status">
+				  Sites of special scientific interest
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="sssi-status">
+				{% if data['low-complexity-sssi-completed'] %}
+				Completed
+				{% else %}
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+				{% endif %}
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="environmental-assessments/water-framework-directive" aria-describedby="wfd-status">
+					Water Framework Directive assessment
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="wfd-status">
+				{% if data['low-complexity-wfd-completed'] %}
+				Completed
+				{% else %}
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+				{% endif %}
+			  </div>
+			</li>
+		</ul>
+
+		<h2 class="govuk-heading-m">Other permissions</h2>
+		<ul class="govuk-task-list">
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="other-permissions/special-legal-powers" aria-describedby="special-legal-powers-status">
+				  Special legal powers
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="special-legal-powers-status">
+				{% if data['low-complexity-special-legal-powers-completed'] %}
+				Completed
+				{% else %}
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+				{% endif %}
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="other-permissions/harbour-authority" aria-describedby="harbour-authority-status">
+				  Harbour authority
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="harbour-authority-status">
+				{% if data['low-complexity-harbour-authority-completed'] %}
+				Completed
+				{% else %}
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+				{% endif %}
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="other-permissions/other-authorities" aria-describedby="other-authorities-status">
+				  Other authorities
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="other-authorities-status">
+				{% if data['low-complexity-other-permissions-completed'] %}
+				Completed
+				{% else %}
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+				{% endif %}
+			  </div>
+			</li>
+
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="other-permissions/consultation-and-advertising" aria-describedby="consultation-status">
+				  Public consultation
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="consultation-status">
+				{% if data['low-complexity-consultation-completed'] %}
+				Completed
+				{% else %}
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+				{% endif %}
+			  </div>
+			</li>
+		</ul>
+
+		<h2 class="govuk-heading-m">Sharing your project information publicly</h2>
+		<ul class="govuk-task-list">
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="sharing-your-project-information-publicly" aria-describedby="sharing-information-status">
+				  Sharing your project information publicly
+				</a>
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="sharing-information-status">
+				{% if data['low-complexity-sharing-information-completed'] %}
+					Completed
+				{% else %}
+					<strong class="govuk-tag govuk-tag--blue">
+						Not yet started
+					</strong>
+				{% endif %}
+			  </div>
+			</li>
+		</ul>
+
+	{% if data['low-complexity-project-background-completed'] and data['low-complexity-dates-completed'] and data['low-complexity-cost-completed'] and data['low-complexity-site-name-completed'] and data['low-complexity-type-of-activity-completed'] and data['low-complexity-activity-description-completed'] and data['low-complexity-site-duration-completed'] and data['low-complexity-date-completed-by-completed'] and data['low-complexity-months-of-activity-completed'] and data['low-complexity-working-hours-completed'] and data['low-complexity-european-sites-completed'] and data['low-complexity-mcz-completed'] and data['low-complexity-sssi-completed'] and data['low-complexity-wfd-completed'] and data['low-complexity-special-legal-powers-completed'] and data['low-complexity-harbour-authority-completed'] and data['low-complexity-other-permissions-completed'] and data['low-complexity-consultation-completed'] and data['low-complexity-sharing-information-completed'] %}
 	<form action="check-your-answers" method="post">
 		<button class="govuk-button" data-module="govuk-button">
 			Check and send your application
@@ -159,4 +334,3 @@ Marine licence start page
 	</div>
 </div>
 {% endblock %}
-

@@ -110,65 +110,7 @@ module.exports = function (router) {
         req.session.data['camefromcheckanswers'] = false;
         res.redirect('../check-your-answers');
       } else {
-        res.redirect('./');
-      }
-    }
-  });
-
-  // Duration page
-  router.get(`/versions/${version}/${section}/project-details/duration`, function (req, res) {
-    // Clear error flags when navigating to the page
-    req.session.data['errorthispage'] = "false";
-    req.session.data['errortypeone'] = "false";
-    req.session.data['errortypetwo'] = "false";
-    
-    // Capture the query parameter if coming from check answers
-    if (req.query.camefromcheckanswers === 'true') {
-      req.session.data['camefromcheckanswers'] = 'true';
-    }
-    
-    res.render(`versions/${version}/${section}/project-details/duration`);
-  });
-
-  // Duration router (POST)
-  router.post(`/versions/${version}/${section}/project-details/duration-router`, function (req, res) {
-    // Clear error flags
-    req.session.data['errorthispage'] = "false";
-    req.session.data['errortypeone'] = "false";
-    req.session.data['errortypetwo'] = "false";
-
-    // Get the duration values
-    const durationYears = req.session.data['low-complexity-duration-years'];
-    const durationMonths = req.session.data['low-complexity-duration-months'];
-
-    // Validate: check if BOTH fields have values and track which fields are missing
-    const yearsEmpty = !durationYears || durationYears.trim() === '';
-    const monthsEmpty = !durationMonths || durationMonths.trim() === '';
-
-    if (yearsEmpty || monthsEmpty) {
-      // Set error flags
-      req.session.data['errorthispage'] = "true";
-      
-      // Set specific error flags for each field
-      if (yearsEmpty) {
-        req.session.data['errortypeone'] = "true"; // Years error
-      }
-      if (monthsEmpty) {
-        req.session.data['errortypetwo'] = "true"; // Months error
-      }
-      
-      // Redirect back to the same page with errors
-      res.redirect('duration');
-    } else {
-      // Validation passed - set completion flag
-      req.session.data['low-complexity-duration-completed'] = true;
-      
-      // Check if we need to return to check answers
-      if (req.session.data['camefromcheckanswers'] === 'true') {
-        req.session.data['camefromcheckanswers'] = false;
-        res.redirect('../check-your-answers');
-      } else {
-        res.redirect('./');
+        res.redirect('../marine-licence-start-page');
       }
     }
   });
@@ -231,7 +173,7 @@ module.exports = function (router) {
         req.session.data['camefromcheckanswers'] = false;
         res.redirect('../check-your-answers');
       } else {
-        res.redirect('./');
+        res.redirect('../marine-licence-start-page');
       }
     }
   });
@@ -276,7 +218,7 @@ module.exports = function (router) {
         req.session.data['camefromcheckanswers'] = false;
         res.redirect('../check-your-answers');
       } else {
-        res.redirect('./');
+        res.redirect('../marine-licence-start-page');
       }
     }
   });
@@ -345,7 +287,7 @@ module.exports = function (router) {
         req.session.data['camefromcheckanswers'] = false;
         res.redirect('../check-your-answers#other-permissions');
       } else {
-        res.redirect('./');
+        res.redirect('../marine-licence-start-page');
       }
     }
   });
@@ -405,7 +347,7 @@ module.exports = function (router) {
         req.session.data['camefromcheckanswers'] = false;
         res.redirect('../check-your-answers#other-permissions');
       } else {
-        res.redirect('./');
+        res.redirect('../marine-licence-start-page');
       }
     }
   });
@@ -465,7 +407,7 @@ module.exports = function (router) {
         req.session.data['camefromcheckanswers'] = false;
         res.redirect('../check-your-answers#other-permissions');
       } else {
-        res.redirect('./');
+        res.redirect('../marine-licence-start-page');
       }
     }
   });
@@ -525,7 +467,7 @@ module.exports = function (router) {
         req.session.data['camefromcheckanswers'] = false;
         res.redirect('../check-your-answers#other-permissions');
       } else {
-        res.redirect('./');
+        res.redirect('../marine-licence-start-page');
       }
     }
   });
@@ -675,7 +617,7 @@ module.exports = function (router) {
         req.session.data['camefromcheckanswers'] = false;
         res.redirect('../check-your-answers#environmental-assessments');
       } else {
-        res.redirect('./');
+        res.redirect('../marine-licence-start-page');
       }
     }
   });
@@ -720,7 +662,7 @@ module.exports = function (router) {
         req.session.data['camefromcheckanswers'] = false;
         res.redirect('../check-your-answers#environmental-assessments');
       } else {
-        res.redirect('./');
+        res.redirect('../marine-licence-start-page');
       }
     }
   });
@@ -765,7 +707,7 @@ module.exports = function (router) {
         req.session.data['camefromcheckanswers'] = false;
         res.redirect('../check-your-answers#environmental-assessments');
       } else {
-        res.redirect('./');
+        res.redirect('../marine-licence-start-page');
       }
     }
   });
@@ -833,7 +775,7 @@ module.exports = function (router) {
         req.session.data['camefromcheckanswers'] = false;
         res.redirect('../check-your-answers#environmental-assessments');
       } else {
-        res.redirect('./');
+        res.redirect('../marine-licence-start-page');
       }
     } else if (nauticalMile === 'Yes') {
       // Check if file already uploaded and coming from check answers
@@ -911,8 +853,8 @@ module.exports = function (router) {
       req.session.data['camefromcheckanswers'] = false;
       res.redirect('../check-your-answers#environmental-assessments');
     } else {
-      // Return to environmental assessments task list
-      res.redirect('./');
+      // Return to main task list
+      res.redirect('../marine-licence-start-page');
     }
   });
 
@@ -930,9 +872,6 @@ module.exports = function (router) {
     delete req.session.data['low-complexity-project-name-text-input'];
     delete req.session.data['low-complexity-project-background'];
     delete req.session.data['low-complexity-project-background-completed'];
-    delete req.session.data['low-complexity-duration-years'];
-    delete req.session.data['low-complexity-duration-months'];
-    delete req.session.data['low-complexity-duration-completed'];
     delete req.session.data['start-date-day'];
     delete req.session.data['start-date-month'];
     delete req.session.data['start-date-year'];
