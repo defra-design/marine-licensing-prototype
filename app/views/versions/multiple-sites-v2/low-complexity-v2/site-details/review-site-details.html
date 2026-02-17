@@ -106,12 +106,19 @@ Review site details
             </div>
         </div>
 
-        <!-- Site 1 details section -->
-        <div id="site-1-details" class="govuk-summary-card">
+        <!-- Site 1 section -->
+        <div id="site-1" class="govuk-summary-card">
             <div class="govuk-summary-card__title-wrapper">
                 <h2 class="govuk-summary-card__title">
-                    Site 1 details
+                    Site 1
                 </h2>
+                <ul class="govuk-summary-card__actions">
+                    <li class="govuk-summary-card__action">
+                        <a class="govuk-link govuk-link--no-visited-state" href="#">
+                            Change site location<span class="govuk-visually-hidden"> for site 1</span>
+                        </a>
+                    </li>
+                </ul>
             </div>
             <div class="govuk-summary-card__content">
                 <dl class="govuk-summary-list govuk-summary-list--full-width">
@@ -141,7 +148,19 @@ Review site details
                             <img src="/public/images/map-5-points.jpg" alt="Map showing site 1 location" />
                         </dd>
                     </div>
+                </dl>
+            </div>
+        </div>
 
+        <!-- Site 1 activity details section -->
+        <div id="site-1-activity-details" class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">
+                    Site 1 activity details
+                </h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
                             Type of activity
@@ -237,9 +256,6 @@ Review site details
                                 {% if data['low-complexity-site-duration-months'] and data['low-complexity-site-duration-months'] != '0' %}
                                     {% set durationParts = (durationParts.push(data['low-complexity-site-duration-months'] + ' ' + ('month' if data['low-complexity-site-duration-months'] == '1' else 'months')), durationParts) %}
                                 {% endif %}
-                                {% if data['low-complexity-site-duration-weeks'] and data['low-complexity-site-duration-weeks'] != '0' %}
-                                    {% set durationParts = (durationParts.push(data['low-complexity-site-duration-weeks'] + ' ' + ('week' if data['low-complexity-site-duration-weeks'] == '1' else 'weeks')), durationParts) %}
-                                {% endif %}
                                 {{ durationParts | join(', ') if durationParts.length > 0 else 'Not provided' }}
                             {% else %}
                                 <span class="govuk-tag govuk-tag--red">Incomplete</span>
@@ -248,6 +264,20 @@ Review site details
                         <dd class="govuk-summary-list__actions">
                             <a href="duration" class="govuk-link govuk-link--no-visited-state">
                                 {% if data['low-complexity-site-duration-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> duration</span>
+                            </a>
+                        </dd>
+                    </div>
+
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">
+                            Months of activity
+                        </dt>
+                        <dd class="govuk-summary-list__value">
+                            <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                        </dd>
+                        <dd class="govuk-summary-list__actions">
+                            <a href="#" class="govuk-link govuk-link--no-visited-state">
+                                Add<span class="govuk-visually-hidden"> months of activity</span>
                             </a>
                         </dd>
                     </div>

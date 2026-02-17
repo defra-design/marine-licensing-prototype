@@ -440,7 +440,6 @@ module.exports = function (router) {
     req.session.data['low-complexity-site-duration-errorthispage'] = "false";
     req.session.data['low-complexity-site-duration-years-error'] = "false";
     req.session.data['low-complexity-site-duration-months-error'] = "false";
-    req.session.data['low-complexity-site-duration-weeks-error'] = "false";
     res.render(`versions/${version}/${section}/${subsection}/duration`);
   });
 
@@ -450,14 +449,12 @@ module.exports = function (router) {
     req.session.data['low-complexity-site-duration-errorthispage'] = "false";
     req.session.data['low-complexity-site-duration-years-error'] = "false";
     req.session.data['low-complexity-site-duration-months-error'] = "false";
-    req.session.data['low-complexity-site-duration-weeks-error'] = "false";
 
     let hasErrors = false;
 
-    // Check if all three fields are empty or missing
+    // Check if both fields are empty or missing
     const yearsEmpty = !req.session.data['low-complexity-site-duration-years'] || req.session.data['low-complexity-site-duration-years'].trim() === '';
     const monthsEmpty = !req.session.data['low-complexity-site-duration-months'] || req.session.data['low-complexity-site-duration-months'].trim() === '';
-    const weeksEmpty = !req.session.data['low-complexity-site-duration-weeks'] || req.session.data['low-complexity-site-duration-weeks'].trim() === '';
 
     if (yearsEmpty) {
       req.session.data['low-complexity-site-duration-years-error'] = "true";
@@ -466,11 +463,6 @@ module.exports = function (router) {
 
     if (monthsEmpty) {
       req.session.data['low-complexity-site-duration-months-error'] = "true";
-      hasErrors = true;
-    }
-
-    if (weeksEmpty) {
-      req.session.data['low-complexity-site-duration-weeks-error'] = "true";
       hasErrors = true;
     }
 
@@ -579,7 +571,6 @@ module.exports = function (router) {
     // Duration
     delete req.session.data['low-complexity-site-duration-years'];
     delete req.session.data['low-complexity-site-duration-months'];
-    delete req.session.data['low-complexity-site-duration-weeks'];
     delete req.session.data['low-complexity-site-duration-completed'];
     
     // Schedule

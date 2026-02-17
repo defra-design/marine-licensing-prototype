@@ -57,7 +57,7 @@ Error:
 						</h1>
 					</legend>
 
-					<p class="govuk-body">Enter 0 in any text boxes that do not apply, for example, if the activity is 4 months and 3 weeks enter 0 in years</p>
+					<p class="govuk-body">Enter 0 in any text boxes that do not apply, for example, if the activity is for 3 months, enter 0 in years</p>
 
 					{% if data['low-complexity-site-duration-errorthispage'] == "true" %}
 					<p id="duration-error" class="govuk-error-message">
@@ -94,19 +94,6 @@ Error:
 										type="text" 
 										inputmode="numeric"
 										value="{{ data['low-complexity-site-duration-months'] }}">
-								</div>
-							</div>
-							<div class="govuk-date-input__item">
-								<div class="govuk-form-group">
-									<label class="govuk-label govuk-date-input__label" for="low-complexity-site-duration-weeks">
-										Weeks
-									</label>
-									<input class="govuk-input govuk-date-input__input govuk-input--width-2 {% if data['low-complexity-site-duration-weeks-error'] == 'true' %}govuk-input--error{% endif %}" 
-										id="low-complexity-site-duration-weeks" 
-										name="low-complexity-site-duration-weeks" 
-										type="text" 
-										inputmode="numeric"
-										value="{{ data['low-complexity-site-duration-weeks'] }}">
 								</div>
 							</div>
 						</div>
