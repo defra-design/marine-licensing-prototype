@@ -14,11 +14,15 @@
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-What is the activity schedule?
+What are the proposed working hours?
 {% endset %}
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
 {% block pageTitle %}
+{% if data['low-complexity-working-hours-errorthispage'] == "true" %}
+Error:
+{% endif %}
+
 {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
 {% endblock %}
 
@@ -26,42 +30,40 @@ What is the activity schedule?
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         
-        <form action="schedule-router" method="post" novalidate>
+        <form action="working-hours-router" method="post" novalidate>
             
             <!-- Error summary -->
-            {% if data['low-complexity-schedule-errorthispage'] == "true" %}
+            {% if data['low-complexity-working-hours-errorthispage'] == "true" %}
                 {{ govukErrorSummary({
                     titleText: "There is a problem",
                     errorList: [
                         {
-                            text: "Enter the activity schedule",
-                            href: "#low-complexity-schedule"
+                            text: "Enter the proposed working hours",
+                            href: "#low-complexity-working-hours"
                         }
                     ]
                 }) }}
             {% endif %}
 
-            <div class="govuk-form-group {% if data['low-complexity-schedule-errorthispage'] == 'true' %}govuk-form-group--error{% endif %}">
+            <div class="govuk-form-group {% if data['low-complexity-working-hours-errorthispage'] == 'true' %}govuk-form-group--error{% endif %}">
                 <h1 class="govuk-label-wrapper">
-                    <label class="govuk-label govuk-label--l" for="low-complexity-schedule">
+                    <label class="govuk-label govuk-label--l" for="low-complexity-working-hours">
                         <span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}<span class="govuk-!-display-block">Site 1</span></span>
                         {{ pageHeadingTextHTML }}
                     </label>
                 </h1>
 
-                <p class="govuk-body">This is the schedule for when this activity will happen. For example, it will take 12 weeks and be carried out Monday to Friday, 9am to 4pm for 7 hours each day.</p>
+                <p class="govuk-body">Tell us the days of the week and start and finish times (for example, Monday to Friday, 9am to 5pm).</p>
 
-                <p class="govuk-body">If any part of the activity needs to be completed by a certain date also include these details. And if there are any periods of time the activity cannot be carried out include these and the reason why.</p>
-
-                <div id="low-complexity-schedule-hint" class="govuk-hint">Enter a maximum of 2,000 characters</div>
+                <div id="low-complexity-working-hours-hint" class="govuk-hint">Enter a maximum of 2,000 characters</div>
                 
-                {% if data['low-complexity-schedule-errorthispage'] == "true" %}
-                <p id="low-complexity-schedule-error" class="govuk-error-message">
-                    <span class="govuk-visually-hidden">Error:</span> Enter the activity schedule
+                {% if data['low-complexity-working-hours-errorthispage'] == "true" %}
+                <p id="low-complexity-working-hours-error" class="govuk-error-message">
+                    <span class="govuk-visually-hidden">Error:</span> Enter the proposed working hours
                 </p>
                 {% endif %}
                 
-                <textarea class="govuk-textarea {% if data['low-complexity-schedule-errorthispage'] == 'true' %}govuk-textarea--error{% endif %}" id="low-complexity-schedule" name="low-complexity-schedule" rows="5">{{ data['low-complexity-schedule'] }}</textarea>
+                <textarea class="govuk-textarea {% if data['low-complexity-working-hours-errorthispage'] == 'true' %}govuk-textarea--error{% endif %}" id="low-complexity-working-hours" name="low-complexity-working-hours" rows="5" aria-describedby="low-complexity-working-hours-hint{% if data['low-complexity-working-hours-errorthispage'] == 'true' %} low-complexity-working-hours-error{% endif %}">{{ data['low-complexity-working-hours'] }}</textarea>
             </div>
             
             <div class="govuk-button-group">
@@ -75,4 +77,3 @@ What is the activity schedule?
     </div>
 </div>
 {% endblock %}
-

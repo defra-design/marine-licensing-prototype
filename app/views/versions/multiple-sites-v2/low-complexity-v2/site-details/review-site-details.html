@@ -36,10 +36,10 @@ Review site details
         {% set durationComplete = data['low-complexity-site-duration-completed'] %}
         {% set dateCompletedByComplete = data['low-complexity-date-completed-by-completed'] %}
         {% set monthsOfActivityComplete = data['low-complexity-months-of-activity-completed'] %}
-        {% set scheduleComplete = data['low-complexity-schedule-completed'] %}
+        {% set workingHoursComplete = data['low-complexity-working-hours-completed'] %}
         {% set impactsComplete = data['low-complexity-impacts-completed'] %}
         
-        {% set allComplete = siteNameComplete and typeOfActivityComplete and activityDescComplete and durationComplete and dateCompletedByComplete and monthsOfActivityComplete and scheduleComplete and impactsComplete %}
+        {% set allComplete = siteNameComplete and typeOfActivityComplete and activityDescComplete and durationComplete and dateCompletedByComplete and monthsOfActivityComplete and workingHoursComplete and impactsComplete %}
         
         {% if not allComplete %}
             {{ govukInsetText({
@@ -247,7 +247,7 @@ Review site details
 
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
-                            Duration of activity
+                            Maximum duration of activity
                         </dt>
                         <dd class="govuk-summary-list__value">
                             {% if data['low-complexity-site-duration-completed'] %}
@@ -316,18 +316,18 @@ Review site details
 
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
-                            Activity schedule
+                            Proposed working hours
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            {% if data['low-complexity-schedule-completed'] and data['low-complexity-schedule'] %}
-                                {{ data['low-complexity-schedule'] }}
+                            {% if data['low-complexity-working-hours-completed'] and data['low-complexity-working-hours'] %}
+                                {{ data['low-complexity-working-hours'] }}
                             {% else %}
                                 <span class="govuk-tag govuk-tag--red">Incomplete</span>
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="schedule" class="govuk-link govuk-link--no-visited-state">
-                                {% if data['low-complexity-schedule-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> schedule</span>
+                            <a href="working-hours" class="govuk-link govuk-link--no-visited-state">
+                                {% if data['low-complexity-working-hours-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> proposed working hours</span>
                             </a>
                         </dd>
                     </div>

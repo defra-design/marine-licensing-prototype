@@ -560,28 +560,28 @@ module.exports = function (router) {
   });
 
   /////////////////////////////////////////////////////////
-  //////// Schedule page
+  //////// Working hours page
   /////////////////////////////////////////////////////////
-  router.get(`/versions/${version}/${section}/${subsection}/schedule`, function (req, res) {
+  router.get(`/versions/${version}/${section}/${subsection}/working-hours`, function (req, res) {
     // Clear any previous errors
-    req.session.data['low-complexity-schedule-errorthispage'] = "false";
-    res.render(`versions/${version}/${section}/${subsection}/schedule`);
+    req.session.data['low-complexity-working-hours-errorthispage'] = "false";
+    res.render(`versions/${version}/${section}/${subsection}/working-hours`);
   });
 
-  // Schedule router (POST)
-  router.post(`/versions/${version}/${section}/${subsection}/schedule-router`, function (req, res) {
+  // Working hours router (POST)
+  router.post(`/versions/${version}/${section}/${subsection}/working-hours-router`, function (req, res) {
     // Clear any previous errors
-    req.session.data['low-complexity-schedule-errorthispage'] = "false";
+    req.session.data['low-complexity-working-hours-errorthispage'] = "false";
 
-    // Check if schedule is entered
-    if (!req.session.data['low-complexity-schedule'] || req.session.data['low-complexity-schedule'].trim() === '') {
-      req.session.data['low-complexity-schedule-errorthispage'] = "true";
-      res.redirect('schedule');
+    // Check if working hours is entered
+    if (!req.session.data['low-complexity-working-hours'] || req.session.data['low-complexity-working-hours'].trim() === '') {
+      req.session.data['low-complexity-working-hours-errorthispage'] = "true";
+      res.redirect('working-hours');
       return;
     }
 
     // Mark as completed and redirect to review page
-    req.session.data['low-complexity-schedule-completed'] = true;
+    req.session.data['low-complexity-working-hours-completed'] = true;
     res.redirect('review-site-details#site-1-activity-details');
   });
 
@@ -665,9 +665,9 @@ module.exports = function (router) {
     delete req.session.data['low-complexity-months-of-activity-details'];
     delete req.session.data['low-complexity-months-of-activity-completed'];
     
-    // Schedule
-    delete req.session.data['low-complexity-schedule'];
-    delete req.session.data['low-complexity-schedule-completed'];
+    // Working hours
+    delete req.session.data['low-complexity-working-hours'];
+    delete req.session.data['low-complexity-working-hours-completed'];
     
     // Impacts
     delete req.session.data['low-complexity-impacts'];
