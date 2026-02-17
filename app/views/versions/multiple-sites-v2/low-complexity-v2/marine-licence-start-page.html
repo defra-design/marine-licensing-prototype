@@ -21,11 +21,13 @@ Marine licence start page
 
 <div class="govuk-grid-row">
 	<div class="govuk-grid-column-two-thirds">
-		<span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
+		<span class="govuk-caption-l">Marine licence</span>
 		<h1 class="govuk-heading-l">
-			{{ pageHeadingTextHTML }}
+			{{ data['low-complexity-project-name-text-input'] }}
 		</h1>
 		<p class="govuk-body">When you provide your information you'll need to complete all sections before you can send your application.</p>
+
+		<p>You'll be able to start the Marine plan policy section once you have completed the site details section.</p>
 		<p class="govuk-body">Your progress will be saved as you go if you need to come back later.</p>
 
 		<h2 class="govuk-heading-m">Project details</h2>
@@ -117,6 +119,34 @@ Marine licence start page
 					<strong class="govuk-tag govuk-tag--blue">
 						Not yet started
 					</strong>
+				{% endif %}
+			  </div>
+			</li>
+		</ul>
+
+		<h2 class="govuk-heading-m">Marine plan policies</h2>
+
+		<p class="govuk-body">Read the <a href="#" class="govuk-link">Marine plan policies guidance</a> before you start.</p>
+
+		<ul class="govuk-task-list">
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				{% if data['low-complexity-site-name-completed'] and data['low-complexity-type-of-activity-completed'] and data['low-complexity-activity-description-completed'] and data['low-complexity-site-duration-completed'] and data['low-complexity-date-completed-by-completed'] and data['low-complexity-months-of-activity-completed'] and data['low-complexity-working-hours-completed'] %}
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="marine-plan-policies/" aria-describedby="marine-plan-policies-status">
+				  Marine plan policies considerations
+				</a>
+				{% else %}
+				<span>Marine plan policies considerations</span>
+				{% endif %}
+			  </div>
+			  
+			  <div class="govuk-task-list__status" id="marine-plan-policies-status">
+				{% if data['low-complexity-site-name-completed'] and data['low-complexity-type-of-activity-completed'] and data['low-complexity-activity-description-completed'] and data['low-complexity-site-duration-completed'] and data['low-complexity-date-completed-by-completed'] and data['low-complexity-months-of-activity-completed'] and data['low-complexity-working-hours-completed'] %}
+					<strong class="govuk-tag govuk-tag--blue">
+						Not yet started
+					</strong>
+				{% else %}
+					Cannot start yet
 				{% endif %}
 			  </div>
 			</li>
