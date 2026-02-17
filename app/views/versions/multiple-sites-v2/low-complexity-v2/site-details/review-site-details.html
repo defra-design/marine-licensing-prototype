@@ -37,9 +37,8 @@ Review site details
         {% set dateCompletedByComplete = data['low-complexity-date-completed-by-completed'] %}
         {% set monthsOfActivityComplete = data['low-complexity-months-of-activity-completed'] %}
         {% set workingHoursComplete = data['low-complexity-working-hours-completed'] %}
-        {% set impactsComplete = data['low-complexity-impacts-completed'] %}
         
-        {% set allComplete = siteNameComplete and typeOfActivityComplete and activityDescComplete and durationComplete and dateCompletedByComplete and monthsOfActivityComplete and workingHoursComplete and impactsComplete %}
+        {% set allComplete = siteNameComplete and typeOfActivityComplete and activityDescComplete and durationComplete and dateCompletedByComplete and monthsOfActivityComplete and workingHoursComplete %}
         
         {% if not allComplete %}
             {{ govukInsetText({
@@ -328,24 +327,6 @@ Review site details
                         <dd class="govuk-summary-list__actions">
                             <a href="working-hours" class="govuk-link govuk-link--no-visited-state">
                                 {% if data['low-complexity-working-hours-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> proposed working hours</span>
-                            </a>
-                        </dd>
-                    </div>
-
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            Possible impacts of the activity and ways to reduce them
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            {% if data['low-complexity-impacts-completed'] and data['low-complexity-impacts'] %}
-                                {{ data['low-complexity-impacts'] }}
-                            {% else %}
-                                <span class="govuk-tag govuk-tag--red">Incomplete</span>
-                            {% endif %}
-                        </dd>
-                        <dd class="govuk-summary-list__actions">
-                            <a href="impacts" class="govuk-link govuk-link--no-visited-state">
-                                {% if data['low-complexity-impacts-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> possible impacts of the activity</span>
                             </a>
                         </dd>
                     </div>

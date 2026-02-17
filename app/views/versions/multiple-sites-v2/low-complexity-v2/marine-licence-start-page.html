@@ -62,24 +62,6 @@ Marine licence start page
 
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
 			  <div class="govuk-task-list__name-and-hint">
-				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="project-details/duration" aria-describedby="duration-status">
-				  Duration of project
-				</a>
-			  </div>
-			  
-			  <div class="govuk-task-list__status" id="duration-status">
-				{% if data['low-complexity-duration-completed'] %}
-				Completed
-				{% else %}
-				<strong class="govuk-tag govuk-tag--blue">
-					Not yet started
-				</strong>
-				{% endif %}
-			  </div>
-			</li>
-
-			<li class="govuk-task-list__item govuk-task-list__item--with-link">
-			  <div class="govuk-task-list__name-and-hint">
 				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="project-details/dates-of-marine-works" aria-describedby="dates-status">
 				  Dates of marine works
 				</a>
@@ -125,7 +107,7 @@ Marine licence start page
 			  </div>
 			  
 			  <div class="govuk-task-list__status" id="site-details-status">
-				{% if data['low-complexity-site-name-completed'] and data['low-complexity-type-of-activity-completed'] and data['low-complexity-activity-description-completed'] and data['low-complexity-site-duration-completed'] and data['low-complexity-schedule-completed'] and data['low-complexity-impacts-completed'] %}
+				{% if data['low-complexity-site-name-completed'] and data['low-complexity-type-of-activity-completed'] and data['low-complexity-activity-description-completed'] and data['low-complexity-site-duration-completed'] and data['low-complexity-date-completed-by-completed'] and data['low-complexity-months-of-activity-completed'] and data['low-complexity-working-hours-completed'] %}
 					Completed
 				{% elif data['has-visited-site-details'] %}
 					<strong class="govuk-tag govuk-tag--light-blue">
@@ -311,7 +293,7 @@ Marine licence start page
 			</li>
 		</ul>
 
-	{% if data['low-complexity-project-background-completed'] and data['low-complexity-duration-completed'] and data['low-complexity-dates-completed'] and data['low-complexity-cost-completed'] and data['low-complexity-site-name-completed'] and data['low-complexity-type-of-activity-completed'] and data['low-complexity-activity-description-completed'] and data['low-complexity-site-duration-completed'] and data['low-complexity-schedule-completed'] and data['low-complexity-impacts-completed'] and data['low-complexity-european-sites-completed'] and data['low-complexity-mcz-completed'] and data['low-complexity-sssi-completed'] and data['low-complexity-wfd-completed'] and data['low-complexity-special-legal-powers-completed'] and data['low-complexity-harbour-authority-completed'] and data['low-complexity-other-permissions-completed'] and data['low-complexity-consultation-completed'] and data['low-complexity-sharing-information-completed'] %}
+	{% if data['low-complexity-project-background-completed'] and data['low-complexity-dates-completed'] and data['low-complexity-cost-completed'] and data['low-complexity-site-name-completed'] and data['low-complexity-type-of-activity-completed'] and data['low-complexity-activity-description-completed'] and data['low-complexity-site-duration-completed'] and data['low-complexity-date-completed-by-completed'] and data['low-complexity-months-of-activity-completed'] and data['low-complexity-working-hours-completed'] and data['low-complexity-european-sites-completed'] and data['low-complexity-mcz-completed'] and data['low-complexity-sssi-completed'] and data['low-complexity-wfd-completed'] and data['low-complexity-special-legal-powers-completed'] and data['low-complexity-harbour-authority-completed'] and data['low-complexity-other-permissions-completed'] and data['low-complexity-consultation-completed'] and data['low-complexity-sharing-information-completed'] %}
 	<form action="check-your-answers" method="post">
 		<button class="govuk-button" data-module="govuk-button">
 			Check and send your application
