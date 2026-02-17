@@ -110,7 +110,7 @@ module.exports = function (router) {
         req.session.data['camefromcheckanswers'] = false;
         res.redirect('../check-your-answers');
       } else {
-        res.redirect('./');
+        res.redirect('../marine-licence-start-page');
       }
     }
   });
@@ -173,7 +173,7 @@ module.exports = function (router) {
         req.session.data['camefromcheckanswers'] = false;
         res.redirect('../check-your-answers');
       } else {
-        res.redirect('./');
+        res.redirect('../marine-licence-start-page');
       }
     }
   });
@@ -218,7 +218,7 @@ module.exports = function (router) {
         req.session.data['camefromcheckanswers'] = false;
         res.redirect('../check-your-answers');
       } else {
-        res.redirect('./');
+        res.redirect('../marine-licence-start-page');
       }
     }
   });
@@ -287,7 +287,7 @@ module.exports = function (router) {
         req.session.data['camefromcheckanswers'] = false;
         res.redirect('../check-your-answers#other-permissions');
       } else {
-        res.redirect('./');
+        res.redirect('../marine-licence-start-page');
       }
     }
   });
@@ -347,7 +347,7 @@ module.exports = function (router) {
         req.session.data['camefromcheckanswers'] = false;
         res.redirect('../check-your-answers#other-permissions');
       } else {
-        res.redirect('./');
+        res.redirect('../marine-licence-start-page');
       }
     }
   });
@@ -407,7 +407,7 @@ module.exports = function (router) {
         req.session.data['camefromcheckanswers'] = false;
         res.redirect('../check-your-answers#other-permissions');
       } else {
-        res.redirect('./');
+        res.redirect('../marine-licence-start-page');
       }
     }
   });
@@ -467,7 +467,7 @@ module.exports = function (router) {
         req.session.data['camefromcheckanswers'] = false;
         res.redirect('../check-your-answers#other-permissions');
       } else {
-        res.redirect('./');
+        res.redirect('../marine-licence-start-page');
       }
     }
   });
@@ -617,7 +617,7 @@ module.exports = function (router) {
         req.session.data['camefromcheckanswers'] = false;
         res.redirect('../check-your-answers#environmental-assessments');
       } else {
-        res.redirect('./');
+        res.redirect('../marine-licence-start-page');
       }
     }
   });
@@ -662,7 +662,7 @@ module.exports = function (router) {
         req.session.data['camefromcheckanswers'] = false;
         res.redirect('../check-your-answers#environmental-assessments');
       } else {
-        res.redirect('./');
+        res.redirect('../marine-licence-start-page');
       }
     }
   });
@@ -707,7 +707,7 @@ module.exports = function (router) {
         req.session.data['camefromcheckanswers'] = false;
         res.redirect('../check-your-answers#environmental-assessments');
       } else {
-        res.redirect('./');
+        res.redirect('../marine-licence-start-page');
       }
     }
   });
@@ -775,7 +775,7 @@ module.exports = function (router) {
         req.session.data['camefromcheckanswers'] = false;
         res.redirect('../check-your-answers#environmental-assessments');
       } else {
-        res.redirect('./');
+        res.redirect('../marine-licence-start-page');
       }
     } else if (nauticalMile === 'Yes') {
       // Check if file already uploaded and coming from check answers
@@ -853,8 +853,8 @@ module.exports = function (router) {
       req.session.data['camefromcheckanswers'] = false;
       res.redirect('../check-your-answers#environmental-assessments');
     } else {
-      // Return to environmental assessments task list
-      res.redirect('./');
+      // Return to main task list
+      res.redirect('../marine-licence-start-page');
     }
   });
 
