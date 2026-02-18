@@ -1,0 +1,51 @@
+{% extends "../../layouts/low-complexity.html" %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% if data['user_type'] === 'organisation' %}
+        {% include "../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link govuk-link--no-visited-state" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+{% set pageHeadingTextHTML %}
+Marine plan policy guidance
+{% endset %}
+
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-two-thirds">
+		<span class="govuk-caption-m">{{ data['low-complexity-project-name-text-input'] }}</span>
+		<h1 class="govuk-heading-l">
+			{{ pageHeadingTextHTML }}
+		</h1>
+
+		<p class="govuk-body">The policies listed are relevant to your project based on what you told us in 'Site details'. If you change those answers, the policies shown here may change.</p>
+
+		<p class="govuk-body">You can find all the policies that apply to your project, with policy aims, marine licence data and environmental designations in <a href="https://www.gov.uk/guidance/explore-marine-plans" class="govuk-link" target="_blank" rel="noopener noreferrer">Explore marine plans (opens in new tab)</a>.</p>
+
+		<h2 class="govuk-heading-m">How to complete the Marine plan policies section</h2>
+
+		<p class="govuk-body">For each policy, you will need to tell us how you will manage the impacts. Select whether impacts will be:</p>
+
+		<ul class="govuk-list govuk-list--bullet">
+			<li><strong>avoided</strong> (the impacts do not happen)</li>
+			<li><strong>minimised</strong> (the impacts cannot be fully avoided but is minimised)</li>
+			<li><strong>mitigated</strong> (specific action is taken to reduce impacts that cannot be fully avoided or minimised)</li>
+			<li><strong>compensated for</strong> (the impacts are unavoidable so an equivalent environmental benefit is provided elsewhere)</li>
+		</ul>
+
+		<p class="govuk-body">You'll then need to explain your answer in relation to the policy.</p>
+
+		<p class="govuk-body">Each policy includes an example to give you an idea of what a good response looks like. These are for guidance only - your answer should reflect your specific project.</p>
+
+		<p class="govuk-body">Some policies do not include compensation as an option. If this applies, you'll only see avoid, minimise and mitigate. Some policies do not follow this structure and only require an explanation.</p>
+	</div>
+</div>
+
+{% endblock %}
