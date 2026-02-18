@@ -11,4 +11,11 @@ module.exports = function (router) {
     res.render(`versions/${version}/${section}/${subsection}/index`);
   });
 
+  /////////////////////////////////////////////////////////
+  //////// Marine plan policy guidance page
+  /////////////////////////////////////////////////////////
+  router.get(`/versions/${version}/${section}/${subsection}/guidance`, function (req, res) {
+    res.render(`versions/${version}/${section}/${subsection}/guidance`);
+  });
+
 };
