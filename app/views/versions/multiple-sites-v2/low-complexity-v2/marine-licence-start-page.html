@@ -124,25 +124,36 @@ Marine licence start page
 			</li>
 		</ul>
 
-		<h2 class="govuk-heading-m">Marine plan policies</h2>
+		<h2 class="govuk-heading-m">Marine plan policy considerations</h2>
 
 		<ul class="govuk-task-list">
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
 			  <div class="govuk-task-list__name-and-hint">
 				{% if data['low-complexity-site-name-completed'] and data['low-complexity-type-of-activity-completed'] and data['low-complexity-activity-description-completed'] and data['low-complexity-site-duration-completed'] and data['low-complexity-date-completed-by-completed'] and data['low-complexity-months-of-activity-completed'] and data['low-complexity-working-hours-completed'] %}
+				{% set marinePoliciesCompleted = data['marine-plan-policies-completed-count'] | default(0) %}
+				{% set marinePoliciesNotStarted = data['marine-plan-policies-not-started-count'] | default(0) %}
+				{% set marinePoliciesTotal = marinePoliciesCompleted + marinePoliciesNotStarted %}
 				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="marine-plan-policies/" aria-describedby="marine-plan-policies-status">
-				  Marine plan policies considerations
+				  Marine plan policies {% if marinePoliciesCompleted == 0 %}({{ marinePoliciesTotal }} to complete){% else %}({{ marinePoliciesCompleted }} of {{ marinePoliciesTotal }} completed){% endif %}
 				</a>
 				{% else %}
-				<span>Marine plan policies considerations</span>
+				<span>Marine plan policies</span>
 				{% endif %}
 			  </div>
 			  
 			  <div class="govuk-task-list__status" id="marine-plan-policies-status">
 				{% if data['low-complexity-site-name-completed'] and data['low-complexity-type-of-activity-completed'] and data['low-complexity-activity-description-completed'] and data['low-complexity-site-duration-completed'] and data['low-complexity-date-completed-by-completed'] and data['low-complexity-months-of-activity-completed'] and data['low-complexity-working-hours-completed'] %}
+					{% if data['marine-plan-policies-not-started-count'] == 0 %}
+					Completed
+					{% elif data['marine-plan-policies-completed-count'] > 0 %}
+					<strong class="govuk-tag govuk-tag--light-blue">
+						In progress
+					</strong>
+					{% else %}
 					<strong class="govuk-tag govuk-tag--blue">
 						Not yet started
 					</strong>
+					{% endif %}
 				{% else %}
 					Cannot start yet
 				{% endif %}

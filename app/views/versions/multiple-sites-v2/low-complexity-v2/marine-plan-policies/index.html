@@ -5,7 +5,7 @@
     {% if data['user_type'] === 'organisation' %}
         {% include "../../includes/organisation-switcher.html" %}
     {% endif %}
-    <a class="govuk-back-link govuk-link--no-visited-state" href="../marine-licence-start-page">Back to the main project page</a>
+    <a class="govuk-back-link govuk-link--no-visited-state" href="../marine-licence-start-page">Back to your project task list</a>
 {% endblock %}
 
 <!-- Setting the big main heading at the top of the page -->
@@ -34,6 +34,10 @@ Marine plan policies
 		</h1>
 
 		<p class="govuk-body">Before you start, read information on the policies presented here and how to complete this section in <a href="guidance" class="govuk-link">Marine plan policy guidance</a>.</p>
+		{% set marinePoliciesCompleted = data['marine-plan-policies-completed-count'] | default(0) %}
+		{% set marinePoliciesNotStarted = data['marine-plan-policies-not-started-count'] | default(0) %}
+		{% set marinePoliciesTotal = marinePoliciesCompleted + marinePoliciesNotStarted %}
+		<p class="govuk-body">{% if marinePoliciesCompleted == 0 %}{{ marinePoliciesTotal }} policies to complete{% else %}{{ marinePoliciesCompleted }} of {{ marinePoliciesTotal }} completed{% endif %}</p>
 		<h2 class="govuk-heading-m">Environmental protection and impacts</h2>
 		<ul class="govuk-task-list">
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
@@ -350,14 +354,18 @@ Marine plan policies
 		<ul class="govuk-task-list">
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
 			  <div class="govuk-task-list__name-and-hint">
-				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-acc-1-status">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="south-access-1" aria-describedby="s-acc-1-status">
 				  South Access 1 (S-ACC-1)
 				</a>
 			  </div>
 			  <div class="govuk-task-list__status" id="s-acc-1-status">
+				{% if data['marine-plan-policy-s-acc-1-completed'] %}
+				Completed
+				{% else %}
 				<strong class="govuk-tag govuk-tag--blue">
 					Not yet started
 				</strong>
+				{% endif %}
 			  </div>
 			</li>
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
