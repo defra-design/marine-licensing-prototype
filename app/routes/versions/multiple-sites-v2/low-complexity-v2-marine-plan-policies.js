@@ -8,6 +8,7 @@ module.exports = function (router) {
   //////// Marine plan policies index page
   /////////////////////////////////////////////////////////
   router.get(`/versions/${version}/${section}/${subsection}/`, function (req, res) {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
     res.render(`versions/${version}/${section}/${subsection}/index`);
   });
 

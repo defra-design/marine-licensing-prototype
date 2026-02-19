@@ -34,6 +34,10 @@ Marine plan policies
 		</h1>
 
 		<p class="govuk-body">Before you start, read information on the policies presented here and how to complete this section in <a href="guidance" class="govuk-link">Marine plan policy guidance</a>.</p>
+		{% set marinePoliciesCompleted = data['marine-plan-policies-completed-count'] | default(0) %}
+		{% set marinePoliciesNotStarted = data['marine-plan-policies-not-started-count'] | default(0) %}
+		{% set marinePoliciesTotal = marinePoliciesCompleted + marinePoliciesNotStarted %}
+		<p class="govuk-body">{% if marinePoliciesCompleted == 0 %}{{ marinePoliciesTotal }} policies to complete{% else %}{{ marinePoliciesCompleted }} of {{ marinePoliciesTotal }} completed{% endif %}</p>
 		<h2 class="govuk-heading-m">Environmental protection and impacts</h2>
 		<ul class="govuk-task-list">
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">

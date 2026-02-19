@@ -130,8 +130,11 @@ Marine licence start page
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
 			  <div class="govuk-task-list__name-and-hint">
 				{% if data['low-complexity-site-name-completed'] and data['low-complexity-type-of-activity-completed'] and data['low-complexity-activity-description-completed'] and data['low-complexity-site-duration-completed'] and data['low-complexity-date-completed-by-completed'] and data['low-complexity-months-of-activity-completed'] and data['low-complexity-working-hours-completed'] %}
+				{% set marinePoliciesCompleted = data['marine-plan-policies-completed-count'] | default(0) %}
+				{% set marinePoliciesNotStarted = data['marine-plan-policies-not-started-count'] | default(0) %}
+				{% set marinePoliciesTotal = marinePoliciesCompleted + marinePoliciesNotStarted %}
 				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="marine-plan-policies/" aria-describedby="marine-plan-policies-status">
-				  Marine plan policies ({{ data['marine-plan-policies-not-started-count'] }})
+				  Marine plan policies {% if marinePoliciesCompleted == 0 %}({{ marinePoliciesTotal }} to complete){% else %}({{ marinePoliciesCompleted }} of {{ marinePoliciesTotal }} completed){% endif %}
 				</a>
 				{% else %}
 				<span>Marine plan policies</span>

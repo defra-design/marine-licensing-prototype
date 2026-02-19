@@ -76,6 +76,7 @@ module.exports = function (router) {
   // Marine licence start page (task list)
   ///////////////////////////////////////////
   router.get(`/versions/${version}/${section}/marine-licence-start-page`, function (req, res) {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
     res.render(`versions/${version}/${section}/marine-licence-start-page`);
   });
 
