@@ -3,6 +3,31 @@ module.exports = function (router) {
   const version = "multiple-sites-v2";
   const section = "low-complexity-v2";
 
+  // Marine plan policy counts - keep session up to date on every v2 request so start page
+  // shows correct (N) and status even when served by kit auto-routing
+  const MARINE_PLAN_POLICY_KEYS = [
+    's-bio-1', 's-bio-2', 's-bio-3', 's-bio-4', 's-dist-1', 's-nis-1', 's-ml-1', 's-ml-2',
+    's-uwn-1', 's-uwn-2', 's-wq-1', 's-wq-2', 's-cc-1', 's-cc-2', 's-cc-3', 's-cc-4', 's-co-1',
+    's-agg-4', 's-aq-2', 's-cab-1', 's-cab-2', 's-dd-2', 's-inf-1', 's-ps-1', 's-ren-1',
+    's-acc-1', 's-acc-2', 's-fish-1', 's-fish-2', 's-fish-4', 's-emp-1', 's-emp-2',
+    's-her-1', 's-soc-1', 's-scp-1', 's-tr-1', 's-tr-2'
+  ];
+  const MARINE_PLAN_POLICIES_TOTAL = MARINE_PLAN_POLICY_KEYS.length;
+
+  router.use(function (req, res, next) {
+    if (req.path.indexOf('low-complexity-v2') !== -1) {
+      let completedCount = 0;
+      for (const key of MARINE_PLAN_POLICY_KEYS) {
+        if (req.session.data['marine-plan-policy-' + key + '-completed']) {
+          completedCount++;
+        }
+      }
+      req.session.data['marine-plan-policies-completed-count'] = completedCount;
+      req.session.data['marine-plan-policies-not-started-count'] = MARINE_PLAN_POLICIES_TOTAL - completedCount;
+    }
+    next();
+  });
+
   ///////////////////////////////////////////
   // Project name start page
   ///////////////////////////////////////////
@@ -50,24 +75,7 @@ module.exports = function (router) {
   ///////////////////////////////////////////
   // Marine licence start page (task list)
   ///////////////////////////////////////////
-  const MARINE_PLAN_POLICY_KEYS = [
-    's-bio-1', 's-bio-2', 's-bio-3', 's-bio-4', 's-dist-1', 's-nis-1', 's-ml-1', 's-ml-2',
-    's-uwn-1', 's-uwn-2', 's-wq-1', 's-wq-2', 's-cc-1', 's-cc-2', 's-cc-3', 's-cc-4', 's-co-1',
-    's-agg-4', 's-aq-2', 's-cab-1', 's-cab-2', 's-dd-2', 's-inf-1', 's-ps-1', 's-ren-1',
-    's-acc-1', 's-acc-2', 's-fish-1', 's-fish-2', 's-fish-4', 's-emp-1', 's-emp-2',
-    's-her-1', 's-soc-1', 's-scp-1', 's-tr-1', 's-tr-2'
-  ];
-  const MARINE_PLAN_POLICIES_TOTAL = MARINE_PLAN_POLICY_KEYS.length;
-
   router.get(`/versions/${version}/${section}/marine-licence-start-page`, function (req, res) {
-    let completedCount = 0;
-    for (const key of MARINE_PLAN_POLICY_KEYS) {
-      if (req.session.data['marine-plan-policy-' + key + '-completed']) {
-        completedCount++;
-      }
-    }
-    req.session.data['marine-plan-policies-completed-count'] = completedCount;
-    req.session.data['marine-plan-policies-not-started-count'] = MARINE_PLAN_POLICIES_TOTAL - completedCount;
     res.render(`versions/${version}/${section}/marine-licence-start-page`);
   });
 
