@@ -430,12 +430,22 @@ The **Marine plan policy considerations** section (low-complexity-v2) is a neste
 #### No Cancel on policy question pages
 Policy question pages (e.g. south-access-1) do **not** show a Cancel link, because they are reached from the nested task list and Cancel behaviour is ambiguous when coming from check answers. Only "Save and continue" is shown. The back link uses `javascript:history.back()`.
 
-#### Main task list count and status
-The main task list shows **"Marine plan policies (N)"** where N is the number of policies not yet started. N and the section status (Not yet started / In progress / Completed) are derived in the **GET** route for the start page by counting how many of a fixed list of policy completion keys are set in session. The total number of policies is currently hardcoded (e.g. 38); if the list of policies changes, update the array of completion keys and the total constant in that route.
+#### Count and status (main task list and index)
+- **Counts in session:** Middleware in `low-complexity-v2.js` runs on every request whose path contains `low-complexity-v2`. It sets `marine-plan-policies-completed-count` and `marine-plan-policies-not-started-count` by counting how many of the fixed list of policy completion keys are set. Total = completed + not-started; templates derive total and never need a separate total key.
+- **Copy (same in both places):** When **none completed** (completed-count 0): **(N policies to complete)**. When **at least one completed**: **X of N completed**. Shown on the main task list link (when the section is available) and on the marine-plan-policies index as a line above the first sub-heading ("Environmental protection and impacts").
+- **Status on main task list:** When section not available → "Cannot start yet". When available: all completed → "Completed"; at least one but not all → "In progress" (light blue tag); none → "Not yet started" (blue tag).
+- **Cache and redirect:** GET handlers for `marine-licence-start-page` and for `marine-plan-policies/` set `Cache-Control: no-store, no-cache, must-revalidate, private` so the browser does not serve cached HTML and counts stay correct.
+
+#### Index page updating after saving a policy
+The kit uses a **file-based session store**. If the POST handler redirects to the index immediately after setting a completion flag, the browser can request the index before the session file has been written, so the index would show stale counts. To avoid that:
+- **POST** (e.g. south-access-1-router) sets the completion flag, computes the new counts, and **redirects to the index with counts in the query string** (e.g. `./?marine-plan-policies-completed-count=1&marine-plan-policies-not-started-count=36`).
+- **GET** for the index checks for these query params; when present, it writes them into `req.session.data` and `res.locals.data` before rendering, so the index shows the correct numbers on first load without relying on the session file. The total used for the redirect is defined in the marine-plan-policies route file (`MARINE_PLAN_POLICIES_TOTAL`) and must match the number of policy keys in `low-complexity-v2.js`.
 
 #### Where the logic lives
-- **GET** for `marine-licence-start-page` (in low-complexity-v2 routes): sets `marine-plan-policies-completed-count` and `marine-plan-policies-not-started-count` from the list of `marine-plan-policy-{id}-completed` keys.
-- **POST** for each policy question (e.g. south-access-1-router): sets the relevant `marine-plan-policy-{id}-completed` flag and redirects back to `marine-plan-policies/` (the subsection index).
+- **Middleware** (low-complexity-v2.js): sets `marine-plan-policies-completed-count` and `marine-plan-policies-not-started-count` for every v2 path.
+- **GET** for `marine-licence-start-page`: sets cache headers and renders; counts come from middleware.
+- **GET** for `marine-plan-policies/`: sets cache headers; if count query params present, applies them to session and locals; then renders.
+- **POST** for each policy question (e.g. south-access-1-router): sets `marine-plan-policy-{id}-completed`, then redirects to index with count query params (not a plain `./` redirect).
 
 ### Routing Modification Rules
 - **Only modify the specific routing section you are working on** - never change unrelated routes
