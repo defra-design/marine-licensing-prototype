@@ -419,6 +419,24 @@ This pattern ensures:
 - ✅ Consistent architecture across all sample plans pages
 - ✅ Easy maintenance and debugging
 
+### Marine Plan Policy Considerations (nested task list)
+
+The **Marine plan policy considerations** section (low-complexity-v2) is a nested task list under the main task list (marine-licence-start-page). It has its own index (`marine-plan-policies/index.html`) that lists individual policy tasks; each policy can have a question page (e.g. `south-access-1.html`) and completion is tracked per policy.
+
+#### Session keys
+- Each policy uses a completion flag: `marine-plan-policy-{policy-id}-completed` (e.g. `marine-plan-policy-s-acc-1-completed`).
+- Form answers use a namespaced prefix, e.g. `marine-plan-policy-s-acc-1-how`, `marine-plan-policy-s-acc-1-avoid`, etc.
+
+#### No Cancel on policy question pages
+Policy question pages (e.g. south-access-1) do **not** show a Cancel link, because they are reached from the nested task list and Cancel behaviour is ambiguous when coming from check answers. Only "Save and continue" is shown. The back link uses `javascript:history.back()`.
+
+#### Main task list count and status
+The main task list shows **"Marine plan policies (N)"** where N is the number of policies not yet started. N and the section status (Not yet started / In progress / Completed) are derived in the **GET** route for the start page by counting how many of a fixed list of policy completion keys are set in session. The total number of policies is currently hardcoded (e.g. 38); if the list of policies changes, update the array of completion keys and the total constant in that route.
+
+#### Where the logic lives
+- **GET** for `marine-licence-start-page` (in low-complexity-v2 routes): sets `marine-plan-policies-completed-count` and `marine-plan-policies-not-started-count` from the list of `marine-plan-policy-{id}-completed` keys.
+- **POST** for each policy question (e.g. south-access-1-router): sets the relevant `marine-plan-policy-{id}-completed` flag and redirects back to `marine-plan-policies/` (the subsection index).
+
 ### Routing Modification Rules
 - **Only modify the specific routing section you are working on** - never change unrelated routes
 - When working on manual entry flows, only modify routes under the "Manual Entry Flow Routes" section

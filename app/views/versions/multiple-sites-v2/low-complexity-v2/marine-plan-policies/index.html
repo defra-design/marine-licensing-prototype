@@ -5,7 +5,7 @@
     {% if data['user_type'] === 'organisation' %}
         {% include "../../includes/organisation-switcher.html" %}
     {% endif %}
-    <a class="govuk-back-link govuk-link--no-visited-state" href="../marine-licence-start-page">Back to the main project page</a>
+    <a class="govuk-back-link govuk-link--no-visited-state" href="../marine-licence-start-page">Back to your project task list</a>
 {% endblock %}
 
 <!-- Setting the big main heading at the top of the page -->
@@ -350,14 +350,18 @@ Marine plan policies
 		<ul class="govuk-task-list">
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
 			  <div class="govuk-task-list__name-and-hint">
-				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-acc-1-status">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="south-access-1" aria-describedby="s-acc-1-status">
 				  South Access 1 (S-ACC-1)
 				</a>
 			  </div>
 			  <div class="govuk-task-list__status" id="s-acc-1-status">
+				{% if data['marine-plan-policy-s-acc-1-completed'] %}
+				Completed
+				{% else %}
 				<strong class="govuk-tag govuk-tag--blue">
 					Not yet started
 				</strong>
+				{% endif %}
 			  </div>
 			</li>
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
