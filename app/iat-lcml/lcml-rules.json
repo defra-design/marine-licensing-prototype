@@ -1,0 +1,41 @@
+{
+	"service_definitions": {
+	  "MAS": "Marine Application Service (New LCML route)",
+	  "MCMS": "Marine Case Management System (Legacy route)"
+	},
+	"global_project_filters": {
+	  "description": "If any of these are true, the ENTIRE project goes to MCMS",
+	  "triggers": [
+		"Total project cost exceeds £1 million",
+		"Involves scuttling of a vessel or structure",
+		"Involves the use of explosives",
+		"Involves incineration of any substance/object",
+		"Activity takes place outside the UK marine area"
+	  ]
+	},
+	"repetitive_data_handling": {
+	  "intent": "Identify questions common to multiple activities and ask once at the project level.",
+	  "known_examples": [
+		"Jurisdiction (Sea/River boundaries)",
+		"Project Cost",
+		"Harbour Authority involvement",
+		"EIA / Screening status"
+	  ],
+	  "instruction": "Analyze content.json to identify other duplicate questions across sections."
+	},
+	"complexity_logic": {
+	  "construction_check": {
+		"question": "Is the activity part of a project involving construction or decommissioning?",
+		"if_yes": "Route to MCMS (Band 3)"
+	  },
+	  "mpa_check": {
+		"proximity_limit": "2km of a Marine Protected Area (MPA)",
+		"logic": "IF within 2km AND (No user-led HRA/MCZ assessment OR Likely Significant Effect) THEN Route to MCMS"
+	  }
+	},
+	"multi_activity_priority": [
+	  "1. MCMS (If any activity triggers MCMS)",
+	  "2. LCML/MAS (If all pass filters)",
+	  "3. Exempt (If all are exempt)"
+	]
+  }
