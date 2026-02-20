@@ -34,22 +34,28 @@ Marine plan policies
 		</h1>
 
 		<p class="govuk-body">Before you start, read information on the policies presented here and how to complete this section in <a href="guidance" class="govuk-link">Marine plan policy guidance</a>.</p>
+
+		<hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
 		{% set marinePoliciesCompleted = data['marine-plan-policies-completed-count'] | default(0) %}
 		{% set marinePoliciesNotStarted = data['marine-plan-policies-not-started-count'] | default(0) %}
 		{% set marinePoliciesTotal = marinePoliciesCompleted + marinePoliciesNotStarted %}
-		<p class="govuk-body">{% if marinePoliciesCompleted == 0 %}{{ marinePoliciesTotal }} policies to complete{% else %}{{ marinePoliciesCompleted }} of {{ marinePoliciesTotal }} completed{% endif %}</p>
+		<p class="govuk-body">{% if marinePoliciesCompleted == 0 %}{{ marinePoliciesTotal }} policies to complete{% else %}{{ marinePoliciesCompleted }} of {{ marinePoliciesTotal }} policies completed{% endif %}</p>
 		<h2 class="govuk-heading-m">Environmental protection and impacts</h2>
 		<ul class="govuk-task-list">
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
 			  <div class="govuk-task-list__name-and-hint">
-				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-bio-1-status">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="south-biodiversity-1" aria-describedby="s-bio-1-status">
 				  South Biodiversity 1 (S-BIO-1)
 				</a>
 			  </div>
 			  <div class="govuk-task-list__status" id="s-bio-1-status">
+				{% if data['marine-plan-policy-s-bio-1-completed'] %}
+				Completed
+				{% else %}
 				<strong class="govuk-tag govuk-tag--blue">
 					Not yet started
 				</strong>
+				{% endif %}
 			  </div>
 			</li>
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
@@ -150,14 +156,18 @@ Marine plan policies
 			</li>
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
 			  <div class="govuk-task-list__name-and-hint">
-				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-uwn-2-status">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="south-underwater-noise-2" aria-describedby="s-uwn-2-status">
 				  South Underwater noise 2 (S-UWN-2)
 				</a>
 			  </div>
 			  <div class="govuk-task-list__status" id="s-uwn-2-status">
+				{% if data['marine-plan-policy-s-uwn-2-completed'] %}
+				Completed
+				{% else %}
 				<strong class="govuk-tag govuk-tag--blue">
 					Not yet started
 				</strong>
+				{% endif %}
 			  </div>
 			</li>
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
@@ -190,14 +200,18 @@ Marine plan policies
 		<ul class="govuk-task-list">
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
 			  <div class="govuk-task-list__name-and-hint">
-				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-cc-1-status">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="south-climate-change-1" aria-describedby="s-cc-1-status">
 				  South Climate change 1 (S-CC-1)
 				</a>
 			  </div>
 			  <div class="govuk-task-list__status" id="s-cc-1-status">
+				{% if data['marine-plan-policy-s-cc-1-completed'] %}
+				Completed
+				{% else %}
 				<strong class="govuk-tag govuk-tag--blue">
 					Not yet started
 				</strong>
+				{% endif %}
 			  </div>
 			</li>
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
@@ -254,14 +268,18 @@ Marine plan policies
 		<ul class="govuk-task-list">
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
 			  <div class="govuk-task-list__name-and-hint">
-				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-agg-4-status">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="south-aggregates-4" aria-describedby="s-agg-4-status">
 				  South Aggregates 4 (S-AGG-4)
 				</a>
 			  </div>
 			  <div class="govuk-task-list__status" id="s-agg-4-status">
+				{% if data['marine-plan-policy-s-agg-4-completed'] %}
+				Completed
+				{% else %}
 				<strong class="govuk-tag govuk-tag--blue">
 					Not yet started
 				</strong>
+				{% endif %}
 			  </div>
 			</li>
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
@@ -422,14 +440,18 @@ Marine plan policies
 		<ul class="govuk-task-list">
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
 			  <div class="govuk-task-list__name-and-hint">
-				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-emp-1-status">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="south-employment-1" aria-describedby="s-emp-1-status">
 				  South Employment 1 (S-EMP-1)
 				</a>
 			  </div>
 			  <div class="govuk-task-list__status" id="s-emp-1-status">
+				{% if data['marine-plan-policy-s-emp-1-completed'] %}
+				Completed
+				{% else %}
 				<strong class="govuk-tag govuk-tag--blue">
 					Not yet started
 				</strong>
+				{% endif %}
 			  </div>
 			</li>
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
