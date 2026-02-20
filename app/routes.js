@@ -103,6 +103,7 @@ require('./routes/versions/multiple-sites-v2/exemption.js')(router);
 require('./routes/versions/multiple-sites-v2/exemption-manual-entry.js')(router);
 require('./routes/versions/multiple-sites-v2/iat.js')(router);
 require('./routes/versions/multiple-sites-v2/iat-improved.js')(router);
+require('./iat-lcml/routes.js')(router);
 require('./routes/versions/multiple-sites-v2/low-complexity-v1.js')(router);
 require('./routes/versions/multiple-sites-v2/low-complexity-v1-site-locations.js')(router);
 require('./routes/versions/multiple-sites-v2/low-complexity-v2.js')(router);

@@ -1,0 +1,43 @@
+{% extends "layouts/main.html" %}
+
+{% block pageTitle %}Check if you need a marine licence{% endblock %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-l">Check if you need a marine licence</h1>
+
+      <p class="govuk-body">Use this tool to find out:</p>
+      <ul class="govuk-list govuk-list--bullet">
+        <li>If your activity falls within the jurisdiction of the MMO</li>
+        <li>If an exemption may apply (where appropriate)</li>
+        <li>If your activity is suitable for self-service marine licensing (where appropriate)</li>
+      </ul>
+
+      <p class="govuk-body">Where applicable, you will be directed to the appropriate service.</p>
+
+      <p class="govuk-body">
+        Find out more about the MMO's <a href="https://www.gov.uk/guidance/marine-licensing-definitions#jurisdiction" class="govuk-link">jurisdiction</a>, <a href="https://www.gov.uk/guidance/do-i-need-a-marine-licence#exemptions" class="govuk-link">exemptions</a> and <a href="https://www.gov.uk/guidance/do-i-need-a-marine-licence#self-service" class="govuk-link">self-service marine licensing</a>.
+      </p>
+
+      <h2 class="govuk-heading-m">Before you start</h2>
+
+      <p class="govuk-body">Ensure you read MMO's marine licence <a href="https://www.gov.uk/guidance/do-i-need-a-marine-licence" class="govuk-link">guidance</a>. You will need to know:</p>
+
+      <ul class="govuk-list govuk-list--bullet">
+        <li>What your activity is</li>
+        <li>Where your activity will take place</li>
+        <li>What it will involve</li>
+      </ul>
+
+      <p class="govuk-body">The guidance will provide a basic understanding of the factors that help determine whether a marine licence is required and explain the difference between various services available.</p>
+
+      {{ govukButton({
+        text: "Start now",
+        href: "/versions/multiple-sites-v2/iat-lcml/sea",
+        classes: "govuk-button--start",
+        isStartButton: true
+      }) }}
+    </div>
+  </div>
+{% endblock %}
