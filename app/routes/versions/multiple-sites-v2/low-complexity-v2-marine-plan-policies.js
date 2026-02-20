@@ -233,4 +233,49 @@ module.exports = function (router) {
     res.redirect(redirectUrl);
   });
 
+  /////////////////////////////////////////////////////////
+  //////// South Underwater noise 2 (S-UWN-2) policy question page (4 radios)
+  /////////////////////////////////////////////////////////
+  router.get(`/versions/${version}/${section}/${subsection}/south-underwater-noise-2`, function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errortypetwo'] = "false";
+    res.render(`versions/${version}/${section}/${subsection}/south-underwater-noise-2`);
+  });
+
+  router.post(`/versions/${version}/${section}/${subsection}/south-underwater-noise-2-router`, function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errortypetwo'] = "false";
+
+    const how = req.session.data['marine-plan-policy-s-uwn-2-how'];
+    const avoid = req.session.data['marine-plan-policy-s-uwn-2-avoid'];
+    const minimise = req.session.data['marine-plan-policy-s-uwn-2-minimise'];
+    const mitigate = req.session.data['marine-plan-policy-s-uwn-2-mitigate'];
+    const compensate = req.session.data['marine-plan-policy-s-uwn-2-compensate'];
+
+    if (!how) {
+      req.session.data['errorthispage'] = "true";
+      req.session.data['errortypeone'] = "true";
+      return res.redirect('south-underwater-noise-2');
+    }
+
+    const textareaEmpty = (how === 'avoid' && (!avoid || avoid.trim() === '')) ||
+      (how === 'minimise' && (!minimise || minimise.trim() === '')) ||
+      (how === 'mitigate' && (!mitigate || mitigate.trim() === '')) ||
+      (how === 'compensate' && (!compensate || compensate.trim() === ''));
+
+    if (textareaEmpty) {
+      req.session.data['errorthispage'] = "true";
+      req.session.data['errortypetwo'] = "true";
+      return res.redirect('south-underwater-noise-2');
+    }
+
+    req.session.data['marine-plan-policy-s-uwn-2-completed'] = true;
+    const completedCount = (req.session.data['marine-plan-policies-completed-count'] || 0) + 1;
+    const notStartedCount = MARINE_PLAN_POLICIES_TOTAL - completedCount;
+    const redirectUrl = './?marine-plan-policies-completed-count=' + completedCount + '&marine-plan-policies-not-started-count=' + notStartedCount;
+    res.redirect(redirectUrl);
+  });
+
 };

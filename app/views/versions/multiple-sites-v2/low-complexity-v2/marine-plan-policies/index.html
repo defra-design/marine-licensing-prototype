@@ -156,14 +156,18 @@ Marine plan policies
 			</li>
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
 			  <div class="govuk-task-list__name-and-hint">
-				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-uwn-2-status">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="south-underwater-noise-2" aria-describedby="s-uwn-2-status">
 				  South Underwater noise 2 (S-UWN-2)
 				</a>
 			  </div>
 			  <div class="govuk-task-list__status" id="s-uwn-2-status">
+				{% if data['marine-plan-policy-s-uwn-2-completed'] %}
+				Completed
+				{% else %}
 				<strong class="govuk-tag govuk-tag--blue">
 					Not yet started
 				</strong>
+				{% endif %}
 			  </div>
 			</li>
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
