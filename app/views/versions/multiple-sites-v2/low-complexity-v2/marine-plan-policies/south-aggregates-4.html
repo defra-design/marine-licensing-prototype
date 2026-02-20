@@ -15,7 +15,7 @@
 {% endblock %}
 
 {% set pageHeadingTextHTML %}
-South Access 1 (S-ACC-1)
+South Aggregates 4 (S-AGG-4)
 {% endset %}
 
 {% block pageTitle %}
@@ -27,46 +27,46 @@ Error:
 
 {% set avoidTextarea %}
 {{ govukTextarea({
-    id: "marine-plan-policy-s-acc-1-avoid",
-    name: "marine-plan-policy-s-acc-1-avoid",
-    value: data['marine-plan-policy-s-acc-1-avoid'],
+    id: "marine-plan-policy-s-agg-4-avoid",
+    name: "marine-plan-policy-s-agg-4-avoid",
+    value: data['marine-plan-policy-s-agg-4-avoid'],
     rows: 5,
     label: {
         text: "Explain how you will avoid any impacts"
     },
     errorMessage: {
         text: "Enter how you will avoid any impacts"
-    } if data['errortypetwo'] == "true" and data['marine-plan-policy-s-acc-1-how'] == "avoid"
+    } if data['errortypetwo'] == "true" and data['marine-plan-policy-s-agg-4-how'] == "avoid"
 }) }}
 {% endset %}
 
 {% set minimiseTextarea %}
 {{ govukTextarea({
-    id: "marine-plan-policy-s-acc-1-minimise",
-    name: "marine-plan-policy-s-acc-1-minimise",
-    value: data['marine-plan-policy-s-acc-1-minimise'],
+    id: "marine-plan-policy-s-agg-4-minimise",
+    name: "marine-plan-policy-s-agg-4-minimise",
+    value: data['marine-plan-policy-s-agg-4-minimise'],
     rows: 5,
     label: {
         text: "Explain how you will minimise any impacts"
     },
     errorMessage: {
         text: "Enter how you will minimise any impacts"
-    } if data['errortypetwo'] == "true" and data['marine-plan-policy-s-acc-1-how'] == "minimise"
+    } if data['errortypetwo'] == "true" and data['marine-plan-policy-s-agg-4-how'] == "minimise"
 }) }}
 {% endset %}
 
 {% set mitigateTextarea %}
 {{ govukTextarea({
-    id: "marine-plan-policy-s-acc-1-mitigate",
-    name: "marine-plan-policy-s-acc-1-mitigate",
-    value: data['marine-plan-policy-s-acc-1-mitigate'],
+    id: "marine-plan-policy-s-agg-4-mitigate",
+    name: "marine-plan-policy-s-agg-4-mitigate",
+    value: data['marine-plan-policy-s-agg-4-mitigate'],
     rows: 5,
     label: {
         text: "Explain how you will mitigate any impacts"
     },
     errorMessage: {
         text: "Enter how you will mitigate any impacts"
-    } if data['errortypetwo'] == "true" and data['marine-plan-policy-s-acc-1-how'] == "mitigate"
+    } if data['errortypetwo'] == "true" and data['marine-plan-policy-s-agg-4-how'] == "mitigate"
 }) }}
 {% endset %}
 
@@ -79,61 +79,61 @@ Error:
 		{{ govukErrorSummary({
 			titleText: "There is a problem",
 			errorList: [
-				{ text: "Select how you will manage the impacts of your project in relation to this policy", href: "#marine-plan-policy-s-acc-1-how" }
+				{ text: "Select how you will manage the impacts of your project in relation to this policy", href: "#marine-plan-policy-s-agg-4-how" }
 			]
 		}) }}
 		{% elif data['errortypetwo'] == "true" %}
-		{% if data['marine-plan-policy-s-acc-1-how'] == "avoid" %}
+		{% if data['marine-plan-policy-s-agg-4-how'] == "avoid" %}
 		{{ govukErrorSummary({
 			titleText: "There is a problem",
 			errorList: [
-				{ text: "Enter how you will avoid any impacts", href: "#marine-plan-policy-s-acc-1-avoid" }
+				{ text: "Enter how you will avoid any impacts", href: "#marine-plan-policy-s-agg-4-avoid" }
 			]
 		}) }}
-		{% elif data['marine-plan-policy-s-acc-1-how'] == "minimise" %}
+		{% elif data['marine-plan-policy-s-agg-4-how'] == "minimise" %}
 		{{ govukErrorSummary({
 			titleText: "There is a problem",
 			errorList: [
-				{ text: "Enter how you will minimise any impacts", href: "#marine-plan-policy-s-acc-1-minimise" }
+				{ text: "Enter how you will minimise any impacts", href: "#marine-plan-policy-s-agg-4-minimise" }
 			]
 		}) }}
 		{% else %}
 		{{ govukErrorSummary({
 			titleText: "There is a problem",
 			errorList: [
-				{ text: "Enter how you will mitigate any impacts", href: "#marine-plan-policy-s-acc-1-mitigate" }
+				{ text: "Enter how you will mitigate any impacts", href: "#marine-plan-policy-s-agg-4-mitigate" }
 			]
 		}) }}
 		{% endif %}
 		{% endif %}
 		{% endif %}
 
-		<form action="south-access-1-router" method="post" novalidate>
+		<form action="south-aggregates-4-router" method="post" novalidate>
 
 			<span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
 			<h1 class="govuk-heading-l">{{ pageHeadingTextHTML }}</h1>
 
 			<h2 class="govuk-heading-m">Policy information</h2>
-			<p class="govuk-body">Proposals demonstrating appropriate enhanced and inclusive public access to and within the marine area, including the provision of services for tourism and recreation activities, will be supported.</p>
+			<p class="govuk-body">Where proposals require marine aggregates as part of their construction, preference should be given to using marine aggregates sourced from the south marine plan areas. If this is not appropriate, proposals should state why.</p>
 			<p class="govuk-body"><a href="#" class="govuk-link" target="_blank" rel="noopener noreferrer">Find out more about this policy (opens in new tab)</a></p>
 
 			<h2 class="govuk-heading-m">Example response</h2>
 			{{ govukInsetText({
-				html: "<p class=\"govuk-body\">The scheme will improve public access to the foreshore by providing a new stepped access ramp and signage. Facilities for tourism and recreation will be maintained and the design allows for inclusive access in line with the policy.</p><p class=\"govuk-body\"><strong>This is for guidance only - your answer should reflect your specific project.</strong></p>"
+				html: "<p class=\"govuk-body\">Where marine aggregates are required they will be sourced from licenced offshore aggregates sites within the South Marine Plan area. The proposal is therefore considered to be in accordance with S-AGG-4.</p><p class=\"govuk-body\">The proposal will help achieve south marine plan Objective 3: To support diversification of activities which improve socio-economic conditions in coastal communities.</p><p class=\"govuk-body\"><strong>This is for guidance only - your answer should reflect your specific project.</strong></p>"
 			}) }}
 
 			<div class="govuk-form-group {% if data['errorthispage'] == 'true' and data['errortypeone'] == 'true' %}govuk-form-group--error{% endif %}">
-				<fieldset class="govuk-fieldset" id="marine-plan-policy-s-acc-1-how" aria-describedby="{% if data['errortypeone'] == 'true' %}marine-plan-policy-s-acc-1-how-error{% endif %}">
+				<fieldset class="govuk-fieldset" id="marine-plan-policy-s-agg-4-how" aria-describedby="{% if data['errortypeone'] == 'true' %}marine-plan-policy-s-agg-4-how-error{% endif %}">
 					<legend class="govuk-fieldset__legend govuk-fieldset__legend--s">
 						How will you manage the impacts of your project in relation to this policy?
 					</legend>
 					{% if data['errortypeone'] == "true" %}
-					<p id="marine-plan-policy-s-acc-1-how-error" class="govuk-error-message">
+					<p id="marine-plan-policy-s-agg-4-how-error" class="govuk-error-message">
 						<span class="govuk-visually-hidden">Error:</span> Select how you will manage the impacts of your project in relation to this policy
 					</p>
 					{% endif %}
 					{{ govukRadios({
-						name: "marine-plan-policy-s-acc-1-how",
+						name: "marine-plan-policy-s-agg-4-how",
 						items: [
 							{
 								value: "avoid",
@@ -141,7 +141,7 @@ Error:
 								conditional: {
 									html: avoidTextarea
 								},
-								checked: data['marine-plan-policy-s-acc-1-how'] == "avoid"
+								checked: data['marine-plan-policy-s-agg-4-how'] == "avoid"
 							},
 							{
 								value: "minimise",
@@ -149,7 +149,7 @@ Error:
 								conditional: {
 									html: minimiseTextarea
 								},
-								checked: data['marine-plan-policy-s-acc-1-how'] == "minimise"
+								checked: data['marine-plan-policy-s-agg-4-how'] == "minimise"
 							},
 							{
 								value: "mitigate",
@@ -157,7 +157,7 @@ Error:
 								conditional: {
 									html: mitigateTextarea
 								},
-								checked: data['marine-plan-policy-s-acc-1-how'] == "mitigate"
+								checked: data['marine-plan-policy-s-agg-4-how'] == "mitigate"
 							}
 						]
 					}) }}

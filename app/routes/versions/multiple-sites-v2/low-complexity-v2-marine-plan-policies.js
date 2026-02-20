@@ -76,4 +76,161 @@ module.exports = function (router) {
     res.redirect(redirectUrl);
   });
 
+  /////////////////////////////////////////////////////////
+  //////// South Biodiversity 1 (S-BIO-1) policy question page
+  /////////////////////////////////////////////////////////
+  router.get(`/versions/${version}/${section}/${subsection}/south-biodiversity-1`, function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errortypetwo'] = "false";
+    res.render(`versions/${version}/${section}/${subsection}/south-biodiversity-1`);
+  });
+
+  router.post(`/versions/${version}/${section}/${subsection}/south-biodiversity-1-router`, function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errortypetwo'] = "false";
+
+    const how = req.session.data['marine-plan-policy-s-bio-1-how'];
+    const avoid = req.session.data['marine-plan-policy-s-bio-1-avoid'];
+    const minimise = req.session.data['marine-plan-policy-s-bio-1-minimise'];
+    const mitigate = req.session.data['marine-plan-policy-s-bio-1-mitigate'];
+
+    if (!how) {
+      req.session.data['errorthispage'] = "true";
+      req.session.data['errortypeone'] = "true";
+      return res.redirect('south-biodiversity-1');
+    }
+
+    const textareaEmpty = (how === 'avoid' && (!avoid || avoid.trim() === '')) ||
+      (how === 'minimise' && (!minimise || minimise.trim() === '')) ||
+      (how === 'mitigate' && (!mitigate || mitigate.trim() === ''));
+
+    if (textareaEmpty) {
+      req.session.data['errorthispage'] = "true";
+      req.session.data['errortypetwo'] = "true";
+      return res.redirect('south-biodiversity-1');
+    }
+
+    req.session.data['marine-plan-policy-s-bio-1-completed'] = true;
+    const completedCount = (req.session.data['marine-plan-policies-completed-count'] || 0) + 1;
+    const notStartedCount = MARINE_PLAN_POLICIES_TOTAL - completedCount;
+    const redirectUrl = './?marine-plan-policies-completed-count=' + completedCount + '&marine-plan-policies-not-started-count=' + notStartedCount;
+    res.redirect(redirectUrl);
+  });
+
+  /////////////////////////////////////////////////////////
+  //////// South Climate change 1 (S-CC-1) policy question page
+  /////////////////////////////////////////////////////////
+  router.get(`/versions/${version}/${section}/${subsection}/south-climate-change-1`, function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errortypetwo'] = "false";
+    res.render(`versions/${version}/${section}/${subsection}/south-climate-change-1`);
+  });
+
+  router.post(`/versions/${version}/${section}/${subsection}/south-climate-change-1-router`, function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errortypetwo'] = "false";
+
+    const how = req.session.data['marine-plan-policy-s-cc-1-how'];
+    const avoid = req.session.data['marine-plan-policy-s-cc-1-avoid'];
+    const minimise = req.session.data['marine-plan-policy-s-cc-1-minimise'];
+    const mitigate = req.session.data['marine-plan-policy-s-cc-1-mitigate'];
+
+    if (!how) {
+      req.session.data['errorthispage'] = "true";
+      req.session.data['errortypeone'] = "true";
+      return res.redirect('south-climate-change-1');
+    }
+
+    const textareaEmpty = (how === 'avoid' && (!avoid || avoid.trim() === '')) ||
+      (how === 'minimise' && (!minimise || minimise.trim() === '')) ||
+      (how === 'mitigate' && (!mitigate || mitigate.trim() === ''));
+
+    if (textareaEmpty) {
+      req.session.data['errorthispage'] = "true";
+      req.session.data['errortypetwo'] = "true";
+      return res.redirect('south-climate-change-1');
+    }
+
+    req.session.data['marine-plan-policy-s-cc-1-completed'] = true;
+    const completedCount = (req.session.data['marine-plan-policies-completed-count'] || 0) + 1;
+    const notStartedCount = MARINE_PLAN_POLICIES_TOTAL - completedCount;
+    const redirectUrl = './?marine-plan-policies-completed-count=' + completedCount + '&marine-plan-policies-not-started-count=' + notStartedCount;
+    res.redirect(redirectUrl);
+  });
+
+  /////////////////////////////////////////////////////////
+  //////// South Aggregates 4 (S-AGG-4) policy question page
+  /////////////////////////////////////////////////////////
+  router.get(`/versions/${version}/${section}/${subsection}/south-aggregates-4`, function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errortypetwo'] = "false";
+    res.render(`versions/${version}/${section}/${subsection}/south-aggregates-4`);
+  });
+
+  router.post(`/versions/${version}/${section}/${subsection}/south-aggregates-4-router`, function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    req.session.data['errortypetwo'] = "false";
+
+    const how = req.session.data['marine-plan-policy-s-agg-4-how'];
+    const avoid = req.session.data['marine-plan-policy-s-agg-4-avoid'];
+    const minimise = req.session.data['marine-plan-policy-s-agg-4-minimise'];
+    const mitigate = req.session.data['marine-plan-policy-s-agg-4-mitigate'];
+
+    if (!how) {
+      req.session.data['errorthispage'] = "true";
+      req.session.data['errortypeone'] = "true";
+      return res.redirect('south-aggregates-4');
+    }
+
+    const textareaEmpty = (how === 'avoid' && (!avoid || avoid.trim() === '')) ||
+      (how === 'minimise' && (!minimise || minimise.trim() === '')) ||
+      (how === 'mitigate' && (!mitigate || mitigate.trim() === ''));
+
+    if (textareaEmpty) {
+      req.session.data['errorthispage'] = "true";
+      req.session.data['errortypetwo'] = "true";
+      return res.redirect('south-aggregates-4');
+    }
+
+    req.session.data['marine-plan-policy-s-agg-4-completed'] = true;
+    const completedCount = (req.session.data['marine-plan-policies-completed-count'] || 0) + 1;
+    const notStartedCount = MARINE_PLAN_POLICIES_TOTAL - completedCount;
+    const redirectUrl = './?marine-plan-policies-completed-count=' + completedCount + '&marine-plan-policies-not-started-count=' + notStartedCount;
+    res.redirect(redirectUrl);
+  });
+
+  /////////////////////////////////////////////////////////
+  //////// South Employment 1 (S-EMP-1) policy question page (textarea)
+  /////////////////////////////////////////////////////////
+  router.get(`/versions/${version}/${section}/${subsection}/south-employment-1`, function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+    res.render(`versions/${version}/${section}/${subsection}/south-employment-1`);
+  });
+
+  router.post(`/versions/${version}/${section}/${subsection}/south-employment-1-router`, function (req, res) {
+    req.session.data['errorthispage'] = "false";
+    req.session.data['errortypeone'] = "false";
+
+    const value = req.session.data['marine-plan-policy-s-emp-1'];
+
+    if (!value || value.trim() === '') {
+      req.session.data['errorthispage'] = "true";
+      req.session.data['errortypeone'] = "true";
+      return res.redirect('south-employment-1');
+    }
+
+    req.session.data['marine-plan-policy-s-emp-1-completed'] = true;
+    const completedCount = (req.session.data['marine-plan-policies-completed-count'] || 0) + 1;
+    const notStartedCount = MARINE_PLAN_POLICIES_TOTAL - completedCount;
+    const redirectUrl = './?marine-plan-policies-completed-count=' + completedCount + '&marine-plan-policies-not-started-count=' + notStartedCount;
+    res.redirect(redirectUrl);
+  });
+
 };
