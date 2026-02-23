@@ -73,26 +73,39 @@ module.exports = function (router) {
   // Outcome classification helpers
   // =====================================================================
 
-  // Determines the per-activity outcome from an outcomeRoute
+  // =====================================================================
+  // Per-activity outcome classification
+  // =====================================================================
+  //
+  // Per-activity outcomes from the question branches:
+  //   EXEMPT        — licence not required (exemption available)
+  //   SELF_SERVICE  — eligible for self-service licensing (goes to MCMS self-service)
+  //   STANDARD      — needs a standard marine licence
+  //
+  // Project-level outcomes (resolved at /project-outcome):
+  //   BAND_3        — high complexity standard licence → MCMS
+  //   BAND_2        — low complexity standard licence  → MAS (new LCML service)
+  //   SELF_SERVICE  — self-service licence              → MCMS self-service
+  //   EXEMPT        — no licence required
+
   function classifyOutcomeRoute(outcomeRoute) {
-    if (!outcomeRoute) return "MCMS";
+    if (!outcomeRoute) return "STANDARD";
     if (outcomeRoute.includes("licence-not-required")) return "EXEMPT";
-    if (outcomeRoute.includes("fast-track-mla")) return "MAS";
-    // Everything else (licence-required, standard-marine-licence, etc.) = MCMS
-    return "MCMS";
+    if (outcomeRoute.includes("fast-track-mla")) return "SELF_SERVICE";
+    // Everything else (licence-required, standard-marine-licence, etc.)
+    return "STANDARD";
   }
 
-  // Check if a nextQuestionRoute leads to the screening chain entry
   function isScreeningChainEntry(route) {
     return route === "/activity/completion";
   }
 
-  // Outcome label for display
-  function getOutcomeLabel(outcome) {
+  // Activity-level label (shown in the per-activity summary)
+  function getActivityOutcomeLabel(outcome) {
     switch (outcome) {
-      case "MCMS":
+      case "STANDARD":
         return "Standard licence";
-      case "MAS":
+      case "SELF_SERVICE":
         return "Self-service";
       case "EXEMPT":
         return "Exempt";
@@ -104,43 +117,57 @@ module.exports = function (router) {
   // =====================================================================
   // Project outcome resolver
   // =====================================================================
+  //
+  // Band 3 triggers (high complexity → MCMS):
+  //   - Activity type: dredging, scuttling, explosives, incineration
+  //   - Deposits outside UK marine area (jurisdiction)
+  //   - Project cost > £1M
+  //   - Within 2km MPA without adequate HRA/MCZ assessment
+  //
+  // If no Band 3 triggers and any activity needs a standard licence → Band 2 → MAS
+  // If all activities are self-service eligible → self-service → MCMS
+  // If all activities are exempt → exempt
 
   function resolveProjectOutcome(sessionData) {
-    const triggers = [];
+    const band3Triggers = [];
     const selectedActivities = sessionData.selected_activities || [];
     const activityAnswers = sessionData.activity_answers || {};
 
-    // Global triggers
-    if (selectedActivities.includes("SCUTTLING")) {
-      triggers.push("Project involves scuttling of a vessel or structure");
+    // --- Activity-type triggers (always Band 3 if selected) ---
+    const BAND_3_ACTIVITY_TYPES = ["DREDGE", "SCUTTLING", "EXPLOSIVES", "INCINERATION"];
+    for (const actId of selectedActivities) {
+      if (BAND_3_ACTIVITY_TYPES.includes(actId)) {
+        const label = ACTIVITY_LABELS[actId] || actId;
+        band3Triggers.push(`Project involves ${label.toLowerCase()}`);
+      }
     }
-    if (selectedActivities.includes("EXPLOSIVES")) {
-      triggers.push("Project involves the use of explosives");
-    }
-    if (selectedActivities.includes("INCINERATION")) {
-      triggers.push("Project involves incineration of a substance or object");
-    }
+
+    // --- Project cost trigger ---
     if (sessionData.project_cost_over_1m === "yes") {
-      triggers.push("Total estimated project cost exceeds £1 million");
+      band3Triggers.push("Total estimated project cost exceeds £1 million");
     }
+
+    // --- Jurisdiction trigger (deposits outside UK) ---
     if (
       sessionData.jurisdiction === "outsideUk" ||
       sessionData.jurisdiction === "elsewhere"
     ) {
-      triggers.push("Activity takes place outside the UK marine area");
+      band3Triggers.push("Activity takes place outside the UK marine area");
     }
+
+    // --- MPA / HRA trigger ---
     if (
       sessionData["mpa-2km"] === "yes" &&
       sessionData["mpa-2km-assessment"] !== "screened-out"
     ) {
-      triggers.push(
+      band3Triggers.push(
         "Activity within 2km of a Marine Protected Area without adequate assessment",
       );
     }
 
-    // Determine the worst outcome across all activities
-    // Priority: MCMS > MAS > EXEMPT
-    const PRIORITY = { MCMS: 3, MAS: 2, EXEMPT: 1 };
+    // --- Determine worst per-activity outcome ---
+    // STANDARD > SELF_SERVICE > EXEMPT
+    const PRIORITY = { STANDARD: 3, SELF_SERVICE: 2, EXEMPT: 1 };
     let worst = "EXEMPT";
 
     for (const actId of selectedActivities) {
@@ -152,12 +179,23 @@ module.exports = function (router) {
       }
     }
 
-    // Global triggers force MCMS
-    if (triggers.length > 0) {
-      worst = "MCMS";
+    // --- Resolve project-level outcome ---
+    let outcome;
+
+    if (worst === "STANDARD" || band3Triggers.length > 0) {
+      // At least one activity needs a standard licence
+      if (band3Triggers.length > 0) {
+        outcome = "BAND_3"; // High complexity → MCMS
+      } else {
+        outcome = "BAND_2"; // Low complexity → MAS (new LCML service)
+      }
+    } else if (worst === "SELF_SERVICE") {
+      outcome = "SELF_SERVICE"; // Self-service → MCMS self-service
+    } else {
+      outcome = "EXEMPT";
     }
 
-    return { outcome: worst, triggers };
+    return { outcome, band3Triggers };
   }
 
   // =====================================================================
@@ -224,8 +262,15 @@ module.exports = function (router) {
       return res.redirect(`${base}/activity-type`);
     }
 
-    // Normalise to array (single checkbox selection comes as string)
+    // Normalise to array and filter out Prototype Kit's "_unchecked" value
     if (!Array.isArray(selected)) selected = [selected];
+    selected = selected.filter((v) => v !== "_unchecked");
+
+    if (selected.length === 0) {
+      req.session.data["errorthispage"] = "true";
+      req.session.data["errortypeone"] = "true";
+      return res.redirect(`${base}/activity-type`);
+    }
 
     req.session.data.selected_activities = selected;
     req.session.data.activity_answers = {};
@@ -395,7 +440,7 @@ module.exports = function (router) {
       if (!req.session.data.activity_answers) {
         req.session.data.activity_answers = {};
       }
-      req.session.data.activity_answers[actId] = { outcome: "MCMS" };
+      req.session.data.activity_answers[actId] = { outcome: "STANDARD" };
       return res.redirect(`${base}/activity-loop/next`);
     }
 
@@ -405,7 +450,7 @@ module.exports = function (router) {
       res.redirect(`${base}${firstQ}`);
     } else {
       // Fallback — treat as MCMS
-      req.session.data.activity_answers[actId] = { outcome: "MCMS" };
+      req.session.data.activity_answers[actId] = { outcome: "STANDARD" };
       res.redirect(`${base}/activity-loop/next`);
     }
   });
@@ -431,25 +476,24 @@ module.exports = function (router) {
 
   router.get(`${base}/project-outcome`, (req, res) => {
     const data = req.session.data;
-    const { outcome, triggers } = resolveProjectOutcome(data);
+    const { outcome, band3Triggers } = resolveProjectOutcome(data);
     const selected = data.selected_activities || [];
 
     data.project_outcome = outcome;
-    data.mcms_triggers = triggers;
 
     const activities = selected.map((actId) => {
       const answers = (data.activity_answers || {})[actId] || {};
       return {
         id: actId,
         name: ACTIVITY_LABELS[actId] || actId,
-        outcome: answers.outcome || "MAS",
-        outcomeLabel: getOutcomeLabel(answers.outcome || "MAS"),
+        outcome: answers.outcome || "SELF_SERVICE",
+        outcomeLabel: getActivityOutcomeLabel(answers.outcome || "SELF_SERVICE"),
       };
     });
 
     res.render("iat-lcml/layouts/iat/project-outcome", {
       outcome,
-      triggers,
+      band3Triggers,
       activities,
     });
   });
@@ -575,7 +619,7 @@ module.exports = function (router) {
             if (actId) {
               if (!req.session.data.activity_answers)
                 req.session.data.activity_answers = {};
-              req.session.data.activity_answers[actId] = { outcome: "MCMS" };
+              req.session.data.activity_answers[actId] = { outcome: "STANDARD" };
             }
             return res.redirect(`${base}/activity-loop/next`);
           }
@@ -619,7 +663,7 @@ module.exports = function (router) {
         if (chosen.nextQuestionRoute && isScreeningChainEntry(chosen.nextQuestionRoute)) {
           // Activity reached the screening chain entry → self-service eligible
           if (actId) {
-            req.session.data.activity_answers[actId].outcome = "MAS";
+            req.session.data.activity_answers[actId].outcome = "SELF_SERVICE";
           }
           return res.redirect(`${base}/activity-loop/next`);
         }

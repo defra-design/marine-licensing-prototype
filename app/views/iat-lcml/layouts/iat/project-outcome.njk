@@ -14,12 +14,19 @@
     <div class="govuk-grid-column-two-thirds">
 
       {# --- Panel showing the overall result --- #}
-      {% if outcome == "MCMS" %}
+      {% if outcome == "BAND_3" %}
         {{ govukPanel({
           titleText: "Standard marine licence application required",
+          html: "Your application will be handled through MCMS",
           classes: "govuk-panel--confirmation"
         }) }}
-      {% elif outcome == "MAS" %}
+      {% elif outcome == "BAND_2" %}
+        {{ govukPanel({
+          titleText: "Marine licence application required",
+          html: "Your application is suitable for the Marine Application Service",
+          classes: "govuk-panel--confirmation"
+        }) }}
+      {% elif outcome == "SELF_SERVICE" %}
         {{ govukPanel({
           titleText: "Suitable for self-service marine licensing",
           classes: "govuk-panel--confirmation"
@@ -32,19 +39,21 @@
       {% endif %}
 
       {# --- Explanation text --- #}
-      {% if outcome == "MCMS" %}
-        <p class="govuk-body">Based on the information provided, your project requires a standard marine licence from the MMO. This is because one or more factors mean it is not suitable for self-service marine licensing.</p>
-      {% elif outcome == "MAS" %}
-        <p class="govuk-body">Based on the information provided, your project is suitable for self-service marine licensing through the Marine Application Service.</p>
+      {% if outcome == "BAND_3" %}
+        <p class="govuk-body">Based on the information provided, your project requires a standard marine licence from the MMO. One or more factors mean it cannot be processed through the Marine Application Service and must be submitted through MCMS.</p>
+      {% elif outcome == "BAND_2" %}
+        <p class="govuk-body">Based on the information provided, your project requires a marine licence. Your application is low complexity and can be submitted through the Marine Application Service (MAS).</p>
+      {% elif outcome == "SELF_SERVICE" %}
+        <p class="govuk-body">Based on the information provided, your project is suitable for self-service marine licensing.</p>
       {% elif outcome == "EXEMPT" %}
         <p class="govuk-body">Based on the information provided, all activities in your project may be exempt from marine licensing requirements.</p>
       {% endif %}
 
-      {# --- MCMS triggers --- #}
-      {% if triggers | length %}
-        <h2 class="govuk-heading-m">Why a standard licence is required</h2>
+      {# --- Band 3 triggers --- #}
+      {% if band3Triggers | length %}
+        <h2 class="govuk-heading-m">Why your application must go through MCMS</h2>
         <ul class="govuk-list govuk-list--bullet">
-          {% for trigger in triggers %}
+          {% for trigger in band3Triggers %}
             <li>{{ trigger }}</li>
           {% endfor %}
         </ul>
@@ -58,7 +67,7 @@
           <div class="govuk-summary-list__row">
             <dt class="govuk-summary-list__key">{{ activity.name }}</dt>
             <dd class="govuk-summary-list__value">
-              <strong class="govuk-tag {% if activity.outcome == 'MCMS' %}govuk-tag--red{% elif activity.outcome == 'MAS' %}govuk-tag--green{% else %}govuk-tag--blue{% endif %}">
+              <strong class="govuk-tag {% if activity.outcome == 'STANDARD' %}govuk-tag--red{% elif activity.outcome == 'SELF_SERVICE' %}govuk-tag--green{% else %}govuk-tag--blue{% endif %}">
                 {{ activity.outcomeLabel }}
               </strong>
             </dd>
@@ -68,12 +77,17 @@
 
       {# --- CTA buttons --- #}
       <div class="govuk-!-margin-top-6">
-        {% if outcome == "MCMS" %}
+        {% if outcome == "BAND_3" %}
           {{ govukButton({
             text: "Apply for a standard marine licence",
             href: "#"
           }) }}
-        {% elif outcome == "MAS" %}
+        {% elif outcome == "BAND_2" %}
+          {{ govukButton({
+            text: "Apply through the Marine Application Service",
+            href: "#"
+          }) }}
+        {% elif outcome == "SELF_SERVICE" %}
           {{ govukButton({
             text: "Apply for a self-service marine licence",
             href: "#"
