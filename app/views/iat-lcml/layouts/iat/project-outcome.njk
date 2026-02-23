@@ -1,0 +1,119 @@
+{# iat-lcml/layouts/iat/project-outcome.njk #}
+
+{% extends "layouts/main.html" %}
+
+{% from "govuk/components/panel/macro.njk"  import govukPanel %}
+{% from "govuk/components/button/macro.njk"  import govukButton %}
+
+{% block pageTitle %}
+  Project outcome – Marine licence IAT
+{% endblock %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+      {# --- Panel showing the overall result --- #}
+      {% if outcome == "BAND_3" %}
+        {{ govukPanel({
+          titleText: "Marine licence required",
+          classes: "govuk-panel--confirmation"
+        }) }}
+      {% elif outcome == "BAND_2" %}
+        {{ govukPanel({
+          titleText: "Marine licence required",
+          classes: "govuk-panel--confirmation"
+        }) }}
+      {% elif outcome == "SELF_SERVICE" %}
+        {{ govukPanel({
+          titleText: "Suitable for self-service marine licensing",
+          classes: "govuk-panel--confirmation"
+        }) }}
+      {% elif outcome == "EXEMPT" %}
+        {{ govukPanel({
+          titleText: "Exempt activity",
+          classes: "govuk-panel--confirmation"
+        }) }}
+      {% endif %}
+
+      {# --- Explanation text --- #}
+      {% if outcome == "BAND_3" %}
+        <p class="govuk-body">Based on the information provided, your project requires a marine licence from the MMO.</p>
+      {% elif outcome == "BAND_2" %}
+        <p class="govuk-body">Based on the information provided, your project requires a marine licence from the MMO.</p>
+      {% elif outcome == "SELF_SERVICE" %}
+        <p class="govuk-body">Based on the information provided, your project is suitable for self-service marine licensing.</p>
+      {% elif outcome == "EXEMPT" %}
+        <p class="govuk-body">Based on your answers your activity is exempt but you need to tell us more information.</p>
+      {% endif %}
+
+      {# --- Band 3 triggers (internal detail, not shown to user) --- #}
+
+      {# --- Per-activity summary --- #}
+      <h2 class="govuk-heading-m">Activity summary</h2>
+
+      <dl class="govuk-summary-list">
+        {% for activity in activities %}
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">{{ activity.name }}</dt>
+            <dd class="govuk-summary-list__value">
+              <strong class="govuk-tag {% if activity.outcome == 'STANDARD' %}govuk-tag--red{% elif activity.outcome == 'SELF_SERVICE' %}govuk-tag--green{% else %}govuk-tag--blue{% endif %}">
+                {{ activity.outcomeLabel }}
+              </strong>
+            </dd>
+          </div>
+        {% endfor %}
+      </dl>
+
+      {# --- CTA buttons --- #}
+      <div class="govuk-!-margin-top-6">
+        {% if outcome == "BAND_3" or outcome == "BAND_2" %}
+          {{ govukButton({
+            text: "Apply for a marine licence",
+            href: "#"
+          }) }}
+        {% elif outcome == "SELF_SERVICE" %}
+          {{ govukButton({
+            text: "Apply for a self-service marine licence",
+            href: "#"
+          }) }}
+        {% elif outcome == "EXEMPT" %}
+          {{ govukButton({
+            text: "Continue",
+            href: "#"
+          }) }}
+        {% endif %}
+
+        {{ govukButton({
+          text: "Download a PDF record of my answers",
+          href: "#",
+          classes: "govuk-button--secondary"
+        }) }}
+      </div>
+
+      {# --- TEST INFO --- #}
+      <div style="margin-top: 2em; padding: 1em; border: 3px dashed #d4351c; background: #fef7f7;">
+        <p style="margin: 0 0 0.5em; font-weight: bold; color: #d4351c; font-family: monospace;">TEST INFO</p>
+        <p style="margin: 0; font-family: monospace; font-size: 14px;">
+          Project outcome code: <strong>{{ outcome }}</strong><br>
+          {% if outcome == "BAND_3" %}
+            Button takes user to: <strong>MCMS</strong> (high complexity standard licence)
+          {% elif outcome == "BAND_2" %}
+            Button takes user to: <strong>MAS</strong> (low complexity standard licence)
+          {% elif outcome == "SELF_SERVICE" %}
+            Button takes user to: <strong>MCMS</strong> (self-service licence)
+          {% elif outcome == "EXEMPT" %}
+            Button takes user to: <strong>MAS</strong> (exemption notification)
+          {% endif %}
+          {% if outcome != "EXEMPT" and band3Triggers | length %}
+            <br><br>Band 3 triggers:
+            {% for trigger in band3Triggers %}
+              <br>— {{ trigger }}
+            {% endfor %}
+          {% endif %}
+        </p>
+      </div>
+
+    </div>
+  </div>
+{% endblock %}

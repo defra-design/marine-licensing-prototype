@@ -1998,6 +1998,55 @@
       ]
     },
     {
+      "route": "/project-cost",
+      "text": "Will the total estimated project cost exceed £1 million?",
+      "hint": "This includes the cost of all activities in the project. Projects with a total cost exceeding £1 million are not suitable for self-service marine licensing.",
+      "section": "doINeedAMarineLicence",
+      "answers": [
+        {
+          "id": "yes",
+          "text": "Yes"
+        },
+        {
+          "id": "no",
+          "text": "No"
+        }
+      ]
+    },
+    {
+      "route": "/mpa-2km",
+      "text": "Will any activity take place within 2km of a Marine Protected Area (MPA)?",
+      "hint": "<p>Projects that take place within 2km of a Marine Protected Area may not be suitable for self-service marine licensing unless an adequate assessment has been carried out.</p><p>'Marine protected areas' include:<ul><li>Highly Protected Marine Areas (HPMAs)</li><li>Marine Conservation Zones (MCZs)</li><li>Special Areas of Conservation (SACs)</li><li>Special Protection Areas (SPAs)</li><li>Ramsar sites</li><li>SSSIs</li></ul></p><p>If you are unsure of whether the activity falls within 2km of an MPA you should check the <a target=\"_blank\" href=\"https://defra.maps.arcgis.com/apps/webappviewer/index.html?id=28f91021979447d3b43dc83e6e93094c\">MMO self-service GIS tool (opens in new tab)</a>.</p>",
+      "section": "doINeedAMarineLicence",
+      "answers": [
+        {
+          "id": "yes",
+          "text": "Yes",
+          "nextQuestionRoute": "/mpa-2km-assessment"
+        },
+        {
+          "id": "no",
+          "text": "No"
+        }
+      ]
+    },
+    {
+      "route": "/mpa-2km-assessment",
+      "text": "Has a Habitats Regulations Assessment (HRA) or Marine Conservation Zone (MCZ) assessment been completed and screened out?",
+      "hint": "<p>If an HRA or MCZ assessment has been completed and the activity has been screened out (meaning it will not have a significant effect on the protected site), it may still be suitable for self-service licensing.</p><p>If you are unsure about the assessment status, select 'No'.</p>",
+      "section": "doINeedAMarineLicence",
+      "answers": [
+        {
+          "id": "screened-out",
+          "text": "Yes, the assessment has been completed and the activity has been screened out"
+        },
+        {
+          "id": "not-screened-out",
+          "text": "No"
+        }
+      ]
+    },
+    {
       "route": "/deposit/method",
       "text": "How will the substance or object be deposited?",
       "section": "doINeedAMarineLicenceDeposit",
