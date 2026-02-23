@@ -13,3 +13,6 @@ Refactoring the `iat-lcml` module to support multi-activity projects. Users sele
 2. **Intelligent Sequencing:** Analyze `content.json` to find repetitive questions (Jurisdiction, Cost, Harbour Authority, etc.). Ask these once at the project level, then loop through activity-specific questions.
 3. **Logic Injection:** Apply the £1M cost and 2km MPA rules from the rules JSON.
 4. **Outcome:** Calculate a single project-level routing result.
+
+## Output Goal
+This is a prototype for design exploration and team discussion, not production code. Prioritise clarity and demonstrability over robustness.
