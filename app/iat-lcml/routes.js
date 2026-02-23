@@ -133,12 +133,15 @@ module.exports = function (router) {
     const selectedActivities = sessionData.selected_activities || [];
     const activityAnswers = sessionData.activity_answers || {};
 
-    // --- Activity-type triggers (always Band 3 if selected) ---
+    // --- Activity-type triggers (Band 3 if selected AND not exempt) ---
     const BAND_3_ACTIVITY_TYPES = ["DREDGE", "SCUTTLING", "EXPLOSIVES", "INCINERATION"];
     for (const actId of selectedActivities) {
       if (BAND_3_ACTIVITY_TYPES.includes(actId)) {
-        const label = ACTIVITY_LABELS[actId] || actId;
-        band3Triggers.push(`Project involves ${label.toLowerCase()}`);
+        const actOutcome = (activityAnswers[actId] || {}).outcome;
+        if (actOutcome !== "EXEMPT") {
+          const label = ACTIVITY_LABELS[actId] || actId;
+          band3Triggers.push(`Project involves ${label.toLowerCase()}`);
+        }
       }
     }
 
@@ -281,11 +284,12 @@ module.exports = function (router) {
       req.session.data.activity_answers[id] = {};
     });
 
-    res.redirect(`${base}/project-cost`);
+    res.redirect(`${base}/activity-loop/start`);
   });
 
   // =====================================================================
-  // Phase 1: /project-cost
+  // Filtering questions (asked AFTER activity loop, only if needed)
+  // /project-cost → /mpa-2km → /mpa-2km-assessment → /project-outcome
   // =====================================================================
 
   const projectCostQ = iat.questions.find(
@@ -320,9 +324,7 @@ module.exports = function (router) {
     res.redirect(`${base}/mpa-2km`);
   });
 
-  // =====================================================================
-  // Phase 1: /mpa-2km
-  // =====================================================================
+  // --- /mpa-2km ---
 
   const mpa2kmQ = iat.questions.find((q) => q.route === "/mpa-2km");
 
@@ -356,13 +358,11 @@ module.exports = function (router) {
       return res.redirect(`${base}/mpa-2km-assessment`);
     }
 
-    // Skip assessment, go straight to activity loop
-    res.redirect(`${base}/activity-loop/start`);
+    // Skip assessment, go to project outcome
+    res.redirect(`${base}/project-outcome`);
   });
 
-  // =====================================================================
-  // Phase 1: /mpa-2km-assessment
-  // =====================================================================
+  // --- /mpa-2km-assessment ---
 
   const mpa2kmAssessmentQ = iat.questions.find(
     (q) => q.route === "/mpa-2km-assessment",
@@ -393,7 +393,7 @@ module.exports = function (router) {
     }
 
     req.session.data["mpa-2km-assessment"] = answer;
-    res.redirect(`${base}/activity-loop/start`);
+    res.redirect(`${base}/project-outcome`);
   });
 
   // =====================================================================
@@ -467,9 +467,49 @@ module.exports = function (router) {
       res.redirect(`${base}/activity-loop/interstitial`);
     } else {
       req.session.data.in_activity_loop = false;
-      req.session.data.in_screening_phase = true;
-      res.redirect(`${base}/activity/completion`);
+      res.redirect(`${base}/activity-loop/done`);
     }
+  });
+
+  // --- /activity-loop/done — smart routing based on activity outcomes ---
+
+  router.get(`${base}/activity-loop/done`, (req, res) => {
+    const data = req.session.data;
+    const selected = data.selected_activities || [];
+    const activityAnswers = data.activity_answers || {};
+
+    const outcomes = selected.map(
+      (id) => (activityAnswers[id] || {}).outcome,
+    );
+    const allExempt = outcomes.every((o) => o === "EXEMPT");
+    const anyStandard = outcomes.some((o) => o === "STANDARD");
+
+    // Check for auto-Band3 activity types with non-exempt outcomes
+    const BAND_3_TYPES = ["DREDGE", "SCUTTLING", "EXPLOSIVES", "INCINERATION"];
+    const hasNonExemptBand3 = selected.some(
+      (id) =>
+        BAND_3_TYPES.includes(id) &&
+        (activityAnswers[id] || {}).outcome !== "EXEMPT",
+    );
+
+    if (allExempt) {
+      // All activities are exempt — skip everything
+      return res.redirect(`${base}/project-outcome`);
+    }
+
+    if (hasNonExemptBand3) {
+      // Auto-Band3 activities present — outcome is already BAND_3, skip filtering
+      return res.redirect(`${base}/project-outcome`);
+    }
+
+    if (anyStandard) {
+      // Standard licence needed — ask filtering questions (cost, MPA)
+      return res.redirect(`${base}/project-cost`);
+    }
+
+    // All self-service eligible — enter screening chain
+    data.in_screening_phase = true;
+    return res.redirect(`${base}/activity/completion`);
   });
 
   // =====================================================================

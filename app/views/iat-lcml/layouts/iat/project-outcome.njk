@@ -91,21 +91,21 @@
         }) }}
       </div>
 
-      {# --- TEST INFO — remove before go-live --- #}
+      {# --- TEST INFO --- #}
       <div style="margin-top: 2em; padding: 1em; border: 3px dashed #d4351c; background: #fef7f7;">
-        <p style="margin: 0 0 0.5em; font-weight: bold; color: #d4351c; font-family: monospace;">TEST INFO — not part of the design</p>
+        <p style="margin: 0 0 0.5em; font-weight: bold; color: #d4351c; font-family: monospace;">TEST INFO</p>
         <p style="margin: 0; font-family: monospace; font-size: 14px;">
           Project outcome code: <strong>{{ outcome }}</strong><br>
           {% if outcome == "BAND_3" %}
-            Button takes user to: <strong>MCMS</strong> (legacy system — high complexity standard licence)
+            Button takes user to: <strong>MCMS</strong> (high complexity standard licence)
           {% elif outcome == "BAND_2" %}
-            Button takes user to: <strong>MAS</strong> (new LCML service — low complexity standard licence)
+            Button takes user to: <strong>MAS</strong> (low complexity standard licence)
           {% elif outcome == "SELF_SERVICE" %}
-            Button takes user to: <strong>MCMS</strong> (legacy system — self-service licence)
+            Button takes user to: <strong>MCMS</strong> (self-service licence)
           {% elif outcome == "EXEMPT" %}
             Button takes user to: <strong>MAS</strong> (exemption notification)
           {% endif %}
-          {% if band3Triggers | length %}
+          {% if outcome != "EXEMPT" and band3Triggers | length %}
             <br><br>Band 3 triggers:
             {% for trigger in band3Triggers %}
               <br>— {{ trigger }}
