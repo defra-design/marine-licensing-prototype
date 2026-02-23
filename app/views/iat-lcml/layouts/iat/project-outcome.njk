@@ -105,6 +105,24 @@
           classes: "govuk-button--secondary"
         }) }}
       </div>
+
+      {# --- TEST INFO — remove before go-live --- #}
+      <div style="margin-top: 2em; padding: 1em; border: 3px dashed #d4351c; background: #fef7f7;">
+        <p style="margin: 0 0 0.5em; font-weight: bold; color: #d4351c; font-family: monospace;">TEST INFO — not part of the design</p>
+        <p style="margin: 0; font-family: monospace; font-size: 14px;">
+          Project outcome code: <strong>{{ outcome }}</strong><br>
+          {% if outcome == "BAND_3" %}
+            Button takes user to: <strong>MCMS</strong> (legacy system — high complexity standard licence)
+          {% elif outcome == "BAND_2" %}
+            Button takes user to: <strong>MAS</strong> (new LCML service — low complexity standard licence)
+          {% elif outcome == "SELF_SERVICE" %}
+            Button takes user to: <strong>MCMS</strong> (legacy system — self-service licence)
+          {% elif outcome == "EXEMPT" %}
+            Button takes user to: <strong>MAS</strong> (exemption notification)
+          {% endif %}
+        </p>
+      </div>
+
     </div>
   </div>
 {% endblock %}
