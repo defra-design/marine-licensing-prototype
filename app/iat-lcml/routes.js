@@ -466,6 +466,7 @@ module.exports = function (router) {
       res.redirect(`${base}/activity-loop/interstitial`);
     } else {
       req.session.data.in_activity_loop = false;
+      req.session.data.in_screening_phase = true;
       res.redirect(`${base}/activity/completion`);
     }
   });
@@ -476,6 +477,7 @@ module.exports = function (router) {
 
   router.get(`${base}/project-outcome`, (req, res) => {
     const data = req.session.data;
+    data.in_screening_phase = false;
     const { outcome, band3Triggers } = resolveProjectOutcome(data);
     const selected = data.selected_activities || [];
 
@@ -683,7 +685,17 @@ module.exports = function (router) {
         }
       }
 
-      // --- Default (not in loop) ---
+      // --- Phase 3 screening intercept ---
+      // If we're in the screening phase and an answer would exit to an
+      // outcome page, redirect to /project-outcome instead.
+      const inScreening = req.session.data.in_screening_phase === true;
+
+      if (inScreening && chosen.outcomeRoute) {
+        req.session.data.in_screening_phase = false;
+        return res.redirect(`${base}/project-outcome`);
+      }
+
+      // --- Default ---
       const next = chosen.nextQuestionRoute || chosen.outcomeRoute;
       if (next) {
         res.redirect(`${base}${next}`);
