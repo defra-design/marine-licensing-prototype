@@ -182,15 +182,16 @@ module.exports = function (router) {
     // --- Resolve project-level outcome ---
     let outcome;
 
-    if (worst === "STANDARD" || band3Triggers.length > 0) {
-      // At least one activity needs a standard licence
+    if (worst === "STANDARD") {
+      // At least one activity needs a standard licence —
+      // Band 3 triggers determine MCMS vs MAS routing
       if (band3Triggers.length > 0) {
-        outcome = "BAND_3"; // High complexity → MCMS
+        outcome = "BAND_3";
       } else {
-        outcome = "BAND_2"; // Low complexity → MAS (new LCML service)
+        outcome = "BAND_2";
       }
     } else if (worst === "SELF_SERVICE") {
-      outcome = "SELF_SERVICE"; // Self-service → MCMS self-service
+      outcome = "SELF_SERVICE";
     } else {
       outcome = "EXEMPT";
     }

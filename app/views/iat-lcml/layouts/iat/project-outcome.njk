@@ -16,14 +16,12 @@
       {# --- Panel showing the overall result --- #}
       {% if outcome == "BAND_3" %}
         {{ govukPanel({
-          titleText: "Standard marine licence application required",
-          html: "Your application will be handled through MCMS",
+          titleText: "Marine licence required",
           classes: "govuk-panel--confirmation"
         }) }}
       {% elif outcome == "BAND_2" %}
         {{ govukPanel({
-          titleText: "Marine licence application required",
-          html: "Your application is suitable for the Marine Application Service",
+          titleText: "Marine licence required",
           classes: "govuk-panel--confirmation"
         }) }}
       {% elif outcome == "SELF_SERVICE" %}
@@ -33,31 +31,23 @@
         }) }}
       {% elif outcome == "EXEMPT" %}
         {{ govukPanel({
-          titleText: "Exemption may apply",
+          titleText: "Exempt activity",
           classes: "govuk-panel--confirmation"
         }) }}
       {% endif %}
 
       {# --- Explanation text --- #}
       {% if outcome == "BAND_3" %}
-        <p class="govuk-body">Based on the information provided, your project requires a standard marine licence from the MMO. One or more factors mean it cannot be processed through the Marine Application Service and must be submitted through MCMS.</p>
+        <p class="govuk-body">Based on the information provided, your project requires a marine licence from the MMO.</p>
       {% elif outcome == "BAND_2" %}
-        <p class="govuk-body">Based on the information provided, your project requires a marine licence. Your application is low complexity and can be submitted through the Marine Application Service (MAS).</p>
+        <p class="govuk-body">Based on the information provided, your project requires a marine licence from the MMO.</p>
       {% elif outcome == "SELF_SERVICE" %}
         <p class="govuk-body">Based on the information provided, your project is suitable for self-service marine licensing.</p>
       {% elif outcome == "EXEMPT" %}
-        <p class="govuk-body">Based on the information provided, all activities in your project may be exempt from marine licensing requirements.</p>
+        <p class="govuk-body">Based on your answers your activity is exempt but you need to tell us more information.</p>
       {% endif %}
 
-      {# --- Band 3 triggers --- #}
-      {% if band3Triggers | length %}
-        <h2 class="govuk-heading-m">Why your application must go through MCMS</h2>
-        <ul class="govuk-list govuk-list--bullet">
-          {% for trigger in band3Triggers %}
-            <li>{{ trigger }}</li>
-          {% endfor %}
-        </ul>
-      {% endif %}
+      {# --- Band 3 triggers (internal detail, not shown to user) --- #}
 
       {# --- Per-activity summary --- #}
       <h2 class="govuk-heading-m">Activity summary</h2>
@@ -77,14 +67,9 @@
 
       {# --- CTA buttons --- #}
       <div class="govuk-!-margin-top-6">
-        {% if outcome == "BAND_3" %}
+        {% if outcome == "BAND_3" or outcome == "BAND_2" %}
           {{ govukButton({
-            text: "Apply for a standard marine licence",
-            href: "#"
-          }) }}
-        {% elif outcome == "BAND_2" %}
-          {{ govukButton({
-            text: "Apply through the Marine Application Service",
+            text: "Apply for a marine licence",
             href: "#"
           }) }}
         {% elif outcome == "SELF_SERVICE" %}
@@ -94,7 +79,7 @@
           }) }}
         {% elif outcome == "EXEMPT" %}
           {{ govukButton({
-            text: "Check exemption notification requirements",
+            text: "Continue",
             href: "#"
           }) }}
         {% endif %}
@@ -119,6 +104,12 @@
             Button takes user to: <strong>MCMS</strong> (legacy system — self-service licence)
           {% elif outcome == "EXEMPT" %}
             Button takes user to: <strong>MAS</strong> (exemption notification)
+          {% endif %}
+          {% if band3Triggers | length %}
+            <br><br>Band 3 triggers:
+            {% for trigger in band3Triggers %}
+              <br>— {{ trigger }}
+            {% endfor %}
           {% endif %}
         </p>
       </div>
