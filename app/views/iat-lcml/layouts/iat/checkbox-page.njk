@@ -1,0 +1,59 @@
+{# iat-lcml/layouts/iat/checkbox-page.njk #}
+
+{% extends "layouts/main.html" %}
+
+{# --- Import the GOV.UK component macros we need --- #}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "govuk/components/button/macro.njk"     import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% block pageTitle %}
+  {% if data['errorthispage'] == "true" %}
+    Error:
+  {% endif %}
+  {{ h1 }} – Marine licence IAT
+{% endblock %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <!-- Error summary -->
+      {% if data['errorthispage'] == "true" %}
+        {{ govukErrorSummary({
+          titleText: "There is a problem",
+          errorList: [
+            {
+              text: "Select at least one activity",
+              href: "#" + inputName
+            }
+          ]
+        }) }}
+      {% endif %}
+
+      <form method="post" novalidate>
+
+        {{ govukCheckboxes({
+          idPrefix: inputName,
+          name: inputName,
+          fieldset: {
+            legend: {
+              html: (('<span class="govuk-caption-l">' + caption + '</span>') if caption else '') + h1,
+              isPageHeading: true,
+              classes: "govuk-fieldset__legend--l"
+            }
+          },
+          hint: {
+            html: hintHtml
+          } if hintHtml,
+          items: checkboxes,
+          errorMessage: {
+            text: "Select at least one activity"
+          } if data['errortypeone'] == "true"
+        }) }}
+
+        {{ govukButton({ text: "Continue" }) }}
+
+      </form>
+    </div>
+  </div>
+{% endblock %}

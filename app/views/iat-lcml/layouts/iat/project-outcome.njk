@@ -1,0 +1,96 @@
+{# iat-lcml/layouts/iat/project-outcome.njk #}
+
+{% extends "layouts/main.html" %}
+
+{% from "govuk/components/panel/macro.njk"  import govukPanel %}
+{% from "govuk/components/button/macro.njk"  import govukButton %}
+
+{% block pageTitle %}
+  Project outcome – Marine licence IAT
+{% endblock %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+      {# --- Panel showing the overall result --- #}
+      {% if outcome == "MCMS" %}
+        {{ govukPanel({
+          titleText: "Standard marine licence application required",
+          classes: "govuk-panel--confirmation"
+        }) }}
+      {% elif outcome == "MAS" %}
+        {{ govukPanel({
+          titleText: "Suitable for self-service marine licensing",
+          classes: "govuk-panel--confirmation"
+        }) }}
+      {% elif outcome == "EXEMPT" %}
+        {{ govukPanel({
+          titleText: "Exemption may apply",
+          classes: "govuk-panel--confirmation"
+        }) }}
+      {% endif %}
+
+      {# --- Explanation text --- #}
+      {% if outcome == "MCMS" %}
+        <p class="govuk-body">Based on the information provided, your project requires a standard marine licence from the MMO. This is because one or more factors mean it is not suitable for self-service marine licensing.</p>
+      {% elif outcome == "MAS" %}
+        <p class="govuk-body">Based on the information provided, your project is suitable for self-service marine licensing through the Marine Application Service.</p>
+      {% elif outcome == "EXEMPT" %}
+        <p class="govuk-body">Based on the information provided, all activities in your project may be exempt from marine licensing requirements.</p>
+      {% endif %}
+
+      {# --- MCMS triggers --- #}
+      {% if triggers | length %}
+        <h2 class="govuk-heading-m">Why a standard licence is required</h2>
+        <ul class="govuk-list govuk-list--bullet">
+          {% for trigger in triggers %}
+            <li>{{ trigger }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+
+      {# --- Per-activity summary --- #}
+      <h2 class="govuk-heading-m">Activity summary</h2>
+
+      <dl class="govuk-summary-list">
+        {% for activity in activities %}
+          <div class="govuk-summary-list__row">
+            <dt class="govuk-summary-list__key">{{ activity.name }}</dt>
+            <dd class="govuk-summary-list__value">
+              <strong class="govuk-tag {% if activity.outcome == 'MCMS' %}govuk-tag--red{% elif activity.outcome == 'MAS' %}govuk-tag--green{% else %}govuk-tag--blue{% endif %}">
+                {{ activity.outcomeLabel }}
+              </strong>
+            </dd>
+          </div>
+        {% endfor %}
+      </dl>
+
+      {# --- CTA buttons --- #}
+      <div class="govuk-!-margin-top-6">
+        {% if outcome == "MCMS" %}
+          {{ govukButton({
+            text: "Apply for a standard marine licence",
+            href: "#"
+          }) }}
+        {% elif outcome == "MAS" %}
+          {{ govukButton({
+            text: "Apply for a self-service marine licence",
+            href: "#"
+          }) }}
+        {% elif outcome == "EXEMPT" %}
+          {{ govukButton({
+            text: "Check exemption notification requirements",
+            href: "#"
+          }) }}
+        {% endif %}
+
+        {{ govukButton({
+          text: "Download a PDF record of my answers",
+          href: "#",
+          classes: "govuk-button--secondary"
+        }) }}
+      </div>
+    </div>
+  </div>
+{% endblock %}
