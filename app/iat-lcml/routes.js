@@ -45,6 +45,12 @@ module.exports = function (router) {
   // Activity metadata
   // =====================================================================
 
+  // Repeatable activity types (can have multiple instances)
+  const REPEATABLE_ACTIVITIES = ["CON", "DEPOSIT", "REMOVAL", "DREDGE"];
+
+  // Strip instance suffix: "CON_2" → "CON", "DREDGE" → "DREDGE"
+  const getActivityType = (instanceId) => instanceId.replace(/_\d+$/, "");
+
   const ACTIVITY_LABELS = {
     CON: "Construction",
     DEPOSIT: "Deposit of a substance or object",
@@ -136,10 +142,11 @@ module.exports = function (router) {
     // --- Activity-type triggers (Band 3 if selected AND not exempt) ---
     const BAND_3_ACTIVITY_TYPES = ["DREDGE", "SCUTTLING", "EXPLOSIVES", "INCINERATION"];
     for (const actId of selectedActivities) {
-      if (BAND_3_ACTIVITY_TYPES.includes(actId)) {
+      const baseType = getActivityType(actId);
+      if (BAND_3_ACTIVITY_TYPES.includes(baseType)) {
         const actOutcome = (activityAnswers[actId] || {}).outcome;
         if (actOutcome !== "EXEMPT") {
-          const label = ACTIVITY_LABELS[actId] || actId;
+          const label = ACTIVITY_LABELS[baseType] || actId;
           band3Triggers.push(`Project involves ${label.toLowerCase()}`);
         }
       }
@@ -250,7 +257,9 @@ module.exports = function (router) {
       checkboxes: activityTypeQ.answers.map((a) => ({
         value: a.id,
         text: a.text,
-        hint: a.hint && { html: a.hint },
+        hint: REPEATABLE_ACTIVITIES.includes(a.id)
+          ? { html: "Select this once even if you have more than one — you can add another at the end." }
+          : a.hint && { html: a.hint },
       })),
     });
   });
@@ -417,12 +426,12 @@ module.exports = function (router) {
       return res.redirect(`${base}/activity-loop/done`);
     }
 
-    const isAutoMcms = AUTO_MCMS_ACTIVITIES.includes(actId);
+    const baseType = getActivityType(actId);
+    const isAutoMcms = AUTO_MCMS_ACTIVITIES.includes(baseType);
 
     res.render("iat-lcml/layouts/iat/interstitial", {
-      activityName: ACTIVITY_LABELS[actId] || actId,
+      activityName: ACTIVITY_LABELS[baseType] || actId,
       currentIndex: idx + 1,
-      totalActivities: selected.length,
       autoMcms: isAutoMcms,
     });
   });
@@ -436,8 +445,10 @@ module.exports = function (router) {
       return res.redirect(`${base}/activity-loop/done`);
     }
 
+    const baseType = getActivityType(actId);
+
     // Auto-MCMS activities skip straight to next
-    if (AUTO_MCMS_ACTIVITIES.includes(actId)) {
+    if (AUTO_MCMS_ACTIVITIES.includes(baseType)) {
       if (!req.session.data.activity_answers) {
         req.session.data.activity_answers = {};
       }
@@ -446,7 +457,7 @@ module.exports = function (router) {
     }
 
     // Otherwise redirect to the first question for this activity
-    const firstQ = ACTIVITY_FIRST_QUESTION[actId];
+    const firstQ = ACTIVITY_FIRST_QUESTION[baseType];
     if (firstQ) {
       res.redirect(`${base}${firstQ}`);
     } else {
@@ -454,6 +465,60 @@ module.exports = function (router) {
       req.session.data.activity_answers[actId] = { outcome: "STANDARD" };
       res.redirect(`${base}/activity-loop/next`);
     }
+  });
+
+  // --- /activity-loop/add-another — ask if user wants another instance ---
+
+  router.get(`${base}/activity-loop/add-another`, (req, res) => {
+    const selected = req.session.data.selected_activities || [];
+    const idx = req.session.data.current_activity_index || 0;
+    const actId = selected[idx];
+    const baseType = getActivityType(actId || "");
+
+    res.render("iat-lcml/layouts/iat/add-another", {
+      activityName: ACTIVITY_LABELS[baseType] || actId,
+    });
+  });
+
+  router.post(`${base}/activity-loop/add-another`, (req, res) => {
+    req.session.data["errorthispage"] = "false";
+    req.session.data["errortypeone"] = "false";
+
+    const answer = req.body.add_another;
+    if (!answer || answer.trim() === "") {
+      req.session.data["errorthispage"] = "true";
+      req.session.data["errortypeone"] = "true";
+      return res.redirect(`${base}/activity-loop/add-another`);
+    }
+
+    if (answer === "yes") {
+      const selected = req.session.data.selected_activities || [];
+      const idx = req.session.data.current_activity_index || 0;
+      const actId = selected[idx];
+      const baseType = getActivityType(actId || "");
+
+      // Work out the next instance number for this base type
+      const existingCount = selected.filter(
+        (id) => getActivityType(id) === baseType,
+      ).length;
+      const newInstanceId = `${baseType}_${existingCount + 1}`;
+
+      // Insert the new instance right after the current one so remaining
+      // activities stay in sequence (push would skip them)
+      selected.splice(idx + 1, 0, newInstanceId);
+      req.session.data.selected_activities = selected;
+      if (!req.session.data.activity_answers) {
+        req.session.data.activity_answers = {};
+      }
+      req.session.data.activity_answers[newInstanceId] = {};
+
+      // Advance index to the new instance and show its interstitial
+      req.session.data.current_activity_index = idx + 1;
+      return res.redirect(`${base}/activity-loop/interstitial`);
+    }
+
+    // "No" — continue to next activity
+    res.redirect(`${base}/activity-loop/next`);
   });
 
   // --- /activity-loop/next — advance to next activity or end loop ---
@@ -488,7 +553,7 @@ module.exports = function (router) {
     const BAND_3_TYPES = ["DREDGE", "SCUTTLING", "EXPLOSIVES", "INCINERATION"];
     const hasNonExemptBand3 = selected.some(
       (id) =>
-        BAND_3_TYPES.includes(id) &&
+        BAND_3_TYPES.includes(getActivityType(id)) &&
         (activityAnswers[id] || {}).outcome !== "EXEMPT",
     );
 
@@ -524,11 +589,29 @@ module.exports = function (router) {
 
     data.project_outcome = outcome;
 
+    // Build display names — append instance number when a type appears more than once
+    const typeCounts = {};
+    selected.forEach((actId) => {
+      const bt = getActivityType(actId);
+      typeCounts[bt] = (typeCounts[bt] || 0) + 1;
+    });
+
+    const typeIndex = {};
     const activities = selected.map((actId) => {
+      const baseType = getActivityType(actId);
       const answers = (data.activity_answers || {})[actId] || {};
+      const label = ACTIVITY_LABELS[baseType] || actId;
+
+      // Track per-type running index for display numbering
+      typeIndex[baseType] = (typeIndex[baseType] || 0) + 1;
+      const displayName =
+        typeCounts[baseType] > 1
+          ? `${label} (${typeIndex[baseType]})`
+          : label;
+
       return {
         id: actId,
-        name: ACTIVITY_LABELS[actId] || actId,
+        name: displayName,
         outcome: answers.outcome || "SELF_SERVICE",
         outcomeLabel: getActivityOutcomeLabel(answers.outcome || "SELF_SERVICE"),
       };
@@ -540,6 +623,15 @@ module.exports = function (router) {
       activities,
     });
   });
+
+  // Helper: where to go after an activity completes its questions
+  function activityDoneRedirect(actId) {
+    const baseType = getActivityType(actId || "");
+    if (REPEATABLE_ACTIVITIES.includes(baseType)) {
+      return `${base}/activity-loop/add-another`;
+    }
+    return `${base}/activity-loop/next`;
+  }
 
   // =====================================================================
   // Auto-generated GET/POST for all content.json questions and outcomes
@@ -664,7 +756,7 @@ module.exports = function (router) {
                 req.session.data.activity_answers = {};
               req.session.data.activity_answers[actId] = { outcome: "STANDARD" };
             }
-            return res.redirect(`${base}/activity-loop/next`);
+            return res.redirect(activityDoneRedirect(actId));
           }
           // Not in loop — find and redirect to the outcome page
           const outcome = iat.outcomes.find(
@@ -708,7 +800,7 @@ module.exports = function (router) {
           if (actId) {
             req.session.data.activity_answers[actId].outcome = "SELF_SERVICE";
           }
-          return res.redirect(`${base}/activity-loop/next`);
+          return res.redirect(activityDoneRedirect(actId));
         }
 
         if (chosen.outcomeRoute) {
@@ -717,7 +809,7 @@ module.exports = function (router) {
           if (actId) {
             req.session.data.activity_answers[actId].outcome = classification;
           }
-          return res.redirect(`${base}/activity-loop/next`);
+          return res.redirect(activityDoneRedirect(actId));
         }
 
         // Normal: continue to the next question in this activity branch
