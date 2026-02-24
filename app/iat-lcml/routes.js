@@ -249,17 +249,21 @@ module.exports = function (router) {
   );
 
   router.get(`${base}/activity-type`, (req, res) => {
+    const baseHint = activityTypeQ.hint || "";
+    const extraHint = "You can add multiple instances of the same activity as you go through.";
+    const combinedHint = baseHint
+      ? `${baseHint}<p class="govuk-body govuk-!-margin-top-2">${extraHint}</p>`
+      : extraHint;
+
     res.render("iat-lcml/layouts/iat/checkbox-page", {
       h1: activityTypeQ.text,
-      hintHtml: activityTypeQ.hint,
+      hintHtml: combinedHint,
       caption: getCaptionText(activityTypeQ.section),
       inputName: "selected_activities",
       checkboxes: activityTypeQ.answers.map((a) => ({
         value: a.id,
         text: a.text,
-        hint: REPEATABLE_ACTIVITIES.includes(a.id)
-          ? { html: "Select this once even if you have more than one — you can add another at the end." }
-          : a.hint && { html: a.hint },
+        hint: a.hint && { html: a.hint },
       })),
     });
   });
