@@ -1,6 +1,6 @@
 {
 	"service_definitions": {
-	  "MAS": "Marine Application Service (New LCML route)",
+	  "CDP": "New CDP system (New LCML route)",
 	  "MCMS": "Marine Case Management System (Legacy route)"
 	},
 	"global_project_filters": {
@@ -35,7 +35,7 @@
 	},
 	"multi_activity_priority": [
 	  "1. MCMS (If any activity triggers MCMS)",
-	  "2. LCML/MAS (If all pass filters)",
+	  "2. LCML/CDP (If all pass filters)",
 	  "3. Exempt (If all are exempt)"
 	]
   }
