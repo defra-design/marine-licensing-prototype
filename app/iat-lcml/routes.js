@@ -250,10 +250,11 @@ module.exports = function (router) {
 
   router.get(`${base}/activity-type`, (req, res) => {
     const baseHint = activityTypeQ.hint || "";
-    const extraHint = "You can add multiple instances of the same activity as you go through.";
+    const selectAllHint = "Select all that apply.";
+    const repeatHint = "You can add multiple instances of the same activity as you go through.";
     const combinedHint = baseHint
-      ? `${baseHint}<p class="govuk-body govuk-!-margin-top-2">${extraHint}</p>`
-      : extraHint;
+      ? `${baseHint}<p class="govuk-body govuk-!-margin-top-2">${selectAllHint}</p><p class="govuk-body">${repeatHint}</p>`
+      : `<p class="govuk-body">${selectAllHint}</p><p class="govuk-body">${repeatHint}</p>`;
 
     res.render("iat-lcml/layouts/iat/checkbox-page", {
       h1: activityTypeQ.text,
