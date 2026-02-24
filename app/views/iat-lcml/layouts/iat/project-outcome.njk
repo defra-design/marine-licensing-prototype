@@ -99,11 +99,11 @@
           {% if outcome == "BAND_3" %}
             Button takes user to: <strong>MCMS</strong> (high complexity standard licence)
           {% elif outcome == "BAND_2" %}
-            Button takes user to: <strong>MAS</strong> (low complexity standard licence)
+            Button takes user to: <strong>New CDP system</strong> (low complexity standard licence)
           {% elif outcome == "SELF_SERVICE" %}
             Button takes user to: <strong>MCMS</strong> (self-service licence)
           {% elif outcome == "EXEMPT" %}
-            Button takes user to: <strong>MAS</strong> (exemption notification)
+            Button takes user to: <strong>New CDP system</strong> (exemption notification)
           {% endif %}
           {% if outcome != "EXEMPT" and band3Triggers | length %}
             <br><br>Band 3 triggers:
