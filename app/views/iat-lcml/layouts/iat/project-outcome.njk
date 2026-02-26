@@ -14,11 +14,11 @@
 
       {# --- Outcome heading (no panel) --- #}
       {% if outcome == "BAND_3" or outcome == "BAND_2" %}
-        <h1 class="govuk-heading-l">Based on the information provided, your project requires a marine licence.</h1>
+        <h1 class="govuk-heading-l">Based on the information provided, your project requires a marine licence</h1>
       {% elif outcome == "SELF_SERVICE" %}
-        <h1 class="govuk-heading-l">Based on the information provided, your project is suitable for self-service marine licensing.</h1>
+        <h1 class="govuk-heading-l">Based on the information provided, your project is suitable for self-service marine licensing</h1>
       {% elif outcome == "EXEMPT" %}
-        <h1 class="govuk-heading-l">Based on your answers your activity is exempt but you need to tell us more information.</h1>
+        <h1 class="govuk-heading-l">Based on your answers your activity is exempt but you need to tell us more information</h1>
       {% endif %}
 
       {# --- Band 3 triggers (internal detail, not shown to user) --- #}
@@ -38,9 +38,9 @@
               {% endif %}
             </dt>
             <dd class="govuk-summary-list__value">
-              <strong class="govuk-tag govuk-tag--green">
+              <span class="govuk-tag {% if activity.outcome == 'STANDARD' %}govuk-tag--blue{% elif activity.outcome == 'EXEMPT' %}govuk-tag--green{% elif activity.outcome == 'SELF_SERVICE' %}govuk-tag--purple{% else %}govuk-tag--blue{% endif %} govuk-!-margin-top-1">
                 {{ activity.outcomeLabel }}
-              </strong>
+              </span>
             </dd>
           </div>
         {% endfor %}

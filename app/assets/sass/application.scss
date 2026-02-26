@@ -568,7 +568,7 @@ body.page-cookie-banner {
   .govuk-summary-list__key,
   .govuk-summary-list__value {
     vertical-align: top;
-    padding-bottom: 4px;
+    padding-top: 16px;
     padding-bottom: 0; // Tighter row spacing (default is typically 15px)
   }
   @media (min-width: 40.0625em) {
