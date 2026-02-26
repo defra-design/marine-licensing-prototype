@@ -38,7 +38,7 @@
               {% endif %}
             </dt>
             <dd class="govuk-summary-list__value">
-              <strong class="govuk-tag {% if activity.outcome == 'STANDARD' %}govuk-tag--red{% elif activity.outcome == 'SELF_SERVICE' %}govuk-tag--green{% else %}govuk-tag--blue{% endif %}">
+              <strong class="govuk-tag govuk-tag--green">
                 {{ activity.outcomeLabel }}
               </strong>
             </dd>
@@ -46,7 +46,7 @@
         {% endfor %}
       </dl>
 
-      {# --- CTA buttons --- #}
+      {# --- CTA --- #}
       <div class="govuk-!-margin-top-6">
         {% if outcome == "BAND_3" or outcome == "BAND_2" %}
           {{ govukButton({
@@ -65,15 +65,13 @@
           }) }}
         {% endif %}
 
-        {{ govukButton({
-          text: "Download a PDF record of my answers",
-          href: "#",
-          classes: "govuk-button--secondary"
-        }) }}
+        <p class="govuk-body">
+          <a class="govuk-link--no-visited-state" href="#">Download a PDF record of my answers</a>
+        </p>
       </div>
 
       {# --- TEST INFO --- #}
-      <div style="margin-top: 2em; padding: 1em; border: 3px dashed #d4351c; background: #fef7f7;">
+      <div style="margin-top: 3em; padding: 1em; border: 3px dashed #d4351c; background: #fef7f7;">
         <p style="margin: 0 0 0.5em; font-weight: bold; color: #d4351c; font-family: monospace;">TEST INFO</p>
         <p style="margin: 0; font-family: monospace; font-size: 14px;">
           Project outcome code: <strong>{{ outcome }}</strong><br>
