@@ -75,6 +75,15 @@ module.exports = function (router) {
     SCUTTLING: null,
   };
 
+  // Override for sub-detail second-level lookup per activity type.
+  // - string → use that explicit route instead of nextQuestionRoute
+  // - false  → no second level, show first answer only
+  // - undefined → default behaviour (follow nextQuestionRoute)
+  const ACTIVITY_DETAIL_ROUTE = {
+    REMOVAL: "/exemption/removal/activity-type",
+    DREDGE: false,
+  };
+
   // =====================================================================
   // Outcome classification helpers
   // =====================================================================
@@ -672,13 +681,27 @@ module.exports = function (router) {
           const firstText = getAnswerText(firstRoute, firstAnswerId);
           if (firstText) {
             subDetail = firstText;
-            // Check for a second-level answer
-            const firstAnswer = getAnswerObject(firstRoute, firstAnswerId);
-            if (firstAnswer && firstAnswer.nextQuestionRoute) {
-              const secondKey = firstAnswer.nextQuestionRoute.replace(/^\//, "");
+            const detailOverride = ACTIVITY_DETAIL_ROUTE[baseType];
+            // Determine the second-level route
+            let secondRoute = null;
+            if (detailOverride === false) {
+              // No second level for this activity type
+              secondRoute = null;
+            } else if (typeof detailOverride === "string") {
+              // Explicit second-level route
+              secondRoute = detailOverride;
+            } else {
+              // Default: follow nextQuestionRoute from the first answer
+              const firstAnswer = getAnswerObject(firstRoute, firstAnswerId);
+              if (firstAnswer && firstAnswer.nextQuestionRoute) {
+                secondRoute = firstAnswer.nextQuestionRoute;
+              }
+            }
+            if (secondRoute) {
+              const secondKey = secondRoute.replace(/^\//, "");
               const secondAnswerId = answers[secondKey];
               if (secondAnswerId) {
-                const secondText = getAnswerText(firstAnswer.nextQuestionRoute, secondAnswerId);
+                const secondText = getAnswerText(secondRoute, secondAnswerId);
                 if (secondText) {
                   subDetail = `${firstText} — ${secondText}`;
                 }
