@@ -560,6 +560,27 @@ body.page-cookie-banner {
   height: 10px; // keep same dimensions as MOJ default
 }
 
+// IAT-LCML project outcome: activity summary – two equal columns (full width of list)
+.iat-activity-summary.govuk-summary-list {
+  .govuk-summary-list__row {
+    align-items: flex-start;
+  }
+  .govuk-summary-list__key,
+  .govuk-summary-list__value {
+    vertical-align: top;
+    padding-top: 16px;
+    padding-bottom: 0; // Tighter row spacing (default is typically 15px)
+  }
+  @media (min-width: 40.0625em) {
+    .govuk-summary-list__key {
+      width: 50%;
+    }
+    .govuk-summary-list__value {
+      width: 50%;
+    }
+  }
+}
+
 // Summary list full width override - use flex for all rows
 
 

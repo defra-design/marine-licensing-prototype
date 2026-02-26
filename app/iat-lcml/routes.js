@@ -75,6 +75,15 @@ module.exports = function (router) {
     SCUTTLING: null,
   };
 
+  // Override for sub-detail second-level lookup per activity type.
+  // - string → use that explicit route instead of nextQuestionRoute
+  // - false  → no second level, show first answer only
+  // - undefined → default behaviour (follow nextQuestionRoute)
+  const ACTIVITY_DETAIL_ROUTE = {
+    REMOVAL: "/exemption/removal/activity-type",
+    DREDGE: false,
+  };
+
   // =====================================================================
   // Outcome classification helpers
   // =====================================================================
@@ -94,6 +103,21 @@ module.exports = function (router) {
   //   SELF_SERVICE  — self-service licence              → MCMS self-service
   //   EXEMPT        — no licence required
 
+  // Look up display text for a stored answer by question route and answer id
+  function getAnswerText(route, answerId) {
+    const q = iat.questions.find((q) => q.route === route);
+    if (!q || !q.answers) return null;
+    const answer = q.answers.find((a) => a.id === answerId);
+    return answer ? answer.text : null;
+  }
+
+  // Get the answer object (with nextQuestionRoute etc.) by route and answer id
+  function getAnswerObject(route, answerId) {
+    const q = iat.questions.find((q) => q.route === route);
+    if (!q || !q.answers) return null;
+    return q.answers.find((a) => a.id === answerId) || null;
+  }
+
   function classifyOutcomeRoute(outcomeRoute) {
     if (!outcomeRoute) return "STANDARD";
     if (outcomeRoute.includes("licence-not-required")) return "EXEMPT";
@@ -110,11 +134,11 @@ module.exports = function (router) {
   function getActivityOutcomeLabel(outcome) {
     switch (outcome) {
       case "STANDARD":
-        return "Standard licence";
+        return "Marine licence";
       case "SELF_SERVICE":
         return "Self-service";
       case "EXEMPT":
-        return "Exempt";
+        return "Exempt activity notification";
       default:
         return outcome;
     }
@@ -155,6 +179,11 @@ module.exports = function (router) {
     // --- Project cost trigger ---
     if (sessionData.project_cost_over_1m === "yes") {
       band3Triggers.push("Total estimated project cost exceeds £1 million");
+    }
+
+    // --- EIA trigger ---
+    if (sessionData.eia_trigger === "yes") {
+      band3Triggers.push("EIA trigger: Project may require an Environmental Impact Assessment");
     }
 
     // --- Jurisdiction trigger (deposits outside UK) ---
@@ -222,6 +251,7 @@ module.exports = function (router) {
   const manualRoutes = [
     "/activity-type",
     "/project-cost",
+    "/eia-check",
     "/mpa-2km",
     "/mpa-2km-assessment",
   ];
@@ -303,7 +333,8 @@ module.exports = function (router) {
 
   // =====================================================================
   // Filtering questions (asked AFTER activity loop, only if needed)
-  // /project-cost → /mpa-2km → /mpa-2km-assessment → /project-outcome
+  // /project-cost → /eia-check → /mpa-2km → /mpa-2km-assessment → /project-outcome
+  // Each gate is a hard stop — "yes" redirects immediately to /project-outcome
   // =====================================================================
 
   const projectCostQ = iat.questions.find(
@@ -335,6 +366,47 @@ module.exports = function (router) {
     }
 
     req.session.data.project_cost_over_1m = answer;
+
+    // Hard stop: cost >£1M triggers BAND_3 immediately
+    if (answer === "yes") {
+      return res.redirect(`${base}/project-outcome`);
+    }
+
+    res.redirect(`${base}/eia-check`);
+  });
+
+  // --- /eia-check ---
+
+  router.get(`${base}/eia-check`, (req, res) => {
+    res.render("iat-lcml/layouts/iat/radio-page", {
+      h1: "Does your project involve any of the following: construction or decommissioning of offshore energy infrastructure, pipelines over 800mm diameter, or works likely to have a significant effect on the environment?",
+      caption: "Project assessment",
+      inputName: "eia_trigger",
+      radios: [
+        { value: "yes", text: "Yes" },
+        { value: "no", text: "No" },
+      ],
+    });
+  });
+
+  router.post(`${base}/eia-check`, (req, res) => {
+    req.session.data["errorthispage"] = "false";
+    req.session.data["errortypeone"] = "false";
+
+    const answer = req.body.eia_trigger;
+    if (!answer || answer.trim() === "") {
+      req.session.data["errorthispage"] = "true";
+      req.session.data["errortypeone"] = "true";
+      return res.redirect(`${base}/eia-check`);
+    }
+
+    req.session.data.eia_trigger = answer;
+
+    // Hard stop: EIA trigger sends straight to outcome
+    if (answer === "yes") {
+      return res.redirect(`${base}/project-outcome`);
+    }
+
     res.redirect(`${base}/mpa-2km`);
   });
 
@@ -594,31 +666,57 @@ module.exports = function (router) {
 
     data.project_outcome = outcome;
 
-    // Build display names — append instance number when a type appears more than once
-    const typeCounts = {};
-    selected.forEach((actId) => {
-      const bt = getActivityType(actId);
-      typeCounts[bt] = (typeCounts[bt] || 0) + 1;
-    });
-
-    const typeIndex = {};
     const activities = selected.map((actId) => {
       const baseType = getActivityType(actId);
       const answers = (data.activity_answers || {})[actId] || {};
       const label = ACTIVITY_LABELS[baseType] || actId;
 
-      // Track per-type running index for display numbering
-      typeIndex[baseType] = (typeIndex[baseType] || 0) + 1;
-      const displayName =
-        typeCounts[baseType] > 1
-          ? `${label} (${typeIndex[baseType]})`
-          : label;
+      // Build sub-activity detail from stored question answers
+      let subDetail = "";
+      const firstRoute = ACTIVITY_FIRST_QUESTION[baseType];
+      if (firstRoute) {
+        const firstKey = firstRoute.replace(/^\//, "");
+        const firstAnswerId = answers[firstKey];
+        if (firstAnswerId) {
+          const firstText = getAnswerText(firstRoute, firstAnswerId);
+          if (firstText) {
+            subDetail = firstText;
+            const detailOverride = ACTIVITY_DETAIL_ROUTE[baseType];
+            // Determine the second-level route
+            let secondRoute = null;
+            if (detailOverride === false) {
+              // No second level for this activity type
+              secondRoute = null;
+            } else if (typeof detailOverride === "string") {
+              // Explicit second-level route
+              secondRoute = detailOverride;
+            } else {
+              // Default: follow nextQuestionRoute from the first answer
+              const firstAnswer = getAnswerObject(firstRoute, firstAnswerId);
+              if (firstAnswer && firstAnswer.nextQuestionRoute) {
+                secondRoute = firstAnswer.nextQuestionRoute;
+              }
+            }
+            if (secondRoute) {
+              const secondKey = secondRoute.replace(/^\//, "");
+              const secondAnswerId = answers[secondKey];
+              if (secondAnswerId) {
+                const secondText = getAnswerText(secondRoute, secondAnswerId);
+                if (secondText) {
+                  subDetail = `${firstText} — ${secondText}`;
+                }
+              }
+            }
+          }
+        }
+      }
 
       return {
         id: actId,
-        name: displayName,
+        name: label,
         outcome: answers.outcome || "SELF_SERVICE",
         outcomeLabel: getActivityOutcomeLabel(answers.outcome || "SELF_SERVICE"),
+        subDetail,
       };
     });
 
