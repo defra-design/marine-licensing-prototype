@@ -10,7 +10,7 @@
   {% if data['errorthispage'] == "true" %}
     Error:
   {% endif %}
-  Do you have another {{ activityName | lower }} activity to add? – Marine licence IAT
+  {{ addAnotherHeading or ("Do you have another " + activityName | lower + " activity to add?") }} – Marine licence IAT
 {% endblock %}
 
 {% block content %}
@@ -22,7 +22,7 @@
           titleText: "There is a problem",
           errorList: [
             {
-              text: "Select yes if you have another " + activityName | lower + " activity to add",
+              text: "Select yes if you have more " + activityName | lower + " to add",
               href: "#add_another"
             }
           ]
@@ -36,17 +36,20 @@
           name: "add_another",
           fieldset: {
             legend: {
-              text: "Do you have another " + activityName | lower + " activity to add?",
+              text: addAnotherHeading or ("Do you have another " + activityName | lower + " activity to add?"),
               isPageHeading: true,
               classes: "govuk-fieldset__legend--l"
             }
           },
+          hint: {
+            text: addAnotherHint
+          } if addAnotherHint,
           items: [
             { value: "yes", text: "Yes" },
             { value: "no", text: "No" }
           ],
           errorMessage: {
-            text: "Select yes if you have another " + activityName | lower + " activity to add"
+            text: "Select yes if you have more " + activityName | lower + " to add"
           } if data['errortypeone'] == "true"
         }) }}
 
