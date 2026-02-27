@@ -399,7 +399,8 @@ module.exports = function (router) {
 
   router.get(`${base}/eia-check`, (req, res) => {
     res.render("iat-lcml/layouts/iat/radio-page", {
-      h1: "Does your project involve any of the following: construction or decommissioning of offshore energy infrastructure, pipelines over 800mm diameter, or works likely to have a significant effect on the environment?",
+      h1: "Does your project involve major infrastructure or works that could significantly affect the environment?",
+      hintHtml: "This includes:<ul class=\"govuk-list govuk-list--bullet\"><li>construction or decommissioning of offshore energy infrastructure</li><li>pipelines over 800mm diameter</li><li>any works likely to have a significant environmental effect</li></ul>",
       caption: "Project assessment",
       inputName: "eia_trigger",
       radios: [
