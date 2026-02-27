@@ -61,6 +61,26 @@ module.exports = function (router) {
     SCUTTLING: "Sinking of a vessel or floating container",
   };
 
+  // Per-activity content for the "add another" screens
+  const ADD_ANOTHER_CONTENT = {
+    CON: {
+      heading: "Do you have more construction work to add?",
+      hint: "For example, if you're doing construction in multiple locations.",
+    },
+    DEPOSIT: {
+      heading: "Do you have another deposit activity to add?",
+      hint: "For example, if you're depositing in different locations.",
+    },
+    REMOVAL: {
+      heading: "Do you have another removal activity to add?",
+      hint: "For example, if you're removing substances or objects from different locations.",
+    },
+    DREDGE: {
+      heading: "Do you have another dredging activity to add?",
+      hint: "For example, if you're dredging in different locations.",
+    },
+  };
+
   // Activities that always require a standard licence (auto-MCMS)
   const AUTO_MCMS_ACTIVITIES = ["INCINERATION", "EXPLOSIVES", "SCUTTLING"];
 
@@ -280,11 +300,11 @@ module.exports = function (router) {
 
   router.get(`${base}/activity-type`, (req, res) => {
     const baseHint = activityTypeQ.hint || "";
-    const selectAllHint = "Select all that apply.";
-    const repeatHint = "You can add multiple instances of the same activity as you go through.";
+    const repeatHint = "You can add any activity more than once later. For example, if you need to add 2 different types of construction activity.";
+    const selectAllHint = "Select all that apply";
     const combinedHint = baseHint
-      ? `${baseHint}<p class="govuk-body govuk-!-margin-top-2">${selectAllHint}</p><p class="govuk-body">${repeatHint}</p>`
-      : `<p class="govuk-body">${selectAllHint}</p><p class="govuk-body">${repeatHint}</p>`;
+      ? `${baseHint}<p class="govuk-body govuk-!-margin-top-2">${repeatHint}</p><p class="govuk-body">${selectAllHint}</p>`
+      : `<p class="govuk-body">${repeatHint}</p><p class="govuk-body">${selectAllHint}</p>`;
 
     res.render("iat-lcml/layouts/iat/checkbox-page", {
       h1: activityTypeQ.text,
@@ -551,9 +571,12 @@ module.exports = function (router) {
     const idx = req.session.data.current_activity_index || 0;
     const actId = selected[idx];
     const baseType = getActivityType(actId || "");
+    const content = ADD_ANOTHER_CONTENT[baseType] || {};
 
     res.render("iat-lcml/layouts/iat/add-another", {
       activityName: ACTIVITY_LABELS[baseType] || actId,
+      addAnotherHeading: content.heading,
+      addAnotherHint: content.hint,
     });
   });
 
