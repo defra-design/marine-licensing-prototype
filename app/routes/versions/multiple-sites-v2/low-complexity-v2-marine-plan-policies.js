@@ -41,6 +41,7 @@ module.exports = function (router) {
     req.session.data['errortypeone'] = "false";
     req.session.data['errortypetwo'] = "false";
     req.session.data['marine-plan-policy-s-acc-1-empty-textareas'] = undefined;
+    req.session.data['marine-plan-policy-s-acc-1-error-list'] = undefined;
     res.render(`versions/${version}/${section}/${subsection}/south-access-1`);
   });
 
@@ -49,6 +50,7 @@ module.exports = function (router) {
     req.session.data['errortypeone'] = "false";
     req.session.data['errortypetwo'] = "false";
     req.session.data['marine-plan-policy-s-acc-1-empty-textareas'] = undefined;
+    req.session.data['marine-plan-policy-s-acc-1-error-list'] = undefined;
 
     let how = req.session.data['marine-plan-policy-s-acc-1-how'];
     how = Array.isArray(how) ? how : (how ? [how] : []);
@@ -61,6 +63,9 @@ module.exports = function (router) {
     if (how.length === 0) {
       req.session.data['errorthispage'] = "true";
       req.session.data['errortypeone'] = "true";
+      req.session.data['marine-plan-policy-s-acc-1-error-list'] = [
+        { text: "Select how you will manage the impacts of your project in relation to this policy", href: "#marine-plan-policy-s-acc-1-how-avoid" }
+      ];
       return res.redirect('south-access-1');
     }
 
@@ -70,9 +75,16 @@ module.exports = function (router) {
     if (how.includes('mitigate') && (!mitigate || mitigate.trim() === '')) emptyTextareas.push('mitigate');
 
     if (emptyTextareas.length > 0) {
+      const errorList = [];
+      emptyTextareas.forEach(function (type) {
+        if (type === 'avoid') errorList.push({ text: "Enter how you will avoid any impacts", href: "#marine-plan-policy-s-acc-1-avoid" });
+        else if (type === 'minimise') errorList.push({ text: "Enter how you will minimise any impacts", href: "#marine-plan-policy-s-acc-1-minimise" });
+        else if (type === 'mitigate') errorList.push({ text: "Enter how you will mitigate any impacts", href: "#marine-plan-policy-s-acc-1-mitigate" });
+      });
       req.session.data['errorthispage'] = "true";
       req.session.data['errortypetwo'] = "true";
       req.session.data['marine-plan-policy-s-acc-1-empty-textareas'] = emptyTextareas;
+      req.session.data['marine-plan-policy-s-acc-1-error-list'] = errorList;
       return res.redirect('south-access-1');
     }
 
@@ -91,6 +103,7 @@ module.exports = function (router) {
     req.session.data['errortypeone'] = "false";
     req.session.data['errortypetwo'] = "false";
     req.session.data['marine-plan-policy-s-bio-1-empty-textareas'] = undefined;
+    req.session.data['marine-plan-policy-s-bio-1-error-list'] = undefined;
     res.render(`versions/${version}/${section}/${subsection}/south-biodiversity-1`);
   });
 
@@ -99,6 +112,7 @@ module.exports = function (router) {
     req.session.data['errortypeone'] = "false";
     req.session.data['errortypetwo'] = "false";
     req.session.data['marine-plan-policy-s-bio-1-empty-textareas'] = undefined;
+    req.session.data['marine-plan-policy-s-bio-1-error-list'] = undefined;
 
     let how = req.session.data['marine-plan-policy-s-bio-1-how'];
     how = Array.isArray(how) ? how : (how ? [how] : []);
@@ -111,6 +125,9 @@ module.exports = function (router) {
     if (how.length === 0) {
       req.session.data['errorthispage'] = "true";
       req.session.data['errortypeone'] = "true";
+      req.session.data['marine-plan-policy-s-bio-1-error-list'] = [
+        { text: "Select how you will manage the impacts of your project in relation to this policy", href: "#marine-plan-policy-s-bio-1-how-avoid" }
+      ];
       return res.redirect('south-biodiversity-1');
     }
 
@@ -120,9 +137,16 @@ module.exports = function (router) {
     if (how.includes('mitigate') && (!mitigate || mitigate.trim() === '')) emptyTextareas.push('mitigate');
 
     if (emptyTextareas.length > 0) {
+      const errorList = [];
+      emptyTextareas.forEach(function (type) {
+        if (type === 'avoid') errorList.push({ text: "Enter how you will avoid any impacts", href: "#marine-plan-policy-s-bio-1-avoid" });
+        else if (type === 'minimise') errorList.push({ text: "Enter how you will minimise any impacts", href: "#marine-plan-policy-s-bio-1-minimise" });
+        else if (type === 'mitigate') errorList.push({ text: "Enter how you will mitigate any impacts", href: "#marine-plan-policy-s-bio-1-mitigate" });
+      });
       req.session.data['errorthispage'] = "true";
       req.session.data['errortypetwo'] = "true";
       req.session.data['marine-plan-policy-s-bio-1-empty-textareas'] = emptyTextareas;
+      req.session.data['marine-plan-policy-s-bio-1-error-list'] = errorList;
       return res.redirect('south-biodiversity-1');
     }
 
@@ -141,6 +165,7 @@ module.exports = function (router) {
     req.session.data['errortypeone'] = "false";
     req.session.data['errortypetwo'] = "false";
     req.session.data['marine-plan-policy-s-cc-1-empty-textareas'] = undefined;
+    req.session.data['marine-plan-policy-s-cc-1-error-list'] = undefined;
     res.render(`versions/${version}/${section}/${subsection}/south-climate-change-1`);
   });
 
@@ -149,6 +174,7 @@ module.exports = function (router) {
     req.session.data['errortypeone'] = "false";
     req.session.data['errortypetwo'] = "false";
     req.session.data['marine-plan-policy-s-cc-1-empty-textareas'] = undefined;
+    req.session.data['marine-plan-policy-s-cc-1-error-list'] = undefined;
 
     let how = req.session.data['marine-plan-policy-s-cc-1-how'];
     how = Array.isArray(how) ? how : (how ? [how] : []);
@@ -161,6 +187,9 @@ module.exports = function (router) {
     if (how.length === 0) {
       req.session.data['errorthispage'] = "true";
       req.session.data['errortypeone'] = "true";
+      req.session.data['marine-plan-policy-s-cc-1-error-list'] = [
+        { text: "Select how you will manage the impacts of your project in relation to this policy", href: "#marine-plan-policy-s-cc-1-how-avoid" }
+      ];
       return res.redirect('south-climate-change-1');
     }
 
@@ -170,9 +199,16 @@ module.exports = function (router) {
     if (how.includes('mitigate') && (!mitigate || mitigate.trim() === '')) emptyTextareas.push('mitigate');
 
     if (emptyTextareas.length > 0) {
+      const errorList = [];
+      emptyTextareas.forEach(function (type) {
+        if (type === 'avoid') errorList.push({ text: "Enter how you will avoid any impacts", href: "#marine-plan-policy-s-cc-1-avoid" });
+        else if (type === 'minimise') errorList.push({ text: "Enter how you will minimise any impacts", href: "#marine-plan-policy-s-cc-1-minimise" });
+        else if (type === 'mitigate') errorList.push({ text: "Enter how you will mitigate any impacts", href: "#marine-plan-policy-s-cc-1-mitigate" });
+      });
       req.session.data['errorthispage'] = "true";
       req.session.data['errortypetwo'] = "true";
       req.session.data['marine-plan-policy-s-cc-1-empty-textareas'] = emptyTextareas;
+      req.session.data['marine-plan-policy-s-cc-1-error-list'] = errorList;
       return res.redirect('south-climate-change-1');
     }
 
@@ -191,6 +227,7 @@ module.exports = function (router) {
     req.session.data['errortypeone'] = "false";
     req.session.data['errortypetwo'] = "false";
     req.session.data['marine-plan-policy-s-agg-4-empty-textareas'] = undefined;
+    req.session.data['marine-plan-policy-s-agg-4-error-list'] = undefined;
     res.render(`versions/${version}/${section}/${subsection}/south-aggregates-4`);
   });
 
@@ -199,6 +236,7 @@ module.exports = function (router) {
     req.session.data['errortypeone'] = "false";
     req.session.data['errortypetwo'] = "false";
     req.session.data['marine-plan-policy-s-agg-4-empty-textareas'] = undefined;
+    req.session.data['marine-plan-policy-s-agg-4-error-list'] = undefined;
 
     let how = req.session.data['marine-plan-policy-s-agg-4-how'];
     how = Array.isArray(how) ? how : (how ? [how] : []);
@@ -211,6 +249,9 @@ module.exports = function (router) {
     if (how.length === 0) {
       req.session.data['errorthispage'] = "true";
       req.session.data['errortypeone'] = "true";
+      req.session.data['marine-plan-policy-s-agg-4-error-list'] = [
+        { text: "Select how you will manage the impacts of your project in relation to this policy", href: "#marine-plan-policy-s-agg-4-how-avoid" }
+      ];
       return res.redirect('south-aggregates-4');
     }
 
@@ -220,9 +261,16 @@ module.exports = function (router) {
     if (how.includes('mitigate') && (!mitigate || mitigate.trim() === '')) emptyTextareas.push('mitigate');
 
     if (emptyTextareas.length > 0) {
+      const errorList = [];
+      emptyTextareas.forEach(function (type) {
+        if (type === 'avoid') errorList.push({ text: "Enter how you will avoid any impacts", href: "#marine-plan-policy-s-agg-4-avoid" });
+        else if (type === 'minimise') errorList.push({ text: "Enter how you will minimise any impacts", href: "#marine-plan-policy-s-agg-4-minimise" });
+        else if (type === 'mitigate') errorList.push({ text: "Enter how you will mitigate any impacts", href: "#marine-plan-policy-s-agg-4-mitigate" });
+      });
       req.session.data['errorthispage'] = "true";
       req.session.data['errortypetwo'] = "true";
       req.session.data['marine-plan-policy-s-agg-4-empty-textareas'] = emptyTextareas;
+      req.session.data['marine-plan-policy-s-agg-4-error-list'] = errorList;
       return res.redirect('south-aggregates-4');
     }
 
@@ -269,6 +317,7 @@ module.exports = function (router) {
     req.session.data['errortypeone'] = "false";
     req.session.data['errortypetwo'] = "false";
     req.session.data['marine-plan-policy-s-uwn-2-empty-textareas'] = undefined;
+    req.session.data['marine-plan-policy-s-uwn-2-error-list'] = undefined;
     res.render(`versions/${version}/${section}/${subsection}/south-underwater-noise-2`);
   });
 
@@ -277,6 +326,7 @@ module.exports = function (router) {
     req.session.data['errortypeone'] = "false";
     req.session.data['errortypetwo'] = "false";
     req.session.data['marine-plan-policy-s-uwn-2-empty-textareas'] = undefined;
+    req.session.data['marine-plan-policy-s-uwn-2-error-list'] = undefined;
 
     let how = req.session.data['marine-plan-policy-s-uwn-2-how'];
     how = Array.isArray(how) ? how : (how ? [how] : []);
@@ -290,6 +340,9 @@ module.exports = function (router) {
     if (how.length === 0) {
       req.session.data['errorthispage'] = "true";
       req.session.data['errortypeone'] = "true";
+      req.session.data['marine-plan-policy-s-uwn-2-error-list'] = [
+        { text: "Select how you will manage the impacts of your project in relation to this policy", href: "#marine-plan-policy-s-uwn-2-how-avoid" }
+      ];
       return res.redirect('south-underwater-noise-2');
     }
 
@@ -300,9 +353,17 @@ module.exports = function (router) {
     if (how.includes('compensate') && (!compensate || compensate.trim() === '')) emptyTextareas.push('compensate');
 
     if (emptyTextareas.length > 0) {
+      const errorList = [];
+      emptyTextareas.forEach(function (type) {
+        if (type === 'avoid') errorList.push({ text: "Enter how you will avoid any impacts", href: "#marine-plan-policy-s-uwn-2-avoid" });
+        else if (type === 'minimise') errorList.push({ text: "Enter how you will minimise any impacts", href: "#marine-plan-policy-s-uwn-2-minimise" });
+        else if (type === 'mitigate') errorList.push({ text: "Enter how you will mitigate any impacts", href: "#marine-plan-policy-s-uwn-2-mitigate" });
+        else if (type === 'compensate') errorList.push({ text: "Enter how you will compensate for any impacts", href: "#marine-plan-policy-s-uwn-2-compensate" });
+      });
       req.session.data['errorthispage'] = "true";
       req.session.data['errortypetwo'] = "true";
       req.session.data['marine-plan-policy-s-uwn-2-empty-textareas'] = emptyTextareas;
+      req.session.data['marine-plan-policy-s-uwn-2-error-list'] = errorList;
       return res.redirect('south-underwater-noise-2');
     }
 

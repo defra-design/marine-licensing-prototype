@@ -71,11 +71,7 @@ Error:
 {% endset %}
 
 {% set howValues = data['marine-plan-policy-s-cc-1-how'] or [] %}
-{% set err1 = [{ text: "Select how you will manage the impacts of your project in relation to this policy", href: "#marine-plan-policy-s-cc-1-how" }] if data['errortypeone'] == "true" else [] %}
-{% set err2 = [{ text: "Enter how you will avoid any impacts", href: "#marine-plan-policy-s-cc-1-avoid" }] if data['errortypetwo'] == "true" and emptyTextareas.indexOf('avoid') > -1 else [] %}
-{% set err3 = [{ text: "Enter how you will minimise any impacts", href: "#marine-plan-policy-s-cc-1-minimise" }] if data['errortypetwo'] == "true" and emptyTextareas.indexOf('minimise') > -1 else [] %}
-{% set err4 = [{ text: "Enter how you will mitigate any impacts", href: "#marine-plan-policy-s-cc-1-mitigate" }] if data['errortypetwo'] == "true" and emptyTextareas.indexOf('mitigate') > -1 else [] %}
-{% set errorList = err1 + err2 + err3 + err4 %}
+{% set errorList = data['marine-plan-policy-s-cc-1-error-list'] or [] %}
 
 {% block content %}
 
@@ -100,9 +96,6 @@ Error:
 			<div class="govuk-form-group {% if data['errorthispage'] == 'true' and data['errortypeone'] == 'true' %}govuk-form-group--error{% endif %}">
 				{{ govukCheckboxes({
 					name: "marine-plan-policy-s-cc-1-how",
-					formGroup: {
-						attributes: { id: "marine-plan-policy-s-cc-1-how" }
-					},
 					fieldset: {
 						legend: {
 							text: "Select how you will manage the impacts of the project in relation to this policy",
@@ -117,6 +110,7 @@ Error:
 					} if data['errortypeone'] == "true",
 					items: [
 						{
+							id: "marine-plan-policy-s-cc-1-how-avoid",
 							value: "avoid",
 							text: "We will avoid impacts",
 							conditional: {
@@ -125,6 +119,7 @@ Error:
 							checked: howValues.indexOf('avoid') > -1
 						},
 						{
+							id: "marine-plan-policy-s-cc-1-how-minimise",
 							value: "minimise",
 							text: "We will minimise impacts",
 							conditional: {
@@ -133,6 +128,7 @@ Error:
 							checked: howValues.indexOf('minimise') > -1
 						},
 						{
+							id: "marine-plan-policy-s-cc-1-how-mitigate",
 							value: "mitigate",
 							text: "We will mitigate impacts",
 							conditional: {

@@ -86,12 +86,7 @@ Error:
 {% endset %}
 
 {% set howValues = data['marine-plan-policy-s-uwn-2-how'] or [] %}
-{% set err1 = [{ text: "Select how you will manage the impacts of your project in relation to this policy", href: "#marine-plan-policy-s-uwn-2-how" }] if data['errortypeone'] == "true" else [] %}
-{% set err2 = [{ text: "Enter how you will avoid any impacts", href: "#marine-plan-policy-s-uwn-2-avoid" }] if data['errortypetwo'] == "true" and emptyTextareas.indexOf('avoid') > -1 else [] %}
-{% set err3 = [{ text: "Enter how you will minimise any impacts", href: "#marine-plan-policy-s-uwn-2-minimise" }] if data['errortypetwo'] == "true" and emptyTextareas.indexOf('minimise') > -1 else [] %}
-{% set err4 = [{ text: "Enter how you will mitigate any impacts", href: "#marine-plan-policy-s-uwn-2-mitigate" }] if data['errortypetwo'] == "true" and emptyTextareas.indexOf('mitigate') > -1 else [] %}
-{% set err5 = [{ text: "Enter how you will compensate for any impacts", href: "#marine-plan-policy-s-uwn-2-compensate" }] if data['errortypetwo'] == "true" and emptyTextareas.indexOf('compensate') > -1 else [] %}
-{% set errorList = err1 + err2 + err3 + err4 + err5 %}
+{% set errorList = data['marine-plan-policy-s-uwn-2-error-list'] or [] %}
 
 {% block content %}
 
@@ -116,9 +111,6 @@ Error:
 			<div class="govuk-form-group {% if data['errorthispage'] == 'true' and data['errortypeone'] == 'true' %}govuk-form-group--error{% endif %}">
 				{{ govukCheckboxes({
 					name: "marine-plan-policy-s-uwn-2-how",
-					formGroup: {
-						attributes: { id: "marine-plan-policy-s-uwn-2-how" }
-					},
 					fieldset: {
 						legend: {
 							text: "Select how you will manage the impacts of the project in relation to this policy",
@@ -133,6 +125,7 @@ Error:
 					} if data['errortypeone'] == "true",
 					items: [
 						{
+							id: "marine-plan-policy-s-uwn-2-how-avoid",
 							value: "avoid",
 							text: "We will avoid impacts",
 							conditional: {
@@ -141,6 +134,7 @@ Error:
 							checked: howValues.indexOf('avoid') > -1
 						},
 						{
+							id: "marine-plan-policy-s-uwn-2-how-minimise",
 							value: "minimise",
 							text: "We will minimise impacts",
 							conditional: {
@@ -149,6 +143,7 @@ Error:
 							checked: howValues.indexOf('minimise') > -1
 						},
 						{
+							id: "marine-plan-policy-s-uwn-2-how-mitigate",
 							value: "mitigate",
 							text: "We will mitigate impacts",
 							conditional: {
@@ -157,6 +152,7 @@ Error:
 							checked: howValues.indexOf('mitigate') > -1
 						},
 						{
+							id: "marine-plan-policy-s-uwn-2-how-compensate",
 							value: "compensate",
 							text: "We will compensate for impacts",
 							conditional: {
