@@ -77,10 +77,10 @@ Error:
     value: data['marine-plan-policy-s-uwn-2-compensate'],
     rows: 5,
     label: {
-        text: "Summarise how you will compensate for the impacts"
+        text: "Summarise how you will compensate for the impacts. If you will not be compensating for the impacts, use this section to state the case for proceeding."
     },
     errorMessage: {
-        text: "Enter how you will compensate for any impacts"
+        text: "Enter how you will compensate for the impacts (or state the case for proceeding)"
     } if data['errortypetwo'] == "true" and emptyTextareas.indexOf('compensate') > -1
 }) }}
 {% endset %}
@@ -106,7 +106,7 @@ Error:
 
 			<h2 class="govuk-heading-m">Policy information</h2>
 			<p class="govuk-body">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-			<p class="govuk-body"><a href="#" class="govuk-link" target="_blank" rel="noopener noreferrer">Find out more about this policy (opens in new tab)</a></p>
+			<p class="govuk-body"><a href="#" class="govuk-link">Find out more about this policy (opens in new tab)</a></p>
 
 			<div class="govuk-form-group {% if data['errorthispage'] == 'true' and data['errortypeone'] == 'true' %}govuk-form-group--error{% endif %}">
 				{{ govukCheckboxes({
@@ -154,7 +154,7 @@ Error:
 						{
 							id: "marine-plan-policy-s-uwn-2-how-compensate",
 							value: "compensate",
-							text: "We will compensate for impacts",
+							text: "We will compensate for impacts (or state the case for proceeding)",
 							conditional: {
 								html: compensateTextarea
 							},

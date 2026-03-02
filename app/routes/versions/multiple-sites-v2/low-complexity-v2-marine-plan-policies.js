@@ -358,7 +358,7 @@ module.exports = function (router) {
         if (type === 'avoid') errorList.push({ text: "Enter how you will avoid any impacts", href: "#marine-plan-policy-s-uwn-2-avoid" });
         else if (type === 'minimise') errorList.push({ text: "Enter how you will minimise any impacts", href: "#marine-plan-policy-s-uwn-2-minimise" });
         else if (type === 'mitigate') errorList.push({ text: "Enter how you will mitigate any impacts", href: "#marine-plan-policy-s-uwn-2-mitigate" });
-        else if (type === 'compensate') errorList.push({ text: "Enter how you will compensate for any impacts", href: "#marine-plan-policy-s-uwn-2-compensate" });
+        else if (type === 'compensate') errorList.push({ text: "Enter how you will compensate for the impacts (or state the case for proceeding)", href: "#marine-plan-policy-s-uwn-2-compensate" });
       });
       req.session.data['errorthispage'] = "true";
       req.session.data['errortypetwo'] = "true";
