@@ -88,9 +88,12 @@ router.get('/' + version + section + 'sign-in', function (req, res) {
     if (req.query.article) {
         req.session.data['exemption-article'] = req.query.article;
     }
-    // if a user is an org user then store it in the session
+    // if a user is an org user then store it in the session; otherwise set display name for individual
     if (req.query.user_type === 'organisation') {
         req.session.data['user_type'] = 'organisation';
+    } else {
+        delete req.session.data['user_type'];
+        req.session.data['organisation-name'] = 'Sam Evans';
     }
     // Store component type if provided (for autocomplete vs radio button selection)
     if (req.query.component_type) {
@@ -101,10 +104,12 @@ router.get('/' + version + section + 'sign-in', function (req, res) {
         req.session.data['goto'] = req.query.goto;
     }
     
-    // Clear organisation data when user signs in (including when they sign out and come back)
-    delete req.session.data['organisation-name'];
+    // Clear organisation data for org users (they will set it via selector); keep changing-organisation clear
+    if (req.session.data['user_type'] === 'organisation') {
+        delete req.session.data['organisation-name'];
+    }
     delete req.session.data['changing-organisation'];
-    
+
     res.render(version + section + 'sign-in');
 });
 
