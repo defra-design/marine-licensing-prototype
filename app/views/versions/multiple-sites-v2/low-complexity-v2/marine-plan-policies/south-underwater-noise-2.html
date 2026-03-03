@@ -25,6 +25,21 @@ Error:
 {% endblock %}
 
 {% set emptyTextareas = data['marine-plan-policy-s-uwn-2-empty-textareas'] or [] %}
+{% set supportsTextarea %}
+{{ govukTextarea({
+    id: "marine-plan-policy-s-uwn-2-supports",
+    name: "marine-plan-policy-s-uwn-2-supports",
+    value: data['marine-plan-policy-s-uwn-2-supports'],
+    rows: 5,
+    label: {
+        text: "Summarise how your project supports this policy"
+    },
+    errorMessage: {
+        text: "Enter how your project supports this policy"
+    } if data['errortypetwo'] == "true" and emptyTextareas.indexOf('supports') > -1
+}) }}
+{% endset %}
+
 {% set avoidTextarea %}
 {{ govukTextarea({
     id: "marine-plan-policy-s-uwn-2-avoid",
@@ -70,18 +85,18 @@ Error:
 }) }}
 {% endset %}
 
-{% set compensateTextarea %}
+{% set stateCaseTextarea %}
 {{ govukTextarea({
-    id: "marine-plan-policy-s-uwn-2-compensate",
-    name: "marine-plan-policy-s-uwn-2-compensate",
-    value: data['marine-plan-policy-s-uwn-2-compensate'],
+    id: "marine-plan-policy-s-uwn-2-state-case",
+    name: "marine-plan-policy-s-uwn-2-state-case",
+    value: data['marine-plan-policy-s-uwn-2-state-case'],
     rows: 5,
     label: {
-        text: "Summarise how you will compensate for the impacts. If you will not be compensating for the impacts, use this section to state the case for proceeding."
+        text: "If you cannot mitigate significant adverse impacts, proposals must state the case for proceeding."
     },
     errorMessage: {
-        text: "Enter how you will compensate for the impacts (or state the case for proceeding)"
-    } if data['errortypetwo'] == "true" and emptyTextareas.indexOf('compensate') > -1
+        text: "Enter the case for proceeding"
+    } if data['errortypetwo'] == "true" and emptyTextareas.indexOf('state-case') > -1
 }) }}
 {% endset %}
 
@@ -113,7 +128,7 @@ Error:
 					name: "marine-plan-policy-s-uwn-2-how",
 					fieldset: {
 						legend: {
-							text: "Select how you will manage the impacts of the project in relation to this policy",
+							text: "Select how you'll address this policy and the project's impacts",
 							classes: "govuk-fieldset__legend--s"
 						}
 					},
@@ -121,13 +136,22 @@ Error:
 						text: "Select all that apply"
 					},
 					errorMessage: {
-						text: "Select how you will manage the impacts of your project in relation to this policy"
+						text: "Select how you'll address this policy and the project's impacts"
 					} if data['errortypeone'] == "true",
 					items: [
 						{
+							id: "marine-plan-policy-s-uwn-2-how-supports",
+							value: "supports",
+							text: "The project supports this policy",
+							conditional: {
+								html: supportsTextarea
+							},
+							checked: howValues.indexOf('supports') > -1
+						},
+						{
 							id: "marine-plan-policy-s-uwn-2-how-avoid",
 							value: "avoid",
-							text: "We will avoid impacts",
+							text: "We'll avoid impacts",
 							conditional: {
 								html: avoidTextarea
 							},
@@ -136,7 +160,7 @@ Error:
 						{
 							id: "marine-plan-policy-s-uwn-2-how-minimise",
 							value: "minimise",
-							text: "We will minimise impacts",
+							text: "We'll minimise impacts",
 							conditional: {
 								html: minimiseTextarea
 							},
@@ -145,20 +169,20 @@ Error:
 						{
 							id: "marine-plan-policy-s-uwn-2-how-mitigate",
 							value: "mitigate",
-							text: "We will mitigate impacts",
+							text: "We'll mitigate impacts",
 							conditional: {
 								html: mitigateTextarea
 							},
 							checked: howValues.indexOf('mitigate') > -1
 						},
 						{
-							id: "marine-plan-policy-s-uwn-2-how-compensate",
-							value: "compensate",
-							text: "We will compensate for impacts (or state the case for proceeding)",
+							id: "marine-plan-policy-s-uwn-2-how-state-case",
+							value: "state-case",
+							text: "We'll state the case for proceeding",
 							conditional: {
-								html: compensateTextarea
+								html: stateCaseTextarea
 							},
-							checked: howValues.indexOf('compensate') > -1
+							checked: howValues.indexOf('state-case') > -1
 						}
 					]
 				}) }}
