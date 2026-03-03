@@ -974,9 +974,10 @@ module.exports = function (router) {
     // Store user_type if provided (for organisation vs individual)
     if (req.query.user_type === 'organisation') {
       req.session.data['user_type'] = 'organisation';
-    } else if (req.query.user_type === '') {
-      // Explicitly clear user_type for individual users
+    } else {
+      // Individual user: clear user_type and set display name for the name bar
       delete req.session.data['user_type'];
+      req.session.data['organisation-name'] = 'Sam Evans';
     }
     
     // Store goto parameter if provided (for returning to homepage after sign-out)

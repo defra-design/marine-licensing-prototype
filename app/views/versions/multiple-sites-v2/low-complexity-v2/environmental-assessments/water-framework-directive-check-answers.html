@@ -4,7 +4,7 @@
 
 {% block beforeContent %}
     {% include "../../includes/phase-banner.html" %}
-    {% if data['user_type'] === 'organisation' %}
+    {% if data['organisation-name'] %}
         {% include "../../includes/organisation-switcher.html" %}
     {% endif %}
     <a class="govuk-back-link govuk-link--no-visited-state" href="javascript:history.back()">Back</a>
