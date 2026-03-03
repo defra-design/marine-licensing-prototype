@@ -25,6 +25,21 @@ Error:
 {% endblock %}
 
 {% set emptyTextareas = data['marine-plan-policy-s-agg-4-empty-textareas'] or [] %}
+{% set supportsTextarea %}
+{{ govukTextarea({
+    id: "marine-plan-policy-s-agg-4-supports",
+    name: "marine-plan-policy-s-agg-4-supports",
+    value: data['marine-plan-policy-s-agg-4-supports'],
+    rows: 5,
+    label: {
+        text: "Summarise how your project supports this policy"
+    },
+    errorMessage: {
+        text: "Enter how your project supports this policy"
+    } if data['errortypetwo'] == "true" and emptyTextareas.indexOf('supports') > -1
+}) }}
+{% endset %}
+
 {% set avoidTextarea %}
 {{ govukTextarea({
     id: "marine-plan-policy-s-agg-4-avoid",
@@ -98,7 +113,7 @@ Error:
 					name: "marine-plan-policy-s-agg-4-how",
 					fieldset: {
 						legend: {
-							text: "Select how you will manage the impacts of the project in relation to this policy",
+							text: "Select how you'll address this policy and the project's impacts",
 							classes: "govuk-fieldset__legend--s"
 						}
 					},
@@ -106,13 +121,22 @@ Error:
 						text: "Select all that apply"
 					},
 					errorMessage: {
-						text: "Select how you will manage the impacts of your project in relation to this policy"
+						text: "Select how you'll address this policy and the project's impacts"
 					} if data['errortypeone'] == "true",
 					items: [
 						{
+							id: "marine-plan-policy-s-agg-4-how-supports",
+							value: "supports",
+							text: "The project supports this policy",
+							conditional: {
+								html: supportsTextarea
+							},
+							checked: howValues.indexOf('supports') > -1
+						},
+						{
 							id: "marine-plan-policy-s-agg-4-how-avoid",
 							value: "avoid",
-							text: "We will avoid impacts",
+							text: "We'll avoid impacts",
 							conditional: {
 								html: avoidTextarea
 							},
@@ -121,7 +145,7 @@ Error:
 						{
 							id: "marine-plan-policy-s-agg-4-how-minimise",
 							value: "minimise",
-							text: "We will minimise impacts",
+							text: "We'll minimise impacts",
 							conditional: {
 								html: minimiseTextarea
 							},
@@ -130,7 +154,7 @@ Error:
 						{
 							id: "marine-plan-policy-s-agg-4-how-mitigate",
 							value: "mitigate",
-							text: "We will mitigate impacts",
+							text: "We'll mitigate impacts",
 							conditional: {
 								html: mitigateTextarea
 							},
