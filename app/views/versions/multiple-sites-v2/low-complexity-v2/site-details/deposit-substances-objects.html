@@ -15,7 +15,15 @@
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
+{% if data['low-complexity-deposit-type'] == 'continuation-existing' %}
+What deposit activity are you continuing?
+{% elif data['low-complexity-deposit-type'] == 'deposit-new' %}
+What new deposit activity are you doing?
+{% elif data['low-complexity-deposit-type'] == 'replacing-existing' %}
+What deposit activity are you doing that replaces an existing object?
+{% else %}
 What type of substance or objects will you be depositing?
+{% endif %}
 {% endset %}
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
