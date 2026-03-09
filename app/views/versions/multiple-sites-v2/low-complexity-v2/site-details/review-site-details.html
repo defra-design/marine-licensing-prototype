@@ -162,6 +162,7 @@ Review site details
             </div>
             <div class="govuk-summary-card__content">
                 <dl class="govuk-summary-list">
+                    <!-- Row 1: Type of activity -->
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">
                             Type of activity
@@ -169,51 +170,21 @@ Review site details
                         <dd class="govuk-summary-list__value">
                             {% if data['low-complexity-type-of-activity-completed'] %}
                                 {% if data['low-complexity-type-of-activity'] == 'construction' %}
-                                    {% if data['low-complexity-type-of-works'] %}
-                                        {% if data['low-complexity-type-of-works'] == 'construction-new' %}Construction of new works
-                                        {% elif data['low-complexity-type-of-works'] == 'maintenance-existing' %}Maintenance of existing works
-                                        {% elif data['low-complexity-type-of-works'] == 'alteration-improvement' %}Alteration or improvement, including extending, of existing marine works
-                                        {% endif %}
-                                    {% endif %}
-                                    {% if data['low-complexity-construction-structures'] and data['low-complexity-construction-structures'].length > 0 %}
-                                        <br><br>{% if data['low-complexity-type-of-works'] == 'construction-new' %}What you're constructing{% elif data['low-complexity-type-of-works'] == 'maintenance-existing' %}What you're maintaining{% elif data['low-complexity-type-of-works'] == 'alteration-improvement' %}What you're altering or improving{% endif %}:
-                                        <ul class="govuk-list govuk-list--bullet govuk-!-margin-top-2">
-                                        {% for structure in data['low-complexity-construction-structures'] %}
-                                            <li>
-                                                {% if structure == 'jetty-pier-quay' %}Jetty, pier or quay
-                                                {% elif structure == 'slipway-boat-ramp' %}Slipway or boat ramp
-                                                {% elif structure == 'sea-wall-coastal-wall' %}Sea wall or coastal wall
-                                                {% elif structure == 'revetment' %}Revetment (sloped coastal protection)
-                                                {% elif structure == 'groyne' %}Groyne
-                                                {% elif structure == 'breakwater-mole-harbour' %}Breakwater, mole or harbour protection structure
-                                                {% elif structure == 'bridge-supports' %}Bridge or bridge supports in tidal waters
-                                                {% elif structure == 'causeway-embankment' %}Causeway, embankment or coastal access ramp
-                                                {% elif structure == 'pontoons-walkways' %}Pontoons or floating walkways
-                                                {% elif structure == 'floating-breakwaters' %}Floating breakwaters or wave attenuators
-                                                {% elif structure == 'piles-piled-structures' %}Piles or piled structures
-                                                {% elif structure == 'foundations-platforms' %}Foundations for offshore platforms or similar structures
-                                                {% elif structure == 'artificial-reefs' %}Artificial reefs or habitat structures
-                                                {% elif structure == 'hard-coastal-defence' %}Hard coastal defence structures such as rock armour or concrete units
-                                                {% elif structure == 'tidal-flood-defence' %}Tidal flood defence structures (e.g., flood barriers, tidal gates, sluices)
-                                                {% elif structure == 'outfalls-diffusers' %}Outfalls or diffusers
-                                                {% elif structure == 'intakes' %}Intakes
-                                                {% elif structure == 'pipelines-ducts' %}Pipelines or ducts
-                                                {% elif structure == 'subsea-cables' %}Subsea cables requiring protective construction
-                                                {% elif structure == 'culverts-channels' %}Culverts or constructed tidal channels
-                                                {% elif structure == 'tidal-energy-devices' %}Tidal energy devices or foundations
-                                                {% elif structure == 'wave-energy-foundations' %}Wave energy device foundations
-                                                {% elif structure == 'offshore-wind-foundations' %}Fixed offshore wind foundations
-                                                {% elif structure == 'aquaculture-piled-structures' %}Piled or fixed aquaculture structures
-                                                {% elif structure == 'aquaculture-trestles' %}Aquaculture trestles or fixed walkways
-                                                {% endif %}
-                                            </li>
-                                        {% endfor %}
-                                        </ul>
+                                    {% if data['low-complexity-type-of-works'] == 'construction-new' %}Construction of new works
+                                    {% elif data['low-complexity-type-of-works'] == 'maintenance-existing' %}Maintenance of existing works
+                                    {% elif data['low-complexity-type-of-works'] == 'alteration-improvement' %}Alteration or improvement, including extending, of existing marine works
                                     {% endif %}
                                 {% elif data['low-complexity-type-of-activity'] == 'deposit' %}
-                                    Deposit of any substance or object
+                                    {% if data['low-complexity-deposit-type'] == 'continuation-existing' %}Continuation of existing deposit activity
+                                    {% elif data['low-complexity-deposit-type'] == 'deposit-new' %}Deposit of something new
+                                    {% elif data['low-complexity-deposit-type'] == 'replacing-existing' %}Replacing existing object
+                                    {% endif %}
                                 {% elif data['low-complexity-type-of-activity'] == 'removal' %}
-                                    Removal of any substance or object
+                                    {% if data['low-complexity-removal-type'] == 'one-off-first-time' %}One off first time removal
+                                    {% elif data['low-complexity-removal-type'] == 'ongoing-routine' %}Removal as part of an ongoing or routine activity
+                                    {% elif data['low-complexity-removal-type'] == 'removal-replacement' %}Removal for replacement
+                                    {% elif data['low-complexity-removal-type'] == 'removal-relocation' %}Removal for relocation
+                                    {% endif %}
                                 {% endif %}
                             {% else %}
                                 <span class="govuk-tag govuk-tag--red">Incomplete</span>
@@ -225,6 +196,178 @@ Review site details
                             </a>
                         </dd>
                     </div>
+
+                    <!-- Row 2: Activity specifics (only shown when completed) -->
+                    {% if data['low-complexity-type-of-activity-completed'] %}
+
+                        {% if data['low-complexity-type-of-activity'] == 'construction' %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                {% if data['low-complexity-type-of-works'] == 'construction-new' %}What are you constructing?
+                                {% elif data['low-complexity-type-of-works'] == 'maintenance-existing' %}What are you maintaining?
+                                {% elif data['low-complexity-type-of-works'] == 'alteration-improvement' %}What are you altering or improving?
+                                {% endif %}
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                {% if data['low-complexity-construction-structures'] and data['low-complexity-construction-structures'].length > 0 %}
+                                    <ul class="govuk-list govuk-list--bullet">
+                                    {% for structure in data['low-complexity-construction-structures'] %}
+                                        <li>
+                                            {% if structure == 'jetty-pier-quay' %}Jetty, pier or quay
+                                            {% elif structure == 'slipway-boat-ramp' %}Slipway or boat ramp
+                                            {% elif structure == 'sea-wall-coastal-wall' %}Sea wall or coastal wall
+                                            {% elif structure == 'revetment' %}Revetment (sloped coastal protection)
+                                            {% elif structure == 'groyne' %}Groyne
+                                            {% elif structure == 'breakwater-mole-harbour' %}Breakwater, mole or harbour protection structure
+                                            {% elif structure == 'bridge-supports' %}Bridge or bridge supports in tidal waters
+                                            {% elif structure == 'causeway-embankment' %}Causeway, embankment or coastal access ramp
+                                            {% elif structure == 'pontoons-walkways' %}Pontoons or floating walkways
+                                            {% elif structure == 'floating-breakwaters' %}Floating breakwaters or wave attenuators
+                                            {% elif structure == 'piles-piled-structures' %}Piles or piled structures
+                                            {% elif structure == 'foundations-platforms' %}Foundations for offshore platforms or similar structures
+                                            {% elif structure == 'artificial-reefs' %}Artificial reefs or habitat structures
+                                            {% elif structure == 'hard-coastal-defence' %}Hard coastal defence structures such as rock armour or concrete units
+                                            {% elif structure == 'tidal-flood-defence' %}Tidal flood defence structures (e.g., flood barriers, tidal gates, sluices)
+                                            {% elif structure == 'outfalls-diffusers' %}Outfalls or diffusers
+                                            {% elif structure == 'intakes' %}Intakes
+                                            {% elif structure == 'pipelines-ducts' %}Pipelines or ducts
+                                            {% elif structure == 'subsea-cables' %}Subsea cables requiring protective construction
+                                            {% elif structure == 'culverts-channels' %}Culverts or constructed tidal channels
+                                            {% elif structure == 'tidal-energy-devices' %}Tidal energy devices or foundations
+                                            {% elif structure == 'wave-energy-foundations' %}Wave energy device foundations
+                                            {% elif structure == 'offshore-wind-foundations' %}Fixed offshore wind foundations
+                                            {% elif structure == 'aquaculture-piled-structures' %}Piled or fixed aquaculture structures
+                                            {% elif structure == 'aquaculture-trestles' %}Aquaculture trestles or fixed walkways
+                                            {% elif structure == 'other-structures' %}Other structures ({{ data['low-complexity-construction-structures-other-details'] }})
+                                            {% endif %}
+                                        </li>
+                                    {% endfor %}
+                                    </ul>
+                                {% endif %}
+                            </dd>
+                            <dd class="govuk-summary-list__actions">
+                                <a href="construction-structures" class="govuk-link govuk-link--no-visited-state">
+                                    Change<span class="govuk-visually-hidden"> what you are constructing</span>
+                                </a>
+                            </dd>
+                        </div>
+                        {% endif %}
+
+                        {% if data['low-complexity-type-of-activity'] == 'deposit' %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                {% if data['low-complexity-deposit-type'] == 'continuation-existing' %}What deposit activity are you continuing?
+                                {% elif data['low-complexity-deposit-type'] == 'deposit-new' %}What new deposit activity are you doing?
+                                {% elif data['low-complexity-deposit-type'] == 'replacing-existing' %}What deposit activity are you doing that replaces an existing object?
+                                {% endif %}
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                {% if data['low-complexity-deposit-substances-objects'] and data['low-complexity-deposit-substances-objects'].length > 0 %}
+                                    <ul class="govuk-list govuk-list--bullet">
+                                    {% for item in data['low-complexity-deposit-substances-objects'] %}
+                                        <li>
+                                            {% if item == 'aids-to-navigation' %}Aids to navigation
+                                            {% elif item == 'dredged-material-beach-management' %}Alternative use of dredged material – beach management
+                                            {% elif item == 'dredged-material-habitat-creation' %}Alternative use of dredged material – habitat creation
+                                            {% elif item == 'dredged-material-land-reclamation' %}Alternative use of dredged material – land reclamation or construction fill
+                                            {% elif item == 'anchoring-systems' %}Anchoring systems
+                                            {% elif item == 'burial-at-sea' %}Burial at sea
+                                            {% elif item == 'disposal-dredged-material' %}Disposal of dredged material to sea
+                                            {% elif item == 'disposal-fish-waste' %}Disposal of fish waste
+                                            {% elif item == 'disposal-shellfish-waste' %}Disposal of shellfish waste
+                                            {% elif item == 'explosive-substances' %}Explosive substances or articles
+                                            {% elif item == 'fireworks' %}Fireworks
+                                            {% elif item == 'habitat-pods' %}Habitat pods, artificial habitat units or reef cubes
+                                            {% elif item == 'marine-restoration-materials' %}Marine restoration materials (e.g. oyster shells, cobbles, gravel for habitat creation)
+                                            {% elif item == 'marker-posts' %}Markers posts
+                                            {% elif item == 'moorings' %}Moorings
+                                            {% elif item == 'pontoons' %}Pontoons
+                                            {% elif item == 'protective-mattresses' %}Protective mattresses or rock bags
+                                            {% elif item == 'scientific-instruments' %}Scientific instruments
+                                            {% elif item == 'seeding-materials' %}Seeding materials (e.g. shellfish seed for habitat enhancement)
+                                            {% elif item == 'temporary-works-equipment' %}Temporary works equipment
+                                            {% elif item == 'tracers-dyes' %}Use of tracers or dyes
+                                            {% elif item == 'other-deposits' %}Other deposits ({{ data['low-complexity-deposit-substances-objects-other-details'] }})
+                                            {% endif %}
+                                        </li>
+                                    {% endfor %}
+                                    </ul>
+                                {% endif %}
+                            </dd>
+                            <dd class="govuk-summary-list__actions">
+                                <a href="deposit-substances-objects" class="govuk-link govuk-link--no-visited-state">
+                                    Change<span class="govuk-visually-hidden"> deposit substances or objects</span>
+                                </a>
+                            </dd>
+                        </div>
+                        {% endif %}
+
+                        {% if data['low-complexity-type-of-activity'] == 'removal' %}
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                {% if data['low-complexity-removal-type'] == 'one-off-first-time' %}What are you removing for the first time on a one off basis?
+                                {% elif data['low-complexity-removal-type'] == 'ongoing-routine' %}What are you removing on an ongoing basis?
+                                {% elif data['low-complexity-removal-type'] == 'removal-replacement' %}What are you removing as part of replacement activity?
+                                {% elif data['low-complexity-removal-type'] == 'removal-relocation' %}What are you removing for relocation?
+                                {% endif %}
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                {% if data['low-complexity-removal-substances-objects'] and data['low-complexity-removal-substances-objects'].length > 0 %}
+                                    <ul class="govuk-list govuk-list--bullet">
+                                    {% for item in data['low-complexity-removal-substances-objects'] %}
+                                        <li>
+                                            {% if item == 'abandoned-fishing-equipment' %}Abandoned fishing equipment
+                                            {% elif item == 'marine-litter-debris' %}Marine litter and debris
+                                            {% elif item == 'rocks-boulders-obstructions' %}Rocks, boulders or obstructions
+                                            {% elif item == 'aquaculture-equipment' %}Aquaculture equipment (trestles, cages, poles etc.)
+                                            {% elif item == 'artificial-reefs' %}Artificial reefs or habitat structures
+                                            {% elif item == 'breakwater-mole-harbour' %}Breakwater, mole or harbour protection structure
+                                            {% elif item == 'bridge-supports' %}Bridge or bridge supports in tidal waters
+                                            {% elif item == 'causeway-embankment' %}Causeway, embankment or coastal access ramp
+                                            {% elif item == 'culverts-channels' %}Culverts or constructed tidal channels
+                                            {% elif item == 'offshore-wind-foundations' %}Fixed offshore wind foundations
+                                            {% elif item == 'floating-breakwaters' %}Floating breakwaters or wave attenuators
+                                            {% elif item == 'foundation-components' %}Foundation components (e.g. anchors, small footings)
+                                            {% elif item == 'foundations-platforms' %}Foundations for offshore platforms or similar structures
+                                            {% elif item == 'groyne' %}Groyne
+                                            {% elif item == 'hard-coastal-defence' %}Hard coastal defence structures such as rock armour or concrete units
+                                            {% elif item == 'intakes' %}Intakes
+                                            {% elif item == 'jetty-pier-quay' %}Jetty, pier or quay
+                                            {% elif item == 'outfalls-diffusers' %}Outfalls or diffusers
+                                            {% elif item == 'pipelines-ducts' %}Pipelines or ducts
+                                            {% elif item == 'piles-piled-structures' %}Piles or piled structures
+                                            {% elif item == 'pontoons-walkways-decommissioning' %}Pontoons or floating walkways
+                                            {% elif item == 'revetment' %}Revetment (sloped coastal protection)
+                                            {% elif item == 'sea-wall-coastal-wall' %}Sea wall or coastal wall
+                                            {% elif item == 'slipway-boat-ramp' %}Slipway or boat ramp
+                                            {% elif item == 'subsea-cables' %}Subsea cables requiring protective construction
+                                            {% elif item == 'tidal-energy-devices' %}Tidal energy devices or foundations
+                                            {% elif item == 'tidal-flood-defence' %}Tidal flood defence structures (e.g. flood barriers, tidal gates, sluices)
+                                            {% elif item == 'wave-energy-foundations' %}Wave energy device foundations
+                                            {% elif item == 'aids-to-navigation' %}Aids to navigation
+                                            {% elif item == 'habitat-pods' %}Habitat pods or artificial reef units
+                                            {% elif item == 'moorings' %}Moorings
+                                            {% elif item == 'pontoons-floating-structures' %}Pontoons or floating structures
+                                            {% elif item == 'scientific-instruments' %}Scientific instruments
+                                            {% elif item == 'survey-markers' %}Survey markers or temporary works equipment
+                                            {% elif item == 'wrecks-archaeological' %}Wrecks or items or archaeological remains
+                                            {% elif item == 'sediment-samples' %}Sediment samples
+                                            {% elif item == 'other-substances-objects' %}Other substances or objects ({{ data['low-complexity-removal-substances-objects-other-details'] }})
+                                            {% endif %}
+                                        </li>
+                                    {% endfor %}
+                                    </ul>
+                                {% endif %}
+                            </dd>
+                            <dd class="govuk-summary-list__actions">
+                                <a href="removal-substances-objects" class="govuk-link govuk-link--no-visited-state">
+                                    Change<span class="govuk-visually-hidden"> removal substances or objects</span>
+                                </a>
+                            </dd>
+                        </div>
+                        {% endif %}
+
+                    {% endif %}
 
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">

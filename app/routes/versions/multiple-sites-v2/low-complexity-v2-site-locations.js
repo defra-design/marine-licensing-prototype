@@ -173,14 +173,40 @@ module.exports = function (router) {
     delete req.session.data['low-complexity-deposit-type-error'];
     delete req.session.data['low-complexity-removal-type-error'];
 
-    // Store the previous type of works value to detect changes
+    // Detect changes in sub-types to clear page 2 data when sub-type changes
+    const previousTypeOfActivity = req.session.data['low-complexity-type-of-activity-previous'];
+    const currentTypeOfActivity = req.session.data['low-complexity-type-of-activity'];
     const previousTypeOfWorks = req.session.data['low-complexity-type-of-works-previous'];
     const currentTypeOfWorks = req.session.data['low-complexity-type-of-works'];
+    const previousDepositType = req.session.data['low-complexity-deposit-type-previous'];
+    const currentDepositType = req.session.data['low-complexity-deposit-type'];
+    const previousRemovalType = req.session.data['low-complexity-removal-type-previous'];
+    const currentRemovalType = req.session.data['low-complexity-removal-type'];
 
-    // If type of works has changed, clear construction structures
+    // If top-level activity type changed, clear completed flag (page 2 data gets cleared below per category)
+    if (previousTypeOfActivity && currentTypeOfActivity && previousTypeOfActivity !== currentTypeOfActivity) {
+      delete req.session.data['low-complexity-type-of-activity-completed'];
+    }
+
+    // If construction sub-type changed, clear construction structures and completed flag
     if (previousTypeOfWorks && currentTypeOfWorks && previousTypeOfWorks !== currentTypeOfWorks) {
       delete req.session.data['low-complexity-construction-structures'];
       delete req.session.data['low-complexity-construction-structures-other-details'];
+      delete req.session.data['low-complexity-type-of-activity-completed'];
+    }
+
+    // If deposit sub-type changed, clear deposit substances/objects and completed flag
+    if (previousDepositType && currentDepositType && previousDepositType !== currentDepositType) {
+      delete req.session.data['low-complexity-deposit-substances-objects'];
+      delete req.session.data['low-complexity-deposit-substances-objects-other-details'];
+      delete req.session.data['low-complexity-type-of-activity-completed'];
+    }
+
+    // If removal sub-type changed, clear removal substances/objects and completed flag
+    if (previousRemovalType && currentRemovalType && previousRemovalType !== currentRemovalType) {
+      delete req.session.data['low-complexity-removal-substances-objects'];
+      delete req.session.data['low-complexity-removal-substances-objects-other-details'];
+      delete req.session.data['low-complexity-type-of-activity-completed'];
     }
 
     let hasErrors = false;
@@ -247,8 +273,11 @@ module.exports = function (router) {
       return;
     }
 
-    // Store current type of works as previous for next comparison
+    // Store current values as previous for next comparison
+    req.session.data['low-complexity-type-of-activity-previous'] = req.session.data['low-complexity-type-of-activity'];
     req.session.data['low-complexity-type-of-works-previous'] = req.session.data['low-complexity-type-of-works'];
+    req.session.data['low-complexity-deposit-type-previous'] = req.session.data['low-complexity-deposit-type'];
+    req.session.data['low-complexity-removal-type-previous'] = req.session.data['low-complexity-removal-type'];
 
     // Route based on activity type
     if (req.session.data['low-complexity-type-of-activity'] === 'construction') {

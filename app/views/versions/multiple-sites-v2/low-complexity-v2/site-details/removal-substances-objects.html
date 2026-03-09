@@ -15,7 +15,17 @@
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
+{% if data['low-complexity-removal-type'] == 'one-off-first-time' %}
+What are you removing for the first time on a one off basis?
+{% elif data['low-complexity-removal-type'] == 'ongoing-routine' %}
+What are you removing on an ongoing basis?
+{% elif data['low-complexity-removal-type'] == 'removal-replacement' %}
+What are you removing as part of replacement activity?
+{% elif data['low-complexity-removal-type'] == 'removal-relocation' %}
+What are you removing for relocation?
+{% else %}
 What substance or objects will you be removing?
+{% endif %}
 {% endset %}
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
