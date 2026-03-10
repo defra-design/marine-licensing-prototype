@@ -4,13 +4,29 @@ module.exports = function (router) {
   const section = "low-complexity-v2";
   const subsection = "site-details";
 
+  // Helper to redirect to the correct review page based on entry method
+  function getReviewUrl(session, anchor) {
+    const isManual = session.data['low-complexity-site-location-method'] === 'manual-entry';
+    const base = isManual ? 'manual-entry/review-site-details' : 'review-site-details';
+    if (isManual && session.data['low-complexity-manual-current-edit-site']) {
+      const siteNum = session.data['low-complexity-manual-current-edit-site'];
+      return base + '#site-' + siteNum + '-activity-details';
+    }
+    return anchor ? base + '#' + anchor : base;
+  }
+
   /////////////////////////////////////////////////////////
   //////// Site details index page (before you start)
   /////////////////////////////////////////////////////////
   router.get(`/versions/${version}/${section}/${subsection}/`, function (req, res) {
     // If user has already visited and saved site details, go straight to review page
     if (req.session.data['has-visited-site-details']) {
-      res.redirect('review-site-details');
+      // Route to the correct review page based on entry method
+      if (req.session.data['low-complexity-site-location-method'] === 'manual-entry') {
+        res.redirect('manual-entry/review-site-details');
+      } else {
+        res.redirect('review-site-details');
+      }
       return;
     }
     
@@ -53,8 +69,10 @@ module.exports = function (router) {
     // Route based on selection
     if (req.session.data['low-complexity-site-location-method'] === 'file-upload') {
       res.redirect('which-type-of-file');
+    } else if (req.session.data['low-complexity-site-location-method'] === 'manual-entry') {
+      // Manual entry - redirect to manual entry flow
+      res.redirect('manual-entry/site-name?site=1');
     } else {
-      // For manual entry - redirect back to same page for now since manual entry is not implemented
       res.redirect('how-do-you-want-to-provide-site-location');
     }
   });
@@ -148,7 +166,7 @@ module.exports = function (router) {
 
     // Mark as completed and redirect to review page
     req.session.data['low-complexity-site-name-completed'] = true;
-    res.redirect('review-site-details#site-1');
+    res.redirect(getReviewUrl(req.session, 'site-1'));
   });
 
   /////////////////////////////////////////////////////////
@@ -289,7 +307,7 @@ module.exports = function (router) {
     } else {
       // Mark as completed and redirect to review page for other activities
       req.session.data['low-complexity-type-of-activity-completed'] = true;
-      res.redirect('review-site-details#site-1-activity-details');
+      res.redirect(getReviewUrl(req.session, 'site-1-activity-details'));
     }
   });
 
@@ -338,7 +356,7 @@ module.exports = function (router) {
 
     // Mark as completed and redirect to review page
     req.session.data['low-complexity-type-of-activity-completed'] = true;
-    res.redirect('review-site-details#site-1-activity-details');
+    res.redirect(getReviewUrl(req.session, 'site-1-activity-details'));
   });
 
   /////////////////////////////////////////////////////////
@@ -386,7 +404,7 @@ module.exports = function (router) {
 
     // Mark as completed and redirect to review page
     req.session.data['low-complexity-type-of-activity-completed'] = true;
-    res.redirect('review-site-details#site-1-activity-details');
+    res.redirect(getReviewUrl(req.session, 'site-1-activity-details'));
   });
 
   /////////////////////////////////////////////////////////
@@ -434,7 +452,7 @@ module.exports = function (router) {
 
     // Mark as completed and redirect to review page
     req.session.data['low-complexity-type-of-activity-completed'] = true;
-    res.redirect('review-site-details#site-1-activity-details');
+    res.redirect(getReviewUrl(req.session, 'site-1-activity-details'));
   });
 
   /////////////////////////////////////////////////////////
@@ -458,7 +476,7 @@ module.exports = function (router) {
     // Clear errors and mark as completed
     req.session.data['low-complexity-activity-description-errorthispage'] = "false";
     req.session.data['low-complexity-activity-description-completed'] = true;
-    res.redirect('review-site-details#site-1-activity-details');
+    res.redirect(getReviewUrl(req.session, 'site-1-activity-details'));
   });
 
   /////////////////////////////////////////////////////////
@@ -503,7 +521,7 @@ module.exports = function (router) {
 
     // Mark as completed and redirect to review page
     req.session.data['low-complexity-site-duration-completed'] = true;
-    res.redirect('review-site-details#site-1-activity-details');
+    res.redirect(getReviewUrl(req.session, 'site-1-activity-details'));
   });
 
   /////////////////////////////////////////////////////////
@@ -544,7 +562,7 @@ module.exports = function (router) {
 
     // Mark as completed and redirect to review page
     req.session.data['low-complexity-date-completed-by-completed'] = true;
-    res.redirect('review-site-details#site-1-activity-details');
+    res.redirect(getReviewUrl(req.session, 'site-1-activity-details'));
   });
 
   /////////////////////////////////////////////////////////
@@ -585,7 +603,7 @@ module.exports = function (router) {
 
     // Mark as completed and redirect to review page
     req.session.data['low-complexity-months-of-activity-completed'] = true;
-    res.redirect('review-site-details#site-1-activity-details');
+    res.redirect(getReviewUrl(req.session, 'site-1-activity-details'));
   });
 
   /////////////////////////////////////////////////////////
@@ -611,7 +629,7 @@ module.exports = function (router) {
 
     // Mark as completed and redirect to review page
     req.session.data['low-complexity-working-hours-completed'] = true;
-    res.redirect('review-site-details#site-1-activity-details');
+    res.redirect(getReviewUrl(req.session, 'site-1-activity-details'));
   });
 
   /////////////////////////////////////////////////////////
@@ -637,7 +655,7 @@ module.exports = function (router) {
 
     // Mark as completed and redirect to review page
     req.session.data['low-complexity-impacts-completed'] = true;
-    res.redirect('review-site-details#site-1-activity-details');
+    res.redirect(getReviewUrl(req.session, 'site-1-activity-details'));
   });
 
   /////////////////////////////////////////////////////////

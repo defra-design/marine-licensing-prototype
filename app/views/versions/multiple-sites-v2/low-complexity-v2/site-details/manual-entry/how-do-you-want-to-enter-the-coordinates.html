@@ -1,0 +1,125 @@
+{% extends "../../../layouts/low-complexity-v2.html" %}
+
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block beforeContent %}
+    {% include "../../../includes/phase-banner.html" %}
+    {% if data['organisation-name'] %}
+        {% include "../../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+{% set pageHeadingTextHTML %}
+How do you want to enter the site coordinates?
+{% endset %}
+
+{% block pageTitle %}
+    {% if errors.coordinateEntryMethod %}Error: {% endif %}
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        {% if errors.coordinateEntryMethod %}
+            {{ govukErrorSummary({
+                titleText: "There is a problem",
+                errorList: [
+                    {
+                        text: errors.coordinateEntryMethod,
+                        href: "#coordinate-entry-method"
+                    }
+                ]
+            }) }}
+        {% endif %}
+
+        <form action="how-do-you-want-to-enter-the-coordinates-router?site={{ site.siteNumber }}{% if returnTo %}&returnTo={{ returnTo }}{% endif %}" method="post" novalidate>
+
+        <div class="govuk-form-group {% if errors.coordinateEntryMethod %}govuk-form-group--error{% endif %}">
+            <span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}<span class="govuk-!-display-block">Site {{ site.siteNumber }}</span></span>
+            <h1 class="govuk-heading-l">
+                {{ pageHeadingTextHTML }}
+            </h1>
+
+            <details class="govuk-details">
+                <summary class="govuk-details__summary">
+                  <span class="govuk-details__summary-text">
+                    Help with choosing how to enter coordinates
+                  </span>
+                </summary>
+                <div class="govuk-details__text">
+                  <h2 class="govuk-heading-s">For sites without a defined shape</h2>
+                  <p>If you only know the coordinates at the centre of the site, we'll use those and the width you enter to create a circular area.</p>
+                  <p>This is useful for activities like taking samples from a boat.</p>
+                  <p>Make sure the circle covers the full area where the activity will take place, including any expected movement.</p>
+                  <p>This example shows a 30-metre circular site using a single set of coordinates as the centre point.</p>
+
+                  <img src="/public/images/map-circle-example.jpg" alt="Example map showing a circular site marked with a centre point and 30-metre radius" width="100%" class="govuk-!-margin-bottom-6" />
+
+                  <h2 class="govuk-heading-s">For sites with a defined shape or boundary</h2>
+                  <p>If your site has a clear shape or boundary, you can enter multiple coordinates to mark out the area. You'll need to enter the coordinates for each point in order, so they join to form a closed shape.</p>
+                  <p>This is useful for activities that take place within a specific area, such as building a structure or dredging part of the seabed.</p>
+                  <p>Make sure the shape includes the full area where the activity will take place, and allow for any movement, if that's relevant.</p>
+                  <p>This example shows a site marked by 4 sets of coordinates to form a custom shape.</p>
+
+                  <img src="/public/images/map-polygon-example.jpg" alt="Example map showing a square site boundary marked with 4 coordinate points" width="100%" />
+              </div>
+              </details>
+
+            {% if errors.coordinateEntryMethod %}
+                <p id="coordinate-entry-method-error" class="govuk-error-message">
+                    <span class="govuk-visually-hidden">Error:</span> {{ errors.coordinateEntryMethod }}
+                </p>
+            {% endif %}
+
+            {{ govukRadios({
+              idPrefix: "coordinate-entry-method",
+              name: "coordinate-entry-method",
+              value: site.coordinateEntryMethod,
+              fieldset: {
+                legend: {
+                  html: pageHeadingTextHTML,
+                  isPageHeading: false,
+                  classes: "govuk-fieldset__legend--l govuk-visually-hidden"
+                }
+              },
+              items: [
+                {
+                  value: "circle",
+                  text: "Enter one set of coordinates and a width to create a circular site",
+                  hint: {
+                    text: "Use this if you only have the centre point of the site"
+                  },
+                  checked: site.coordinateEntryMethod == "circle"
+                },
+                {
+                  value: "polygon",
+                  text: "Enter multiple sets of coordinates to mark the boundary of the site",
+                  hint: {
+                    text: "Use this if the site is a custom shape with more than one point"
+                  },
+                  checked: site.coordinateEntryMethod == "polygon"
+                }
+              ]
+            }) }}
+
+            </div>
+
+      <div class="govuk-button-group">
+        {{ govukButton({
+          text: "Continue"
+        }) }}
+        {% if returnTo !== 'review' %}
+        <a class="govuk-link govuk-link--no-visited-state" href="../../marine-licence-start-page">Cancel</a>
+        {% endif %}
+    </div>
+
+        </form>
+
+    </div>
+</div>
+{% endblock %}

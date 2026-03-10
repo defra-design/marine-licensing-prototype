@@ -1,0 +1,92 @@
+{% extends "../../../layouts/low-complexity-v2.html" %}
+
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block beforeContent %}
+    {% include "../../../includes/phase-banner.html" %}
+    {% if data['organisation-name'] %}
+        {% include "../../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+{% set pageHeadingTextHTML %}
+Enter the width of the circular site in metres
+{% endset %}
+
+{% block pageTitle %}
+    {% if errors.siteWidth %}Error: {% endif %}
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        {% if errors.siteWidth %}
+            {{ govukErrorSummary({
+                titleText: "There is a problem",
+                errorList: [
+                    {
+                        html: errors.siteWidth,
+                        href: "#site-width"
+                    }
+                ]
+            }) }}
+        {% endif %}
+
+        <form action="site-width-router?site={{ site.siteNumber }}{% if returnTo %}&returnTo={{ returnTo }}{% endif %}" method="post" novalidate>
+
+            {% if errors.siteWidth %}
+            <div class="govuk-form-group govuk-form-group--error">
+            {% else %}
+            <div class="govuk-form-group">
+            {% endif %}
+
+                <span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}<span class="govuk-!-display-block">Site {{ site.siteNumber }}</span></span>
+                <h1 class="govuk-heading-l">
+                    {{ pageHeadingTextHTML }}
+                </h1>
+
+                {% if errors.siteWidth %}
+                <p id="site-width-error" class="govuk-error-message">
+                    <span class="govuk-visually-hidden">Error:</span> {{ errors.siteWidth }}
+                </p>
+                {% endif %}
+
+                {{ govukInput({
+                    label: {
+                        html: pageHeadingTextHTML,
+                        classes: "govuk-visually-hidden",
+                        isPageHeading: false
+                    },
+                    autocomplete: "off",
+                    id: "site-width",
+                    name: "site-width",
+                    value: site.coordinates.width if site.coordinates else '',
+                    suffix: {
+                        text: "metres"
+                    },
+                    classes: "govuk-input--width-5" + (" govuk-input--error" if errors.siteWidth else ""),
+                    formGroup: {
+                        classes: "govuk-!-margin-bottom-0"
+                    }
+                }) }}
+            </div>
+
+            <div class="govuk-button-group">
+                {{ govukButton({
+                  text: "Save and continue"
+                }) }}
+                {% if returnTo !== 'review' %}
+                <a class="govuk-link govuk-link--no-visited-state" href="../../marine-licence-start-page">Cancel</a>
+                {% endif %}
+            </div>
+
+        </form>
+
+    </div>
+</div>
+{% endblock %}
