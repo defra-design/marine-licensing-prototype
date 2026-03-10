@@ -16,14 +16,14 @@
 Check your answers before sending your application
 {% endset %}
 
-<!-- Format start date -->
+<!-- Format start date (month and year only) -->
 {% set startDateFormatted %}
-{{ data['start-date-day'] }} {{ data['start-date-month'] | toMonth }} {{ data['start-date-year'] }}
+{{ data['start-date-month'] | toMonth }} {{ data['start-date-year'] }}
 {% endset %}
 
-<!-- Format end date -->
+<!-- Format end date (month and year only) -->
 {% set endDateFormatted %}
-{{ data['end-date-day'] }} {{ data['end-date-month'] | toMonth }} {{ data['end-date-year'] }}
+{{ data['end-date-month'] | toMonth }} {{ data['end-date-year'] }}
 {% endset %}
 
 <!-- Format project duration -->
@@ -181,7 +181,7 @@ Removal of any substance or object
 				},
 				{
 					key: {
-						text: "Dates of marine works"
+						text: "Preferred start and end dates for the licence"
 					},
 					value: {
 						html: (startDateFormatted | trim) + " to " + (endDateFormatted | trim)
@@ -189,9 +189,9 @@ Removal of any substance or object
 					actions: {
 						items: [
 							{
-								href: "project-details/dates-of-marine-works?camefromcheckanswers=true",
+								href: "project-details/start-and-end-dates?camefromcheckanswers=true",
 								text: "Change",
-								visuallyHiddenText: "dates of marine works",
+								visuallyHiddenText: "start and end dates",
 								classes: "govuk-link--no-visited-state"
 							}
 						]

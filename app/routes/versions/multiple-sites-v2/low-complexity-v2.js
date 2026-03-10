@@ -148,8 +148,8 @@ module.exports = function (router) {
     }
   });
 
-  // Dates of marine works page
-  router.get(`/versions/${version}/${section}/project-details/dates-of-marine-works`, function (req, res) {
+  // Start and end dates page (licence preferred dates – month and year only)
+  router.get(`/versions/${version}/${section}/project-details/start-and-end-dates`, function (req, res) {
     // Clear error flags when navigating to the page
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
@@ -160,48 +160,40 @@ module.exports = function (router) {
       req.session.data['camefromcheckanswers'] = 'true';
     }
     
-    res.render(`versions/${version}/${section}/project-details/dates-of-marine-works`);
+    res.render(`versions/${version}/${section}/project-details/start-and-end-dates`);
   });
 
-  // Dates of marine works router (POST)
-  router.post(`/versions/${version}/${section}/project-details/dates-of-marine-works-router`, function (req, res) {
+  // Start and end dates router (POST) – validates month and year only
+  router.post(`/versions/${version}/${section}/project-details/start-and-end-dates-router`, function (req, res) {
     // Clear error flags
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
     req.session.data['errortypetwo'] = "false";
 
-    // Get the date values
-    const startDay = req.session.data['start-date-day'];
     const startMonth = req.session.data['start-date-month'];
     const startYear = req.session.data['start-date-year'];
-    const endDay = req.session.data['end-date-day'];
     const endMonth = req.session.data['end-date-month'];
     const endYear = req.session.data['end-date-year'];
 
     let hasError = false;
 
-    // Check if start date has any empty fields
-    if (!startDay || startDay.trim() === '' || !startMonth || startMonth.trim() === '' || !startYear || startYear.trim() === '') {
+    if (!startMonth || startMonth.trim() === '' || !startYear || startYear.trim() === '') {
       req.session.data['errorthispage'] = "true";
       req.session.data['errortypeone'] = "true";
       hasError = true;
     }
 
-    // Check if end date has any empty fields
-    if (!endDay || endDay.trim() === '' || !endMonth || endMonth.trim() === '' || !endYear || endYear.trim() === '') {
+    if (!endMonth || endMonth.trim() === '' || !endYear || endYear.trim() === '') {
       req.session.data['errorthispage'] = "true";
       req.session.data['errortypetwo'] = "true";
       hasError = true;
     }
 
     if (hasError) {
-      // Redirect back to the same page with errors
-      res.redirect('dates-of-marine-works');
+      res.redirect('start-and-end-dates');
     } else {
-      // Validation passed - set completion flag
       req.session.data['low-complexity-dates-completed'] = true;
       
-      // Check if we need to return to check answers
       if (req.session.data['camefromcheckanswers'] === 'true') {
         req.session.data['camefromcheckanswers'] = false;
         res.redirect('../check-your-answers');
@@ -905,10 +897,8 @@ module.exports = function (router) {
     delete req.session.data['low-complexity-project-name-text-input'];
     delete req.session.data['low-complexity-project-background'];
     delete req.session.data['low-complexity-project-background-completed'];
-    delete req.session.data['start-date-day'];
     delete req.session.data['start-date-month'];
     delete req.session.data['start-date-year'];
-    delete req.session.data['end-date-day'];
     delete req.session.data['end-date-month'];
     delete req.session.data['end-date-year'];
     delete req.session.data['low-complexity-dates-completed'];
