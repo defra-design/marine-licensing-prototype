@@ -673,18 +673,26 @@ module.exports = function (router) {
   // ==============================================================================================
 
   router.get(`${basePath}/delete-all-sites`, function (req, res) {
+    res.render(`${viewBase}/delete-all-sites`, {
+      data: req.session.data
+    });
+  });
+
+  router.post(`${basePath}/delete-all-sites-router`, function (req, res) {
+    // Clear manual entry sites
     delete req.session.data['low-complexity-manual-sites'];
     delete req.session.data['low-complexity-manual-current-site'];
     delete req.session.data['low-complexity-manual-current-edit-site'];
     delete req.session.data['has-visited-site-details'];
     delete req.session.data['low-complexity-site-location-method'];
 
-    // Also clear flat activity session keys
+    // Clear flat activity session keys
     ACTIVITY_DATA_KEYS.forEach(key => {
       delete req.session.data[key];
     });
 
-    res.redirect(`/versions/multiple-sites-v2/low-complexity-v2/site-details/`);
+    // Redirect to task list so site details resets to Not yet started
+    res.redirect(`/versions/multiple-sites-v2/low-complexity-v2/marine-licence-start-page`);
   });
 
 };
