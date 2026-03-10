@@ -158,7 +158,7 @@ Type of activity
                 name: "low-complexity-type-of-activity",
                 fieldset: {
                     legend: {
-                        html: '<span class="govuk-caption-l">' + data['low-complexity-project-name-text-input'] + '<span class="govuk-!-display-block">Site 1</span></span>' + pageHeadingTextHTML,
+                        html: '<span class="govuk-caption-l">' + data['low-complexity-project-name-text-input'] + '<span class="govuk-!-display-block">Site ' + (data['low-complexity-manual-current-edit-site'] or '1') + '</span></span>' + pageHeadingTextHTML,
                         isPageHeading: true,
                         classes: "govuk-fieldset__legend--l"
                     }

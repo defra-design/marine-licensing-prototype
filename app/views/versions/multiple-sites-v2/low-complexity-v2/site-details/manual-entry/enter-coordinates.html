@@ -1,0 +1,126 @@
+{% extends "../../../layouts/low-complexity-v2.html" %}
+
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/fieldset/macro.njk" import govukFieldset %}
+
+{% block beforeContent %}
+    {% include "../../../includes/phase-banner.html" %}
+    {% if data['organisation-name'] %}
+        {% include "../../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+{% set pageHeadingTextHTML %}
+Enter the coordinates at the centre point of the site
+{% endset %}
+
+{% block pageTitle %}
+    {% if errors.latitude or errors.longitude %}Error: {% endif %}
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        {% set questionHeadingTextOneHTML %}
+            {% if site.coordinateSystem == "British National Grid (OSGB36)" %}
+            Easting
+            {% else %}
+            Latitude
+            {% endif %}
+        {% endset %}
+
+        {% set questionHeadingTextTwoHTML %}
+            {% if site.coordinateSystem == "British National Grid (OSGB36)" %}
+            Northing
+            {% else %}
+            Longitude
+            {% endif %}
+        {% endset %}
+
+        {% if errors.latitude or errors.longitude %}
+        <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+            <h2 class="govuk-error-summary__title" id="error-summary-title">
+                There is a problem
+            </h2>
+            <div class="govuk-error-summary__body">
+                <ul class="govuk-list govuk-error-summary__list">
+                    {% if errors.latitude %}
+                    <li><a href="#coordinates-latitude">{{ errors.latitude }}</a></li>
+                    {% endif %}
+                    {% if errors.longitude %}
+                    <li><a href="#coordinates-longitude">{{ errors.longitude }}</a></li>
+                    {% endif %}
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+
+        <span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}<span class="govuk-!-display-block">Site {{ site.siteNumber }}</span></span>
+        <h1 class="govuk-heading-l">
+            {{ pageHeadingTextHTML }}
+          </h1>
+
+        <form action="enter-coordinates-router?site={{ site.siteNumber }}{% if returnTo %}&returnTo={{ returnTo }}{% endif %}" method="post" novalidate>
+
+            {% call govukFieldset({
+                legend: {
+                  html: pageHeadingTextHTML,
+                  classes: "govuk-visually-hidden",
+                  isPageHeading: false
+                }
+              }) %}
+
+              {% if site.coordinateSystem == "British National Grid (OSGB36)" %}
+              {% include "../../../includes/east-north-content.html" %}
+              {% else %}
+              {% include "../../../includes/lat-long-content.html" %}
+              {% endif %}
+
+            {{ govukInput({
+                label: {
+                    html: questionHeadingTextOneHTML,
+                    classes: "govuk-label",
+                    isPageHeading: false
+                },
+                autocomplete: "off",
+                id: "coordinates-latitude",
+                name: "coordinates-latitude",
+                errorMessage: null if not errors.latitude else { html: errors.latitude },
+                value: site.coordinates.latitude if site.coordinates else '',
+                classes: "govuk-input govuk-!-width-one-half"
+            }) }}
+
+            {{ govukInput({
+                label: {
+                    html: questionHeadingTextTwoHTML,
+                    classes: "govuk-label",
+                    isPageHeading: false
+                },
+                autocomplete: "off",
+                id: "coordinates-longitude",
+                name: "coordinates-longitude",
+                errorMessage: null if not errors.longitude else { html: errors.longitude },
+                value: site.coordinates.longitude if site.coordinates else '',
+                classes: "govuk-input govuk-!-width-one-half"
+            }) }}
+            {% endcall %}
+
+            <div class="govuk-button-group">
+                {% set isIndependentEdit = (returnTo == 'review' and site.coordinates.type == 'circle' and site.coordinates.width) %}
+                {{ govukButton({
+                  text: "Save and continue" if isIndependentEdit else "Continue"
+                }) }}
+                {% if returnTo !== 'review' %}
+                <a class="govuk-link govuk-link--no-visited-state" href="../../marine-licence-start-page">Cancel</a>
+                {% endif %}
+            </div>
+
+        </form>
+
+    </div>
+</div>
+{% endblock %}

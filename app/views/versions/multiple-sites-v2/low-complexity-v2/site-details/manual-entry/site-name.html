@@ -1,0 +1,76 @@
+{% extends "../../../layouts/low-complexity-v2.html" %}
+
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block beforeContent %}
+    {% include "../../../includes/phase-banner.html" %}
+    {% if data['organisation-name'] %}
+        {% include "../../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+{% set pageHeadingTextHTML %}
+Site name
+{% endset %}
+
+{% block pageTitle %}
+    {% if errors.name %}Error: {% endif %}
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        {% if errors.name %}
+        <div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1" data-module="govuk-error-summary">
+            <h2 class="govuk-error-summary__title" id="error-summary-title">
+                There is a problem
+            </h2>
+            <div class="govuk-error-summary__body">
+                <ul class="govuk-list govuk-error-summary__list">
+                    <li><a href="#site-name">{{ errors.name }}</a></li>
+                </ul>
+            </div>
+        </div>
+        {% endif %}
+
+        <form action="site-name-router?site={{ site.siteNumber }}{% if returnTo %}&returnTo={{ returnTo }}{% endif %}" method="post" novalidate>
+
+            <div class="govuk-form-group {% if errors.name %}govuk-form-group--error{% endif %}">
+                <span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}<span class="govuk-!-display-block">Site {{ site.siteNumber }}</span></span>
+                <h1 class="govuk-label-wrapper">
+                    <label class="govuk-label govuk-label--l" for="site-name">
+                        {{ pageHeadingTextHTML }}
+                    </label>
+                </h1>
+
+                {% if errors.name %}
+                    <p id="site-name-error" class="govuk-error-message">
+                        <span class="govuk-visually-hidden">Error:</span> {{ errors.name }}
+                    </p>
+                {% endif %}
+
+                <input
+                    class="govuk-input govuk-!-width-full {% if errors.name %}govuk-input--error{% endif %}"
+                    id="site-name"
+                    name="site-name"
+                    type="text"
+                    value="{{ site.name }}"
+                    {% if errors.name %}aria-describedby="site-name-error"{% endif %}
+                />
+            </div>
+
+            <div class="govuk-button-group">
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+                <a class="govuk-link govuk-link--no-visited-state" href="../../marine-licence-start-page">Cancel</a>
+            </div>
+        </form>
+
+    </div>
+</div>
+{% endblock %}
