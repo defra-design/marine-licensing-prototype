@@ -50,6 +50,22 @@ Error:
 {% endset %}
 
 {% block content %}
+<style>
+    .govuk-checkboxes__divider {
+        font-weight: 700;
+        max-width: none !important;
+        width: 100% !important;
+        display: block !important;
+        text-align: left !important;
+        font-size: 1.125rem !important;
+        line-height: 1.3125 !important;
+        margin-top: 40px;
+        margin-bottom: 15px;
+    }
+    .govuk-checkboxes__divider:first-of-type {
+        margin-top: 0;
+    }
+</style>
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
@@ -83,8 +99,7 @@ Error:
                 },
                 items: [
                     {
-                        value: "aids-to-navigation",
-                        text: "Aids to navigation"
+                        divider: "Dredged material and waste"
                     },
                     {
                         value: "dredged-material-beach-management",
@@ -99,14 +114,6 @@ Error:
                         text: "Alternative use of dredged material – land reclamation or construction fill"
                     },
                     {
-                        value: "anchoring-systems",
-                        text: "Anchoring systems"
-                    },
-                    {
-                        value: "burial-at-sea",
-                        text: "Burial at sea"
-                    },
-                    {
                         value: "disposal-dredged-material",
                         text: "Disposal of dredged material to sea"
                     },
@@ -119,20 +126,15 @@ Error:
                         text: "Disposal of shellfish waste"
                     },
                     {
-                        value: "explosive-substances",
-                        text: "Explosive substances or articles"
+                        divider: "Equipment, structures and installations"
                     },
                     {
-                        value: "fireworks",
-                        text: "Fireworks"
+                        value: "aids-to-navigation",
+                        text: "Aids to navigation"
                     },
                     {
-                        value: "habitat-pods",
-                        text: "Habitat pods, artificial habitat units or reef cubes"
-                    },
-                    {
-                        value: "marine-restoration-materials",
-                        text: "Marine restoration materials (e.g. oyster shells, cobbles, gravel for habitat creation)"
+                        value: "anchoring-systems",
+                        text: "Anchoring systems"
                     },
                     {
                         value: "marker-posts",
@@ -155,20 +157,49 @@ Error:
                         text: "Scientific instruments"
                     },
                     {
+                        value: "temporary-works-equipment",
+                        text: "Temporary works equipment"
+                    },
+                    {
+                        divider: "Environmental enhancement and restoration"
+                    },
+                    {
+                        value: "habitat-pods",
+                        text: "Habitat pods, artificial habitat units or reef cubes"
+                    },
+                    {
+                        value: "marine-restoration-materials",
+                        text: "Marine restoration materials (e.g. oyster shells, cobbles, gravel for habitat creation)"
+                    },
+                    {
                         value: "seeding-materials",
                         text: "Seeding materials (e.g. shellfish seed for habitat enhancement)"
                     },
                     {
-                        value: "temporary-works-equipment",
-                        text: "Temporary works equipment"
+                        divider: "Hazardous, controlled or sensitive deposits"
+                    },
+                    {
+                        value: "burial-at-sea",
+                        text: "Burial at sea"
+                    },
+                    {
+                        value: "explosive-substances",
+                        text: "Explosive substances or articles"
+                    },
+                    {
+                        value: "fireworks",
+                        text: "Fireworks"
                     },
                     {
                         value: "tracers-dyes",
                         text: "Use of tracers or dyes"
                     },
                     {
+                        divider: "Other substances or objects"
+                    },
+                    {
                         value: "other-deposits",
-                        text: "Other deposits not listed above",
+                        text: "Other substances or objects not listed above",
                         conditional: {
                             html: otherDepositsTextarea
                         }
