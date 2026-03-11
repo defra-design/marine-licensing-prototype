@@ -33,8 +33,13 @@ Error:
     name: "low-complexity-months-of-activity-details",
     value: data['low-complexity-months-of-activity-details'],
     rows: 5,
+    maxlength: 2000,
     label: {
-        text: "Provide details including why"
+        text: "Which months and why",
+        classes: "govuk-visually-hidden"
+    },
+    hint: {
+        html: "<p class=\"govuk-hint\">Explain which months the activity will happen and why. Include any environmental reasons, such as avoiding sensitive periods for marine life.</p><p class=\"govuk-hint\">Enter a maximum of 2,000 characters</p>"
     },
     errorMessage: {
         text: "Enter details including why"

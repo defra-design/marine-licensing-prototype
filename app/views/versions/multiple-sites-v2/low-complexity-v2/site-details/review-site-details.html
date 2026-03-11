@@ -203,9 +203,9 @@ Review site details
                         {% if data['low-complexity-type-of-activity'] == 'construction' %}
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
-                                {% if data['low-complexity-type-of-works'] == 'construction-new' %}What are you constructing?
-                                {% elif data['low-complexity-type-of-works'] == 'maintenance-existing' %}What are you maintaining?
-                                {% elif data['low-complexity-type-of-works'] == 'alteration-improvement' %}What are you altering or improving?
+                                {% if data['low-complexity-type-of-works'] == 'construction-new' %}What you're constructing
+                                {% elif data['low-complexity-type-of-works'] == 'maintenance-existing' %}What you're maintaining
+                                {% elif data['low-complexity-type-of-works'] == 'alteration-improvement' %}What you're altering or improving
                                 {% endif %}
                             </dt>
                             <dd class="govuk-summary-list__value">
@@ -256,9 +256,9 @@ Review site details
                         {% if data['low-complexity-type-of-activity'] == 'deposit' %}
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
-                                {% if data['low-complexity-deposit-type'] == 'continuation-existing' %}What deposit activity are you continuing?
-                                {% elif data['low-complexity-deposit-type'] == 'deposit-new' %}What new deposit activity are you doing?
-                                {% elif data['low-complexity-deposit-type'] == 'replacing-existing' %}What deposit activity are you doing that replaces an existing object?
+                                {% if data['low-complexity-deposit-type'] == 'continuation-existing' %}What deposit activity you're continuing
+                                {% elif data['low-complexity-deposit-type'] == 'deposit-new' %}What new deposit activity you're doing
+                                {% elif data['low-complexity-deposit-type'] == 'replacing-existing' %}What deposit activity you're doing that replaces an existing object
                                 {% endif %}
                             </dt>
                             <dd class="govuk-summary-list__value">
@@ -305,10 +305,10 @@ Review site details
                         {% if data['low-complexity-type-of-activity'] == 'removal' %}
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
-                                {% if data['low-complexity-removal-type'] == 'one-off-first-time' %}What are you removing for the first time on a one off basis?
-                                {% elif data['low-complexity-removal-type'] == 'ongoing-routine' %}What are you removing on an ongoing basis?
-                                {% elif data['low-complexity-removal-type'] == 'removal-replacement' %}What are you removing as part of replacement activity?
-                                {% elif data['low-complexity-removal-type'] == 'removal-relocation' %}What are you removing for relocation?
+                                {% if data['low-complexity-removal-type'] == 'one-off-first-time' %}What you're removing for the first time on a one off basis
+                                {% elif data['low-complexity-removal-type'] == 'ongoing-routine' %}What you're removing on an ongoing basis
+                                {% elif data['low-complexity-removal-type'] == 'removal-replacement' %}What you're removing as part of replacement activity
+                                {% elif data['low-complexity-removal-type'] == 'removal-relocation' %}What you're removing for relocation
                                 {% endif %}
                             </dt>
                             <dd class="govuk-summary-list__value">
@@ -421,7 +421,7 @@ Review site details
                                 {% if data['low-complexity-date-completed-by'] == 'Yes' %}
                                     {{ data['low-complexity-date-completed-by-details'] }}
                                 {% else %}
-                                    No
+                                    Not needed to be completed by a certain date
                                 {% endif %}
                             {% else %}
                                 <span class="govuk-tag govuk-tag--red">Incomplete</span>
