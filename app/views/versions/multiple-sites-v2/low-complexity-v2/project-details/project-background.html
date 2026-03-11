@@ -2,6 +2,7 @@
 
 {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
 
 {% block beforeContent %}
     {% include "../../includes/phase-banner.html" %}
@@ -11,18 +12,12 @@
     <a class="govuk-back-link govuk-link--no-visited-state" href="javascript:history.back()">Back</a>
 {% endblock %}
 
-<!-- Setting the big main heading at the top of the page -->
-{% set pageHeadingTextHTML %}
-Project background
-{% endset %}
-
-<!-- Text that show in the browser tab. Does NOT need changing -->
+<!-- Text that shows in the browser tab -->
 {% block pageTitle %}
 {% if data['errorthispage'] == "true" %}
 Error:
 {% endif %}
-
-{{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+Project background - {{ data['headerNameExemption'] }}
 {% endblock %}
 
 {% block content %}
@@ -45,21 +40,36 @@ Error:
 		</div>
 		{% endif %}
 
-		<!--  END OF 'error summary' -->
-
 		<form action="project-background-router" method="post" novalidate>
+
+			{% if data['low-complexity-project-name-text-input'] %}
+			<span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
+			{% endif %}
+			<h1 class="govuk-heading-l">Project background</h1>
+
+			<p class="govuk-body">The project background will be displayed on the public register and on the licence. Give a summary of:</p>
+			<ul class="govuk-list govuk-list--bullet">
+				<li>what activities you're doing and why</li>
+				<li>where the work will take place</li>
+				<li>which companies or organisations are involved (if applicable)</li>
+			</ul>
+			<p class="govuk-body">You'll be asked to go into further detail about these later in the application.</p>
+
+			{{ govukDetails({
+				summaryText: "Project background examples",
+				html: "<p class=\"govuk-body govuk-!-margin-bottom-4\"><strong>Example One</strong><br>Seabed stabilisation works for Sofia Offshore Wind Farm. The works will use rock bags, geotextile sand containers, loose rock and rock mattresses to stabilise the surface for Jack-up Vessel operations. The works will take place in 20 distinct locations within the SOWF's array area.</p><p class=\"govuk-body\"><strong>Example Two</strong><br>Reconstruction and extension of rock armour at Soldiers Point (Reach W1) of Shoreham Adur Tidal Walls, along the River Adur in Shoreham Harbour. The works extend from Shoreham Fort to Shoreham Harbour Club.</p>"
+			}) }}
 
 			{{ govukTextarea({
 				name: "low-complexity-project-background",
 				id: "low-complexity-project-background",
 				maxlength: 2000,
 				label: {
-					html: '<span class="govuk-caption-l">' + data['low-complexity-project-name-text-input'] + '</span>' + pageHeadingTextHTML,
-					classes: "govuk-label--l",
-					isPageHeading: true
+					text: "Give a background summary of your project",
+					classes: "govuk-label--s"
 				},
 				hint: {
-					text: "Include the need for and aim of the project, and if it's part of a larger project (maximum 2,000 characters)"
+					text: "Enter a maximum of 2,000 characters"
 				},
 				value: data['low-complexity-project-background'],
 				errorMessage: {

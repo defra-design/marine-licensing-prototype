@@ -541,12 +541,12 @@ Review site details
 
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
-                                Does any part of the activity need to be completed by a certain date?
+                                Completion date
                             </dt>
                             <dd class="govuk-summary-list__value">
                                 {% if ad['low-complexity-date-completed-by-completed'] %}
                                     {% if ad['low-complexity-date-completed-by'] == 'Yes' %}
-                                        Yes<br>{{ ad['low-complexity-date-completed-by-details'] }}
+                                        {{ ad['low-complexity-date-completed-by-details'] }}
                                     {% else %}
                                         No
                                     {% endif %}
@@ -556,19 +556,19 @@ Review site details
                             </dd>
                             <dd class="govuk-summary-list__actions">
                                 <a href="load-activity?site={{ site.siteNumber }}&page=date-completed-by" class="govuk-link govuk-link--no-visited-state">
-                                    {% if ad['low-complexity-date-completed-by-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> does any part of the activity need to be completed by a certain date?</span>
+                                    {% if ad['low-complexity-date-completed-by-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> completion date</span>
                                 </a>
                             </dd>
                         </div>
 
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
-                                Will the activity be limited to specific months of the year?
+                                Activity limited to specific months
                             </dt>
                             <dd class="govuk-summary-list__value">
                                 {% if ad['low-complexity-months-of-activity-completed'] %}
                                     {% if ad['low-complexity-months-of-activity'] == 'Yes' %}
-                                        Yes<br>{{ ad['low-complexity-months-of-activity-details'] }}
+                                        {{ ad['low-complexity-months-of-activity-details'] }}
                                     {% else %}
                                         No
                                     {% endif %}
@@ -578,7 +578,7 @@ Review site details
                             </dd>
                             <dd class="govuk-summary-list__actions">
                                 <a href="load-activity?site={{ site.siteNumber }}&page=months-of-activity" class="govuk-link govuk-link--no-visited-state">
-                                    {% if ad['low-complexity-months-of-activity-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> will the activity be limited to specific months of the year?</span>
+                                    {% if ad['low-complexity-months-of-activity-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> activity limited to specific months</span>
                                 </a>
                             </dd>
                         </div>
