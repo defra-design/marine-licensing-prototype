@@ -52,7 +52,7 @@ Error:
 				<fieldset class="govuk-fieldset" {% if data['low-complexity-site-duration-errorthispage'] == "true" %}aria-describedby="duration-error"{% endif %}>
 					<legend class="govuk-fieldset__legend govuk-fieldset__legend--l">
 						<h1 class="govuk-fieldset__heading">
-							<span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}<span class="govuk-!-display-block">Site {{ data['low-complexity-manual-current-edit-site'] or '1' }}</span></span>
+							<span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}<span class="govuk-!-display-block">Site {{ data['low-complexity-manual-current-edit-site'] or '1' }} - Activity {{ data['low-complexity-manual-current-edit-activity'] or data['low-complexity-current-edit-activity'] or '1' }}</span></span>
 							{{ pageHeadingTextHTML }}
 						</h1>
 					</legend>

@@ -27,7 +27,7 @@ Review site details
             {{ pageHeadingTextHTML }}
         </h1>
 
-        {# Check overall completeness across all sites #}
+        {# Check overall completeness across all sites and activities #}
         {% set allComplete = true %}
         {% for site in sites %}
             {% if not site.coordinates or (not site.coordinates.width and not site.coordinates.points) %}
@@ -36,13 +36,15 @@ Review site details
             {% if not site.name %}
                 {% set allComplete = false %}
             {% endif %}
-            {% set ad = site.activityData if site.activityData else {} %}
-            {% if not ad['low-complexity-type-of-activity-completed'] %}{% set allComplete = false %}{% endif %}
-            {% if not ad['low-complexity-activity-description-completed'] %}{% set allComplete = false %}{% endif %}
-            {% if not ad['low-complexity-site-duration-completed'] %}{% set allComplete = false %}{% endif %}
-            {% if not ad['low-complexity-date-completed-by-completed'] %}{% set allComplete = false %}{% endif %}
-            {% if not ad['low-complexity-months-of-activity-completed'] %}{% set allComplete = false %}{% endif %}
-            {% if not ad['low-complexity-working-hours-completed'] %}{% set allComplete = false %}{% endif %}
+            {% set siteActivities = site.activities if site.activities else [] %}
+            {% for activity in siteActivities %}
+                {% if not activity['low-complexity-type-of-activity-completed'] %}{% set allComplete = false %}{% endif %}
+                {% if not activity['low-complexity-activity-description-completed'] %}{% set allComplete = false %}{% endif %}
+                {% if not activity['low-complexity-site-duration-completed'] %}{% set allComplete = false %}{% endif %}
+                {% if not activity['low-complexity-date-completed-by-completed'] %}{% set allComplete = false %}{% endif %}
+                {% if not activity['low-complexity-months-of-activity-completed'] %}{% set allComplete = false %}{% endif %}
+                {% if not activity['low-complexity-working-hours-completed'] %}{% set allComplete = false %}{% endif %}
+            {% endfor %}
         {% endfor %}
 
         {% if not allComplete %}
@@ -280,12 +282,24 @@ Review site details
                 </div>
             </div>
 
-            <!-- Site activity details section -->
-            <div id="site-{{ site.siteNumber }}-activity-details" class="govuk-summary-card">
+            <!-- Site activity details sections - loop through activities -->
+            {% set siteActivities = site.activities if site.activities else [] %}
+            {% for ad in siteActivities %}
+
+            <div id="site-{{ site.siteNumber }}-activity-{{ ad.activityNumber }}" class="govuk-summary-card">
                 <div class="govuk-summary-card__title-wrapper">
                     <h2 class="govuk-summary-card__title">
-                        Site {{ site.siteNumber }} activity details
+                        Site {{ site.siteNumber }} - Activity {{ ad.activityNumber }}
                     </h2>
+                    {% if ad.activityNumber > 1 %}
+                    <ul class="govuk-summary-card__actions">
+                        <li class="govuk-summary-card__action">
+                            <a class="govuk-link govuk-link--no-visited-state" href="delete-activity?site={{ site.siteNumber }}&activity={{ ad.activityNumber }}">
+                                Delete activity<span class="govuk-visually-hidden"> {{ ad.activityNumber }} for site {{ site.siteNumber }}</span>
+                            </a>
+                        </li>
+                    </ul>
+                    {% endif %}
                 </div>
                 <div class="govuk-summary-card__content">
                     <dl class="govuk-summary-list">
@@ -318,7 +332,7 @@ Review site details
                                 {% endif %}
                             </dd>
                             <dd class="govuk-summary-list__actions">
-                                <a href="load-activity?site={{ site.siteNumber }}&page=type-of-activity" class="govuk-link govuk-link--no-visited-state">
+                                <a href="load-activity?site={{ site.siteNumber }}&activity={{ ad.activityNumber }}&page=type-of-activity" class="govuk-link govuk-link--no-visited-state">
                                     {% if ad['low-complexity-type-of-activity-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> type of activity</span>
                                 </a>
                             </dd>
@@ -373,7 +387,7 @@ Review site details
                                     {% endif %}
                                 </dd>
                                 <dd class="govuk-summary-list__actions">
-                                    <a href="load-activity?site={{ site.siteNumber }}&page=construction-structures" class="govuk-link govuk-link--no-visited-state">
+                                    <a href="load-activity?site={{ site.siteNumber }}&activity={{ ad.activityNumber }}&page=construction-structures" class="govuk-link govuk-link--no-visited-state">
                                         Change<span class="govuk-visually-hidden"> what you are constructing</span>
                                     </a>
                                 </dd>
@@ -422,7 +436,7 @@ Review site details
                                     {% endif %}
                                 </dd>
                                 <dd class="govuk-summary-list__actions">
-                                    <a href="load-activity?site={{ site.siteNumber }}&page=deposit-substances-objects" class="govuk-link govuk-link--no-visited-state">
+                                    <a href="load-activity?site={{ site.siteNumber }}&activity={{ ad.activityNumber }}&page=deposit-substances-objects" class="govuk-link govuk-link--no-visited-state">
                                         Change<span class="govuk-visually-hidden"> deposit substances or objects</span>
                                     </a>
                                 </dd>
@@ -487,7 +501,7 @@ Review site details
                                     {% endif %}
                                 </dd>
                                 <dd class="govuk-summary-list__actions">
-                                    <a href="load-activity?site={{ site.siteNumber }}&page=removal-substances-objects" class="govuk-link govuk-link--no-visited-state">
+                                    <a href="load-activity?site={{ site.siteNumber }}&activity={{ ad.activityNumber }}&page=removal-substances-objects" class="govuk-link govuk-link--no-visited-state">
                                         Change<span class="govuk-visually-hidden"> removal substances or objects</span>
                                     </a>
                                 </dd>
@@ -508,7 +522,7 @@ Review site details
                                 {% endif %}
                             </dd>
                             <dd class="govuk-summary-list__actions">
-                                <a href="load-activity?site={{ site.siteNumber }}&page=activity-description" class="govuk-link govuk-link--no-visited-state">
+                                <a href="load-activity?site={{ site.siteNumber }}&activity={{ ad.activityNumber }}&page=activity-description" class="govuk-link govuk-link--no-visited-state">
                                     {% if ad['low-complexity-activity-description-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> activity description</span>
                                 </a>
                             </dd>
@@ -533,7 +547,7 @@ Review site details
                                 {% endif %}
                             </dd>
                             <dd class="govuk-summary-list__actions">
-                                <a href="load-activity?site={{ site.siteNumber }}&page=duration" class="govuk-link govuk-link--no-visited-state">
+                                <a href="load-activity?site={{ site.siteNumber }}&activity={{ ad.activityNumber }}&page=duration" class="govuk-link govuk-link--no-visited-state">
                                     {% if ad['low-complexity-site-duration-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> duration</span>
                                 </a>
                             </dd>
@@ -555,7 +569,7 @@ Review site details
                                 {% endif %}
                             </dd>
                             <dd class="govuk-summary-list__actions">
-                                <a href="load-activity?site={{ site.siteNumber }}&page=date-completed-by" class="govuk-link govuk-link--no-visited-state">
+                                <a href="load-activity?site={{ site.siteNumber }}&activity={{ ad.activityNumber }}&page=date-completed-by" class="govuk-link govuk-link--no-visited-state">
                                     {% if ad['low-complexity-date-completed-by-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> completion date</span>
                                 </a>
                             </dd>
@@ -577,7 +591,7 @@ Review site details
                                 {% endif %}
                             </dd>
                             <dd class="govuk-summary-list__actions">
-                                <a href="load-activity?site={{ site.siteNumber }}&page=months-of-activity" class="govuk-link govuk-link--no-visited-state">
+                                <a href="load-activity?site={{ site.siteNumber }}&activity={{ ad.activityNumber }}&page=months-of-activity" class="govuk-link govuk-link--no-visited-state">
                                     {% if ad['low-complexity-months-of-activity-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> activity limited to specific months</span>
                                 </a>
                             </dd>
@@ -595,7 +609,7 @@ Review site details
                                 {% endif %}
                             </dd>
                             <dd class="govuk-summary-list__actions">
-                                <a href="load-activity?site={{ site.siteNumber }}&page=working-hours" class="govuk-link govuk-link--no-visited-state">
+                                <a href="load-activity?site={{ site.siteNumber }}&activity={{ ad.activityNumber }}&page=working-hours" class="govuk-link govuk-link--no-visited-state">
                                     {% if ad['low-complexity-working-hours-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> proposed working hours</span>
                                 </a>
                             </dd>
@@ -604,8 +618,10 @@ Review site details
                 </div>
             </div>
 
+            {% endfor %}
+
             <p class="govuk-body govuk-!-margin-bottom-6">
-                <a href="#" class="govuk-button govuk-button--secondary">Add another activity for site {{ site.siteNumber }}</a>
+                <a href="add-activity?site={{ site.siteNumber }}" class="govuk-button govuk-button--secondary">Add another activity for site {{ site.siteNumber }}</a>
             </p>
 
             {% endfor %}

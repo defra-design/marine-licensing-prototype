@@ -100,6 +100,43 @@ Marine licence start page
 		</ul>
 
 		<h2 class="govuk-heading-m">Site details</h2>
+
+		{# Compute site details completeness across all activities #}
+		{% set siteDetailsComplete = true %}
+		{% if data['low-complexity-site-location-method'] == 'manual-entry' %}
+			{# Manual entry: check all sites and all activities #}
+			{% set manualSites = data['low-complexity-manual-sites'] if data['low-complexity-manual-sites'] else [] %}
+			{% if manualSites.length == 0 %}{% set siteDetailsComplete = false %}{% endif %}
+			{% for site in manualSites %}
+				{% if not site.name %}{% set siteDetailsComplete = false %}{% endif %}
+				{% set siteActs = site.activities if site.activities else [] %}
+				{% for act in siteActs %}
+					{% if not act['low-complexity-type-of-activity-completed'] %}{% set siteDetailsComplete = false %}{% endif %}
+					{% if not act['low-complexity-activity-description-completed'] %}{% set siteDetailsComplete = false %}{% endif %}
+					{% if not act['low-complexity-site-duration-completed'] %}{% set siteDetailsComplete = false %}{% endif %}
+					{% if not act['low-complexity-date-completed-by-completed'] %}{% set siteDetailsComplete = false %}{% endif %}
+					{% if not act['low-complexity-months-of-activity-completed'] %}{% set siteDetailsComplete = false %}{% endif %}
+					{% if not act['low-complexity-working-hours-completed'] %}{% set siteDetailsComplete = false %}{% endif %}
+				{% endfor %}
+			{% endfor %}
+		{% else %}
+			{# File upload: check site name and all activities #}
+			{% if not data['low-complexity-site-name-completed'] %}{% set siteDetailsComplete = false %}{% endif %}
+			{% set fileActs = data['low-complexity-file-upload-activities'] if data['low-complexity-file-upload-activities'] else [] %}
+			{% for act in fileActs %}
+				{% if not act['low-complexity-type-of-activity-completed'] %}{% set siteDetailsComplete = false %}{% endif %}
+				{% if not act['low-complexity-activity-description-completed'] %}{% set siteDetailsComplete = false %}{% endif %}
+				{% if not act['low-complexity-site-duration-completed'] %}{% set siteDetailsComplete = false %}{% endif %}
+				{% if not act['low-complexity-date-completed-by-completed'] %}{% set siteDetailsComplete = false %}{% endif %}
+				{% if not act['low-complexity-months-of-activity-completed'] %}{% set siteDetailsComplete = false %}{% endif %}
+				{% if not act['low-complexity-working-hours-completed'] %}{% set siteDetailsComplete = false %}{% endif %}
+			{% endfor %}
+			{# Fallback for legacy flat keys when no activities array exists yet #}
+			{% if fileActs.length == 0 and not data['has-visited-site-details'] %}
+				{% set siteDetailsComplete = false %}
+			{% endif %}
+		{% endif %}
+
 		<ul class="govuk-task-list">
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
 			  <div class="govuk-task-list__name-and-hint">
@@ -107,9 +144,9 @@ Marine licence start page
 				  Site details
 				</a>
 			  </div>
-			  
+
 			  <div class="govuk-task-list__status" id="site-details-status">
-				{% if data['low-complexity-site-name-completed'] and data['low-complexity-type-of-activity-completed'] and data['low-complexity-activity-description-completed'] and data['low-complexity-site-duration-completed'] and data['low-complexity-date-completed-by-completed'] and data['low-complexity-months-of-activity-completed'] and data['low-complexity-working-hours-completed'] %}
+				{% if siteDetailsComplete and data['has-visited-site-details'] %}
 					Completed
 				{% elif data['has-visited-site-details'] %}
 					<strong class="govuk-tag govuk-tag--light-blue">
@@ -129,7 +166,7 @@ Marine licence start page
 		<ul class="govuk-task-list">
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
 			  <div class="govuk-task-list__name-and-hint">
-				{% if data['low-complexity-site-name-completed'] and data['low-complexity-type-of-activity-completed'] and data['low-complexity-activity-description-completed'] and data['low-complexity-site-duration-completed'] and data['low-complexity-date-completed-by-completed'] and data['low-complexity-months-of-activity-completed'] and data['low-complexity-working-hours-completed'] %}
+				{% if siteDetailsComplete and data['has-visited-site-details'] %}
 				{% set marinePoliciesCompleted = data['marine-plan-policies-completed-count'] | default(0) %}
 				{% set marinePoliciesNotStarted = data['marine-plan-policies-not-started-count'] | default(0) %}
 				{% set marinePoliciesTotal = marinePoliciesCompleted + marinePoliciesNotStarted %}
@@ -142,7 +179,7 @@ Marine licence start page
 			  </div>
 			  
 			  <div class="govuk-task-list__status" id="marine-plan-policies-status">
-				{% if data['low-complexity-site-name-completed'] and data['low-complexity-type-of-activity-completed'] and data['low-complexity-activity-description-completed'] and data['low-complexity-site-duration-completed'] and data['low-complexity-date-completed-by-completed'] and data['low-complexity-months-of-activity-completed'] and data['low-complexity-working-hours-completed'] %}
+				{% if siteDetailsComplete and data['has-visited-site-details'] %}
 					{% if data['marine-plan-policies-not-started-count'] == 0 %}
 					Completed
 					{% elif data['marine-plan-policies-completed-count'] > 0 %}
@@ -332,7 +369,7 @@ Marine licence start page
 			</li>
 		</ul>
 
-	{% if data['low-complexity-project-background-completed'] and data['low-complexity-dates-completed'] and data['low-complexity-cost-completed'] and data['low-complexity-site-name-completed'] and data['low-complexity-type-of-activity-completed'] and data['low-complexity-activity-description-completed'] and data['low-complexity-site-duration-completed'] and data['low-complexity-date-completed-by-completed'] and data['low-complexity-months-of-activity-completed'] and data['low-complexity-working-hours-completed'] and data['low-complexity-european-sites-completed'] and data['low-complexity-mcz-completed'] and data['low-complexity-sssi-completed'] and data['low-complexity-wfd-completed'] and data['low-complexity-special-legal-powers-completed'] and data['low-complexity-harbour-authority-completed'] and data['low-complexity-other-permissions-completed'] and data['low-complexity-consultation-completed'] and data['low-complexity-sharing-information-completed'] %}
+	{% if data['low-complexity-project-background-completed'] and data['low-complexity-dates-completed'] and data['low-complexity-cost-completed'] and siteDetailsComplete and data['has-visited-site-details'] and data['low-complexity-european-sites-completed'] and data['low-complexity-mcz-completed'] and data['low-complexity-sssi-completed'] and data['low-complexity-wfd-completed'] and data['low-complexity-special-legal-powers-completed'] and data['low-complexity-harbour-authority-completed'] and data['low-complexity-other-permissions-completed'] and data['low-complexity-consultation-completed'] and data['low-complexity-sharing-information-completed'] %}
 	<form action="check-your-answers" method="post">
 		<button class="govuk-button" data-module="govuk-button">
 			Check and send your application

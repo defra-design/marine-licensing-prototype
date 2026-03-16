@@ -41,7 +41,7 @@ How have you assessed the impact of the activity and how will you reduce this?
                 }) }}
             {% endif %}
 
-            <span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}<span class="govuk-!-display-block">Site {{ data['low-complexity-manual-current-edit-site'] or '1' }}</span></span>
+            <span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}<span class="govuk-!-display-block">Site {{ data['low-complexity-manual-current-edit-site'] or '1' }} - Activity {{ data['low-complexity-manual-current-edit-activity'] or data['low-complexity-current-edit-activity'] or '1' }}</span></span>
             <h1 class="govuk-heading-l">
                 {{ pageHeadingTextHTML }}
             </h1>

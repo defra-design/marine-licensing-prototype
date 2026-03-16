@@ -10,7 +10,7 @@ module.exports = function (router) {
 
   // ==============================================================================================
   // Activity data keys - these are the flat session keys used by the shared activity pages
-  // We copy these to/from site objects so each site has its own activity data
+  // We copy these to/from activity objects so each activity has its own data
   // ==============================================================================================
 
   const ACTIVITY_DATA_KEYS = [
@@ -62,6 +62,44 @@ module.exports = function (router) {
     return sites.find(s => s.siteNumber === parseInt(siteNumber));
   }
 
+  // Migrate legacy activityData to activities array
+  function migrateSiteActivities(site) {
+    if (!site.activities) {
+      site.activities = [];
+      if (site.activityData && Object.keys(site.activityData).length > 0) {
+        site.activities.push(Object.assign({ activityNumber: 1 }, site.activityData));
+      } else {
+        site.activities.push({ activityNumber: 1 });
+      }
+      delete site.activityData;
+    }
+  }
+
+  function getActivityFromSite(site, activityNumber) {
+    migrateSiteActivities(site);
+    return site.activities.find(a => a.activityNumber === parseInt(activityNumber));
+  }
+
+  function addActivityToSite(site) {
+    migrateSiteActivities(site);
+    const activityNumber = site.activities.length + 1;
+    const activity = { activityNumber: activityNumber };
+    site.activities.push(activity);
+    return activity;
+  }
+
+  function deleteActivityFromSite(site, activityNumber) {
+    migrateSiteActivities(site);
+    const index = site.activities.findIndex(a => a.activityNumber === parseInt(activityNumber));
+    if (index > -1) {
+      site.activities.splice(index, 1);
+      // Renumber remaining activities
+      site.activities.forEach((act, i) => {
+        act.activityNumber = i + 1;
+      });
+    }
+  }
+
   function createNewSite(session) {
     const sites = getManualSites(session);
     const siteNumber = sites.length + 1;
@@ -72,7 +110,7 @@ module.exports = function (router) {
       coordinateSystem: '',
       coordinates: {},
       mapImage: '',
-      activityData: {}
+      activities: [{ activityNumber: 1 }]
     };
     sites.push(site);
     session.data['low-complexity-manual-current-site'] = siteNumber;
@@ -91,31 +129,36 @@ module.exports = function (router) {
     }
   }
 
-  // Load a site's activity data into flat session keys so shared activity pages can use them
-  function loadActivityDataToSession(session, site) {
-    if (!site.activityData) site.activityData = {};
+  // Load an activity's data into flat session keys so shared activity pages can use them
+  function loadActivityDataToSession(session, site, activityNumber) {
+    migrateSiteActivities(site);
+    const activity = getActivityFromSite(site, activityNumber);
+    if (!activity) return;
     // First clear all activity keys from session
     ACTIVITY_DATA_KEYS.forEach(key => {
       delete session.data[key];
     });
-    // Then load from the site's activity data
+    // Then load from the activity
     ACTIVITY_DATA_KEYS.forEach(key => {
-      if (site.activityData[key] !== undefined) {
-        session.data[key] = site.activityData[key];
+      if (activity[key] !== undefined) {
+        session.data[key] = activity[key];
       }
     });
-    // Store which site we're currently editing
+    // Store which site and activity we're currently editing
     session.data['low-complexity-manual-current-edit-site'] = site.siteNumber;
+    session.data['low-complexity-manual-current-edit-activity'] = parseInt(activityNumber);
   }
 
-  // Save flat session keys back to the site's activity data object
-  function saveActivityDataFromSession(session, site) {
-    if (!site.activityData) site.activityData = {};
+  // Save flat session keys back to the activity object
+  function saveActivityDataFromSession(session, site, activityNumber) {
+    migrateSiteActivities(site);
+    const activity = getActivityFromSite(site, activityNumber);
+    if (!activity) return;
     ACTIVITY_DATA_KEYS.forEach(key => {
       if (session.data[key] !== undefined) {
-        site.activityData[key] = session.data[key];
+        activity[key] = session.data[key];
       } else {
-        delete site.activityData[key];
+        delete activity[key];
       }
     });
   }
@@ -126,6 +169,7 @@ module.exports = function (router) {
 
   router.get(`${basePath}/load-activity`, function (req, res) {
     const siteParam = req.query.site;
+    const activityParam = req.query.activity || '1';
     const page = req.query.page;
 
     const site = getSiteByNumber(req.session, siteParam);
@@ -133,8 +177,11 @@ module.exports = function (router) {
       return res.redirect(`${basePath}/review-site-details`);
     }
 
-    // Load this site's activity data into flat session keys
-    loadActivityDataToSession(req.session, site);
+    // Ensure site has activities array
+    migrateSiteActivities(site);
+
+    // Load this activity's data into flat session keys
+    loadActivityDataToSession(req.session, site, activityParam);
 
     // Redirect to the actual activity page (one directory up from manual-entry)
     res.redirect(`/versions/multiple-sites-v2/low-complexity-v2/site-details/${page}`);
@@ -594,16 +641,21 @@ module.exports = function (router) {
 
     const sites = getManualSites(req.session);
 
-    // Save any pending activity data back to the current site being edited
+    // Ensure all sites have activities arrays (migration)
+    sites.forEach(site => migrateSiteActivities(site));
+
+    // Save any pending activity data back to the current site/activity being edited
     // This captures data when returning from shared activity pages
     const currentEditSite = req.session.data['low-complexity-manual-current-edit-site'];
+    const currentEditActivity = req.session.data['low-complexity-manual-current-edit-activity'] || 1;
     if (currentEditSite) {
       const site = getSiteByNumber(req.session, currentEditSite);
       if (site) {
-        saveActivityDataFromSession(req.session, site);
+        saveActivityDataFromSession(req.session, site, currentEditActivity);
       }
-      // Clear the current edit site marker
+      // Clear the current edit markers
       delete req.session.data['low-complexity-manual-current-edit-site'];
+      delete req.session.data['low-complexity-manual-current-edit-activity'];
     }
 
     res.render(`${viewBase}/review-site-details`, {
@@ -669,6 +721,57 @@ module.exports = function (router) {
   });
 
   // ==============================================================================================
+  // Add another activity to a site
+  // ==============================================================================================
+
+  router.get(`${basePath}/add-activity`, function (req, res) {
+    const siteParam = req.query.site;
+    const site = getSiteByNumber(req.session, siteParam);
+    if (!site) {
+      return res.redirect(`${basePath}/review-site-details`);
+    }
+    addActivityToSite(site);
+    res.redirect(`${basePath}/review-site-details#site-${site.siteNumber}-activity-${site.activities.length}`);
+  });
+
+  // ==============================================================================================
+  // Delete activity - confirmation page (GET) and actual deletion (POST)
+  // ==============================================================================================
+
+  router.get(`${basePath}/delete-activity`, function (req, res) {
+    const siteParam = req.query.site;
+    const activityParam = req.query.activity;
+
+    const site = getSiteByNumber(req.session, siteParam);
+    if (!site) {
+      return res.redirect(`${basePath}/review-site-details`);
+    }
+    migrateSiteActivities(site);
+    const activity = getActivityFromSite(site, activityParam);
+    if (!activity) {
+      return res.redirect(`${basePath}/review-site-details`);
+    }
+
+    res.render(`${viewBase}/delete-activity`, {
+      data: req.session.data,
+      site: site,
+      activity: activity
+    });
+  });
+
+  router.post(`${basePath}/delete-activity-router`, function (req, res) {
+    const siteParam = req.body['site-number'];
+    const activityParam = req.body['activity-number'];
+    if (siteParam && activityParam) {
+      const site = getSiteByNumber(req.session, siteParam);
+      if (site) {
+        deleteActivityFromSite(site, activityParam);
+      }
+    }
+    res.redirect(`${basePath}/review-site-details`);
+  });
+
+  // ==============================================================================================
   // Delete all site details
   // ==============================================================================================
 
@@ -683,6 +786,7 @@ module.exports = function (router) {
     delete req.session.data['low-complexity-manual-sites'];
     delete req.session.data['low-complexity-manual-current-site'];
     delete req.session.data['low-complexity-manual-current-edit-site'];
+    delete req.session.data['low-complexity-manual-current-edit-activity'];
     delete req.session.data['has-visited-site-details'];
     delete req.session.data['low-complexity-site-location-method'];
 
