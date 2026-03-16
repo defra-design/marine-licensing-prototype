@@ -317,8 +317,11 @@ module.exports = function (router) {
     }
   });
 
-  // Special legal powers page
+  // Special legal powers page (organisation users only)
   router.get(`/versions/${version}/${section}/other-permissions/special-legal-powers`, function (req, res) {
+    if (req.session.data['user_type'] !== 'organisation') {
+      return res.redirect('../marine-licence-start-page');
+    }
     // Clear error flags when navigating to the page
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
@@ -332,8 +335,11 @@ module.exports = function (router) {
     res.render(`versions/${version}/${section}/other-permissions/special-legal-powers`);
   });
 
-  // Special legal powers router (POST)
+  // Special legal powers router (POST) (organisation users only)
   router.post(`/versions/${version}/${section}/other-permissions/special-legal-powers-router`, function (req, res) {
+    if (req.session.data['user_type'] !== 'organisation') {
+      return res.redirect('../marine-licence-start-page');
+    }
     // Clear error flags
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
