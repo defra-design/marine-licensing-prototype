@@ -4,13 +4,103 @@ module.exports = function (router) {
   const section = "low-complexity-v2";
   const subsection = "site-details";
 
+  // Activity data keys for file upload path
+  const ACTIVITY_DATA_KEYS = [
+    'low-complexity-type-of-activity',
+    'low-complexity-type-of-activity-completed',
+    'low-complexity-type-of-activity-previous',
+    'low-complexity-type-of-works',
+    'low-complexity-type-of-works-previous',
+    'low-complexity-deposit-type',
+    'low-complexity-deposit-type-previous',
+    'low-complexity-removal-type',
+    'low-complexity-removal-type-previous',
+    'low-complexity-construction-structures',
+    'low-complexity-construction-structures-other-details',
+    'low-complexity-deposit-substances-objects',
+    'low-complexity-deposit-substances-objects-other-details',
+    'low-complexity-removal-substances-objects',
+    'low-complexity-removal-substances-objects-other-details',
+    'low-complexity-activity-description',
+    'low-complexity-activity-description-completed',
+    'low-complexity-site-duration-years',
+    'low-complexity-site-duration-months',
+    'low-complexity-site-duration-completed',
+    'low-complexity-date-completed-by',
+    'low-complexity-date-completed-by-details',
+    'low-complexity-date-completed-by-completed',
+    'low-complexity-months-of-activity',
+    'low-complexity-months-of-activity-details',
+    'low-complexity-months-of-activity-completed',
+    'low-complexity-working-hours',
+    'low-complexity-working-hours-completed',
+    'low-complexity-impacts',
+    'low-complexity-impacts-completed'
+  ];
+
+  // ==============================================================================================
+  // File upload multi-activity helpers
+  // ==============================================================================================
+
+  function getFileUploadActivities(session) {
+    if (!session.data['low-complexity-file-upload-activities']) {
+      // Migrate existing flat session data into activity 1
+      const activity = { activityNumber: 1 };
+      ACTIVITY_DATA_KEYS.forEach(key => {
+        if (session.data[key] !== undefined) {
+          activity[key] = session.data[key];
+        }
+      });
+      session.data['low-complexity-file-upload-activities'] = [activity];
+    }
+    return session.data['low-complexity-file-upload-activities'];
+  }
+
+  function getFileUploadActivity(session, activityNumber) {
+    const activities = getFileUploadActivities(session);
+    return activities.find(a => a.activityNumber === parseInt(activityNumber));
+  }
+
+  function loadFileUploadActivityToSession(session, activityNumber) {
+    const activity = getFileUploadActivity(session, activityNumber);
+    if (!activity) return;
+    // Clear all activity keys from session
+    ACTIVITY_DATA_KEYS.forEach(key => {
+      delete session.data[key];
+    });
+    // Load from activity
+    ACTIVITY_DATA_KEYS.forEach(key => {
+      if (activity[key] !== undefined) {
+        session.data[key] = activity[key];
+      }
+    });
+    session.data['low-complexity-current-edit-activity'] = parseInt(activityNumber);
+  }
+
+  function saveFileUploadActivityFromSession(session, activityNumber) {
+    const activity = getFileUploadActivity(session, activityNumber);
+    if (!activity) return;
+    ACTIVITY_DATA_KEYS.forEach(key => {
+      if (session.data[key] !== undefined) {
+        activity[key] = session.data[key];
+      } else {
+        delete activity[key];
+      }
+    });
+  }
+
   // Helper to redirect to the correct review page based on entry method
   function getReviewUrl(session, anchor) {
     const isManual = session.data['low-complexity-site-location-method'] === 'manual-entry';
     const base = isManual ? 'manual-entry/review-site-details' : 'review-site-details';
     if (isManual && session.data['low-complexity-manual-current-edit-site']) {
       const siteNum = session.data['low-complexity-manual-current-edit-site'];
-      return base + '#site-' + siteNum + '-activity-details';
+      const actNum = session.data['low-complexity-manual-current-edit-activity'] || 1;
+      return base + '#site-' + siteNum + '-activity-' + actNum;
+    }
+    if (!isManual && session.data['low-complexity-current-edit-activity']) {
+      const actNum = session.data['low-complexity-current-edit-activity'];
+      return base + '#site-1-activity-' + actNum;
     }
     return anchor ? base + '#' + anchor : base;
   }
@@ -124,8 +214,21 @@ module.exports = function (router) {
     if (req.query.camefromcheckanswers === 'true') {
       req.session.data['camefromcheckanswers'] = 'true';
     }
-    
-    res.render(`versions/${version}/${section}/${subsection}/review-site-details`);
+
+    // Save any pending activity data back to the current activity being edited
+    const currentEditActivity = req.session.data['low-complexity-current-edit-activity'];
+    if (currentEditActivity) {
+      const activities = getFileUploadActivities(req.session);
+      saveFileUploadActivityFromSession(req.session, currentEditActivity);
+      delete req.session.data['low-complexity-current-edit-activity'];
+    }
+
+    // Ensure activities array exists
+    const activities = getFileUploadActivities(req.session);
+
+    res.render(`versions/${version}/${section}/${subsection}/review-site-details`, {
+      activities: activities
+    });
   });
 
   // Review site details router (POST)
@@ -141,6 +244,60 @@ module.exports = function (router) {
       // Normal flow - redirect back to task list
       res.redirect('../marine-licence-start-page');
     }
+  });
+
+  /////////////////////////////////////////////////////////
+  //////// Load activity data (file upload) - intermediary
+  /////////////////////////////////////////////////////////
+  router.get(`/versions/${version}/${section}/${subsection}/load-activity`, function (req, res) {
+    const activityParam = req.query.activity || '1';
+    const page = req.query.page;
+
+    loadFileUploadActivityToSession(req.session, activityParam);
+
+    res.redirect(`/versions/${version}/${section}/${subsection}/${page}`);
+  });
+
+  /////////////////////////////////////////////////////////
+  //////// Add another activity (file upload)
+  /////////////////////////////////////////////////////////
+  router.get(`/versions/${version}/${section}/${subsection}/add-activity`, function (req, res) {
+    const activities = getFileUploadActivities(req.session);
+    const activityNumber = activities.length + 1;
+    activities.push({ activityNumber: activityNumber });
+    res.redirect(`/versions/${version}/${section}/${subsection}/review-site-details#site-1-activity-${activityNumber}`);
+  });
+
+  /////////////////////////////////////////////////////////
+  //////// Delete activity (file upload)
+  /////////////////////////////////////////////////////////
+  router.get(`/versions/${version}/${section}/${subsection}/delete-activity`, function (req, res) {
+    const activityParam = req.query.activity;
+    const activities = getFileUploadActivities(req.session);
+    const activity = activities.find(a => a.activityNumber === parseInt(activityParam));
+    if (!activity) {
+      return res.redirect(`/versions/${version}/${section}/${subsection}/review-site-details`);
+    }
+    res.render(`versions/${version}/${section}/${subsection}/delete-activity`, {
+      activity: activity,
+      siteNumber: 1
+    });
+  });
+
+  router.post(`/versions/${version}/${section}/${subsection}/delete-activity-router`, function (req, res) {
+    const activityParam = req.body['activity-number'];
+    if (activityParam) {
+      const activities = getFileUploadActivities(req.session);
+      const index = activities.findIndex(a => a.activityNumber === parseInt(activityParam));
+      if (index > -1) {
+        activities.splice(index, 1);
+        // Renumber remaining activities
+        activities.forEach((act, i) => {
+          act.activityNumber = i + 1;
+        });
+      }
+    }
+    res.redirect(`/versions/${version}/${section}/${subsection}/review-site-details`);
   });
 
   /////////////////////////////////////////////////////////
@@ -307,7 +464,7 @@ module.exports = function (router) {
     } else {
       // Mark as completed and redirect to review page for other activities
       req.session.data['low-complexity-type-of-activity-completed'] = true;
-      res.redirect(getReviewUrl(req.session, 'site-1-activity-details'));
+      res.redirect(getReviewUrl(req.session, 'site-1-activity-1'));
     }
   });
 
@@ -356,7 +513,7 @@ module.exports = function (router) {
 
     // Mark as completed and redirect to review page
     req.session.data['low-complexity-type-of-activity-completed'] = true;
-    res.redirect(getReviewUrl(req.session, 'site-1-activity-details'));
+    res.redirect(getReviewUrl(req.session, 'site-1-activity-1'));
   });
 
   /////////////////////////////////////////////////////////
@@ -404,7 +561,7 @@ module.exports = function (router) {
 
     // Mark as completed and redirect to review page
     req.session.data['low-complexity-type-of-activity-completed'] = true;
-    res.redirect(getReviewUrl(req.session, 'site-1-activity-details'));
+    res.redirect(getReviewUrl(req.session, 'site-1-activity-1'));
   });
 
   /////////////////////////////////////////////////////////
@@ -452,7 +609,7 @@ module.exports = function (router) {
 
     // Mark as completed and redirect to review page
     req.session.data['low-complexity-type-of-activity-completed'] = true;
-    res.redirect(getReviewUrl(req.session, 'site-1-activity-details'));
+    res.redirect(getReviewUrl(req.session, 'site-1-activity-1'));
   });
 
   /////////////////////////////////////////////////////////
@@ -476,7 +633,7 @@ module.exports = function (router) {
     // Clear errors and mark as completed
     req.session.data['low-complexity-activity-description-errorthispage'] = "false";
     req.session.data['low-complexity-activity-description-completed'] = true;
-    res.redirect(getReviewUrl(req.session, 'site-1-activity-details'));
+    res.redirect(getReviewUrl(req.session, 'site-1-activity-1'));
   });
 
   /////////////////////////////////////////////////////////
@@ -521,7 +678,7 @@ module.exports = function (router) {
 
     // Mark as completed and redirect to review page
     req.session.data['low-complexity-site-duration-completed'] = true;
-    res.redirect(getReviewUrl(req.session, 'site-1-activity-details'));
+    res.redirect(getReviewUrl(req.session, 'site-1-activity-1'));
   });
 
   /////////////////////////////////////////////////////////
@@ -562,7 +719,7 @@ module.exports = function (router) {
 
     // Mark as completed and redirect to review page
     req.session.data['low-complexity-date-completed-by-completed'] = true;
-    res.redirect(getReviewUrl(req.session, 'site-1-activity-details'));
+    res.redirect(getReviewUrl(req.session, 'site-1-activity-1'));
   });
 
   /////////////////////////////////////////////////////////
@@ -603,7 +760,7 @@ module.exports = function (router) {
 
     // Mark as completed and redirect to review page
     req.session.data['low-complexity-months-of-activity-completed'] = true;
-    res.redirect(getReviewUrl(req.session, 'site-1-activity-details'));
+    res.redirect(getReviewUrl(req.session, 'site-1-activity-1'));
   });
 
   /////////////////////////////////////////////////////////
@@ -629,7 +786,7 @@ module.exports = function (router) {
 
     // Mark as completed and redirect to review page
     req.session.data['low-complexity-working-hours-completed'] = true;
-    res.redirect(getReviewUrl(req.session, 'site-1-activity-details'));
+    res.redirect(getReviewUrl(req.session, 'site-1-activity-1'));
   });
 
   /////////////////////////////////////////////////////////
@@ -655,7 +812,7 @@ module.exports = function (router) {
 
     // Mark as completed and redirect to review page
     req.session.data['low-complexity-impacts-completed'] = true;
-    res.redirect(getReviewUrl(req.session, 'site-1-activity-details'));
+    res.redirect(getReviewUrl(req.session, 'site-1-activity-1'));
   });
 
   /////////////////////////////////////////////////////////
@@ -668,61 +825,28 @@ module.exports = function (router) {
   // Delete all sites router (POST)
   router.post(`/versions/${version}/${section}/${subsection}/delete-all-sites-router`, function (req, res) {
     // Clear all site details data
-    
+
     // File upload journey data
     delete req.session.data['low-complexity-site-location-method'];
     delete req.session.data['low-complexity-file-type'];
     delete req.session.data['hasUploadedSiteFile'];
-    
+
     // Site name
     delete req.session.data['low-complexity-site-name'];
     delete req.session.data['low-complexity-site-name-completed'];
-    
-    // Type of activity
-    delete req.session.data['low-complexity-type-of-activity'];
-    delete req.session.data['low-complexity-type-of-works'];
-    delete req.session.data['low-complexity-type-of-works-previous'];
-    delete req.session.data['low-complexity-deposit-type'];
-    delete req.session.data['low-complexity-deposit-substances-objects'];
-    delete req.session.data['low-complexity-deposit-substances-objects-other-details'];
-    delete req.session.data['low-complexity-removal-type'];
-    delete req.session.data['low-complexity-construction-structures'];
-    delete req.session.data['low-complexity-construction-structures-other-details'];
-    delete req.session.data['low-complexity-removal-substances-objects'];
-    delete req.session.data['low-complexity-removal-substances-objects-other-details'];
-    delete req.session.data['low-complexity-type-of-activity-completed'];
-    
-    // Activity description
-    delete req.session.data['low-complexity-activity-name'];
-    delete req.session.data['low-complexity-activity-description'];
-    delete req.session.data['low-complexity-activity-description-completed'];
-    
-    // Duration
-    delete req.session.data['low-complexity-site-duration-years'];
-    delete req.session.data['low-complexity-site-duration-months'];
-    delete req.session.data['low-complexity-site-duration-completed'];
-    
-    // Date completed by
-    delete req.session.data['low-complexity-date-completed-by'];
-    delete req.session.data['low-complexity-date-completed-by-details'];
-    delete req.session.data['low-complexity-date-completed-by-completed'];
-    
-    // Months of activity
-    delete req.session.data['low-complexity-months-of-activity'];
-    delete req.session.data['low-complexity-months-of-activity-details'];
-    delete req.session.data['low-complexity-months-of-activity-completed'];
-    
-    // Working hours
-    delete req.session.data['low-complexity-working-hours'];
-    delete req.session.data['low-complexity-working-hours-completed'];
-    
-    // Impacts
-    delete req.session.data['low-complexity-impacts'];
-    delete req.session.data['low-complexity-impacts-completed'];
-    
+
+    // File upload activities array
+    delete req.session.data['low-complexity-file-upload-activities'];
+    delete req.session.data['low-complexity-current-edit-activity'];
+
+    // Flat activity session keys
+    ACTIVITY_DATA_KEYS.forEach(key => {
+      delete req.session.data[key];
+    });
+
     // Overall completion flag
     delete req.session.data['has-visited-site-details'];
-    
+
     // Redirect to task list
     res.redirect('../marine-licence-start-page');
   });

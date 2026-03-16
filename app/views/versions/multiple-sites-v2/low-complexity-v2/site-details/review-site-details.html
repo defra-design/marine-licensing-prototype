@@ -29,16 +29,19 @@ Review site details
             {{ pageHeadingTextHTML }}
         </h1>
         
-        <!-- Check if all required fields are completed -->
+        <!-- Check if all required fields are completed across all activities -->
         {% set siteNameComplete = data['low-complexity-site-name-completed'] %}
-        {% set typeOfActivityComplete = data['low-complexity-type-of-activity-completed'] %}
-        {% set activityDescComplete = data['low-complexity-activity-description-completed'] %}
-        {% set durationComplete = data['low-complexity-site-duration-completed'] %}
-        {% set dateCompletedByComplete = data['low-complexity-date-completed-by-completed'] %}
-        {% set monthsOfActivityComplete = data['low-complexity-months-of-activity-completed'] %}
-        {% set workingHoursComplete = data['low-complexity-working-hours-completed'] %}
-        
-        {% set allComplete = siteNameComplete and typeOfActivityComplete and activityDescComplete and durationComplete and dateCompletedByComplete and monthsOfActivityComplete and workingHoursComplete %}
+        {% set fileUploadActivities = activities if activities else [] %}
+        {% set allComplete = true %}
+        {% if not siteNameComplete %}{% set allComplete = false %}{% endif %}
+        {% for act in fileUploadActivities %}
+            {% if not act['low-complexity-type-of-activity-completed'] %}{% set allComplete = false %}{% endif %}
+            {% if not act['low-complexity-activity-description-completed'] %}{% set allComplete = false %}{% endif %}
+            {% if not act['low-complexity-site-duration-completed'] %}{% set allComplete = false %}{% endif %}
+            {% if not act['low-complexity-date-completed-by-completed'] %}{% set allComplete = false %}{% endif %}
+            {% if not act['low-complexity-months-of-activity-completed'] %}{% set allComplete = false %}{% endif %}
+            {% if not act['low-complexity-working-hours-completed'] %}{% set allComplete = false %}{% endif %}
+        {% endfor %}
         
         {% if not allComplete %}
             {{ govukInsetText({
@@ -153,12 +156,23 @@ Review site details
             </div>
         </div>
 
-        <!-- Site 1 activity details section -->
-        <div id="site-1-activity-details" class="govuk-summary-card">
+        <!-- Site 1 activity details sections - loop through activities -->
+        {% for ad in fileUploadActivities %}
+
+        <div id="site-1-activity-{{ ad.activityNumber }}" class="govuk-summary-card">
             <div class="govuk-summary-card__title-wrapper">
                 <h2 class="govuk-summary-card__title">
-                    Site 1 activity details
+                    Site 1 - Activity {{ ad.activityNumber }}
                 </h2>
+                {% if ad.activityNumber > 1 %}
+                <ul class="govuk-summary-card__actions">
+                    <li class="govuk-summary-card__action">
+                        <a class="govuk-link govuk-link--no-visited-state" href="delete-activity?activity={{ ad.activityNumber }}">
+                            Delete activity<span class="govuk-visually-hidden"> {{ ad.activityNumber }}</span>
+                        </a>
+                    </li>
+                </ul>
+                {% endif %}
             </div>
             <div class="govuk-summary-card__content">
                 <dl class="govuk-summary-list">
@@ -168,22 +182,22 @@ Review site details
                             Type of activity
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            {% if data['low-complexity-type-of-activity-completed'] %}
-                                {% if data['low-complexity-type-of-activity'] == 'construction' %}
-                                    {% if data['low-complexity-type-of-works'] == 'construction-new' %}Construction of new works
-                                    {% elif data['low-complexity-type-of-works'] == 'maintenance-existing' %}Maintenance of existing works
-                                    {% elif data['low-complexity-type-of-works'] == 'alteration-improvement' %}Alteration or improvement, including extending, of existing marine works
+                            {% if ad['low-complexity-type-of-activity-completed'] %}
+                                {% if ad['low-complexity-type-of-activity'] == 'construction' %}
+                                    {% if ad['low-complexity-type-of-works'] == 'construction-new' %}Construction of new works
+                                    {% elif ad['low-complexity-type-of-works'] == 'maintenance-existing' %}Maintenance of existing works
+                                    {% elif ad['low-complexity-type-of-works'] == 'alteration-improvement' %}Alteration or improvement, including extending, of existing marine works
                                     {% endif %}
-                                {% elif data['low-complexity-type-of-activity'] == 'deposit' %}
-                                    {% if data['low-complexity-deposit-type'] == 'continuation-existing' %}Continuation of existing deposit activity
-                                    {% elif data['low-complexity-deposit-type'] == 'deposit-new' %}Deposit of something new
-                                    {% elif data['low-complexity-deposit-type'] == 'replacing-existing' %}Replacing existing object
+                                {% elif ad['low-complexity-type-of-activity'] == 'deposit' %}
+                                    {% if ad['low-complexity-deposit-type'] == 'continuation-existing' %}Continuation of existing deposit activity
+                                    {% elif ad['low-complexity-deposit-type'] == 'deposit-new' %}Deposit of something new
+                                    {% elif ad['low-complexity-deposit-type'] == 'replacing-existing' %}Replacing existing object
                                     {% endif %}
-                                {% elif data['low-complexity-type-of-activity'] == 'removal' %}
-                                    {% if data['low-complexity-removal-type'] == 'one-off-first-time' %}One off first time removal
-                                    {% elif data['low-complexity-removal-type'] == 'ongoing-routine' %}Removal as part of an ongoing or routine activity
-                                    {% elif data['low-complexity-removal-type'] == 'removal-replacement' %}Removal for replacement
-                                    {% elif data['low-complexity-removal-type'] == 'removal-relocation' %}Removal for relocation
+                                {% elif ad['low-complexity-type-of-activity'] == 'removal' %}
+                                    {% if ad['low-complexity-removal-type'] == 'one-off-first-time' %}One off first time removal
+                                    {% elif ad['low-complexity-removal-type'] == 'ongoing-routine' %}Removal as part of an ongoing or routine activity
+                                    {% elif ad['low-complexity-removal-type'] == 'removal-replacement' %}Removal for replacement
+                                    {% elif ad['low-complexity-removal-type'] == 'removal-relocation' %}Removal for relocation
                                     {% endif %}
                                 {% endif %}
                             {% else %}
@@ -191,27 +205,27 @@ Review site details
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="type-of-activity" class="govuk-link govuk-link--no-visited-state">
-                                {% if data['low-complexity-type-of-activity-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> type of activity</span>
+                            <a href="load-activity?activity={{ ad.activityNumber }}&page=type-of-activity" class="govuk-link govuk-link--no-visited-state">
+                                {% if ad['low-complexity-type-of-activity-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> type of activity</span>
                             </a>
                         </dd>
                     </div>
 
                     <!-- Row 2: Activity specifics (only shown when completed) -->
-                    {% if data['low-complexity-type-of-activity-completed'] %}
+                    {% if ad['low-complexity-type-of-activity-completed'] %}
 
-                        {% if data['low-complexity-type-of-activity'] == 'construction' %}
+                        {% if ad['low-complexity-type-of-activity'] == 'construction' %}
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
-                                {% if data['low-complexity-type-of-works'] == 'construction-new' %}What you're constructing
-                                {% elif data['low-complexity-type-of-works'] == 'maintenance-existing' %}What you're maintaining
-                                {% elif data['low-complexity-type-of-works'] == 'alteration-improvement' %}What you're altering or improving
+                                {% if ad['low-complexity-type-of-works'] == 'construction-new' %}What you're constructing
+                                {% elif ad['low-complexity-type-of-works'] == 'maintenance-existing' %}What you're maintaining
+                                {% elif ad['low-complexity-type-of-works'] == 'alteration-improvement' %}What you're altering or improving
                                 {% endif %}
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                {% if data['low-complexity-construction-structures'] and data['low-complexity-construction-structures'].length > 0 %}
+                                {% if ad['low-complexity-construction-structures'] and ad['low-complexity-construction-structures'].length > 0 %}
                                     <ul class="govuk-list govuk-list--bullet">
-                                    {% for structure in data['low-complexity-construction-structures'] %}
+                                    {% for structure in ad['low-complexity-construction-structures'] %}
                                         <li>
                                             {% if structure == 'jetty-pier-quay' %}Jetty, pier or quay
                                             {% elif structure == 'slipway-boat-ramp' %}Slipway or boat ramp
@@ -238,7 +252,7 @@ Review site details
                                             {% elif structure == 'offshore-wind-foundations' %}Fixed offshore wind foundations
                                             {% elif structure == 'aquaculture-piled-structures' %}Piled or fixed aquaculture structures
                                             {% elif structure == 'aquaculture-trestles' %}Aquaculture trestles or fixed walkways
-                                            {% elif structure == 'other-structures' %}Other structures ({{ data['low-complexity-construction-structures-other-details'] }})
+                                            {% elif structure == 'other-structures' %}Other structures ({{ ad['low-complexity-construction-structures-other-details'] }})
                                             {% endif %}
                                         </li>
                                     {% endfor %}
@@ -246,25 +260,25 @@ Review site details
                                 {% endif %}
                             </dd>
                             <dd class="govuk-summary-list__actions">
-                                <a href="construction-structures" class="govuk-link govuk-link--no-visited-state">
+                                <a href="load-activity?activity={{ ad.activityNumber }}&page=construction-structures" class="govuk-link govuk-link--no-visited-state">
                                     Change<span class="govuk-visually-hidden"> what you are constructing</span>
                                 </a>
                             </dd>
                         </div>
                         {% endif %}
 
-                        {% if data['low-complexity-type-of-activity'] == 'deposit' %}
+                        {% if ad['low-complexity-type-of-activity'] == 'deposit' %}
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
-                                {% if data['low-complexity-deposit-type'] == 'continuation-existing' %}What deposit activity you're continuing
-                                {% elif data['low-complexity-deposit-type'] == 'deposit-new' %}What new deposit activity you're doing
-                                {% elif data['low-complexity-deposit-type'] == 'replacing-existing' %}What deposit activity you're doing that replaces an existing object
+                                {% if ad['low-complexity-deposit-type'] == 'continuation-existing' %}What deposit activity you're continuing
+                                {% elif ad['low-complexity-deposit-type'] == 'deposit-new' %}What new deposit activity you're doing
+                                {% elif ad['low-complexity-deposit-type'] == 'replacing-existing' %}What deposit activity you're doing that replaces an existing object
                                 {% endif %}
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                {% if data['low-complexity-deposit-substances-objects'] and data['low-complexity-deposit-substances-objects'].length > 0 %}
+                                {% if ad['low-complexity-deposit-substances-objects'] and ad['low-complexity-deposit-substances-objects'].length > 0 %}
                                     <ul class="govuk-list govuk-list--bullet">
-                                    {% for item in data['low-complexity-deposit-substances-objects'] %}
+                                    {% for item in ad['low-complexity-deposit-substances-objects'] %}
                                         <li>
                                             {% if item == 'aids-to-navigation' %}Aids to navigation
                                             {% elif item == 'dredged-material-beach-management' %}Alternative use of dredged material – beach management
@@ -287,7 +301,7 @@ Review site details
                                             {% elif item == 'seeding-materials' %}Seeding materials (e.g. shellfish seed for habitat enhancement)
                                             {% elif item == 'temporary-works-equipment' %}Temporary works equipment
                                             {% elif item == 'tracers-dyes' %}Use of tracers or dyes
-                                            {% elif item == 'other-deposits' %}Other deposits ({{ data['low-complexity-deposit-substances-objects-other-details'] }})
+                                            {% elif item == 'other-deposits' %}Other deposits ({{ ad['low-complexity-deposit-substances-objects-other-details'] }})
                                             {% endif %}
                                         </li>
                                     {% endfor %}
@@ -295,26 +309,26 @@ Review site details
                                 {% endif %}
                             </dd>
                             <dd class="govuk-summary-list__actions">
-                                <a href="deposit-substances-objects" class="govuk-link govuk-link--no-visited-state">
+                                <a href="load-activity?activity={{ ad.activityNumber }}&page=deposit-substances-objects" class="govuk-link govuk-link--no-visited-state">
                                     Change<span class="govuk-visually-hidden"> deposit substances or objects</span>
                                 </a>
                             </dd>
                         </div>
                         {% endif %}
 
-                        {% if data['low-complexity-type-of-activity'] == 'removal' %}
+                        {% if ad['low-complexity-type-of-activity'] == 'removal' %}
                         <div class="govuk-summary-list__row">
                             <dt class="govuk-summary-list__key">
-                                {% if data['low-complexity-removal-type'] == 'one-off-first-time' %}What you're removing for the first time on a one off basis
-                                {% elif data['low-complexity-removal-type'] == 'ongoing-routine' %}What you're removing on an ongoing basis
-                                {% elif data['low-complexity-removal-type'] == 'removal-replacement' %}What you're removing as part of replacement activity
-                                {% elif data['low-complexity-removal-type'] == 'removal-relocation' %}What you're removing for relocation
+                                {% if ad['low-complexity-removal-type'] == 'one-off-first-time' %}What you're removing for the first time on a one off basis
+                                {% elif ad['low-complexity-removal-type'] == 'ongoing-routine' %}What you're removing on an ongoing basis
+                                {% elif ad['low-complexity-removal-type'] == 'removal-replacement' %}What you're removing as part of replacement activity
+                                {% elif ad['low-complexity-removal-type'] == 'removal-relocation' %}What you're removing for relocation
                                 {% endif %}
                             </dt>
                             <dd class="govuk-summary-list__value">
-                                {% if data['low-complexity-removal-substances-objects'] and data['low-complexity-removal-substances-objects'].length > 0 %}
+                                {% if ad['low-complexity-removal-substances-objects'] and ad['low-complexity-removal-substances-objects'].length > 0 %}
                                     <ul class="govuk-list govuk-list--bullet">
-                                    {% for item in data['low-complexity-removal-substances-objects'] %}
+                                    {% for item in ad['low-complexity-removal-substances-objects'] %}
                                         <li>
                                             {% if item == 'abandoned-fishing-equipment' %}Abandoned fishing equipment
                                             {% elif item == 'marine-litter-debris' %}Marine litter and debris
@@ -352,7 +366,7 @@ Review site details
                                             {% elif item == 'survey-markers' %}Survey markers or temporary works equipment
                                             {% elif item == 'wrecks-archaeological' %}Wrecks or items or archaeological remains
                                             {% elif item == 'sediment-samples' %}Sediment samples
-                                            {% elif item == 'other-substances-objects' %}Other substances or objects ({{ data['low-complexity-removal-substances-objects-other-details'] }})
+                                            {% elif item == 'other-substances-objects' %}Other substances or objects ({{ ad['low-complexity-removal-substances-objects-other-details'] }})
                                             {% endif %}
                                         </li>
                                     {% endfor %}
@@ -360,7 +374,7 @@ Review site details
                                 {% endif %}
                             </dd>
                             <dd class="govuk-summary-list__actions">
-                                <a href="removal-substances-objects" class="govuk-link govuk-link--no-visited-state">
+                                <a href="load-activity?activity={{ ad.activityNumber }}&page=removal-substances-objects" class="govuk-link govuk-link--no-visited-state">
                                     Change<span class="govuk-visually-hidden"> removal substances or objects</span>
                                 </a>
                             </dd>
@@ -374,15 +388,15 @@ Review site details
                             Activity description
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            {% if data['low-complexity-activity-description-completed'] and data['low-complexity-activity-description'] %}
-                                {{ data['low-complexity-activity-description'] }}
+                            {% if ad['low-complexity-activity-description-completed'] and ad['low-complexity-activity-description'] %}
+                                {{ ad['low-complexity-activity-description'] }}
                             {% else %}
                                 <span class="govuk-tag govuk-tag--red">Incomplete</span>
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="activity-description" class="govuk-link govuk-link--no-visited-state">
-                                {% if data['low-complexity-activity-description-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> activity description</span>
+                            <a href="load-activity?activity={{ ad.activityNumber }}&page=activity-description" class="govuk-link govuk-link--no-visited-state">
+                                {% if ad['low-complexity-activity-description-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> activity description</span>
                             </a>
                         </dd>
                     </div>
@@ -392,13 +406,13 @@ Review site details
                             Maximum duration of activity
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            {% if data['low-complexity-site-duration-completed'] %}
+                            {% if ad['low-complexity-site-duration-completed'] %}
                                 {% set durationParts = [] %}
-                                {% if data['low-complexity-site-duration-years'] and data['low-complexity-site-duration-years'] != '0' %}
-                                    {% set durationParts = (durationParts.push(data['low-complexity-site-duration-years'] + ' ' + ('year' if data['low-complexity-site-duration-years'] == '1' else 'years')), durationParts) %}
+                                {% if ad['low-complexity-site-duration-years'] and ad['low-complexity-site-duration-years'] != '0' %}
+                                    {% set durationParts = (durationParts.push(ad['low-complexity-site-duration-years'] + ' ' + ('year' if ad['low-complexity-site-duration-years'] == '1' else 'years')), durationParts) %}
                                 {% endif %}
-                                {% if data['low-complexity-site-duration-months'] and data['low-complexity-site-duration-months'] != '0' %}
-                                    {% set durationParts = (durationParts.push(data['low-complexity-site-duration-months'] + ' ' + ('month' if data['low-complexity-site-duration-months'] == '1' else 'months')), durationParts) %}
+                                {% if ad['low-complexity-site-duration-months'] and ad['low-complexity-site-duration-months'] != '0' %}
+                                    {% set durationParts = (durationParts.push(ad['low-complexity-site-duration-months'] + ' ' + ('month' if ad['low-complexity-site-duration-months'] == '1' else 'months')), durationParts) %}
                                 {% endif %}
                                 {{ durationParts | join(', ') if durationParts.length > 0 else 'Not provided' }}
                             {% else %}
@@ -406,8 +420,8 @@ Review site details
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="duration" class="govuk-link govuk-link--no-visited-state">
-                                {% if data['low-complexity-site-duration-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> duration</span>
+                            <a href="load-activity?activity={{ ad.activityNumber }}&page=duration" class="govuk-link govuk-link--no-visited-state">
+                                {% if ad['low-complexity-site-duration-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> duration</span>
                             </a>
                         </dd>
                     </div>
@@ -417,9 +431,9 @@ Review site details
                             Completion date
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            {% if data['low-complexity-date-completed-by-completed'] %}
-                                {% if data['low-complexity-date-completed-by'] == 'Yes' %}
-                                    {{ data['low-complexity-date-completed-by-details'] }}
+                            {% if ad['low-complexity-date-completed-by-completed'] %}
+                                {% if ad['low-complexity-date-completed-by'] == 'Yes' %}
+                                    {{ ad['low-complexity-date-completed-by-details'] }}
                                 {% else %}
                                     Not needed to be completed by a certain date
                                 {% endif %}
@@ -428,8 +442,8 @@ Review site details
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="date-completed-by" class="govuk-link govuk-link--no-visited-state">
-                                {% if data['low-complexity-date-completed-by-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> completion date</span>
+                            <a href="load-activity?activity={{ ad.activityNumber }}&page=date-completed-by" class="govuk-link govuk-link--no-visited-state">
+                                {% if ad['low-complexity-date-completed-by-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> completion date</span>
                             </a>
                         </dd>
                     </div>
@@ -439,9 +453,9 @@ Review site details
                             Activity limited to specific months
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            {% if data['low-complexity-months-of-activity-completed'] %}
-                                {% if data['low-complexity-months-of-activity'] == 'Yes' %}
-                                    {{ data['low-complexity-months-of-activity-details'] }}
+                            {% if ad['low-complexity-months-of-activity-completed'] %}
+                                {% if ad['low-complexity-months-of-activity'] == 'Yes' %}
+                                    {{ ad['low-complexity-months-of-activity-details'] }}
                                 {% else %}
                                     No
                                 {% endif %}
@@ -450,8 +464,8 @@ Review site details
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="months-of-activity" class="govuk-link govuk-link--no-visited-state">
-                                {% if data['low-complexity-months-of-activity-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> activity limited to specific months</span>
+                            <a href="load-activity?activity={{ ad.activityNumber }}&page=months-of-activity" class="govuk-link govuk-link--no-visited-state">
+                                {% if ad['low-complexity-months-of-activity-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> activity limited to specific months</span>
                             </a>
                         </dd>
                     </div>
@@ -461,15 +475,15 @@ Review site details
                             Proposed working hours
                         </dt>
                         <dd class="govuk-summary-list__value">
-                            {% if data['low-complexity-working-hours-completed'] and data['low-complexity-working-hours'] %}
-                                {{ data['low-complexity-working-hours'] }}
+                            {% if ad['low-complexity-working-hours-completed'] and ad['low-complexity-working-hours'] %}
+                                {{ ad['low-complexity-working-hours'] }}
                             {% else %}
                                 <span class="govuk-tag govuk-tag--red">Incomplete</span>
                             {% endif %}
                         </dd>
                         <dd class="govuk-summary-list__actions">
-                            <a href="working-hours" class="govuk-link govuk-link--no-visited-state">
-                                {% if data['low-complexity-working-hours-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> proposed working hours</span>
+                            <a href="load-activity?activity={{ ad.activityNumber }}&page=working-hours" class="govuk-link govuk-link--no-visited-state">
+                                {% if ad['low-complexity-working-hours-completed'] %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> proposed working hours</span>
                             </a>
                         </dd>
                     </div>
@@ -477,8 +491,10 @@ Review site details
             </div>
         </div>
 
+        {% endfor %}
+
         <p class="govuk-body">
-            <a href="#" class="govuk-button govuk-button--secondary">Add another activity for site 1</a>
+            <a href="add-activity" class="govuk-button govuk-button--secondary">Add another activity for site 1</a>
         </p>
 
         <form action="review-site-details-router" method="post" novalidate>
