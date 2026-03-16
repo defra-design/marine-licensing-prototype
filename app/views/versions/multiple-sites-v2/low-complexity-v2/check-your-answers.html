@@ -451,6 +451,7 @@ Removal of any substance or object
 			</div>
 			<div class="govuk-summary-card__content">
 				<dl class="govuk-summary-list">
+					{% if data['user_type'] === 'organisation' %}
 					<div class="govuk-summary-list__row{% if data['low-complexity-special-legal-powers'] == 'Yes' %} govuk-summary-list__row--no-border{% endif %}">
 						<dt class="govuk-summary-list__key">
 							Does your organisation have special legal powers to do any of this project?
@@ -479,6 +480,7 @@ Removal of any substance or object
 							</a>
 						</dd>
 					</div>
+					{% endif %}
 					{% endif %}
 
 					<div class="govuk-summary-list__row{% if data['low-complexity-harbour-authority'] == 'Yes' %} govuk-summary-list__row--no-border{% endif %}">
