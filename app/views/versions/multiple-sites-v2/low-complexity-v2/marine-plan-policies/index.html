@@ -33,13 +33,15 @@ Marine plan policies
 			{{ pageHeadingTextHTML }}
 		</h1>
 
+		<p>The policies listed are based on the information you entered in 'Site details'. You need to complete each policy.</p>
 		<p class="govuk-body">Before you start, read information on the policies presented here and how to complete this section in <a href="guidance" class="govuk-link" target="_blank" rel="noopener noreferrer">Marine plan policy guidance (opens in new tab)</a>.</p>
 
 		<hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-		{% set marinePoliciesCompleted = data['marine-plan-policies-completed-count'] | default(0) %}
-		{% set marinePoliciesNotStarted = data['marine-plan-policies-not-started-count'] | default(0) %}
-		{% set marinePoliciesTotal = marinePoliciesCompleted + marinePoliciesNotStarted %}
-		<p class="govuk-body">{% if marinePoliciesCompleted == 0 %}{{ marinePoliciesTotal }} policies to complete{% else %}{{ marinePoliciesCompleted }} of {{ marinePoliciesTotal }} policies completed{% endif %}</p>
+		{# Only 5 policy pages are active in this prototype; display as 37 for usability testing #}
+		{% set mppActiveCompletedCount = (data['marine-plan-policy-s-acc-1-completed'] and 1 or 0) + (data['marine-plan-policy-s-bio-1-completed'] and 1 or 0) + (data['marine-plan-policy-s-agg-4-completed'] and 1 or 0) + (data['marine-plan-policy-s-emp-1-completed'] and 1 or 0) + (data['marine-plan-policy-s-uwn-2-completed'] and 1 or 0) %}
+		{% set mppActiveComplete = data['marine-plan-policy-s-acc-1-completed'] and data['marine-plan-policy-s-bio-1-completed'] and data['marine-plan-policy-s-agg-4-completed'] and data['marine-plan-policy-s-emp-1-completed'] and data['marine-plan-policy-s-uwn-2-completed'] %}
+		{% set mppDisplayTotal = 37 %}
+		<p class="govuk-body">{% if mppActiveCompletedCount == 0 %}{{ mppDisplayTotal }} policies to complete{% elif mppActiveComplete %}37 of 37 policies completed{% else %}{{ mppActiveCompletedCount }} of {{ mppDisplayTotal }} policies completed{% endif %}</p>
 		<h2 class="govuk-heading-m">Environmental protection and impacts</h2>
 		<ul class="govuk-task-list">
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
