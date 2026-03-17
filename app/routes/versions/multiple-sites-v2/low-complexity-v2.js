@@ -203,51 +203,6 @@ module.exports = function (router) {
     }
   });
 
-  // Cost of marine works page
-  router.get(`/versions/${version}/${section}/project-details/cost-of-marine-works`, function (req, res) {
-    // Clear error flags when navigating to the page
-    req.session.data['errorthispage'] = "false";
-    req.session.data['errortypeone'] = "false";
-    
-    // Capture the query parameter if coming from check answers
-    if (req.query.camefromcheckanswers === 'true') {
-      req.session.data['camefromcheckanswers'] = 'true';
-    }
-    
-    res.render(`versions/${version}/${section}/project-details/cost-of-marine-works`);
-  });
-
-  // Cost of marine works router (POST)
-  router.post(`/versions/${version}/${section}/project-details/cost-of-marine-works-router`, function (req, res) {
-    // Clear error flags
-    req.session.data['errorthispage'] = "false";
-    req.session.data['errortypeone'] = "false";
-
-    // Get the cost value
-    const cost = req.session.data['low-complexity-cost'];
-
-    // Validate: check if cost is empty or undefined
-    if (!cost || cost.trim() === '') {
-      // Set error flags
-      req.session.data['errorthispage'] = "true";
-      req.session.data['errortypeone'] = "true";
-      
-      // Redirect back to the same page with errors
-      res.redirect('cost-of-marine-works');
-    } else {
-      // Validation passed - set completion flag
-      req.session.data['low-complexity-cost-completed'] = true;
-      
-      // Check if we need to return to check answers
-      if (req.session.data['camefromcheckanswers'] === 'true') {
-        req.session.data['camefromcheckanswers'] = false;
-        res.redirect('../check-your-answers');
-      } else {
-        res.redirect('../marine-licence-start-page');
-      }
-    }
-  });
-
   ///////////////////////////////////////////
   // Other permissions section
   ///////////////////////////////////////////
@@ -908,8 +863,6 @@ module.exports = function (router) {
     delete req.session.data['end-date-month'];
     delete req.session.data['end-date-year'];
     delete req.session.data['low-complexity-dates-completed'];
-    delete req.session.data['low-complexity-cost'];
-    delete req.session.data['low-complexity-cost-completed'];
     
     // Clear site details data
     delete req.session.data['has-visited-site-details'];
