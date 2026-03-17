@@ -711,10 +711,10 @@ module.exports = function (router) {
 
     const sites = getManualSites(req.session);
     if (sites.length === 0) {
-      // All sites deleted - clear state and go back to start
+      // All sites deleted - clear state and return to task list
       delete req.session.data['has-visited-site-details'];
       delete req.session.data['low-complexity-manual-sites'];
-      return res.redirect(`/versions/multiple-sites-v2/low-complexity-v2/site-details/`);
+      return res.redirect(`/versions/multiple-sites-v2/low-complexity-v2/marine-licence-start-page`);
     }
 
     res.redirect(`${basePath}/review-site-details`);
