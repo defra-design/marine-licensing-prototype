@@ -142,7 +142,7 @@ Marine licence start page
 			</li>
 		</ul>
 
-		<h2 class="govuk-heading-m">Marine plan policy considerations</h2>
+		<h2 class="govuk-heading-m">Marine plan policies</h2>
 
 		<p class="govuk-body">Read the <a href="marine-plan-policies/guidance" class="govuk-link" target="_blank" rel="noopener noreferrer">Marine plan policy guidance (opens in new tab)</a> before you start.</p>
 
@@ -156,10 +156,10 @@ Marine licence start page
 			  <div class="govuk-task-list__name-and-hint">
 				{% if siteDetailsComplete and data['has-visited-site-details'] %}
 				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="marine-plan-policies/" aria-describedby="marine-plan-policies-status">
-				  Marine plan policies {% if mppActiveCompletedCount == 0 %}({{ mppDisplayTotal }} to complete){% elif mppActiveComplete %}({{ mppDisplayTotal }} of {{ mppDisplayTotal }} completed){% else %}({{ mppActiveCompletedCount }} of {{ mppDisplayTotal }} completed){% endif %}
+				  Policy considerations {% if mppActiveCompletedCount == 0 %}({{ mppDisplayTotal }} to complete){% elif mppActiveComplete %}({{ mppDisplayTotal }} of {{ mppDisplayTotal }} completed){% else %}({{ mppActiveCompletedCount }} of {{ mppDisplayTotal }} completed){% endif %}
 				</a>
 				{% else %}
-				<span>Marine plan policies</span>
+				<span>Policy considerations</span>
 				{% endif %}
 			  </div>
 			  
