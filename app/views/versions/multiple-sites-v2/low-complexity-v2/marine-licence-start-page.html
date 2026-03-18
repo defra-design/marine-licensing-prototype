@@ -150,11 +150,12 @@ Marine licence start page
 		{% set mppActiveComplete = data['marine-plan-policy-s-acc-1-completed'] and data['marine-plan-policy-s-bio-1-completed'] and data['marine-plan-policy-s-agg-4-completed'] and data['marine-plan-policy-s-emp-1-completed'] and data['marine-plan-policy-s-uwn-2-completed'] %}
 		{% set mppActiveCompletedCount = (data['marine-plan-policy-s-acc-1-completed'] and 1 or 0) + (data['marine-plan-policy-s-bio-1-completed'] and 1 or 0) + (data['marine-plan-policy-s-agg-4-completed'] and 1 or 0) + (data['marine-plan-policy-s-emp-1-completed'] and 1 or 0) + (data['marine-plan-policy-s-uwn-2-completed'] and 1 or 0) %}
 		{% set mppDisplayTotal = 37 %}
+		{% set mppUnlocked = data['site-details-confirmed-complete'] or mppActiveCompletedCount > 0 %}
 
 		<ul class="govuk-task-list">
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
 			  <div class="govuk-task-list__name-and-hint">
-				{% if data['site-details-confirmed-complete'] %}
+				{% if mppUnlocked %}
 				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="marine-plan-policies/" aria-describedby="marine-plan-policies-status">
 				  Policy considerations {% if mppActiveCompletedCount == 0 %}({{ mppDisplayTotal }} to complete){% elif mppActiveComplete %}({{ mppDisplayTotal }} of {{ mppDisplayTotal }} completed){% else %}({{ mppActiveCompletedCount }} of {{ mppDisplayTotal }} completed){% endif %}
 				</a>
@@ -164,7 +165,7 @@ Marine licence start page
 			  </div>
 
 			  <div class="govuk-task-list__status" id="marine-plan-policies-status">
-				{% if data['site-details-confirmed-complete'] %}
+				{% if mppUnlocked %}
 					{% if mppActiveComplete %}
 					Completed
 					{% elif mppActiveCompletedCount > 0 %}

@@ -215,8 +215,9 @@ module.exports = function (router) {
       req.session.data['camefromcheckanswers'] = 'true';
     }
 
-    // Clear validation error on fresh load
+    // Clear validation error and radio selection on fresh load
     delete req.session.data['low-complexity-site-details-finished-error'];
+    delete req.session.data['low-complexity-site-details-finished'];
 
     // Save any pending activity data back to the current activity being edited
     const currentEditActivity = req.session.data['low-complexity-current-edit-activity'];
@@ -300,9 +301,8 @@ module.exports = function (router) {
     const activities = getFileUploadActivities(req.session);
     const activityNumber = activities.length + 1;
     activities.push({ activityNumber: activityNumber });
-    // Adding a new incomplete activity invalidates the confirmed-complete state
+    // New incomplete activity means site details are no longer confirmed complete
     delete req.session.data['site-details-confirmed-complete'];
-    delete req.session.data['low-complexity-site-details-finished'];
     res.redirect(`/versions/${version}/${section}/${subsection}/review-site-details#site-1-activity-${activityNumber}`);
   });
 

@@ -639,8 +639,9 @@ module.exports = function (router) {
       req.session.data['camefromcheckanswers'] = 'true';
     }
 
-    // Clear validation error on fresh load
+    // Clear validation error and radio selection on fresh load
     delete req.session.data['low-complexity-site-details-finished-error'];
+    delete req.session.data['low-complexity-site-details-finished'];
 
     const sites = getManualSites(req.session);
 
@@ -720,9 +721,8 @@ module.exports = function (router) {
 
   router.get(`${basePath}/add-another-site`, function (req, res) {
     const site = createNewSite(req.session);
-    // Adding a new incomplete site invalidates the confirmed-complete state
+    // New incomplete site means site details are no longer confirmed complete
     delete req.session.data['site-details-confirmed-complete'];
-    delete req.session.data['low-complexity-site-details-finished'];
     res.redirect(`${basePath}/site-name?site=${site.siteNumber}`);
   });
 
@@ -755,6 +755,17 @@ module.exports = function (router) {
       // All sites deleted - clear state and return to task list
       delete req.session.data['has-visited-site-details'];
       delete req.session.data['low-complexity-manual-sites'];
+      delete req.session.data['site-details-confirmed-complete'];
+      delete req.session.data['low-complexity-site-details-finished'];
+      delete req.session.data['low-complexity-site-location-method'];
+
+      // Clear MPP data since all site details are gone
+      delete req.session.data['marine-plan-policy-s-acc-1-completed'];
+      delete req.session.data['marine-plan-policy-s-bio-1-completed'];
+      delete req.session.data['marine-plan-policy-s-agg-4-completed'];
+      delete req.session.data['marine-plan-policy-s-emp-1-completed'];
+      delete req.session.data['marine-plan-policy-s-uwn-2-completed'];
+
       return res.redirect(`/versions/multiple-sites-v2/low-complexity-v2/marine-licence-start-page`);
     }
 
@@ -772,9 +783,8 @@ module.exports = function (router) {
       return res.redirect(`${basePath}/review-site-details`);
     }
     addActivityToSite(site);
-    // Adding a new incomplete activity invalidates the confirmed-complete state
+    // New incomplete activity means site details are no longer confirmed complete
     delete req.session.data['site-details-confirmed-complete'];
-    delete req.session.data['low-complexity-site-details-finished'];
     res.redirect(`${basePath}/review-site-details#site-${site.siteNumber}-activity-${site.activities.length}`);
   });
 
