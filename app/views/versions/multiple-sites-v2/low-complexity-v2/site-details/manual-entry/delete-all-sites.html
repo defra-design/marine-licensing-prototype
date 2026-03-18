@@ -28,8 +28,13 @@ Are you sure you want to delete all site details?
       {{ pageHeadingTextHTML }}
     </h1>
 
+    {% set mppInProgress = data['marine-plan-policy-s-acc-1-completed'] or data['marine-plan-policy-s-bio-1-completed'] or data['marine-plan-policy-s-agg-4-completed'] or data['marine-plan-policy-s-emp-1-completed'] or data['marine-plan-policy-s-uwn-2-completed'] %}
     <p class="govuk-inset-text">
-      You'll lose all the site details you've already entered. This cannot be undone.
+      {% if mppInProgress %}
+        You'll lose all the site details you've already entered. You'll also lose any Marine Plan Policy information you've entered.
+      {% else %}
+        You'll lose all the site details you've already entered.
+      {% endif %}
     </p>
 
     <form action="delete-all-sites-router" method="post" novalidate>

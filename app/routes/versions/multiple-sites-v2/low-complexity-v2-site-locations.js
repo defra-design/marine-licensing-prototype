@@ -215,6 +215,9 @@ module.exports = function (router) {
       req.session.data['camefromcheckanswers'] = 'true';
     }
 
+    // Clear validation error on fresh load
+    delete req.session.data['low-complexity-site-details-finished-error'];
+
     // Save any pending activity data back to the current activity being edited
     const currentEditActivity = req.session.data['low-complexity-current-edit-activity'];
     if (currentEditActivity) {
@@ -235,7 +238,39 @@ module.exports = function (router) {
   router.post(`/versions/${version}/${section}/${subsection}/review-site-details-router`, function (req, res) {
     // Mark that user has visited site details journey
     req.session.data['has-visited-site-details'] = true;
-    
+
+    // Clear previous error
+    delete req.session.data['low-complexity-site-details-finished-error'];
+
+    // Check if the "finished" radios were shown (all details complete)
+    // Compute allComplete server-side to match the template logic
+    const siteNameComplete = req.session.data['low-complexity-site-name-completed'];
+    const activities = getFileUploadActivities(req.session);
+    let allComplete = !!siteNameComplete;
+    activities.forEach(act => {
+      if (!act['low-complexity-type-of-activity-completed']) allComplete = false;
+      if (!act['low-complexity-activity-description-completed']) allComplete = false;
+      if (!act['low-complexity-site-duration-completed']) allComplete = false;
+      if (!act['low-complexity-date-completed-by-completed']) allComplete = false;
+      if (!act['low-complexity-months-of-activity-completed']) allComplete = false;
+      if (!act['low-complexity-working-hours-completed']) allComplete = false;
+    });
+
+    if (allComplete) {
+      // Validate the radio selection
+      const finished = req.session.data['low-complexity-site-details-finished'];
+      if (!finished) {
+        req.session.data['low-complexity-site-details-finished-error'] = true;
+        return res.redirect('review-site-details');
+      }
+
+      if (finished === 'Yes') {
+        req.session.data['site-details-confirmed-complete'] = true;
+      } else {
+        delete req.session.data['site-details-confirmed-complete'];
+      }
+    }
+
     // Check if we need to return to check answers
     if (req.session.data['camefromcheckanswers'] === 'true') {
       req.session.data['camefromcheckanswers'] = false;
@@ -265,6 +300,9 @@ module.exports = function (router) {
     const activities = getFileUploadActivities(req.session);
     const activityNumber = activities.length + 1;
     activities.push({ activityNumber: activityNumber });
+    // Adding a new incomplete activity invalidates the confirmed-complete state
+    delete req.session.data['site-details-confirmed-complete'];
+    delete req.session.data['low-complexity-site-details-finished'];
     res.redirect(`/versions/${version}/${section}/${subsection}/review-site-details#site-1-activity-${activityNumber}`);
   });
 
@@ -844,8 +882,17 @@ module.exports = function (router) {
       delete req.session.data[key];
     });
 
-    // Overall completion flag
+    // Overall completion flags
     delete req.session.data['has-visited-site-details'];
+    delete req.session.data['site-details-confirmed-complete'];
+    delete req.session.data['low-complexity-site-details-finished'];
+
+    // Clear MPP data since site details are being deleted
+    delete req.session.data['marine-plan-policy-s-acc-1-completed'];
+    delete req.session.data['marine-plan-policy-s-bio-1-completed'];
+    delete req.session.data['marine-plan-policy-s-agg-4-completed'];
+    delete req.session.data['marine-plan-policy-s-emp-1-completed'];
+    delete req.session.data['marine-plan-policy-s-uwn-2-completed'];
 
     // Redirect to task list
     res.redirect('../marine-licence-start-page');

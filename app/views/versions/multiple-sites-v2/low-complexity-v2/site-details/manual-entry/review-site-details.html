@@ -10,6 +10,8 @@
 
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 
 {% set pageHeadingTextHTML %}
 Review site details
@@ -26,6 +28,18 @@ Review site details
         <h1 class="govuk-heading-l">
             {{ pageHeadingTextHTML }}
         </h1>
+
+        {% if data['low-complexity-site-details-finished-error'] %}
+            {{ govukErrorSummary({
+                titleText: "There is a problem",
+                errorList: [
+                    {
+                        text: "Select if you have finished entering your site details",
+                        href: "#site-details-finished"
+                    }
+                ]
+            }) }}
+        {% endif %}
 
         {# Check overall completeness across all sites and activities #}
         {% set allComplete = true %}
@@ -639,6 +653,38 @@ Review site details
         </p>
 
         <form action="review-site-details-router" method="post" novalidate>
+            {% if allComplete %}
+                <h2 class="govuk-heading-m">Marine plan policies</h2>
+                <p class="govuk-body">If you've completed site details, you can now start the Marine plan policy section. The information you enter in site details is used to determine which Marine plan policies you need to complete.</p>
+                <p class="govuk-body">You can change your site details later. If you do, the policies you need to complete may change.</p>
+
+                {{ govukRadios({
+                    name: "low-complexity-site-details-finished",
+                    idPrefix: "site-details-finished",
+                    fieldset: {
+                        legend: {
+                            text: "Have you finished entering your site details?",
+                            classes: "govuk-fieldset__legend--s"
+                        }
+                    },
+                    items: [
+                        {
+                            value: "Yes",
+                            text: "Yes",
+                            checked: data['low-complexity-site-details-finished'] == 'Yes'
+                        },
+                        {
+                            value: "No",
+                            text: "No",
+                            checked: data['low-complexity-site-details-finished'] == 'No'
+                        }
+                    ],
+                    errorMessage: {
+                        text: "Select if you have finished entering your site details"
+                    } if data['low-complexity-site-details-finished-error']
+                }) }}
+            {% endif %}
+
             <div class="govuk-button-group govuk-!-margin-top-4">
                 {{ govukButton({
                     text: "Continue"

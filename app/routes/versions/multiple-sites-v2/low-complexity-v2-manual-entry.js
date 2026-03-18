@@ -639,6 +639,9 @@ module.exports = function (router) {
       req.session.data['camefromcheckanswers'] = 'true';
     }
 
+    // Clear validation error on fresh load
+    delete req.session.data['low-complexity-site-details-finished-error'];
+
     const sites = getManualSites(req.session);
 
     // Ensure all sites have activities arrays (migration)
@@ -668,6 +671,41 @@ module.exports = function (router) {
     req.session.data['has-visited-site-details'] = true;
     req.session.data['low-complexity-site-location-method'] = 'manual-entry';
 
+    // Clear previous error
+    delete req.session.data['low-complexity-site-details-finished-error'];
+
+    // Check if the "finished" radios were shown (all details complete)
+    const sites = getManualSites(req.session);
+    let allComplete = sites.length > 0;
+    sites.forEach(site => {
+      if (!site.name) allComplete = false;
+      if (!site.coordinates || (!site.coordinates.width && !site.coordinates.points)) allComplete = false;
+      migrateSiteActivities(site);
+      (site.activities || []).forEach(act => {
+        if (!act['low-complexity-type-of-activity-completed']) allComplete = false;
+        if (!act['low-complexity-activity-description-completed']) allComplete = false;
+        if (!act['low-complexity-site-duration-completed']) allComplete = false;
+        if (!act['low-complexity-date-completed-by-completed']) allComplete = false;
+        if (!act['low-complexity-months-of-activity-completed']) allComplete = false;
+        if (!act['low-complexity-working-hours-completed']) allComplete = false;
+      });
+    });
+
+    if (allComplete) {
+      // Validate the radio selection
+      const finished = req.session.data['low-complexity-site-details-finished'];
+      if (!finished) {
+        req.session.data['low-complexity-site-details-finished-error'] = true;
+        return res.redirect(`${basePath}/review-site-details`);
+      }
+
+      if (finished === 'Yes') {
+        req.session.data['site-details-confirmed-complete'] = true;
+      } else {
+        delete req.session.data['site-details-confirmed-complete'];
+      }
+    }
+
     if (req.session.data['camefromcheckanswers'] === 'true') {
       req.session.data['camefromcheckanswers'] = false;
       res.redirect('../../check-your-answers#site-location');
@@ -682,6 +720,9 @@ module.exports = function (router) {
 
   router.get(`${basePath}/add-another-site`, function (req, res) {
     const site = createNewSite(req.session);
+    // Adding a new incomplete site invalidates the confirmed-complete state
+    delete req.session.data['site-details-confirmed-complete'];
+    delete req.session.data['low-complexity-site-details-finished'];
     res.redirect(`${basePath}/site-name?site=${site.siteNumber}`);
   });
 
@@ -731,6 +772,9 @@ module.exports = function (router) {
       return res.redirect(`${basePath}/review-site-details`);
     }
     addActivityToSite(site);
+    // Adding a new incomplete activity invalidates the confirmed-complete state
+    delete req.session.data['site-details-confirmed-complete'];
+    delete req.session.data['low-complexity-site-details-finished'];
     res.redirect(`${basePath}/review-site-details#site-${site.siteNumber}-activity-${site.activities.length}`);
   });
 
@@ -789,11 +833,20 @@ module.exports = function (router) {
     delete req.session.data['low-complexity-manual-current-edit-activity'];
     delete req.session.data['has-visited-site-details'];
     delete req.session.data['low-complexity-site-location-method'];
+    delete req.session.data['site-details-confirmed-complete'];
+    delete req.session.data['low-complexity-site-details-finished'];
 
     // Clear flat activity session keys
     ACTIVITY_DATA_KEYS.forEach(key => {
       delete req.session.data[key];
     });
+
+    // Clear MPP data since site details are being deleted
+    delete req.session.data['marine-plan-policy-s-acc-1-completed'];
+    delete req.session.data['marine-plan-policy-s-bio-1-completed'];
+    delete req.session.data['marine-plan-policy-s-agg-4-completed'];
+    delete req.session.data['marine-plan-policy-s-emp-1-completed'];
+    delete req.session.data['marine-plan-policy-s-uwn-2-completed'];
 
     // Redirect to task list so site details resets to Not yet started
     res.redirect(`/versions/multiple-sites-v2/low-complexity-v2/marine-licence-start-page`);
