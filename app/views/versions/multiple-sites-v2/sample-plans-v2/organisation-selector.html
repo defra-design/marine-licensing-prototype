@@ -5,6 +5,7 @@
   {% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
   {% if changingOrganisation or data['changing-organisation'] === 'true' %}
     {{ govukHeader({
+  homepageUrl: "/",
       classes: "govuk-header--full-width-border"
     }) }}
     {{ govukServiceNavigation({
@@ -33,6 +34,7 @@
     }) }}
   {% else %}
     {{ govukHeader({
+  homepageUrl: "/",
       classes: "govuk-header--full-width-border"
     }) }}
     {{ govukServiceNavigation({
