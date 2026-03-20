@@ -13,6 +13,7 @@ https://prototype-kit.service.gov.uk/docs/how-to-use-layouts
 
 <!-- project-name-start.html and home.html have their own headers -->
 {{ govukHeader({
+    homepageUrl: "/",
   classes: "govuk-header--full-width-border"
 }) }}
 {% set projectsUrl = "/versions/multiple-sites-v2/" ~ (data['samplePlansSection'] or 'sample-plans-v1') ~ "/projects" %}
