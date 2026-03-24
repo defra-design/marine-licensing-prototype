@@ -13,7 +13,7 @@
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-Check your answers before sending your application
+Check your answers before sending your information
 {% endset %}
 
 <!-- Format start date (month and year only) -->
@@ -26,88 +26,15 @@ Check your answers before sending your application
 {{ data['end-date-month'] | toMonth }} {{ data['end-date-year'] }}
 {% endset %}
 
-<!-- Format project duration -->
-{% set durationFormatted %}
-{% if data['low-complexity-duration-years'] | int > 0 and data['low-complexity-duration-months'] | int > 0 %}
-{{ data['low-complexity-duration-years'] }} year{% if data['low-complexity-duration-years'] | int != 1 %}s{% endif %}, {{ data['low-complexity-duration-months'] }} month{% if data['low-complexity-duration-months'] | int != 1 %}s{% endif %}
-{% elif data['low-complexity-duration-years'] | int > 0 %}
-{{ data['low-complexity-duration-years'] }} year{% if data['low-complexity-duration-years'] | int != 1 %}s{% endif %}
-{% elif data['low-complexity-duration-months'] | int > 0 %}
-{{ data['low-complexity-duration-months'] }} month{% if data['low-complexity-duration-months'] | int != 1 %}s{% endif %}
-{% endif %}
-{% endset %}
-
-<!-- Format site activity duration -->
-{% set siteDurationFormatted %}
-{% set durationParts = [] %}
-{% if data['low-complexity-site-duration-years'] and data['low-complexity-site-duration-years'] != '0' %}
-{% set durationParts = (durationParts.push(data['low-complexity-site-duration-years'] + ' ' + ('year' if data['low-complexity-site-duration-years'] == '1' else 'years')), durationParts) %}
-{% endif %}
-{% if data['low-complexity-site-duration-months'] and data['low-complexity-site-duration-months'] != '0' %}
-{% set durationParts = (durationParts.push(data['low-complexity-site-duration-months'] + ' ' + ('month' if data['low-complexity-site-duration-months'] == '1' else 'months')), durationParts) %}
-{% endif %}
-{% if data['low-complexity-site-duration-weeks'] and data['low-complexity-site-duration-weeks'] != '0' %}
-{% set durationParts = (durationParts.push(data['low-complexity-site-duration-weeks'] + ' ' + ('week' if data['low-complexity-site-duration-weeks'] == '1' else 'weeks')), durationParts) %}
-{% endif %}
-{{ durationParts | join(', ') if durationParts.length > 0 else 'Not provided' }}
-{% endset %}
-
-<!-- Format type of activity -->
-{% set typeOfActivityFormatted %}
-{% if data['low-complexity-type-of-activity'] == 'construction' %}
-{% if data['low-complexity-type-of-works'] %}
-{% if data['low-complexity-type-of-works'] == 'construction-new' %}Construction of new works
-{% elif data['low-complexity-type-of-works'] == 'maintenance-existing' %}Maintenance of existing works
-{% elif data['low-complexity-type-of-works'] == 'alteration-improvement' %}Alteration or improvement, including extending, of existing marine works
-{% endif %}
-{% endif %}
-{% if data['low-complexity-construction-structures'] and data['low-complexity-construction-structures'].length > 0 %}
-<br><br>{% if data['low-complexity-type-of-works'] == 'construction-new' %}What you're constructing{% elif data['low-complexity-type-of-works'] == 'maintenance-existing' %}What you're maintaining{% elif data['low-complexity-type-of-works'] == 'alteration-improvement' %}What you're altering or improving{% endif %}:
-<ul class="govuk-list govuk-list--bullet govuk-!-margin-top-2">
-{% for structure in data['low-complexity-construction-structures'] %}
-<li>
-{% if structure == 'jetty-pier-quay' %}Jetty, pier or quay
-{% elif structure == 'slipway-boat-ramp' %}Slipway or boat ramp
-{% elif structure == 'sea-wall-coastal-wall' %}Sea wall or coastal wall
-{% elif structure == 'revetment' %}Revetment (sloped coastal protection)
-{% elif structure == 'groyne' %}Groyne
-{% elif structure == 'breakwater-mole-harbour' %}Breakwater, mole or harbour protection structure
-{% elif structure == 'bridge-supports' %}Bridge or bridge supports in tidal waters
-{% elif structure == 'causeway-embankment' %}Causeway, embankment or coastal access ramp
-{% elif structure == 'pontoons-walkways' %}Pontoons or floating walkways
-{% elif structure == 'floating-breakwaters' %}Floating breakwaters or wave attenuators
-{% elif structure == 'piles-piled-structures' %}Piles or piled structures
-{% elif structure == 'foundations-platforms' %}Foundations for offshore platforms or similar structures
-{% elif structure == 'artificial-reefs' %}Artificial reefs or habitat structures
-{% elif structure == 'hard-coastal-defence' %}Hard coastal defence structures such as rock armour or concrete units
-{% elif structure == 'tidal-flood-defence' %}Tidal flood defence structures (e.g., flood barriers, tidal gates, sluices)
-{% elif structure == 'outfalls-diffusers' %}Outfalls or diffusers
-{% elif structure == 'intakes' %}Intakes
-{% elif structure == 'pipelines-ducts' %}Pipelines or ducts
-{% elif structure == 'subsea-cables' %}Subsea cables requiring protective construction
-{% elif structure == 'culverts-channels' %}Culverts or constructed tidal channels
-{% elif structure == 'tidal-energy-devices' %}Tidal energy devices or foundations
-{% elif structure == 'wave-energy-foundations' %}Wave energy device foundations
-{% elif structure == 'offshore-wind-foundations' %}Fixed offshore wind foundations
-{% elif structure == 'aquaculture-piled-structures' %}Piled or fixed aquaculture structures
-{% elif structure == 'aquaculture-trestles' %}Aquaculture trestles or fixed walkways
-{% endif %}
-</li>
-{% endfor %}
-</ul>
-{% endif %}
-{% elif data['low-complexity-type-of-activity'] == 'deposit' %}
-Deposit of any substance or object
-{% elif data['low-complexity-type-of-activity'] == 'removal' %}
-Removal of any substance or object
-{% endif %}
-{% endset %}
-
-
 <!-- Text that show in the browser tab. Does NOT need changing -->
 {% block pageTitle %}
     {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
 {% endblock %}
+
+{# Resolve site data depending on file-upload vs manual-entry path #}
+{% set isManualEntry = data['low-complexity-site-location-method'] == 'manual-entry' %}
+{% set manualSites = data['low-complexity-manual-sites'] if data['low-complexity-manual-sites'] else [] %}
+{% set fileUploadActivities = data['low-complexity-file-upload-activities'] if data['low-complexity-file-upload-activities'] else [] %}
 
 {% block content %}
 
@@ -118,6 +45,9 @@ Removal of any substance or object
 			{{ pageHeadingTextHTML }}
 		</h1>
 
+		{# ============================== #}
+		{# PROJECT DETAILS                #}
+		{# ============================== #}
 		{{ govukSummaryList({
 			card: {
 				title: {
@@ -163,25 +93,7 @@ Removal of any substance or object
 				},
 				{
 					key: {
-						text: "Duration of project"
-					},
-					value: {
-						html: durationFormatted | trim
-					},
-					actions: {
-						items: [
-							{
-								href: "project-details/duration?camefromcheckanswers=true",
-								text: "Change",
-								visuallyHiddenText: "duration of project",
-								classes: "govuk-link--no-visited-state"
-							}
-						]
-					}
-				},
-				{
-					key: {
-						text: "Preferred start and end dates for the licence"
+						text: "Preferred start and end dates of the licence"
 					},
 					value: {
 						html: (startDateFormatted | trim) + " to " + (endDateFormatted | trim)
@@ -200,7 +112,9 @@ Removal of any substance or object
 			]
 		}) }}
 
-		<!-- Providing the site location card -->
+		{# ============================== #}
+		{# PROVIDING THE SITE LOCATION    #}
+		{# ============================== #}
 		<div id="site-location" class="govuk-summary-card">
 			<div class="govuk-summary-card__title-wrapper">
 				<h2 class="govuk-summary-card__title">
@@ -208,9 +122,15 @@ Removal of any substance or object
 				</h2>
 				<ul class="govuk-summary-card__actions">
 					<li class="govuk-summary-card__action">
+						{% if isManualEntry %}
+						<a class="govuk-link govuk-link--no-visited-state" href="site-details/manual-entry/review-site-details?camefromcheckanswers=true">
+							Change<span class="govuk-visually-hidden"> providing the site location</span>
+						</a>
+						{% else %}
 						<a class="govuk-link govuk-link--no-visited-state" href="site-details/review-site-details?camefromcheckanswers=true">
 							Change<span class="govuk-visually-hidden"> providing the site location</span>
 						</a>
+						{% endif %}
 					</li>
 				</ul>
 			</div>
@@ -221,9 +141,14 @@ Removal of any substance or object
 							Method of providing site location
 						</dt>
 						<dd class="govuk-summary-list__value">
-							File upload
+							{% if isManualEntry %}
+								Enter the coordinates manually
+							{% else %}
+								File upload
+							{% endif %}
 						</dd>
 					</div>
+					{% if not isManualEntry %}
 					<div class="govuk-summary-list__row">
 						<dt class="govuk-summary-list__key">
 							File type
@@ -233,8 +158,10 @@ Removal of any substance or object
 								KML
 							{% elif data['low-complexity-file-type'] == 'shapefile' %}
 								Shapefile
+							{% elif data['low-complexity-file-type'] == 'kps' %}
+								KPS
 							{% else %}
-								Shapefile
+								Shapefile or KPS (depending on what was selected)
 							{% endif %}
 						</dd>
 					</div>
@@ -245,149 +172,1019 @@ Removal of any substance or object
 						<dd class="govuk-summary-list__value">
 							{% if data['low-complexity-file-type'] == 'kml' %}
 								my-site-location.kml
+							{% elif data['low-complexity-file-type'] == 'shapefile' %}
+								my-site-location.zip (3 shapefile, axis.prj)
 							{% else %}
 								my-site-location.zip
 							{% endif %}
 						</dd>
 					</div>
+					{% endif %}
 				</dl>
 			</div>
 		</div>
 
-		<!-- Site 1 details card -->
-		<div id="site-1-details" class="govuk-summary-card">
-			<div class="govuk-summary-card__title-wrapper">
-				<h2 class="govuk-summary-card__title">
-					Site 1 details
-				</h2>
-				<ul class="govuk-summary-card__actions">
-					<li class="govuk-summary-card__action">
-						<a class="govuk-link govuk-link--no-visited-state" href="site-details/review-site-details?camefromcheckanswers=true">
-							Change<span class="govuk-visually-hidden"> site 1 details</span>
-						</a>
-					</li>
-				</ul>
+		{# ============================== #}
+		{# SITE DETAILS — FILE UPLOAD     #}
+		{# ============================== #}
+		{% if not isManualEntry %}
+
+			{# Site 1 card #}
+			<div id="site-1" class="govuk-summary-card">
+				<div class="govuk-summary-card__title-wrapper">
+					<h2 class="govuk-summary-card__title">
+						Site 1
+					</h2>
+					<ul class="govuk-summary-card__actions">
+						<li class="govuk-summary-card__action">
+							<a class="govuk-link govuk-link--no-visited-state" href="site-details/review-site-details?camefromcheckanswers=true">
+								Change<span class="govuk-visually-hidden"> site 1</span>
+							</a>
+						</li>
+					</ul>
+				</div>
+				<div class="govuk-summary-card__content">
+					<dl class="govuk-summary-list govuk-summary-list--full-width">
+						<div class="govuk-summary-list__row">
+							<dt class="govuk-summary-list__key">
+								Site name
+							</dt>
+							<dd class="govuk-summary-list__value">
+								{{ data['low-complexity-site-name'] }}
+							</dd>
+						</div>
+						<div class="govuk-summary-list__row govuk-summary-list__row--no-actions">
+							<dt class="govuk-summary-list__key govuk-summary-list__key--full-width map-label">
+								Map view
+							</dt>
+							<dd class="govuk-summary-list__value govuk-summary-list__value--full-width">
+								<img src="/public/images/map-5-points.jpg" alt="Map showing site 1 location" />
+							</dd>
+						</div>
+					</dl>
+				</div>
 			</div>
-			<div class="govuk-summary-card__content">
-				<dl class="govuk-summary-list">
-					<div class="govuk-summary-list__row">
-						<dt class="govuk-summary-list__key">
-							Site name
-						</dt>
-						<dd class="govuk-summary-list__value">
-							{{ data['low-complexity-site-name'] }}
-						</dd>
-					</div>
-					
-					<div class="govuk-summary-list__row">
-						<dt class="govuk-summary-list__key map-label">
-							Map view
-						</dt>
-						<dd class="govuk-summary-list__value">
-							<img src="/public/images/map-5-points.jpg" alt="Map showing site 1 location" />
-						</dd>
-					</div>
 
-					<div class="govuk-summary-list__row govuk-summary-list__row--no-border">
-						<dt class="govuk-summary-list__key">
-							Type of activity
-						</dt>
-						<dd class="govuk-summary-list__value">
-							{{ typeOfActivityFormatted | safe }}
-						</dd>
-					</div>
+			{# Activity cards for Site 1 (file upload) #}
+			{% for ad in fileUploadActivities %}
+			<div id="site-1-activity-{{ ad.activityNumber }}" class="govuk-summary-card">
+				<div class="govuk-summary-card__title-wrapper">
+					<h2 class="govuk-summary-card__title">
+						Site 1 - Activity {{ ad.activityNumber }}
+					</h2>
+					<ul class="govuk-summary-card__actions">
+						<li class="govuk-summary-card__action">
+							<a class="govuk-link govuk-link--no-visited-state" href="site-details/review-site-details?camefromcheckanswers=true">
+								Change<span class="govuk-visually-hidden"> site 1 activity {{ ad.activityNumber }}</span>
+							</a>
+						</li>
+					</ul>
+				</div>
+				<div class="govuk-summary-card__content">
+					<dl class="govuk-summary-list">
+						<div class="govuk-summary-list__row">
+							<dt class="govuk-summary-list__key">
+								Type of activity
+							</dt>
+							<dd class="govuk-summary-list__value">
+								{% if ad['low-complexity-type-of-activity-completed'] %}
+									{% if ad['low-complexity-type-of-activity'] == 'construction' %}
+										{% if ad['low-complexity-type-of-works'] == 'construction-new' %}Construction of new works
+										{% elif ad['low-complexity-type-of-works'] == 'maintenance-existing' %}Maintenance of existing works
+										{% elif ad['low-complexity-type-of-works'] == 'alteration-improvement' %}Alteration or improvement, including extending, of existing marine works
+										{% endif %}
+									{% elif ad['low-complexity-type-of-activity'] == 'deposit' %}
+										{% if ad['low-complexity-deposit-type'] == 'continuation-existing' %}Continuation of existing deposit activity
+										{% elif ad['low-complexity-deposit-type'] == 'deposit-new' %}Deposit of something new
+										{% elif ad['low-complexity-deposit-type'] == 'replacing-existing' %}Replacing existing object
+										{% endif %}
+									{% elif ad['low-complexity-type-of-activity'] == 'removal' %}
+										{% if ad['low-complexity-removal-type'] == 'one-off-first-time' %}One off first time removal
+										{% elif ad['low-complexity-removal-type'] == 'ongoing-routine' %}Removal as part of an ongoing or routine activity
+										{% elif ad['low-complexity-removal-type'] == 'removal-replacement' %}Removal for replacement
+										{% elif ad['low-complexity-removal-type'] == 'removal-relocation' %}Removal for relocation
+										{% endif %}
+									{% endif %}
+								{% else %}
+									[Data]
+								{% endif %}
+							</dd>
+						</div>
 
-					<div class="govuk-summary-list__row">
-						<dt class="govuk-summary-list__key">
-							Activity description
-						</dt>
-						<dd class="govuk-summary-list__value">
-							{{ data['low-complexity-activity-description'] }}
-						</dd>
-					</div>
+						{% if ad['low-complexity-type-of-activity-completed'] %}
+							{% if ad['low-complexity-type-of-activity'] == 'construction' %}
+							<div class="govuk-summary-list__row">
+								<dt class="govuk-summary-list__key">
+									{% if ad['low-complexity-type-of-works'] == 'construction-new' %}What you're constructing
+									{% elif ad['low-complexity-type-of-works'] == 'maintenance-existing' %}What you're maintaining
+									{% elif ad['low-complexity-type-of-works'] == 'alteration-improvement' %}What you're altering or improving
+									{% endif %}
+								</dt>
+								<dd class="govuk-summary-list__value">
+									{% if ad['low-complexity-construction-structures'] and ad['low-complexity-construction-structures'].length > 0 %}
+										<ul class="govuk-list govuk-list--bullet">
+										{% for structure in ad['low-complexity-construction-structures'] %}
+											<li>
+												{% if structure == 'jetty-pier-quay' %}Jetty, pier or quay
+												{% elif structure == 'slipway-boat-ramp' %}Slipway or boat ramp
+												{% elif structure == 'sea-wall-coastal-wall' %}Sea wall or coastal wall
+												{% elif structure == 'revetment' %}Revetment (sloped coastal protection)
+												{% elif structure == 'groyne' %}Groyne
+												{% elif structure == 'breakwater-mole-harbour' %}Breakwater, mole or harbour protection structure
+												{% elif structure == 'bridge-supports' %}Bridge or bridge supports in tidal waters
+												{% elif structure == 'causeway-embankment' %}Causeway, embankment or coastal access ramp
+												{% elif structure == 'pontoons-walkways' %}Pontoons or floating walkways
+												{% elif structure == 'floating-breakwaters' %}Floating breakwaters or wave attenuators
+												{% elif structure == 'piles-piled-structures' %}Piles or piled structures
+												{% elif structure == 'foundations-platforms' %}Foundations for offshore platforms or similar structures
+												{% elif structure == 'artificial-reefs' %}Artificial reefs or habitat structures
+												{% elif structure == 'hard-coastal-defence' %}Hard coastal defence structures such as rock armour or concrete units
+												{% elif structure == 'tidal-flood-defence' %}Tidal flood defence structures (e.g., flood barriers, tidal gates, sluices)
+												{% elif structure == 'outfalls-diffusers' %}Outfalls or diffusers
+												{% elif structure == 'intakes' %}Intakes
+												{% elif structure == 'pipelines-ducts' %}Pipelines or ducts
+												{% elif structure == 'subsea-cables' %}Subsea cables requiring protective construction
+												{% elif structure == 'culverts-channels' %}Culverts or constructed tidal channels
+												{% elif structure == 'tidal-energy-devices' %}Tidal energy devices or foundations
+												{% elif structure == 'wave-energy-foundations' %}Wave energy device foundations
+												{% elif structure == 'offshore-wind-foundations' %}Fixed offshore wind foundations
+												{% elif structure == 'aquaculture-piled-structures' %}Piled or fixed aquaculture structures
+												{% elif structure == 'aquaculture-trestles' %}Aquaculture trestles or fixed walkways
+												{% elif structure == 'other-structures' %}Other structures ({{ ad['low-complexity-construction-structures-other-details'] }})
+												{% endif %}
+											</li>
+										{% endfor %}
+										</ul>
+									{% endif %}
+								</dd>
+							</div>
+							{% endif %}
 
-					<div class="govuk-summary-list__row">
-						<dt class="govuk-summary-list__key">
-							Duration of activity
-						</dt>
-						<dd class="govuk-summary-list__value">
-							{{ siteDurationFormatted | trim }}
-						</dd>
-					</div>
+							{% if ad['low-complexity-type-of-activity'] == 'deposit' %}
+							<div class="govuk-summary-list__row">
+								<dt class="govuk-summary-list__key">
+									{% if ad['low-complexity-deposit-type'] == 'continuation-existing' %}What deposit activity you're continuing
+									{% elif ad['low-complexity-deposit-type'] == 'deposit-new' %}What new deposit activity you're doing
+									{% elif ad['low-complexity-deposit-type'] == 'replacing-existing' %}What deposit activity you're doing that replaces an existing object
+									{% endif %}
+								</dt>
+								<dd class="govuk-summary-list__value">
+									{% if ad['low-complexity-deposit-substances-objects'] and ad['low-complexity-deposit-substances-objects'].length > 0 %}
+										<ul class="govuk-list govuk-list--bullet">
+										{% for item in ad['low-complexity-deposit-substances-objects'] %}
+											<li>
+												{% if item == 'aids-to-navigation' %}Aids to navigation
+												{% elif item == 'dredged-material-beach-management' %}Alternative use of dredged material – beach management
+												{% elif item == 'dredged-material-habitat-creation' %}Alternative use of dredged material – habitat creation
+												{% elif item == 'dredged-material-land-reclamation' %}Alternative use of dredged material – land reclamation or construction fill
+												{% elif item == 'anchoring-systems' %}Anchoring systems
+												{% elif item == 'burial-at-sea' %}Burial at sea
+												{% elif item == 'disposal-dredged-material' %}Disposal of dredged material to sea
+												{% elif item == 'disposal-fish-waste' %}Disposal of fish waste
+												{% elif item == 'disposal-shellfish-waste' %}Disposal of shellfish waste
+												{% elif item == 'explosive-substances' %}Explosive substances or articles
+												{% elif item == 'fireworks' %}Fireworks
+												{% elif item == 'habitat-pods' %}Habitat pods, artificial habitat units or reef cubes
+												{% elif item == 'marine-restoration-materials' %}Marine restoration materials (e.g. oyster shells, cobbles, gravel for habitat creation)
+												{% elif item == 'marker-posts' %}Markers posts
+												{% elif item == 'moorings' %}Moorings
+												{% elif item == 'pontoons' %}Pontoons
+												{% elif item == 'protective-mattresses' %}Protective mattresses or rock bags
+												{% elif item == 'scientific-instruments' %}Scientific instruments
+												{% elif item == 'seeding-materials' %}Seeding materials (e.g. shellfish seed for habitat enhancement)
+												{% elif item == 'temporary-works-equipment' %}Temporary works equipment
+												{% elif item == 'tracers-dyes' %}Use of tracers or dyes
+												{% elif item == 'other-deposits' %}Other deposits ({{ ad['low-complexity-deposit-substances-objects-other-details'] }})
+												{% endif %}
+											</li>
+										{% endfor %}
+										</ul>
+									{% endif %}
+								</dd>
+							</div>
+							{% endif %}
 
-					<div class="govuk-summary-list__row">
-						<dt class="govuk-summary-list__key">
-							Activity schedule
-						</dt>
-						<dd class="govuk-summary-list__value">
-							{{ data['low-complexity-schedule'] }}
-						</dd>
-					</div>
+							{% if ad['low-complexity-type-of-activity'] == 'removal' %}
+							<div class="govuk-summary-list__row">
+								<dt class="govuk-summary-list__key">
+									{% if ad['low-complexity-removal-type'] == 'one-off-first-time' %}What you're removing for the first time on a one off basis
+									{% elif ad['low-complexity-removal-type'] == 'ongoing-routine' %}What you're removing on an ongoing basis
+									{% elif ad['low-complexity-removal-type'] == 'removal-replacement' %}What you're removing as part of replacement activity
+									{% elif ad['low-complexity-removal-type'] == 'removal-relocation' %}What you're removing for relocation
+									{% endif %}
+								</dt>
+								<dd class="govuk-summary-list__value">
+									{% if ad['low-complexity-removal-substances-objects'] and ad['low-complexity-removal-substances-objects'].length > 0 %}
+										<ul class="govuk-list govuk-list--bullet">
+										{% for item in ad['low-complexity-removal-substances-objects'] %}
+											<li>
+												{% if item == 'abandoned-fishing-equipment' %}Abandoned fishing equipment
+												{% elif item == 'marine-litter-debris' %}Marine litter and debris
+												{% elif item == 'rocks-boulders-obstructions' %}Rocks, boulders or obstructions
+												{% elif item == 'aquaculture-equipment' %}Aquaculture equipment (trestles, cages, poles etc.)
+												{% elif item == 'artificial-reefs' %}Artificial reefs or habitat structures
+												{% elif item == 'breakwater-mole-harbour' %}Breakwater, mole or harbour protection structure
+												{% elif item == 'bridge-supports' %}Bridge or bridge supports in tidal waters
+												{% elif item == 'causeway-embankment' %}Causeway, embankment or coastal access ramp
+												{% elif item == 'culverts-channels' %}Culverts or constructed tidal channels
+												{% elif item == 'offshore-wind-foundations' %}Fixed offshore wind foundations
+												{% elif item == 'floating-breakwaters' %}Floating breakwaters or wave attenuators
+												{% elif item == 'foundation-components' %}Foundation components (e.g. anchors, small footings)
+												{% elif item == 'foundations-platforms' %}Foundations for offshore platforms or similar structures
+												{% elif item == 'groyne' %}Groyne
+												{% elif item == 'hard-coastal-defence' %}Hard coastal defence structures such as rock armour or concrete units
+												{% elif item == 'intakes' %}Intakes
+												{% elif item == 'jetty-pier-quay' %}Jetty, pier or quay
+												{% elif item == 'outfalls-diffusers' %}Outfalls or diffusers
+												{% elif item == 'pipelines-ducts' %}Pipelines or ducts
+												{% elif item == 'piles-piled-structures' %}Piles or piled structures
+												{% elif item == 'pontoons-walkways-decommissioning' %}Pontoons or floating walkways
+												{% elif item == 'revetment' %}Revetment (sloped coastal protection)
+												{% elif item == 'sea-wall-coastal-wall' %}Sea wall or coastal wall
+												{% elif item == 'slipway-boat-ramp' %}Slipway or boat ramp
+												{% elif item == 'subsea-cables' %}Subsea cables requiring protective construction
+												{% elif item == 'tidal-energy-devices' %}Tidal energy devices or foundations
+												{% elif item == 'tidal-flood-defence' %}Tidal flood defence structures (e.g. flood barriers, tidal gates, sluices)
+												{% elif item == 'wave-energy-foundations' %}Wave energy device foundations
+												{% elif item == 'aids-to-navigation' %}Aids to navigation
+												{% elif item == 'habitat-pods' %}Habitat pods or artificial reef units
+												{% elif item == 'moorings' %}Moorings
+												{% elif item == 'pontoons-floating-structures' %}Pontoons or floating structures
+												{% elif item == 'scientific-instruments' %}Scientific instruments
+												{% elif item == 'survey-markers' %}Survey markers or temporary works equipment
+												{% elif item == 'wrecks-archaeological' %}Wrecks or items or archaeological remains
+												{% elif item == 'sediment-samples' %}Sediment samples
+												{% elif item == 'other-substances-objects' %}Other substances or objects ({{ ad['low-complexity-removal-substances-objects-other-details'] }})
+												{% endif %}
+											</li>
+										{% endfor %}
+										</ul>
+									{% endif %}
+								</dd>
+							</div>
+							{% endif %}
+						{% endif %}
 
-					<div class="govuk-summary-list__row">
-						<dt class="govuk-summary-list__key">
-							Possible impacts of the activity and ways to reduce them
-						</dt>
-						<dd class="govuk-summary-list__value">
-							{{ data['low-complexity-impacts'] }}
-						</dd>
-					</div>
-				</dl>
+						<div class="govuk-summary-list__row">
+							<dt class="govuk-summary-list__key">
+								Activity description
+							</dt>
+							<dd class="govuk-summary-list__value">
+								{{ ad['low-complexity-activity-description'] if ad['low-complexity-activity-description'] else '[Data]' }}
+							</dd>
+						</div>
+
+						<div class="govuk-summary-list__row">
+							<dt class="govuk-summary-list__key">
+								Maximum duration of activity
+							</dt>
+							<dd class="govuk-summary-list__value">
+								{% if ad['low-complexity-site-duration-completed'] %}
+									{% set durationParts = [] %}
+									{% if ad['low-complexity-site-duration-years'] and ad['low-complexity-site-duration-years'] != '0' %}
+										{% set durationParts = (durationParts.push(ad['low-complexity-site-duration-years'] + ' ' + ('year' if ad['low-complexity-site-duration-years'] == '1' else 'years')), durationParts) %}
+									{% endif %}
+									{% if ad['low-complexity-site-duration-months'] and ad['low-complexity-site-duration-months'] != '0' %}
+										{% set durationParts = (durationParts.push(ad['low-complexity-site-duration-months'] + ' ' + ('month' if ad['low-complexity-site-duration-months'] == '1' else 'months')), durationParts) %}
+									{% endif %}
+									{{ durationParts | join(', ') if durationParts.length > 0 else 'Not provided' }}
+								{% else %}
+									[Data]
+								{% endif %}
+							</dd>
+						</div>
+
+						<div class="govuk-summary-list__row">
+							<dt class="govuk-summary-list__key">
+								Completion date
+							</dt>
+							<dd class="govuk-summary-list__value">
+								{% if ad['low-complexity-date-completed-by-completed'] %}
+									{% if ad['low-complexity-date-completed-by'] == 'Yes' %}
+										{{ ad['low-complexity-date-completed-by-details'] }}
+									{% else %}
+										Not needed to be completed by a certain date
+									{% endif %}
+								{% else %}
+									[Data]
+								{% endif %}
+							</dd>
+						</div>
+
+						<div class="govuk-summary-list__row">
+							<dt class="govuk-summary-list__key">
+								Activity limited to specific months
+							</dt>
+							<dd class="govuk-summary-list__value">
+								{% if ad['low-complexity-months-of-activity-completed'] %}
+									{% if ad['low-complexity-months-of-activity'] == 'Yes' %}
+										{{ ad['low-complexity-months-of-activity-details'] }}
+									{% else %}
+										No
+									{% endif %}
+								{% else %}
+									[Data]
+								{% endif %}
+							</dd>
+						</div>
+
+						<div class="govuk-summary-list__row">
+							<dt class="govuk-summary-list__key">
+								Proposed working hours
+							</dt>
+							<dd class="govuk-summary-list__value">
+								{{ ad['low-complexity-working-hours'] if ad['low-complexity-working-hours'] else '[Data]' }}
+							</dd>
+						</div>
+					</dl>
+				</div>
 			</div>
-		</div>
+			{% endfor %}
 
-		<!-- Environmental assessments card -->
+		{% else %}
+
+		{# ============================== #}
+		{# SITE DETAILS — MANUAL ENTRY    #}
+		{# ============================== #}
+		{% for site in manualSites %}
+
+			{# Site card #}
+			<div id="site-{{ site.siteNumber }}" class="govuk-summary-card">
+				<div class="govuk-summary-card__title-wrapper">
+					<h2 class="govuk-summary-card__title">
+						Site {{ site.siteNumber }}
+					</h2>
+					<ul class="govuk-summary-card__actions">
+						<li class="govuk-summary-card__action">
+							<a class="govuk-link govuk-link--no-visited-state" href="site-details/manual-entry/review-site-details?camefromcheckanswers=true">
+								Change<span class="govuk-visually-hidden"> site {{ site.siteNumber }}</span>
+							</a>
+						</li>
+					</ul>
+				</div>
+				<div class="govuk-summary-card__content">
+					<dl class="govuk-summary-list govuk-summary-list--full-width">
+						<div class="govuk-summary-list__row">
+							<dt class="govuk-summary-list__key">
+								Site name
+							</dt>
+							<dd class="govuk-summary-list__value">
+								{{ site.name if site.name else '[Data]' }}
+							</dd>
+						</div>
+
+						{% if site.coordinateEntryMethod %}
+						<div class="govuk-summary-list__row">
+							<dt class="govuk-summary-list__key">
+								Single or multiple sets of coordinates
+							</dt>
+							<dd class="govuk-summary-list__value">
+								{% if site.coordinateEntryMethod == 'circle' %}
+									Manually enter one set of coordinates and a width to create a circular site
+								{% elif site.coordinateEntryMethod == 'polygon' %}
+									Enter multiple sets of coordinates to mark the boundary of the site
+								{% endif %}
+							</dd>
+						</div>
+						{% endif %}
+
+						{% if site.coordinateSystem %}
+						<div class="govuk-summary-list__row">
+							<dt class="govuk-summary-list__key">
+								Coordinate system
+							</dt>
+							<dd class="govuk-summary-list__value">
+								{{ site.coordinateSystem }}<br>
+								{% if site.coordinateSystem == "WGS84 (World Geodetic System 1984)" %}
+									Latitude and longitude
+								{% elif site.coordinateSystem == "British National Grid (OSGB36)" %}
+									Eastings and Northings
+								{% endif %}
+							</dd>
+						</div>
+						{% endif %}
+
+						{% if site.coordinates and site.coordinates.type == "circle" %}
+						<div class="govuk-summary-list__row">
+							<dt class="govuk-summary-list__key">
+								Coordinates at centre of site
+							</dt>
+							<dd class="govuk-summary-list__value">
+								{% if site.coordinates.center and site.coordinates.center.latitude and site.coordinates.center.longitude %}
+									{{ site.coordinates.center.latitude }}, {{ site.coordinates.center.longitude }}
+								{% else %}
+									[Data]
+								{% endif %}
+							</dd>
+						</div>
+						<div class="govuk-summary-list__row">
+							<dt class="govuk-summary-list__key">
+								Width of circular site
+							</dt>
+							<dd class="govuk-summary-list__value">
+								{% if site.coordinates.width %}
+									{{ site.coordinates.width }} metres
+								{% else %}
+									[Data]
+								{% endif %}
+							</dd>
+						</div>
+
+						{% elif site.coordinates and site.coordinates.type == "polygon" %}
+							{% if site.coordinates.points and site.coordinates.points.length > 0 %}
+								{% for point in site.coordinates.points %}
+								<div class="govuk-summary-list__row{% if not loop.last %} govuk-summary-list__row--no-border{% endif %}">
+									<dt class="govuk-summary-list__key">
+										{% if loop.index == 1 %}
+											Start and end points
+										{% else %}
+											Point {{ loop.index }}
+										{% endif %}
+									</dt>
+									<dd class="govuk-summary-list__value">
+										{{ point.latitude }}, {{ point.longitude }}
+									</dd>
+								</div>
+								{% endfor %}
+							{% endif %}
+						{% endif %}
+
+						<div class="govuk-summary-list__row govuk-summary-list__row--no-actions">
+							<dt class="govuk-summary-list__key govuk-summary-list__key--full-width map-label">
+								Map view
+							</dt>
+							<dd class="govuk-summary-list__value govuk-summary-list__value--full-width">
+								{% set mapImageSrc = site.mapImage %}
+								{% if not mapImageSrc %}
+									{% if site.coordinates and site.coordinates.type == "circle" %}
+										{% set mapImageSrc = '/public/images/map-circle.jpg' %}
+									{% elif site.coordinates and site.coordinates.type == "polygon" and site.coordinates.points %}
+										{% if site.coordinates.points.length == 3 %}
+											{% set mapImageSrc = '/public/images/map-3-points.jpg' %}
+										{% elif site.coordinates.points.length == 4 %}
+											{% set mapImageSrc = '/public/images/map-4-points.jpg' %}
+										{% elif site.coordinates.points.length >= 5 %}
+											{% set mapImageSrc = '/public/images/map-5-points.jpg' %}
+										{% else %}
+											{% set mapImageSrc = '/public/images/map-drawn.jpg' %}
+										{% endif %}
+									{% else %}
+										{% set mapImageSrc = '/public/images/map-drawn.jpg' %}
+									{% endif %}
+								{% endif %}
+								<img src="{{ mapImageSrc }}" alt="Map showing site {{ site.siteNumber }} location" width="100%" />
+							</dd>
+						</div>
+					</dl>
+				</div>
+			</div>
+
+			{# Activity cards for this site (manual entry) #}
+			{% set siteActivities = site.activities if site.activities else [] %}
+			{% for ad in siteActivities %}
+			<div id="site-{{ site.siteNumber }}-activity-{{ ad.activityNumber }}" class="govuk-summary-card">
+				<div class="govuk-summary-card__title-wrapper">
+					<h2 class="govuk-summary-card__title">
+						Site {{ site.siteNumber }} - Activity {{ ad.activityNumber }}
+					</h2>
+					<ul class="govuk-summary-card__actions">
+						<li class="govuk-summary-card__action">
+							<a class="govuk-link govuk-link--no-visited-state" href="site-details/manual-entry/review-site-details?camefromcheckanswers=true">
+								Change<span class="govuk-visually-hidden"> site {{ site.siteNumber }} activity {{ ad.activityNumber }}</span>
+							</a>
+						</li>
+					</ul>
+				</div>
+				<div class="govuk-summary-card__content">
+					<dl class="govuk-summary-list">
+						<div class="govuk-summary-list__row">
+							<dt class="govuk-summary-list__key">
+								Type of activity
+							</dt>
+							<dd class="govuk-summary-list__value">
+								{% if ad['low-complexity-type-of-activity-completed'] %}
+									{% if ad['low-complexity-type-of-activity'] == 'construction' %}
+										{% if ad['low-complexity-type-of-works'] == 'construction-new' %}Construction of new works
+										{% elif ad['low-complexity-type-of-works'] == 'maintenance-existing' %}Maintenance of existing works
+										{% elif ad['low-complexity-type-of-works'] == 'alteration-improvement' %}Alteration or improvement, including extending, of existing marine works
+										{% endif %}
+									{% elif ad['low-complexity-type-of-activity'] == 'deposit' %}
+										{% if ad['low-complexity-deposit-type'] == 'continuation-existing' %}Continuation of existing deposit activity
+										{% elif ad['low-complexity-deposit-type'] == 'deposit-new' %}Deposit of something new
+										{% elif ad['low-complexity-deposit-type'] == 'replacing-existing' %}Replacing existing object
+										{% endif %}
+									{% elif ad['low-complexity-type-of-activity'] == 'removal' %}
+										{% if ad['low-complexity-removal-type'] == 'one-off-first-time' %}One off first time removal
+										{% elif ad['low-complexity-removal-type'] == 'ongoing-routine' %}Removal as part of an ongoing or routine activity
+										{% elif ad['low-complexity-removal-type'] == 'removal-replacement' %}Removal for replacement
+										{% elif ad['low-complexity-removal-type'] == 'removal-relocation' %}Removal for relocation
+										{% endif %}
+									{% endif %}
+								{% else %}
+									[Data]
+								{% endif %}
+							</dd>
+						</div>
+
+						{% if ad['low-complexity-type-of-activity-completed'] %}
+							{% if ad['low-complexity-type-of-activity'] == 'construction' and ad['low-complexity-construction-structures'] and ad['low-complexity-construction-structures'].length > 0 %}
+							<div class="govuk-summary-list__row">
+								<dt class="govuk-summary-list__key">
+									{% if ad['low-complexity-type-of-works'] == 'construction-new' %}What you're constructing
+									{% elif ad['low-complexity-type-of-works'] == 'maintenance-existing' %}What you're maintaining
+									{% elif ad['low-complexity-type-of-works'] == 'alteration-improvement' %}What you're altering or improving
+									{% endif %}
+								</dt>
+								<dd class="govuk-summary-list__value">
+									<ul class="govuk-list govuk-list--bullet">
+									{% for structure in ad['low-complexity-construction-structures'] %}
+										<li>
+											{% if structure == 'jetty-pier-quay' %}Jetty, pier or quay
+											{% elif structure == 'slipway-boat-ramp' %}Slipway or boat ramp
+											{% elif structure == 'sea-wall-coastal-wall' %}Sea wall or coastal wall
+											{% elif structure == 'revetment' %}Revetment (sloped coastal protection)
+											{% elif structure == 'groyne' %}Groyne
+											{% elif structure == 'breakwater-mole-harbour' %}Breakwater, mole or harbour protection structure
+											{% elif structure == 'bridge-supports' %}Bridge or bridge supports in tidal waters
+											{% elif structure == 'causeway-embankment' %}Causeway, embankment or coastal access ramp
+											{% elif structure == 'pontoons-walkways' %}Pontoons or floating walkways
+											{% elif structure == 'floating-breakwaters' %}Floating breakwaters or wave attenuators
+											{% elif structure == 'piles-piled-structures' %}Piles or piled structures
+											{% elif structure == 'foundations-platforms' %}Foundations for offshore platforms or similar structures
+											{% elif structure == 'artificial-reefs' %}Artificial reefs or habitat structures
+											{% elif structure == 'hard-coastal-defence' %}Hard coastal defence structures such as rock armour or concrete units
+											{% elif structure == 'tidal-flood-defence' %}Tidal flood defence structures (e.g., flood barriers, tidal gates, sluices)
+											{% elif structure == 'outfalls-diffusers' %}Outfalls or diffusers
+											{% elif structure == 'intakes' %}Intakes
+											{% elif structure == 'pipelines-ducts' %}Pipelines or ducts
+											{% elif structure == 'subsea-cables' %}Subsea cables requiring protective construction
+											{% elif structure == 'culverts-channels' %}Culverts or constructed tidal channels
+											{% elif structure == 'tidal-energy-devices' %}Tidal energy devices or foundations
+											{% elif structure == 'wave-energy-foundations' %}Wave energy device foundations
+											{% elif structure == 'offshore-wind-foundations' %}Fixed offshore wind foundations
+											{% elif structure == 'aquaculture-piled-structures' %}Piled or fixed aquaculture structures
+											{% elif structure == 'aquaculture-trestles' %}Aquaculture trestles or fixed walkways
+											{% elif structure == 'other-structures' %}Other structures ({{ ad['low-complexity-construction-structures-other-details'] }})
+											{% endif %}
+										</li>
+									{% endfor %}
+									</ul>
+								</dd>
+							</div>
+							{% endif %}
+
+							{% if ad['low-complexity-type-of-activity'] == 'deposit' and ad['low-complexity-deposit-substances-objects'] and ad['low-complexity-deposit-substances-objects'].length > 0 %}
+							<div class="govuk-summary-list__row">
+								<dt class="govuk-summary-list__key">
+									{% if ad['low-complexity-deposit-type'] == 'continuation-existing' %}What deposit activity you're continuing
+									{% elif ad['low-complexity-deposit-type'] == 'deposit-new' %}What new deposit activity you're doing
+									{% elif ad['low-complexity-deposit-type'] == 'replacing-existing' %}What deposit activity you're doing that replaces an existing object
+									{% endif %}
+								</dt>
+								<dd class="govuk-summary-list__value">
+									<ul class="govuk-list govuk-list--bullet">
+									{% for item in ad['low-complexity-deposit-substances-objects'] %}
+										<li>
+											{% if item == 'aids-to-navigation' %}Aids to navigation
+											{% elif item == 'dredged-material-beach-management' %}Alternative use of dredged material – beach management
+											{% elif item == 'dredged-material-habitat-creation' %}Alternative use of dredged material – habitat creation
+											{% elif item == 'dredged-material-land-reclamation' %}Alternative use of dredged material – land reclamation or construction fill
+											{% elif item == 'anchoring-systems' %}Anchoring systems
+											{% elif item == 'burial-at-sea' %}Burial at sea
+											{% elif item == 'disposal-dredged-material' %}Disposal of dredged material to sea
+											{% elif item == 'disposal-fish-waste' %}Disposal of fish waste
+											{% elif item == 'disposal-shellfish-waste' %}Disposal of shellfish waste
+											{% elif item == 'explosive-substances' %}Explosive substances or articles
+											{% elif item == 'fireworks' %}Fireworks
+											{% elif item == 'habitat-pods' %}Habitat pods, artificial habitat units or reef cubes
+											{% elif item == 'marine-restoration-materials' %}Marine restoration materials (e.g. oyster shells, cobbles, gravel for habitat creation)
+											{% elif item == 'marker-posts' %}Markers posts
+											{% elif item == 'moorings' %}Moorings
+											{% elif item == 'pontoons' %}Pontoons
+											{% elif item == 'protective-mattresses' %}Protective mattresses or rock bags
+											{% elif item == 'scientific-instruments' %}Scientific instruments
+											{% elif item == 'seeding-materials' %}Seeding materials (e.g. shellfish seed for habitat enhancement)
+											{% elif item == 'temporary-works-equipment' %}Temporary works equipment
+											{% elif item == 'tracers-dyes' %}Use of tracers or dyes
+											{% elif item == 'other-deposits' %}Other deposits ({{ ad['low-complexity-deposit-substances-objects-other-details'] }})
+											{% endif %}
+										</li>
+									{% endfor %}
+									</ul>
+								</dd>
+							</div>
+							{% endif %}
+
+							{% if ad['low-complexity-type-of-activity'] == 'removal' and ad['low-complexity-removal-substances-objects'] and ad['low-complexity-removal-substances-objects'].length > 0 %}
+							<div class="govuk-summary-list__row">
+								<dt class="govuk-summary-list__key">
+									{% if ad['low-complexity-removal-type'] == 'one-off-first-time' %}What you're removing for the first time on a one off basis
+									{% elif ad['low-complexity-removal-type'] == 'ongoing-routine' %}What you're removing on an ongoing basis
+									{% elif ad['low-complexity-removal-type'] == 'removal-replacement' %}What you're removing as part of replacement activity
+									{% elif ad['low-complexity-removal-type'] == 'removal-relocation' %}What you're removing for relocation
+									{% endif %}
+								</dt>
+								<dd class="govuk-summary-list__value">
+									<ul class="govuk-list govuk-list--bullet">
+									{% for item in ad['low-complexity-removal-substances-objects'] %}
+										<li>
+											{% if item == 'abandoned-fishing-equipment' %}Abandoned fishing equipment
+											{% elif item == 'marine-litter-debris' %}Marine litter and debris
+											{% elif item == 'rocks-boulders-obstructions' %}Rocks, boulders or obstructions
+											{% elif item == 'aquaculture-equipment' %}Aquaculture equipment (trestles, cages, poles etc.)
+											{% elif item == 'artificial-reefs' %}Artificial reefs or habitat structures
+											{% elif item == 'breakwater-mole-harbour' %}Breakwater, mole or harbour protection structure
+											{% elif item == 'bridge-supports' %}Bridge or bridge supports in tidal waters
+											{% elif item == 'causeway-embankment' %}Causeway, embankment or coastal access ramp
+											{% elif item == 'culverts-channels' %}Culverts or constructed tidal channels
+											{% elif item == 'offshore-wind-foundations' %}Fixed offshore wind foundations
+											{% elif item == 'floating-breakwaters' %}Floating breakwaters or wave attenuators
+											{% elif item == 'foundation-components' %}Foundation components (e.g. anchors, small footings)
+											{% elif item == 'foundations-platforms' %}Foundations for offshore platforms or similar structures
+											{% elif item == 'groyne' %}Groyne
+											{% elif item == 'hard-coastal-defence' %}Hard coastal defence structures such as rock armour or concrete units
+											{% elif item == 'intakes' %}Intakes
+											{% elif item == 'jetty-pier-quay' %}Jetty, pier or quay
+											{% elif item == 'outfalls-diffusers' %}Outfalls or diffusers
+											{% elif item == 'pipelines-ducts' %}Pipelines or ducts
+											{% elif item == 'piles-piled-structures' %}Piles or piled structures
+											{% elif item == 'pontoons-walkways-decommissioning' %}Pontoons or floating walkways
+											{% elif item == 'revetment' %}Revetment (sloped coastal protection)
+											{% elif item == 'sea-wall-coastal-wall' %}Sea wall or coastal wall
+											{% elif item == 'slipway-boat-ramp' %}Slipway or boat ramp
+											{% elif item == 'subsea-cables' %}Subsea cables requiring protective construction
+											{% elif item == 'tidal-energy-devices' %}Tidal energy devices or foundations
+											{% elif item == 'tidal-flood-defence' %}Tidal flood defence structures (e.g. flood barriers, tidal gates, sluices)
+											{% elif item == 'wave-energy-foundations' %}Wave energy device foundations
+											{% elif item == 'aids-to-navigation' %}Aids to navigation
+											{% elif item == 'habitat-pods' %}Habitat pods or artificial reef units
+											{% elif item == 'moorings' %}Moorings
+											{% elif item == 'pontoons-floating-structures' %}Pontoons or floating structures
+											{% elif item == 'scientific-instruments' %}Scientific instruments
+											{% elif item == 'survey-markers' %}Survey markers or temporary works equipment
+											{% elif item == 'wrecks-archaeological' %}Wrecks or items or archaeological remains
+											{% elif item == 'sediment-samples' %}Sediment samples
+											{% elif item == 'other-substances-objects' %}Other substances or objects ({{ ad['low-complexity-removal-substances-objects-other-details'] }})
+											{% endif %}
+										</li>
+									{% endfor %}
+									</ul>
+								</dd>
+							</div>
+							{% endif %}
+						{% endif %}
+
+						<div class="govuk-summary-list__row">
+							<dt class="govuk-summary-list__key">
+								Activity description
+							</dt>
+							<dd class="govuk-summary-list__value">
+								{{ ad['low-complexity-activity-description'] if ad['low-complexity-activity-description'] else '[Data]' }}
+							</dd>
+						</div>
+
+						<div class="govuk-summary-list__row">
+							<dt class="govuk-summary-list__key">
+								Maximum duration of activity
+							</dt>
+							<dd class="govuk-summary-list__value">
+								{% if ad['low-complexity-site-duration-completed'] %}
+									{% set durationParts = [] %}
+									{% if ad['low-complexity-site-duration-years'] and ad['low-complexity-site-duration-years'] != '0' %}
+										{% set durationParts = (durationParts.push(ad['low-complexity-site-duration-years'] + ' ' + ('year' if ad['low-complexity-site-duration-years'] == '1' else 'years')), durationParts) %}
+									{% endif %}
+									{% if ad['low-complexity-site-duration-months'] and ad['low-complexity-site-duration-months'] != '0' %}
+										{% set durationParts = (durationParts.push(ad['low-complexity-site-duration-months'] + ' ' + ('month' if ad['low-complexity-site-duration-months'] == '1' else 'months')), durationParts) %}
+									{% endif %}
+									{{ durationParts | join(', ') if durationParts.length > 0 else 'Not provided' }}
+								{% else %}
+									[Data]
+								{% endif %}
+							</dd>
+						</div>
+
+						<div class="govuk-summary-list__row">
+							<dt class="govuk-summary-list__key">
+								Completion date
+							</dt>
+							<dd class="govuk-summary-list__value">
+								{% if ad['low-complexity-date-completed-by-completed'] %}
+									{% if ad['low-complexity-date-completed-by'] == 'Yes' %}
+										{{ ad['low-complexity-date-completed-by-details'] }}
+									{% else %}
+										Not needed to be completed by a certain date
+									{% endif %}
+								{% else %}
+									[Data]
+								{% endif %}
+							</dd>
+						</div>
+
+						<div class="govuk-summary-list__row">
+							<dt class="govuk-summary-list__key">
+								Activity limited to specific months
+							</dt>
+							<dd class="govuk-summary-list__value">
+								{% if ad['low-complexity-months-of-activity-completed'] %}
+									{% if ad['low-complexity-months-of-activity'] == 'Yes' %}
+										{{ ad['low-complexity-months-of-activity-details'] }}
+									{% else %}
+										No
+									{% endif %}
+								{% else %}
+									[Data]
+								{% endif %}
+							</dd>
+						</div>
+
+						<div class="govuk-summary-list__row">
+							<dt class="govuk-summary-list__key">
+								Proposed working hours
+							</dt>
+							<dd class="govuk-summary-list__value">
+								{{ ad['low-complexity-working-hours'] if ad['low-complexity-working-hours'] else '[Data]' }}
+							</dd>
+						</div>
+					</dl>
+				</div>
+			</div>
+			{% endfor %}
+
+		{% endfor %}
+		{% endif %}
+
+		{# ================================================= #}
+		{# MARINE PLAN POLICIES — Environmental protection    #}
+		{# ================================================= #}
 		<div class="govuk-summary-card">
 			<div class="govuk-summary-card__title-wrapper">
-				<h2 class="govuk-summary-card__title" id="environmental-assessments">
-					Environmental assessments
+				<h2 class="govuk-summary-card__title">
+					Marine plan policies – Environmental protection and impacts
 				</h2>
 			</div>
 			<div class="govuk-summary-card__content">
 				<dl class="govuk-summary-list">
 					<div class="govuk-summary-list__row">
-						<dt class="govuk-summary-list__key">
-							How have you assessed the impact of your project on European sites and how you'll reduce this impact?
-						</dt>
-						<dd class="govuk-summary-list__value">
-							{{ data['low-complexity-european-sites'] }}
-						</dd>
-						<dd class="govuk-summary-list__actions">
-							<a class="govuk-link govuk-link--no-visited-state" href="environmental-assessments/european-sites?camefromcheckanswers=true">
-								Change<span class="govuk-visually-hidden"> how you've assessed the impact on European sites</span>
-							</a>
-						</dd>
+						<dt class="govuk-summary-list__key">South Biodiversity 1 (S-BIO-1)</dt>
+						<dd class="govuk-summary-list__value">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</dd>
+						<dd class="govuk-summary-list__actions"><a class="govuk-link govuk-link--no-visited-state" href="#">Change<span class="govuk-visually-hidden"> South Biodiversity 1</span></a></dd>
 					</div>
-
 					<div class="govuk-summary-list__row">
-						<dt class="govuk-summary-list__key">
-							How have you assessed the impact of your project on Marine Conservation Zones (MCZs) and how you'll reduce this impact?
-						</dt>
-						<dd class="govuk-summary-list__value">
-							{{ data['low-complexity-mcz'] }}
-						</dd>
-						<dd class="govuk-summary-list__actions">
-							<a class="govuk-link govuk-link--no-visited-state" href="environmental-assessments/marine-conservation-zones?camefromcheckanswers=true">
-								Change<span class="govuk-visually-hidden"> how you've assessed the impact on Marine Conservation Zones</span>
-							</a>
-						</dd>
+						<dt class="govuk-summary-list__key">South Biodiversity 2 (S-BIO-2)</dt>
+						<dd class="govuk-summary-list__value">Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit.</dd>
+						<dd class="govuk-summary-list__actions"><a class="govuk-link govuk-link--no-visited-state" href="#">Change<span class="govuk-visually-hidden"> South Biodiversity 2</span></a></dd>
 					</div>
-
 					<div class="govuk-summary-list__row">
-						<dt class="govuk-summary-list__key">
-							How have you assessed the impact of your project on sites of special scientific interest (SSSI) and how you'll reduce this impact?
-						</dt>
-						<dd class="govuk-summary-list__value">
-							{{ data['low-complexity-sssi'] }}
-						</dd>
-						<dd class="govuk-summary-list__actions">
-							<a class="govuk-link govuk-link--no-visited-state" href="environmental-assessments/sites-of-special-scientific-interest?camefromcheckanswers=true">
-								Change<span class="govuk-visually-hidden"> how you've assessed the impact on sites of special scientific interest</span>
-							</a>
-						</dd>
+						<dt class="govuk-summary-list__key">South Biodiversity 3 (S-BIO-3)</dt>
+						<dd class="govuk-summary-list__value">At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint occaecati cupiditate non provident, similique sunt in culpa qui officia deserunt mollitia animi id est laborum et dolorum fuga.</dd>
+						<dd class="govuk-summary-list__actions"><a class="govuk-link govuk-link--no-visited-state" href="#">Change<span class="govuk-visually-hidden"> South Biodiversity 3</span></a></dd>
 					</div>
-
 					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">South Biodiversity 4 (S-BIO-4)</dt>
+						<dd class="govuk-summary-list__value">Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet ut et voluptates repudiandae sint et molestiae non recusandae. Itaque earum rerum hic tenetur a sapiente delectus ut aut reiciendis voluptatibus maiores alias consequatur aut perferendis doloribus asperiores repellat.</dd>
+						<dd class="govuk-summary-list__actions"><a class="govuk-link govuk-link--no-visited-state" href="#">Change<span class="govuk-visually-hidden"> South Biodiversity 4</span></a></dd>
+					</div>
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">South Disturbance 1 (S-DIST-1)</dt>
+						<dd class="govuk-summary-list__value">Neque porro quisquam est qui dolorem ipsum quia dolor sit amet consectetur adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam nisi ut aliquid commodi.</dd>
+						<dd class="govuk-summary-list__actions"><a class="govuk-link govuk-link--no-visited-state" href="#">Change<span class="govuk-visually-hidden"> South Disturbance 1</span></a></dd>
+					</div>
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">South Invasive non-native species 1 (S-NIS-1)</dt>
+						<dd class="govuk-summary-list__value">Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum sed perspiciatis.</dd>
+						<dd class="govuk-summary-list__actions"><a class="govuk-link govuk-link--no-visited-state" href="#">Change<span class="govuk-visually-hidden"> South Invasive non-native species 1</span></a></dd>
+					</div>
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">South Marine litter 1 (S-ML-1)</dt>
+						<dd class="govuk-summary-list__value">Nam libero tempore cum soluta nobis est eligendi optio cumque nihil impedit quo minus id quod maxime placeat facere possimus, omnis voluptas assumenda est omnis dolor repellendus. Itaque earum rerum hic tenetur a sapiente delectus ut aut reiciendis voluptatibus maiores consequatur.</dd>
+						<dd class="govuk-summary-list__actions"><a class="govuk-link govuk-link--no-visited-state" href="#">Change<span class="govuk-visually-hidden"> South Marine litter 1</span></a></dd>
+					</div>
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">South Marine litter 2 (S-ML-2)</dt>
+						<dd class="govuk-summary-list__value">Nulla facilisi etiam dignissim diam quis enim lobortis scelerisque fermentum dui faucibus in ornare quam viverra orci sagittis eu volutpat odio facilisis mauris sit amet massa vitae tortor condimentum lacinia quis vel eros donec ac odio tempor orci dapibus ultrices in iaculis nunc.</dd>
+						<dd class="govuk-summary-list__actions"><a class="govuk-link govuk-link--no-visited-state" href="#">Change<span class="govuk-visually-hidden"> South Marine litter 2</span></a></dd>
+					</div>
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">South Underwater noise 1 (S-UWN-1)</dt>
+						<dd class="govuk-summary-list__value">Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam, feugiat vitae ultricies eget tempor sit amet ante. Donec eu libero sit amet quam egestas semper aenean ultricies mi vitae est mauris placerat eleifend leo vel orci porta.</dd>
+						<dd class="govuk-summary-list__actions"><a class="govuk-link govuk-link--no-visited-state" href="#">Change<span class="govuk-visually-hidden"> South Underwater noise 1</span></a></dd>
+					</div>
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">South Underwater noise 2 (S-UWN-2)</dt>
+						<dd class="govuk-summary-list__value">Curabitur pretium tincidunt lacus nulla gravida orci a odio elementum soluta nobis est eligendi optio cumque nihil impedit quo minus. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor maecenas sed enim ut sem viverra aliquet eget sit amet tellus cras adipiscing enim eu.</dd>
+						<dd class="govuk-summary-list__actions"><a class="govuk-link govuk-link--no-visited-state" href="#">Change<span class="govuk-visually-hidden"> South Underwater noise 2</span></a></dd>
+					</div>
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">South Water quality 1 (S-WQ-1)</dt>
+						<dd class="govuk-summary-list__value">Fusce dapibus tellus ac cursus commodo rutrum faucibus dolor auctor cras mattis consectetur purus sit amet fermentum. Maecenas faucibus mollis interdum sed posuere consectetur est at lobortis. Aenean lacinia bibendum nulla sed consectetur praesent commodo cursus magna vel scelerisque nisl consectetur et.</dd>
+						<dd class="govuk-summary-list__actions"><a class="govuk-link govuk-link--no-visited-state" href="#">Change<span class="govuk-visually-hidden"> South Water quality 1</span></a></dd>
+					</div>
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">South Water quality 2 (S-WQ-2)</dt>
+						<dd class="govuk-summary-list__value">Integer posuere erat a ante venenatis dapibus posuere velit aliquet cras justo odio dapibus ut facilisis. Donec sed odio dui etiam porta sem malesuada magna mollis euismod. Nullam quis risus eget urna mollis ornare vel eu leo praesent commodo cursus magna vel scelerisque nisl.</dd>
+						<dd class="govuk-summary-list__actions"><a class="govuk-link govuk-link--no-visited-state" href="#">Change<span class="govuk-visually-hidden"> South Water quality 2</span></a></dd>
+					</div>
+				</dl>
+			</div>
+		</div>
+
+		{# ================================================= #}
+		{# MARINE PLAN POLICIES — Climate change              #}
+		{# ================================================= #}
+		<div class="govuk-summary-card">
+			<div class="govuk-summary-card__title-wrapper">
+				<h2 class="govuk-summary-card__title">
+					Marine plan policies – Climate change and cumulative effects
+				</h2>
+			</div>
+			<div class="govuk-summary-card__content">
+				<dl class="govuk-summary-list">
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">South Climate change 1 (S-CC-1)</dt>
+						<dd class="govuk-summary-list__value">Vivamus luctus urna sed urna ultricies ac tempor dui sagittis in hac habitasse platea dictumst. Morbi tincidunt ornare massa eget egestas purus viverra accumsan in nisl nisi scelerisque eu ultrices vitae auctor eu augue ut lectus arcu bibendum at varius vel pharetra vel turpis.</dd>
+						<dd class="govuk-summary-list__actions"><a class="govuk-link govuk-link--no-visited-state" href="#">Change<span class="govuk-visually-hidden"> South Climate change 1</span></a></dd>
+					</div>
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">South Climate change 2 (S-CC-2)</dt>
+						<dd class="govuk-summary-list__value">Fringilla est ullamcorper eget nulla facilisi etiam dignissim diam quis enim lobortis scelerisque fermentum dui faucibus. Amet consectetur adipiscing elit pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas sed tempus urna et pharetra pharetra massa vel eros donec.</dd>
+						<dd class="govuk-summary-list__actions"><a class="govuk-link govuk-link--no-visited-state" href="#">Change<span class="govuk-visually-hidden"> South Climate change 2</span></a></dd>
+					</div>
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">South Climate change 3 (S-CC-3)</dt>
+						<dd class="govuk-summary-list__value">Facilisis magna etiam tempor orci eu lobortis elementum nibh tellus molestie nunc non blandit massa enim nec dui nunc mattis enim ut tellus. Elementum sagittis vitae et leo duis ut diam quam nulla porttitor massa id neque aliquam vestibulum morbi blandit cursus risus at.</dd>
+						<dd class="govuk-summary-list__actions"><a class="govuk-link govuk-link--no-visited-state" href="#">Change<span class="govuk-visually-hidden"> South Climate change 3</span></a></dd>
+					</div>
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">South Climate change 4 (S-CC-4)</dt>
+						<dd class="govuk-summary-list__value">Ultrices sagittis orci a scelerisque purus semper eget duis at tellus at urna condimentum mattis pellentesque id nibh. Tortor pretium viverra suspendisse potenti nullam ac tortor vitae purus faucibus ornare suspendisse sed nisi lacus sed viverra tellus in hac habitasse platea dictumst vestibulum.</dd>
+						<dd class="govuk-summary-list__actions"><a class="govuk-link govuk-link--no-visited-state" href="#">Change<span class="govuk-visually-hidden"> South Climate change 4</span></a></dd>
+					</div>
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">South Co-existence 1 (S-CO-1)</dt>
+						<dd class="govuk-summary-list__value">Amet venenatis urna cursus eget nunc scelerisque viverra mauris in aliquam sem fringilla ut morbi tincidunt augue interdum velit euismod. Eu volutpat odio facilisis mauris sit amet massa vitae tortor condimentum lacinia quis vel eros donec ac odio tempor orci dapibus ultrices iaculis.</dd>
+						<dd class="govuk-summary-list__actions"><a class="govuk-link govuk-link--no-visited-state" href="#">Change<span class="govuk-visually-hidden"> South Co-existence 1</span></a></dd>
+					</div>
+				</dl>
+			</div>
+		</div>
+
+		{# ================================================= #}
+		{# MARINE PLAN POLICIES — Marine activities           #}
+		{# ================================================= #}
+		<div class="govuk-summary-card">
+			<div class="govuk-summary-card__title-wrapper">
+				<h2 class="govuk-summary-card__title">
+					Marine plan policies – Marine activities and infrastructure
+				</h2>
+			</div>
+			<div class="govuk-summary-card__content">
+				<dl class="govuk-summary-list">
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">South Aggregates 4 (S-AGG-4)</dt>
+						<dd class="govuk-summary-list__value">Tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam feugiat vitae ultricies eget tempor sit amet ante donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est mauris placerat eleifend leo vel orci porta non pulvinar neque laoreet.</dd>
+						<dd class="govuk-summary-list__actions"><a class="govuk-link govuk-link--no-visited-state" href="#">Change<span class="govuk-visually-hidden"> South Aggregates 4</span></a></dd>
+					</div>
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">South Aquaculture 2 (S-AQ-2)</dt>
+						<dd class="govuk-summary-list__value">Phasellus egestas tellus rutrum tellus pellentesque eu tincidunt tortor aliquam nulla facilisi cras fermentum odio eu feugiat pretium nibh ipsum consequat. Nisl condimentum id venenatis a condimentum vitae sapien pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas maecenas.</dd>
+						<dd class="govuk-summary-list__actions"><a class="govuk-link govuk-link--no-visited-state" href="#">Change<span class="govuk-visually-hidden"> South Aquaculture 2</span></a></dd>
+					</div>
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">South Cables 1 (S-CAB-1)</dt>
+						<dd class="govuk-summary-list__value">Dignissim cras tincidunt lobortis feugiat vivamus at augue eget arcu dictum varius duis at consectetur lorem donec massa sapien faucibus et molestie ac feugiat. Sed vulputate odio ut enim blandit volutpat maecenas volutpat blandit aliquam etiam erat velit scelerisque in dictum non consectetur a erat.</dd>
+						<dd class="govuk-summary-list__actions"><a class="govuk-link govuk-link--no-visited-state" href="#">Change<span class="govuk-visually-hidden"> South Cables 1</span></a></dd>
+					</div>
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">South Cables 2 (S-CAB-2)</dt>
+						<dd class="govuk-summary-list__value">Sit amet mauris commodo quis imperdiet massa tincidunt nunc pulvinar sapien et ligula ullamcorper malesuada proin libero nunc consequat interdum varius sit amet mattis. Vulputate dignissim suspendisse in est ante in nibh mauris cursus mattis molestie a iaculis at erat pellentesque adipiscing commodo.</dd>
+						<dd class="govuk-summary-list__actions"><a class="govuk-link govuk-link--no-visited-state" href="#">Change<span class="govuk-visually-hidden"> South Cables 2</span></a></dd>
+					</div>
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">South Dredging and disposal 2 (S-DD-2)</dt>
+						<dd class="govuk-summary-list__value">Egestas integer eget aliquet nibh praesent tristique magna sit amet purus gravida quis blandit turpis cursus in hac habitasse platea dictumst. Quisque sagittis purus sit amet volutpat consequat mauris nunc congue nisi vitae suscipit tellus mauris a diam maecenas sed enim ut sem viverra.</dd>
+						<dd class="govuk-summary-list__actions"><a class="govuk-link govuk-link--no-visited-state" href="#">Change<span class="govuk-visually-hidden"> South Dredging and disposal 2</span></a></dd>
+					</div>
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">South Infrastructure 1 (S-INF-1)</dt>
+						<dd class="govuk-summary-list__value">Arcu cursus vitae congue mauris rhoncus aenean vel elit scelerisque mauris pellentesque pulvinar pellentesque habitant morbi tristique senectus. Vel risus commodo viverra maecenas accumsan lacus vel facilisis volutpat est velit egestas dui id ornare arcu odio ut sem nulla pharetra diam sit amet.</dd>
+						<dd class="govuk-summary-list__actions"><a class="govuk-link govuk-link--no-visited-state" href="#">Change<span class="govuk-visually-hidden"> South Infrastructure 1</span></a></dd>
+					</div>
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">South Ports, harbours and shipping 1 (S-PS-1)</dt>
+						<dd class="govuk-summary-list__value">Adipiscing vitae proin sagittis nisl rhoncus mattis rhoncus urna neque viverra justo nec ultrices dui sapien eget mi proin sed libero enim sed faucibus turpis. In eu mi bibendum neque egestas congue quisque egestas diam in arcu cursus euismod quis viverra nibh cras pulvinar.</dd>
+						<dd class="govuk-summary-list__actions"><a class="govuk-link govuk-link--no-visited-state" href="#">Change<span class="govuk-visually-hidden"> South Ports, harbours and shipping 1</span></a></dd>
+					</div>
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">South Renewables 1 (S-REN-1)</dt>
+						<dd class="govuk-summary-list__value">Faucibus nisl tincidunt eget nullam non nisi est sit amet facilisis magna etiam tempor orci eu lobortis elementum nibh tellus molestie. Nunc non blandit massa enim nec dui nunc mattis enim ut tellus elementum sagittis vitae et leo duis ut diam quam nulla porttitor.</dd>
+						<dd class="govuk-summary-list__actions"><a class="govuk-link govuk-link--no-visited-state" href="#">Change<span class="govuk-visually-hidden"> South Renewables 1</span></a></dd>
+					</div>
+				</dl>
+			</div>
+		</div>
+
+		{# ================================================= #}
+		{# MARINE PLAN POLICIES — Access, fisheries           #}
+		{# ================================================= #}
+		<div class="govuk-summary-card">
+			<div class="govuk-summary-card__title-wrapper">
+				<h2 class="govuk-summary-card__title">
+					Marine plan policies – Access, fisheries and sea use
+				</h2>
+			</div>
+			<div class="govuk-summary-card__content">
+				<dl class="govuk-summary-list">
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">South Access 1 (S-ACC-1)</dt>
+						<dd class="govuk-summary-list__value">Massa id neque aliquam vestibulum morbi blandit cursus risus at ultrices mi tempus imperdiet nulla malesuada pellentesque elit eget gravida cum sociis natoque. Penatibus et magnis dis parturient montes nascetur ridiculus mus mauris vitae ultricies leo integer malesuada nunc vel risus commodo viverra.</dd>
+						<dd class="govuk-summary-list__actions"><a class="govuk-link govuk-link--no-visited-state" href="#">Change<span class="govuk-visually-hidden"> South Access 1</span></a></dd>
+					</div>
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">South Access 2 (S-ACC-2)</dt>
+						<dd class="govuk-summary-list__value">Dictumst vestibulum rhoncus est pellentesque elit ullamcorper dignissim cras tincidunt lobortis feugiat vivamus at augue eget arcu dictum varius. Duis at consectetur lorem donec massa sapien faucibus et molestie ac feugiat sed lectus vestibulum mattis ullamcorper velit sed ullamcorper morbi tincidunt ornare.</dd>
+						<dd class="govuk-summary-list__actions"><a class="govuk-link govuk-link--no-visited-state" href="#">Change<span class="govuk-visually-hidden"> South Access 2</span></a></dd>
+					</div>
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">South Fisheries 1 (S-FISH-1)</dt>
+						<dd class="govuk-summary-list__value">Turpis massa tincidunt dui ut ornare lectus sit amet est placerat in egestas erat imperdiet sed euismod nisi porta lorem mollis aliquam ut porttitor leo. A pellentesque sit amet porttitor eget dolor morbi non arcu risus quis varius quam quisque id diam vel quam elementum.</dd>
+						<dd class="govuk-summary-list__actions"><a class="govuk-link govuk-link--no-visited-state" href="#">Change<span class="govuk-visually-hidden"> South Fisheries 1</span></a></dd>
+					</div>
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">South Fisheries 2 (S-FISH-2)</dt>
+						<dd class="govuk-summary-list__value">Pulvinar etiam non quam lacus suspendisse faucibus interdum posuere lorem ipsum dolor sit amet consectetur adipiscing elit duis tristique sollicitudin nibh. Sit amet commodo nulla facilisi nullam vehicula ipsum a arcu cursus vitae congue mauris rhoncus aenean vel elit scelerisque mauris pellentesque.</dd>
+						<dd class="govuk-summary-list__actions"><a class="govuk-link govuk-link--no-visited-state" href="#">Change<span class="govuk-visually-hidden"> South Fisheries 2</span></a></dd>
+					</div>
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">South Fisheries 4 (S-FISH-4)</dt>
+						<dd class="govuk-summary-list__value">Volutpat lacus laoreet non curabitur gravida arcu ac tortor dignissim convallis aenean et tortor at risus viverra adipiscing at in tellus integer. Feugiat pretium nibh ipsum consequat nisl vel pretium lectus quam id leo in vitae turpis massa sed elementum tempus egestas sed sed.</dd>
+						<dd class="govuk-summary-list__actions"><a class="govuk-link govuk-link--no-visited-state" href="#">Change<span class="govuk-visually-hidden"> South Fisheries 4</span></a></dd>
+					</div>
+				</dl>
+			</div>
+		</div>
+
+		{# ================================================= #}
+		{# MARINE PLAN POLICIES — Social, economic, cultural  #}
+		{# ================================================= #}
+		<div class="govuk-summary-card">
+			<div class="govuk-summary-card__title-wrapper">
+				<h2 class="govuk-summary-card__title">
+					Marine plan policies – Social, economic and cultural considerations
+				</h2>
+			</div>
+			<div class="govuk-summary-card__content">
+				<dl class="govuk-summary-list">
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">South Employment 1 (S-EMP-1)</dt>
+						<dd class="govuk-summary-list__value">Aliquet sagittis id consectetur purus ut faucibus pulvinar elementum integer enim neque volutpat ac tincidunt vitae semper quis lectus nulla at volutpat. Diam maecenas ultricies mi eget mauris pharetra et ultrices neque ornare aenean euismod elementum nisi quis eleifend quam adipiscing vitae proin sagittis.</dd>
+						<dd class="govuk-summary-list__actions"><a class="govuk-link govuk-link--no-visited-state" href="#">Change<span class="govuk-visually-hidden"> South Employment 1</span></a></dd>
+					</div>
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">South Employment 2 (S-EMP-2)</dt>
+						<dd class="govuk-summary-list__value">Nisl rhoncus mattis rhoncus urna neque viverra justo nec ultrices dui sapien eget mi proin sed libero enim sed faucibus turpis in eu mi. Bibendum neque egestas congue quisque egestas diam in arcu cursus euismod quis viverra nibh cras pulvinar mattis nunc sed blandit libero.</dd>
+						<dd class="govuk-summary-list__actions"><a class="govuk-link govuk-link--no-visited-state" href="#">Change<span class="govuk-visually-hidden"> South Employment 2</span></a></dd>
+					</div>
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">South Heritage assets 1 (S-HER-1)</dt>
+						<dd class="govuk-summary-list__value">Consequat interdum varius sit amet mattis vulputate enim nulla aliquet porttitor lacus luctus accumsan tortor posuere ac ut consequat semper viverra. Nam libero justo laoreet sit amet cursus sit amet dictum sit amet justo donec enim diam vulputate ut pharetra sit amet aliquam id diam.</dd>
+						<dd class="govuk-summary-list__actions"><a class="govuk-link govuk-link--no-visited-state" href="#">Change<span class="govuk-visually-hidden"> South Heritage assets 1</span></a></dd>
+					</div>
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">South Knowledge, understanding, appreciation and enjoyment 1 (S-SOC-1)</dt>
+						<dd class="govuk-summary-list__value">Suspendisse ultrices gravida dictum fusce ut placerat orci nulla pellentesque dignissim enim sit amet venenatis urna cursus eget nunc scelerisque viverra mauris. In aliquam sem fringilla ut morbi tincidunt augue interdum velit euismod in pellentesque massa placerat duis ultricies lacus sed turpis tincidunt.</dd>
+						<dd class="govuk-summary-list__actions"><a class="govuk-link govuk-link--no-visited-state" href="#">Change<span class="govuk-visually-hidden"> South Knowledge, understanding, appreciation and enjoyment 1</span></a></dd>
+					</div>
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">South Seascape and landscape 1 (S-SCP-1)</dt>
+						<dd class="govuk-summary-list__value">Eget nunc lobortis mattis aliquam faucibus purus in massa tempor nec feugiat nisl pretium fusce id velit ut tortor pretium viverra suspendisse potenti. Nullam ac tortor vitae purus faucibus ornare suspendisse sed nisi lacus sed viverra tellus in hac habitasse platea dictumst vestibulum rhoncus.</dd>
+						<dd class="govuk-summary-list__actions"><a class="govuk-link govuk-link--no-visited-state" href="#">Change<span class="govuk-visually-hidden"> South Seascape and landscape 1</span></a></dd>
+					</div>
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">South Tourism and recreation 1 (S-TR-1)</dt>
+						<dd class="govuk-summary-list__value">Scelerisque eu ultrices vitae auctor eu augue ut lectus arcu bibendum at varius vel pharetra vel turpis nunc eget lorem dolor sed viverra ipsum. Nunc aliquet bibendum enim facilisis gravida neque convallis a cras semper auctor neque vitae tempus quam pellentesque nec nam aliquam sem.</dd>
+						<dd class="govuk-summary-list__actions"><a class="govuk-link govuk-link--no-visited-state" href="#">Change<span class="govuk-visually-hidden"> South Tourism and recreation 1</span></a></dd>
+					</div>
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">South Tourism and recreation 2 (S-TR-2)</dt>
+						<dd class="govuk-summary-list__value">Amet nisl suscipit adipiscing bibendum est ultricies integer quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur. Vel illum qui dolorem eum fugiat quo voluptas nulla pariatur at vero eos et accusamus et iusto odio dignissimos ducimus.</dd>
+						<dd class="govuk-summary-list__actions"><a class="govuk-link govuk-link--no-visited-state" href="#">Change<span class="govuk-visually-hidden"> South Tourism and recreation 2</span></a></dd>
+					</div>
+				</dl>
+			</div>
+		</div>
+
+		{# ================================================= #}
+		{# WATER FRAMEWORK DIRECTIVE ASSESSMENT               #}
+		{# ================================================= #}
+		<div class="govuk-summary-card">
+			<div class="govuk-summary-card__title-wrapper">
+				<h2 class="govuk-summary-card__title" id="water-framework-directive">
+					Water Framework Directive assessment
+				</h2>
+			</div>
+			<div class="govuk-summary-card__content">
+				<dl class="govuk-summary-list">
+					<div class="govuk-summary-list__row{% if data['low-complexity-wfd-nautical-mile'] == 'Yes' %} govuk-summary-list__row--no-border{% endif %}">
 						<dt class="govuk-summary-list__key">
 							Is your project located up to 1 nautical mile out at sea?
 						</dt>
@@ -404,7 +1201,7 @@ Removal of any substance or object
 					{% if data['low-complexity-wfd-nautical-mile'] == 'Yes' %}
 					<div class="govuk-summary-list__row">
 						<dt class="govuk-summary-list__key">
-							Uploaded Water Framework Directive assessment
+							Water Framework Directive assessment file
 						</dt>
 						<dd class="govuk-summary-list__value">
 							{% if data['low-complexity-wfd-filename'] %}
@@ -424,7 +1221,9 @@ Removal of any substance or object
 			</div>
 		</div>
 
-		<!-- Other permissions card -->
+		{# ============================== #}
+		{# OTHER PERMISSIONS              #}
+		{# ============================== #}
 		<div class="govuk-summary-card">
 			<div class="govuk-summary-card__title-wrapper">
 				<h2 class="govuk-summary-card__title" id="other-permissions">
@@ -467,7 +1266,7 @@ Removal of any substance or object
 
 					<div class="govuk-summary-list__row{% if data['low-complexity-harbour-authority'] == 'Yes' %} govuk-summary-list__row--no-border{% endif %}">
 						<dt class="govuk-summary-list__key">
-							Is your project located in a harbour authority area?
+							Located in a harbour authority area?
 						</dt>
 						<dd class="govuk-summary-list__value">
 							{{ data['low-complexity-harbour-authority'] }}
@@ -497,7 +1296,7 @@ Removal of any substance or object
 
 					<div class="govuk-summary-list__row{% if data['low-complexity-other-permissions'] == 'Yes' %} govuk-summary-list__row--no-border{% endif %}">
 						<dt class="govuk-summary-list__key">
-							Have you applied to, or got permission from, any other authorities in relation to this project?
+							Permission from any other authorities in relation to this project?
 						</dt>
 						<dd class="govuk-summary-list__value">
 							{{ data['low-complexity-other-permissions'] }}
@@ -527,7 +1326,7 @@ Removal of any substance or object
 
 					<div class="govuk-summary-list__row{% if data['low-complexity-consultation'] == 'Yes' %} govuk-summary-list__row--no-border{% endif %}">
 						<dt class="govuk-summary-list__key">
-							Have you consulted with any public groups or organisations before making this application?
+							Public groups or organisations consulted before making this application?
 						</dt>
 						<dd class="govuk-summary-list__value">
 							{{ data['low-complexity-consultation'] }}
@@ -558,7 +1357,9 @@ Removal of any substance or object
 			</div>
 		</div>
 
-		<!-- Sharing your project information publicly card -->
+		{# ============================== #}
+		{# SHARING YOUR PROJECT INFO      #}
+		{# ============================== #}
 		<div class="govuk-summary-card">
 			<div class="govuk-summary-card__title-wrapper">
 				<h2 class="govuk-summary-card__title" id="sharing-your-project-information-publicly">
@@ -584,7 +1385,7 @@ Removal of any substance or object
 					{% if data['low-complexity-sharing-information'] == 'Yes' %}
 					<div class="govuk-summary-list__row">
 						<dt class="govuk-summary-list__key">
-							Provide details of why you do not consent to your project information being published
+							Reason your information cannot be shared publicly
 						</dt>
 						<dd class="govuk-summary-list__value">
 							{{ data['low-complexity-sharing-information-details'] }}
@@ -609,4 +1410,3 @@ Removal of any substance or object
 	</div>
 </div>
 {% endblock %}
-
