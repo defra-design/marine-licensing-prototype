@@ -275,7 +275,13 @@ module.exports = function (router) {
     // Check if we need to return to check answers
     if (req.session.data['camefromcheckanswers'] === 'true') {
       req.session.data['camefromcheckanswers'] = false;
-      res.redirect('../check-your-answers#site-location');
+      // Only return to check-your-answers if site details are still confirmed complete
+      // If the user made changes that broke completeness, send them to the task list instead
+      if (req.session.data['site-details-confirmed-complete']) {
+        res.redirect('../check-your-answers#site-location');
+      } else {
+        res.redirect('../marine-licence-start-page');
+      }
     } else {
       // Normal flow - redirect back to task list
       res.redirect('../marine-licence-start-page');
