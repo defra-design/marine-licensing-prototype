@@ -601,7 +601,7 @@ module.exports = function (router) {
       // Check if we need to return to check answers
       if (req.session.data['camefromcheckanswers'] === 'true') {
         req.session.data['camefromcheckanswers'] = false;
-        res.redirect('../check-your-answers#environmental-assessments');
+        res.redirect('../check-your-answers#water-framework-directive');
       } else {
         res.redirect('../marine-licence-start-page');
       }
@@ -646,7 +646,7 @@ module.exports = function (router) {
       // Check if we need to return to check answers
       if (req.session.data['camefromcheckanswers'] === 'true') {
         req.session.data['camefromcheckanswers'] = false;
-        res.redirect('../check-your-answers#environmental-assessments');
+        res.redirect('../check-your-answers#water-framework-directive');
       } else {
         res.redirect('../marine-licence-start-page');
       }
@@ -691,7 +691,7 @@ module.exports = function (router) {
       // Check if we need to return to check answers
       if (req.session.data['camefromcheckanswers'] === 'true') {
         req.session.data['camefromcheckanswers'] = false;
-        res.redirect('../check-your-answers#environmental-assessments');
+        res.redirect('../check-your-answers#water-framework-directive');
       } else {
         res.redirect('../marine-licence-start-page');
       }
@@ -759,7 +759,7 @@ module.exports = function (router) {
       // Check if we need to return to main check answers
       if (fromMainCheckAnswers) {
         req.session.data['camefromcheckanswers'] = false;
-        res.redirect('../check-your-answers#environmental-assessments');
+        res.redirect('../check-your-answers#water-framework-directive');
       } else {
         res.redirect('../marine-licence-start-page');
       }
@@ -773,7 +773,7 @@ module.exports = function (router) {
         if (fromMainCheckAnswers) {
           // Go directly back to main check-your-answers (skip WFD check-answers)
           req.session.data['camefromcheckanswers'] = false;
-          res.redirect('../check-your-answers#environmental-assessments');
+          res.redirect('../check-your-answers#water-framework-directive');
         } else {
           // Coming from WFD check-answers, return there
           res.redirect('water-framework-directive-check-answers');
@@ -837,7 +837,7 @@ module.exports = function (router) {
     // Check if we need to return to main check answers
     if (req.session.data['camefromcheckanswers'] === 'true') {
       req.session.data['camefromcheckanswers'] = false;
-      res.redirect('../check-your-answers#environmental-assessments');
+      res.redirect('../check-your-answers#water-framework-directive');
     } else {
       // Return to main task list
       res.redirect('../marine-licence-start-page');

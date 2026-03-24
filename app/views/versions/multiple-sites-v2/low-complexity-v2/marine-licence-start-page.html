@@ -184,69 +184,15 @@ Marine licence start page
 			</li>
 		</ul>
 
-		<h2 class="govuk-heading-m">Environmental assessments</h2>
+		<h2 class="govuk-heading-m">Water Framework Directive assessment</h2>
 		<ul class="govuk-task-list">
-			<li class="govuk-task-list__item govuk-task-list__item--with-link">
-			  <div class="govuk-task-list__name-and-hint">
-				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="environmental-assessments/european-sites" aria-describedby="european-sites-status">
-				  European sites
-				</a>
-			  </div>
-			  
-			  <div class="govuk-task-list__status" id="european-sites-status">
-				{% if data['low-complexity-european-sites-completed'] %}
-				Completed
-				{% else %}
-				<strong class="govuk-tag govuk-tag--blue">
-					Not yet started
-				</strong>
-				{% endif %}
-			  </div>
-			</li>
-
-			<li class="govuk-task-list__item govuk-task-list__item--with-link">
-			  <div class="govuk-task-list__name-and-hint">
-				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="environmental-assessments/marine-conservation-zones" aria-describedby="mcz-status">
-				  Marine Conservation Zone Assessment
-				</a>
-			  </div>
-			  
-			  <div class="govuk-task-list__status" id="mcz-status">
-				{% if data['low-complexity-mcz-completed'] %}
-				Completed
-				{% else %}
-				<strong class="govuk-tag govuk-tag--blue">
-					Not yet started
-				</strong>
-				{% endif %}
-			  </div>
-			</li>
-
-			<li class="govuk-task-list__item govuk-task-list__item--with-link">
-			  <div class="govuk-task-list__name-and-hint">
-				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="environmental-assessments/sites-of-special-scientific-interest" aria-describedby="sssi-status">
-				  Sites of special scientific interest
-				</a>
-			  </div>
-			  
-			  <div class="govuk-task-list__status" id="sssi-status">
-				{% if data['low-complexity-sssi-completed'] %}
-				Completed
-				{% else %}
-				<strong class="govuk-tag govuk-tag--blue">
-					Not yet started
-				</strong>
-				{% endif %}
-			  </div>
-			</li>
-
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
 			  <div class="govuk-task-list__name-and-hint">
 				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="environmental-assessments/water-framework-directive" aria-describedby="wfd-status">
 					Water Framework Directive assessment
 				</a>
 			  </div>
-			  
+
 			  <div class="govuk-task-list__status" id="wfd-status">
 				{% if data['low-complexity-wfd-completed'] %}
 				Completed
@@ -357,7 +303,7 @@ Marine licence start page
 			</li>
 		</ul>
 
-	{% if data['low-complexity-project-background-completed'] and data['low-complexity-dates-completed'] and data['site-details-confirmed-complete'] and mppActiveComplete and data['low-complexity-european-sites-completed'] and data['low-complexity-mcz-completed'] and data['low-complexity-sssi-completed'] and data['low-complexity-wfd-completed'] and (data['user_type'] !== 'organisation' or data['low-complexity-special-legal-powers-completed']) and data['low-complexity-harbour-authority-completed'] and data['low-complexity-other-permissions-completed'] and data['low-complexity-consultation-completed'] and data['low-complexity-sharing-information-completed'] %}
+	{% if data['low-complexity-project-background-completed'] and data['low-complexity-dates-completed'] and data['site-details-confirmed-complete'] and mppActiveComplete and data['low-complexity-wfd-completed'] and (data['user_type'] !== 'organisation' or data['low-complexity-special-legal-powers-completed']) and data['low-complexity-harbour-authority-completed'] and data['low-complexity-other-permissions-completed'] and data['low-complexity-consultation-completed'] and data['low-complexity-sharing-information-completed'] %}
 	<form action="check-your-answers" method="post">
 		<button class="govuk-button" data-module="govuk-button">
 			Check and send your application
