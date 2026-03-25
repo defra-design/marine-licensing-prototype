@@ -132,7 +132,7 @@ Review site details
                 </h2>
                 <ul class="govuk-summary-card__actions">
                     <li class="govuk-summary-card__action">
-                        <a class="govuk-link govuk-link--no-visited-state" href="#">
+                        <a class="govuk-link govuk-link--no-visited-state" href="change-site-location">
                             Change site location<span class="govuk-visually-hidden"> for site 1</span>
                         </a>
                     </li>
@@ -163,7 +163,11 @@ Review site details
                             Map view
                         </dt>
                         <dd class="govuk-summary-list__value govuk-summary-list__value--full-width">
-                            <img src="/public/images/map-5-points.jpg" alt="Map showing site 1 location" />
+                            {% if data['low-complexity-site-location-change-count'] and data['low-complexity-site-location-change-count'] % 2 == 1 %}
+                                <img src="/public/images/map-8-points.jpg" alt="Map showing site 1 location" />
+                            {% else %}
+                                <img src="/public/images/map-5-points.jpg" alt="Map showing site 1 location" />
+                            {% endif %}
                         </dd>
                     </div>
                 </dl>

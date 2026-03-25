@@ -191,6 +191,22 @@ module.exports = function (router) {
   });
 
   /////////////////////////////////////////////////////////
+  //////// Change site location page
+  /////////////////////////////////////////////////////////
+  router.get(`/versions/${version}/${section}/${subsection}/change-site-location`, function (req, res) {
+    res.render(`versions/${version}/${section}/${subsection}/change-site-location`);
+  });
+
+  // Change site location router (POST)
+  router.post(`/versions/${version}/${section}/${subsection}/change-site-location-router`, function (req, res) {
+    // Set flag so we know user is changing an existing site location
+    req.session.data['low-complexity-site-location-changing'] = true;
+    // Clear file type selection so radios are blank
+    delete req.session.data['low-complexity-file-type'];
+    res.redirect('which-type-of-file');
+  });
+
+  /////////////////////////////////////////////////////////
   //////// Upload file page
   /////////////////////////////////////////////////////////
   router.get(`/versions/${version}/${section}/${subsection}/upload-file`, function (req, res) {
@@ -203,6 +219,14 @@ module.exports = function (router) {
     req.session.data['hasUploadedSiteFile'] = true;
     // Mark that user has visited site details journey (reached review page)
     req.session.data['has-visited-site-details'] = true;
+
+    // If changing site location, toggle the change count and clear the changing flag
+    if (req.session.data['low-complexity-site-location-changing']) {
+      const count = (req.session.data['low-complexity-site-location-change-count'] || 0) + 1;
+      req.session.data['low-complexity-site-location-change-count'] = count;
+      delete req.session.data['low-complexity-site-location-changing'];
+    }
+
     res.redirect('review-site-details');
   });
 
