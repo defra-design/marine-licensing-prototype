@@ -1,0 +1,142 @@
+{% extends "../../layouts/low-complexity-v2.html" %}
+
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+
+{% block beforeContent %}
+	{% include "../../includes/phase-banner.html" %}
+	{% if data['organisation-name'] %}
+		{% include "../../includes/organisation-switcher.html" %}
+	{% endif %}
+	{% include "../../includes/back-link.html" %}
+{% endblock %}
+
+{% set pageHeadingTextHTML %}
+Fee estimate
+{% endset %}
+
+{% block pageTitle %}
+    Fee estimate - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+
+{% if data['low-complexity-fee-errorthispage'] == "true" %}
+	<div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" data-module="govuk-error-summary">
+		<h2 class="govuk-error-summary__title" id="error-summary-title">
+			There is a problem
+		</h2>
+		<div class="govuk-error-summary__body">
+			<ul class="govuk-list govuk-error-summary__list">
+				{% if data['low-complexity-fee-errortypeone'] == "true" %}
+					<li>
+						<a href="#low-complexity-fee-terms-checkbox">You need to agree to the terms and conditions</a>
+					</li>
+				{% endif %}
+				{% if data['low-complexity-fee-errortypetwo'] == "true" %}
+					<li>
+						<a href="#low-complexity-fee-acceptance">Select if you accept the fee estimate of £1,400.00</a>
+					</li>
+				{% endif %}
+			</ul>
+		</div>
+	</div>
+{% endif %}
+
+<div class="govuk-grid-row">
+
+	<div class="govuk-grid-column-two-thirds">
+
+		<span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
+		<h1 class="govuk-heading-l">
+			{{ pageHeadingTextHTML }}
+		</h1>
+
+		{{ govukInsetText({
+			text: "Your application fee band: 2A"
+		}) }}
+
+		{{ govukWarningText({
+			text: "This is an estimate. Your final invoice will be based on actual hours worked",
+			iconFallbackText: "Warning"
+		}) }}
+
+		<p>This estimate includes VAT where applicable. This estimate does not include:</p>
+
+		<ul class="govuk-list govuk-list--bullet">
+			<li>sediment sample analysis</li>
+			<li>marine disposal site monitoring fees</li>
+			<li>travel costs</li>
+			<li>licence monitoring charges (if your licence requires monitoring)</li>
+		</ul>
+
+		<p><a href="https://www.gov.uk/government/publications/marine-licensing-fees" rel="noreferrer noopener" target="_blank">Find out more about MMO charges (opens in new tab)</a>.</p>
+
+		<form action="fee-estimate-router" method="post">
+
+			<h2 class="govuk-heading-m">Terms and conditions</h2>
+
+			<p>You need to agree to these <a href="https://assets.publishing.service.gov.uk/media/63567839e90e0777b38c5d02/FEES_Terms_and_Conditions.pdf" rel="noreferrer noopener" target="_blank">terms and conditions (opens in new tab)</a>.</p>
+
+			<div class="govuk-form-group {% if data['low-complexity-fee-errorthispage'] == 'true' and data['low-complexity-fee-errortypeone'] == 'true' %}govuk-form-group--error{% endif %}">
+				<fieldset class="govuk-fieldset" {% if data['low-complexity-fee-errorthispage'] == 'true' and data['low-complexity-fee-errortypeone'] == 'true' %}aria-describedby="low-complexity-fee-terms-checkbox-error"{% endif %}>
+					{% if data['low-complexity-fee-errorthispage'] == 'true' and data['low-complexity-fee-errortypeone'] == 'true' %}
+						<p id="low-complexity-fee-terms-checkbox-error" class="govuk-error-message">
+							<span class="govuk-visually-hidden">Error:</span>
+							You need to agree to the terms and conditions
+						</p>
+					{% endif %}
+					<div class="govuk-checkboxes" data-module="govuk-checkboxes">
+						<div class="govuk-checkboxes__item">
+							<input class="govuk-checkboxes__input" id="low-complexity-fee-terms-checkbox" name="low-complexity-fee-terms-checkbox" type="checkbox" value="agree" {% if data['low-complexity-fee-terms-checkbox'] == 'agree' %}checked{% endif %}>
+							<label class="govuk-label govuk-checkboxes__label" for="low-complexity-fee-terms-checkbox">
+								I agree to the terms and conditions
+							</label>
+						</div>
+					</div>
+				</fieldset>
+			</div>
+
+			<div class="govuk-form-group {% if data['low-complexity-fee-errorthispage'] == 'true' and data['low-complexity-fee-errortypetwo'] == 'true' %}govuk-form-group--error{% endif %}">
+				<fieldset class="govuk-fieldset" {% if data['low-complexity-fee-errorthispage'] == 'true' and data['low-complexity-fee-errortypetwo'] == 'true' %}aria-describedby="low-complexity-fee-acceptance-error"{% else %}aria-describedby="low-complexity-fee-acceptance-hint"{% endif %}>
+					<legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+						<h2 class="govuk-fieldset__heading">
+							Do you accept the fee estimate of £1,400.00?
+						</h2>
+					</legend>
+					{% if data['low-complexity-fee-errorthispage'] == 'true' and data['low-complexity-fee-errortypetwo'] == 'true' %}
+						<p id="low-complexity-fee-acceptance-error" class="govuk-error-message">
+							<span class="govuk-visually-hidden">Error:</span>
+							Select if you accept the fee estimate of £1,400.00
+						</p>
+					{% endif %}
+					<div class="govuk-radios" data-module="govuk-radios">
+						<div class="govuk-radios__item">
+							<input class="govuk-radios__input" id="low-complexity-fee-acceptance" name="low-complexity-fee-acceptance" type="radio" value="yes" {% if data['low-complexity-fee-acceptance'] == 'yes' %}checked{% endif %}>
+							<label class="govuk-label govuk-radios__label" for="low-complexity-fee-acceptance">
+								Yes
+							</label>
+						</div>
+						<div class="govuk-radios__item">
+							<input class="govuk-radios__input" id="low-complexity-fee-acceptance-2" name="low-complexity-fee-acceptance" type="radio" value="no" {% if data['low-complexity-fee-acceptance'] == 'no' %}checked{% endif %}>
+							<label class="govuk-label govuk-radios__label" for="low-complexity-fee-acceptance-2">
+								No
+							</label>
+						</div>
+					</div>
+				</fieldset>
+			</div>
+
+			<div class="govuk-button-group">
+				<button class="govuk-button" data-module="govuk-button">
+					Save and continue
+				</button>
+				<a class="govuk-link" href="../marine-licence-start-page">Cancel</a>
+			</div>
+
+		</form>
+
+	</div>
+
+</div>
+{% endblock %}
