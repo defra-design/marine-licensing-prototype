@@ -110,6 +110,7 @@ require('./routes/versions/multiple-sites-v2/low-complexity-v2.js')(router);
 require('./routes/versions/multiple-sites-v2/low-complexity-v2-site-locations.js')(router);
 require('./routes/versions/multiple-sites-v2/low-complexity-v2-manual-entry.js')(router);
 require('./routes/versions/multiple-sites-v2/low-complexity-v2-marine-plan-policies.js')(router);
+require('./routes/versions/multiple-sites-v2/low-complexity-v2-fee-and-invoicing.js')(router);
 require('./routes/versions/multiple-sites-v2/sample-plans-v1.js')(router);
 require('./routes/versions/multiple-sites-v2/sample-plans-v1-dredging-site-locations.js')(router);
 require('./routes/versions/multiple-sites-v2/sample-plans-v1-disposal-site-locations.js')(router);
