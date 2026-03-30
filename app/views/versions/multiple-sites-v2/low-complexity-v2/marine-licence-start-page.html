@@ -80,7 +80,7 @@ Marine licence start page
 			</li>
 		</ul>
 
-		<h2 class="govuk-heading-m">Site details and activities</h2>
+		<h2 class="govuk-heading-m">Site and activity details</h2>
 
 		{# Compute site details completeness across all activities #}
 		{% set siteDetailsComplete = true %}
@@ -122,7 +122,7 @@ Marine licence start page
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
 			  <div class="govuk-task-list__name-and-hint">
 				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="site-details/" aria-describedby="site-details-status">
-				  Site details
+				  Sites and activities
 				</a>
 			  </div>
 
@@ -156,7 +156,7 @@ Marine licence start page
 			{% set mppFolder = 'marine-plan-policies/' %}
 		{% endif %}
 
-		<p class="govuk-body">Read the <a href="{{ mppFolder }}guidance" class="govuk-link" target="_blank" rel="noopener noreferrer">Marine plan policy guidance (opens in new tab)</a> before you start.</p>
+		<p class="govuk-body">Read the <a href="{{ mppFolder }}guidance" class="govuk-link" target="_blank" rel="noopener noreferrer">Marine plan policies guidance (opens in new tab)</a> before you start.</p>
 
 		{# MPP section: only 5 policy pages are active in this prototype; section is complete when all 5 are done. Display as 37 for usability testing. #}
 		{% set mppActiveComplete = data[mppPrefix + 's-acc-1-completed'] and data[mppPrefix + 's-bio-1-completed'] and data[mppPrefix + 's-agg-4-completed'] and data[mppPrefix + 's-emp-1-completed'] and data[mppPrefix + 's-uwn-2-completed'] %}
@@ -172,7 +172,7 @@ Marine licence start page
 				  Policy considerations {% if mppActiveCompletedCount == 0 %}({{ mppDisplayTotal }} to complete){% elif mppActiveComplete %}({{ mppDisplayTotal }} of {{ mppDisplayTotal }} completed){% else %}({{ mppActiveCompletedCount }} of {{ mppDisplayTotal }} completed){% endif %}
 				</a>
 				{% else %}
-				<span>Policy considerations</span>
+				<span>Marine plan policy considerations</span>
 				{% endif %}
 			  </div>
 
@@ -196,7 +196,7 @@ Marine licence start page
 			</li>
 		</ul>
 
-		<h2 class="govuk-heading-m">Water Framework Directive assessment</h2>
+		<h2 class="govuk-heading-m">Water Framework Directive</h2>
 		<ul class="govuk-task-list">
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
 			  <div class="govuk-task-list__name-and-hint">
@@ -294,7 +294,7 @@ Marine licence start page
 			</li>
 		</ul>
 
-		<h2 class="govuk-heading-m">Fee estimate and invoicing</h2>
+		<h2 class="govuk-heading-m">Fee estimate and invoicing details</h2>
 		<ul class="govuk-task-list">
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
 			  <div class="govuk-task-list__name-and-hint">
