@@ -2,7 +2,7 @@
   "serviceName": "Get permission for marine work",
   "plugins": {
     "govuk-frontend": {
-      "rebrand": true
+      "rebrand": false
     }
   }
 }

@@ -1,0 +1,19 @@
+{#
+Shared wrapper around the Prototype Kit's `govuk-branded` layout.
+
+We override `headIcons` to ensure favicons resolve when using GOV.UK Frontend v6,
+which no longer ships assets under `assets/rebrand/`.
+#}
+
+{% extends "govuk-prototype-kit/layouts/govuk-branded.njk" %}
+
+{% block headIcons %}
+  {# Use the non-rebrand assets path that exists in govuk-frontend@6 #}
+  {% set _govukFrontendAssets = "/plugin-assets/govuk-frontend/dist/govuk/assets" %}
+  <link rel="icon" sizes="48x48" href="{{ _govukFrontendAssets }}/images/favicon.ico">
+  <link rel="icon" sizes="any" href="{{ _govukFrontendAssets }}/images/favicon.svg" type="image/svg+xml">
+  <link rel="mask-icon" href="{{ _govukFrontendAssets }}/images/govuk-icon-mask.svg" color="{{ themeColor | default('#1d70b8', true) }}">
+  <link rel="apple-touch-icon" href="{{ _govukFrontendAssets }}/images/govuk-icon-180.png">
+  <link rel="manifest" href="{{ _govukFrontendAssets }}/manifest.json">
+{% endblock %}
+
