@@ -144,11 +144,23 @@ Marine licence start page
 
 		<h2 class="govuk-heading-m">Marine plan policies</h2>
 
-		<p class="govuk-body">Read the <a href="marine-plan-policies/guidance" class="govuk-link" target="_blank" rel="noopener noreferrer">Marine plan policy guidance (opens in new tab)</a> before you start.</p>
+		{# Determine which MPP version to use based on session #}
+		{% set mppVersion = data['mpp-version'] %}
+		{% if mppVersion == '2' %}
+			{# MPP v2: textarea-only question pages #}
+			{% set mppPrefix = 'marine-plan-policy-v2-' %}
+			{% set mppFolder = 'marine-plan-policies-v2/' %}
+		{% else %}
+			{# MPP v1: checkbox + textarea question pages #}
+			{% set mppPrefix = 'marine-plan-policy-' %}
+			{% set mppFolder = 'marine-plan-policies/' %}
+		{% endif %}
+
+		<p class="govuk-body">Read the <a href="{{ mppFolder }}guidance" class="govuk-link" target="_blank" rel="noopener noreferrer">Marine plan policy guidance (opens in new tab)</a> before you start.</p>
 
 		{# MPP section: only 5 policy pages are active in this prototype; section is complete when all 5 are done. Display as 37 for usability testing. #}
-		{% set mppActiveComplete = data['marine-plan-policy-s-acc-1-completed'] and data['marine-plan-policy-s-bio-1-completed'] and data['marine-plan-policy-s-agg-4-completed'] and data['marine-plan-policy-s-emp-1-completed'] and data['marine-plan-policy-s-uwn-2-completed'] %}
-		{% set mppActiveCompletedCount = (data['marine-plan-policy-s-acc-1-completed'] and 1 or 0) + (data['marine-plan-policy-s-bio-1-completed'] and 1 or 0) + (data['marine-plan-policy-s-agg-4-completed'] and 1 or 0) + (data['marine-plan-policy-s-emp-1-completed'] and 1 or 0) + (data['marine-plan-policy-s-uwn-2-completed'] and 1 or 0) %}
+		{% set mppActiveComplete = data[mppPrefix + 's-acc-1-completed'] and data[mppPrefix + 's-bio-1-completed'] and data[mppPrefix + 's-agg-4-completed'] and data[mppPrefix + 's-emp-1-completed'] and data[mppPrefix + 's-uwn-2-completed'] %}
+		{% set mppActiveCompletedCount = (data[mppPrefix + 's-acc-1-completed'] and 1 or 0) + (data[mppPrefix + 's-bio-1-completed'] and 1 or 0) + (data[mppPrefix + 's-agg-4-completed'] and 1 or 0) + (data[mppPrefix + 's-emp-1-completed'] and 1 or 0) + (data[mppPrefix + 's-uwn-2-completed'] and 1 or 0) %}
 		{% set mppDisplayTotal = 37 %}
 		{% set mppUnlocked = data['site-details-confirmed-complete'] or mppActiveCompletedCount > 0 %}
 
@@ -156,7 +168,7 @@ Marine licence start page
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
 			  <div class="govuk-task-list__name-and-hint">
 				{% if mppUnlocked %}
-				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="marine-plan-policies/" aria-describedby="marine-plan-policies-status">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="{{ mppFolder }}" aria-describedby="marine-plan-policies-status">
 				  Policy considerations {% if mppActiveCompletedCount == 0 %}({{ mppDisplayTotal }} to complete){% elif mppActiveComplete %}({{ mppDisplayTotal }} of {{ mppDisplayTotal }} completed){% else %}({{ mppActiveCompletedCount }} of {{ mppDisplayTotal }} completed){% endif %}
 				</a>
 				{% else %}

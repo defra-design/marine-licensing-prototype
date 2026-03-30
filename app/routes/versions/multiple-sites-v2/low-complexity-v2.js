@@ -16,6 +16,7 @@ module.exports = function (router) {
 
   router.use(function (req, res, next) {
     if (req.path.indexOf('low-complexity-v2') !== -1) {
+      // v1 MPP counts
       let completedCount = 0;
       for (const key of MARINE_PLAN_POLICY_KEYS) {
         if (req.session.data['marine-plan-policy-' + key + '-completed']) {
@@ -24,6 +25,16 @@ module.exports = function (router) {
       }
       req.session.data['marine-plan-policies-completed-count'] = completedCount;
       req.session.data['marine-plan-policies-not-started-count'] = MARINE_PLAN_POLICIES_TOTAL - completedCount;
+
+      // v2 MPP counts
+      let completedCountV2 = 0;
+      for (const key of MARINE_PLAN_POLICY_KEYS) {
+        if (req.session.data['marine-plan-policy-v2-' + key + '-completed']) {
+          completedCountV2++;
+        }
+      }
+      req.session.data['marine-plan-policies-v2-completed-count'] = completedCountV2;
+      req.session.data['marine-plan-policies-v2-not-started-count'] = MARINE_PLAN_POLICIES_TOTAL - completedCountV2;
     }
     next();
   });
