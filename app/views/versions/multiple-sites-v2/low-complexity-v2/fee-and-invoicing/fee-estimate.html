@@ -1,7 +1,6 @@
 {% extends "../../layouts/low-complexity-v2.html" %}
 
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
-{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
 
 {% block beforeContent %}
 	{% include "../../includes/phase-banner.html" %}
@@ -53,15 +52,12 @@ Fee estimate
 		</h1>
 
 		{{ govukInsetText({
-			text: "Your application fee band: 2A"
+			html: "Your application fee band: 2A<br>The maximum fee for your application is £1,400"
 		}) }}
 
-		{{ govukWarningText({
-			text: "This is an estimate. Your final invoice will be based on actual hours worked",
-			iconFallbackText: "Warning"
-		}) }}
+		<p>Your final invoice will be based on actual hours worked. VAT does not apply.</p>
 
-		<p>This estimate includes VAT where applicable. This estimate does not include:</p>
+		<p>This estimate does not include:</p>
 
 		<ul class="govuk-list govuk-list--bullet">
 			<li>sediment sample analysis</li>
