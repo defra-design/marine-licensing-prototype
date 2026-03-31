@@ -163,30 +163,6 @@ Review site details
                             Upload a file with the coordinates of the site
                         </dd>
                     </div>
-                    {% if data['exemption-which-type-of-file-radios'] %}
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            File type
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            {{ data['exemption-which-type-of-file-radios'] }}
-                        </dd>
-                    </div>
-                    {% endif %}
-                    {% if data['hasUploadedFile'] %}
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            File uploaded
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            {% if data['exemption-which-type-of-file-radios'] == "KML" %}
-                                se-coast-sample-sites-coordinates.kml
-                            {% else %}
-                                se-coast-sample-sites-coordinates.zip
-                            {% endif %}
-                        </dd>
-                    </div>
-                    {% endif %}
                 </dl>
             </div>
         </div>

@@ -148,38 +148,6 @@ Check your answers before sending your information
 							{% endif %}
 						</dd>
 					</div>
-					{% if not isManualEntry %}
-					<div class="govuk-summary-list__row">
-						<dt class="govuk-summary-list__key">
-							File type
-						</dt>
-						<dd class="govuk-summary-list__value">
-							{% if data['low-complexity-file-type'] == 'kml' %}
-								KML
-							{% elif data['low-complexity-file-type'] == 'shapefile' %}
-								Shapefile
-							{% elif data['low-complexity-file-type'] == 'kps' %}
-								KPS
-							{% else %}
-								Shapefile or KPS (depending on what was selected)
-							{% endif %}
-						</dd>
-					</div>
-					<div class="govuk-summary-list__row">
-						<dt class="govuk-summary-list__key">
-							File uploaded
-						</dt>
-						<dd class="govuk-summary-list__value">
-							{% if data['low-complexity-file-type'] == 'kml' %}
-								my-site-location.kml
-							{% elif data['low-complexity-file-type'] == 'shapefile' %}
-								my-site-location.zip (3 shapefile, axis.prj)
-							{% else %}
-								my-site-location.zip
-							{% endif %}
-						</dd>
-					</div>
-					{% endif %}
 				</dl>
 			</div>
 		</div>

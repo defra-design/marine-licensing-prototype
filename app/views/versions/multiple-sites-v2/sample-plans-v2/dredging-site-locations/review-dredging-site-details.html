@@ -73,34 +73,6 @@ Review dredge site details
                         </dd>
                         
                     </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            File type
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            {% if data['sample-plan-file-type'] == 'kml' %}
-                                KML
-                            {% elif data['sample-plan-file-type'] == 'shapefile' %}
-                                Shapefile
-                            {% else %}
-                                Shapefile
-                            {% endif %}
-                        </dd>
-                        
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">
-                            File uploaded
-                        </dt>
-                        <dd class="govuk-summary-list__value">
-                            {% if data['sample-plan-file-type'] == 'kml' %}
-                                dredge-site-coordinates.kml
-                            {% else %}
-                                dredge-site-coordinates.zip
-                            {% endif %}
-                        </dd>
-                        
-                    </div>
                 </dl>
             </div>
         </div>
