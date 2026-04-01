@@ -18,56 +18,56 @@
 {% set coordinateSystem = site.coordinateSystem %}
 
 {% set point1LatHTML %}
-    {% if coordinateSystem == "British National Grid (OSGB36)" %}Eastings of the start and end point
+    {% if coordinateSystem == "British National Grid (OSGB36)" %}Easting of the start and end point
     {% else %}Latitude of start and end point{% endif %}
 {% endset %}
 {% set point1LongHTML %}
-    {% if coordinateSystem == "British National Grid (OSGB36)" %}Northings of the start and end point
+    {% if coordinateSystem == "British National Grid (OSGB36)" %}Northing of the start and end point
     {% else %}Longitude of start and end point{% endif %}
 {% endset %}
 {% set point2LatHTML %}
-    {% if coordinateSystem == "British National Grid (OSGB36)" %}Eastings of point 2
+    {% if coordinateSystem == "British National Grid (OSGB36)" %}Easting of point 2
     {% else %}Latitude of point 2{% endif %}
 {% endset %}
 {% set point2LongHTML %}
-    {% if coordinateSystem == "British National Grid (OSGB36)" %}Northings of point 2
+    {% if coordinateSystem == "British National Grid (OSGB36)" %}Northing of point 2
     {% else %}Longitude of point 2{% endif %}
 {% endset %}
 {% set point3LatHTML %}
-    {% if coordinateSystem == "British National Grid (OSGB36)" %}Eastings of point 3
+    {% if coordinateSystem == "British National Grid (OSGB36)" %}Easting of point 3
     {% else %}Latitude of point 3{% endif %}
 {% endset %}
 {% set point3LongHTML %}
-    {% if coordinateSystem == "British National Grid (OSGB36)" %}Northings of point 3
+    {% if coordinateSystem == "British National Grid (OSGB36)" %}Northing of point 3
     {% else %}Longitude of point 3{% endif %}
 {% endset %}
 {% set point4LatHTML %}
-    {% if coordinateSystem == "British National Grid (OSGB36)" %}Eastings of point 4
+    {% if coordinateSystem == "British National Grid (OSGB36)" %}Easting of point 4
     {% else %}Latitude of point 4{% endif %}
 {% endset %}
 {% set point4LongHTML %}
-    {% if coordinateSystem == "British National Grid (OSGB36)" %}Northings of point 4
+    {% if coordinateSystem == "British National Grid (OSGB36)" %}Northing of point 4
     {% else %}Longitude of point 4{% endif %}
 {% endset %}
 {% set point5LatHTML %}
-    {% if coordinateSystem == "British National Grid (OSGB36)" %}Eastings of point 5
+    {% if coordinateSystem == "British National Grid (OSGB36)" %}Easting of point 5
     {% else %}Latitude of point 5{% endif %}
 {% endset %}
 {% set point5LongHTML %}
-    {% if coordinateSystem == "British National Grid (OSGB36)" %}Northings of point 5
+    {% if coordinateSystem == "British National Grid (OSGB36)" %}Northing of point 5
     {% else %}Longitude of point 5{% endif %}
 {% endset %}
 
-{% set point1LatError = "Enter the " + ("eastings" if coordinateSystem == "British National Grid (OSGB36)" else "latitude") + " of the start and end point" %}
-{% set point1LongError = "Enter the " + ("northings" if coordinateSystem == "British National Grid (OSGB36)" else "longitude") + " of the start and end point" %}
-{% set point2LatError = "Enter the " + ("eastings" if coordinateSystem == "British National Grid (OSGB36)" else "latitude") + " of point 2" %}
-{% set point2LongError = "Enter the " + ("northings" if coordinateSystem == "British National Grid (OSGB36)" else "longitude") + " of point 2" %}
-{% set point3LatError = "Enter the " + ("eastings" if coordinateSystem == "British National Grid (OSGB36)" else "latitude") + " of point 3" %}
-{% set point3LongError = "Enter the " + ("northings" if coordinateSystem == "British National Grid (OSGB36)" else "longitude") + " of point 3" %}
-{% set point4LatError = "Enter the " + ("eastings" if coordinateSystem == "British National Grid (OSGB36)" else "latitude") + " of point 4" %}
-{% set point4LongError = "Enter the " + ("northings" if coordinateSystem == "British National Grid (OSGB36)" else "longitude") + " of point 4" %}
-{% set point5LatError = "Enter the " + ("eastings" if coordinateSystem == "British National Grid (OSGB36)" else "latitude") + " of point 5" %}
-{% set point5LongError = "Enter the " + ("northings" if coordinateSystem == "British National Grid (OSGB36)" else "longitude") + " of point 5" %}
+{% set point1LatError = "Enter the " + ("easting" if coordinateSystem == "British National Grid (OSGB36)" else "latitude") + " of the start and end point" %}
+{% set point1LongError = "Enter the " + ("northing" if coordinateSystem == "British National Grid (OSGB36)" else "longitude") + " of the start and end point" %}
+{% set point2LatError = "Enter the " + ("easting" if coordinateSystem == "British National Grid (OSGB36)" else "latitude") + " of point 2" %}
+{% set point2LongError = "Enter the " + ("northing" if coordinateSystem == "British National Grid (OSGB36)" else "longitude") + " of point 2" %}
+{% set point3LatError = "Enter the " + ("easting" if coordinateSystem == "British National Grid (OSGB36)" else "latitude") + " of point 3" %}
+{% set point3LongError = "Enter the " + ("northing" if coordinateSystem == "British National Grid (OSGB36)" else "longitude") + " of point 3" %}
+{% set point4LatError = "Enter the " + ("easting" if coordinateSystem == "British National Grid (OSGB36)" else "latitude") + " of point 4" %}
+{% set point4LongError = "Enter the " + ("northing" if coordinateSystem == "British National Grid (OSGB36)" else "longitude") + " of point 4" %}
+{% set point5LatError = "Enter the " + ("easting" if coordinateSystem == "British National Grid (OSGB36)" else "latitude") + " of point 5" %}
+{% set point5LongError = "Enter the " + ("northing" if coordinateSystem == "British National Grid (OSGB36)" else "longitude") + " of point 5" %}
 
 {% set hasPoint1LatError = false %}
 {% set hasPoint1LongError = false %}
