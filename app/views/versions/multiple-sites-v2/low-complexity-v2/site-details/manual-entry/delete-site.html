@@ -35,6 +35,11 @@ Are you sure you want to delete this site?
       {% endif %}
     </div>
 
+    {% set mppInProgress = data['marine-plan-policy-s-acc-1-completed'] or data['marine-plan-policy-s-bio-1-completed'] or data['marine-plan-policy-s-agg-4-completed'] or data['marine-plan-policy-s-emp-1-completed'] or data['marine-plan-policy-s-uwn-2-completed'] or data['marine-plan-policy-v2-s-acc-1-completed'] or data['marine-plan-policy-v2-s-bio-1-completed'] or data['marine-plan-policy-v2-s-agg-4-completed'] or data['marine-plan-policy-v2-s-emp-1-completed'] or data['marine-plan-policy-v2-s-uwn-2-completed'] %}
+    {% if sitesCount == 1 and mppInProgress %}
+      <p class="govuk-body">This will also delete any Marine Plan Policy information you've entered.</p>
+    {% endif %}
+
     <form action="delete-site-router" method="post" novalidate>
       <input type="hidden" name="site-number" value="{{ site.siteNumber }}">
       <div class="govuk-button-group govuk-!-margin-top-7">

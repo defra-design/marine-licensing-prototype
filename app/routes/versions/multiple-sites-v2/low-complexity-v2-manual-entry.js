@@ -744,9 +744,11 @@ module.exports = function (router) {
       return res.redirect(`${basePath}/review-site-details`);
     }
 
+    const sites = getManualSites(req.session);
     res.render(`${viewBase}/delete-site`, {
       data: req.session.data,
-      site: site
+      site: site,
+      sitesCount: sites.length
     });
   });
 
@@ -765,12 +767,20 @@ module.exports = function (router) {
       delete req.session.data['low-complexity-site-details-finished'];
       delete req.session.data['low-complexity-site-location-method'];
 
-      // Clear MPP data since all site details are gone
+      // Clear MPP v1 data since all site details are gone
       delete req.session.data['marine-plan-policy-s-acc-1-completed'];
       delete req.session.data['marine-plan-policy-s-bio-1-completed'];
       delete req.session.data['marine-plan-policy-s-agg-4-completed'];
       delete req.session.data['marine-plan-policy-s-emp-1-completed'];
       delete req.session.data['marine-plan-policy-s-uwn-2-completed'];
+
+      // Clear MPP v2 data
+      ['s-acc-1', 's-bio-1', 's-agg-4', 's-emp-1', 's-uwn-2'].forEach(function (key) {
+        delete req.session.data['marine-plan-policy-v2-' + key + '-completed'];
+        delete req.session.data['marine-plan-policy-v2-' + key + '-text'];
+      });
+      delete req.session.data['marine-plan-policies-v2-completed-count'];
+      delete req.session.data['marine-plan-policies-v2-not-started-count'];
 
       return res.redirect(`/versions/multiple-sites-v2/low-complexity-v2/marine-licence-start-page`);
     }
@@ -857,12 +867,20 @@ module.exports = function (router) {
       delete req.session.data[key];
     });
 
-    // Clear MPP data since site details are being deleted
+    // Clear MPP v1 data since site details are being deleted
     delete req.session.data['marine-plan-policy-s-acc-1-completed'];
     delete req.session.data['marine-plan-policy-s-bio-1-completed'];
     delete req.session.data['marine-plan-policy-s-agg-4-completed'];
     delete req.session.data['marine-plan-policy-s-emp-1-completed'];
     delete req.session.data['marine-plan-policy-s-uwn-2-completed'];
+
+    // Clear MPP v2 data
+    ['s-acc-1', 's-bio-1', 's-agg-4', 's-emp-1', 's-uwn-2'].forEach(function (key) {
+      delete req.session.data['marine-plan-policy-v2-' + key + '-completed'];
+      delete req.session.data['marine-plan-policy-v2-' + key + '-text'];
+    });
+    delete req.session.data['marine-plan-policies-v2-completed-count'];
+    delete req.session.data['marine-plan-policies-v2-not-started-count'];
 
     // Redirect to task list so site details resets to Not yet started
     res.redirect(`/versions/multiple-sites-v2/low-complexity-v2/marine-licence-start-page`);

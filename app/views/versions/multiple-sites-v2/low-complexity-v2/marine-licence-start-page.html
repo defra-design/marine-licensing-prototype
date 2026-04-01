@@ -169,7 +169,7 @@ Marine licence start page
 			  <div class="govuk-task-list__name-and-hint">
 				{% if mppUnlocked %}
 				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="{{ mppFolder }}" aria-describedby="marine-plan-policies-status">
-				  Policy considerations {% if mppActiveCompletedCount == 0 %}({{ mppDisplayTotal }} to complete){% elif mppActiveComplete %}({{ mppDisplayTotal }} of {{ mppDisplayTotal }} completed){% else %}({{ mppActiveCompletedCount }} of {{ mppDisplayTotal }} completed){% endif %}
+					Marine plan policy considerations {% if mppActiveCompletedCount == 0 %}({{ mppDisplayTotal }} to complete){% elif mppActiveComplete %}({{ mppDisplayTotal }} of {{ mppDisplayTotal }} completed){% else %}({{ mppActiveCompletedCount }} of {{ mppDisplayTotal }} completed){% endif %}
 				</a>
 				{% else %}
 				<span>Marine plan policy considerations</span>
@@ -324,9 +324,9 @@ Marine licence start page
 			  </div>
 
 			  <div class="govuk-task-list__status">
-				<strong class="govuk-tag govuk-tag--blue">
-					Not yet started
-				</strong>
+
+					- - - - - - - - - - -
+
 			  </div>
 			</li>
 		</ul>
