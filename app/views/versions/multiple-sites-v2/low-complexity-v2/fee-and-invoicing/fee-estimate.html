@@ -34,7 +34,7 @@ Fee estimate
 				{% endif %}
 				{% if data['low-complexity-fee-errortypetwo'] == "true" %}
 					<li>
-						<a href="#low-complexity-fee-acceptance">Select if you accept the fee estimate of £1,400.00</a>
+						<a href="#low-complexity-fee-acceptance">Select if you accept the fee estimate of £1,400</a>
 					</li>
 				{% endif %}
 			</ul>
@@ -97,13 +97,13 @@ Fee estimate
 				<fieldset class="govuk-fieldset" {% if data['low-complexity-fee-errorthispage'] == 'true' and data['low-complexity-fee-errortypetwo'] == 'true' %}aria-describedby="low-complexity-fee-acceptance-error"{% else %}aria-describedby="low-complexity-fee-acceptance-hint"{% endif %}>
 					<legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
 						<h2 class="govuk-fieldset__heading">
-							Do you accept the fee estimate of £1,400.00?
+							Do you accept the fee estimate of £1,400?
 						</h2>
 					</legend>
 					{% if data['low-complexity-fee-errorthispage'] == 'true' and data['low-complexity-fee-errortypetwo'] == 'true' %}
 						<p id="low-complexity-fee-acceptance-error" class="govuk-error-message">
 							<span class="govuk-visually-hidden">Error:</span>
-							Select if you accept the fee estimate of £1,400.00
+							Select if you accept the fee estimate of £1,400
 						</p>
 					{% endif %}
 					<div class="govuk-radios" data-module="govuk-radios">
