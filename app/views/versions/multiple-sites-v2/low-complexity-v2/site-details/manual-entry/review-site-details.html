@@ -393,7 +393,7 @@ Review site details
                                                 {% elif structure == 'offshore-wind-foundations' %}Fixed offshore wind foundations
                                                 {% elif structure == 'aquaculture-piled-structures' %}Piled or fixed aquaculture structures
                                                 {% elif structure == 'aquaculture-trestles' %}Aquaculture trestles or fixed walkways
-                                                {% elif structure == 'other-structures' %}Other structures ({{ ad['low-complexity-construction-structures-other-details'] }})
+                                                {% elif structure == 'other-structures' %}Other structures: {{ ad['low-complexity-construction-structures-other-details'] }}
                                                 {% endif %}
                                             </li>
                                         {% endfor %}
@@ -442,7 +442,7 @@ Review site details
                                                 {% elif item == 'seeding-materials' %}Seeding materials (e.g. shellfish seed for habitat enhancement)
                                                 {% elif item == 'temporary-works-equipment' %}Temporary works equipment
                                                 {% elif item == 'tracers-dyes' %}Use of tracers or dyes
-                                                {% elif item == 'other-deposits' %}Other deposits ({{ ad['low-complexity-deposit-substances-objects-other-details'] }})
+                                                {% elif item == 'other-deposits' %}Other deposits: {{ ad['low-complexity-deposit-substances-objects-other-details'] }}
                                                 {% endif %}
                                             </li>
                                         {% endfor %}
@@ -507,7 +507,7 @@ Review site details
                                                 {% elif item == 'survey-markers' %}Survey markers or temporary works equipment
                                                 {% elif item == 'wrecks-archaeological' %}Wrecks or items or archaeological remains
                                                 {% elif item == 'sediment-samples' %}Sediment samples
-                                                {% elif item == 'other-substances-objects' %}Other substances or objects ({{ ad['low-complexity-removal-substances-objects-other-details'] }})
+                                                {% elif item == 'other-substances-objects' %}Other substances or objects: {{ ad['low-complexity-removal-substances-objects-other-details'] }}
                                                 {% endif %}
                                             </li>
                                         {% endfor %}
