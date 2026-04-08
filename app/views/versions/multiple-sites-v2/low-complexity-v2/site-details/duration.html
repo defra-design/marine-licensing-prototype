@@ -38,7 +38,7 @@ Error:
 			</h2>
 			<div class="govuk-error-summary__body">
 				<ul class="govuk-list govuk-error-summary__list">
-					<li><a href="#low-complexity-site-duration-years">Enter the maximum duration of the activity</a></li>
+					<li><a href="#low-complexity-site-duration-years">{% if data['low-complexity-site-duration-zero-error'] == 'true' %}Enter a duration{% else %}Enter the maximum duration of the activity{% endif %}</a></li>
 				</ul>
 			</div>
 		</div>
@@ -61,7 +61,7 @@ Error:
 
 					{% if data['low-complexity-site-duration-errorthispage'] == "true" %}
 					<p id="duration-error" class="govuk-error-message">
-						<span class="govuk-visually-hidden">Error:</span> Enter the maximum duration of the activity
+						<span class="govuk-visually-hidden">Error:</span> {% if data['low-complexity-site-duration-zero-error'] == 'true' %}Enter a duration{% else %}Enter the maximum duration of the activity{% endif %}
 					</p>
 					{% endif %}
 

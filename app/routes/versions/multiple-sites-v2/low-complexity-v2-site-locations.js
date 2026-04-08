@@ -712,6 +712,7 @@ module.exports = function (router) {
     req.session.data['low-complexity-site-duration-errorthispage'] = "false";
     req.session.data['low-complexity-site-duration-years-error'] = "false";
     req.session.data['low-complexity-site-duration-months-error'] = "false";
+    req.session.data['low-complexity-site-duration-zero-error'] = "false";
     res.render(`versions/${version}/${section}/${subsection}/duration`);
   });
 
@@ -721,6 +722,7 @@ module.exports = function (router) {
     req.session.data['low-complexity-site-duration-errorthispage'] = "false";
     req.session.data['low-complexity-site-duration-years-error'] = "false";
     req.session.data['low-complexity-site-duration-months-error'] = "false";
+    req.session.data['low-complexity-site-duration-zero-error'] = "false";
 
     let hasErrors = false;
 
@@ -740,6 +742,16 @@ module.exports = function (router) {
 
     if (hasErrors) {
       req.session.data['low-complexity-site-duration-errorthispage'] = "true";
+      res.redirect('duration');
+      return;
+    }
+
+    // Check if both fields are 0
+    if (req.session.data['low-complexity-site-duration-years'].trim() === '0' && req.session.data['low-complexity-site-duration-months'].trim() === '0') {
+      req.session.data['low-complexity-site-duration-errorthispage'] = "true";
+      req.session.data['low-complexity-site-duration-years-error'] = "true";
+      req.session.data['low-complexity-site-duration-months-error'] = "true";
+      req.session.data['low-complexity-site-duration-zero-error'] = "true";
       res.redirect('duration');
       return;
     }
