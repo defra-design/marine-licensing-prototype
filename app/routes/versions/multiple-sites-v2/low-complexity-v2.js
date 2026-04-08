@@ -499,8 +499,8 @@ module.exports = function (router) {
     const sharingConsent = req.session.data['low-complexity-sharing-information'];
     const sharingDetails = req.session.data['low-complexity-sharing-information-details'];
 
-    // If "No" is selected, clear the textarea data
-    if (sharingConsent === 'No') {
+    // If "Yes" is selected, clear the textarea data (consent given, no details needed)
+    if (sharingConsent === 'Yes') {
       delete req.session.data['low-complexity-sharing-information-details'];
     }
 
@@ -509,14 +509,14 @@ module.exports = function (router) {
       // Set error flags
       req.session.data['errorthispage'] = "true";
       req.session.data['errortypeone'] = "true";
-      
+
       // Redirect back to the same page with errors
       res.redirect('sharing-your-project-information-publicly');
-    } else if (sharingConsent === 'Yes' && (!sharingDetails || sharingDetails.trim() === '')) {
-      // If Yes is selected, check if textarea has content
+    } else if (sharingConsent === 'No' && (!sharingDetails || sharingDetails.trim() === '')) {
+      // If No is selected, check if textarea has content
       req.session.data['errorthispage'] = "true";
       req.session.data['errortypetwo'] = "true";
-      
+
       // Redirect back to the same page with errors
       res.redirect('sharing-your-project-information-publicly');
     } else {
