@@ -3,17 +3,37 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
+{% block head %}
+  {{ super() }}
+  {% if data['low-complexity-application-status'] == 'sent' %}
+  <style>
+    .app-read-only .govuk-summary-list__actions,
+    .app-read-only .govuk-summary-card__actions {
+      display: none;
+    }
+  </style>
+  {% endif %}
+{% endblock %}
+
 {% block beforeContent %}
     {% include "../includes/phase-banner.html" %}
+    {% if data['low-complexity-application-status'] == 'sent' %}
+    {% include "../includes/back-link.html" %}
+    {% else %}
     {% if data['organisation-name'] %}
         {% include "../includes/organisation-switcher.html" %}
     {% endif %}
     <a class="govuk-back-link govuk-link--no-visited-state" href="marine-licence-start-page">Go back to marine licence start page</a>
+    {% endif %}
 {% endblock %}
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
+{% if data['low-complexity-application-status'] == 'sent' %}
+{{ data['low-complexity-project-name-text-input'] }}
+{% else %}
 Check your answers before sending your information
+{% endif %}
 {% endset %}
 
 <!-- Format start date (month and year only) -->
@@ -38,9 +58,13 @@ Check your answers before sending your information
 
 {% block content %}
 
-<div class="govuk-grid-row">
+<div class="govuk-grid-row{% if data['low-complexity-application-status'] == 'sent' %} app-read-only{% endif %}">
 	<div class="govuk-grid-column-full">
+		{% if data['low-complexity-application-status'] == 'sent' %}
+		<span class="govuk-caption-l">MLA/2025/10025 – Marine licence</span>
+		{% else %}
 		<span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
+		{% endif %}
 		<h1 class="govuk-heading-l">
 			{{ pageHeadingTextHTML }}
 		</h1>
@@ -48,6 +72,8 @@ Check your answers before sending your information
 		{# ============================== #}
 		{# PROJECT DETAILS                #}
 		{# ============================== #}
+		{% set isSent = data['low-complexity-application-status'] == 'sent' %}
+
 		{{ govukSummaryList({
 			card: {
 				title: {
@@ -71,7 +97,7 @@ Check your answers before sending your information
 								classes: "govuk-link--no-visited-state"
 							}
 						]
-					}
+					} if not isSent
 				},
 				{
 					key: {
@@ -89,7 +115,7 @@ Check your answers before sending your information
 								classes: "govuk-link--no-visited-state"
 							}
 						]
-					}
+					} if not isSent
 				},
 				{
 					key: {
@@ -107,7 +133,7 @@ Check your answers before sending your information
 								classes: "govuk-link--no-visited-state"
 							}
 						]
-					}
+					} if not isSent
 				}
 			]
 		}) }}
@@ -1336,24 +1362,24 @@ Check your answers before sending your information
 			</div>
 			<div class="govuk-summary-card__content">
 				<dl class="govuk-summary-list">
-					<div class="govuk-summary-list__row{% if data['low-complexity-sharing-information'] == 'Yes' %} govuk-summary-list__row--no-border{% endif %}">
+					<div class="govuk-summary-list__row govuk-summary-list__row--no-border">
 						<dt class="govuk-summary-list__key">
-							Is there any reason your information cannot be shared publicly?
+							Consent to publish your project information
 						</dt>
 						<dd class="govuk-summary-list__value">
 							{{ data['low-complexity-sharing-information'] }}
 						</dd>
 						<dd class="govuk-summary-list__actions">
 							<a class="govuk-link govuk-link--no-visited-state" href="sharing-your-project-information-publicly?camefromcheckanswers=true">
-								Change<span class="govuk-visually-hidden"> if there is any reason your information cannot be shared publicly</span>
+								Change<span class="govuk-visually-hidden"> consent to publish your project information</span>
 							</a>
 						</dd>
 					</div>
 
-					{% if data['low-complexity-sharing-information'] == 'Yes' %}
+					{% if data['low-complexity-sharing-information'] == 'No' %}
 					<div class="govuk-summary-list__row">
 						<dt class="govuk-summary-list__key">
-							Reason your information cannot be shared publicly
+							Why you do not consent
 						</dt>
 						<dd class="govuk-summary-list__value">
 							{{ data['low-complexity-sharing-information-details'] }}
@@ -1369,11 +1395,13 @@ Check your answers before sending your information
 			</div>
 		</div>
 
+		{% if data['low-complexity-application-status'] != 'sent' %}
 		<form action="declaration" method="post" novalidate>
 			{{ govukButton({
 				text: "Continue"
 			}) }}
 		</form>
+		{% endif %}
 
 	</div>
 </div>

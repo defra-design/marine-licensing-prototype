@@ -18,6 +18,20 @@
 Sharing your project information publicly
 {% endset %}
 
+<!-- Setting the smaller secondary heading lower down the page -->
+{% set questionHeadingTextHTML %}
+Do you consent to the MMO publishing your project information publicly?
+{% endset %}
+
+<!-- Set the text for the error type -->
+{% set errorTextHTML %}
+{% if data['errortypeone'] == "true" %}
+Select whether you consent to the MMO publishing your project information publicly
+{% elif data['errortypetwo'] == "true" %}
+Enter details of why you do not consent to your project information being published
+{% endif %}
+{% endset %}
+
 <!-- Text that show in the browser tab. Does NOT need changing -->
 {% block pageTitle %}
 {% if data['errorthispage'] == "true" %}
@@ -27,95 +41,93 @@ Error:
 {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
 {% endblock %}
 
-{% set sharingDetailsTextarea %}
+{% set detailsHtml %}
 {{ govukTextarea({
     id: "low-complexity-sharing-information-details",
     name: "low-complexity-sharing-information-details",
     value: data['low-complexity-sharing-information-details'],
-    rows: 5,
     label: {
-        text: "Provide details of why you do not consent to your project information being published"
+        text: "Provide details of why you do not consent to your project information being published",
+        classes: "govuk-label",
+        isPageHeading: false
     },
-    errorMessage: {
-        text: "Enter details of why you do not consent"
-    } if data['errortypetwo'] == "true"
+    errorMessage: null if data['errortypetwo'] != "true"
+    else { text: "Enter details of why you do not consent to your project information being published" }
 }) }}
-{% endset %}
+{% endset -%}
 
 {% block content %}
 
 <div class="govuk-grid-row">
 	<div class="govuk-grid-column-two-thirds">
+
+		<!-- ERROR LOGIC 'error summary' -->
 		{% if data['errorthispage'] == "true" %}
 		{{ govukErrorSummary({
 			titleText: "There is a problem",
 			errorList: [
 				{
-					text: "Select if there is any reason your information cannot be shared publicly" if data['errortypeone'] == "true" else "Enter details of why you do not consent",
+					text: errorTextHTML,
 					href: "#low-complexity-sharing-information" if data['errortypeone'] == "true" else "#low-complexity-sharing-information-details"
 				}
 			]
 		}) }}
 		{% endif %}
+		<!-- END OF 'error summary' -->
 
-		<!--  END OF 'error summary' -->
-
-		<span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
-		<h1 class="govuk-heading-l">
-			{{ pageHeadingTextHTML }}
-		</h1>
-
-		<p class="govuk-body">The MMO must keep a register of information relating to applications and licences it's responsible for. This register must be made available to the public.</p>
-
-		<p class="govuk-body">We will not publish your email address, phone number or the cost of your marine works.</p>
-
-		<h2 class="govuk-heading-m">Information that cannot be publicly shared</h2>
-
-		<p class="govuk-body">Information on your application will not be published on the MMO's public register if the:</p>
-
-		<ul class="govuk-list govuk-list--bullet">
-			<li>Secretary of State decides publishing it contains sensitive information that would be a threat to national security</li>
-			<li>MMO decides the information is commercially sensitive</li>
-		</ul>
-
+		<!-- go to routes.js for routing  -->
 		<form action="sharing-your-project-information-publicly-router" method="post" novalidate>
+			<span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
+			<h1 class="govuk-heading-l">
+				{{ pageHeadingTextHTML }}
+			</h1>
+
+			<p>The Marine Management Organisation (MMO) publishes some of the information you provide on <a href="https://www.gov.uk/guidance/explore-marine-plans" rel="noreferrer noopener" target="_blank">Explore Marine Plans (opens in new tab)</a>. In the future, we may also publish this information on the MMO's public register.</p>
+
+			<p>Sharing this information helps you and other applicants:</p>
+
+			<ul class="govuk-list govuk-list--bullet">
+				<li>get a clear picture of activity in the marine environment</li>
+				<li>prepare applications more effectively by avoiding conflicts with existing marine activity</li>
+				<li>evaluate the environmental impact of projects in the context of other marine activity, leading to better applications and evidence for decision-makers</li>
+			</ul>
+
+			<p>We will not publish contact details, such as your email address, phone number or postal address, or any financial information.</p>
 
 			{{ govukRadios({
 				name: "low-complexity-sharing-information",
 				id: "low-complexity-sharing-information",
 				fieldset: {
 					legend: {
-						text: "Is there any reason your information cannot be shared publicly?",
+						html: questionHeadingTextHTML,
 						isPageHeading: false,
 						classes: "govuk-fieldset__legend--m"
 					}
 				},
+				errorMessage: null if data['errortypeone'] != "true"
+				else { html: "Select whether you consent to the MMO publishing your project information publicly" },
 				items: [
 					{
 						value: "Yes",
 						text: "Yes",
-						conditional: {
-							html: sharingDetailsTextarea
-						},
 						checked: data['low-complexity-sharing-information'] == "Yes"
 					},
 					{
 						value: "No",
 						text: "No",
+						conditional: {
+							html: detailsHtml
+						},
 						checked: data['low-complexity-sharing-information'] == "No"
 					}
-				],
-				errorMessage: {
-					text: "Select if there is any reason your information cannot be shared publicly"
-				} if data['errortypeone'] == "true"
+				]
 			}) }}
 
 			<div class="govuk-button-group">
 				{{ govukButton({
 					text: "Save and continue"
 				}) }}
-
-				<a class="govuk-link" href="javascript:history.back()">Cancel</a>
+				<a class="govuk-link govuk-link--no-visited-state" href="javascript:window.history.back()">Cancel</a>
 			</div>
 
 		</form>
@@ -132,7 +144,7 @@ Error:
 
 		<option value="errorthispage=true&errortypeone=true&errortypetwo=false&" {% if data['errortypeone'] == 'true' and data['errortypetwo'] != 'true' %}selected{% endif %}>Error 1 - No radio selected</option>
 
-		<option value="errorthispage=true&errortypeone=false&errortypetwo=true&" {% if data['errortypeone'] != 'true' and data['errortypetwo'] == 'true' %}selected{% endif %}>Error 2 - Textarea left blank</option>
+		<option value="errorthispage=true&errortypeone=false&errortypetwo=true&" {% if data['errortypeone'] != 'true' and data['errortypetwo'] == 'true' %}selected{% endif %}>Error 2 - Input text left blank</option>
 
 	</select>
 
