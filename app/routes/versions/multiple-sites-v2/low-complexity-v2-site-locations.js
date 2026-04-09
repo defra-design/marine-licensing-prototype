@@ -290,12 +290,13 @@ module.exports = function (router) {
       }
 
       if (finished === 'Yes') {
-        // Check if this is the first time confirming site details complete
         const wasAlreadyComplete = req.session.data['site-details-confirmed-complete'];
+        const mppAlertRequested = req.session.data['mpp-alert'] === 'true';
         req.session.data['site-details-confirmed-complete'] = true;
+        delete req.session.data['mpp-alert'];
 
-        // If first time completing, redirect with mpp-calculating flag
-        if (!wasAlreadyComplete) {
+        // Show MPP calculating alert if first time completing or if mpp-alert param was used
+        if (!wasAlreadyComplete || mppAlertRequested) {
           return res.redirect('../marine-licence-start-page?mpp-calculating=true');
         }
       } else {
