@@ -19,15 +19,30 @@ Marine licence start page
 
 {% block content %}
 
+{% set mppCalculating = data['mpp-calculating'] == 'true' %}
+
 <div class="govuk-grid-row">
 	<div class="govuk-grid-column-two-thirds">
+
+		{% if mppCalculating %}
+		<div class="moj-alert moj-alert--information">
+			<svg class="moj-alert__icon" fill="currentColor" role="presentation" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 25 25" height="25" width="25"><path d="M13.7,18.5h-2.4v-2.4h2.4V18.5z M12.5,13.7c-0.7,0-1.2-0.5-1.2-1.2V7.7c0-0.7,0.5-1.2,1.2-1.2s1.2,0.5,1.2,1.2v4.8 C13.7,13.2,13.2,13.7,12.5,13.7z M12.5,0.5c-6.6,0-12,5.4-12,12s5.4,12,12,12s12-5.4,12-12S19.1,0.5,12.5,0.5z"/></svg>
+			<div class="moj-alert__content">
+				<h2 class="govuk-heading-s">Your marine plan policies are being calculated</h2>
+				<p class="govuk-body">This may take up to 30 seconds. <a href="marine-licence-start-page" class="govuk-link">Refresh the page</a> to see if they're ready.</p>
+			</div>
+		</div>
+		{% endif %}
+
 		<span class="govuk-caption-l">Marine licence</span>
 		<h1 class="govuk-heading-l">
 			{{ data['low-complexity-project-name-text-input'] }}
 		</h1>
-		<p class="govuk-body">You need to complete all sections before sending your application. Your progress will be saved as you go if you need to come back later.</p>
+		<p class="govuk-body">When you provide your information you'll need to complete all sections before you can send your application.</p>
 
-		<p>You can start the Marine plan policy section once you have completed the site details section.</p>
+		<p class="govuk-body">You'll be able to start the Marine plan policy section once you have completed the site details section.</p>
+
+		<p class="govuk-body">Your progress will be saved as you go if you need to come back later.</p>
 
 		<h2 class="govuk-heading-m">Project details</h2>
 		<ul class="govuk-task-list">
@@ -167,7 +182,9 @@ Marine licence start page
 		<ul class="govuk-task-list">
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
 			  <div class="govuk-task-list__name-and-hint">
-				{% if mppUnlocked %}
+				{% if mppCalculating %}
+				<span>Marine plan policy considerations</span>
+				{% elif mppUnlocked %}
 				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="{{ mppFolder }}" aria-describedby="marine-plan-policies-status">
 					Marine plan policy considerations {% if mppActiveCompletedCount == 0 %}({{ mppDisplayTotal }} to complete){% elif mppActiveComplete %}({{ mppDisplayTotal }} of {{ mppDisplayTotal }} completed){% else %}({{ mppActiveCompletedCount }} of {{ mppDisplayTotal }} completed){% endif %}
 				</a>
@@ -177,7 +194,9 @@ Marine licence start page
 			  </div>
 
 			  <div class="govuk-task-list__status" id="marine-plan-policies-status">
-				{% if mppUnlocked %}
+				{% if mppCalculating %}
+					Calculating policies&hellip;
+				{% elif mppUnlocked %}
 					{% if mppActiveComplete %}
 					Completed
 					{% elif mppActiveCompletedCount > 0 %}
