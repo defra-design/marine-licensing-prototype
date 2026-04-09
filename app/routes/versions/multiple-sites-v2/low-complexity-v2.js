@@ -88,6 +88,11 @@ module.exports = function (router) {
   ///////////////////////////////////////////
   router.get(`/versions/${version}/${section}/marine-licence-start-page`, function (req, res) {
     res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+    // Clear mpp-calculating from session if not in the current query string
+    // (prototype kit auto-stores query params, so we need to clear it on refresh)
+    if (!req.query['mpp-calculating']) {
+      delete req.session.data['mpp-calculating'];
+    }
     res.render(`versions/${version}/${section}/marine-licence-start-page`);
   });
 
