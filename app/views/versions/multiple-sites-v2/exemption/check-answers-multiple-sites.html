@@ -389,11 +389,11 @@
       {{ pageHeadingTextHTML }}
     </h1>
 
-    <!-- Project summary section -->
+    <!-- Project details section -->
     <div class="govuk-summary-card">
       <div class="govuk-summary-card__title-wrapper">
         <h2 class="govuk-summary-card__title">
-          Project summary
+          Project details
         </h2>
       </div>
 
@@ -477,7 +477,7 @@
         </dl>
       </div>
     </div>
-    <!-- End of project summary section -->
+    <!-- End of project details section -->
 
     <!-- Applicant details card - only for organisation users -->
     {% if data['user_type'] === 'organisation' and data['organisation-name'] !== 'Sam Evans' %}
