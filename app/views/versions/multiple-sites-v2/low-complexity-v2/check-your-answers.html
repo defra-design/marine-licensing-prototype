@@ -1,6 +1,5 @@
 {% extends "../layouts/low-complexity-v2.html" %}
 
-{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% block head %}
@@ -74,69 +73,52 @@ Check your answers before sending your information
 		{# ============================== #}
 		{% set isSent = data['low-complexity-application-status'] == 'sent' %}
 
-		{{ govukSummaryList({
-			card: {
-				title: {
-					text: "Project details"
-				}
-			},
-			rows: [
-				{
-					key: {
-						text: "Project name"
-					},
-					value: {
-						text: data['low-complexity-project-name-text-input']
-					},
-					actions: {
-						items: [
-							{
-								href: "project-name?camefromcheckanswers=true",
-								text: "Change",
-								visuallyHiddenText: "project name",
-								classes: "govuk-link--no-visited-state"
-							}
-						]
-					} if not isSent
-				},
-				{
-					key: {
-						text: "Project background"
-					},
-					value: {
-						text: data['low-complexity-project-background']
-					},
-					actions: {
-						items: [
-							{
-								href: "project-details/project-background?camefromcheckanswers=true",
-								text: "Change",
-								visuallyHiddenText: "project background",
-								classes: "govuk-link--no-visited-state"
-							}
-						]
-					} if not isSent
-				},
-				{
-					key: {
-						text: "Preferred start and end dates of the licence"
-					},
-					value: {
-						html: (startDateFormatted | trim) + " to " + (endDateFormatted | trim)
-					},
-					actions: {
-						items: [
-							{
-								href: "project-details/start-and-end-dates?camefromcheckanswers=true",
-								text: "Change",
-								visuallyHiddenText: "start and end dates",
-								classes: "govuk-link--no-visited-state"
-							}
-						]
-					} if not isSent
-				}
-			]
-		}) }}
+		<div class="govuk-summary-card">
+			<div class="govuk-summary-card__title-wrapper">
+				<h2 class="govuk-summary-card__title">Project details</h2>
+			</div>
+			<div class="govuk-summary-card__content">
+				<dl class="govuk-summary-list">
+
+					{% if not isSent %}
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">Project name</dt>
+						<dd class="govuk-summary-list__value">{{ data['low-complexity-project-name-text-input'] }}</dd>
+						<dd class="govuk-summary-list__actions">
+							<a class="govuk-link govuk-link--no-visited-state" href="project-name?camefromcheckanswers=true">
+								Change<span class="govuk-visually-hidden"> project name</span>
+							</a>
+						</dd>
+					</div>
+					{% endif %}
+
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">Project background</dt>
+						<dd class="govuk-summary-list__value">{{ data['low-complexity-project-background'] }}</dd>
+						{% if not isSent %}
+						<dd class="govuk-summary-list__actions">
+							<a class="govuk-link govuk-link--no-visited-state" href="project-details/project-background?camefromcheckanswers=true">
+								Change<span class="govuk-visually-hidden"> project background</span>
+							</a>
+						</dd>
+						{% endif %}
+					</div>
+
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">Preferred start and end dates of the licence</dt>
+						<dd class="govuk-summary-list__value">{{ startDateFormatted | trim }} to {{ endDateFormatted | trim }}</dd>
+						{% if not isSent %}
+						<dd class="govuk-summary-list__actions">
+							<a class="govuk-link govuk-link--no-visited-state" href="project-details/start-and-end-dates?camefromcheckanswers=true">
+								Change<span class="govuk-visually-hidden"> start and end dates</span>
+							</a>
+						</dd>
+						{% endif %}
+					</div>
+
+				</dl>
+			</div>
+		</div>
 
 		{# ============================== #}
 		{# PROVIDING THE SITE LOCATION    #}
