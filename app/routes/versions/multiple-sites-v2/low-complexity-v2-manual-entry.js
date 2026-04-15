@@ -702,6 +702,9 @@ module.exports = function (router) {
 
       if (finished === 'Yes') {
         req.session.data['site-details-confirmed-complete'] = true;
+        // Once MPPs have been unlocked, keep them accessible even if the user
+        // later re-opens site details to add a site/activity.
+        req.session.data['mpp-previously-unlocked'] = true;
       } else {
         delete req.session.data['site-details-confirmed-complete'];
       }
@@ -781,6 +784,9 @@ module.exports = function (router) {
       });
       delete req.session.data['marine-plan-policies-v2-completed-count'];
       delete req.session.data['marine-plan-policies-v2-not-started-count'];
+
+      // Reset the "MPPs previously unlocked" flag now that MPP data is wiped
+      delete req.session.data['mpp-previously-unlocked'];
 
       return res.redirect(`/versions/multiple-sites-v2/low-complexity-v2/marine-licence-start-page`);
     }
@@ -881,6 +887,9 @@ module.exports = function (router) {
     });
     delete req.session.data['marine-plan-policies-v2-completed-count'];
     delete req.session.data['marine-plan-policies-v2-not-started-count'];
+
+    // Reset the "MPPs previously unlocked" flag now that MPP data is wiped
+    delete req.session.data['mpp-previously-unlocked'];
 
     // Redirect to task list so site details resets to Not yet started
     res.redirect(`/versions/multiple-sites-v2/low-complexity-v2/marine-licence-start-page`);

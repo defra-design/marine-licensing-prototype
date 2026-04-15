@@ -293,6 +293,9 @@ module.exports = function (router) {
         const wasAlreadyComplete = req.session.data['site-details-confirmed-complete'];
         const mppAlertRequested = req.session.data['mpp-alert'] === 'true';
         req.session.data['site-details-confirmed-complete'] = true;
+        // Once MPPs have been unlocked, keep them accessible even if the user
+        // later re-opens site details to add a site/activity.
+        req.session.data['mpp-previously-unlocked'] = true;
         delete req.session.data['mpp-alert'];
 
         // Show MPP calculating alert if first time completing or if mpp-alert param was used
@@ -951,6 +954,9 @@ module.exports = function (router) {
     });
     delete req.session.data['marine-plan-policies-v2-completed-count'];
     delete req.session.data['marine-plan-policies-v2-not-started-count'];
+
+    // Reset the "MPPs previously unlocked" flag now that MPP data is wiped
+    delete req.session.data['mpp-previously-unlocked'];
 
     // Redirect to task list
     res.redirect('../marine-licence-start-page');

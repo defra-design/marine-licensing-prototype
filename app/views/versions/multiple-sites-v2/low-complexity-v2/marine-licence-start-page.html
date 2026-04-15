@@ -28,7 +28,7 @@ Marine licence start page
 		<div class="moj-alert moj-alert--information">
 			<svg class="moj-alert__icon" fill="currentColor" role="presentation" focusable="false" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 25 25" height="25" width="25"><path d="M13.7,18.5h-2.4v-2.4h2.4V18.5z M12.5,13.7c-0.7,0-1.2-0.5-1.2-1.2V7.7c0-0.7,0.5-1.2,1.2-1.2s1.2,0.5,1.2,1.2v4.8 C13.7,13.2,13.2,13.7,12.5,13.7z M12.5,0.5c-6.6,0-12,5.4-12,12s5.4,12,12,12s12-5.4,12-12S19.1,0.5,12.5,0.5z"/></svg>
 			<div class="moj-alert__content">
-				<h2 class="moj-alert__heading">Your marine plan policies are being calculated</h2>
+				<h2 class="moj-alert__heading">Checking which Marine plan policies apply to your project</h2>
 				This may take up to 30 seconds. <a href="marine-licence-start-page" class="govuk-link govuk-link--no-visited-state" style="color: #005ea5;">Refresh the page</a> to see if they're ready.
 			</div>
 			<div class="moj-alert__action">
@@ -180,7 +180,7 @@ Marine licence start page
 		{% set mppActiveComplete = data[mppPrefix + 's-acc-1-completed'] and data[mppPrefix + 's-bio-1-completed'] and data[mppPrefix + 's-agg-4-completed'] and data[mppPrefix + 's-emp-1-completed'] and data[mppPrefix + 's-uwn-2-completed'] %}
 		{% set mppActiveCompletedCount = (data[mppPrefix + 's-acc-1-completed'] and 1 or 0) + (data[mppPrefix + 's-bio-1-completed'] and 1 or 0) + (data[mppPrefix + 's-agg-4-completed'] and 1 or 0) + (data[mppPrefix + 's-emp-1-completed'] and 1 or 0) + (data[mppPrefix + 's-uwn-2-completed'] and 1 or 0) %}
 		{% set mppDisplayTotal = 37 %}
-		{% set mppUnlocked = data['site-details-confirmed-complete'] or mppActiveCompletedCount > 0 %}
+		{% set mppUnlocked = data['site-details-confirmed-complete'] or mppActiveCompletedCount > 0 or data['mpp-previously-unlocked'] %}
 
 		<ul class="govuk-task-list">
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
@@ -198,7 +198,7 @@ Marine licence start page
 
 			  <div class="govuk-task-list__status" id="marine-plan-policies-status">
 				{% if mppCalculating %}
-					Calculating policies&hellip;
+					Checking policies&hellip;
 				{% elif mppUnlocked %}
 					{% if mppActiveComplete %}
 					Completed
