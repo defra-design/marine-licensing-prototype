@@ -34,7 +34,7 @@ Fee estimate
 				{% endif %}
 				{% if data['low-complexity-fee-errortypetwo'] == "true" %}
 					<li>
-						<a href="#low-complexity-fee-acceptance">Select if you accept the fee estimate of £1,400</a>
+						<a href="#low-complexity-fee-acceptance">Select if you accept the fee estimate</a>
 					</li>
 				{% endif %}
 			</ul>
@@ -52,19 +52,12 @@ Fee estimate
 		</h1>
 
 		{{ govukInsetText({
-			html: "Your application fee band: 2A<br>The maximum fee for your application is £1,400"
+			html: "Your application fee band: 2A<br>Your application fee will not exceed £1,400"
 		}) }}
 
 		<p>Your final invoice will be based on actual hours worked. VAT does not apply.</p>
 
-		<p>This estimate does not include:</p>
-
-		<ul class="govuk-list govuk-list--bullet">
-			<li>sediment sample analysis</li>
-			<li>marine disposal site monitoring fees</li>
-			<li>travel costs</li>
-			<li>licence monitoring charges (if your licence requires monitoring)</li>
-		</ul>
+		<p>If your application is approved, there could be an additional cost of up to £750 for post-consent monitoring. </p>
 
 		<p><a href="https://www.gov.uk/government/publications/marine-licensing-fees" rel="noreferrer noopener" target="_blank">Find out more about MMO charges (opens in new tab)</a>.</p>
 
@@ -97,13 +90,16 @@ Fee estimate
 				<fieldset class="govuk-fieldset" {% if data['low-complexity-fee-errorthispage'] == 'true' and data['low-complexity-fee-errortypetwo'] == 'true' %}aria-describedby="low-complexity-fee-acceptance-error"{% else %}aria-describedby="low-complexity-fee-acceptance-hint"{% endif %}>
 					<legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
 						<h2 class="govuk-fieldset__heading">
-							Do you accept the fee estimate of £1,400?
+							Do you accept the fee estimate?
 						</h2>
 					</legend>
+					<div id="low-complexity-fee-acceptance-hint" class="govuk-hint">
+						This includes the application fee of up to £1,400 and potential post-consent monitoring of up to £750
+					</div>
 					{% if data['low-complexity-fee-errorthispage'] == 'true' and data['low-complexity-fee-errortypetwo'] == 'true' %}
 						<p id="low-complexity-fee-acceptance-error" class="govuk-error-message">
 							<span class="govuk-visually-hidden">Error:</span>
-							Select if you accept the fee estimate of £1,400
+							Select if you accept the fee estimate
 						</p>
 					{% endif %}
 					<div class="govuk-radios" data-module="govuk-radios">
