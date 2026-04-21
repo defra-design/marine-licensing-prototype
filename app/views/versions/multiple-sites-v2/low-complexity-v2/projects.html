@@ -132,7 +132,8 @@ Projects
 					<td class="govuk-table__cell" data-sort-value="{% if data['low-complexity-application-status'] == 'sent' %}002{% else %}003{% endif %}">
 						{% if data['low-complexity-application-status'] == 'sent' %}
 						{{ govukTag({
-							text: "Sent"
+							text: "Sent",
+							classes: "govuk-tag--green"
 						}) }}
 						{% else %}
 						{{ govukTag({
@@ -313,61 +314,6 @@ Projects
 					</td>
 				</tr>
 
-				<!-- Sediment sample plans -->
-				<!--<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="Tyne estuary sampling" data-type="Sediment sample plan" data-reference="SAM-10002" data-status="Sent">
-					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Tyne estuary sampling</th>
-					<td class="govuk-table__cell">Sediment sample plan</td>
-					<td class="govuk-table__cell" data-sort-value="SAM-10002">SAM/2025/10002</td>
-					<td class="govuk-table__cell" data-sort-value="002">
-						{{ govukTag({
-							text: "Sent"
-						}) }}
-					</td>
-					<td class="govuk-table__cell" data-sort-value="251111">11 Nov 2025</td>
-					{% if data['user_type'] === 'organisation' %}
-					<td class="govuk-table__cell">Sam Evans</td>
-					{% endif %}
-					<td class="govuk-table__cell">
-						<a href="#" class="govuk-link--no-visited-state">View details</a>
-					</td>
-				</tr>
-
-				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="Portsmouth channel dredge sample" data-type="Sediment sample plan" data-reference="SAM-10007" data-status="Sent">
-					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Portsmouth channel dredge sample</th>
-					<td class="govuk-table__cell">Sediment sample plan</td>
-					<td class="govuk-table__cell" data-sort-value="SAM-10007">SAM/2025/10007</td>
-					<td class="govuk-table__cell" data-sort-value="002">
-						{{ govukTag({
-							text: "Sent"
-						}) }}
-					</td>
-					<td class="govuk-table__cell" data-sort-value="251117">17 Nov 2025</td>
-					{% if data['user_type'] === 'organisation' %}
-					<td class="govuk-table__cell">Sam Evans</td>
-					{% endif %}
-					<td class="govuk-table__cell">
-						<a href="#" class="govuk-link--no-visited-state">View details</a>
-					</td>
-				</tr>
-
-				<tr class="govuk-table__row" data-creator="sarah-chen" data-project-name="Falmouth harbour pre-dredge analysis" data-type="Sediment sample plan" data-reference="SAM-10011" data-status="Draft">
-					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Falmouth harbour pre-dredge analysis</th>
-					<td class="govuk-table__cell">Sediment sample plan</td>
-					<td class="govuk-table__cell" data-sort-value="SAM-10011">SAM/2025/10011</td>
-					<td class="govuk-table__cell" data-sort-value="003">
-						{{ govukTag({
-							text: "Draft",
-							classes: "govuk-tag--light-blue"
-						}) }}
-					</td>
-					<td class="govuk-table__cell" data-sort-value="-">-</td>
-					{% if data['user_type'] === 'organisation' %}
-					<td class="govuk-table__cell">Sarah Chen</td>
-					{% endif %}
-					<td class="govuk-table__cell">
-						
-					</td>
-				</tr>-->
 			</tbody>
 		</table>
 
