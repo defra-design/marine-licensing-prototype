@@ -42,7 +42,13 @@
 
                     {% if data['low-complexity-file-type'] == "shapefile" %}
                     <p>Upload a ZIP file containing all the files for your shapefile. Your shapefile must include .shp, .shx, .dbf and .prj files.</p>
+                    {% if data['low-complexity-site-location-changing'] %}
+                    <p>The file you upload must be for a single site.</p>
+                    {% else %}
                     <p>You can include more than one site.</p>
+                    {% endif %}
+                    {% elif data['low-complexity-file-type'] == "kml" and data['low-complexity-site-location-changing'] %}
+                    <p>The file you upload must be for a single site.</p>
                     {% endif %}
 
 
