@@ -27,7 +27,17 @@ Change site location
       {{ pageHeadingTextHTML }}
     </h1>
 
-    <p class="govuk-body">This is placeholder content. You can change this site location by uploading a single site shapefile or KML file. Any activity details you've already entered will be saved.</p>
+    <div class="govuk-inset-text">
+      {% if data['low-complexity-site-name'] %}
+        Site 1: {{ data['low-complexity-site-name'] }}
+      {% else %}
+        Site 1
+      {% endif %}
+    </div>
+
+    <p class="govuk-body">You can change your site location by uploading a single site file. Any activity details you've already entered will be saved.</p>
+
+    <p class="govuk-body">If you've started the Marine plan policies, changing your site location may change which policies are presented.</p>
 
     <form action="change-site-location-router" method="post" novalidate>
       <div class="govuk-button-group govuk-!-margin-top-7">
