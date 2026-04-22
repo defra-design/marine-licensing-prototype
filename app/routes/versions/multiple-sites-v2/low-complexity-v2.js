@@ -735,6 +735,10 @@ module.exports = function (router) {
 
     if (fromMainCheckAnswers) {
       req.session.data['camefromcheckanswers'] = 'true';
+    } else {
+      // The `camefromcheckanswers` flag is shared across tasks. Clear any stale
+      // value so entering the WFD flow from the task list is truly fresh.
+      req.session.data['camefromcheckanswers'] = false;
     }
 
     // Smart routing: only send the user to the WFD check page when the flow has
