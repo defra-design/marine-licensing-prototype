@@ -1160,38 +1160,73 @@ Check your answers before sending your information
 			</div>
 			<div class="govuk-summary-card__content">
 				<dl class="govuk-summary-list">
-					<div class="govuk-summary-list__row{% if data['low-complexity-wfd-nautical-mile'] == 'Yes' %} govuk-summary-list__row--no-border{% endif %}">
+					<div class="govuk-summary-list__row{% if data['low-complexity-wfd-assessed'] == 'Yes' %} govuk-summary-list__row--no-border{% endif %}">
 						<dt class="govuk-summary-list__key">
-							Is your project located up to 1 nautical mile out at sea?
+							Have you assessed your project against the WFD?
 						</dt>
 						<dd class="govuk-summary-list__value">
-							{{ data['low-complexity-wfd-nautical-mile'] }}
+							{{ data['low-complexity-wfd-assessed'] }}
 						</dd>
 						<dd class="govuk-summary-list__actions">
 							<a class="govuk-link govuk-link--no-visited-state" href="environmental-assessments/water-framework-directive?camefromcheckanswers=true">
-								Change<span class="govuk-visually-hidden"> if your project is located up to 1 nautical mile out at sea</span>
+								Change<span class="govuk-visually-hidden"> if you have assessed your project against the Water Framework Directive</span>
 							</a>
 						</dd>
 					</div>
 
-					{% if data['low-complexity-wfd-nautical-mile'] == 'Yes' %}
+					{% if data['low-complexity-wfd-assessed'] == 'Yes' %}
+
+					{# Row 2: summary (visually hidden change link → page 1) #}
 					<div class="govuk-summary-list__row">
 						<dt class="govuk-summary-list__key">
-							Water Framework Directive assessment file
+							Details of your WFD assessment
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ data['low-complexity-wfd-summary'] }}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							<a class="govuk-link govuk-link--no-visited-state govuk-visually-hidden" href="environmental-assessments/water-framework-directive?camefromcheckanswers=true">
+								Change details of your WFD assessment
+							</a>
+						</dd>
+					</div>
+
+					{# Row 3: have an assessment to upload? — no-border only when a file row follows #}
+					<div class="govuk-summary-list__row{% if data['low-complexity-wfd-upload-answer'] == 'Yes' %} govuk-summary-list__row--no-border{% endif %}">
+						<dt class="govuk-summary-list__key">
+							Do you have a Water Framework Directive assessment to upload?
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ data['low-complexity-wfd-upload-answer'] }}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							<a class="govuk-link govuk-link--no-visited-state" href="environmental-assessments/water-framework-directive-upload-question?camefromcheckanswers=true">
+								Change<span class="govuk-visually-hidden"> if you have a Water Framework Directive assessment to upload</span>
+							</a>
+						</dd>
+					</div>
+
+					{# Row 4: uploaded file (only when upload answer is Yes) — visually hidden change link → upload question page #}
+					{% if data['low-complexity-wfd-upload-answer'] == 'Yes' %}
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							Uploaded file
 						</dt>
 						<dd class="govuk-summary-list__value">
 							{% if data['low-complexity-wfd-filename'] %}
 								{{ data['low-complexity-wfd-filename'] }}
 							{% else %}
-								WFD.pdf
+								WFD-assessment.pdf
 							{% endif %}
 						</dd>
 						<dd class="govuk-summary-list__actions">
-							<a class="govuk-link govuk-link--no-visited-state" href="environmental-assessments/water-framework-directive-upload?camefromcheckanswers=true">
-								Change<span class="govuk-visually-hidden"> uploaded Water Framework Directive assessment</span>
+							<a class="govuk-link govuk-link--no-visited-state govuk-visually-hidden" href="environmental-assessments/water-framework-directive-upload-question?camefromcheckanswers=true">
+								Change uploaded file
 							</a>
 						</dd>
 					</div>
+					{% endif %}
+
 					{% endif %}
 				</dl>
 			</div>

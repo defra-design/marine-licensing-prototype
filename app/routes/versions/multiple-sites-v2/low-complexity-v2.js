@@ -714,150 +714,169 @@ module.exports = function (router) {
     }
   });
 
-  // Water Framework Directive - Smart routing from task list
+  // Helper: build a redirect path keeping the current context flags
+  function wfdPathWithContext(base, fromMainCheck, fromWfdCheck) {
+    if (fromMainCheck) return base + '?camefromcheckanswers=true';
+    if (fromWfdCheck) return base + '?fromcheckanswers=true';
+    return base;
+  }
+
+  // ============================================================
+  // WFD page 1 — "Have you assessed your project against the WFD?"
+  // ============================================================
   router.get(`/versions/${version}/${section}/environmental-assessments/water-framework-directive`, function (req, res) {
-    // Clear error flags when navigating to the page
-    req.session.data['errorthispage'] = "false";
-    req.session.data['errortypeone'] = "false";
-    
-    // Check if coming from check answers pages (change links)
+    // Clear error flags
+    delete req.session.data['low-complexity-wfd-errorthispage'];
+    delete req.session.data['low-complexity-wfd-error-radio'];
+    delete req.session.data['low-complexity-wfd-error-summary'];
+
     const fromCheckAnswers = req.query.fromcheckanswers === 'true';
     const fromMainCheckAnswers = req.query.camefromcheckanswers === 'true';
-    
-    // Capture the query parameter if coming from main check answers
+
     if (fromMainCheckAnswers) {
       req.session.data['camefromcheckanswers'] = 'true';
     }
-    
-    // Smart routing logic
-    // If file uploaded AND not coming from WFD check-answers AND not coming from main check-answers, go to WFD check-answers
-    if (req.session.data['low-complexity-wfd-file-uploaded'] && !fromCheckAnswers && !fromMainCheckAnswers) {
-      res.redirect('water-framework-directive-check-answers');
+
+    // Smart routing: only send the user to the WFD check page when the flow has
+    // been fully completed with "Yes" answered on page 1. For "No" answers there
+    // is no check page — re-entering the task should show the question again.
+    if (req.session.data['low-complexity-wfd-assessed'] === 'Yes'
+        && req.session.data['low-complexity-wfd-completed']
+        && !fromCheckAnswers && !fromMainCheckAnswers) {
+      return res.redirect('water-framework-directive-check-answers');
     }
-    // Otherwise render the question page
-    else {
-      res.render(`versions/${version}/${section}/environmental-assessments/water-framework-directive`);
-    }
+
+    res.render(`versions/${version}/${section}/environmental-assessments/water-framework-directive`);
   });
 
-  // Water Framework Directive Yes/No question router (POST)
   router.post(`/versions/${version}/${section}/environmental-assessments/water-framework-directive-router`, function (req, res) {
-    // Clear error flags
-    req.session.data['errorthispage'] = "false";
-    req.session.data['errortypeone'] = "false";
+    delete req.session.data['low-complexity-wfd-errorthispage'];
+    delete req.session.data['low-complexity-wfd-error-radio'];
+    delete req.session.data['low-complexity-wfd-error-summary'];
 
-    // Get the nautical mile answer
-    const nauticalMile = req.session.data['low-complexity-wfd-nautical-mile'];
+    const assessed = req.session.data['low-complexity-wfd-assessed'];
+    const summary = req.session.data['low-complexity-wfd-summary'];
     const fromCheckAnswers = req.query.fromcheckanswers === 'true';
     const fromMainCheckAnswers = req.session.data['camefromcheckanswers'] === 'true';
 
-    // Validate: check if radio is selected
-    if (!nauticalMile) {
-      // Set error flags
-      req.session.data['errorthispage'] = "true";
-      req.session.data['errortypeone'] = "true";
-      
-      // Redirect back to the same page with errors, preserving the check answers context
-      if (fromMainCheckAnswers) {
-        res.redirect('water-framework-directive?camefromcheckanswers=true');
-      } else if (fromCheckAnswers) {
-        res.redirect('water-framework-directive?fromcheckanswers=true');
-      } else {
-        res.redirect('water-framework-directive');
-      }
-    } else if (nauticalMile === 'No') {
-      // If No, mark as complete
-      req.session.data['low-complexity-wfd-completed'] = true;
-      // Clear file upload data if it exists
+    let hasErrors = false;
+    if (!assessed) {
+      req.session.data['low-complexity-wfd-error-radio'] = "true";
+      hasErrors = true;
+    } else if (assessed === 'Yes' && (!summary || summary.trim() === '')) {
+      req.session.data['low-complexity-wfd-error-summary'] = "true";
+      hasErrors = true;
+    }
+
+    if (hasErrors) {
+      req.session.data['low-complexity-wfd-errorthispage'] = "true";
+      return res.redirect(wfdPathWithContext('water-framework-directive', fromMainCheckAnswers, fromCheckAnswers));
+    }
+
+    if (assessed === 'No') {
+      // Clear cascaded sub-answers
+      delete req.session.data['low-complexity-wfd-summary'];
+      delete req.session.data['low-complexity-wfd-upload-answer'];
       delete req.session.data['low-complexity-wfd-file-uploaded'];
       delete req.session.data['low-complexity-wfd-filename'];
-      
-      // Check if we need to return to main check answers
+      req.session.data['low-complexity-wfd-completed'] = true;
+
       if (fromMainCheckAnswers) {
         req.session.data['camefromcheckanswers'] = false;
-        res.redirect('../check-your-answers#water-framework-directive');
-      } else {
-        res.redirect('../marine-licence-start-page');
+        return res.redirect('../check-your-answers#water-framework-directive');
       }
-    } else if (nauticalMile === 'Yes') {
-      // Check if file already uploaded and coming from check answers
-      const fileAlreadyUploaded = req.session.data['low-complexity-wfd-file-uploaded'];
-      const fromWFDCheckAnswers = req.query.fromcheckanswers === 'true';
-      
-      // If file already exists and coming from any check answers, skip upload
-      if (fileAlreadyUploaded && (fromMainCheckAnswers || fromWFDCheckAnswers)) {
-        if (fromMainCheckAnswers) {
-          // Go directly back to main check-your-answers (skip WFD check-answers)
-          req.session.data['camefromcheckanswers'] = false;
-          res.redirect('../check-your-answers#water-framework-directive');
-        } else {
-          // Coming from WFD check-answers, return there
-          res.redirect('water-framework-directive-check-answers');
-        }
-      } else {
-        // Need to upload file (first time or user is going through fresh)
-        if (fromMainCheckAnswers) {
-          res.redirect('water-framework-directive-upload?camefromcheckanswers=true');
-        } else if (fromWFDCheckAnswers) {
-          res.redirect('water-framework-directive-upload?fromcheckanswers=true');
-        } else {
-          res.redirect('water-framework-directive-upload');
-        }
-      }
+      return res.redirect('../marine-licence-start-page');
     }
+
+    // assessed === 'Yes' — do NOT mark task complete yet; the sub-journey must finish first.
+    // Always continue to the upload question; any existing answer will pre-fill the radio.
+    return res.redirect(wfdPathWithContext('water-framework-directive-upload-question', fromMainCheckAnswers, fromCheckAnswers));
   });
 
-  // Water Framework Directive Upload page
-  router.get(`/versions/${version}/${section}/environmental-assessments/water-framework-directive-upload`, function (req, res) {
-    // Capture the query parameter if coming from main check answers
+  // ============================================================
+  // WFD page 2 — "Do you have a Water Framework Directive assessment to upload?"
+  // ============================================================
+  router.get(`/versions/${version}/${section}/environmental-assessments/water-framework-directive-upload-question`, function (req, res) {
+    delete req.session.data['low-complexity-wfd-upload-q-errorthispage'];
+
     if (req.query.camefromcheckanswers === 'true') {
       req.session.data['camefromcheckanswers'] = 'true';
     }
-    
+
+    res.render(`versions/${version}/${section}/environmental-assessments/water-framework-directive-upload-question`);
+  });
+
+  router.post(`/versions/${version}/${section}/environmental-assessments/water-framework-directive-upload-question-router`, function (req, res) {
+    delete req.session.data['low-complexity-wfd-upload-q-errorthispage'];
+
+    const uploadAnswer = req.session.data['low-complexity-wfd-upload-answer'];
+    const fromCheckAnswers = req.query.fromcheckanswers === 'true';
+    const fromMainCheckAnswers = req.session.data['camefromcheckanswers'] === 'true';
+
+    if (!uploadAnswer) {
+      req.session.data['low-complexity-wfd-upload-q-errorthispage'] = "true";
+      return res.redirect(wfdPathWithContext('water-framework-directive-upload-question', fromMainCheckAnswers, fromCheckAnswers));
+    }
+
+    if (uploadAnswer === 'No') {
+      // Clear any previously uploaded file
+      delete req.session.data['low-complexity-wfd-file-uploaded'];
+      delete req.session.data['low-complexity-wfd-filename'];
+      req.session.data['low-complexity-wfd-completed'] = true;
+
+      // If coming from the main check page, go straight back there.
+      if (fromMainCheckAnswers) {
+        req.session.data['camefromcheckanswers'] = false;
+        return res.redirect('../check-your-answers#water-framework-directive');
+      }
+      // Otherwise show the WFD check page.
+      return res.redirect('water-framework-directive-check-answers');
+    }
+
+    // uploadAnswer === 'Yes' → go to the file upload page, preserving context
+    return res.redirect(wfdPathWithContext('water-framework-directive-upload', fromMainCheckAnswers, fromCheckAnswers));
+  });
+
+  // ============================================================
+  // WFD file upload page
+  // ============================================================
+  router.get(`/versions/${version}/${section}/environmental-assessments/water-framework-directive-upload`, function (req, res) {
+    if (req.query.camefromcheckanswers === 'true') {
+      req.session.data['camefromcheckanswers'] = 'true';
+    }
+
     res.render(`versions/${version}/${section}/environmental-assessments/water-framework-directive-upload`);
   });
 
-  // Water Framework Directive Upload router (POST)
   router.post(`/versions/${version}/${section}/environmental-assessments/water-framework-directive-upload-router`, function (req, res) {
-    // Store filename (in real app, this would come from actual file upload)
-    // For prototype, we'll use a default filename
-    req.session.data['low-complexity-wfd-filename'] = 'WFD.pdf';
+    // Prototype: pretend a file was uploaded
+    req.session.data['low-complexity-wfd-filename'] = 'WFD-assessment.pdf';
     req.session.data['low-complexity-wfd-file-uploaded'] = true;
-    
-    // Check if coming from main check answers and pass through to WFD check answers
-    const fromMainCheckAnswers = req.session.data['camefromcheckanswers'] === 'true';
-    
-    if (fromMainCheckAnswers) {
-      res.redirect('water-framework-directive-check-answers?camefromcheckanswers=true');
-    } else {
-      // Always go to WFD check answers after upload
-      res.redirect('water-framework-directive-check-answers');
-    }
+    req.session.data['low-complexity-wfd-completed'] = true;
+
+    // After upload, always land on the WFD check page (which Continue takes back to main check if needed)
+    res.redirect('water-framework-directive-check-answers');
   });
 
-  // Water Framework Directive Check Answers page
+  // ============================================================
+  // WFD check answers page
+  // ============================================================
   router.get(`/versions/${version}/${section}/environmental-assessments/water-framework-directive-check-answers`, function (req, res) {
-    // Capture the query parameter if coming from main check answers
     if (req.query.camefromcheckanswers === 'true') {
       req.session.data['camefromcheckanswers'] = 'true';
     }
-    
+
     res.render(`versions/${version}/${section}/environmental-assessments/water-framework-directive-check-answers`);
   });
 
-  // Water Framework Directive Check Answers router (POST)
   router.post(`/versions/${version}/${section}/environmental-assessments/water-framework-directive-check-answers-router`, function (req, res) {
-    // Mark task as complete
     req.session.data['low-complexity-wfd-completed'] = true;
-    
-    // Check if we need to return to main check answers
+
     if (req.session.data['camefromcheckanswers'] === 'true') {
       req.session.data['camefromcheckanswers'] = false;
-      res.redirect('../check-your-answers#water-framework-directive');
-    } else {
-      // Return to main task list
-      res.redirect('../marine-licence-start-page');
+      return res.redirect('../check-your-answers#water-framework-directive');
     }
+    res.redirect('../marine-licence-start-page');
   });
 
   ///////////////////////////////////////////
@@ -903,6 +922,9 @@ module.exports = function (router) {
     delete req.session.data['low-complexity-wfd'];
     delete req.session.data['low-complexity-wfd-completed'];
     delete req.session.data['low-complexity-wfd-nautical-mile'];
+    delete req.session.data['low-complexity-wfd-assessed'];
+    delete req.session.data['low-complexity-wfd-summary'];
+    delete req.session.data['low-complexity-wfd-upload-answer'];
     delete req.session.data['low-complexity-wfd-file-uploaded'];
     delete req.session.data['low-complexity-wfd-filename'];
     

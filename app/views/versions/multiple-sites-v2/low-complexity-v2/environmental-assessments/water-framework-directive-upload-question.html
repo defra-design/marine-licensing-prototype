@@ -1,0 +1,87 @@
+{% extends "../../layouts/low-complexity-v2.html" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% if data['organisation-name'] %}
+        {% include "../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link govuk-link--no-visited-state" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+{% set pageHeadingTextHTML %}
+Do you have a Water Framework Directive assessment to upload?
+{% endset %}
+
+{% block pageTitle %}
+{% if data['low-complexity-wfd-upload-q-errorthispage'] == "true" %}Error: {% endif %}{{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-two-thirds">
+
+		{% if data['low-complexity-wfd-upload-q-errorthispage'] == "true" %}
+		<div class="govuk-error-summary" data-module="govuk-error-summary">
+			<div role="alert">
+				<h2 class="govuk-error-summary__title">There is a problem</h2>
+				<div class="govuk-error-summary__body">
+					<ul class="govuk-list govuk-error-summary__list">
+						<li><a href="#low-complexity-wfd-upload-answer">Select if you have a Water Framework Directive assessment to upload</a></li>
+					</ul>
+				</div>
+			</div>
+		</div>
+		{% endif %}
+
+		<span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
+		<h1 class="govuk-heading-l">{{ pageHeadingTextHTML }}</h1>
+
+		<form action="water-framework-directive-upload-question-router" method="post" novalidate>
+
+			{{ govukRadios({
+				name: "low-complexity-wfd-upload-answer",
+				idPrefix: "low-complexity-wfd-upload-answer",
+				fieldset: {
+					legend: {
+						text: pageHeadingTextHTML,
+						classes: "govuk-visually-hidden"
+					}
+				},
+				hint: {
+					text: "Upload your assessment if you have one. You can continue without uploading."
+				},
+				items: [
+					{
+						value: "Yes",
+						text: "Yes",
+						checked: data['low-complexity-wfd-upload-answer'] == "Yes"
+					},
+					{
+						value: "No",
+						text: "No",
+						checked: data['low-complexity-wfd-upload-answer'] == "No"
+					}
+				],
+				errorMessage: {
+					text: "Select if you have a Water Framework Directive assessment to upload"
+				} if data['low-complexity-wfd-upload-q-errorthispage'] == "true"
+			}) }}
+
+			<div class="govuk-button-group">
+				{{ govukButton({
+					text: "Continue"
+				}) }}
+
+				<a class="govuk-link govuk-link--no-visited-state" href="../marine-licence-start-page">Cancel</a>
+			</div>
+
+		</form>
+
+	</div>
+</div>
+
+{% endblock %}
