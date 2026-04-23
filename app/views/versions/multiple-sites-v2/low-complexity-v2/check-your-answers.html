@@ -1157,41 +1157,69 @@ Check your answers before sending your information
 				<h2 class="govuk-summary-card__title" id="water-framework-directive">
 					Water Framework Directive assessment
 				</h2>
+				<ul class="govuk-summary-card__actions">
+					<li class="govuk-summary-card__action">
+						{% if data['low-complexity-wfd-assessed'] == 'Yes' %}
+						<a class="govuk-link govuk-link--no-visited-state" href="environmental-assessments/water-framework-directive-check-answers?camefromcheckanswers=true">
+							Change<span class="govuk-visually-hidden"> Water Framework Directive assessment</span>
+						</a>
+						{% else %}
+						<a class="govuk-link govuk-link--no-visited-state" href="environmental-assessments/water-framework-directive?camefromcheckanswers=true">
+							Change<span class="govuk-visually-hidden"> Water Framework Directive assessment</span>
+						</a>
+						{% endif %}
+					</li>
+				</ul>
 			</div>
 			<div class="govuk-summary-card__content">
 				<dl class="govuk-summary-list">
-					<div class="govuk-summary-list__row{% if data['low-complexity-wfd-nautical-mile'] == 'Yes' %} govuk-summary-list__row--no-border{% endif %}">
+					<div class="govuk-summary-list__row{% if data['low-complexity-wfd-assessed'] == 'Yes' %} govuk-summary-list__row--no-border{% endif %}">
 						<dt class="govuk-summary-list__key">
-							Is your project located up to 1 nautical mile out at sea?
+							Have you assessed your project against the WFD?
 						</dt>
 						<dd class="govuk-summary-list__value">
-							{{ data['low-complexity-wfd-nautical-mile'] }}
-						</dd>
-						<dd class="govuk-summary-list__actions">
-							<a class="govuk-link govuk-link--no-visited-state" href="environmental-assessments/water-framework-directive?camefromcheckanswers=true">
-								Change<span class="govuk-visually-hidden"> if your project is located up to 1 nautical mile out at sea</span>
-							</a>
+							{{ data['low-complexity-wfd-assessed'] }}
 						</dd>
 					</div>
 
-					{% if data['low-complexity-wfd-nautical-mile'] == 'Yes' %}
+					{% if data['low-complexity-wfd-assessed'] == 'Yes' %}
+
+					{# Row 2: summary — no change link; editing happens via the WFD check page #}
 					<div class="govuk-summary-list__row">
 						<dt class="govuk-summary-list__key">
-							Water Framework Directive assessment file
+							Details of your WFD assessment
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ data['low-complexity-wfd-summary'] }}
+						</dd>
+					</div>
+
+					{# Row 3: have an assessment to upload? — no change link; edit via WFD check #}
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							Do you have a Water Framework Directive assessment to upload?
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ data['low-complexity-wfd-upload-answer'] }}
+						</dd>
+					</div>
+
+					{# Row 4: uploaded file (only if upload answer is Yes) — no change link; edit via WFD check #}
+					{% if data['low-complexity-wfd-upload-answer'] == 'Yes' %}
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							Uploaded file
 						</dt>
 						<dd class="govuk-summary-list__value">
 							{% if data['low-complexity-wfd-filename'] %}
 								{{ data['low-complexity-wfd-filename'] }}
 							{% else %}
-								WFD.pdf
+								WFD-assessment.pdf
 							{% endif %}
 						</dd>
-						<dd class="govuk-summary-list__actions">
-							<a class="govuk-link govuk-link--no-visited-state" href="environmental-assessments/water-framework-directive-upload?camefromcheckanswers=true">
-								Change<span class="govuk-visually-hidden"> uploaded Water Framework Directive assessment</span>
-							</a>
-						</dd>
 					</div>
+					{% endif %}
+
 					{% endif %}
 				</dl>
 			</div>
