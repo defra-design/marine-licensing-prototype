@@ -733,12 +733,19 @@ module.exports = function (router) {
     const fromCheckAnswers = req.query.fromcheckanswers === 'true';
     const fromMainCheckAnswers = req.query.camefromcheckanswers === 'true';
 
+    // Mirror the source of this visit into session so the POST (which has no
+    // query string via the form action) can decide where to send the user.
     if (fromMainCheckAnswers) {
       req.session.data['camefromcheckanswers'] = 'true';
-    } else {
-      // The `camefromcheckanswers` flag is shared across tasks. Clear any stale
-      // value so entering the WFD flow from the task list is truly fresh.
+      req.session.data['low-complexity-wfd-came-from-wfd-check'] = false;
+    } else if (fromCheckAnswers) {
+      req.session.data['low-complexity-wfd-came-from-wfd-check'] = 'true';
       req.session.data['camefromcheckanswers'] = false;
+    } else {
+      // Clean entry from task list — wipe both flags so stale values from
+      // other tasks can't leak into this flow.
+      req.session.data['camefromcheckanswers'] = false;
+      req.session.data['low-complexity-wfd-came-from-wfd-check'] = false;
     }
 
     // Smart routing: only send the user to the WFD check page when the flow has
@@ -760,8 +767,9 @@ module.exports = function (router) {
 
     const assessed = req.session.data['low-complexity-wfd-assessed'];
     const summary = req.session.data['low-complexity-wfd-summary'];
-    const fromCheckAnswers = req.query.fromcheckanswers === 'true';
+    // Flags persisted via session (the form action has no query string).
     const fromMainCheckAnswers = req.session.data['camefromcheckanswers'] === 'true';
+    const fromWfdCheck = req.session.data['low-complexity-wfd-came-from-wfd-check'] === 'true';
 
     let hasErrors = false;
     if (!assessed) {
@@ -774,7 +782,7 @@ module.exports = function (router) {
 
     if (hasErrors) {
       req.session.data['low-complexity-wfd-errorthispage'] = "true";
-      return res.redirect(wfdPathWithContext('water-framework-directive', fromMainCheckAnswers, fromCheckAnswers));
+      return res.redirect(wfdPathWithContext('water-framework-directive', fromMainCheckAnswers, fromWfdCheck));
     }
 
     if (assessed === 'No') {
@@ -784,6 +792,7 @@ module.exports = function (router) {
       delete req.session.data['low-complexity-wfd-file-uploaded'];
       delete req.session.data['low-complexity-wfd-filename'];
       req.session.data['low-complexity-wfd-completed'] = true;
+      req.session.data['low-complexity-wfd-came-from-wfd-check'] = false;
 
       if (fromMainCheckAnswers) {
         req.session.data['camefromcheckanswers'] = false;
@@ -792,9 +801,23 @@ module.exports = function (router) {
       return res.redirect('../marine-licence-start-page');
     }
 
-    // assessed === 'Yes' — do NOT mark task complete yet; the sub-journey must finish first.
-    // Always continue to the upload question; any existing answer will pre-fill the radio.
-    return res.redirect(wfdPathWithContext('water-framework-directive-upload-question', fromMainCheckAnswers, fromCheckAnswers));
+    // assessed === 'Yes'
+    const subJourneyAlreadyComplete = !!req.session.data['low-complexity-wfd-upload-answer'];
+
+    if (subJourneyAlreadyComplete) {
+      // User is just editing the summary; skip the upload question and return to the
+      // check page they started from.
+      if (fromMainCheckAnswers) {
+        req.session.data['camefromcheckanswers'] = false;
+        req.session.data['low-complexity-wfd-came-from-wfd-check'] = false;
+        return res.redirect('../check-your-answers#water-framework-directive');
+      }
+      req.session.data['low-complexity-wfd-came-from-wfd-check'] = false;
+      return res.redirect('water-framework-directive-check-answers');
+    }
+
+    // Fresh / restarted sub-journey — continue through the upload question.
+    return res.redirect(wfdPathWithContext('water-framework-directive-upload-question', fromMainCheckAnswers, fromWfdCheck));
   });
 
   // ============================================================
@@ -931,6 +954,7 @@ module.exports = function (router) {
     delete req.session.data['low-complexity-wfd-upload-answer'];
     delete req.session.data['low-complexity-wfd-file-uploaded'];
     delete req.session.data['low-complexity-wfd-filename'];
+    delete req.session.data['low-complexity-wfd-came-from-wfd-check'];
     
     // Clear other permissions data
     delete req.session.data['low-complexity-special-legal-powers'];

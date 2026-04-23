@@ -58,8 +58,8 @@ Check your answers for Water Framework Directive assessment
 				</dd>
 			</div>
 
-			{# Row 3: do you have an assessment to upload? (no-border only when a file row follows) #}
-			<div class="govuk-summary-list__row{% if data['low-complexity-wfd-upload-answer'] == 'Yes' %} govuk-summary-list__row--no-border{% endif %}">
+			{# Row 3: do you have an assessment to upload? #}
+			<div class="govuk-summary-list__row">
 				<dt class="govuk-summary-list__key">
 					Do you have a Water Framework Directive assessment to upload?
 				</dt>
@@ -73,7 +73,7 @@ Check your answers for Water Framework Directive assessment
 				</dd>
 			</div>
 
-			{# Row 4: uploaded file (only when upload answer is Yes) — screen-reader-only change link back to the upload question page #}
+			{# Row 4: uploaded file (only when upload answer is Yes) — visible change link goes straight to the upload page #}
 			{% if data['low-complexity-wfd-upload-answer'] == 'Yes' %}
 			<div class="govuk-summary-list__row">
 				<dt class="govuk-summary-list__key">
@@ -87,8 +87,8 @@ Check your answers for Water Framework Directive assessment
 					{% endif %}
 				</dd>
 				<dd class="govuk-summary-list__actions">
-					<a class="govuk-link govuk-link--no-visited-state govuk-visually-hidden" href="water-framework-directive-upload-question?fromcheckanswers=true">
-						Change uploaded file
+					<a class="govuk-link govuk-link--no-visited-state" href="water-framework-directive-upload?fromcheckanswers=true">
+						Change<span class="govuk-visually-hidden"> uploaded file</span>
 					</a>
 				</dd>
 			</div>
