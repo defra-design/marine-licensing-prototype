@@ -76,7 +76,9 @@ Do you have a Water Framework Directive assessment to upload?
 					text: "Continue"
 				}) }}
 
-				<a class="govuk-link govuk-link--no-visited-state" href="../marine-licence-start-page">Cancel</a>
+				{% if data['camefromcheckanswers'] != 'true' and data['low-complexity-wfd-came-from-wfd-check'] != 'true' %}
+				<a class="govuk-link govuk-link--no-visited-state" href="wfd-cancel">Cancel</a>
+				{% endif %}
 			</div>
 
 		</form>

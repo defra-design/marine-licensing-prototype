@@ -735,13 +735,16 @@ module.exports = function (router) {
 
     // Mirror the source of this visit into session so the POST (which has no
     // query string via the form action) can decide where to send the user.
+    // The two flags are independent — a user who drilled main check → WFD
+    // check → WFD question has both flags set, and each is cleared when its
+    // respective check page is finally returned to.
     if (fromMainCheckAnswers) {
       req.session.data['camefromcheckanswers'] = 'true';
-      req.session.data['low-complexity-wfd-came-from-wfd-check'] = false;
-    } else if (fromCheckAnswers) {
+    }
+    if (fromCheckAnswers) {
       req.session.data['low-complexity-wfd-came-from-wfd-check'] = 'true';
-      req.session.data['camefromcheckanswers'] = false;
-    } else {
+    }
+    if (!fromMainCheckAnswers && !fromCheckAnswers) {
       // Clean entry from task list — wipe both flags so stale values from
       // other tasks can't leak into this flow.
       req.session.data['camefromcheckanswers'] = false;
@@ -805,13 +808,9 @@ module.exports = function (router) {
     const subJourneyAlreadyComplete = !!req.session.data['low-complexity-wfd-upload-answer'];
 
     if (subJourneyAlreadyComplete) {
-      // User is just editing the summary; skip the upload question and return to the
-      // check page they started from.
-      if (fromMainCheckAnswers) {
-        req.session.data['camefromcheckanswers'] = false;
-        req.session.data['low-complexity-wfd-came-from-wfd-check'] = false;
-        return res.redirect('../check-your-answers#water-framework-directive');
-      }
+      // User is just editing the summary; skip the upload question and go to the
+      // WFD check page. Its Continue button then returns to the main check page
+      // when appropriate (based on session.camefromcheckanswers).
       req.session.data['low-complexity-wfd-came-from-wfd-check'] = false;
       return res.redirect('water-framework-directive-check-answers');
     }
@@ -851,12 +850,8 @@ module.exports = function (router) {
       delete req.session.data['low-complexity-wfd-filename'];
       req.session.data['low-complexity-wfd-completed'] = true;
 
-      // If coming from the main check page, go straight back there.
-      if (fromMainCheckAnswers) {
-        req.session.data['camefromcheckanswers'] = false;
-        return res.redirect('../check-your-answers#water-framework-directive');
-      }
-      // Otherwise show the WFD check page.
+      // Whenever assessed is Yes we always land on the WFD check page first;
+      // its Continue button returns to the main check page if appropriate.
       return res.redirect('water-framework-directive-check-answers');
     }
 
@@ -886,6 +881,25 @@ module.exports = function (router) {
   });
 
   // ============================================================
+  // WFD cancel — wipes every WFD session key so the next entry is blank
+  // ============================================================
+  router.get(`/versions/${version}/${section}/environmental-assessments/wfd-cancel`, function (req, res) {
+    delete req.session.data['low-complexity-wfd-assessed'];
+    delete req.session.data['low-complexity-wfd-summary'];
+    delete req.session.data['low-complexity-wfd-upload-answer'];
+    delete req.session.data['low-complexity-wfd-file-uploaded'];
+    delete req.session.data['low-complexity-wfd-filename'];
+    delete req.session.data['low-complexity-wfd-completed'];
+    delete req.session.data['low-complexity-wfd-came-from-wfd-check'];
+    delete req.session.data['low-complexity-wfd-errorthispage'];
+    delete req.session.data['low-complexity-wfd-error-radio'];
+    delete req.session.data['low-complexity-wfd-error-summary'];
+    delete req.session.data['low-complexity-wfd-upload-q-errorthispage'];
+    req.session.data['camefromcheckanswers'] = false;
+    res.redirect('../marine-licence-start-page');
+  });
+
+  // ============================================================
   // WFD check answers page
   // ============================================================
   router.get(`/versions/${version}/${section}/environmental-assessments/water-framework-directive-check-answers`, function (req, res) {
@@ -898,6 +912,9 @@ module.exports = function (router) {
 
   router.post(`/versions/${version}/${section}/environmental-assessments/water-framework-directive-check-answers-router`, function (req, res) {
     req.session.data['low-complexity-wfd-completed'] = true;
+    // Entering the WFD check page is the natural end of any edit; clear the
+    // "came from WFD check" flag so the next fresh journey isn't contaminated.
+    req.session.data['low-complexity-wfd-came-from-wfd-check'] = false;
 
     if (req.session.data['camefromcheckanswers'] === 'true') {
       req.session.data['camefromcheckanswers'] = false;
