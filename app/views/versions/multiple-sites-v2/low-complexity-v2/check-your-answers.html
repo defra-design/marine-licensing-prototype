@@ -1157,6 +1157,19 @@ Check your answers before sending your information
 				<h2 class="govuk-summary-card__title" id="water-framework-directive">
 					Water Framework Directive assessment
 				</h2>
+				<ul class="govuk-summary-card__actions">
+					<li class="govuk-summary-card__action">
+						{% if data['low-complexity-wfd-assessed'] == 'Yes' %}
+						<a class="govuk-link govuk-link--no-visited-state" href="environmental-assessments/water-framework-directive-check-answers?camefromcheckanswers=true">
+							Change<span class="govuk-visually-hidden"> Water Framework Directive assessment</span>
+						</a>
+						{% else %}
+						<a class="govuk-link govuk-link--no-visited-state" href="environmental-assessments/water-framework-directive?camefromcheckanswers=true">
+							Change<span class="govuk-visually-hidden"> Water Framework Directive assessment</span>
+						</a>
+						{% endif %}
+					</li>
+				</ul>
 			</div>
 			<div class="govuk-summary-card__content">
 				<dl class="govuk-summary-list">
@@ -1166,17 +1179,6 @@ Check your answers before sending your information
 						</dt>
 						<dd class="govuk-summary-list__value">
 							{{ data['low-complexity-wfd-assessed'] }}
-						</dd>
-						<dd class="govuk-summary-list__actions">
-							{% if data['low-complexity-wfd-assessed'] == 'Yes' %}
-							<a class="govuk-link govuk-link--no-visited-state" href="environmental-assessments/water-framework-directive-check-answers?camefromcheckanswers=true">
-								Change<span class="govuk-visually-hidden"> if you have assessed your project against the Water Framework Directive</span>
-							</a>
-							{% else %}
-							<a class="govuk-link govuk-link--no-visited-state" href="environmental-assessments/water-framework-directive?camefromcheckanswers=true">
-								Change<span class="govuk-visually-hidden"> if you have assessed your project against the Water Framework Directive</span>
-							</a>
-							{% endif %}
 						</dd>
 					</div>
 

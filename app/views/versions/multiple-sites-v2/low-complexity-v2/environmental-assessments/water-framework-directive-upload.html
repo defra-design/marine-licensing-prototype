@@ -49,7 +49,7 @@ Upload your Water Framework Directive assessment
 					text: "Continue"
 				}) }}
 
-				{% if data['camefromcheckanswers'] != 'true' and data['low-complexity-wfd-came-from-wfd-check'] != 'true' %}
+				{% if data['camefromcheckanswers'] != 'true' and data['low-complexity-wfd-came-from-wfd-check'] != 'true' and not data['low-complexity-wfd-completed'] %}
 				<a class="govuk-link govuk-link--no-visited-state" href="wfd-cancel">Cancel</a>
 				{% endif %}
 			</div>
