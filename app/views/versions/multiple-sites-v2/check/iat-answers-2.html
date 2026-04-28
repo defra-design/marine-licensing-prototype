@@ -1,0 +1,113 @@
+{% extends "../layouts/main.html" %}
+
+{% block head %}
+  {{ super() }}
+  <style>
+    @media print {
+      .govuk-footer,
+      .govuk-phase-banner,
+      .govuk-back-link,
+      .print-link {
+        display: none;
+      }
+    }
+  </style>
+{% endblock %}
+
+{% block beforeContent %}
+	{% include "../includes/phase-banner.html" %}
+	{% include "../includes/back-link.html" %}
+{% endblock %}
+
+{% block pageTitle %}
+	Marine licence requirement check - {{ data['headerName'] }}
+{% endblock %}
+
+{% block content %}
+<style>
+	.govuk-summary-list__key {
+		width: 50%;
+	}
+	.govuk-summary-list__value {
+		width: 50%;
+	}
+</style>
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-full">
+
+		<h1 class="govuk-heading-l">Marine Management Organisation - Marine licence requirement check</h1>
+
+		<p class="print-link"><a href="javascript:window.print()">Print this page</a></p>
+		<p class="print-link">To save as a PDF, select 'Print this page' and choose 'Save as PDF' as your printer.</p>
+
+		<h2 class="govuk-heading-m">Introduction</h2>
+		<p>The purpose of the MMO marine licence requirement checker tool is to assist prospective applicants to determine whether a marine licence is required in order to carry out an activity. The outcome produced is based on the answers provided. Prospective applicants are responsible for ensuring that the information supplied is correct. Providing false or misleading information may result in enforcement action being taken.</p>
+
+		<h2 class="govuk-heading-m">Date of check</h2>
+		<p id="date-of-check"></p>
+		<script>
+			var d = new Date();
+			var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+			document.getElementById("date-of-check").textContent = d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear();
+		</script>
+
+		<h2 class="govuk-heading-m">Summary</h2>
+		<p>You selected 'Other maintenance' which indicates that your proposed activity includes an activity not specified in the self-service sub-activity list provided. Only activities specified are suitable for self-service marine licensing.</p>
+		<p>Based on the information provided the activity requires a marine licence from the MMO but the activity is not suitable for self-service marine licensing.</p>
+
+	</div>
+</div>
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-full">
+
+		<h2 class="govuk-heading-m">Answers</h2>
+
+		{{ govukSummaryList({
+			rows: [
+				{
+					key: { text: "Where will the activity take place?" },
+					value: { text: "In or over the sea" }
+				},
+				{
+					key: { text: "Which waters will the activity take place in?" },
+					value: { text: "English waters or Northern Ireland offshore waters" }
+				},
+				{
+					key: { text: "What type of activity will be carried out?" },
+					value: { text: "Construction" }
+				},
+				{
+					key: { text: "What is the purpose of the construction activity?" },
+					value: { text: "Build or make something new" }
+				},
+				{
+					key: { text: "What does the construction involve?" },
+					value: { text: "Something else" }
+				},
+				{
+					key: { text: "What is the construction activity for?" },
+					value: { text: "Something else" }
+				},
+				{
+					key: { text: "Please select an activity type that matches with the activity to be carried out." },
+					value: { text: "Maintenance of existing structures or assets" }
+				},
+				{
+					key: { text: "Please select sub-activities that match with activities proposed to be carried out." },
+					value: { html: "<ul class=\"govuk-list govuk-list--bullet\">
+						<li>Other maintenance</li>
+						<li>Re-painting of existing structures or assets</li>
+						<li>Re-rendering, resurfacing or repointing of existing structures or slipways</li>
+						<li>Removal of marine growth</li>
+						<li>Sand or grit blasting</li>
+						<li>Scaffolding or access towers</li>
+					</ul>" }
+				}
+			]
+		}) }}
+
+	</div>
+</div>
+{% endblock %}
