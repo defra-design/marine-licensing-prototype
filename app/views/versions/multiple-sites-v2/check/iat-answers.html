@@ -1,0 +1,246 @@
+{% extends "../layouts/main.html" %}
+
+{% block head %}
+  {{ super() }}
+  <style>
+    @media print {
+      .govuk-footer,
+      .govuk-phase-banner,
+      .govuk-back-link,
+      .print-link {
+        display: none;
+      }
+    }
+  </style>
+{% endblock %}
+
+{% block beforeContent %}
+	{% include "../includes/phase-banner.html" %}
+	{% include "../includes/back-link.html" %}
+{% endblock %}
+
+{% block pageTitle %}
+	Marine licence requirement check - {{ data['headerName'] }}
+{% endblock %}
+
+{% block content %}
+<style>
+	.govuk-summary-list__key {
+		width: 50%;
+	}
+	.govuk-summary-list__value {
+		width: 50%;
+	}
+</style>
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-two-thirds">
+
+		<h1 class="govuk-heading-l">Marine Management Organisation - Marine licence requirement check</h1>
+
+		<p class="print-link"><a href="javascript:window.print()">Print this page</a></p>
+		<p class="print-link">To save as a PDF, select 'Print this page' and choose 'Save as PDF' as your printer.</p>
+
+		<!--{{ govukDetails({
+			summaryText: "How to save this page as a PDF",
+			text: "Select 'Print this page' and choose 'Save as PDF' or 'Microsoft Print to PDF' as your printer option."
+	}) }}-->
+
+		<h2 class="govuk-heading-m">Introduction</h2>
+		<p>The purpose of the MMO marine licence requirement checker tool is to assist prospective applicants to determine whether a marine licence is required in order to carry out an activity. The outcome produced is based on the answers provided. Prospective applicants are responsible for ensuring that the information supplied is correct. Providing false or misleading information may result in enforcement action being taken.</p>
+
+		<h2 class="govuk-heading-m">Date of check</h2>
+		<p id="date-of-check"></p>
+		<script>
+			var d = new Date();
+			var months = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+			document.getElementById("date-of-check").textContent = d.getDate() + " " + months[d.getMonth()] + " " + d.getFullYear();
+		</script>
+
+		<h2 class="govuk-heading-m">Summary</h2>
+		{% if (data['exemption'] == "pontoon-approval" or data['exemption'] == "pontoon-notification" or data['exemption'] == "") %}
+			<p>
+				Based on the information provided the activity is one that meets the terms of a marine licence exemption set out in
+				<a href="http://www.legislation.gov.uk/uksi/2011/409/article/25A" rel="noreferrer noopener" target="_blank">Article 25A of the Marine Licence (Exempted Activities) Order 2011 (as amended) (opens in new tab)</a>
+				and a marine licence is therefore not required.
+			</p>
+			{% if data['exemption'] == "pontoon-approval" %}
+				<p>This exemption is subject to the requirement that the activity is carried out in accordance with an approval granted by the MMO. Please submit notification of your intention to carry out the activity and await approval before proceeding.</p>
+			{% else %}
+				<p>This exemption is subject to the requirement that notification of the intention to carry out the activity is given to the MMO prior to the commencement of the activity.</p>
+			{% endif %}
+		{% elif data['exemption'] == "sample-notification" %}
+			<p>
+				Based on the information provided the activity is one that meets the terms of a marine licence exemption set out in
+				<a href="https://www.legislation.gov.uk/uksi/2011/409/article/17A" rel="noreferrer noopener" target="_blank">Article 17A of the Marine Licence (Exempted Activities) Order 2011 (as amended) (opens in new tab)</a>
+				and a marine licence is therefore not required.
+			</p>
+			<p>This exemption is subject to the requirement that notification of the intention to carry out the activity is given to the MMO prior to the commencement of the activity.</p>
+		{% endif %}
+
+	</div>
+</div>
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-full">
+
+		<h2 class="govuk-heading-m">Answers</h2>
+
+		{% if data['exemption'] == "pontoon-approval" %}
+
+			{{ govukSummaryList({
+				rows: [
+					{
+						key: { text: "Where will the activity take place?" },
+						value: { text: "In or over the sea" }
+					},
+					{
+						key: { text: "Which waters will the activity take place in?" },
+						value: { text: "English waters or Northern Ireland offshore waters" }
+					},
+					{
+						key: { text: "What type of activity will be carried out?" },
+						value: { text: "Construction" }
+					},
+					{
+						key: { text: "What is the purpose of the construction activity?" },
+						value: { text: "Build or make something new" }
+					},
+					{
+						key: { text: "What does the construction involve?" },
+						value: { text: "Pontoons" }
+					},
+					{
+						key: { text: "Is the purpose of the activity to provide a pontoon?" },
+						value: { text: "Yes" }
+					},
+					{
+						key: { text: "Will a harbour authority or someone working for them carry out the activity?" },
+						value: { text: "No" }
+					},
+					{
+						key: { text: "Will the activity take place in a harbour authority area?" },
+						value: { text: "Yes" }
+					},
+					{
+						key: { text: "Do you have harbour authority consent to build a pontoon?" },
+						value: { text: "Yes" }
+					},
+					{
+						key: { text: "Will the pontoon deck be larger than 30 square metres when finished?" },
+						value: { text: "No" }
+					},
+					{
+						key: { text: "In the 6 months before the activity begins, will the harbour authority have built or approved more than 10 pontoons?" },
+						value: { text: "Yes" }
+					}
+				]
+			}) }}
+
+		{% elif (data['exemption'] == "pontoon-notification" or data['exemption'] == "") %}
+
+			{{ govukSummaryList({
+				rows: [
+					{
+						key: { text: "Where will the activity take place?" },
+						value: { text: "In or over the sea" }
+					},
+					{
+						key: { text: "Which waters will the activity take place in?" },
+						value: { text: "English waters or Northern Ireland offshore waters" }
+					},
+					{
+						key: { text: "What type of activity will be carried out?" },
+						value: { text: "Construction" }
+					},
+					{
+						key: { text: "What is the purpose of the construction activity?" },
+						value: { text: "Build or make something new" }
+					},
+					{
+						key: { text: "What does the construction involve?" },
+						value: { text: "Pontoons" }
+					},
+					{
+						key: { text: "Is the purpose of the activity to provide a pontoon?" },
+						value: { text: "Yes" }
+					},
+					{
+						key: { text: "Will a harbour authority or someone working for them carry out the activity?" },
+						value: { text: "No" }
+					},
+					{
+						key: { text: "Will the activity take place in a harbour authority area?" },
+						value: { text: "Yes" }
+					},
+					{
+						key: { text: "Do you have harbour authority consent to build a pontoon?" },
+						value: { text: "Yes" }
+					},
+					{
+						key: { text: "Will the pontoon deck be larger than 30 square metres when finished?" },
+						value: { text: "No" }
+					},
+					{
+						key: { text: "In the 6 months before the activity begins, will the harbour authority have built or approved more than 10 pontoons?" },
+						value: { text: "No" }
+					}
+				]
+			}) }}
+
+		{% elif data['exemption'] == "sample-notification" %}
+
+			{{ govukSummaryList({
+				rows: [
+					{
+						key: { text: "Where will the activity take place?" },
+						value: { text: "In the 'Sea'" }
+					},
+					{
+						key: { text: "In which waters will the activity take place?" },
+						value: { text: "In English waters" }
+					},
+					{
+						key: { text: "What type of activity will be carried out?" },
+						value: { text: "Removal of a substance or object" }
+					},
+					{
+						key: { text: "How will the removal be carried out?" },
+						value: { text: "Using a vehicle or vessel" }
+					},
+					{
+						key: { text: "Will the substance or object to be removed, be removed from the 'Seabed'?" },
+						value: { text: "Yes" }
+					},
+					{
+						key: { text: "What does the removal activity relate to?" },
+						value: { text: "Scientific investigation or research" }
+					},
+					{
+						key: { text: "What does the removal activity relate to?" },
+						value: { text: "Samples for testing and analysis" }
+					},
+					{
+						key: { text: "Is the purpose of the activity to take a sample of material for testing or analysis?" },
+						value: { text: "Yes" }
+					},
+					{
+						key: { text: "Will the sample to be collected be of a volume of 1m3 or less?" },
+						value: { text: "Yes" }
+					},
+					{
+						key: { text: "Will the activity cause or be likely to cause an obstruction or danger to navigation?" },
+						value: { text: "No" }
+					},
+					{
+						key: { text: "Will the activity take place in or within 200m of a Marine Protected Area (MPA)?" },
+						value: { text: "No" }
+					}
+				]
+			}) }}
+
+		{% endif %}
+
+	</div>
+</div>
+{% endblock %}
