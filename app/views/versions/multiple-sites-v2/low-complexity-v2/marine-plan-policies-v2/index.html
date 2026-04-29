@@ -33,7 +33,7 @@ Marine plan policies
 			{{ pageHeadingTextHTML }}
 		</h1>
 
-		<p>The policies listed are based on the information you entered in 'Site details'. You must consider every policy listed before you can send your information. If you cannot finish now, you can return to this page later.</p>
+		<p>The policies listed are based on the information you entered in Site and activity details. You must consider every policy listed before you can send your information. If you cannot finish now, you can return to this page later.</p>
 		<p class="govuk-body">Before you start, read information on the policies presented here and how to complete this section in <a href="guidance" class="govuk-link" target="_blank" rel="noopener noreferrer">Marine plan policy guidance (opens in new tab)</a>.</p>
 
 		<hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
@@ -42,7 +42,7 @@ Marine plan policies
 		{% set mppActiveComplete = data['marine-plan-policy-v2-s-acc-1-completed'] and data['marine-plan-policy-v2-s-bio-1-completed'] and data['marine-plan-policy-v2-s-agg-4-completed'] and data['marine-plan-policy-v2-s-emp-1-completed'] and data['marine-plan-policy-v2-s-uwn-2-completed'] %}
 		{% set mppDisplayTotal = 37 %}
 		<p class="govuk-body">{% if mppActiveCompletedCount == 0 %}{{ mppDisplayTotal }} policies to complete{% elif mppActiveComplete %}37 of 37 policies completed{% else %}{{ mppActiveCompletedCount }} of {{ mppDisplayTotal }} policies completed{% endif %}</p>
-		<h2 class="govuk-heading-m">Cross cutting</h2>
+		<h2 class="govuk-heading-m">Cross-cutting</h2>
 		<ul class="govuk-task-list">
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
 			  <div class="govuk-task-list__name-and-hint">
