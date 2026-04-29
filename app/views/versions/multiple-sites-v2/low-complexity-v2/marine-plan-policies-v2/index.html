@@ -42,7 +42,149 @@ Marine plan policies
 		{% set mppActiveComplete = data['marine-plan-policy-v2-s-acc-1-completed'] and data['marine-plan-policy-v2-s-bio-1-completed'] and data['marine-plan-policy-v2-s-agg-4-completed'] and data['marine-plan-policy-v2-s-emp-1-completed'] and data['marine-plan-policy-v2-s-uwn-2-completed'] %}
 		{% set mppDisplayTotal = 37 %}
 		<p class="govuk-body">{% if mppActiveCompletedCount == 0 %}{{ mppDisplayTotal }} policies to complete{% elif mppActiveComplete %}37 of 37 policies completed{% else %}{{ mppActiveCompletedCount }} of {{ mppDisplayTotal }} policies completed{% endif %}</p>
-		<h2 class="govuk-heading-m">Environmental protection and impacts</h2>
+		<h2 class="govuk-heading-m">Cross cutting</h2>
+		<ul class="govuk-task-list">
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-cc-1-status">
+				  South Climate change 1 (S-CC-1)
+				</a>
+			  </div>
+			  <div class="govuk-task-list__status" id="s-cc-1-status">
+				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
+			  </div>
+			</li>
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-cc-2-status">
+				  South Climate change 2 (S-CC-2)
+				</a>
+			  </div>
+			  <div class="govuk-task-list__status" id="s-cc-2-status">
+				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
+			  </div>
+			</li>
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-cc-3-status">
+				  South Climate change 3 (S-CC-3)
+				</a>
+			  </div>
+			  <div class="govuk-task-list__status" id="s-cc-3-status">
+				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
+			  </div>
+			</li>
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-cc-4-status">
+				  South Climate change 4 (S-CC-4)
+				</a>
+			  </div>
+			  <div class="govuk-task-list__status" id="s-cc-4-status">
+				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
+			  </div>
+			</li>
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-co-1-status">
+				  South Co-existence 1 (S-CO-1)
+				</a>
+			  </div>
+			  <div class="govuk-task-list__status" id="s-co-1-status">
+				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
+			  </div>
+			</li>
+		</ul>
+
+		<h2 class="govuk-heading-m">Economic</h2>
+		<ul class="govuk-task-list">
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="south-aggregates-4" aria-describedby="s-agg-4-status">
+				  South Aggregates 4 (S-AGG-4)
+				</a>
+			  </div>
+			  <div class="govuk-task-list__status" id="s-agg-4-status">
+				{% if data['marine-plan-policy-v2-s-agg-4-completed'] %}
+				Completed
+				{% else %}
+				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
+				{% endif %}
+			  </div>
+			</li>
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-aq-2-status">
+				  South Aquaculture 2 (S-AQ-2)
+				</a>
+			  </div>
+			  <div class="govuk-task-list__status" id="s-aq-2-status">
+				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
+			  </div>
+			</li>
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-cab-1-status">
+				  South Cables 1 (S-CAB-1)
+				</a>
+			  </div>
+			  <div class="govuk-task-list__status" id="s-cab-1-status">
+				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
+			  </div>
+			</li>
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-cab-2-status">
+				  South Cables 2 (S-CAB-2)
+				</a>
+			  </div>
+			  <div class="govuk-task-list__status" id="s-cab-2-status">
+				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
+			  </div>
+			</li>
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-dd-2-status">
+				  South Dredging and disposal 2 (S-DD-2)
+				</a>
+			  </div>
+			  <div class="govuk-task-list__status" id="s-dd-2-status">
+				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
+			  </div>
+			</li>
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-inf-1-status">
+				  South Infrastructure 1 (S-INF-1)
+				</a>
+			  </div>
+			  <div class="govuk-task-list__status" id="s-inf-1-status">
+				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
+			  </div>
+			</li>
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-ps-1-status">
+				  South Ports, harbours and shipping 1 (S-PS-1)
+				</a>
+			  </div>
+			  <div class="govuk-task-list__status" id="s-ps-1-status">
+				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
+			  </div>
+			</li>
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-ren-1-status">
+				  South Renewables 1 (S-REN-1)
+				</a>
+			  </div>
+			  <div class="govuk-task-list__status" id="s-ren-1-status">
+				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
+			  </div>
+			</li>
+		</ul>
+
+		<h2 class="govuk-heading-m">Environmental</h2>
 		<ul class="govuk-task-list">
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
 			  <div class="govuk-task-list__name-and-hint">
@@ -174,149 +316,7 @@ Marine plan policies
 			</li>
 		</ul>
 
-		<h2 class="govuk-heading-m">Climate change and cumulative effects</h2>
-		<ul class="govuk-task-list">
-			<li class="govuk-task-list__item govuk-task-list__item--with-link">
-			  <div class="govuk-task-list__name-and-hint">
-				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-cc-1-status">
-				  South Climate change 1 (S-CC-1)
-				</a>
-			  </div>
-			  <div class="govuk-task-list__status" id="s-cc-1-status">
-				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
-			  </div>
-			</li>
-			<li class="govuk-task-list__item govuk-task-list__item--with-link">
-			  <div class="govuk-task-list__name-and-hint">
-				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-cc-2-status">
-				  South Climate change 2 (S-CC-2)
-				</a>
-			  </div>
-			  <div class="govuk-task-list__status" id="s-cc-2-status">
-				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
-			  </div>
-			</li>
-			<li class="govuk-task-list__item govuk-task-list__item--with-link">
-			  <div class="govuk-task-list__name-and-hint">
-				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-cc-3-status">
-				  South Climate change 3 (S-CC-3)
-				</a>
-			  </div>
-			  <div class="govuk-task-list__status" id="s-cc-3-status">
-				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
-			  </div>
-			</li>
-			<li class="govuk-task-list__item govuk-task-list__item--with-link">
-			  <div class="govuk-task-list__name-and-hint">
-				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-cc-4-status">
-				  South Climate change 4 (S-CC-4)
-				</a>
-			  </div>
-			  <div class="govuk-task-list__status" id="s-cc-4-status">
-				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
-			  </div>
-			</li>
-			<li class="govuk-task-list__item govuk-task-list__item--with-link">
-			  <div class="govuk-task-list__name-and-hint">
-				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-co-1-status">
-				  South Co-existence 1 (S-CO-1)
-				</a>
-			  </div>
-			  <div class="govuk-task-list__status" id="s-co-1-status">
-				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
-			  </div>
-			</li>
-		</ul>
-
-		<h2 class="govuk-heading-m">Marine activities and infrastructure</h2>
-		<ul class="govuk-task-list">
-			<li class="govuk-task-list__item govuk-task-list__item--with-link">
-			  <div class="govuk-task-list__name-and-hint">
-				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="south-aggregates-4" aria-describedby="s-agg-4-status">
-				  South Aggregates 4 (S-AGG-4)
-				</a>
-			  </div>
-			  <div class="govuk-task-list__status" id="s-agg-4-status">
-				{% if data['marine-plan-policy-v2-s-agg-4-completed'] %}
-				Completed
-				{% else %}
-				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
-				{% endif %}
-			  </div>
-			</li>
-			<li class="govuk-task-list__item govuk-task-list__item--with-link">
-			  <div class="govuk-task-list__name-and-hint">
-				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-aq-2-status">
-				  South Aquaculture 2 (S-AQ-2)
-				</a>
-			  </div>
-			  <div class="govuk-task-list__status" id="s-aq-2-status">
-				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
-			  </div>
-			</li>
-			<li class="govuk-task-list__item govuk-task-list__item--with-link">
-			  <div class="govuk-task-list__name-and-hint">
-				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-cab-1-status">
-				  South Cables 1 (S-CAB-1)
-				</a>
-			  </div>
-			  <div class="govuk-task-list__status" id="s-cab-1-status">
-				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
-			  </div>
-			</li>
-			<li class="govuk-task-list__item govuk-task-list__item--with-link">
-			  <div class="govuk-task-list__name-and-hint">
-				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-cab-2-status">
-				  South Cables 2 (S-CAB-2)
-				</a>
-			  </div>
-			  <div class="govuk-task-list__status" id="s-cab-2-status">
-				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
-			  </div>
-			</li>
-			<li class="govuk-task-list__item govuk-task-list__item--with-link">
-			  <div class="govuk-task-list__name-and-hint">
-				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-dd-2-status">
-				  South Dredging and disposal 2 (S-DD-2)
-				</a>
-			  </div>
-			  <div class="govuk-task-list__status" id="s-dd-2-status">
-				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
-			  </div>
-			</li>
-			<li class="govuk-task-list__item govuk-task-list__item--with-link">
-			  <div class="govuk-task-list__name-and-hint">
-				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-inf-1-status">
-				  South Infrastructure 1 (S-INF-1)
-				</a>
-			  </div>
-			  <div class="govuk-task-list__status" id="s-inf-1-status">
-				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
-			  </div>
-			</li>
-			<li class="govuk-task-list__item govuk-task-list__item--with-link">
-			  <div class="govuk-task-list__name-and-hint">
-				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-ps-1-status">
-				  South Ports, harbours and shipping 1 (S-PS-1)
-				</a>
-			  </div>
-			  <div class="govuk-task-list__status" id="s-ps-1-status">
-				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
-			  </div>
-			</li>
-			<li class="govuk-task-list__item govuk-task-list__item--with-link">
-			  <div class="govuk-task-list__name-and-hint">
-				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-ren-1-status">
-				  South Renewables 1 (S-REN-1)
-				</a>
-			  </div>
-			  <div class="govuk-task-list__status" id="s-ren-1-status">
-				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
-			  </div>
-			</li>
-		</ul>
-
-		<h2 class="govuk-heading-m">Access, fisheries and sea use</h2>
+		<h2 class="govuk-heading-m">Social</h2>
 		<ul class="govuk-task-list">
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
 			  <div class="govuk-task-list__name-and-hint">
@@ -339,6 +339,30 @@ Marine plan policies
 				</a>
 			  </div>
 			  <div class="govuk-task-list__status" id="s-acc-2-status">
+				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
+			  </div>
+			</li>
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="south-employment-1" aria-describedby="s-emp-1-status">
+				  South Employment 1 (S-EMP-1)
+				</a>
+			  </div>
+			  <div class="govuk-task-list__status" id="s-emp-1-status">
+				{% if data['marine-plan-policy-v2-s-emp-1-completed'] %}
+				Completed
+				{% else %}
+				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
+				{% endif %}
+			  </div>
+			</li>
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
+			  <div class="govuk-task-list__name-and-hint">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-emp-2-status">
+				  South Employment 2 (S-EMP-2)
+				</a>
+			  </div>
+			  <div class="govuk-task-list__status" id="s-emp-2-status">
 				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
 			  </div>
 			</li>
@@ -369,34 +393,6 @@ Marine plan policies
 				</a>
 			  </div>
 			  <div class="govuk-task-list__status" id="s-fish-4-status">
-				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
-			  </div>
-			</li>
-		</ul>
-
-		<h2 class="govuk-heading-m">Social, economic and cultural considerations</h2>
-		<ul class="govuk-task-list">
-			<li class="govuk-task-list__item govuk-task-list__item--with-link">
-			  <div class="govuk-task-list__name-and-hint">
-				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="south-employment-1" aria-describedby="s-emp-1-status">
-				  South Employment 1 (S-EMP-1)
-				</a>
-			  </div>
-			  <div class="govuk-task-list__status" id="s-emp-1-status">
-				{% if data['marine-plan-policy-v2-s-emp-1-completed'] %}
-				Completed
-				{% else %}
-				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
-				{% endif %}
-			  </div>
-			</li>
-			<li class="govuk-task-list__item govuk-task-list__item--with-link">
-			  <div class="govuk-task-list__name-and-hint">
-				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="s-emp-2-status">
-				  South Employment 2 (S-EMP-2)
-				</a>
-			  </div>
-			  <div class="govuk-task-list__status" id="s-emp-2-status">
 				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
 			  </div>
 			</li>
