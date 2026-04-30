@@ -50,7 +50,7 @@ Projects
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
 {% block pageTitle %}
-    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+    {{ pageHeadingTextHTML }} - Get permission for marine work
 {% endblock %}
 
 {% block content %}
@@ -98,8 +98,8 @@ Projects
 					
 					<td class="govuk-table__cell" data-sort-value="002">
 						{{ govukTag({
-							text: "Scheduled",
-							classes: "govuk-tag"
+							text: "Active",
+							classes: "govuk-tag--green"
 						}) }}
 					</td>
 					<td class="govuk-table__cell" data-sort-value="250512">12 May 2025</td>
@@ -190,8 +190,8 @@ Projects
 					
 					<td class="govuk-table__cell" data-sort-value="003">
 						{{ govukTag({
-							text: "Finished",
-							classes: "govuk-tag--grey"
+							text: "Active",
+							classes: "govuk-tag--green"
 						}) }}
 					</td>
 					<td class="govuk-table__cell" data-sort-value="250212">12 Feb 2025</td>
@@ -269,8 +269,8 @@ Projects
 					{% if data['applicationSubmitted'] == "true" %}	
 						<td class="govuk-table__cell" data-sort-value="002">
 							{{ govukTag({
-								text: "Scheduled",
-								classes: "govuk-tag--blue"
+								text: "Active",
+								classes: "govuk-tag--green"
 							}) }}
 						</td>
 						<td class="govuk-table__cell" data-sort-value="250716">

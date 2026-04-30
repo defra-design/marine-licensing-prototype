@@ -24,6 +24,13 @@
 {% endblock %}
 
 {% block content %}
+{% if data['exemption'] is string %}
+  {% set exemption = data['exemption'] %}
+{% elif data['exemption'] %}
+  {% set exemption = data['exemption'] | last %}
+{% else %}
+  {% set exemption = "" %}
+{% endif %}
 <style>
 	.govuk-summary-list__key {
 		width: 50%;
@@ -58,24 +65,23 @@
 		</script>
 
 		<h2 class="govuk-heading-m">Summary</h2>
-		{% if (data['exemption'] == "pontoon-approval" or data['exemption'] == "pontoon-notification" or data['exemption'] == "") %}
+		{% if (exemption == "pontoon-approval" or exemption == "pontoon-notification" or not exemption) %}
 			<p>
 				Based on the information provided the activity is one that meets the terms of a marine licence exemption set out in
 				<a href="http://www.legislation.gov.uk/uksi/2011/409/article/25A" rel="noreferrer noopener" target="_blank">Article 25A of the Marine Licence (Exempted Activities) Order 2011 (as amended) (opens in new tab)</a>
 				and a marine licence is therefore not required.
 			</p>
-			{% if data['exemption'] == "pontoon-approval" %}
+			{% if exemption == "pontoon-approval" %}
 				<p>This exemption is subject to the requirement that the activity is carried out in accordance with an approval granted by the MMO. Please submit notification of your intention to carry out the activity and await approval before proceeding.</p>
 			{% else %}
 				<p>This exemption is subject to the requirement that notification of the intention to carry out the activity is given to the MMO prior to the commencement of the activity.</p>
 			{% endif %}
-		{% elif data['exemption'] == "sample-notification" %}
+		{% elif exemption == "sample-notification" %}
 			<p>
 				Based on the information provided the activity is one that meets the terms of a marine licence exemption set out in
 				<a href="https://www.legislation.gov.uk/uksi/2011/409/article/17A" rel="noreferrer noopener" target="_blank">Article 17A of the Marine Licence (Exempted Activities) Order 2011 (as amended) (opens in new tab)</a>
 				and a marine licence is therefore not required.
 			</p>
-			<p>This exemption is subject to the requirement that notification of the intention to carry out the activity is given to the MMO prior to the commencement of the activity.</p>
 		{% endif %}
 
 	</div>
@@ -86,7 +92,7 @@
 
 		<h2 class="govuk-heading-m">Answers</h2>
 
-		{% if data['exemption'] == "pontoon-approval" %}
+		{% if exemption == "pontoon-approval" %}
 
 			{{ govukSummaryList({
 				rows: [
@@ -137,7 +143,7 @@
 				]
 			}) }}
 
-		{% elif (data['exemption'] == "pontoon-notification" or data['exemption'] == "") %}
+		{% elif (exemption == "pontoon-notification" or not exemption) %}
 
 			{{ govukSummaryList({
 				rows: [
@@ -188,17 +194,17 @@
 				]
 			}) }}
 
-		{% elif data['exemption'] == "sample-notification" %}
+		{% elif exemption == "sample-notification" %}
 
 			{{ govukSummaryList({
 				rows: [
 					{
 						key: { text: "Where will the activity take place?" },
-						value: { text: "In the 'Sea'" }
+						value: { text: "In or over the sea" }
 					},
 					{
-						key: { text: "In which waters will the activity take place?" },
-						value: { text: "In English waters" }
+						key: { text: "Which waters will the activity take place in?" },
+						value: { text: "English waters or Northern Ireland offshore waters" }
 					},
 					{
 						key: { text: "What type of activity will be carried out?" },
@@ -209,31 +215,31 @@
 						value: { text: "Using a vehicle or vessel" }
 					},
 					{
-						key: { text: "Will the substance or object to be removed, be removed from the 'Seabed'?" },
+						key: { text: "Will the substance or object be removed from the seabed?" },
 						value: { text: "Yes" }
 					},
 					{
-						key: { text: "What does the removal activity relate to?" },
-						value: { text: "Scientific investigation or research" }
+						key: { text: "What does the removal activity involve?" },
+						value: { text: "Scientific research" }
 					},
 					{
-						key: { text: "What does the removal activity relate to?" },
+						key: { text: "What will be removed?" },
 						value: { text: "Samples for testing and analysis" }
 					},
 					{
-						key: { text: "Is the purpose of the activity to take a sample of material for testing or analysis?" },
+						key: { text: "Is the purpose to take a sample for testing or analysis?" },
 						value: { text: "Yes" }
 					},
 					{
-						key: { text: "Will the sample to be collected be of a volume of 1m3 or less?" },
+						key: { text: "Will each sample have a volume of 1 cubic metre or less?" },
 						value: { text: "Yes" }
 					},
 					{
-						key: { text: "Will the activity cause or be likely to cause an obstruction or danger to navigation?" },
+						key: { text: "Is the activity likely to cause an obstruction or danger to navigation?" },
 						value: { text: "No" }
 					},
 					{
-						key: { text: "Will the activity take place in or within 200m of a Marine Protected Area (MPA)?" },
+						key: { text: "Will the activity take place within 200m of a marine protected area (MPA)?" },
 						value: { text: "No" }
 					}
 				]

@@ -17,6 +17,13 @@ You need to provide more information, but you do not need a marine licence
 {% endblock %}
 
 {% block content %}
+{% if data['exemption'] is string %}
+  {% set exemption = data['exemption'] %}
+{% elif data['exemption'] %}
+  {% set exemption = data['exemption'] | last %}
+{% else %}
+  {% set exemption = "" %}
+{% endif %}
 <div class="govuk-grid-row">
 
 	<div class="govuk-grid-column-two-thirds">
@@ -25,13 +32,13 @@ You need to provide more information, but you do not need a marine licence
 			{{ pageHeadingTextHTML }}
 		</h1>
 
-		{% if (data['exemption'] == "pontoon-approval" or data['exemption'] == "pontoon-notification" or data['exemption'] == "") %}
+		{% if (exemption == "pontoon-approval" or exemption == "pontoon-notification" or not exemption) %}
     <p>
         Based on your answers, your activity is exempt under  
         <a href="http://www.legislation.gov.uk/uksi/2011/409/article/25A" rel="noreferrer noopener" target="_blank">
             Article 25A of the Marine Licence (Exempted Activities) Order 2011 (opens in new tab)</a>.
     </p>
-{% elif data['exemption'] == "sample-notification" %}
+{% elif exemption == "sample-notification" %}
     <p>
         Based on your answers, your activity is exempt under  
         <a href="https://www.legislation.gov.uk/uksi/2011/409/article/17A" rel="noreferrer noopener" target="_blank">
@@ -39,18 +46,11 @@ You need to provide more information, but you do not need a marine licence
     </p>
 {% endif %}
 
-{% if data['exemption'] == "pontoon-approval" %}
-    {{ govukWarningText({
-        text: "Your activity is only exempt on the condition that you provide further information and wait for approval before starting.",
-        iconFallbackText: "Warning"
-    }) }}
-{% elif (data['exemption'] == "pontoon-notification" or data['exemption'] == "sample-notification" or data['exemption'] == "") %}
-    {{ govukWarningText({
-        text: "Your activity is only exempt on the condition that you provide further information before starting.",
-        iconFallbackText: "Warning"
-    }) }}
+{% if exemption == "pontoon-approval" %}
+    <p class="govuk-body"><strong>Your activity is only exempt on the condition that you provide further information and wait for approval before starting.</strong></p>
+{% elif (exemption == "pontoon-notification" or exemption == "sample-notification" or not exemption) %}
+    <p class="govuk-body"><strong>Your activity is only exempt on the condition that you provide further information before starting.</strong></p>
 {% endif %}
-		<h2 class="govuk-heading-m">Send your information using our new service</h2>
 
 		<p>This is a 'beta' service - <a href="https://www.gov.uk/help/beta" rel="noreferrer noopener" target="_blank">find out what this means for you (opens in new tab)</a>.</p>
 
@@ -62,18 +62,20 @@ You need to provide more information, but you do not need a marine licence
 			<li>start and end dates for your activity</li>
 		</ul>
 
-		<p>You'll also need a Defra account to send this information. Sign in or create one using Government Gateway. You can set up a Government Gateway account in the next step if needed.</p>
+		<p>You'll also need a Defra account to send this information. You can sign in with GOV.UK One Login or Government Gateway. If you do not have a Defra account, you'll be asked to create one after you sign in.
+
+		</p>
 		
 		<div class="">
-			<a href="../exemption/sign-in.html" class="govuk-button" role="button">Continue to the new service</a>
+			<a href="../exemption/sign-in.html" class="govuk-button" role="button">Continue</a>
 		</div>
 
 		<p>
-			<a href="iat-answers.html" class="govuk-link--no-visited-state" rel="noreferrer noopener" target="_blank">View a summary of your answers (opens in new tab)</a>
+			<a href="iat-answers.html?exemption={{ exemption }}" class="govuk-link--no-visited-state" rel="noreferrer noopener" target="_blank">View a summary of your answers (opens in new tab)</a>
 		</p>
 
-		<h2 class="govuk-heading-m govuk-!-margin-top-8">If you've used the original service before</h2>
-		<p>Sign in to the Marine Case Management System to view or manage information you've sent us in that system. This will not appear in the new service.</p>
+		<!--<h2 class="govuk-heading-m govuk-!-margin-top-8">If you've used the original service before</h2>
+		<p>Sign in to the Marine Case Management System to view or manage information you've sent us in that system. This will not appear in the new service.</p>-->
 
 	</div>
 </div>
