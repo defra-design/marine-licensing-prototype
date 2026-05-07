@@ -10,9 +10,21 @@
   </style>
 {% endblock %}
 
+{% block header %}
+{% from "govuk/components/header/macro.njk" import govukHeader %}
+{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
+
+{{ govukHeader({
+  homepageUrl: "/",
+  classes: "govuk-header--full-width-border"
+}) }}
+{{ govukServiceNavigation({
+  serviceName: "Get permission for marine work",
+  serviceUrl: "/versions/multiple-sites-v2/low-complexity-v2/homepage"
+}) }}
+{% endblock %}
+
 {% block beforeContent %}
-    {% include "../includes/phase-banner.html" %}
-    {% include "../includes/back-link.html" %}
 {% endblock %}
 
 {% block pageTitle %}
@@ -28,6 +40,35 @@
         <h1 class="govuk-heading-l">
             Installation of floating pontoon, Lyme Regis Harbour, Dorset
         </h1>
+
+        {# ============================== #}
+        {# APPLICATION DETAILS           #}
+        {# ============================== #}
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">Application details</h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Application type</dt>
+                        <dd class="govuk-summary-list__value">Marine licence</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Reference number</dt>
+                        <dd class="govuk-summary-list__value">MLA/2026/00TEST</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Who the licence is for</dt>
+                        <dd class="govuk-summary-list__value">Jurassic Coast SUP Ltd</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Date submitted</dt>
+                        <dd class="govuk-summary-list__value">{{ "" | todayDate }}</dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
 
         {# ============================== #}
         {# PROJECT DETAILS                #}
@@ -371,6 +412,10 @@
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Details</dt>
                         <dd class="govuk-summary-list__value">A WFD scoping assessment has been completed for this project and is submitted with this application. The project site lies within the South West River Basin District. The proposed pontoon installation is a small scale, reversible floating structure with no seabed penetration and no release of any materials into the water column. The project is assessed as presenting no risk of causing deterioration to the ecological or chemical status of the relevant WFD water body. The existing water body status in this area is assessed as Good ecological status and the project will not affect this. The pontoon structure itself may over time provide a minor positive habitat benefit through colonisation of the underside by native species.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Download WFD assessment</dt>
+                        <dd class="govuk-summary-list__value">[Link to WFD assessment]</dd>
                     </div>
                 </dl>
             </div>
