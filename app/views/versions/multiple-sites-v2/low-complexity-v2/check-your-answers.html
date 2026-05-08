@@ -1237,126 +1237,78 @@ Check your answers before sending your information
 			<div class="govuk-summary-card__content">
 				<dl class="govuk-summary-list">
 					{% if data['user_type'] === 'organisation' %}
-					<div class="govuk-summary-list__row{% if data['low-complexity-special-legal-powers'] == 'Yes' %} govuk-summary-list__row--no-border{% endif %}">
+					<div class="govuk-summary-list__row">
 						<dt class="govuk-summary-list__key">
 							Special legal powers to do any of this project
 						</dt>
 						<dd class="govuk-summary-list__value">
-							{{ data['low-complexity-special-legal-powers'] }}
+							{% if data['low-complexity-special-legal-powers'] == 'Yes' %}
+								{{ data['low-complexity-special-legal-powers-details'] }}
+							{% else %}
+								No
+							{% endif %}
 						</dd>
 						<dd class="govuk-summary-list__actions">
 							<a class="govuk-link govuk-link--no-visited-state" href="other-permissions/special-legal-powers?camefromcheckanswers=true">
-								Change<span class="govuk-visually-hidden"> if your organisation has special legal powers</span>
+								Change<span class="govuk-visually-hidden"> special legal powers to do any of this project</span>
 							</a>
 						</dd>
 					</div>
+					{% endif %}
 
-					{% if data['low-complexity-special-legal-powers'] == 'Yes' %}
 					<div class="govuk-summary-list__row">
-						<dt class="govuk-summary-list__key">
-							Provide details of the legal powers including the relevant legislation
-						</dt>
-						<dd class="govuk-summary-list__value">
-							{{ data['low-complexity-special-legal-powers-details'] }}
-						</dd>
-						<dd class="govuk-summary-list__actions">
-							<a class="govuk-link govuk-link--no-visited-state govuk-visually-hidden" href="other-permissions/special-legal-powers">
-								Change<span class="govuk-visually-hidden"> details of the legal powers</span>
-							</a>
-						</dd>
-					</div>
-					{% endif %}
-					{% endif %}
-
-					<div class="govuk-summary-list__row{% if data['low-complexity-harbour-authority'] == 'Yes' %} govuk-summary-list__row--no-border{% endif %}">
 						<dt class="govuk-summary-list__key">
 							Located in a harbour authority area
 						</dt>
 						<dd class="govuk-summary-list__value">
-							{{ data['low-complexity-harbour-authority'] }}
+							{% if data['low-complexity-harbour-authority'] == 'Yes' %}
+								{{ data['low-complexity-harbour-authority-details'] }}
+							{% else %}
+								No
+							{% endif %}
 						</dd>
 						<dd class="govuk-summary-list__actions">
 							<a class="govuk-link govuk-link--no-visited-state" href="other-permissions/harbour-authority?camefromcheckanswers=true">
-								Change<span class="govuk-visually-hidden"> if your project is located in a harbour authority area</span>
+								Change<span class="govuk-visually-hidden"> located in a harbour authority area</span>
 							</a>
 						</dd>
 					</div>
 
-					{% if data['low-complexity-harbour-authority'] == 'Yes' %}
 					<div class="govuk-summary-list__row">
-						<dt class="govuk-summary-list__key">
-							Provide details of the harbour authority
-						</dt>
-						<dd class="govuk-summary-list__value">
-							{{ data['low-complexity-harbour-authority-details'] }}
-						</dd>
-						<dd class="govuk-summary-list__actions">
-							<a class="govuk-link govuk-link--no-visited-state govuk-visually-hidden" href="other-permissions/harbour-authority">
-								Change<span class="govuk-visually-hidden"> details of the harbour authority</span>
-							</a>
-						</dd>
-					</div>
-					{% endif %}
-
-					<div class="govuk-summary-list__row{% if data['low-complexity-other-permissions'] == 'Yes' %} govuk-summary-list__row--no-border{% endif %}">
 						<dt class="govuk-summary-list__key">
 							Permission from any other authorities in relation to this project
 						</dt>
 						<dd class="govuk-summary-list__value">
-							{{ data['low-complexity-other-permissions'] }}
+							{% if data['low-complexity-other-permissions'] == 'Yes' %}
+								{{ data['low-complexity-other-permissions-details'] }}
+							{% else %}
+								No
+							{% endif %}
 						</dd>
 						<dd class="govuk-summary-list__actions">
 							<a class="govuk-link govuk-link--no-visited-state" href="other-permissions/other-authorities?camefromcheckanswers=true">
-								Change<span class="govuk-visually-hidden"> if you've applied to other authorities</span>
+								Change<span class="govuk-visually-hidden"> permission from any other authorities in relation to this project</span>
 							</a>
 						</dd>
 					</div>
 
-					{% if data['low-complexity-other-permissions'] == 'Yes' %}
 					<div class="govuk-summary-list__row">
-						<dt class="govuk-summary-list__key">
-							Include details of the organisations, relevant contact details and any reference numbers
-						</dt>
-						<dd class="govuk-summary-list__value">
-							{{ data['low-complexity-other-permissions-details'] }}
-						</dd>
-						<dd class="govuk-summary-list__actions">
-							<a class="govuk-link govuk-link--no-visited-state govuk-visually-hidden" href="other-permissions/other-authorities">
-								Change<span class="govuk-visually-hidden"> details of other authorities</span>
-							</a>
-						</dd>
-					</div>
-					{% endif %}
-
-					<div class="govuk-summary-list__row{% if data['low-complexity-consultation'] == 'Yes' %} govuk-summary-list__row--no-border{% endif %}">
 						<dt class="govuk-summary-list__key">
 							Public groups or organisations consultation
 						</dt>
 						<dd class="govuk-summary-list__value">
-							{{ data['low-complexity-consultation'] }}
+							{% if data['low-complexity-consultation'] == 'Yes' %}
+								{{ data['low-complexity-consultation-details'] }}
+							{% else %}
+								No
+							{% endif %}
 						</dd>
 						<dd class="govuk-summary-list__actions">
 							<a class="govuk-link govuk-link--no-visited-state" href="other-permissions/consultation-and-advertising?camefromcheckanswers=true">
-								Change<span class="govuk-visually-hidden"> if you've consulted with public groups or organisations</span>
+								Change<span class="govuk-visually-hidden"> public groups or organisations consultation</span>
 							</a>
 						</dd>
 					</div>
-
-					{% if data['low-complexity-consultation'] == 'Yes' %}
-					<div class="govuk-summary-list__row">
-						<dt class="govuk-summary-list__key">
-							Tell us who you consulted and what advice they gave
-						</dt>
-						<dd class="govuk-summary-list__value">
-							{{ data['low-complexity-consultation-details'] }}
-						</dd>
-						<dd class="govuk-summary-list__actions">
-							<a class="govuk-link govuk-link--no-visited-state govuk-visually-hidden" href="other-permissions/consultation-and-advertising">
-								Change<span class="govuk-visually-hidden"> details of who you consulted</span>
-							</a>
-						</dd>
-					</div>
-					{% endif %}
 				</dl>
 			</div>
 		</div>
