@@ -1,5 +1,42 @@
 {% extends "../layouts/main.html" %}
 
+{% block header %}
+{% from "govuk/components/header/macro.njk" import govukHeader %}
+{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
+{{ govukHeader({
+    homepageUrl: "/",
+  classes: "govuk-header--full-width-border"
+}) }}
+{% if data['showNav'] == "true" %}
+{{ govukServiceNavigation({
+  serviceName: "Get permission for marine work",
+  navigation: [
+    {
+      href: "/versions/multiple-sites-v2/exemption/homepage",
+      text: "Home"
+    },
+    {
+      href: "/versions/multiple-sites-v2/exemption/projects",
+      text: "Projects"
+    },
+    {
+      href: "#",
+      text: "Defra account",
+      active: false
+    },
+    {
+      href: "/versions/multiple-sites-v2/exemption/sign-in.html?goto=home",
+      text: "Sign out"
+    }
+  ]
+}) }}
+{% else %}
+{{ govukServiceNavigation({
+  serviceName: "Get permission for marine work"
+}) }}
+{% endif %}
+{% endblock %}
+
 {% block head %}
   {{ super() }}
   <style>
@@ -16,7 +53,9 @@
 
 {% block beforeContent %}
 	{% include "../includes/phase-banner.html" %}
-	{% include "../includes/back-link.html" %}
+	{% if data['newTab'] != "true" %}
+		{% include "../includes/back-link.html" %}
+	{% endif %}
 {% endblock %}
 
 {% block pageTitle %}
