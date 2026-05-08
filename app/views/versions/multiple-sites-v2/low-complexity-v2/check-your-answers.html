@@ -1239,7 +1239,7 @@ Check your answers before sending your information
 					{% if data['user_type'] === 'organisation' %}
 					<div class="govuk-summary-list__row{% if data['low-complexity-special-legal-powers'] == 'Yes' %} govuk-summary-list__row--no-border{% endif %}">
 						<dt class="govuk-summary-list__key">
-							Does your organisation have special legal powers to do any of this project?
+							Special legal powers to do any of this project
 						</dt>
 						<dd class="govuk-summary-list__value">
 							{{ data['low-complexity-special-legal-powers'] }}
@@ -1270,7 +1270,7 @@ Check your answers before sending your information
 
 					<div class="govuk-summary-list__row{% if data['low-complexity-harbour-authority'] == 'Yes' %} govuk-summary-list__row--no-border{% endif %}">
 						<dt class="govuk-summary-list__key">
-							Located in a harbour authority area?
+							Located in a harbour authority area
 						</dt>
 						<dd class="govuk-summary-list__value">
 							{{ data['low-complexity-harbour-authority'] }}
@@ -1300,7 +1300,7 @@ Check your answers before sending your information
 
 					<div class="govuk-summary-list__row{% if data['low-complexity-other-permissions'] == 'Yes' %} govuk-summary-list__row--no-border{% endif %}">
 						<dt class="govuk-summary-list__key">
-							Permission from any other authorities in relation to this project?
+							Permission from any other authorities in relation to this project
 						</dt>
 						<dd class="govuk-summary-list__value">
 							{{ data['low-complexity-other-permissions'] }}
@@ -1330,7 +1330,7 @@ Check your answers before sending your information
 
 					<div class="govuk-summary-list__row{% if data['low-complexity-consultation'] == 'Yes' %} govuk-summary-list__row--no-border{% endif %}">
 						<dt class="govuk-summary-list__key">
-							Public groups or organisations consulted before making this application?
+							Public groups or organisations consultation
 						</dt>
 						<dd class="govuk-summary-list__value">
 							{{ data['low-complexity-consultation'] }}
@@ -1345,7 +1345,7 @@ Check your answers before sending your information
 					{% if data['low-complexity-consultation'] == 'Yes' %}
 					<div class="govuk-summary-list__row">
 						<dt class="govuk-summary-list__key">
-							Provide details of who you spoke to and the advice given
+							Tell us who you consulted and what advice they gave
 						</dt>
 						<dd class="govuk-summary-list__value">
 							{{ data['low-complexity-consultation-details'] }}

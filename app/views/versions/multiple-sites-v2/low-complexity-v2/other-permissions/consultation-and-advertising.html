@@ -34,10 +34,13 @@ Error:
     value: data['low-complexity-consultation-details'],
     rows: 5,
     label: {
-        text: "Provide details of who you spoke to and the advice given"
+        text: "Tell us who you consulted and what advice they gave"
+    },
+    hint: {
+        text: "Enter a maximum of 1,000 characters"
     },
     errorMessage: {
-        text: "Enter details of who you spoke to and the advice given"
+        text: "Enter details of who you consulted and what advice they gave"
     } if data['errortypetwo'] == "true"
 }) }}
 {% endset %}
@@ -51,7 +54,7 @@ Error:
 			titleText: "There is a problem",
 			errorList: [
 				{
-					text: "Select if you have consulted with any public groups or organisations before making this application" if data['errortypeone'] == "true" else "Enter details of who you spoke to and the advice given",
+					text: "Select whether you have consulted with any public groups or organisations before making this application" if data['errortypeone'] == "true" else "Enter details of who you consulted and what advice they gave",
 					href: "#low-complexity-consultation" if data['errortypeone'] == "true" else "#low-complexity-consultation-details"
 				}
 			]
@@ -73,7 +76,7 @@ Error:
 					}
 				},
 				hint: {
-					text: "This could include relevant local groups in the community or organisations, for example, parish councils, Companies House or Natural England"
+					html: '<p class="govuk-body">This could include relevant local groups in the community or organisations, for example, resident committees, local environmental and conservation groups, Companies House or Natural England.</p><details class="govuk-details"><summary class="govuk-details__summary"><span class="govuk-details__summary-text">Help with pre-application and public consultation</span></summary><div class="govuk-details__text"><p class="govuk-body"><strong>Pre-application consultation</strong></p><p class="govuk-body">Pre-application consultation is informal. It means speaking to public groups or organisations before submitting your application.</p><p class="govuk-body">We ask because it helps us understand the context of your application and prepare for the formal public consultation.</p><p class="govuk-body">For example, it tells us if there might be a high level of public interest and helps avoid duplication or competing advice.</p><p class="govuk-body"><strong>Public consultation</strong></p><p class="govuk-body">After we assess your application, we will open a formal public consultation. This is a legal requirement.</p><p class="govuk-body">The formal consultation:</p><ul class="govuk-list govuk-list--bullet"><li>lasts at least 28 days (6 weeks if your activity needs an Environmental Impact Assessment)</li><li>allows the public to comment on your application</li><li>means you must advertise your activity (you pay for advertising costs)</li></ul><p class="govuk-body">Your case officer will tell you what you need to advertise and where, when your application reaches this stage. Budget for advertising as part of your application costs.</p></div></details>'
 				},
 				items: [
 					{
@@ -91,7 +94,7 @@ Error:
 					}
 				],
 				errorMessage: {
-					text: "Select if you have consulted with any public groups or organisations before making this application"
+					text: "Select whether you have consulted with any public groups or organisations before making this application"
 				} if data['errortypeone'] == "true"
 			}) }}
 
