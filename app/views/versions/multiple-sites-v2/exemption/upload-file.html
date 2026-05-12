@@ -42,7 +42,9 @@
                 
                     {% if data['exemption-which-type-of-file-radios'] == "Shapefile" %}
                     <p>Upload a ZIP file containing all the files for your shapefile. Your shapefile must include .shp, .shx, .dbf and .prj files.</p>
-                    <p>You can include more than one site.</p>
+                    {% endif %}
+                    {% if data['exemption-which-type-of-file-radios'] == "Shapefile" or data['exemption-which-type-of-file-radios'] == "KML" %}
+                    <p>You can include more than one site. Your file must only contain sites drawn as polygons (shapes), not points or lines.</p>
                     {% endif %}
                   
 			{% from "govuk/components/file-upload/macro.njk" import govukFileUpload %}
