@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LCML v2 – Flow Documentation</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;font-size:13px;background:#f1f5f9;color:#1e293b;display:flex;flex-direction:column;height:100vh;overflow:hidden}
+
+/* Header */
+header{background:#0b0c0e;color:#fff;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;border-bottom:4px solid #1d70b8}
+header h1{font-size:15px;font-weight:700;letter-spacing:-.01em}
+header .sub{font-size:11px;color:#64748b;margin-top:2px}
+header .hint{font-size:11px;color:#475569;background:#1e293b;padding:5px 10px;border-radius:4px}
+
+/* App layout */
+.app{display:flex;flex:1;overflow:hidden}
+
+/* Sidebar */
+#sidebar{width:260px;flex-shrink:0;background:#fff;border-right:1px solid #e2e8f0;display:flex;flex-direction:column;overflow:hidden}
+#flows-scroll{flex:1;overflow-y:auto;padding:12px}
+.cat{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:#94a3b8;margin:12px 0 5px}
+.cat:first-child{margin-top:0}
+.flow-btn{display:block;width:100%;text-align:left;padding:6px 9px;border:1px solid #e2e8f0;border-radius:5px;background:#f8fafc;cursor:pointer;font-size:11px;font-weight:600;color:#334155;margin-bottom:3px;transition:all .12s;line-height:1.4}
+.flow-btn:hover{background:#eff6ff;border-color:#93c5fd;color:#1e40af}
+.flow-btn.active{background:#1d70b8;border-color:#1d70b8;color:#fff}
+.flow-btn .fc{font-size:10px;font-weight:400;opacity:.7;margin-top:1px}
+
+/* Step panel */
+#step-panel{border-top:1px solid #e2e8f0;background:#f8fafc;max-height:280px;overflow-y:auto;padding:12px}
+#step-panel.hidden{display:none}
+.sp-name{font-size:12px;font-weight:700;color:#0f172a;margin-bottom:3px}
+.sp-desc{font-size:11px;color:#64748b;line-height:1.5;margin-bottom:10px}
+.step-row{display:flex;gap:7px;margin-bottom:8px;align-items:flex-start}
+.snum{flex-shrink:0;width:17px;height:17px;border-radius:50%;background:#1d70b8;color:#fff;font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.scontent{flex:1;font-size:11px}
+.saction{font-weight:600;color:#1e293b;margin-bottom:3px}
+.stags{display:flex;flex-wrap:wrap;gap:2px}
+.stag{background:#f1f5f9;border:1px solid #cbd5e1;border-radius:3px;padding:1px 5px;font-family:monospace;font-size:10px;color:#475569}
+
+/* Canvas */
+#canvas-wrapper{flex:1;overflow:auto;position:relative}
+#canvas{position:relative;padding:24px;min-width:1360px;min-height:600px}
+#arrows-svg{position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:20;overflow:visible}
+
+/* Module grid */
+#modules-grid{display:grid;grid-template-columns:215px 220px 215px 210px 185px;gap:18px;align-items:start;position:relative;z-index:1}
+
+/* Module card */
+.module-card{border-radius:7px;border:2px solid;overflow:hidden;transition:opacity .2s}
+.module-card.mod-dim{opacity:.25}
+.m-head{padding:8px 11px}
+.m-label{font-size:11px;font-weight:700;color:#fff}
+.m-file{font-size:9px;font-family:monospace;color:rgba(255,255,255,.65);margin-top:2px}
+.m-pages{padding:5px}
+
+/* Page node */
+.page-node{padding:5px 8px;border-radius:4px;border:1px solid #e2e8f0;background:#f8fafc;font-size:11px;font-weight:500;color:#334155;margin-bottom:3px;transition:all .15s;cursor:default;position:relative;line-height:1.3}
+.page-node .ppath{font-size:9px;color:#9ca3af;font-family:monospace;margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.page-node.hub{background:#eff6ff;border-color:#93c5fd;color:#1e40af;font-weight:700}
+.page-node.flow-start{background:#d1fae5;border-color:#059669;color:#064e3b;font-weight:700}
+.page-node.flow-step{background:#fef3c7;border-color:#f59e0b;color:#78350f;font-weight:600}
+.page-node.flow-end{background:#fce7f3;border-color:#ec4899;color:#831843;font-weight:700}
+.page-node.flow-dim{opacity:.2}
+.sbadge{display:none;position:absolute;right:5px;top:50%;transform:translateY(-50%);background:#1d70b8;color:#fff;border-radius:10px;font-size:9px;font-weight:700;padding:1px 5px;min-width:16px;text-align:center}
+.page-node.flow-start .sbadge,.page-node.flow-step .sbadge,.page-node.flow-end .sbadge{display:block}
+.page-node.flow-start .sbadge{background:#059669}
+.page-node.flow-end .sbadge{background:#ec4899}
+
+/* Legend */
+#legend{position:fixed;bottom:14px;right:14px;background:#fff;border:1px solid #e2e8f0;border-radius:7px;padding:9px 13px;font-size:11px;box-shadow:0 2px 10px rgba(0,0,0,.08);z-index:100}
+.lg-title{font-size:9px;font-weight:700;text-transform:uppercase;color:#64748b;margin-bottom:6px;letter-spacing:.05em}
+.lg-row{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.lg-dot{width:11px;height:8px;border-radius:2px;flex-shrink:0}
+</style>
+</head>
+<body>
+<header>
+  <div>
+    <div class="sub">Low Complexity Marine Licence · Marine Plan Policies v2 · multiple-sites-v2</div>
+    <h1>Flow Documentation</h1>
+  </div>
+  <div class="hint">Select a flow in the sidebar ↑</div>
+</header>
+
+<div class="app">
+  <aside id="sidebar">
+    <div id="flows-scroll"></div>
+    <div id="step-panel" class="hidden"></div>
+  </aside>
+  <div id="canvas-wrapper">
+    <div id="canvas">
+      <svg id="arrows-svg">
+        <defs>
+          <marker id="arr-a" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto"><polygon points="0 0,7 2.5,0 5" fill="#f59e0b"/></marker>
+          <marker id="arr-g" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto"><polygon points="0 0,7 2.5,0 5" fill="#059669"/></marker>
+          <marker id="arr-p" markerWidth="7" markerHeight="5" refX="6" refY="2.5" orient="auto"><polygon points="0 0,7 2.5,0 5" fill="#ec4899"/></marker>
+        </defs>
+      </svg>
+      <div id="modules-grid"></div>
+    </div>
+  </div>
+</div>
+
+<div id="legend">
+  <div class="lg-title">Legend</div>
+  <div class="lg-row"><div class="lg-dot" style="background:#d1fae5;border:1px solid #059669"></div><span>Flow start</span></div>
+  <div class="lg-row"><div class="lg-dot" style="background:#fef3c7;border:1px solid #f59e0b"></div><span>Flow step</span></div>
+  <div class="lg-row"><div class="lg-dot" style="background:#fce7f3;border:1px solid #ec4899"></div><span>Flow end</span></div>
+  <div class="lg-row"><div class="lg-dot" style="background:#eff6ff;border:1px solid #93c5fd"></div><span>Hub page</span></div>
+</div>
+
+<script>
+// ============================================================
+// DATA  –  edit this JSON to update the documentation
+// ============================================================
+const DATA = {
+  modules: [
+    {
+      id: "main",
+      label: "Main Routes",
+      file: "low-complexity-v2.js",
+      color: "#1d70b8",
+      pages: [
+        { id:"p-project-name",  label:"Project Name Start",        path:"project-name-start",                          type:"start" },
+        { id:"p-task-list",     label:"Task List",                  path:"marine-licence-start-page",                   type:"hub" },
+        { id:"p-proj-bg",       label:"Project Background",         path:"project-details/project-background" },
+        { id:"p-dates",         label:"Start & End Dates",          path:"project-details/start-and-end-dates" },
+        { id:"p-harbour",       label:"Harbour Authority",          path:"other-permissions/harbour-authority" },
+        { id:"p-other-auths",   label:"Other Authorities",          path:"other-permissions/other-authorities" },
+        { id:"p-consult",       label:"Consultation & Advertising", path:"other-permissions/consultation-and-advertising" },
+        { id:"p-sharing",       label:"Sharing Information",        path:"sharing-your-project-information-publicly" },
+        { id:"p-check",         label:"Check Your Answers",         path:"check-your-answers" },
+        { id:"p-declaration",   label:"Declaration",                path:"declaration" },
+        { id:"p-confirm",       label:"Confirmation",               path:"confirmation" }
+      ]
+    },
+    {
+      id: "site-loc",
+      label: "Site Details – File Upload",
+      file: "low-complexity-v2-site-locations.js",
+      color: "#00703c",
+      pages: [
+        { id:"p-sd-index",      label:"Site Details Start",          path:"site-details/" },
+        { id:"p-how-provide",   label:"How to provide location",     path:"site-details/how-do-you-want-to-provide-site-location" },
+        { id:"p-which-file",    label:"Which type of file?",         path:"site-details/which-type-of-file" },
+        { id:"p-upload",        label:"Upload file",                 path:"site-details/upload-file" },
+        { id:"p-change-loc",    label:"Change site location",        path:"site-details/change-site-location" },
+        { id:"p-sl-review",     label:"Review site details",         path:"site-details/review-site-details" },
+        { id:"p-sl-site-name",  label:"Site name",                   path:"site-details/site-name" },
+        { id:"p-type-act",      label:"Type of activity",            path:"site-details/type-of-activity" },
+        { id:"p-construction",  label:"Construction structures",     path:"site-details/construction-structures" },
+        { id:"p-deposit",       label:"Deposit substances/objects",  path:"site-details/deposit-substances-objects" },
+        { id:"p-removal",       label:"Removal substances/objects",  path:"site-details/removal-substances-objects" },
+        { id:"p-act-desc",      label:"Activity description",        path:"site-details/activity-description" },
+        { id:"p-duration",      label:"Duration",                    path:"site-details/duration" },
+        { id:"p-date-done",     label:"Date completed by",           path:"site-details/date-completed-by" },
+        { id:"p-months",        label:"Months of activity",          path:"site-details/months-of-activity" },
+        { id:"p-hours",         label:"Working hours",               path:"site-details/working-hours" }
+      ]
+    },
+    {
+      id: "manual",
+      label: "Site Details – Manual Entry",
+      file: "low-complexity-v2-manual-entry.js",
+      color: "#7c3aed",
+      pages: [
+        { id:"p-me-name",       label:"Site name",                   path:"site-details/manual-entry/site-name" },
+        { id:"p-me-method",     label:"Coordinate entry method",     path:"site-details/manual-entry/how-do-you-want-to-enter-the-coordinates" },
+        { id:"p-me-system",     label:"Coordinate system",           path:"site-details/manual-entry/which-coordinate-system" },
+        { id:"p-me-single",     label:"Enter coordinates (circle)",  path:"site-details/manual-entry/enter-coordinates" },
+        { id:"p-me-width",      label:"Site width",                  path:"site-details/manual-entry/site-width" },
+        { id:"p-me-poly",       label:"Enter multiple coordinates (polygon)", path:"site-details/manual-entry/enter-multiple-coordinates" },
+        { id:"p-me-review",     label:"Review site details",         path:"site-details/manual-entry/review-site-details" },
+        { id:"p-me-del-site",   label:"Delete site",                 path:"site-details/manual-entry/delete-site" }
+      ]
+    },
+    {
+      id: "mpp",
+      label: "Marine Plan Policies v2",
+      file: "low-complexity-v2-marine-plan-policies-v2.js",
+      color: "#0d6efd",
+      pages: [
+        { id:"p-mpp-index",   label:"Policy Index (37 total)",  path:"marine-plan-policies-v2/" },
+        { id:"p-mpp-guide",   label:"Guidance",                 path:"marine-plan-policies-v2/guidance" },
+        { id:"p-mpp-acc",     label:"S-ACC-1 (Access)",         path:"marine-plan-policies-v2/south-access-1" },
+        { id:"p-mpp-bio",     label:"S-BIO-1 (Biodiversity)",   path:"marine-plan-policies-v2/south-biodiversity-1" },
+        { id:"p-mpp-agg",     label:"S-AGG-4 (Aggregates)",     path:"marine-plan-policies-v2/south-aggregates-4" },
+        { id:"p-mpp-emp",     label:"S-EMP-1 (Employment)",     path:"marine-plan-policies-v2/south-employment-1" },
+        { id:"p-mpp-uwn",     label:"S-UWN-2 (Underwater Noise)", path:"marine-plan-policies-v2/south-underwater-noise-2" }
+      ]
+    },
+    {
+      id: "fee",
+      label: "Fee & Invoicing",
+      file: "low-complexity-v2-fee-and-invoicing.js",
+      color: "#b45309",
+      pages: [
+        { id:"p-fee-est",   label:"Fee Estimate",         path:"fee-and-invoicing/fee-estimate" },
+        { id:"p-fee-sure",  label:"Are You Sure? (reject)", path:"fee-and-invoicing/fee-are-you-sure" }
+      ]
+    }
+  ],
+
+  flows: [
+    {
+      id: "start-app",
+      label: "Start a new application",
+      category: "Getting started",
+      description: "User enters a project name to create a new draft application and land on the task list.",
+      steps: [
+        { from:"p-project-name", to:"p-task-list",
+          action:"POST project-name-start-router — name validated",
+          data:["low-complexity-project-name-text-input","low-complexity-application-status = 'draft'","low-complexity-application-reference = '-'"] }
+      ]
+    },
+    {
+      id: "upload-file",
+      label: "Upload a site file",
+      category: "Site Details",
+      description: "User uploads a KML, SHP, or GeoJSON file to define their site location. On returning, site details jump straight to the review page.",
+      steps: [
+        { from:"p-task-list",    to:"p-sd-index",    action:"Click 'Site details' task", data:[] },
+        { from:"p-sd-index",     to:"p-how-provide", action:"POST index-router", data:[] },
+        { from:"p-how-provide",  to:"p-which-file",  action:"POST — file-upload selected", data:["low-complexity-site-location-method = 'file-upload'"] },
+        { from:"p-which-file",   to:"p-upload",      action:"POST — file type chosen", data:["low-complexity-file-type"] },
+        { from:"p-upload",       to:"p-sl-review",   action:"POST — file uploaded", data:["hasUploadedSiteFile = true","has-visited-site-details = true"] },
+        { from:"p-sl-site-name", to:"p-sl-review",   action:"POST site-name-router", data:["low-complexity-site-name","low-complexity-site-name-completed = true"] },
+        { from:"p-sl-review",    to:"p-task-list",   action:"POST review-router — 'Yes, finished'", data:["site-details-confirmed-complete = true","mpp-previously-unlocked = true","redirect ?mpp-calculating=true"] }
+      ]
+    },
+    {
+      id: "manual-circle",
+      label: "Manual entry – circle site",
+      category: "Site Details",
+      description: "User manually enters a centre coordinate + width to define a circular site. Stored in low-complexity-manual-sites[] array.",
+      steps: [
+        { from:"p-task-list",   to:"p-sd-index",   action:"Click 'Site details' task", data:[] },
+        { from:"p-sd-index",    to:"p-how-provide", action:"POST index-router", data:[] },
+        { from:"p-how-provide", to:"p-me-name",     action:"POST — manual-entry selected", data:["low-complexity-site-location-method = 'manual-entry'","redirect ?site=1"] },
+        { from:"p-me-name",     to:"p-me-method",   action:"POST site-name-router", data:["site.name (in manual-sites[0])"] },
+        { from:"p-me-method",   to:"p-me-system",   action:"POST — circle selected", data:["site.coordinateEntryMethod = 'circle'","site.coordinates.type = 'circle'"] },
+        { from:"p-me-system",   to:"p-me-single",   action:"POST — system chosen, circle → enter-coordinates", data:["site.coordinateSystem","site.coordinates.system"] },
+        { from:"p-me-single",   to:"p-me-width",    action:"POST — centre saved", data:["site.coordinates.latitude","site.coordinates.longitude"] },
+        { from:"p-me-width",    to:"p-me-review",   action:"POST — width saved; first visit", data:["site.coordinates.width","site.mapImage = 'map-circle.jpg'","has-visited-site-details = true"] },
+        { from:"p-me-review",   to:"p-task-list",   action:"POST review-router — 'Yes, finished'", data:["site-details-confirmed-complete = true","mpp-previously-unlocked = true"] }
+      ]
+    },
+    {
+      id: "manual-poly",
+      label: "Manual entry – polygon site",
+      category: "Site Details",
+      description: "User enters 3–5 coordinate points to define a polygon boundary. Map image is chosen based on point count (3/4/5).",
+      steps: [
+        { from:"p-task-list",   to:"p-sd-index",   action:"Click 'Site details' task", data:[] },
+        { from:"p-sd-index",    to:"p-how-provide", action:"POST index-router", data:[] },
+        { from:"p-how-provide", to:"p-me-name",     action:"POST — manual-entry selected", data:["low-complexity-site-location-method = 'manual-entry'"] },
+        { from:"p-me-name",     to:"p-me-method",   action:"POST site-name-router", data:["site.name"] },
+        { from:"p-me-method",   to:"p-me-system",   action:"POST — polygon selected", data:["site.coordinateEntryMethod = 'polygon'","site.coordinates.type = 'polygon'"] },
+        { from:"p-me-system",   to:"p-me-poly",     action:"POST — system chosen, polygon → enter-multiple-coordinates", data:["site.coordinateSystem"] },
+        { from:"p-me-poly",     to:"p-me-review",   action:"POST — 3–5 points saved", data:["site.coordinates.points[]","site.mapImage = 'map-N-points.jpg'","has-visited-site-details = true"] },
+        { from:"p-me-review",   to:"p-task-list",   action:"POST review-router — 'Yes, finished'", data:["site-details-confirmed-complete = true"] }
+      ]
+    },
+    {
+      id: "add-site",
+      label: "Add another site",
+      category: "Site Details",
+      description: "From the manual entry review, user adds a second site. GET /add-another-site calls createNewSite() then redirects to site-name?site=N.",
+      steps: [
+        { from:"p-me-review",  to:"p-me-name",    action:"Click 'Add another site' → GET add-another-site", data:["createNewSite() → low-complexity-manual-sites[].push({siteNumber:N})","site-details-confirmed-complete DELETED","redirect ?site=N"] },
+        { from:"p-me-name",    to:"p-me-method",  action:"POST — name saved for new site", data:["site.name"] },
+        { from:"p-me-method",  to:"p-me-system",  action:"POST — method selected", data:["site.coordinateEntryMethod"] },
+        { from:"p-me-system",  to:"p-me-single",  action:"POST — system selected (circle path shown)", data:["site.coordinateSystem"] },
+        { from:"p-me-single",  to:"p-me-width",   action:"POST — coordinates saved", data:["site.coordinates.latitude/longitude"] },
+        { from:"p-me-width",   to:"p-me-review",  action:"POST — width saved", data:["site.coordinates.width","site.mapImage"] }
+      ]
+    },
+    {
+      id: "change-loc",
+      label: "Change site location",
+      category: "Site Details",
+      description: "User replaces an uploaded file from the review page. A change-count is incremented to track version.",
+      steps: [
+        { from:"p-sl-review",  to:"p-change-loc",  action:"Click 'Change site location' link", data:[] },
+        { from:"p-change-loc", to:"p-which-file",  action:"POST change-site-location-router", data:["low-complexity-site-location-changing = true","low-complexity-file-type DELETED"] },
+        { from:"p-which-file", to:"p-upload",      action:"POST — new file type selected", data:["low-complexity-file-type"] },
+        { from:"p-upload",     to:"p-sl-review",   action:"POST — new file uploaded", data:["low-complexity-site-location-change-count++","low-complexity-site-location-changing DELETED"] }
+      ]
+    },
+    {
+      id: "add-activity",
+      label: "Add another activity",
+      category: "Site Details",
+      description: "User adds a new activity to an existing (file-upload) site. Activities are stored in low-complexity-file-upload-activities[]. ACTIVITY_DATA_KEYS are loaded/saved via the load-activity redirect.",
+      steps: [
+        { from:"p-sl-review",    to:"p-type-act",     action:"GET add-activity → new activity pushed → GET load-activity → type-of-activity", data:["low-complexity-file-upload-activities[].push({activityNumber:N})","site-details-confirmed-complete DELETED","ACTIVITY_DATA_KEYS loaded to flat session"] },
+        { from:"p-type-act",     to:"p-construction", action:"POST — construction chosen", data:["low-complexity-type-of-activity = 'construction'","low-complexity-type-of-works"] },
+        { from:"p-construction", to:"p-sl-review",    action:"POST construction-structures-router", data:["low-complexity-construction-structures[]","low-complexity-type-of-activity-completed = true","ACTIVITY_DATA_KEYS saved to activity object"] }
+      ]
+    },
+    {
+      id: "act-details",
+      label: "Complete activity details",
+      category: "Site Details",
+      description: "After type-of-activity is set, user completes the remaining activity fields. Each saves back to the activity object and returns to the review page.",
+      steps: [
+        { from:"p-sl-review", to:"p-act-desc",  action:"Click 'Activity description' → GET load-activity", data:["ACTIVITY_DATA_KEYS loaded to flat session"] },
+        { from:"p-act-desc",  to:"p-sl-review", action:"POST activity-description-router", data:["low-complexity-activity-description","low-complexity-activity-description-completed = true"] },
+        { from:"p-sl-review", to:"p-duration",  action:"Click 'Duration' → GET load-activity", data:[] },
+        { from:"p-duration",  to:"p-sl-review", action:"POST duration-router", data:["low-complexity-site-duration-years","low-complexity-site-duration-months","low-complexity-site-duration-completed = true"] },
+        { from:"p-sl-review", to:"p-hours",     action:"Click 'Working hours' → GET load-activity", data:[] },
+        { from:"p-hours",     to:"p-sl-review", action:"POST working-hours-router", data:["low-complexity-working-hours","low-complexity-working-hours-completed = true"] }
+      ]
+    },
+    {
+      id: "mpp-complete",
+      label: "Complete a marine plan policy",
+      category: "Marine Plan Policies",
+      description: "Marine plan policies are unlocked once site-details-confirmed-complete is set. Each policy saves text + a completed flag, and the running count is passed as a query param on redirect.",
+      steps: [
+        { from:"p-task-list",  to:"p-mpp-index", action:"Click 'Marine plan policies' task", data:["Requires: site-details-confirmed-complete = true OR mpp-previously-unlocked = true","Middleware recalculates v2 completed/not-started counts on every request"] },
+        { from:"p-mpp-index",  to:"p-mpp-acc",   action:"Click policy (e.g. S-ACC-1)", data:[] },
+        { from:"p-mpp-acc",    to:"p-mpp-index", action:"POST south-access-1-router", data:["marine-plan-policy-v2-s-acc-1-text","marine-plan-policy-v2-s-acc-1-completed = true","marine-plan-policies-v2-completed-count++","redirect ?completed-count=N&not-started-count=M"] },
+        { from:"p-mpp-index",  to:"p-task-list", action:"Click 'Back to task list'", data:[] }
+      ]
+    },
+    {
+      id: "fee-accept",
+      label: "Accept fee estimate",
+      category: "Fee & Invoicing",
+      description: "User accepts the fee and terms. Marks fee section complete and returns to the task list.",
+      steps: [
+        { from:"p-task-list", to:"p-fee-est",  action:"Click 'Fee and invoicing' task", data:[] },
+        { from:"p-fee-est",   to:"p-task-list", action:"POST fee-estimate-router — accepted", data:["low-complexity-fee-terms-checkbox (must be checked)","low-complexity-fee-acceptance = 'yes'","low-complexity-fee-estimate-completed = 'true'","low-complexity-fee-estimate-rejected = 'false'"] }
+      ]
+    },
+    {
+      id: "fee-reject",
+      label: "Reject fee estimate",
+      category: "Fee & Invoicing",
+      description: "User declines the fee. After a confirmation page the application is left as a draft in the projects list.",
+      steps: [
+        { from:"p-task-list", to:"p-fee-est",   action:"Click 'Fee and invoicing' task", data:[] },
+        { from:"p-fee-est",   to:"p-fee-sure",  action:"POST fee-estimate-router — rejected", data:["low-complexity-fee-acceptance = 'no'"] },
+        { from:"p-fee-sure",  to:null,           action:"POST fee-are-you-sure-router", data:["low-complexity-fee-estimate-rejected = 'true'","low-complexity-fee-estimate-completed = 'false'","→ redirects to /versions/multiple-sites-v2/low-complexity-v2/projects (outside diagram)"] }
+      ]
+    },
+    {
+      id: "submit",
+      label: "Submit application",
+      category: "Submission",
+      description: "All sections must be complete. On submission a reference number and date are generated and the status changes to 'sent'.",
+      steps: [
+        { from:"p-task-list",   to:"p-check",       action:"Click 'Check your answers'", data:["Requires: all task sections complete"] },
+        { from:"p-check",       to:"p-declaration",  action:"Click 'Submit application'", data:[] },
+        { from:"p-declaration", to:"p-confirm",      action:"POST declaration-router", data:["low-complexity-application-status = 'sent'","low-complexity-application-reference = 'MLA/2025/10025'","low-complexity-submission-date (today's date)"] }
+      ]
+    }
+  ]
+};
+
+// ============================================================
+// BUILD LOOKUP MAPS
+// ============================================================
+const pageById = {};
+DATA.modules.forEach(mod => {
+  mod.pages.forEach(pg => { pageById[pg.id] = { ...pg, moduleId: mod.id }; });
+});
+
+// ============================================================
+// RENDER MODULES
+// ============================================================
+function renderModules() {
+  const grid = document.getElementById('modules-grid');
+  grid.innerHTML = '';
+  DATA.modules.forEach(mod => {
+    const card = document.createElement('div');
+    card.className = 'module-card';
+    card.id = 'mod-' + mod.id;
+    card.style.borderColor = mod.color;
+
+    const head = document.createElement('div');
+    head.className = 'm-head';
+    head.style.background = mod.color;
+    head.innerHTML = `<div class="m-label">${mod.label}</div><div class="m-file">${mod.file}</div>`;
+
+    const pages = document.createElement('div');
+    pages.className = 'm-pages';
+    mod.pages.forEach(pg => {
+      const node = document.createElement('div');
+      node.className = 'page-node' + (pg.type === 'hub' ? ' hub' : '');
+      node.id = 'pn-' + pg.id;
+      node.dataset.pageId = pg.id;
+      node.innerHTML = `${pg.label}<div class="ppath">${pg.path}</div><span class="sbadge"></span>`;
+      pages.appendChild(node);
+    });
+
+    card.appendChild(head);
+    card.appendChild(pages);
+    grid.appendChild(card);
+  });
+}
+
+// ============================================================
+// RENDER FLOW LIST
+// ============================================================
+function renderFlowList() {
+  const scroll = document.getElementById('flows-scroll');
+  scroll.innerHTML = '';
+  let lastCat = null;
+  DATA.flows.forEach(flow => {
+    if (flow.category !== lastCat) {
+      const cat = document.createElement('div');
+      cat.className = 'cat';
+      cat.textContent = flow.category;
+      scroll.appendChild(cat);
+      lastCat = flow.category;
+    }
+    const btn = document.createElement('button');
+    btn.className = 'flow-btn';
+    btn.dataset.flowId = flow.id;
+    btn.innerHTML = `<div>${flow.label}</div><div class="fc">${flow.steps.length} step${flow.steps.length !== 1 ? 's' : ''}</div>`;
+    btn.addEventListener('click', () => selectFlow(flow.id));
+    scroll.appendChild(btn);
+  });
+}
+
+// ============================================================
+// SELECT FLOW
+// ============================================================
+let activeFlowId = null;
+
+function selectFlow(flowId) {
+  if (activeFlowId === flowId) {
+    clearFlow();
+    return;
+  }
+  activeFlowId = flowId;
+  const flow = DATA.flows.find(f => f.id === flowId);
+  if (!flow) return;
+
+  // Update button states
+  document.querySelectorAll('.flow-btn').forEach(b => {
+    b.classList.toggle('active', b.dataset.flowId === flowId);
+  });
+
+  // Collect all page IDs involved in this flow
+  const involvedIds = new Set();
+  flow.steps.forEach((step, i) => {
+    involvedIds.add(step.from);
+    if (step.to) involvedIds.add(step.to);
+  });
+
+  // Determine which modules are involved
+  const involvedModules = new Set();
+  involvedIds.forEach(id => {
+    const pg = pageById[id];
+    if (pg) involvedModules.add(pg.moduleId);
+  });
+
+  // Apply classes to page nodes
+  document.querySelectorAll('.page-node').forEach(el => {
+    const id = el.dataset.pageId;
+    el.classList.remove('flow-start','flow-step','flow-end','flow-dim');
+    const badge = el.querySelector('.sbadge');
+    badge.textContent = '';
+    if (!involvedIds.has(id)) { el.classList.add('flow-dim'); return; }
+    // Find step index
+    const stepNumbers = [];
+    flow.steps.forEach((step, i) => {
+      if (step.from === id || step.to === id) stepNumbers.push(i + 1);
+    });
+    // Determine role
+    const firstStep = flow.steps[0];
+    const lastStep = flow.steps[flow.steps.length - 1];
+    const isStart = firstStep.from === id;
+    const isEnd = lastStep.to === id;
+    if (isStart) el.classList.add('flow-start');
+    else if (isEnd) el.classList.add('flow-end');
+    else el.classList.add('flow-step');
+    badge.textContent = stepNumbers[0];
+  });
+
+  // Dim uninvolved modules
+  document.querySelectorAll('.module-card').forEach(el => {
+    const modId = el.id.replace('mod-', '');
+    el.classList.toggle('mod-dim', !involvedModules.has(modId));
+  });
+
+  // Draw arrows
+  drawArrows(flow);
+
+  // Show step panel
+  showStepPanel(flow);
+}
+
+function clearFlow() {
+  activeFlowId = null;
+  document.querySelectorAll('.flow-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.page-node').forEach(el => {
+    el.classList.remove('flow-start','flow-step','flow-end','flow-dim');
+    el.querySelector('.sbadge').textContent = '';
+  });
+  document.querySelectorAll('.module-card').forEach(el => el.classList.remove('mod-dim'));
+  clearArrows();
+  document.getElementById('step-panel').classList.add('hidden');
+}
+
+// ============================================================
+// DRAW ARROWS
+// ============================================================
+function clearArrows() {
+  const svg = document.getElementById('arrows-svg');
+  svg.querySelectorAll('.flow-arrow,.flow-label').forEach(el => el.remove());
+}
+
+function getRelRect(el) {
+  const canvas = document.getElementById('canvas');
+  const cr = canvas.getBoundingClientRect();
+  const er = el.getBoundingClientRect();
+  return {
+    left:   er.left   - cr.left,
+    top:    er.top    - cr.top,
+    right:  er.right  - cr.left,
+    bottom: er.bottom - cr.top,
+    width:  er.width,
+    height: er.height,
+    cx:     er.left - cr.left + er.width / 2,
+    cy:     er.top  - cr.top  + er.height / 2
+  };
+}
+
+function makeArrowPath(fr, tr, isFirst, isLast) {
+  const dx = tr.cx - fr.cx;
+  const dy = tr.cy - fr.cy;
+  const marker = isFirst ? 'url(#arr-g)' : isLast ? 'url(#arr-p)' : 'url(#arr-a)';
+  const stroke = isFirst ? '#059669' : isLast ? '#ec4899' : '#f59e0b';
+
+  let d, midX, midY;
+
+  if (Math.abs(dx) > 60) {
+    if (dx > 0) {
+      // Forward right: exit right-centre, enter left-centre
+      const sx = fr.right, sy = fr.cy;
+      const ex = tr.left,  ey = tr.cy;
+      const cp = (ex - sx) * 0.45;
+      d = `M${sx},${sy} C${sx+cp},${sy} ${ex-cp},${ey} ${ex},${ey}`;
+      midX = (sx + ex) / 2; midY = (sy + ey) / 2 - 10;
+    } else {
+      // Back left: exit bottom-centre, loop below modules, enter bottom-centre of target
+      const sx = fr.cx,  sy = fr.bottom;
+      const ex = tr.cx,  ey = tr.bottom + 4;
+      const rail = Math.max(fr.bottom, tr.bottom) + 52;
+      d = `M${sx},${sy} C${sx},${rail} ${ex},${rail} ${ex},${ey}`;
+      midX = (sx + ex) / 2; midY = rail - 10;
+    }
+  } else {
+    // Same column or close: vertical
+    if (dy > 0) {
+      const sx = fr.cx, sy = fr.bottom;
+      const ex = tr.cx, ey = tr.top;
+      d = `M${sx},${sy} C${sx},${sy+18} ${ex},${ey-18} ${ex},${ey}`;
+      midX = (sx+ex)/2; midY = (sy+ey)/2;
+    } else {
+      // Upward in same column (e.g. mpp-policy → mpp-index)
+      const sx = fr.right - 6, sy = fr.cy;
+      const ex = tr.right - 6, ey = tr.cy;
+      const rail = Math.max(fr.right, tr.right) + 26;
+      d = `M${sx},${sy} C${rail},${sy} ${rail},${ey} ${ex},${ey}`;
+      midX = rail + 6; midY = (sy+ey)/2;
+    }
+  }
+  return { d, marker, stroke, midX, midY };
+}
+
+function drawArrows(flow) {
+  clearArrows();
+  const svg = document.getElementById('arrows-svg');
+
+  flow.steps.forEach((step, i) => {
+    if (!step.to) return; // null target = exits diagram
+    const fromEl = document.getElementById('pn-' + step.from);
+    const toEl   = document.getElementById('pn-' + step.to);
+    if (!fromEl || !toEl) return;
+
+    const fr = getRelRect(fromEl);
+    const tr = getRelRect(toEl);
+    const isFirst = i === 0;
+    const isLast  = i === flow.steps.length - 1 || !flow.steps[i+1].to;
+    const { d, marker, stroke, midX, midY } = makeArrowPath(fr, tr, isFirst, isLast);
+
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', d);
+    path.setAttribute('fill', 'none');
+    path.setAttribute('stroke', stroke);
+    path.setAttribute('stroke-width', '2');
+    path.setAttribute('marker-end', marker);
+    path.classList.add('flow-arrow');
+    svg.appendChild(path);
+
+    // Step number label on arrow midpoint
+    const label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+    label.setAttribute('x', midX);
+    label.setAttribute('y', midY);
+    label.setAttribute('text-anchor', 'middle');
+    label.setAttribute('font-size', '9');
+    label.setAttribute('font-weight', '700');
+    label.setAttribute('fill', stroke);
+    label.setAttribute('paint-order', 'stroke');
+    label.setAttribute('stroke', '#fff');
+    label.setAttribute('stroke-width', '3');
+    label.textContent = i + 1;
+    label.classList.add('flow-label');
+    svg.appendChild(label);
+  });
+
+  // Resize canvas if needed
+  resizeCanvas();
+}
+
+function resizeCanvas() {
+  const canvas = document.getElementById('canvas');
+  const grid = document.getElementById('modules-grid');
+  const gridRect = grid.getBoundingClientRect();
+  const canvasRect = canvas.getBoundingClientRect();
+  const needed = gridRect.bottom - canvasRect.top + 100;
+  canvas.style.minHeight = Math.max(needed, 600) + 'px';
+}
+
+// ============================================================
+// STEP PANEL
+// ============================================================
+function showStepPanel(flow) {
+  const panel = document.getElementById('step-panel');
+  panel.classList.remove('hidden');
+  let html = `<div class="sp-name">${flow.label}</div><div class="sp-desc">${flow.description}</div>`;
+  flow.steps.forEach((step, i) => {
+    const dataHtml = step.data.length
+      ? `<div class="stags">${step.data.map(d=>`<span class="stag">${d}</span>`).join('')}</div>`
+      : '';
+    const toLabel = step.to ? (pageById[step.to]?.label || step.to) : '<em>exits diagram</em>';
+    html += `<div class="step-row">
+      <div class="snum">${i+1}</div>
+      <div class="scontent">
+        <div class="saction">${step.action}</div>
+        ${dataHtml}
+      </div>
+    </div>`;
+  });
+  panel.innerHTML = html;
+}
+
+// ============================================================
+// INIT
+// ============================================================
+renderModules();
+renderFlowList();
+
+// Redraw arrows on scroll or resize
+document.getElementById('canvas-wrapper').addEventListener('scroll', () => {
+  if (activeFlowId) {
+    const flow = DATA.flows.find(f => f.id === activeFlowId);
+    if (flow) drawArrows(flow);
+  }
+});
+window.addEventListener('resize', () => {
+  if (activeFlowId) {
+    const flow = DATA.flows.find(f => f.id === activeFlowId);
+    if (flow) drawArrows(flow);
+  }
+});
+</script>
+</body>
+</html>
