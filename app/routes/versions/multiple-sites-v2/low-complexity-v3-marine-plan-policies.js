@@ -23,6 +23,9 @@ module.exports = function (router) {
       res.locals.data['marine-plan-policies-completed-count'] = completed;
       res.locals.data['marine-plan-policies-not-started-count'] = notStarted;
     }
+    if (req.session.data['mpp-load-outcome'] === 'timeout') {
+      return res.render(`versions/${version}/${section}/${subsection}/policies-unavailable`);
+    }
     res.render(`versions/${version}/${section}/${subsection}/index`);
   });
 

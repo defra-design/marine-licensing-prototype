@@ -290,17 +290,16 @@ module.exports = function (router) {
       }
 
       if (finished === 'Yes') {
-        const wasAlreadyComplete = req.session.data['site-details-confirmed-complete'];
-        const mppAlertRequested = req.session.data['mpp-alert'] === 'true';
         req.session.data['site-details-confirmed-complete'] = true;
         // Once MPPs have been unlocked, keep them accessible even if the user
         // later re-opens site details to add a site/activity.
         req.session.data['mpp-previously-unlocked'] = true;
-        delete req.session.data['mpp-alert'];
 
-        // Show MPP calculating alert if first time completing or if mpp-alert param was used
-        if (!wasAlreadyComplete || mppAlertRequested) {
-          return res.redirect('../marine-licence-start-page?mpp-calculating=true');
+        const mppLoad = req.session.data['mpp-load'];
+        delete req.session.data['mpp-load'];
+        if (mppLoad === 'success' || mppLoad === 'timeout') {
+          req.session.data['mpp-load-outcome'] = mppLoad;
+          return res.redirect('../loading-marine-plan-policies');
         }
       } else {
         delete req.session.data['site-details-confirmed-complete'];
