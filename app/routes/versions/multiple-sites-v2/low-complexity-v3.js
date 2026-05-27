@@ -658,7 +658,6 @@ module.exports = function (router) {
   // WFD Q1 — Is your project within one nautical mile of the coast?
   // ============================================================
   router.get(`/versions/${version}/${section}/environmental-assessments/water-framework-directive-q1`, function (req, res) {
-    delete req.session.data['low-complexity-wfd-q1-error'];
     res.render(`versions/${version}/${section}/environmental-assessments/water-framework-directive`);
   });
 
@@ -670,7 +669,7 @@ module.exports = function (router) {
 
     if (!answer) {
       req.session.data['low-complexity-wfd-q1-error'] = "true";
-      return res.redirect('water-framework-directive');
+      return res.redirect('water-framework-directive-q1');
     }
 
     if (answer === 'No') {
