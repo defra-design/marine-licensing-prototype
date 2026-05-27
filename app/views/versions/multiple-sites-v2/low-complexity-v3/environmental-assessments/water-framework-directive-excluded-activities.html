@@ -1,0 +1,95 @@
+{% extends "../../layouts/low-complexity-v3.html" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% set pageHeadingTextHTML %}
+Is your project limited to one of the following excluded activities?
+{% endset %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% if data['organisation-name'] %}
+        {% include "../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link govuk-link--no-visited-state" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+{% block pageTitle %}
+{% if data['low-complexity-wfd-q2-error'] == "true" %}Error: {% endif %}{{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        {% if data['low-complexity-wfd-q2-error'] == "true" %}
+        {{ govukErrorSummary({
+            titleText: "There is a problem",
+            errorList: [
+                {
+                    text: "Select whether your project is limited to one of the excluded activities",
+                    href: "#low-complexity-wfd-excluded-activities"
+                }
+            ]
+        }) }}
+        {% endif %}
+
+        <form action="water-framework-directive-excluded-activities-router" method="post" novalidate>
+
+            {{ govukRadios({
+                name: "low-complexity-wfd-excluded-activities",
+                idPrefix: "low-complexity-wfd-excluded-activities",
+                fieldset: {
+                    legend: {
+                        html: '<span class="govuk-caption-l">' + data['low-complexity-project-name-text-input'] + '</span>' + pageHeadingTextHTML,
+                        isPageHeading: true,
+                        classes: "govuk-fieldset__legend--l"
+                    }
+                },
+                hint: {
+                    html: '<ul class="govuk-list govuk-list--bullet govuk-list--spaced">
+                        <li>maintaining pumps at pumping stations - if you do it regularly, avoid low dissolved oxygen levels during maintenance and minimise silt movement when restarting the pumps</li>
+                        <li>removing blockages or obstacles like litter or debris within 10m of an existing structure to maintain flow</li>
+                        <li>replacing or removing existing pipes, cables or services crossing over a water body - but not including any new structure or supports, or new bed or bank reinforcement</li>
+                        <li>&lsquo;over water&rsquo; replacement or repairs to, for example bridge, pier and jetty surfaces - if you minimise bank or bed disturbance</li>
+                    </ul>'
+                },
+                items: [
+                    {
+                        value: "Yes",
+                        text: "Yes - my project is limited to one of these activities",
+                        hint: {
+                            text: "You do not need to complete a Water Framework Directive assessment"
+                        },
+                        checked: data['low-complexity-wfd-excluded-activities'] == "Yes"
+                    },
+                    {
+                        value: "No",
+                        text: "No",
+                        checked: data['low-complexity-wfd-excluded-activities'] == "No"
+                    }
+                ],
+                errorMessage: {
+                    text: "Select whether your project is limited to one of the excluded activities"
+                } if data['low-complexity-wfd-q2-error'] == "true"
+            }) }}
+
+            <div class="govuk-button-group">
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+
+                {% if not data['low-complexity-wfd-from-cya'] %}
+                <a class="govuk-link govuk-link--no-visited-state" href="wfd-cancel">Cancel</a>
+                {% endif %}
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

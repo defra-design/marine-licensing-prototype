@@ -5,7 +5,7 @@
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 
 {% set pageHeadingTextHTML %}
-Is your project located within one nautical mile (1.85km) of the coast?
+Do you have a previous Water Framework Directive assessment completed between 2015 and 2022 for this type of activity?
 {% endset %}
 
 {% block beforeContent %}
@@ -17,7 +17,7 @@ Is your project located within one nautical mile (1.85km) of the coast?
 {% endblock %}
 
 {% block pageTitle %}
-{% if data['low-complexity-wfd-q1-error'] == "true" %}Error: {% endif %}{{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% if data['low-complexity-wfd-q3-error'] == "true" %}Error: {% endif %}{{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
 {% endblock %}
 
 {% block content %}
@@ -25,23 +25,23 @@ Is your project located within one nautical mile (1.85km) of the coast?
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
-        {% if data['low-complexity-wfd-q1-error'] == "true" %}
+        {% if data['low-complexity-wfd-q3-error'] == "true" %}
         {{ govukErrorSummary({
             titleText: "There is a problem",
             errorList: [
                 {
-                    text: "Select whether your project is located within one nautical mile (1.85km) of the coast",
-                    href: "#low-complexity-wfd-within-nautical-mile"
+                    text: "Select whether you have a previous Water Framework Directive assessment completed between 2015 and 2022 for this type of activity",
+                    href: "#low-complexity-wfd-previous-assessment"
                 }
             ]
         }) }}
         {% endif %}
 
-        <form action="water-framework-directive-router" method="post" novalidate>
+        <form action="water-framework-directive-previous-assessment-router" method="post" novalidate>
 
             {{ govukRadios({
-                name: "low-complexity-wfd-within-nautical-mile",
-                idPrefix: "low-complexity-wfd-within-nautical-mile",
+                name: "low-complexity-wfd-previous-assessment",
+                idPrefix: "low-complexity-wfd-previous-assessment",
                 fieldset: {
                     legend: {
                         html: '<span class="govuk-caption-l">' + data['low-complexity-project-name-text-input'] + '</span>' + pageHeadingTextHTML,
@@ -53,20 +53,23 @@ Is your project located within one nautical mile (1.85km) of the coast?
                     {
                         value: "Yes",
                         text: "Yes",
-                        checked: data['low-complexity-wfd-within-nautical-mile'] == "Yes"
+                        hint: {
+                            text: "You have a previous Water Framework Directive assessment for the same type of activity you're proposing in this application"
+                        },
+                        checked: data['low-complexity-wfd-previous-assessment'] == "Yes"
                     },
                     {
                         value: "No",
                         text: "No",
                         hint: {
-                            text: "You do not need to complete a Water Framework Directive assessment"
+                            text: "You will need to upload a new Water Framework Directive assessment"
                         },
-                        checked: data['low-complexity-wfd-within-nautical-mile'] == "No"
+                        checked: data['low-complexity-wfd-previous-assessment'] == "No"
                     }
                 ],
                 errorMessage: {
-                    text: "Select whether your project is located within one nautical mile (1.85km) of the coast"
-                } if data['low-complexity-wfd-q1-error'] == "true"
+                    text: "Select whether you have a previous Water Framework Directive assessment completed between 2015 and 2022 for this type of activity"
+                } if data['low-complexity-wfd-q3-error'] == "true"
             }) }}
 
             <div class="govuk-button-group">
