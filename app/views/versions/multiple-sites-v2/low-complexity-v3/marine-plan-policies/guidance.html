@@ -1,0 +1,102 @@
+{% extends "../../layouts/low-complexity-v3.html" %}
+{% block header %}
+{{ govukHeader({
+  homepageUrl: "/",
+	classes: "govuk-header--full-width-border"
+  }) }}
+  {{ govukServiceNavigation({
+	serviceName: "Get permission for marine work"
+  }) }}
+  {% endblock %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+{% endblock %}
+
+{% set pageHeadingTextHTML %}
+Marine plan policy guidance
+{% endset %}
+
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+
+{% block content %}
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-two-thirds">
+		<h1 class="govuk-heading-l">
+			{{ pageHeadingTextHTML }}
+		</h1>
+
+		<p class="govuk-body">The policies listed are relevant to your project based on what you told us in 'Site details'. If you change those answers, the policies shown here may change.</p>
+
+		<p class="govuk-body">You can find all the policies that apply to your project, with policy aims, marine licence data and environmental designations in <a href="https://www.gov.uk/guidance/explore-marine-plans" class="govuk-link" target="_blank" rel="noopener noreferrer">Explore marine plans (opens in new tab)</a>.</p>
+
+		<h2 class="govuk-heading-m">How to complete the Marine plan policies section</h2>
+
+		<p class="govuk-body">For most marine plan policies, you'll need to explain how the project will support the policy and manage its impacts, by completing text boxes for:</p>
+
+		<ul class="govuk-list govuk-list--bullet">
+			<li><strong>supporting the policy</strong></li>
+			<li><strong>avoiding impacts</strong></li>
+			<li><strong>minimising impacts</strong></li>
+			<li><strong>mitigating impacts</strong></li>
+			<li><strong>compensating for impacts</strong></li>
+			<li><strong>stating the case for proceeding</strong></li>
+		</ul>
+
+		<p class="govuk-body">You need to select all the options that apply to your project.</p>
+
+		<p class="govuk-body">Where possible, avoid impacts. If you cannot avoid impacts, minimise them. If impacts remain, mitigate them. Only compensate as a last resort.</p>
+
+		<p class="govuk-body">Some policies also allow you to state the case for proceeding if impacts cannot be mitigated or compensated for.</p>
+
+		<h3 class="govuk-heading-s">Supporting the policy</h3>
+
+		<p class="govuk-body">This means the project actively contributes to the policy's objectives or provides positive benefits.</p>
+
+		<p class="govuk-body">For example, installing new public access points that enhance recreational use of the marine area.</p>
+
+		<h3 class="govuk-heading-s">Avoiding impacts</h3>
+
+		<p class="govuk-body">This means that the impacts do not happen. You should prioritise avoiding impacts when possible as it's the most effective step you can take.</p>
+
+		<p class="govuk-body">For example, re-routing a sub-sea cable to avoid a known marine mammal breeding ground.</p>
+
+		<h3 class="govuk-heading-s">Minimising impacts</h3>
+
+		<p class="govuk-body">This means that the scale, duration or intensity of the impacts is reduced.</p>
+
+		<p class="govuk-body">For example, requiring vessels to slow down to minimise the risk of ship strikes on whales or dolphins.</p>
+
+		<h3 class="govuk-heading-s">Mitigating impacts</h3>
+
+		<p class="govuk-body">This means that specific action is taken to reduce impacts that cannot be fully avoided or minimised.</p>
+
+		<p class="govuk-body">For example, using seasonal restrictions to avoid breeding periods, or installing silt curtains during construction to contain sediment disturbance.</p>
+
+		<p class="govuk-body">Some policies require specific mitigations - these are shown alongside policies this applies to.</p>
+
+		<h3 class="govuk-heading-s">Compensating for impacts</h3>
+
+		<p class="govuk-body">This means providing an equivalent environmental benefit elsewhere to offset unavoidable impacts. This should only be used as a last resort.</p>
+
+		<p class="govuk-body">For example, restoring degraded habitat in a similar location, or creating new habitat to replace what will be lost.</p>
+
+		<h3 class="govuk-heading-s">Stating the case for proceeding</h3>
+
+		<p class="govuk-body">If impacts cannot be avoided, minimised or mitigated, you must explain why the project should still go ahead despite the impacts.</p>
+
+		<p class="govuk-body">For example, explaining the public benefits of critical flood defence infrastructure, or the economic importance of maintaining a working port.</p>
+
+		<h3 class="govuk-heading-s">About compensating and stating the case</h3>
+
+		<p class="govuk-body">Some policies include compensation as an option. Others require you to state the case for proceeding if impacts cannot be mitigated. You'll only see the option that applies to the policy.</p>
+
+		<p class="govuk-body">Some policies do not follow this structure and only require an explanation of your considerations.</p>
+	</div>
+</div>
+
+{% endblock %}
