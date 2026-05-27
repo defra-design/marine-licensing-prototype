@@ -1159,12 +1159,12 @@ Check your answers before sending your information
 				</h2>
 				<ul class="govuk-summary-card__actions">
 					<li class="govuk-summary-card__action">
-						{% if data['low-complexity-wfd-assessed'] == 'Yes' %}
-						<a class="govuk-link govuk-link--no-visited-state" href="environmental-assessments/water-framework-directive-check-answers?camefromcheckanswers=true">
+						{% if data['low-complexity-wfd-within-nautical-mile'] == 'Yes' %}
+						<a class="govuk-link govuk-link--no-visited-state" href="environmental-assessments/water-framework-directive-check-answers">
 							Change<span class="govuk-visually-hidden"> Water Framework Directive assessment</span>
 						</a>
 						{% else %}
-						<a class="govuk-link govuk-link--no-visited-state" href="environmental-assessments/water-framework-directive?camefromcheckanswers=true">
+						<a class="govuk-link govuk-link--no-visited-state" href="environmental-assessments/water-framework-directive">
 							Change<span class="govuk-visually-hidden"> Water Framework Directive assessment</span>
 						</a>
 						{% endif %}
@@ -1173,53 +1173,62 @@ Check your answers before sending your information
 			</div>
 			<div class="govuk-summary-card__content">
 				<dl class="govuk-summary-list">
-					<div class="govuk-summary-list__row{% if data['low-complexity-wfd-assessed'] == 'Yes' %} govuk-summary-list__row--no-border{% endif %}">
+					<div class="govuk-summary-list__row">
 						<dt class="govuk-summary-list__key">
-							Have you assessed your project against the WFD?
+							Project located within one nautical mile (1.85km) of the coast
 						</dt>
 						<dd class="govuk-summary-list__value">
-							{{ data['low-complexity-wfd-assessed'] }}
+							{{ data['low-complexity-wfd-within-nautical-mile'] }}
 						</dd>
 					</div>
 
-					{% if data['low-complexity-wfd-assessed'] == 'Yes' %}
+					{% if data['low-complexity-wfd-within-nautical-mile'] == 'Yes' %}
 
-					{# Row 2: summary — no change link; editing happens via the WFD check page #}
 					<div class="govuk-summary-list__row">
 						<dt class="govuk-summary-list__key">
-							Details of your WFD assessment
+							Project limited to one of the excluded activities
 						</dt>
 						<dd class="govuk-summary-list__value">
-							{{ data['low-complexity-wfd-summary'] }}
+							{{ data['low-complexity-wfd-excluded-activities'] }}
 						</dd>
 					</div>
 
-					{# Row 3: have an assessment to upload? — no change link; edit via WFD check #}
+					{% if data['low-complexity-wfd-excluded-activities'] == 'No' %}
+
 					<div class="govuk-summary-list__row">
 						<dt class="govuk-summary-list__key">
-							Do you have a Water Framework Directive assessment to upload?
+							Previous 2015 to 2022 Water Framework Directive assessment
 						</dt>
 						<dd class="govuk-summary-list__value">
-							{{ data['low-complexity-wfd-upload-answer'] }}
+							{{ data['low-complexity-wfd-previous-assessment'] }}
 						</dd>
 					</div>
 
-					{# Row 4: uploaded file (only if upload answer is Yes) — no change link; edit via WFD check #}
-					{% if data['low-complexity-wfd-upload-answer'] == 'Yes' %}
+					{% if data['low-complexity-wfd-previous-assessment'] == 'Yes' %}
 					<div class="govuk-summary-list__row">
 						<dt class="govuk-summary-list__key">
-							Uploaded file
+							Changes since the previous Water Framework Directive assessment
 						</dt>
 						<dd class="govuk-summary-list__value">
-							{% if data['low-complexity-wfd-filename'] %}
-								{{ data['low-complexity-wfd-filename'] }}
-							{% else %}
-								WFD-assessment.pdf
-							{% endif %}
+							{{ data['low-complexity-wfd-assessment-changed'] }}
 						</dd>
 					</div>
 					{% endif %}
 
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							{% if data['low-complexity-wfd-previous-assessment'] == 'Yes' and data['low-complexity-wfd-assessment-changed'] == 'Yes' %}
+								Previous Water Framework Directive assessment upload
+							{% else %}
+								Water Framework Directive assessment upload
+							{% endif %}
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ data['low-complexity-wfd-filename'] if data['low-complexity-wfd-filename'] else "WFD.doc" }}
+						</dd>
+					</div>
+
+					{% endif %}
 					{% endif %}
 				</dl>
 			</div>

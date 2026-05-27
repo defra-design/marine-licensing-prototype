@@ -12,7 +12,7 @@
 {% endblock %}
 
 {% block pageTitle %}
-{% if data['low-complexity-wfd-q1-error'] == "true" %}Error: {% endif %}Is your project located within one nautical mile (1.85km) of the coast? - {{ data['headerNameExemption'] }}
+{% if data['low-complexity-wfd-q3-error'] == "true" %}Error: {% endif %}Do you have a previous Water Framework Directive assessment completed between 2015 and 2022 for this type of activity? - {{ data['headerNameExemption'] }}
 {% endblock %}
 
 {% block content %}
@@ -20,27 +20,27 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
-        {% if data['low-complexity-wfd-q1-error'] == "true" %}
+        {% if data['low-complexity-wfd-q3-error'] == "true" %}
         <div class="govuk-error-summary" data-module="govuk-error-summary">
             <div role="alert">
                 <h2 class="govuk-error-summary__title">There is a problem</h2>
                 <div class="govuk-error-summary__body">
                     <ul class="govuk-list govuk-error-summary__list">
-                        <li><a href="#low-complexity-wfd-within-nautical-mile">Select yes if your project is located within one nautical mile (1.85km) of the coast</a></li>
+                        <li><a href="#low-complexity-wfd-previous-assessment">Select yes if you have a previous Water Framework Directive assessment completed between 2015 and 2022</a></li>
                     </ul>
                 </div>
             </div>
         </div>
         {% endif %}
 
-        <form action="water-framework-directive-router" method="post" novalidate>
+        <form action="water-framework-directive-previous-assessment-router" method="post" novalidate>
 
             {{ govukRadios({
-                name: "low-complexity-wfd-within-nautical-mile",
-                idPrefix: "low-complexity-wfd-within-nautical-mile",
+                name: "low-complexity-wfd-previous-assessment",
+                idPrefix: "low-complexity-wfd-previous-assessment",
                 fieldset: {
                     legend: {
-                        html: "<span class='govuk-caption-l'>" + data['low-complexity-project-name-text-input'] + "</span><h1 class='govuk-fieldset__heading govuk-heading-l'>Is your project located within one nautical mile (1.85km) of the coast?</h1>",
+                        html: "<span class='govuk-caption-l'>" + data['low-complexity-project-name-text-input'] + "</span><h1 class='govuk-fieldset__heading govuk-heading-l'>Do you have a previous Water Framework Directive assessment completed between 2015 and 2022 for this type of activity?</h1>",
                         classes: "govuk-fieldset__legend--l",
                         isPageHeading: true
                     }
@@ -49,20 +49,23 @@
                     {
                         value: "Yes",
                         text: "Yes",
-                        checked: data['low-complexity-wfd-within-nautical-mile'] == "Yes"
+                        hint: {
+                            text: "You have a previous Water Framework Directive assessment for the same type of activity you're proposing in this application"
+                        },
+                        checked: data['low-complexity-wfd-previous-assessment'] == "Yes"
                     },
                     {
                         value: "No",
                         text: "No",
                         hint: {
-                            text: "You do not need to complete a Water Framework Directive assessment"
+                            text: "You will need to upload a new Water Framework Directive assessment"
                         },
-                        checked: data['low-complexity-wfd-within-nautical-mile'] == "No"
+                        checked: data['low-complexity-wfd-previous-assessment'] == "No"
                     }
                 ],
                 errorMessage: {
-                    text: "Select yes if your project is located within one nautical mile (1.85km) of the coast"
-                } if data['low-complexity-wfd-q1-error'] == "true"
+                    text: "Select yes if you have a previous Water Framework Directive assessment completed between 2015 and 2022"
+                } if data['low-complexity-wfd-q3-error'] == "true"
             }) }}
 
             <div class="govuk-button-group">

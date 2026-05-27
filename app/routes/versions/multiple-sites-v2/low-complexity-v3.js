@@ -591,292 +591,214 @@ module.exports = function (router) {
     res.render(`versions/${version}/${section}/environmental-assessments/index`);
   });
 
-  // European sites page
-  router.get(`/versions/${version}/${section}/environmental-assessments/european-sites`, function (req, res) {
-    // Clear error flags when navigating to the page
-    req.session.data['errorthispage'] = "false";
-    req.session.data['errortypeone'] = "false";
-    
-    // Capture the query parameter if coming from check answers
-    if (req.query.camefromcheckanswers === 'true') {
-      req.session.data['camefromcheckanswers'] = 'true';
-    }
-    
-    res.render(`versions/${version}/${section}/environmental-assessments/european-sites`);
-  });
-
-  // European sites router (POST)
-  router.post(`/versions/${version}/${section}/environmental-assessments/european-sites-router`, function (req, res) {
-    // Clear error flags
-    req.session.data['errorthispage'] = "false";
-    req.session.data['errortypeone'] = "false";
-
-    // Get the european sites value
-    const europeanSites = req.session.data['low-complexity-european-sites'];
-
-    // Validate: check if european sites is empty or undefined
-    if (!europeanSites || europeanSites.trim() === '') {
-      // Set error flags
-      req.session.data['errorthispage'] = "true";
-      req.session.data['errortypeone'] = "true";
-      
-      // Redirect back to the same page with errors
-      res.redirect('european-sites');
-    } else {
-      // Validation passed - set completion flag
-      req.session.data['low-complexity-european-sites-completed'] = true;
-      
-      // Check if we need to return to check answers
-      if (req.session.data['camefromcheckanswers'] === 'true') {
-        req.session.data['camefromcheckanswers'] = false;
-        res.redirect('../check-your-answers#water-framework-directive');
-      } else {
-        res.redirect('../marine-licence-start-page');
-      }
-    }
-  });
-
-  // Marine Conservation Zones page
-  router.get(`/versions/${version}/${section}/environmental-assessments/marine-conservation-zones`, function (req, res) {
-    // Clear error flags when navigating to the page
-    req.session.data['errorthispage'] = "false";
-    req.session.data['errortypeone'] = "false";
-    
-    // Capture the query parameter if coming from check answers
-    if (req.query.camefromcheckanswers === 'true') {
-      req.session.data['camefromcheckanswers'] = 'true';
-    }
-    
-    res.render(`versions/${version}/${section}/environmental-assessments/marine-conservation-zones`);
-  });
-
-  // Marine Conservation Zones router (POST)
-  router.post(`/versions/${version}/${section}/environmental-assessments/marine-conservation-zones-router`, function (req, res) {
-    // Clear error flags
-    req.session.data['errorthispage'] = "false";
-    req.session.data['errortypeone'] = "false";
-
-    // Get the MCZ value
-    const mcz = req.session.data['low-complexity-mcz'];
-
-    // Validate: check if MCZ is empty or undefined
-    if (!mcz || mcz.trim() === '') {
-      // Set error flags
-      req.session.data['errorthispage'] = "true";
-      req.session.data['errortypeone'] = "true";
-      
-      // Redirect back to the same page with errors
-      res.redirect('marine-conservation-zones');
-    } else {
-      // Validation passed - set completion flag
-      req.session.data['low-complexity-mcz-completed'] = true;
-      
-      // Check if we need to return to check answers
-      if (req.session.data['camefromcheckanswers'] === 'true') {
-        req.session.data['camefromcheckanswers'] = false;
-        res.redirect('../check-your-answers#water-framework-directive');
-      } else {
-        res.redirect('../marine-licence-start-page');
-      }
-    }
-  });
-
-  // Sites of special scientific interest page
-  router.get(`/versions/${version}/${section}/environmental-assessments/sites-of-special-scientific-interest`, function (req, res) {
-    // Clear error flags when navigating to the page
-    req.session.data['errorthispage'] = "false";
-    req.session.data['errortypeone'] = "false";
-    
-    // Capture the query parameter if coming from check answers
-    if (req.query.camefromcheckanswers === 'true') {
-      req.session.data['camefromcheckanswers'] = 'true';
-    }
-    
-    res.render(`versions/${version}/${section}/environmental-assessments/sites-of-special-scientific-interest`);
-  });
-
-  // Sites of special scientific interest router (POST)
-  router.post(`/versions/${version}/${section}/environmental-assessments/sites-of-special-scientific-interest-router`, function (req, res) {
-    // Clear error flags
-    req.session.data['errorthispage'] = "false";
-    req.session.data['errortypeone'] = "false";
-
-    // Get the SSSI value
-    const sssi = req.session.data['low-complexity-sssi'];
-
-    // Validate: check if SSSI is empty or undefined
-    if (!sssi || sssi.trim() === '') {
-      // Set error flags
-      req.session.data['errorthispage'] = "true";
-      req.session.data['errortypeone'] = "true";
-      
-      // Redirect back to the same page with errors
-      res.redirect('sites-of-special-scientific-interest');
-    } else {
-      // Validation passed - set completion flag
-      req.session.data['low-complexity-sssi-completed'] = true;
-      
-      // Check if we need to return to check answers
-      if (req.session.data['camefromcheckanswers'] === 'true') {
-        req.session.data['camefromcheckanswers'] = false;
-        res.redirect('../check-your-answers#water-framework-directive');
-      } else {
-        res.redirect('../marine-licence-start-page');
-      }
-    }
-  });
-
-  // Helper: build a redirect path keeping the current context flags
-  function wfdPathWithContext(base, fromMainCheck, fromWfdCheck) {
-    if (fromMainCheck) return base + '?camefromcheckanswers=true';
-    if (fromWfdCheck) return base + '?fromcheckanswers=true';
-    return base;
+  // ============================================================
+  // WFD — helper: clear all WFD session data
+  // ============================================================
+  function clearWfdData(data) {
+    delete data['low-complexity-wfd-within-nautical-mile'];
+    delete data['low-complexity-wfd-excluded-activities'];
+    delete data['low-complexity-wfd-previous-assessment'];
+    delete data['low-complexity-wfd-assessment-changed'];
+    delete data['low-complexity-wfd-filename'];
+    delete data['low-complexity-wfd-completed'];
+    delete data['low-complexity-wfd-from-cya'];
+    delete data['low-complexity-wfd-q1-error'];
+    delete data['low-complexity-wfd-q2-error'];
+    delete data['low-complexity-wfd-q3-error'];
+    delete data['low-complexity-wfd-q4-error'];
   }
 
   // ============================================================
-  // WFD page 1 — "Have you assessed your project against the WFD?"
+  // WFD entry point — smart-routes on re-entry
   // ============================================================
   router.get(`/versions/${version}/${section}/environmental-assessments/water-framework-directive`, function (req, res) {
-    // Clear error flags
-    delete req.session.data['low-complexity-wfd-errorthispage'];
-    delete req.session.data['low-complexity-wfd-error-radio'];
-    delete req.session.data['low-complexity-wfd-error-summary'];
+    const fromCya = req.query.fromcheckanswers === 'true';
 
-    const fromCheckAnswers = req.query.fromcheckanswers === 'true';
-    const fromMainCheckAnswers = req.query.camefromcheckanswers === 'true';
-
-    // Mirror the source of this visit into session so the POST (which has no
-    // query string via the form action) can decide where to send the user.
-    // The two flags are independent — a user who drilled main check → WFD
-    // check → WFD question has both flags set, and each is cleared when its
-    // respective check page is finally returned to.
-    if (fromMainCheckAnswers) {
-      req.session.data['camefromcheckanswers'] = 'true';
-    }
-    if (fromCheckAnswers) {
-      req.session.data['low-complexity-wfd-came-from-wfd-check'] = 'true';
-    }
-    if (!fromMainCheckAnswers && !fromCheckAnswers) {
-      // Clean entry from task list — wipe both flags so stale values from
-      // other tasks can't leak into this flow.
-      req.session.data['camefromcheckanswers'] = false;
-      req.session.data['low-complexity-wfd-came-from-wfd-check'] = false;
+    if (fromCya) {
+      // Coming via a Change link from the WFD CYA page — clear downstream answers
+      // and set the from-cya flag so Cancel links are hidden
+      delete req.session.data['low-complexity-wfd-excluded-activities'];
+      delete req.session.data['low-complexity-wfd-previous-assessment'];
+      delete req.session.data['low-complexity-wfd-assessment-changed'];
+      delete req.session.data['low-complexity-wfd-filename'];
+      req.session.data['low-complexity-wfd-from-cya'] = true;
+      delete req.session.data['low-complexity-wfd-q1-error'];
+      return res.render(`versions/${version}/${section}/environmental-assessments/water-framework-directive`);
     }
 
-    // Smart routing: only send the user to the WFD check page when the flow has
-    // been fully completed with "Yes" answered on page 1. For "No" answers there
-    // is no check page — re-entering the task should show the question again.
-    if (req.session.data['low-complexity-wfd-assessed'] === 'Yes'
-        && req.session.data['low-complexity-wfd-completed']
-        && !fromCheckAnswers && !fromMainCheckAnswers) {
+    // Fresh entry from task list
+    delete req.session.data['low-complexity-wfd-q1-error'];
+
+    if (req.session.data['low-complexity-wfd-completed']) {
+      // Already completed — skip before-you-start
+      if (req.session.data['low-complexity-wfd-within-nautical-mile'] === 'No') {
+        // Re-entry after a No answer: show Q1 with answer pre-selected
+        return res.render(`versions/${version}/${section}/environmental-assessments/water-framework-directive`);
+      }
+      // Re-entry after a Yes path: go to CYA
       return res.redirect('water-framework-directive-check-answers');
     }
 
+    // Not yet started — show before-you-start page
+    res.redirect('water-framework-directive-before-you-start');
+  });
+
+  // ============================================================
+  // WFD before you start page
+  // ============================================================
+  router.get(`/versions/${version}/${section}/environmental-assessments/water-framework-directive-before-you-start`, function (req, res) {
+    res.render(`versions/${version}/${section}/environmental-assessments/water-framework-directive-before-you-start`);
+  });
+
+  router.post(`/versions/${version}/${section}/environmental-assessments/water-framework-directive-before-you-start-router`, function (req, res) {
+    res.redirect('water-framework-directive-q1');
+  });
+
+  // ============================================================
+  // WFD Q1 — Is your project within one nautical mile of the coast?
+  // ============================================================
+  router.get(`/versions/${version}/${section}/environmental-assessments/water-framework-directive-q1`, function (req, res) {
+    delete req.session.data['low-complexity-wfd-q1-error'];
     res.render(`versions/${version}/${section}/environmental-assessments/water-framework-directive`);
   });
 
   router.post(`/versions/${version}/${section}/environmental-assessments/water-framework-directive-router`, function (req, res) {
-    delete req.session.data['low-complexity-wfd-errorthispage'];
-    delete req.session.data['low-complexity-wfd-error-radio'];
-    delete req.session.data['low-complexity-wfd-error-summary'];
+    delete req.session.data['low-complexity-wfd-q1-error'];
 
-    const assessed = req.session.data['low-complexity-wfd-assessed'];
-    const summary = req.session.data['low-complexity-wfd-summary'];
-    // Flags persisted via session (the form action has no query string).
-    const fromMainCheckAnswers = req.session.data['camefromcheckanswers'] === 'true';
-    const fromWfdCheck = req.session.data['low-complexity-wfd-came-from-wfd-check'] === 'true';
+    const answer = req.session.data['low-complexity-wfd-within-nautical-mile'];
+    const fromCya = req.session.data['low-complexity-wfd-from-cya'];
 
-    let hasErrors = false;
-    if (!assessed) {
-      req.session.data['low-complexity-wfd-error-radio'] = "true";
-      hasErrors = true;
-    } else if (assessed === 'Yes' && (!summary || summary.trim() === '')) {
-      req.session.data['low-complexity-wfd-error-summary'] = "true";
-      hasErrors = true;
+    if (!answer) {
+      req.session.data['low-complexity-wfd-q1-error'] = "true";
+      return res.redirect('water-framework-directive');
     }
 
-    if (hasErrors) {
-      req.session.data['low-complexity-wfd-errorthispage'] = "true";
-      return res.redirect(wfdPathWithContext('water-framework-directive', fromMainCheckAnswers, fromWfdCheck));
-    }
-
-    if (assessed === 'No') {
-      // Clear cascaded sub-answers
-      delete req.session.data['low-complexity-wfd-summary'];
-      delete req.session.data['low-complexity-wfd-upload-answer'];
-      delete req.session.data['low-complexity-wfd-file-uploaded'];
+    if (answer === 'No') {
+      // Clear all downstream data
+      delete req.session.data['low-complexity-wfd-excluded-activities'];
+      delete req.session.data['low-complexity-wfd-previous-assessment'];
+      delete req.session.data['low-complexity-wfd-assessment-changed'];
       delete req.session.data['low-complexity-wfd-filename'];
       req.session.data['low-complexity-wfd-completed'] = true;
-      req.session.data['low-complexity-wfd-came-from-wfd-check'] = false;
-
-      if (fromMainCheckAnswers) {
-        req.session.data['camefromcheckanswers'] = false;
-        return res.redirect('../check-your-answers#water-framework-directive');
-      }
+      req.session.data['low-complexity-wfd-from-cya'] = false;
       return res.redirect('../marine-licence-start-page');
     }
 
-    // assessed === 'Yes'
-    const subJourneyAlreadyComplete = !!req.session.data['low-complexity-wfd-upload-answer'];
-
-    if (subJourneyAlreadyComplete) {
-      // User is just editing the summary; skip the upload question and go to the
-      // WFD check page. Its Continue button then returns to the main check page
-      // when appropriate (based on session.camefromcheckanswers).
-      req.session.data['low-complexity-wfd-came-from-wfd-check'] = false;
-      return res.redirect('water-framework-directive-check-answers');
-    }
-
-    // Fresh / restarted sub-journey — continue through the upload question.
-    return res.redirect(wfdPathWithContext('water-framework-directive-upload-question', fromMainCheckAnswers, fromWfdCheck));
+    // answer === 'Yes'
+    return res.redirect('water-framework-directive-excluded-activities');
   });
 
   // ============================================================
-  // WFD page 2 — "Do you have a Water Framework Directive assessment to upload?"
+  // WFD Q2 — Is your project limited to excluded activities?
   // ============================================================
-  router.get(`/versions/${version}/${section}/environmental-assessments/water-framework-directive-upload-question`, function (req, res) {
-    delete req.session.data['low-complexity-wfd-upload-q-errorthispage'];
+  router.get(`/versions/${version}/${section}/environmental-assessments/water-framework-directive-excluded-activities`, function (req, res) {
+    const fromCya = req.query.fromcheckanswers === 'true';
 
-    if (req.query.camefromcheckanswers === 'true') {
-      req.session.data['camefromcheckanswers'] = 'true';
-    }
-
-    res.render(`versions/${version}/${section}/environmental-assessments/water-framework-directive-upload-question`);
-  });
-
-  router.post(`/versions/${version}/${section}/environmental-assessments/water-framework-directive-upload-question-router`, function (req, res) {
-    delete req.session.data['low-complexity-wfd-upload-q-errorthispage'];
-
-    const uploadAnswer = req.session.data['low-complexity-wfd-upload-answer'];
-    const fromCheckAnswers = req.query.fromcheckanswers === 'true';
-    const fromMainCheckAnswers = req.session.data['camefromcheckanswers'] === 'true';
-
-    if (!uploadAnswer) {
-      req.session.data['low-complexity-wfd-upload-q-errorthispage'] = "true";
-      return res.redirect(wfdPathWithContext('water-framework-directive-upload-question', fromMainCheckAnswers, fromCheckAnswers));
-    }
-
-    if (uploadAnswer === 'No') {
-      // Clear any previously uploaded file
-      delete req.session.data['low-complexity-wfd-file-uploaded'];
+    if (fromCya) {
+      delete req.session.data['low-complexity-wfd-previous-assessment'];
+      delete req.session.data['low-complexity-wfd-assessment-changed'];
       delete req.session.data['low-complexity-wfd-filename'];
-      req.session.data['low-complexity-wfd-completed'] = true;
+      req.session.data['low-complexity-wfd-from-cya'] = true;
+    }
 
-      // Whenever assessed is Yes we always land on the WFD check page first;
-      // its Continue button returns to the main check page if appropriate.
+    delete req.session.data['low-complexity-wfd-q2-error'];
+    res.render(`versions/${version}/${section}/environmental-assessments/water-framework-directive-excluded-activities`);
+  });
+
+  router.post(`/versions/${version}/${section}/environmental-assessments/water-framework-directive-excluded-activities-router`, function (req, res) {
+    delete req.session.data['low-complexity-wfd-q2-error'];
+
+    const answer = req.session.data['low-complexity-wfd-excluded-activities'];
+
+    if (!answer) {
+      req.session.data['low-complexity-wfd-q2-error'] = "true";
+      return res.redirect('water-framework-directive-excluded-activities');
+    }
+
+    if (answer === 'Yes') {
+      // Excluded activity — clear downstream data and go to CYA
+      delete req.session.data['low-complexity-wfd-previous-assessment'];
+      delete req.session.data['low-complexity-wfd-assessment-changed'];
+      delete req.session.data['low-complexity-wfd-filename'];
       return res.redirect('water-framework-directive-check-answers');
     }
 
-    // uploadAnswer === 'Yes' → go to the file upload page, preserving context
-    return res.redirect(wfdPathWithContext('water-framework-directive-upload', fromMainCheckAnswers, fromCheckAnswers));
+    // answer === 'No'
+    return res.redirect('water-framework-directive-previous-assessment');
+  });
+
+  // ============================================================
+  // WFD Q3 — Previous assessment 2015–2022?
+  // ============================================================
+  router.get(`/versions/${version}/${section}/environmental-assessments/water-framework-directive-previous-assessment`, function (req, res) {
+    const fromCya = req.query.fromcheckanswers === 'true';
+
+    if (fromCya) {
+      delete req.session.data['low-complexity-wfd-assessment-changed'];
+      delete req.session.data['low-complexity-wfd-filename'];
+      req.session.data['low-complexity-wfd-from-cya'] = true;
+    }
+
+    delete req.session.data['low-complexity-wfd-q3-error'];
+    res.render(`versions/${version}/${section}/environmental-assessments/water-framework-directive-previous-assessment`);
+  });
+
+  router.post(`/versions/${version}/${section}/environmental-assessments/water-framework-directive-previous-assessment-router`, function (req, res) {
+    delete req.session.data['low-complexity-wfd-q3-error'];
+
+    const answer = req.session.data['low-complexity-wfd-previous-assessment'];
+
+    if (!answer) {
+      req.session.data['low-complexity-wfd-q3-error'] = "true";
+      return res.redirect('water-framework-directive-previous-assessment');
+    }
+
+    if (answer === 'Yes') {
+      return res.redirect('water-framework-directive-assessment-changed');
+    }
+
+    // answer === 'No' — no previous assessment, go straight to upload
+    delete req.session.data['low-complexity-wfd-assessment-changed'];
+    return res.redirect('water-framework-directive-upload');
+  });
+
+  // ============================================================
+  // WFD Q4 — Has anything changed since previous assessment?
+  // ============================================================
+  router.get(`/versions/${version}/${section}/environmental-assessments/water-framework-directive-assessment-changed`, function (req, res) {
+    const fromCya = req.query.fromcheckanswers === 'true';
+
+    if (fromCya) {
+      delete req.session.data['low-complexity-wfd-filename'];
+      req.session.data['low-complexity-wfd-from-cya'] = true;
+    }
+
+    delete req.session.data['low-complexity-wfd-q4-error'];
+    res.render(`versions/${version}/${section}/environmental-assessments/water-framework-directive-assessment-changed`);
+  });
+
+  router.post(`/versions/${version}/${section}/environmental-assessments/water-framework-directive-assessment-changed-router`, function (req, res) {
+    delete req.session.data['low-complexity-wfd-q4-error'];
+
+    const answer = req.session.data['low-complexity-wfd-assessment-changed'];
+
+    if (!answer) {
+      req.session.data['low-complexity-wfd-q4-error'] = "true";
+      return res.redirect('water-framework-directive-assessment-changed');
+    }
+
+    // Both Yes and No go to the upload page
+    return res.redirect('water-framework-directive-upload');
   });
 
   // ============================================================
   // WFD file upload page
   // ============================================================
   router.get(`/versions/${version}/${section}/environmental-assessments/water-framework-directive-upload`, function (req, res) {
-    if (req.query.camefromcheckanswers === 'true') {
-      req.session.data['camefromcheckanswers'] = 'true';
+    const fromCya = req.query.fromcheckanswers === 'true';
+
+    if (fromCya) {
+      req.session.data['low-complexity-wfd-from-cya'] = true;
     }
 
     res.render(`versions/${version}/${section}/environmental-assessments/water-framework-directive-upload`);
@@ -884,54 +806,28 @@ module.exports = function (router) {
 
   router.post(`/versions/${version}/${section}/environmental-assessments/water-framework-directive-upload-router`, function (req, res) {
     // Prototype: pretend a file was uploaded
-    req.session.data['low-complexity-wfd-filename'] = 'WFD-assessment.pdf';
-    req.session.data['low-complexity-wfd-file-uploaded'] = true;
-    req.session.data['low-complexity-wfd-completed'] = true;
-
-    // After upload, always land on the WFD check page (which Continue takes back to main check if needed)
-    res.redirect('water-framework-directive-check-answers');
+    req.session.data['low-complexity-wfd-filename'] = 'WFD.doc';
+    return res.redirect('water-framework-directive-check-answers');
   });
 
   // ============================================================
-  // WFD cancel — wipes every WFD session key so the next entry is blank
+  // WFD cancel — wipes every WFD session key so next entry is fresh
   // ============================================================
   router.get(`/versions/${version}/${section}/environmental-assessments/wfd-cancel`, function (req, res) {
-    delete req.session.data['low-complexity-wfd-assessed'];
-    delete req.session.data['low-complexity-wfd-summary'];
-    delete req.session.data['low-complexity-wfd-upload-answer'];
-    delete req.session.data['low-complexity-wfd-file-uploaded'];
-    delete req.session.data['low-complexity-wfd-filename'];
-    delete req.session.data['low-complexity-wfd-completed'];
-    delete req.session.data['low-complexity-wfd-came-from-wfd-check'];
-    delete req.session.data['low-complexity-wfd-errorthispage'];
-    delete req.session.data['low-complexity-wfd-error-radio'];
-    delete req.session.data['low-complexity-wfd-error-summary'];
-    delete req.session.data['low-complexity-wfd-upload-q-errorthispage'];
-    req.session.data['camefromcheckanswers'] = false;
+    clearWfdData(req.session.data);
     res.redirect('../marine-licence-start-page');
   });
 
   // ============================================================
-  // WFD check answers page
+  // WFD check your answers page
   // ============================================================
   router.get(`/versions/${version}/${section}/environmental-assessments/water-framework-directive-check-answers`, function (req, res) {
-    if (req.query.camefromcheckanswers === 'true') {
-      req.session.data['camefromcheckanswers'] = 'true';
-    }
-
     res.render(`versions/${version}/${section}/environmental-assessments/water-framework-directive-check-answers`);
   });
 
   router.post(`/versions/${version}/${section}/environmental-assessments/water-framework-directive-check-answers-router`, function (req, res) {
     req.session.data['low-complexity-wfd-completed'] = true;
-    // Entering the WFD check page is the natural end of any edit; clear the
-    // "came from WFD check" flag so the next fresh journey isn't contaminated.
-    req.session.data['low-complexity-wfd-came-from-wfd-check'] = false;
-
-    if (req.session.data['camefromcheckanswers'] === 'true') {
-      req.session.data['camefromcheckanswers'] = false;
-      return res.redirect('../check-your-answers#water-framework-directive');
-    }
+    req.session.data['low-complexity-wfd-from-cya'] = false;
     res.redirect('../marine-licence-start-page');
   });
 
@@ -969,21 +865,17 @@ module.exports = function (router) {
     delete req.session.data['low-complexity-impacts-completed'];
     
     // Clear environmental assessments data
-    delete req.session.data['low-complexity-european-sites'];
-    delete req.session.data['low-complexity-european-sites-completed'];
-    delete req.session.data['low-complexity-mcz'];
-    delete req.session.data['low-complexity-mcz-completed'];
-    delete req.session.data['low-complexity-sssi'];
-    delete req.session.data['low-complexity-sssi-completed'];
-    delete req.session.data['low-complexity-wfd'];
-    delete req.session.data['low-complexity-wfd-completed'];
-    delete req.session.data['low-complexity-wfd-nautical-mile'];
-    delete req.session.data['low-complexity-wfd-assessed'];
-    delete req.session.data['low-complexity-wfd-summary'];
-    delete req.session.data['low-complexity-wfd-upload-answer'];
-    delete req.session.data['low-complexity-wfd-file-uploaded'];
+    delete req.session.data['low-complexity-wfd-within-nautical-mile'];
+    delete req.session.data['low-complexity-wfd-excluded-activities'];
+    delete req.session.data['low-complexity-wfd-previous-assessment'];
+    delete req.session.data['low-complexity-wfd-assessment-changed'];
     delete req.session.data['low-complexity-wfd-filename'];
-    delete req.session.data['low-complexity-wfd-came-from-wfd-check'];
+    delete req.session.data['low-complexity-wfd-completed'];
+    delete req.session.data['low-complexity-wfd-from-cya'];
+    delete req.session.data['low-complexity-wfd-q1-error'];
+    delete req.session.data['low-complexity-wfd-q2-error'];
+    delete req.session.data['low-complexity-wfd-q3-error'];
+    delete req.session.data['low-complexity-wfd-q4-error'];
     
     // Clear other permissions data
     delete req.session.data['low-complexity-special-legal-powers'];

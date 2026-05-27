@@ -12,7 +12,7 @@
 {% endblock %}
 
 {% block pageTitle %}
-{% if data['low-complexity-wfd-q1-error'] == "true" %}Error: {% endif %}Is your project located within one nautical mile (1.85km) of the coast? - {{ data['headerNameExemption'] }}
+{% if data['low-complexity-wfd-q4-error'] == "true" %}Error: {% endif %}Has anything changed since your previous Water Framework Directive assessment? - {{ data['headerNameExemption'] }}
 {% endblock %}
 
 {% block content %}
@@ -20,49 +20,55 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
-        {% if data['low-complexity-wfd-q1-error'] == "true" %}
+        {% if data['low-complexity-wfd-q4-error'] == "true" %}
         <div class="govuk-error-summary" data-module="govuk-error-summary">
             <div role="alert">
                 <h2 class="govuk-error-summary__title">There is a problem</h2>
                 <div class="govuk-error-summary__body">
                     <ul class="govuk-list govuk-error-summary__list">
-                        <li><a href="#low-complexity-wfd-within-nautical-mile">Select yes if your project is located within one nautical mile (1.85km) of the coast</a></li>
+                        <li><a href="#low-complexity-wfd-assessment-changed">Select yes if anything has changed since your previous Water Framework Directive assessment</a></li>
                     </ul>
                 </div>
             </div>
         </div>
         {% endif %}
 
-        <form action="water-framework-directive-router" method="post" novalidate>
+        <form action="water-framework-directive-assessment-changed-router" method="post" novalidate>
 
             {{ govukRadios({
-                name: "low-complexity-wfd-within-nautical-mile",
-                idPrefix: "low-complexity-wfd-within-nautical-mile",
+                name: "low-complexity-wfd-assessment-changed",
+                idPrefix: "low-complexity-wfd-assessment-changed",
                 fieldset: {
                     legend: {
-                        html: "<span class='govuk-caption-l'>" + data['low-complexity-project-name-text-input'] + "</span><h1 class='govuk-fieldset__heading govuk-heading-l'>Is your project located within one nautical mile (1.85km) of the coast?</h1>",
+                        html: "<span class='govuk-caption-l'>" + data['low-complexity-project-name-text-input'] + "</span><h1 class='govuk-fieldset__heading govuk-heading-l'>Has anything changed since your previous Water Framework Directive assessment?</h1>",
                         classes: "govuk-fieldset__legend--l",
                         isPageHeading: true
                     }
+                },
+                hint: {
+                    text: "This includes changes to the method, size, scale, volume, depth, location or timings of the activity, or a pollution incident in the area."
                 },
                 items: [
                     {
                         value: "Yes",
                         text: "Yes",
-                        checked: data['low-complexity-wfd-within-nautical-mile'] == "Yes"
+                        hint: {
+                            text: "You will need to upload a new Water Framework Directive assessment"
+                        },
+                        checked: data['low-complexity-wfd-assessment-changed'] == "Yes"
                     },
                     {
                         value: "No",
                         text: "No",
                         hint: {
-                            text: "You do not need to complete a Water Framework Directive assessment"
+                            text: "You will need to upload the previous Water Framework Directive"
                         },
-                        checked: data['low-complexity-wfd-within-nautical-mile'] == "No"
+                        checked: data['low-complexity-wfd-assessment-changed'] == "No"
                     }
                 ],
                 errorMessage: {
-                    text: "Select yes if your project is located within one nautical mile (1.85km) of the coast"
-                } if data['low-complexity-wfd-q1-error'] == "true"
+                    text: "Select yes if anything has changed since your previous Water Framework Directive assessment"
+                } if data['low-complexity-wfd-q4-error'] == "true"
             }) }}
 
             <div class="govuk-button-group">
