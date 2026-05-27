@@ -1,0 +1,54 @@
+{% extends "../../layouts/low-complexity-v3.html" %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% if data['organisation-name'] %}
+        {% include "../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageHeadingTextHTML %}
+Change site location
+{% endset %}
+
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
+    <h1 class="govuk-heading-l">
+      {{ pageHeadingTextHTML }}
+    </h1>
+
+    <div class="govuk-inset-text">
+      {% if data['low-complexity-site-name'] %}
+        Site 1: {{ data['low-complexity-site-name'] }}
+      {% else %}
+        Site 1
+      {% endif %}
+    </div>
+
+    <p class="govuk-body">You can change your site location by uploading a single site file. Any activity details you've already entered will be saved.</p>
+
+    <p class="govuk-body">If you've started the Marine plan policies, changing your site location may change which policies are presented.</p>
+
+    <form action="change-site-location-router" method="post" novalidate>
+      <div class="govuk-button-group govuk-!-margin-top-7">
+        {{ govukButton({
+          text: "Yes, change site location",
+          classes: "govuk-button--warning"
+        }) }}
+        <a class="govuk-link govuk-link--no-visited-state" href="review-site-details">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

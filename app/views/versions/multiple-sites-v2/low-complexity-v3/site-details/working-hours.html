@@ -1,0 +1,79 @@
+{% extends "../../layouts/low-complexity-v3.html" %}
+
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% if data['organisation-name'] %}
+        {% include "../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+What are the proposed working hours?
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+{% if data['low-complexity-working-hours-errorthispage'] == "true" %}
+Error:
+{% endif %}
+
+{{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        
+        <form action="working-hours-router" method="post" novalidate>
+            
+            <!-- Error summary -->
+            {% if data['low-complexity-working-hours-errorthispage'] == "true" %}
+                {{ govukErrorSummary({
+                    titleText: "There is a problem",
+                    errorList: [
+                        {
+                            text: "Enter the proposed working hours",
+                            href: "#low-complexity-working-hours"
+                        }
+                    ]
+                }) }}
+            {% endif %}
+
+            <div class="govuk-form-group {% if data['low-complexity-working-hours-errorthispage'] == 'true' %}govuk-form-group--error{% endif %}">
+                <h1 class="govuk-label-wrapper">
+                    <label class="govuk-label govuk-label--l" for="low-complexity-working-hours">
+                        <span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}<span class="govuk-!-display-block">Site {{ data['low-complexity-manual-current-edit-site'] or '1' }} - Activity {{ data['low-complexity-manual-current-edit-activity'] or data['low-complexity-current-edit-activity'] or '1' }}</span></span>
+                        {{ pageHeadingTextHTML }}
+                    </label>
+                </h1>
+
+                <p id="low-complexity-working-hours-hint" class="govuk-hint">Tell us the days of the week and start and finish times (for example, Monday to Friday, 9am to 5pm). Include whether the works will happen at high or low tide.</p>
+
+                <p class="govuk-hint">Enter a maximum of 1,000 characters</p>
+                
+                {% if data['low-complexity-working-hours-errorthispage'] == "true" %}
+                <p id="low-complexity-working-hours-error" class="govuk-error-message">
+                    <span class="govuk-visually-hidden">Error:</span> Enter the proposed working hours
+                </p>
+                {% endif %}
+                
+                <textarea class="govuk-textarea {% if data['low-complexity-working-hours-errorthispage'] == 'true' %}govuk-textarea--error{% endif %}" id="low-complexity-working-hours" name="low-complexity-working-hours" rows="5" aria-describedby="low-complexity-working-hours-hint{% if data['low-complexity-working-hours-errorthispage'] == 'true' %} low-complexity-working-hours-error{% endif %}">{{ data['low-complexity-working-hours'] }}</textarea>
+            </div>
+            
+            <div class="govuk-button-group">
+                {{ govukButton({
+                    text: "Save and continue"
+                }) }}
+            </div>
+
+        </form>
+
+    </div>
+</div>
+{% endblock %}

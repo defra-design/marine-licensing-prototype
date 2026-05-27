@@ -1,0 +1,110 @@
+{% extends "../../layouts/low-complexity-v3.html" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% if data['organisation-name'] %}
+        {% include "../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link govuk-link--no-visited-state" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+{% set pageHeadingTextHTML %}
+Check your answers for Water Framework Directive assessment
+{% endset %}
+
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-two-thirds">
+
+		<span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
+		<h1 class="govuk-heading-l">{{ pageHeadingTextHTML }}</h1>
+
+		<dl class="govuk-summary-list">
+
+			{# Row 1: assessed? (no-border so it visually pairs with the summary row below) #}
+			<div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+				<dt class="govuk-summary-list__key">
+					Have you assessed your project against the WFD?
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ data['low-complexity-wfd-assessed'] }}
+				</dd>
+				<dd class="govuk-summary-list__actions">
+					<a class="govuk-link govuk-link--no-visited-state" href="water-framework-directive?fromcheckanswers=true">
+						Change<span class="govuk-visually-hidden"> if you have assessed your project against the Water Framework Directive</span>
+					</a>
+				</dd>
+			</div>
+
+			{# Row 2: summary of conclusions — screen-reader-only change link back to the same page #}
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					Details of your WFD assessment
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ data['low-complexity-wfd-summary'] }}
+				</dd>
+				<dd class="govuk-summary-list__actions">
+					<a class="govuk-link govuk-link--no-visited-state govuk-visually-hidden" href="water-framework-directive?fromcheckanswers=true">
+						Change details of your WFD assessment
+					</a>
+				</dd>
+			</div>
+
+			{# Row 3: do you have an assessment to upload? #}
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					Do you have a Water Framework Directive assessment to upload?
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{{ data['low-complexity-wfd-upload-answer'] }}
+				</dd>
+				<dd class="govuk-summary-list__actions">
+					<a class="govuk-link govuk-link--no-visited-state" href="water-framework-directive-upload-question?fromcheckanswers=true">
+						Change<span class="govuk-visually-hidden"> if you have a Water Framework Directive assessment to upload</span>
+					</a>
+				</dd>
+			</div>
+
+			{# Row 4: uploaded file (only when upload answer is Yes) — visible change link goes straight to the upload page #}
+			{% if data['low-complexity-wfd-upload-answer'] == 'Yes' %}
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">
+					Uploaded file
+				</dt>
+				<dd class="govuk-summary-list__value">
+					{% if data['low-complexity-wfd-filename'] %}
+						{{ data['low-complexity-wfd-filename'] }}
+					{% else %}
+						WFD-assessment.pdf
+					{% endif %}
+				</dd>
+				<dd class="govuk-summary-list__actions">
+					<a class="govuk-link govuk-link--no-visited-state" href="water-framework-directive-upload?fromcheckanswers=true">
+						Change<span class="govuk-visually-hidden"> uploaded file</span>
+					</a>
+				</dd>
+			</div>
+			{% endif %}
+
+		</dl>
+
+		<form action="water-framework-directive-check-answers-router" method="post" novalidate>
+			<div class="govuk-button-group">
+				{{ govukButton({
+					text: "Continue"
+				}) }}
+			</div>
+		</form>
+
+	</div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,131 @@
+{% extends "../../layouts/low-complexity-v3.html" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% if data['organisation-name'] %}
+        {% include "../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link govuk-link--no-visited-state" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+{% set pageHeadingTextHTML %}
+Water Framework Directive
+{% endset %}
+
+{% block pageTitle %}
+{% if data['low-complexity-wfd-errorthispage'] == "true" %}Error: {% endif %}{{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-two-thirds">
+
+		{% if data['low-complexity-wfd-errorthispage'] == "true" %}
+		<div class="govuk-error-summary" data-module="govuk-error-summary">
+			<div role="alert">
+				<h2 class="govuk-error-summary__title">There is a problem</h2>
+				<div class="govuk-error-summary__body">
+					<ul class="govuk-list govuk-error-summary__list">
+						{% if data['low-complexity-wfd-error-radio'] == "true" %}
+						<li><a href="#low-complexity-wfd-assessed">Select yes if you have assessed your project against the Water Framework Directive</a></li>
+						{% endif %}
+						{% if data['low-complexity-wfd-error-summary'] == "true" %}
+						<li><a href="#low-complexity-wfd-summary">Enter a summary of the assessment's conclusions</a></li>
+						{% endif %}
+					</ul>
+				</div>
+			</div>
+		</div>
+		{% endif %}
+
+		<form action="water-framework-directive-router" method="post" novalidate>
+
+			<span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
+			<h1 class="govuk-heading-l">{{ pageHeadingTextHTML }}</h1>
+
+			<p class="govuk-body">Projects up to 1 nautical mile (1.85km) out at sea must include a Water Framework Directive assessment as part of the marine licence application.</p>
+
+			<p class="govuk-body">Use <a href="https://magic.defra.gov.uk/MagicMap.html" class="govuk-link" rel="noreferrer noopener" target="_blank">Magic maps (opens in new tab)</a> to check how far out to sea your project is in nautical miles.</p>
+
+			{{ govukDetails({
+				summaryText: "Get help with using Magic Maps",
+				html: "<ol class='govuk-list govuk-list--number'>
+					<li>Zoom in to the area on the map where your project is located.</li>
+					<li>Select the <strong>measurement tool</strong> in the top right.</li>
+					<li>Select the first ruler icon.</li>
+					<li>Click on the edge of the map where you want to start measuring your location from.</li>
+					<li>Then draw a line as far as you think the distance is. Double click on it to stop drawing.</li>
+					<li>To convert the measurement to nautical miles, go to the <strong>unit box</strong> on the right and select <strong>nautical miles</strong> from the drop-down. You can then extend or shorten the line to check how far 1 nautical mile is.</li>
+				</ol>"
+			}) }}
+
+			<p class="govuk-body"><a href="https://www.gov.uk/guidance/water-framework-directive-assessment-estuarine-and-coastal-waters" class="govuk-link" rel="noreferrer noopener" target="_blank">Read the guidance on the Water Framework Directive (opens in new tab)</a> to find out how to do an assessment.</p>
+
+			{% set summaryHtml %}
+				{{ govukTextarea({
+					id: "low-complexity-wfd-summary",
+					name: "low-complexity-wfd-summary",
+					label: {
+						text: "Provide a summary of the assessment's conclusions"
+					},
+					value: data['low-complexity-wfd-summary'],
+					errorMessage: {
+						text: "Enter a summary of the assessment's conclusions"
+					} if data['low-complexity-wfd-error-summary'] == "true"
+				}) }}
+			{% endset %}
+
+			{{ govukRadios({
+				name: "low-complexity-wfd-assessed",
+				idPrefix: "low-complexity-wfd-assessed",
+				fieldset: {
+					legend: {
+						text: "Have you assessed your project against the Water Framework Directive?",
+						classes: "govuk-fieldset__legend--m"
+					}
+				},
+				hint: {
+					text: "You must do this if your project is up to 1 nautical mile out at sea. You can upload your assessment on the next page if you have one."
+				},
+				items: [
+					{
+						value: "Yes",
+						text: "Yes",
+						checked: data['low-complexity-wfd-assessed'] == "Yes",
+						conditional: {
+							html: summaryHtml
+						}
+					},
+					{
+						value: "No",
+						text: "No",
+						checked: data['low-complexity-wfd-assessed'] == "No"
+					}
+				],
+				errorMessage: {
+					text: "Select yes if you have assessed your project against the Water Framework Directive"
+				} if data['low-complexity-wfd-error-radio'] == "true"
+			}) }}
+
+			<div class="govuk-button-group">
+				{{ govukButton({
+					text: "Continue"
+				}) }}
+
+				{% if data['camefromcheckanswers'] != 'true' and data['low-complexity-wfd-came-from-wfd-check'] != 'true' and not data['low-complexity-wfd-completed'] %}
+				<a class="govuk-link govuk-link--no-visited-state" href="wfd-cancel">Cancel</a>
+				{% endif %}
+			</div>
+
+		</form>
+
+	</div>
+</div>
+
+{% endblock %}

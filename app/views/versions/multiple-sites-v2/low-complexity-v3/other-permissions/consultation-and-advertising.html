@@ -1,0 +1,131 @@
+{% extends "../../layouts/low-complexity-v3.html" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% if data['organisation-name'] %}
+        {% include "../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link govuk-link--no-visited-state" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+<!-- Setting the big main heading at the top of the page -->
+{% set pageHeadingTextHTML %}
+Have you consulted with any public groups or organisations before making this application?
+{% endset %}
+
+<!-- Text that show in the browser tab. Does NOT need changing -->
+{% block pageTitle %}
+{% if data['errorthispage'] == "true" %}
+Error:
+{% endif %}
+
+{{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% set consultationTextarea %}
+{{ govukTextarea({
+    id: "low-complexity-consultation-details",
+    name: "low-complexity-consultation-details",
+    value: data['low-complexity-consultation-details'],
+    rows: 5,
+    label: {
+        text: "Tell us who you consulted and what advice they gave"
+    },
+    hint: {
+        text: "Enter a maximum of 1,000 characters"
+    },
+    errorMessage: {
+        text: "Enter details of who you consulted and what advice they gave"
+    } if data['errortypetwo'] == "true"
+}) }}
+{% endset %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-two-thirds">
+		{% if data['errorthispage'] == "true" %}
+		{{ govukErrorSummary({
+			titleText: "There is a problem",
+			errorList: [
+				{
+					text: "Select whether you have consulted with any public groups or organisations before making this application" if data['errortypeone'] == "true" else "Enter details of who you consulted and what advice they gave",
+					href: "#low-complexity-consultation" if data['errortypeone'] == "true" else "#low-complexity-consultation-details"
+				}
+			]
+		}) }}
+		{% endif %}
+
+		<!--  END OF 'error summary' -->
+
+		<form action="consultation-and-advertising-router" method="post" novalidate>
+
+			{{ govukRadios({
+				name: "low-complexity-consultation",
+				id: "low-complexity-consultation",
+				fieldset: {
+					legend: {
+						html: '<span class="govuk-caption-l">' + data['low-complexity-project-name-text-input'] + '</span>' + pageHeadingTextHTML,
+						isPageHeading: true,
+						classes: "govuk-fieldset__legend--l"
+					}
+				},
+				hint: {
+					html: '<p class="govuk-body">This could include relevant local groups in the community or organisations, for example, resident committees, local environmental and conservation groups, Companies House or Natural England.</p><details class="govuk-details"><summary class="govuk-details__summary"><span class="govuk-details__summary-text">Help with pre-application and public consultation</span></summary><div class="govuk-details__text"><p class="govuk-body"><strong>Pre-application consultation</strong></p><p class="govuk-body">Pre-application consultation is informal. It means speaking to public groups or organisations before submitting your application.</p><p class="govuk-body">We ask because it helps us understand the context of your application and prepare for the formal public consultation.</p><p class="govuk-body">For example, it tells us if there might be a high level of public interest and helps avoid duplication or competing advice.</p><p class="govuk-body"><strong>Public consultation</strong></p><p class="govuk-body">After we assess your application, we will open a formal public consultation. This is a legal requirement.</p><p class="govuk-body">The formal consultation:</p><ul class="govuk-list govuk-list--bullet"><li>lasts at least 28 days (6 weeks if your activity needs an Environmental Impact Assessment)</li><li>allows the public to comment on your application</li><li>means you must advertise your activity (you pay for advertising costs)</li></ul><p class="govuk-body">Your case officer will tell you what you need to advertise and where, when your application reaches this stage. Budget for advertising as part of your application costs.</p></div></details>'
+				},
+				items: [
+					{
+						value: "Yes",
+						text: "Yes",
+						conditional: {
+							html: consultationTextarea
+						},
+						checked: data['low-complexity-consultation'] == "Yes"
+					},
+					{
+						value: "No",
+						text: "No",
+						checked: data['low-complexity-consultation'] == "No"
+					}
+				],
+				errorMessage: {
+					text: "Select whether you have consulted with any public groups or organisations before making this application"
+				} if data['errortypeone'] == "true"
+			}) }}
+
+			<div class="govuk-button-group">
+				{{ govukButton({
+					text: "Save and continue"
+				}) }}
+
+				<a class="govuk-link" href="javascript:history.back()">Cancel</a>
+			</div>
+
+		</form>
+
+	</div>
+</div>
+
+<!-- ERROR LOGIC  drop down to toggle states  -->
+<form method="post" action="#" class="for4" style=" float: left; position: relative; bottom:-325px; padding-bottom: 30px;  ">
+
+	<select style="height:30px;" onchange="window.location.href='?'+this.value">
+
+		<option value="errorthispage=false&errortypeone=false&errortypetwo=false&" {% if data['errorthispage'] != "true" %}selected{% endif %}>Errors - Off</option>
+
+		<option value="errorthispage=true&errortypeone=true&errortypetwo=false&" {% if data['errortypeone'] == 'true' and data['errortypetwo'] != 'true' %}selected{% endif %}>Error 1 - No radio selected</option>
+
+		<option value="errorthispage=true&errortypeone=false&errortypetwo=true&" {% if data['errortypeone'] != 'true' and data['errortypetwo'] == 'true' %}selected{% endif %}>Error 2 - Textarea left blank</option>
+
+	</select>
+
+</form>
+<!--  END OF ERROR LOGIC -->
+
+{% endblock %}
+
