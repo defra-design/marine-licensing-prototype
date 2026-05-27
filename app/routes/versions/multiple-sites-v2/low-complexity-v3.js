@@ -88,12 +88,24 @@ module.exports = function (router) {
   ///////////////////////////////////////////
   router.get(`/versions/${version}/${section}/marine-licence-start-page`, function (req, res) {
     res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
-    // Clear mpp-calculating from session if not in the current query string
-    // (prototype kit auto-stores query params, so we need to clear it on refresh)
-    if (!req.query['mpp-calculating']) {
-      delete req.session.data['mpp-calculating'];
+    if (req.query['mpp-policies-loaded'] === 'true') {
+      req.session.data['mpp-load-outcome'] = 'success';
+      delete req.session.data['mpp-policies-loaded'];
+      // Redirect so the task list reads updated session data (file store snapshot issue)
+      return res.redirect(`/versions/${version}/${section}/marine-licence-start-page`);
     }
     res.render(`versions/${version}/${section}/marine-licence-start-page`);
+  });
+
+  router.get(`/versions/${version}/${section}/mpp-policies-recovered`, function (req, res) {
+    req.session.data['mpp-load-outcome'] = 'success';
+    delete req.session.data['mpp-policies-loaded'];
+    res.redirect(`/versions/${version}/${section}/marine-licence-start-page`);
+  });
+
+  router.get(`/versions/${version}/${section}/loading-marine-plan-policies`, function (req, res) {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+    res.render(`versions/${version}/${section}/loading-marine-plan-policies`);
   });
 
   // Project name page (accessible from task list)

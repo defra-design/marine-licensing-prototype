@@ -1,0 +1,26 @@
+{% extends "../../layouts/low-complexity-v3.html" %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% if data['organisation-name'] %}
+        {% include "../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link govuk-link--no-visited-state" href="../mpp-policies-recovered">Back to your project task list</a>
+{% endblock %}
+
+{% block pageTitle %}
+Marine plan policies - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-two-thirds">
+		<span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
+		<h1 class="govuk-heading-l">Marine plan policies</h1>
+
+		<p class="govuk-body">Marine plan policies are taking longer than expected to load. Come back and try again later.</p>
+
+		<p class="govuk-body">If they are still not loading contact <a href="mailto:marine.consents@marinemanagement.org.uk" class="govuk-link">marine.consents@marinemanagement.org.uk</a>.</p>
+	</div>
+</div>
+{% endblock %}

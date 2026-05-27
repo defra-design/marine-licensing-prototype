@@ -705,6 +705,16 @@ module.exports = function (router) {
         // Once MPPs have been unlocked, keep them accessible even if the user
         // later re-opens site details to add a site/activity.
         req.session.data['mpp-previously-unlocked'] = true;
+
+        const mppLoad = req.session.data['mpp-load'];
+        delete req.session.data['mpp-load'];
+        if (mppLoad === 'success' || mppLoad === 'timeout') {
+          req.session.data['mpp-load-outcome'] = mppLoad;
+          if (req.session.data['camefromcheckanswers'] === 'true') {
+            req.session.data['camefromcheckanswers'] = false;
+          }
+          return res.redirect('../../loading-marine-plan-policies');
+        }
       } else {
         delete req.session.data['site-details-confirmed-complete'];
       }

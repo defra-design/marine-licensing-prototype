@@ -1,0 +1,65 @@
+{% extends "../layouts/low-complexity-v3.html" %}
+
+{% block header %}
+{% from "govuk/components/header/macro.njk" import govukHeader %}
+{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
+{{ govukHeader({
+  homepageUrl: "/",
+  classes: "govuk-header--full-width-border"
+}) }}
+{{ govukServiceNavigation({
+  serviceName: "Get permission for marine work"
+}) }}
+{% endblock %}
+
+{% block pageTitle %}
+Loading your Marine plan policies – GOV.UK
+{% endblock %}
+
+{% block head %}
+{{ super() }}
+{% set mppLoadingSeconds = 10 if data['mpp-load-outcome'] == 'timeout' else 2 %}
+<meta http-equiv="refresh" content="{{ mppLoadingSeconds }};url=/versions/multiple-sites-v2/low-complexity-v3/marine-licence-start-page">
+<style>
+  .spinner {
+    margin: 0 auto 2rem auto;
+    width: 80px;
+    height: 80px;
+    border: 15px solid #b1b4b6;
+    border-top: 15px solid #1d70b8;
+    border-radius: 50%;
+    animation: spin 2s linear infinite;
+  }
+
+  @keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+  }
+</style>
+{% endblock %}
+
+{% block beforeContent %}
+{% endblock %}
+
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-full govuk-!-text-align-centre govuk-!-padding-top-2">
+
+      <div class="spinner" role="status" aria-live="polite">
+        <span class="govuk-visually-hidden">Loading your Marine plan policies…</span>
+      </div>
+
+      <h1 class="govuk-heading-l">
+        Loading your Marine plan policies
+      </h1>
+
+      <p class="govuk-body">
+        This usually takes less than 50 seconds
+      </p>
+
+    </div>
+  </div>
+{% endblock %}
+
+{% block footer %}
+{% endblock %}
