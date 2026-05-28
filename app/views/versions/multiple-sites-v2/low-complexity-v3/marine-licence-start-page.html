@@ -175,8 +175,8 @@ Marine licence start page
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
 			  <div class="govuk-task-list__name-and-hint">
 				{% if mppUnlocked %}
-				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="{{ mppFolder }}" aria-describedby="marine-plan-policies-status">
-					Marine plan policy considerations{% if mppActiveCompletedCount == 0 and mppLoadOutcome != 'timeout' %} ({{ mppDisplayTotal }} to complete){% elif mppActiveComplete %} ({{ mppDisplayTotal }} of {{ mppDisplayTotal }} completed){% elif mppActiveCompletedCount > 0 %} ({{ mppActiveCompletedCount }} of {{ mppDisplayTotal }} completed){% endif %}
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="{% if mppLoadOutcome == 'timeout-recovered' %}loading-marine-plan-policies-retry{% else %}{{ mppFolder }}{% endif %}" aria-describedby="marine-plan-policies-status">
+					Marine plan policy considerations{% if mppActiveCompletedCount == 0 and mppLoadOutcome != 'timeout' and mppLoadOutcome != 'timeout-recovered' %} ({{ mppDisplayTotal }} to complete){% elif mppActiveComplete %} ({{ mppDisplayTotal }} of {{ mppDisplayTotal }} completed){% elif mppActiveCompletedCount > 0 %} ({{ mppActiveCompletedCount }} of {{ mppDisplayTotal }} completed){% endif %}
 				</a>
 				{% else %}
 				<span>Marine plan policy considerations</span>
