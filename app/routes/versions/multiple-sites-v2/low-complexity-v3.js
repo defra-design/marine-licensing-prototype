@@ -98,7 +98,7 @@ module.exports = function (router) {
   });
 
   router.get(`/versions/${version}/${section}/mpp-policies-recovered`, function (req, res) {
-    req.session.data['mpp-load-outcome'] = 'success';
+    req.session.data['mpp-load-outcome'] = 'timeout-recovered';
     delete req.session.data['mpp-policies-loaded'];
     res.redirect(`/versions/${version}/${section}/marine-licence-start-page`);
   });
@@ -106,6 +106,12 @@ module.exports = function (router) {
   router.get(`/versions/${version}/${section}/loading-marine-plan-policies`, function (req, res) {
     res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
     res.render(`versions/${version}/${section}/loading-marine-plan-policies`);
+  });
+
+  router.get(`/versions/${version}/${section}/loading-marine-plan-policies-retry`, function (req, res) {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+    req.session.data['mpp-load-outcome'] = 'success';
+    res.render(`versions/${version}/${section}/loading-marine-plan-policies-retry`);
   });
 
   // Project name page (accessible from task list)

@@ -19,7 +19,7 @@ Both links are under **Marine plan policies loading journeys** on the index page
 
 **Quicker time:** MPP link shows `(37 to complete)` → full policy index with 37 policies.
 
-**Slower time:** MPP link shows no count → unavailable error page. Click **Back to your project task list** → policies have now loaded; link shows `(37 to complete)` and index is normal.
+**Slower time:** MPP link shows no count → unavailable error page. Click **Back to your project task list** → link still shows no count. Click MPP task → 3-second spinner → index is normal (all 37 policies).
 
 ### Organic flow
 
@@ -41,19 +41,21 @@ The prototype kit stores the query param in session. When the user selects **Yes
 | Variable | Values | Purpose |
 |----------|--------|---------|
 | `mpp-load` | `success` / `timeout` | Set from index URL; consumed on review POST |
-| `mpp-load-outcome` | `success` / `timeout` | Persisted after spinner; drives task list link text and MPP index |
+| `mpp-load-outcome` | `success` / `timeout` / `timeout-recovered` | Persisted after spinner; drives task list link text, href, and MPP index |
 | `mpp-policies-loaded=true` | query on task list (legacy) | Redirects to task list with outcome set to `success` |
-| `/mpp-policies-recovered` | back link from unavailable page | Sets outcome to `success`, redirects to task list |
+| `/mpp-policies-recovered` | back link from unavailable page | Sets outcome to `timeout-recovered`, redirects to task list |
+| `/loading-marine-plan-policies-retry` | MPP task link when `timeout-recovered` | Sets outcome to `success`, shows 3s spinner, redirects to MPP index |
 
 ## Files
 
 | File | Role |
 |------|------|
 | `app/views/index.html` | Details component with Quicker time / Slower time links |
-| `app/views/.../loading-marine-plan-policies.html` | Spinner page |
+| `app/views/.../loading-marine-plan-policies.html` | Spinner page (10s → task list) |
+| `app/views/.../loading-marine-plan-policies-retry.html` | Retry spinner page (3s → MPP index) |
 | `app/views/.../marine-plan-policies/policies-unavailable.html` | Delayed load error (v1 + v2) |
-| `app/views/.../marine-licence-start-page.html` | Task list; conditional MPP link text |
-| `app/routes/.../low-complexity-v3.js` | Spinner route; recovery on task list GET |
+| `app/views/.../marine-licence-start-page.html` | Task list; conditional MPP link text and href |
+| `app/routes/.../low-complexity-v3.js` | Spinner routes; recovery + retry routes |
 | `app/routes/.../low-complexity-v3-site-locations.js` | Review POST → spinner or task list |
 | `app/routes/.../low-complexity-v3-manual-entry.js` | Same redirect logic for manual entry |
 | `app/routes/.../low-complexity-v3-marine-plan-policies*.js` | Render unavailable page when outcome is `timeout` |
