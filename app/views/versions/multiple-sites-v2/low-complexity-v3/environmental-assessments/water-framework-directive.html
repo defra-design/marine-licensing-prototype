@@ -39,35 +39,53 @@ Is your project located within one nautical mile (1.85km) of the coast?
 
         <form action="water-framework-directive-router" method="post" novalidate>
 
-            {{ govukRadios({
-                name: "low-complexity-wfd-within-nautical-mile",
-                idPrefix: "low-complexity-wfd-within-nautical-mile",
-                fieldset: {
-                    legend: {
-                        html: '<span class="govuk-caption-l">' + data['low-complexity-project-name-text-input'] + '</span>' + pageHeadingTextHTML,
-                        isPageHeading: true,
-                        classes: "govuk-fieldset__legend--l"
-                    }
-                },
-                items: [
-                    {
-                        value: "Yes",
-                        text: "Yes",
-                        checked: data['low-complexity-wfd-within-nautical-mile'] == "Yes"
+            <div class="govuk-form-group {% if data['low-complexity-wfd-q1-error'] == 'true' %}govuk-form-group--error{% endif %}">
+                <span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
+                <h1 class="govuk-heading-l">
+                    {{ pageHeadingTextHTML }}
+                </h1>
+
+                <details class="govuk-details">
+                    <summary class="govuk-details__summary">
+                        <span class="govuk-details__summary-text">
+                            Help with understanding one nautical mile from the coast
+                        </span>
+                    </summary>
+                    <div class="govuk-details__text">
+                        <img src="/public/images/nautical-mile-illustration.png" alt="Diagram showing a site location in the water less than 1 nautical mile from the coast" width="100%" />
+                    </div>
+                </details>
+
+                {{ govukRadios({
+                    name: "low-complexity-wfd-within-nautical-mile",
+                    idPrefix: "low-complexity-wfd-within-nautical-mile",
+                    fieldset: {
+                        legend: {
+                            html: pageHeadingTextHTML,
+                            isPageHeading: false,
+                            classes: "govuk-fieldset__legend--l govuk-visually-hidden"
+                        }
                     },
-                    {
-                        value: "No",
-                        text: "No",
-                        hint: {
-                            text: "You do not need to complete a Water Framework Directive assessment"
+                    items: [
+                        {
+                            value: "Yes",
+                            text: "Yes",
+                            checked: data['low-complexity-wfd-within-nautical-mile'] == "Yes"
                         },
-                        checked: data['low-complexity-wfd-within-nautical-mile'] == "No"
-                    }
-                ],
-                errorMessage: {
-                    text: "Select whether your project is located within one nautical mile (1.85km) of the coast"
-                } if data['low-complexity-wfd-q1-error'] == "true"
-            }) }}
+                        {
+                            value: "No",
+                            text: "No",
+                            hint: {
+                                text: "You do not need to complete a Water Framework Directive assessment"
+                            },
+                            checked: data['low-complexity-wfd-within-nautical-mile'] == "No"
+                        }
+                    ],
+                    errorMessage: {
+                        text: "Select whether your project is located within one nautical mile (1.85km) of the coast"
+                    } if data['low-complexity-wfd-q1-error'] == "true"
+                }) }}
+            </div>
 
             <div class="govuk-button-group">
                 {{ govukButton({
