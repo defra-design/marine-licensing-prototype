@@ -1,0 +1,522 @@
+{% extends "../layouts/low-complexity-v3.html" %}
+
+{% block head %}
+  {{ super() }}
+  <style>
+    .app-read-only .govuk-summary-list__actions,
+    .app-read-only .govuk-summary-card__actions {
+      display: none;
+    }
+  </style>
+{% endblock %}
+
+{% block header %}
+{% from "govuk/components/header/macro.njk" import govukHeader %}
+{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
+
+{{ govukHeader({
+  homepageUrl: "/",
+  classes: "govuk-header--full-width-border"
+}) }}
+{{ govukServiceNavigation({
+  serviceName: "Get permission for marine work",
+  serviceUrl: "/versions/multiple-sites-v2/low-complexity-v3/homepage"
+}) }}
+{% endblock %}
+
+{% block beforeContent %}
+{% endblock %}
+
+{% block pageTitle %}
+    Installation of floating pontoon, Lyme Regis Harbour, Dorset - Get permission for marine work
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row app-read-only">
+    <div class="govuk-grid-column-full">
+
+        <span class="govuk-caption-l">MLA/2026/00TEST – Marine licence</span>
+        <h1 class="govuk-heading-l">
+            Installation of floating pontoon, Lyme Regis Harbour, Dorset
+        </h1>
+
+        {# ============================== #}
+        {# APPLICATION DETAILS           #}
+        {# ============================== #}
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">Application details</h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Application type</dt>
+                        <dd class="govuk-summary-list__value">Marine licence</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Reference number</dt>
+                        <dd class="govuk-summary-list__value">MLA/2026/00TEST</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Who the licence is for</dt>
+                        <dd class="govuk-summary-list__value">Jurassic Coast SUP Ltd</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Date submitted</dt>
+                        <dd class="govuk-summary-list__value">{{ "" | todayDate }}</dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        {# ============================== #}
+        {# PROJECT DETAILS                #}
+        {# ============================== #}
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">Project details</h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Project background</dt>
+                        <dd class="govuk-summary-list__value">Jurassic Coast SUP Ltd is a small paddleboarding hire and instruction business operating in Lyme Regis. We are applying for a marine licence to install a small floating pontoon within Lyme Regis Harbour to provide a safe and accessible launching and landing platform for paddleboards and kayaks hired to our customers. At present customers are required to enter the water via the main harbour slipway which is shared with commercial fishing vessels and other harbour traffic. During the summer months this creates significant health and safety concerns particularly for inexperienced users and those with limited mobility. The pontoon would be attached to the existing harbour wall using H-frame wall guides and a short hinged gangway. It will be a floating structure rising and falling with the tide. The works will take place entirely within the outer harbour area.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Preferred start and end dates of the licence</dt>
+                        <dd class="govuk-summary-list__value">April 2026 to September 2027</dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        {# ============================== #}
+        {# PROVIDING THE SITE LOCATION    #}
+        {# ============================== #}
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">Providing the site location</h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Method of providing site location</dt>
+                        <dd class="govuk-summary-list__value">File upload</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Location coordinates</dt>
+                        <dd class="govuk-summary-list__value"><a href="#" class="govuk-link">Download coordinates as a csv file</a></dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        {# ============================== #}
+        {# SITE 1                         #}
+        {# ============================== #}
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">Site 1</h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list govuk-summary-list--full-width">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Site name</dt>
+                        <dd class="govuk-summary-list__value">Lyme Regis Harbour Outer Pontoon</dd>
+                    </div>
+                    <div class="govuk-summary-list__row govuk-summary-list__row--no-actions">
+                        <dt class="govuk-summary-list__key govuk-summary-list__key--full-width map-label">Map view</dt>
+                        <dd class="govuk-summary-list__value govuk-summary-list__value--full-width">
+                            <img src="/public/images/map-5-points.jpg" alt="Map showing site 1 location" />
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        {# ============================== #}
+        {# SITE 1 — ACTIVITY 1            #}
+        {# ============================== #}
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">Site 1 – Activity 1</h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Type of activity</dt>
+                        <dd class="govuk-summary-list__value">Construction of new works</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">What you're constructing</dt>
+                        <dd class="govuk-summary-list__value">Pontoons or floating walkways</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Activity description</dt>
+                        <dd class="govuk-summary-list__value">Installation of one floating pontoon unit measuring 8 metres in length by 4 metres in width (total area 32 m²). The pontoon will be manufactured off-site from HDPE modular float units set within a hot-dip galvanised steel frame with non-slip GRP mesh decking panels. The pontoon will be fixed to the existing harbour wall using two H-frame steel wall guide rails drilled and resin-anchored to the masonry. No piling or seabed penetration is required. Access to the pontoon from the quayside will be via a 4m hinged aluminium gangway. All works will be carried out from the quayside or using a small harbour workboat. No heavy plant or craneage is anticipated, individual pontoon components can be handled manually or with light lifting equipment.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Maximum duration of activity</dt>
+                        <dd class="govuk-summary-list__value">6 weeks</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Completion date</dt>
+                        <dd class="govuk-summary-list__value">Not needed to be completed by a certain date</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Activity limited to specific months</dt>
+                        <dd class="govuk-summary-list__value">Yes — installation works to be carried out between April and September only, avoiding the winter months when harbour conditions make marine works impracticable and harbour traffic is at its lowest.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Proposed working hours</dt>
+                        <dd class="govuk-summary-list__value">Monday to Friday, 08:00 to 17:00. Occasional Saturday morning working may be required to take advantage of suitable tidal windows.</dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        {# ================================================= #}
+        {# MARINE PLAN POLICIES — CROSS-CUTTING              #}
+        {# ================================================= #}
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">Marine plan policies – Cross-cutting</h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Climate change 1 (SW-CC-1)</dt>
+                        <dd class="govuk-summary-list__value">This project will not affect any habitats that provide flood defence or carbon sequestration services. The pontoon is a small floating structure within an existing harbour basin and will have no bearing on coastal flood defences.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Climate change 3 (SW-CC-3)</dt>
+                        <dd class="govuk-summary-list__value">The project will not have any significant impact on coastal change or climate adaptation. The floating nature of the pontoon means it automatically adjusts to any future changes in sea level.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Co-existence 1 (SW-CO-1)</dt>
+                        <dd class="govuk-summary-list__value">We are committed to operating alongside other harbour users in a cooperative and considerate manner. The pontoon location has been agreed with the harbour authority to minimise any conflict with existing users. We will liaise with the harbour master on an ongoing basis regarding seasonal adjustments to our operations if required.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Cross-border co-operation 1 (SW-CBC-1)</dt>
+                        <dd class="govuk-summary-list__value">This project has no cross-border impacts into other marine plan areas. Lyme Regis Harbour is entirely within the South West Marine Plan area.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Cumulative effects 1 (SW-CE-1)</dt>
+                        <dd class="govuk-summary-list__value">We are not aware of any other proposed works in the immediate vicinity that could give rise to cumulative effects with this project. The harbour operates a busy leisure and commercial fishing function already and the addition of a small pontoon is not considered to materially add to any existing cumulative pressures.</dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        {# ================================================= #}
+        {# MARINE PLAN POLICIES — ECONOMIC                   #}
+        {# ================================================= #}
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">Marine plan policies – Economic</h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Aquaculture 2 (SW-AQ-2)</dt>
+                        <dd class="govuk-summary-list__value">The project does not involve aquaculture and will have no impact on aquaculture activities.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Cables 1 (SW-CAB-1)</dt>
+                        <dd class="govuk-summary-list__value">The project does not involve any cable laying activities.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Cables 3 (SW-CAB-3)</dt>
+                        <dd class="govuk-summary-list__value">We have checked the available marine infrastructure mapping and are not aware of any subsea cables in the immediate vicinity of the proposed pontoon location. The harbour master has confirmed no known cables are present in the installation area.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Dredging and disposal 1 (SW-DD-1)</dt>
+                        <dd class="govuk-summary-list__value">No dredging activity is involved in this project.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Dredging and disposal 2 (SW-DD-2)</dt>
+                        <dd class="govuk-summary-list__value">No impact on licensed disposal sites is anticipated.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Dredging and disposal 3 (SW-DD-3)</dt>
+                        <dd class="govuk-summary-list__value">No dredged material will be produced as part of this project.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Infrastructure 1 (SW-INF-1)</dt>
+                        <dd class="govuk-summary-list__value">The installation of the pontoon will enhance the marine infrastructure available within Lyme Regis Harbour by providing a dedicated safe access point for paddleboard and kayak users, reducing conflicts with other users at the existing slipway. This supports the harbour's role as a hub for maritime leisure activity on this section of the Jurassic Coast.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Infrastructure 2 (SW-INF-2)</dt>
+                        <dd class="govuk-summary-list__value">The pontoon will improve and enhance existing water access facilities at Lyme Regis Harbour. It will provide an additional means of safe access to the water that is not currently available, directly benefitting recreational water users and our business operations.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Ports, harbours and shipping 1 (SW-PS-1)</dt>
+                        <dd class="govuk-summary-list__value">The project is located within Lyme Regis Harbour which is managed by Dorset Council as the harbour authority. We have consulted with the Harbour Master and our proposed pontoon location has been agreed in principle. The works will not obstruct any navigation routes or conflict with harbour operations. The pontoon will be clearly marked in accordance with harbour authority requirements.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Ports, harbours and shipping 4 (SW-PS-4)</dt>
+                        <dd class="govuk-summary-list__value">This project does not have any direct relevance to coastal or short sea shipping. Lyme Regis is a small leisure harbour and the proposed installation is within the main harbour basin away from any shipping channels.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Renewables 1 (SW-REN-1)</dt>
+                        <dd class="govuk-summary-list__value">This project does not directly involve or affect any renewable energy infrastructure or activities.</dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        {# ================================================= #}
+        {# MARINE PLAN POLICIES — ENVIRONMENTAL              #}
+        {# ================================================= #}
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">Marine plan policies – Environmental</h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Air quality 1 (SW-AIR-1)</dt>
+                        <dd class="govuk-summary-list__value">The project will have no impact on air quality. A small amount of machinery may be used during installation but any impact will be negligible, short term and localised.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Biodiversity 1 (SW-BIO-1)</dt>
+                        <dd class="govuk-summary-list__value">The project is not anticipated to have any adverse impact on biodiversity. Lyme Regis Harbour is an existing built structure and the proposed pontoon location is within the main harbour basin which is regularly disturbed by vessel activity. A basic ecological assessment of the installation area has been carried out and no significant biodiversity features were identified. The underside of the pontoon may over time provide some habitat for colonising invertebrates and algae which could provide a minor biodiversity benefit.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Biodiversity 2 (SW-BIO-2)</dt>
+                        <dd class="govuk-summary-list__value">The project should have no adverse impact on native species. No piling or seabed penetration is involved so there will be no direct physical disturbance to the subtidal substrate.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Biodiversity 3 (SW-BIO-3)</dt>
+                        <dd class="govuk-summary-list__value">The proposed project should have no adverse impact on coastal ecosystems or habitats. The structure is small scale, reversible and does not require any modification to the existing coastline.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Disturbance 1 (SW-DIST-1)</dt>
+                        <dd class="govuk-summary-list__value">The installation works are short in duration (estimated 3–4 days on the water). No impact piling is involved — all fixings are to the existing harbour wall. Any underwater noise from drilling activities will be brief and localised. Lyme Regis Harbour is an active harbour with regular vessel movements. The works will not materially increase disturbance beyond existing background levels. We do not consider a marine mammal observer to be necessary given the nature and scale of the works but we will comply with any requirements set by the MMO.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Habitats 1 (SW-HAB-1)</dt>
+                        <dd class="govuk-summary-list__value">This project will have no impact on deep sea habitats. The works are within a small enclosed harbour basin in the intertidal/shallow subtidal zone.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Invasive non-native species 1 (SW-INNS-1)</dt>
+                        <dd class="govuk-summary-list__value">All pontoon components and installation materials will be new and sourced from UK suppliers. There is therefore no risk of introducing invasive non-native species (INNS) from other waterbodies via the structure itself. Installation will be carried out by a local contractor whose equipment will not have been used in other waterbodies prior to works at Lyme Regis.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Invasive non-native species 2 (SW-INNS-2)</dt>
+                        <dd class="govuk-summary-list__value">Once in place the pontoon will be used exclusively within Lyme Regis Harbour. All hired paddleboards and kayaks will be rinsed with fresh water and inspected between sessions as standard operating procedure for our business. We will display Check Clean Dry signage at the pontoon.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Marine litter 1 (SW-ML-1)</dt>
+                        <dd class="govuk-summary-list__value">The installation works will not generate any marine litter. Any packaging or waste materials generated will be removed from site and disposed of appropriately. We will provide a small waste bin on the pontoon for customers to use and will conduct daily checks.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Marine litter 2 (SW-ML-2)</dt>
+                        <dd class="govuk-summary-list__value">The proposed project does not involve any activities that are likely to increase marine litter in the area. Our business promotes responsible use of the marine environment and we actively encourage customers to take all litter away with them.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Marine protected areas 1 (SW-MPA-1)</dt>
+                        <dd class="govuk-summary-list__value">The project site is within Lyme Regis Harbour. The Chesil Beach and Stennis Ledges SAC and West Bay SAC are located to the east and west respectively, at distances of several kilometres. The installation of a small floating pontoon within the existing harbour basin is not considered to have any adverse effect on these or other marine protected areas.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Marine protected areas 2 (SW-MPA-2)</dt>
+                        <dd class="govuk-summary-list__value">The project will not have any impact on the ability of any MPA to adapt to climate change. The works are reversible and entirely within an existing built harbour structure.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Marine protected areas 3 (SW-MPA-3)</dt>
+                        <dd class="govuk-summary-list__value">No impact on any Marine Conservation Zone features is anticipated. The nearest MCZ is the Lyme Bay and Torbay MCZ, the protected features of which are not present within the inner harbour area.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Underwater noise 1 (SW-UWN-1)</dt>
+                        <dd class="govuk-summary-list__value">No impact piling is proposed. The only potential source of underwater noise is from the use of an SDS drill to install fixing bolts into the harbour wall. This will be intermittent, of very short duration and is not considered sufficient to cause any disturbance to marine mammals or other mobile species.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Underwater noise 2 (SW-UWN-2)</dt>
+                        <dd class="govuk-summary-list__value">No significant underwater noise is anticipated from this project. The harbour is already regularly exposed to vessel noise and other anthropogenic noise sources.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Water quality 1 (SW-WQ-1)</dt>
+                        <dd class="govuk-summary-list__value">No materials will be introduced to the water column that could cause deterioration in water quality. All materials to be used are inert (HDPE floats, aluminium, galvanised steel, GRP). Any construction activities that involve working over water will use appropriate containment measures to prevent the accidental release of any materials.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Water quality 2 (SW-WQ-2)</dt>
+                        <dd class="govuk-summary-list__value">The project will have no impact on water quality. Lyme Regis Harbour is already classified under WFD and the installation of a small floating pontoon is not considered to have any bearing on the water body classification.</dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        {# ================================================= #}
+        {# MARINE PLAN POLICIES — SOCIAL                     #}
+        {# ================================================= #}
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">Marine plan policies – Social</h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Access 1 (SW-ACC-1)</dt>
+                        <dd class="govuk-summary-list__value">The proposed pontoon will improve public access to the water within Lyme Regis Harbour by providing a safe, stable and accessible boarding platform for paddleboards and kayaks hired to members of the public. The current access via the shared slipway is steep and can be slippery and access is often restricted when fishing vessels are using the same area. The pontoon will include a level walkway from the gangway which will make access significantly easier for people of all abilities including those with limited mobility. We will display clear and appropriate signage.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Employment 1 (SW-EMP-1)</dt>
+                        <dd class="govuk-summary-list__value">Jurassic Coast SUP Ltd currently employs two full-time members of staff and two seasonal staff during the summer months. The installation of the pontoon will improve our operational efficiency and safety which we expect will allow us to increase throughput of customers and generate additional revenue. This will support the case for increasing staffing in future seasons. The project will also provide short-term employment for the local contractor carrying out the installation works.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Fisheries 1 (SW-FISH-1)</dt>
+                        <dd class="govuk-summary-list__value">The pontoon will be positioned in the outer harbour away from the main fishing quay and slipway. We do not anticipate any negative impact on commercial fishing operations. We have discussed the proposed location with the harbour master and local fishing vessel operators and no objections were raised. The pontoon may in fact reduce conflicts between recreational users and fishing vessels at the shared slipway during busy summer periods.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Fisheries 2 (SW-FISH-2)</dt>
+                        <dd class="govuk-summary-list__value">No impact on fisheries management or fish passage is anticipated. The pontoon is a floating structure with no seabed penetration and a minimal footprint of 24m². It will not obstruct any navigation channels or access routes used by fishing vessels.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Fisheries 3 (SW-FISH-3)</dt>
+                        <dd class="govuk-summary-list__value">The project area is not within or adjacent to any known fish nursery areas, spawning grounds or migratory routes. Installation works are of short duration and low impact.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Heritage assets 1 (SW-HER-1)</dt>
+                        <dd class="govuk-summary-list__value">Lyme Regis Harbour is a historic harbour but the proposed installation location is within the outer harbour basin rather than adjacent to any listed structures. We have checked the Historic Environment Record and are not aware of any heritage assets within the project area. The harbour authority has confirmed they have no heritage concerns regarding the proposed location.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Knowledge, understanding, appreciation and enjoyment 1 (SW-SOC-1)</dt>
+                        <dd class="govuk-summary-list__value">Our business is entirely focused on improving public access to and enjoyment of the marine environment. We provide paddleboard lessons for beginners and run family hire sessions throughout the summer season. We actively promote awareness of the marine environment and coastal wildlife among our customers and include a brief environmental induction as part of all our sessions. The improved access that the pontoon will provide will allow us to extend our services to users who currently cannot access the water safely via the slipway, including older adults and families with young children.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Seascape and landscape 1 (SW-SCP-1)</dt>
+                        <dd class="govuk-summary-list__value">The pontoon will be a small, low-profile floating structure that sits at water level and will be largely unobtrusive within the existing harbour environment. Lyme Regis Harbour already contains various pontoons, buoys, moorings and vessels. We do not believe the addition of this structure will have any adverse impact on the character or visual amenity of the harbour or the wider seascape. The structure will be finished in a neutral colour in keeping with harbour authority guidance.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Tourism and recreation 1 (SW-TR-1)</dt>
+                        <dd class="govuk-summary-list__value">This project directly supports and enhances tourism and recreational activity at Lyme Regis. Our paddleboard hire and instruction business serves both local residents and the significant number of tourists who visit Lyme Regis and the Jurassic Coast each year. The improved access facilities will allow us to serve more customers safely and extend the season during which we can operate. Lyme Regis is a significant tourist destination and marine recreation is an important part of the visitor economy. The project is fully consistent with supporting this sector.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Tourism and recreation 2 (SW-TR-2)</dt>
+                        <dd class="govuk-summary-list__value">The pontoon will improve the safety and ease of access for recreational water users. By providing a dedicated boarding point away from the main slipway we will also help reduce any potential conflicts between recreational paddlesport users and other harbour users including visiting leisure boats and fishing vessels.</dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        {# ================================================= #}
+        {# WATER FRAMEWORK DIRECTIVE ASSESSMENT               #}
+        {# ================================================= #}
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">Water Framework Directive assessment</h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+                        <dt class="govuk-summary-list__key">WFD assessment completed</dt>
+                        <dd class="govuk-summary-list__value">Yes</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Details</dt>
+                        <dd class="govuk-summary-list__value">A WFD scoping assessment has been completed for this project and is submitted with this application. The project site lies within the South West River Basin District. The proposed pontoon installation is a small scale, reversible floating structure with no seabed penetration and no release of any materials into the water column. The project is assessed as presenting no risk of causing deterioration to the ecological or chemical status of the relevant WFD water body. The existing water body status in this area is assessed as Good ecological status and the project will not affect this. The pontoon structure itself may over time provide a minor positive habitat benefit through colonisation of the underside by native species.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Download WFD assessment</dt>
+                        <dd class="govuk-summary-list__value">[Link to WFD assessment]</dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        {# ============================== #}
+        {# OTHER PERMISSIONS              #}
+        {# ============================== #}
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">Other permissions</h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+                        <dt class="govuk-summary-list__key">Located in a harbour authority area?</dt>
+                        <dd class="govuk-summary-list__value">Yes</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Provide details of the harbour authority</dt>
+                        <dd class="govuk-summary-list__value">Lyme Regis Harbour Authority (Dorset Council). We have been in contact with the Harbour Master, Mr D. Furner, who has confirmed in principle agreement for the proposed pontoon location. A formal harbour authority consent will be sought once marine licence approval is confirmed. Dorset Council Harbours ref: LRH/2026/MISC/041</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Does your organisation have special legal powers to do any of this project?</dt>
+                        <dd class="govuk-summary-list__value">No</dd>
+                    </div>
+                    <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+                        <dt class="govuk-summary-list__key">Permission from any other authorities in relation to this project?</dt>
+                        <dd class="govuk-summary-list__value">Yes</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Include details of the organisations, relevant contact details and any reference numbers</dt>
+                        <dd class="govuk-summary-list__value">Dorset Council Planning Department — a pre-application enquiry was made in February 2026 to confirm whether planning permission is required for the pontoon installation. We were advised that planning permission is not required as the works constitute permitted development within the harbour area, however this is subject to confirmation. Contact: planning.enquiries@dorset.gov.uk, ref PA-PRE-2026-00412.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+                        <dt class="govuk-summary-list__key">Public groups or organisations consulted before making this application?</dt>
+                        <dd class="govuk-summary-list__value">Yes</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Provide details of who you spoke to and the advice given</dt>
+                        <dd class="govuk-summary-list__value">
+                            <ul class="govuk-list govuk-list--bullet">
+                                We have consulted with the following: • Lyme Regis Harbour Authority (Harbour Master) — as above, in principle agreement to the proposed location obtained • Lyme Regis Fishermens Association — discussed the proposed pontoon location with the association secretary. No objections raised provided the pontoon does not obstruct access to the fishing quay, which it will not. • Dorset Wildlife Trust — contacted by email in March 2026 to flag the project and ask if there were any ecological concerns. No response received to date. • Natural England — pre-application enquiry submitted via the marine pre-application advice service. Response received confirming no objection in principle subject to confirmation that no protected species are present at the installation location.
+                            </ul>
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        {# ============================== #}
+        {# FEE ESTIMATE AND INVOICING     #}
+        {# ============================== #}
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">Fee estimate and invoicing details</h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Application fee band</dt>
+                        <dd class="govuk-summary-list__value">2A</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Maximum fee</dt>
+                        <dd class="govuk-summary-list__value">£1,400</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Fee estimate accepted</dt>
+                        <dd class="govuk-summary-list__value">Yes</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Terms and conditions agreed</dt>
+                        <dd class="govuk-summary-list__value">Yes</dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        {# ============================== #}
+        {# SHARING YOUR PROJECT INFO      #}
+        {# ============================== #}
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">Sharing project information publicly</h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+                        <dt class="govuk-summary-list__key">Consent to publish project information</dt>
+                        <dd class="govuk-summary-list__value">Yes</dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}
