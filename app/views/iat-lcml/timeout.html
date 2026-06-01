@@ -1,0 +1,22 @@
+{% extends "layouts/main.html" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block pageTitle %}Your session has timed out{% endblock %}
+{% block beforeContent %}
+
+{% endblock %}
+{% block content %}
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+      <h1 class="govuk-heading-l">Your session has timed out</h1>
+
+      <p class="govuk-body">Any answers will be saved for 24 hours. To resume, you need to go back to the start.</p>
+
+      {{ govukButton({
+        text: "Return to start",
+        href: "/versions/multiple-sites-v2/iat-lcml"
+      }) }}
+    </div>
+  </div>
+{% endblock %}
