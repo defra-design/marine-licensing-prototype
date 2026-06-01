@@ -290,6 +290,10 @@ module.exports = function (router) {
     res.render("iat-lcml/start");
   });
 
+  router.get(`${base}/timeout`, (req, res) => {
+    res.render("iat-lcml/timeout");
+  });
+
   // =====================================================================
   // Phase 1: /activity-type — checkboxes
   // =====================================================================
