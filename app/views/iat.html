@@ -4,10 +4,10 @@
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-IAT archive
+Interactive Assistance Tool (IAT)
 {% endset %}
 
-{% set navActive = "iat-archive" %}
+{% set navActive = "iat" %}
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
 {% block pageTitle %}
@@ -48,13 +48,15 @@ html: ''
     <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
     <!-- End of session warning text -->
 
-    <!-- Start of Interactive Assistance Tool (IAT) -->
-    <h2 class="govuk-heading-m">Interactive Assistance Tool (IAT) <strong class="govuk-tag govuk-tag--green"
-        style="float:right">Finished</strong></h2>
+    <h2 class="govuk-heading-m">IAT replica journey</h2>
+    
+    <p><a href="versions/multiple-sites-v2/start" class="govuk-link--no-visited-state">Start the IAT replica journey</a></p>
+
+    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
+    <h2 class="govuk-heading-m">IAT archive</h2>
 
     <p><a href="versions/iat/start" class="govuk-link--no-visited-state">Start the IAT journey</a></p>
-
-    <p><a href="versions/iat/start-99" class="govuk-link--no-visited-state">Start the mock IAT journey</a></p>
 
     <p>This is a replica of the live Interactive Assistance Tool (IAT) which helps users determine whether they need a
       marine licence. The tool guides users through a series of questions to assess their proposed marine activities.
@@ -125,9 +127,6 @@ html: ''
 
       </div>
     </details>
-
-    <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-    <!-- End of Interactive Assistance Tool (IAT) -->
 
   </div>
 
