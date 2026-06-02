@@ -1,19 +1,17 @@
-<div class="govuk-grid-column-one-third govuk-!-margin-top-9 govuk-!-padding-left-8">
-  <p class="govuk-!-margin-top-6" style="border-top: 2px solid #1d70b8; margin-bottom: 30px;">
-
-  <nav aria-label="Prototype sections">
-    <ul class="govuk-list govuk-list--spaced">
-      <li><a href="index.html" class="govuk-link--no-visited-state">Home - LCML iteration 3</a></li>
-      <li><a href="lcml-archive.html" class="govuk-link--no-visited-state">LCML – previous iterations</a></li>
-      <li><a href="exemptions-private-beta.html" class="govuk-link--no-visited-state">Exemptions – Private beta</a></li>
-      <li><a href="defra-id-tactical-fix.html" class="govuk-link--no-visited-state">Defra ID tactical fix</a></li>
-      <li><a href="exemptions-alpha.html" class="govuk-link--no-visited-state">Exemptions – Alpha</a></li>
-      <li><a href="exemptions-archive.html" class="govuk-link--no-visited-state">Exemptions archive</a></li>
-      <li><a href="sample-plans.html" class="govuk-link--no-visited-state">Sample Plans</a></li>
-      <li><a href="iat-archive.html" class="govuk-link--no-visited-state">IAT archive</a></li>
-      <li><a href="about-the-prototype.html" class="govuk-link--no-visited-state">About this prototype</a></li>
-      <li><a href="alpha-2024.html" class="govuk-link--no-visited-state">Previous alpha</a></li>
-    </ul>
-  </nav>
-
+<div class="govuk-grid-column-one-third govuk-!-margin-top-9">
+  {{ mojSideNavigation({
+    label: "Prototype sections",
+    items: [
+      { text: "Home - LCML iteration 3", href: "index.html", active: navActive == "index" },
+      { text: "LCML – previous iterations", href: "lcml-archive.html", active: navActive == "lcml-archive" },
+      { text: "Exemptions – Private beta", href: "exemptions-private-beta.html", active: navActive == "exemptions-private-beta" },
+      { text: "Defra ID tactical fix", href: "defra-id-tactical-fix.html", active: navActive == "defra-id-tactical-fix" },
+      { text: "Exemptions – Alpha", href: "exemptions-alpha.html", active: navActive == "exemptions-alpha" },
+      { text: "Exemptions archive", href: "exemptions-archive.html", active: navActive == "exemptions-archive" },
+      { text: "Sample Plans", href: "sample-plans.html", active: navActive == "sample-plans" },
+      { text: "IAT archive", href: "iat-archive.html", active: navActive == "iat-archive" },
+      { text: "About this prototype", href: "about-the-prototype.html", active: navActive == "about-the-prototype" },
+      { text: "Previous alpha", href: "alpha-2024.html", active: navActive == "alpha-2024" }
+    ]
+  }) }}
 </div>
