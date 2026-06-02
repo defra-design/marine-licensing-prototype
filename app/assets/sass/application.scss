@@ -5,6 +5,13 @@
 
 // Add extra styles here
 
+// Prototype hub side nav – remove MOJ default top padding so nav aligns with page content
+@media (min-width: 40.0625em) {
+  .proto-nav .moj-side-navigation {
+    padding-top: 0;
+  }
+}
+
 // Accessible Autocomplete GOV.UK styling overrides
 .autocomplete__wrapper {
   position: relative;
