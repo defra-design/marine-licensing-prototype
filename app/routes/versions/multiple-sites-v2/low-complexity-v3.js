@@ -608,6 +608,11 @@ module.exports = function (router) {
     delete data['low-complexity-wfd-filename'];
     delete data['low-complexity-wfd-completed'];
     delete data['low-complexity-wfd-from-cya'];
+    delete data['low-complexity-wfd-from-main-cya'];
+    delete data['low-complexity-wfd-q1-original'];
+    delete data['low-complexity-wfd-q2-original'];
+    delete data['low-complexity-wfd-q3-original'];
+    delete data['low-complexity-wfd-q4-original'];
     delete data['low-complexity-wfd-q1-error'];
     delete data['low-complexity-wfd-q2-error'];
     delete data['low-complexity-wfd-q3-error'];
@@ -620,13 +625,18 @@ module.exports = function (router) {
   router.get(`/versions/${version}/${section}/environmental-assessments/water-framework-directive`, function (req, res) {
     const fromCya = req.query.fromcheckanswers === 'true';
 
+    // Coming via the WFD card Change link on the MAIN check-your-answers page
+    // (the "No to 1nm" end-point). Flag it so Continue returns to the main check page.
+    if (req.query.camefromcheckanswers === 'true') {
+      req.session.data['low-complexity-wfd-from-main-cya'] = true;
+    }
+
     if (fromCya) {
-      // Coming via a Change link from the WFD CYA page — clear downstream answers
-      // and set the from-cya flag so Cancel links are hidden
-      delete req.session.data['low-complexity-wfd-excluded-activities'];
-      delete req.session.data['low-complexity-wfd-previous-assessment'];
-      delete req.session.data['low-complexity-wfd-assessment-changed'];
-      delete req.session.data['low-complexity-wfd-filename'];
+      // Coming via a Change link from the WFD CYA page — snapshot the current answer
+      // (so an unchanged answer can jump straight back) and set the from-cya flag so
+      // Cancel links are hidden. Downstream answers are preserved and only cleared in
+      // the router if the answer actually changes.
+      req.session.data['low-complexity-wfd-q1-original'] = req.session.data['low-complexity-wfd-within-nautical-mile'];
       req.session.data['low-complexity-wfd-from-cya'] = true;
       delete req.session.data['low-complexity-wfd-q1-error'];
       return res.render(`versions/${version}/${section}/environmental-assessments/water-framework-directive`);
@@ -672,11 +682,20 @@ module.exports = function (router) {
 
     const answer = req.session.data['low-complexity-wfd-within-nautical-mile'];
     const fromCya = req.session.data['low-complexity-wfd-from-cya'];
+    const fromMainCya = req.session.data['low-complexity-wfd-from-main-cya'];
+    const original = req.session.data['low-complexity-wfd-q1-original'];
 
     if (!answer) {
       req.session.data['low-complexity-wfd-q1-error'] = "true";
       return res.redirect('water-framework-directive-q1');
     }
+
+    // Editing from the WFD CYA page and the answer is unchanged — jump straight back
+    if (fromCya && original !== undefined && answer === original) {
+      delete req.session.data['low-complexity-wfd-q1-original'];
+      return res.redirect('water-framework-directive-check-answers');
+    }
+    delete req.session.data['low-complexity-wfd-q1-original'];
 
     if (answer === 'No') {
       // Clear all downstream data
@@ -686,6 +705,11 @@ module.exports = function (router) {
       delete req.session.data['low-complexity-wfd-filename'];
       req.session.data['low-complexity-wfd-completed'] = true;
       req.session.data['low-complexity-wfd-from-cya'] = false;
+      // Came from the main check page — return there, anchored on the WFD card
+      if (fromMainCya) {
+        req.session.data['low-complexity-wfd-from-main-cya'] = false;
+        return res.redirect('../check-your-answers#water-framework-directive');
+      }
       return res.redirect('../marine-licence-start-page');
     }
 
@@ -700,9 +724,8 @@ module.exports = function (router) {
     const fromCya = req.query.fromcheckanswers === 'true';
 
     if (fromCya) {
-      delete req.session.data['low-complexity-wfd-previous-assessment'];
-      delete req.session.data['low-complexity-wfd-assessment-changed'];
-      delete req.session.data['low-complexity-wfd-filename'];
+      // Snapshot the current answer; downstream is only cleared in the router if it changes
+      req.session.data['low-complexity-wfd-q2-original'] = req.session.data['low-complexity-wfd-excluded-activities'];
       req.session.data['low-complexity-wfd-from-cya'] = true;
     }
 
@@ -714,11 +737,20 @@ module.exports = function (router) {
     delete req.session.data['low-complexity-wfd-q2-error'];
 
     const answer = req.session.data['low-complexity-wfd-excluded-activities'];
+    const fromCya = req.session.data['low-complexity-wfd-from-cya'];
+    const original = req.session.data['low-complexity-wfd-q2-original'];
 
     if (!answer) {
       req.session.data['low-complexity-wfd-q2-error'] = "true";
       return res.redirect('water-framework-directive-excluded-activities');
     }
+
+    // Editing from the WFD CYA page and the answer is unchanged — jump straight back
+    if (fromCya && original !== undefined && answer === original) {
+      delete req.session.data['low-complexity-wfd-q2-original'];
+      return res.redirect('water-framework-directive-check-answers');
+    }
+    delete req.session.data['low-complexity-wfd-q2-original'];
 
     if (answer === 'Yes') {
       // Excluded activity — clear downstream data and go to CYA
@@ -739,8 +771,8 @@ module.exports = function (router) {
     const fromCya = req.query.fromcheckanswers === 'true';
 
     if (fromCya) {
-      delete req.session.data['low-complexity-wfd-assessment-changed'];
-      delete req.session.data['low-complexity-wfd-filename'];
+      // Snapshot the current answer; downstream is only cleared in the router if it changes
+      req.session.data['low-complexity-wfd-q3-original'] = req.session.data['low-complexity-wfd-previous-assessment'];
       req.session.data['low-complexity-wfd-from-cya'] = true;
     }
 
@@ -752,11 +784,20 @@ module.exports = function (router) {
     delete req.session.data['low-complexity-wfd-q3-error'];
 
     const answer = req.session.data['low-complexity-wfd-previous-assessment'];
+    const fromCya = req.session.data['low-complexity-wfd-from-cya'];
+    const original = req.session.data['low-complexity-wfd-q3-original'];
 
     if (!answer) {
       req.session.data['low-complexity-wfd-q3-error'] = "true";
       return res.redirect('water-framework-directive-previous-assessment');
     }
+
+    // Editing from the WFD CYA page and the answer is unchanged — jump straight back
+    if (fromCya && original !== undefined && answer === original) {
+      delete req.session.data['low-complexity-wfd-q3-original'];
+      return res.redirect('water-framework-directive-check-answers');
+    }
+    delete req.session.data['low-complexity-wfd-q3-original'];
 
     if (answer === 'Yes') {
       return res.redirect('water-framework-directive-assessment-changed');
@@ -774,7 +815,8 @@ module.exports = function (router) {
     const fromCya = req.query.fromcheckanswers === 'true';
 
     if (fromCya) {
-      delete req.session.data['low-complexity-wfd-filename'];
+      // Snapshot the current answer; the upload is only revisited in the router if it changes
+      req.session.data['low-complexity-wfd-q4-original'] = req.session.data['low-complexity-wfd-assessment-changed'];
       req.session.data['low-complexity-wfd-from-cya'] = true;
     }
 
@@ -786,11 +828,20 @@ module.exports = function (router) {
     delete req.session.data['low-complexity-wfd-q4-error'];
 
     const answer = req.session.data['low-complexity-wfd-assessment-changed'];
+    const fromCya = req.session.data['low-complexity-wfd-from-cya'];
+    const original = req.session.data['low-complexity-wfd-q4-original'];
 
     if (!answer) {
       req.session.data['low-complexity-wfd-q4-error'] = "true";
       return res.redirect('water-framework-directive-assessment-changed');
     }
+
+    // Editing from the WFD CYA page and the answer is unchanged — jump straight back
+    if (fromCya && original !== undefined && answer === original) {
+      delete req.session.data['low-complexity-wfd-q4-original'];
+      return res.redirect('water-framework-directive-check-answers');
+    }
+    delete req.session.data['low-complexity-wfd-q4-original'];
 
     // Both Yes and No go to the upload page
     return res.redirect('water-framework-directive-upload');
@@ -827,12 +878,22 @@ module.exports = function (router) {
   // WFD check your answers page
   // ============================================================
   router.get(`/versions/${version}/${section}/environmental-assessments/water-framework-directive-check-answers`, function (req, res) {
+    // Reached via the WFD card Change link on the MAIN check-your-answers page
+    // (the "Yes to 1nm" path). Flag it so Continue returns to the main check page.
+    if (req.query.camefromcheckanswers === 'true') {
+      req.session.data['low-complexity-wfd-from-main-cya'] = true;
+    }
     res.render(`versions/${version}/${section}/environmental-assessments/water-framework-directive-check-answers`);
   });
 
   router.post(`/versions/${version}/${section}/environmental-assessments/water-framework-directive-check-answers-router`, function (req, res) {
     req.session.data['low-complexity-wfd-completed'] = true;
     req.session.data['low-complexity-wfd-from-cya'] = false;
+    // Came from the main check page — return there, anchored on the WFD card
+    if (req.session.data['low-complexity-wfd-from-main-cya']) {
+      req.session.data['low-complexity-wfd-from-main-cya'] = false;
+      return res.redirect('../check-your-answers#water-framework-directive');
+    }
     res.redirect('../marine-licence-start-page');
   });
 
@@ -877,6 +938,11 @@ module.exports = function (router) {
     delete req.session.data['low-complexity-wfd-filename'];
     delete req.session.data['low-complexity-wfd-completed'];
     delete req.session.data['low-complexity-wfd-from-cya'];
+    delete req.session.data['low-complexity-wfd-from-main-cya'];
+    delete req.session.data['low-complexity-wfd-q1-original'];
+    delete req.session.data['low-complexity-wfd-q2-original'];
+    delete req.session.data['low-complexity-wfd-q3-original'];
+    delete req.session.data['low-complexity-wfd-q4-original'];
     delete req.session.data['low-complexity-wfd-q1-error'];
     delete req.session.data['low-complexity-wfd-q2-error'];
     delete req.session.data['low-complexity-wfd-q3-error'];

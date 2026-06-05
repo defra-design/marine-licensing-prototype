@@ -94,7 +94,7 @@ Is your project located within one nautical mile (1.85km) of the coast?
                     text: "Continue"
                 }) }}
 
-                {% if not data['low-complexity-wfd-from-cya'] %}
+                {% if not data['low-complexity-wfd-from-cya'] and not data['low-complexity-wfd-from-main-cya'] %}
                 <a class="govuk-link govuk-link--no-visited-state" href="wfd-cancel">Cancel</a>
                 {% endif %}
             </div>
