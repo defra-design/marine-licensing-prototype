@@ -5,7 +5,7 @@
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 
 {% set pageHeadingTextHTML %}
-Is your project located within one nautical mile (1.85km) of the coast?
+Is your project in the marine environment up to one nautical mile (1.85km) out to sea?
 {% endset %}
 
 {% block beforeContent %}
@@ -30,7 +30,7 @@ Is your project located within one nautical mile (1.85km) of the coast?
             titleText: "There is a problem",
             errorList: [
                 {
-                    text: "Select whether your project is located within one nautical mile (1.85km) of the coast",
+                    text: "Select whether your project is in the marine environment up to one nautical mile (1.85km) out to sea",
                     href: "#low-complexity-wfd-within-nautical-mile"
                 }
             ]
@@ -48,13 +48,19 @@ Is your project located within one nautical mile (1.85km) of the coast?
                 <details class="govuk-details">
                     <summary class="govuk-details__summary">
                         <span class="govuk-details__summary-text">
-                            Help with understanding one nautical mile from the coast
+                            Help with understanding the marine environment up to one nautical mile out to sea
                         </span>
                     </summary>
                     <div class="govuk-details__text">
-                        <p>This example shows a project site located within one nautical mile of the coast.</p>
-
-                        <img src="/public/images/nautical-mile-illustration.png" alt="Diagram showing a site location in the water less than 1 nautical mile from the coast" width="100%" />
+                        <p>The marine environment includes any area submerged at Mean High Water Springs (the average highest tide level). This includes:</p>
+                        <ul class="govuk-list govuk-list--bullet">
+                            <li>tidal rivers and estuaries up to the Normal Tidal Limit</li>
+                            <li>enclosed tidal waters, such as docks and marinas, where seawater can flow in and out, for example, through a lock</li>
+                        </ul>
+                        <p>The one nautical mile limit is measured seaward from the low-water line.</p>
+                        <p>This illustration shows the area where a Water Framework Directive (WFD) assessment is usually required.</p>
+                        <img src="/public/images/nautical-mile-illustration.jpg" alt="Diagram showing a site location 
+                        in the water less than 1 nautical mile from the coast" width="100%" />
                     </div>
                 </details>
 
@@ -84,7 +90,7 @@ Is your project located within one nautical mile (1.85km) of the coast?
                         }
                     ],
                     errorMessage: {
-                        text: "Select whether your project is located within one nautical mile (1.85km) of the coast"
+                        text: "Select whether your project is in the marine environment up to one nautical mile (1.85km) out to sea"
                     } if data['low-complexity-wfd-q1-error'] == "true"
                 }) }}
             </div>
