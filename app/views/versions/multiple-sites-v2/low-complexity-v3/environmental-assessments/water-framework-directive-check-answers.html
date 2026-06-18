@@ -33,7 +33,7 @@ Check your answers for Water Framework Directive - {{ data['headerNameExemption'
                 </dd>
                 <dd class="govuk-summary-list__actions">
                     <a class="govuk-link govuk-link--no-visited-state" href="water-framework-directive?fromcheckanswers=true">
-                        Change<span class="govuk-visually-hidden"> if your project is located within one nautical mile of the coast</span>
+                        Change<span class="govuk-visually-hidden"> if your project is within one nautical mile of the low-water line, or in a tidal river or estuary</span>
                     </a>
                 </dd>
             </div>
@@ -56,41 +56,7 @@ Check your answers for Water Framework Directive - {{ data['headerNameExemption'
 
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">
-                    Previous 2015 to 2022 Water Framework Directive assessment
-                </dt>
-                <dd class="govuk-summary-list__value">
-                    {{ data['low-complexity-wfd-previous-assessment'] }}
-                </dd>
-                <dd class="govuk-summary-list__actions">
-                    <a class="govuk-link govuk-link--no-visited-state" href="water-framework-directive-previous-assessment?fromcheckanswers=true">
-                        Change<span class="govuk-visually-hidden"> if you have a previous Water Framework Directive assessment from 2015 to 2022</span>
-                    </a>
-                </dd>
-            </div>
-
-            {% if data['low-complexity-wfd-previous-assessment'] == "Yes" %}
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    Changes since the previous Water Framework Directive assessment
-                </dt>
-                <dd class="govuk-summary-list__value">
-                    {{ data['low-complexity-wfd-assessment-changed'] }}
-                </dd>
-                <dd class="govuk-summary-list__actions">
-                    <a class="govuk-link govuk-link--no-visited-state" href="water-framework-directive-assessment-changed?fromcheckanswers=true">
-                        Change<span class="govuk-visually-hidden"> if anything has changed since your previous Water Framework Directive assessment</span>
-                    </a>
-                </dd>
-            </div>
-            {% endif %}
-
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">
-                    {% if data['low-complexity-wfd-previous-assessment'] == "Yes" and data['low-complexity-wfd-assessment-changed'] == "Yes" %}
-                        Water Framework Directive assessment upload
-                    {% else %}
-                        Water Framework Directive assessment upload
-                    {% endif %}
+                    Water Framework Directive assessment upload
                 </dt>
                 <dd class="govuk-summary-list__value">
                     {{ data['low-complexity-wfd-filename'] if data['low-complexity-wfd-filename'] else "WFD.doc" }}
