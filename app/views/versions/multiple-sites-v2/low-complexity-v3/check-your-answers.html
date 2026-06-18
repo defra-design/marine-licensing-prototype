@@ -1182,31 +1182,7 @@ Check your answers before sending your information
 
 					<div class="govuk-summary-list__row">
 						<dt class="govuk-summary-list__key">
-							Previous 2015 to 2022 Water Framework Directive assessment
-						</dt>
-						<dd class="govuk-summary-list__value">
-							{{ data['low-complexity-wfd-previous-assessment'] }}
-						</dd>
-					</div>
-
-					{% if data['low-complexity-wfd-previous-assessment'] == 'Yes' %}
-					<div class="govuk-summary-list__row">
-						<dt class="govuk-summary-list__key">
-							Changes since the previous Water Framework Directive assessment
-						</dt>
-						<dd class="govuk-summary-list__value">
-							{{ data['low-complexity-wfd-assessment-changed'] }}
-						</dd>
-					</div>
-					{% endif %}
-
-					<div class="govuk-summary-list__row">
-						<dt class="govuk-summary-list__key">
-							{% if data['low-complexity-wfd-previous-assessment'] == 'Yes' and data['low-complexity-wfd-assessment-changed'] == 'Yes' %}
-								Water Framework Directive assessment upload
-							{% else %}
-								Water Framework Directive assessment upload
-							{% endif %}
+							Water Framework Directive assessment upload
 						</dt>
 						<dd class="govuk-summary-list__value">
 							{{ data['low-complexity-wfd-filename'] if data['low-complexity-wfd-filename'] else "WFD.doc" }}
