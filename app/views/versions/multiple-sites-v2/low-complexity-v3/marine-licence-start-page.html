@@ -325,15 +325,21 @@ Marine licence start page
 			  </div>
 			</li>
 
-			<li class="govuk-task-list__item">
+			<li class="govuk-task-list__item govuk-task-list__item--with-link">
 			  <div class="govuk-task-list__name-and-hint">
-				<span>Invoicing</span>
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="fee-and-invoicing/{% if data['low-complexity-invoicing-completed'] %}check-invoicing-details{% else %}invoicing-start{% endif %}" aria-describedby="invoicing-status">
+				  Invoicing
+				</a>
 			  </div>
 
-			  <div class="govuk-task-list__status">
-
-					- - - - - - - - - - -
-
+			  <div class="govuk-task-list__status" id="invoicing-status">
+				{% if data['low-complexity-invoicing-completed'] %}
+				Completed
+				{% else %}
+				<strong class="govuk-tag govuk-tag--blue">
+					Not yet started
+				</strong>
+				{% endif %}
 			  </div>
 			</li>
 		</ul>

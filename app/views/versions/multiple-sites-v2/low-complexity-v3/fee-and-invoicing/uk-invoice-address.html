@@ -1,0 +1,99 @@
+{% extends "../../layouts/low-complexity-v3.html" %}
+
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% block beforeContent %}
+	{% include "../../includes/phase-banner.html" %}
+	{% if data['organisation-name'] %}
+		{% include "../../includes/organisation-switcher.html" %}
+	{% endif %}
+	{% include "../../includes/back-link.html" %}
+{% endblock %}
+
+{% set pageHeadingTextHTML %}
+UK invoice address
+{% endset %}
+
+{% block pageTitle %}
+	{% if errors.addressLine1 or errors.townCity or errors.postcode %}Error: {% endif %}{{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-two-thirds">
+
+		{% if errors.addressLine1 or errors.townCity or errors.postcode %}
+		{% set errorList = [] %}
+		{% if errors.addressLine1 %}{% set errorList = (errorList.push({ text: errors.addressLine1, href: "#invoice-address-line-1" }), errorList) %}{% endif %}
+		{% if errors.townCity %}{% set errorList = (errorList.push({ text: errors.townCity, href: "#invoice-town-city" }), errorList) %}{% endif %}
+		{% if errors.postcode %}{% set errorList = (errorList.push({ text: errors.postcode, href: "#invoice-postcode" }), errorList) %}{% endif %}
+		{{ govukErrorSummary({
+			titleText: "There is a problem",
+			errorList: errorList
+		}) }}
+		{% endif %}
+
+		<span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
+		<h1 class="govuk-heading-l">{{ pageHeadingTextHTML }}</h1>
+
+		<form action="uk-invoice-address-router{% if returnTo %}?returnTo={{ returnTo }}{% endif %}" method="post" novalidate>
+
+			{{ govukInput({
+				label: { text: "Address line 1" },
+				id: "invoice-address-line-1",
+				name: "invoice-address-line-1",
+				value: data['invoice-address-line-1'],
+				autocomplete: "address-line1",
+				errorMessage: { text: errors.addressLine1 } if errors.addressLine1
+			}) }}
+
+			{{ govukInput({
+				label: { text: "Address line 2 (optional)" },
+				id: "invoice-address-line-2",
+				name: "invoice-address-line-2",
+				value: data['invoice-address-line-2'],
+				autocomplete: "address-line2"
+			}) }}
+
+			{{ govukInput({
+				label: { text: "Town or city" },
+				classes: "govuk-!-width-two-thirds",
+				id: "invoice-town-city",
+				name: "invoice-town-city",
+				value: data['invoice-town-city'],
+				autocomplete: "address-level2",
+				errorMessage: { text: errors.townCity } if errors.townCity
+			}) }}
+
+			{{ govukInput({
+				label: { text: "County (optional)" },
+				classes: "govuk-!-width-two-thirds",
+				id: "invoice-county",
+				name: "invoice-county",
+				value: data['invoice-county']
+			}) }}
+
+			{{ govukInput({
+				label: { text: "Postcode" },
+				classes: "govuk-input--width-10",
+				id: "invoice-postcode",
+				name: "invoice-postcode",
+				value: data['invoice-postcode'],
+				autocomplete: "postal-code",
+				errorMessage: { text: errors.postcode } if errors.postcode
+			}) }}
+
+			<div class="govuk-button-group">
+				{{ govukButton({ text: "Continue" }) }}
+				{% if returnTo !== 'check' %}
+				<a class="govuk-link govuk-link--no-visited-state" href="../marine-licence-start-page">Cancel</a>
+				{% endif %}
+			</div>
+
+		</form>
+
+	</div>
+</div>
+{% endblock %}

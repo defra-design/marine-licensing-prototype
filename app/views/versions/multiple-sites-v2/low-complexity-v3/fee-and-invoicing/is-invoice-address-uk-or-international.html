@@ -1,0 +1,82 @@
+{% extends "../../layouts/low-complexity-v3.html" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% block beforeContent %}
+	{% include "../../includes/phase-banner.html" %}
+	{% if data['organisation-name'] %}
+		{% include "../../includes/organisation-switcher.html" %}
+	{% endif %}
+	<a class="govuk-back-link govuk-link--no-visited-state" href="../marine-licence-start-page">Back</a>
+{% endblock %}
+
+{% set pageHeadingTextHTML %}
+Is the invoice contact's address in the UK or international?
+{% endset %}
+
+{% block pageTitle %}
+	{% if errors.addressType %}Error: {% endif %}{{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-two-thirds">
+
+		{% if errors.addressType %}
+		{{ govukErrorSummary({
+			titleText: "There is a problem",
+			errorList: [
+				{
+					text: errors.addressType,
+					href: "#invoice-address-type"
+				}
+			]
+		}) }}
+		{% endif %}
+
+		<form action="is-invoice-address-uk-or-international-router{% if returnTo %}?returnTo={{ returnTo }}{% endif %}" method="post" novalidate>
+
+			{{ govukRadios({
+				name: "invoice-address-type",
+				id: "invoice-address-type",
+				fieldset: {
+					legend: {
+						html: '<span class="govuk-caption-l">' + data['low-complexity-project-name-text-input'] + '</span>' + pageHeadingTextHTML,
+						isPageHeading: true,
+						classes: "govuk-fieldset__legend--l"
+					}
+				},
+				hint: {
+					html: '<p class="govuk-body">We will send an invoice to the contact you provide here once we have assessed your application. This usually takes around 13 weeks.</p><p class="govuk-body">You will have 28 days to pay from the date of the invoice. No payment is taken during this application.</p>'
+				},
+				items: [
+					{
+						value: "uk",
+						text: "UK",
+						checked: data['invoice-address-type'] == "uk"
+					},
+					{
+						value: "international",
+						text: "International",
+						checked: data['invoice-address-type'] == "international"
+					}
+				],
+				errorMessage: {
+					text: errors.addressType
+				} if errors.addressType
+			}) }}
+
+			<div class="govuk-button-group">
+				{{ govukButton({ text: "Continue" }) }}
+				{% if returnTo !== 'check' %}
+				<a class="govuk-link govuk-link--no-visited-state" href="../marine-licence-start-page">Cancel</a>
+				{% endif %}
+			</div>
+
+		</form>
+
+	</div>
+</div>
+{% endblock %}

@@ -1,0 +1,92 @@
+{% extends "../../layouts/low-complexity-v3.html" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% block beforeContent %}
+	{% include "../../includes/phase-banner.html" %}
+	{% if data['organisation-name'] %}
+		{% include "../../includes/organisation-switcher.html" %}
+	{% endif %}
+	{% include "../../includes/back-link.html" %}
+{% endblock %}
+
+{% set pageHeadingTextHTML %}
+Purchase order details
+{% endset %}
+
+{% block pageTitle %}
+	{% if errors.poRequired or errors.poNumber %}Error: {% endif %}{{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% set poNumberInput %}
+{{ govukInput({
+	label: { text: "Purchase order number" },
+	id: "invoice-po-number",
+	name: "invoice-po-number",
+	classes: "govuk-!-width-two-thirds",
+	value: data['invoice-po-number'],
+	errorMessage: { text: errors.poNumber } if errors.poNumber
+}) }}
+{% endset %}
+
+{% block content %}
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-two-thirds">
+
+		{% if errors.poRequired or errors.poNumber %}
+		{{ govukErrorSummary({
+			titleText: "There is a problem",
+			errorList: [
+				{
+					text: errors.poRequired if errors.poRequired else errors.poNumber,
+					href: "#invoice-po-required" if errors.poRequired else "#invoice-po-number"
+				}
+			]
+		}) }}
+		{% endif %}
+
+		<span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
+		<h1 class="govuk-heading-l">{{ pageHeadingTextHTML }}</h1>
+
+		<form action="purchase-order-details-router{% if returnTo %}?returnTo={{ returnTo }}{% endif %}" method="post" novalidate>
+
+			{{ govukRadios({
+				name: "invoice-po-required",
+				id: "invoice-po-required",
+				fieldset: {
+					legend: {
+						text: "Do you require a purchase order number on the invoice?",
+						classes: "govuk-fieldset__legend--m"
+					}
+				},
+				items: [
+					{
+						value: "yes",
+						text: "Yes",
+						conditional: { html: poNumberInput },
+						checked: data['invoice-po-required'] == "yes"
+					},
+					{
+						value: "no",
+						text: "No",
+						checked: data['invoice-po-required'] == "no"
+					}
+				],
+				errorMessage: { text: errors.poRequired } if errors.poRequired
+			}) }}
+
+			<div class="govuk-button-group">
+				{{ govukButton({ text: "Save and continue" }) }}
+				{% if returnTo !== 'check' %}
+				<a class="govuk-link govuk-link--no-visited-state" href="../marine-licence-start-page">Cancel</a>
+				{% endif %}
+			</div>
+
+		</form>
+
+	</div>
+</div>
+{% endblock %}

@@ -81,4 +81,178 @@ module.exports = function (router) {
     // Redirect to projects page - the project will remain as a draft
     res.redirect(`/versions/${version}/${section}/projects`);
   });
+
+  ///////////////////////////////////////////
+  // Invoicing section (UK branch)
+  //
+  // Nothing is treated as "saved" until the user reaches the Check page.
+  // Re-entering the task from the task list (when not yet complete) hits
+  // `invoicing-start`, which wipes all invoicing keys so the user starts
+  // afresh. The completed flag is only set when the Check page is loaded.
+  ///////////////////////////////////////////
+
+  const invoicingKeys = [
+    'invoice-address-type',
+    'invoice-address-line-1',
+    'invoice-address-line-2',
+    'invoice-town-city',
+    'invoice-county',
+    'invoice-postcode',
+    'invoice-full-name',
+    'invoice-organisation-name',
+    'invoice-phone',
+    'invoice-email',
+    'invoice-po-required',
+    'invoice-po-number'
+  ];
+
+  // Helper: render an invoicing page with locals
+  function renderInvoicing(res, req, page, locals) {
+    res.render(`versions/${version}/${section}/${subSection}/${page}`, Object.assign({
+      data: req.session.data,
+      errors: {},
+      returnTo: req.query.returnTo
+    }, locals || {}));
+  }
+
+  // ---- Fresh-start reset (entry point from the task list) ----
+  router.get(`/versions/${version}/${section}/${subSection}/invoicing-start`, function (req, res) {
+    invoicingKeys.forEach(function (key) {
+      delete req.session.data[key];
+    });
+    req.session.data['low-complexity-invoicing-completed'] = false;
+    res.redirect('is-invoice-address-uk-or-international');
+  });
+
+  // ---- 1. Is the invoice contact's address in the UK or international? ----
+  router.get(`/versions/${version}/${section}/${subSection}/is-invoice-address-uk-or-international`, function (req, res) {
+    renderInvoicing(res, req, 'is-invoice-address-uk-or-international');
+  });
+
+  router.post(`/versions/${version}/${section}/${subSection}/is-invoice-address-uk-or-international-router`, function (req, res) {
+    const returnTo = req.query.returnTo;
+    const addressType = req.body['invoice-address-type'];
+
+    if (!addressType) {
+      return renderInvoicing(res, req, 'is-invoice-address-uk-or-international', {
+        errors: { addressType: "Select whether the invoice contact's address in the UK or international" }
+      });
+    }
+
+    // International branch is not built yet - selecting it does nothing.
+    if (addressType === 'international') {
+      return res.redirect('is-invoice-address-uk-or-international' + (returnTo ? '?returnTo=' + returnTo : ''));
+    }
+
+    if (returnTo === 'check') {
+      return res.redirect('check-invoicing-details');
+    }
+    res.redirect('uk-invoice-address');
+  });
+
+  // ---- 2. UK invoice address ----
+  router.get(`/versions/${version}/${section}/${subSection}/uk-invoice-address`, function (req, res) {
+    renderInvoicing(res, req, 'uk-invoice-address');
+  });
+
+  router.post(`/versions/${version}/${section}/${subSection}/uk-invoice-address-router`, function (req, res) {
+    const returnTo = req.query.returnTo;
+    const errors = {};
+
+    if (!req.body['invoice-address-line-1'] || req.body['invoice-address-line-1'].trim() === '') {
+      errors.addressLine1 = 'Enter address line 1';
+    }
+    if (!req.body['invoice-town-city'] || req.body['invoice-town-city'].trim() === '') {
+      errors.townCity = 'Enter town or city';
+    }
+    if (!req.body['invoice-postcode'] || req.body['invoice-postcode'].trim() === '') {
+      errors.postcode = 'Enter postcode';
+    }
+
+    if (Object.keys(errors).length > 0) {
+      return renderInvoicing(res, req, 'uk-invoice-address', { errors: errors });
+    }
+
+    if (returnTo === 'check') {
+      return res.redirect('check-invoicing-details');
+    }
+    res.redirect('invoice-contact-details');
+  });
+
+  // ---- 3. Invoice contact details ----
+  router.get(`/versions/${version}/${section}/${subSection}/invoice-contact-details`, function (req, res) {
+    renderInvoicing(res, req, 'invoice-contact-details');
+  });
+
+  router.post(`/versions/${version}/${section}/${subSection}/invoice-contact-details-router`, function (req, res) {
+    const returnTo = req.query.returnTo;
+    const isOrganisation = req.session.data['user_type'] === 'organisation';
+    const errors = {};
+
+    if (!req.body['invoice-full-name'] || req.body['invoice-full-name'].trim() === '') {
+      errors.fullName = 'Enter full name';
+    }
+    if (isOrganisation && (!req.body['invoice-organisation-name'] || req.body['invoice-organisation-name'].trim() === '')) {
+      errors.organisationName = 'Enter organisation name';
+    }
+    if (!req.body['invoice-phone'] || req.body['invoice-phone'].trim() === '') {
+      errors.phone = 'Enter UK phone number';
+    }
+    if (!req.body['invoice-email'] || req.body['invoice-email'].trim() === '') {
+      errors.email = 'Enter email address';
+    }
+
+    if (Object.keys(errors).length > 0) {
+      return renderInvoicing(res, req, 'invoice-contact-details', { errors: errors });
+    }
+
+    if (returnTo === 'check') {
+      return res.redirect('check-invoicing-details');
+    }
+
+    // Individual users skip the purchase order page
+    if (isOrganisation) {
+      return res.redirect('purchase-order-details');
+    }
+    res.redirect('check-invoicing-details');
+  });
+
+  // ---- 4. Purchase order details (organisation users only) ----
+  router.get(`/versions/${version}/${section}/${subSection}/purchase-order-details`, function (req, res) {
+    renderInvoicing(res, req, 'purchase-order-details');
+  });
+
+  router.post(`/versions/${version}/${section}/${subSection}/purchase-order-details-router`, function (req, res) {
+    const returnTo = req.query.returnTo;
+    const poRequired = req.body['invoice-po-required'];
+    const errors = {};
+
+    if (!poRequired) {
+      errors.poRequired = 'Select whether you require a purchase order number on the invoice';
+    } else if (poRequired === 'yes' && (!req.body['invoice-po-number'] || req.body['invoice-po-number'].trim() === '')) {
+      errors.poNumber = 'Enter a purchase order number';
+    }
+
+    if (Object.keys(errors).length > 0) {
+      return renderInvoicing(res, req, 'purchase-order-details', { errors: errors });
+    }
+
+    // Clear the PO number if "No" was selected
+    if (poRequired === 'no') {
+      req.session.data['invoice-po-number'] = '';
+    }
+
+    res.redirect('check-invoicing-details');
+  });
+
+  // ---- 5. Check your invoicing details ----
+  router.get(`/versions/${version}/${section}/${subSection}/check-invoicing-details`, function (req, res) {
+    // Reaching this page means the section is complete and the data is saved
+    req.session.data['low-complexity-invoicing-completed'] = true;
+    renderInvoicing(res, req, 'check-invoicing-details');
+  });
+
+  router.post(`/versions/${version}/${section}/${subSection}/check-invoicing-details-router`, function (req, res) {
+    res.redirect(`/versions/${version}/${section}/marine-licence-start-page`);
+  });
 };

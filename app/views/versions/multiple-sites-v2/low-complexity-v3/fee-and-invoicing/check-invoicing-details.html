@@ -1,0 +1,112 @@
+{% extends "../../layouts/low-complexity-v3.html" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block beforeContent %}
+	{% include "../../includes/phase-banner.html" %}
+	{% if data['organisation-name'] %}
+		{% include "../../includes/organisation-switcher.html" %}
+	{% endif %}
+	{% include "../../includes/back-link.html" %}
+{% endblock %}
+
+{% set isOrganisation = data['user_type'] === 'organisation' %}
+
+{% set pageHeadingTextHTML %}
+Check your invoicing details
+{% endset %}
+
+{% block pageTitle %}
+	{{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-two-thirds">
+
+		<span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
+		<h1 class="govuk-heading-l">{{ pageHeadingTextHTML }}</h1>
+
+		<dl class="govuk-summary-list">
+
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">Address type</dt>
+				<dd class="govuk-summary-list__value">
+					{% if data['invoice-address-type'] == 'international' %}International{% else %}UK{% endif %}
+				</dd>
+				<dd class="govuk-summary-list__actions">
+					<a class="govuk-link govuk-link--no-visited-state" href="is-invoice-address-uk-or-international?returnTo=check">
+						Change<span class="govuk-visually-hidden"> address type</span>
+					</a>
+				</dd>
+			</div>
+
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">Address</dt>
+				<dd class="govuk-summary-list__value">
+					{{ data['invoice-address-line-1'] }}<br>
+					{% if data['invoice-address-line-2'] %}{{ data['invoice-address-line-2'] }}<br>{% endif %}
+					{{ data['invoice-town-city'] }}<br>
+					{% if data['invoice-county'] %}{{ data['invoice-county'] }}<br>{% endif %}
+					{{ data['invoice-postcode'] }}
+				</dd>
+				<dd class="govuk-summary-list__actions">
+					<a class="govuk-link govuk-link--no-visited-state" href="uk-invoice-address?returnTo=check">
+						Change<span class="govuk-visually-hidden"> address</span>
+					</a>
+				</dd>
+			</div>
+
+			<div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+				<dt class="govuk-summary-list__key">Full name</dt>
+				<dd class="govuk-summary-list__value">{{ data['invoice-full-name'] }}</dd>
+				<dd class="govuk-summary-list__actions">
+					<a class="govuk-link govuk-link--no-visited-state" href="invoice-contact-details?returnTo=check">
+						Change<span class="govuk-visually-hidden"> contact details</span>
+					</a>
+				</dd>
+			</div>
+
+			{% if isOrganisation %}
+			<div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+				<dt class="govuk-summary-list__key">Organisation</dt>
+				<dd class="govuk-summary-list__value">{{ data['invoice-organisation-name'] }}</dd>
+				<dd class="govuk-summary-list__actions"></dd>
+			</div>
+			{% endif %}
+
+			<div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+				<dt class="govuk-summary-list__key">Telephone number</dt>
+				<dd class="govuk-summary-list__value">{{ data['invoice-phone'] }}</dd>
+				<dd class="govuk-summary-list__actions"></dd>
+			</div>
+
+			<div class="govuk-summary-list__row{% if isOrganisation %}{% else %} govuk-summary-list__row--no-actions{% endif %}">
+				<dt class="govuk-summary-list__key">Email address</dt>
+				<dd class="govuk-summary-list__value">{{ data['invoice-email'] }}</dd>
+				<dd class="govuk-summary-list__actions"></dd>
+			</div>
+
+			{% if isOrganisation %}
+			<div class="govuk-summary-list__row">
+				<dt class="govuk-summary-list__key">Purchase order number</dt>
+				<dd class="govuk-summary-list__value">
+					{% if data['invoice-po-required'] == 'yes' %}{{ data['invoice-po-number'] }}{% else %}Not required{% endif %}
+				</dd>
+				<dd class="govuk-summary-list__actions">
+					<a class="govuk-link govuk-link--no-visited-state" href="purchase-order-details?returnTo=check">
+						Change<span class="govuk-visually-hidden"> purchase order number</span>
+					</a>
+				</dd>
+			</div>
+			{% endif %}
+
+		</dl>
+
+		<form action="check-invoicing-details-router" method="post">
+			{{ govukButton({ text: "Continue" }) }}
+		</form>
+
+	</div>
+</div>
+{% endblock %}
