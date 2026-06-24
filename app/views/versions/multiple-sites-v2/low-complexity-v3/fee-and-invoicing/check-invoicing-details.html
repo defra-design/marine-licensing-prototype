@@ -44,14 +44,19 @@ Check your invoicing details
 			<div class="govuk-summary-list__row">
 				<dt class="govuk-summary-list__key">Address</dt>
 				<dd class="govuk-summary-list__value">
-					{{ data['invoice-address-line-1'] }}<br>
-					{% if data['invoice-address-line-2'] %}{{ data['invoice-address-line-2'] }}<br>{% endif %}
-					{{ data['invoice-town-city'] }}<br>
-					{% if data['invoice-county'] %}{{ data['invoice-county'] }}<br>{% endif %}
-					{{ data['invoice-postcode'] }}
+					{% if data['invoice-address-type'] == 'international' %}
+						{{ data['invoice-international-address'] | replace("\n", "<br>") | safe }}<br>
+						{{ data['invoice-country'] }}
+					{% else %}
+						{{ data['invoice-address-line-1'] }}<br>
+						{% if data['invoice-address-line-2'] %}{{ data['invoice-address-line-2'] }}<br>{% endif %}
+						{{ data['invoice-town-city'] }}<br>
+						{% if data['invoice-county'] %}{{ data['invoice-county'] }}<br>{% endif %}
+						{{ data['invoice-postcode'] }}
+					{% endif %}
 				</dd>
 				<dd class="govuk-summary-list__actions">
-					<a class="govuk-link govuk-link--no-visited-state" href="uk-invoice-address?returnTo=check">
+					<a class="govuk-link govuk-link--no-visited-state" href="{% if data['invoice-address-type'] == 'international' %}international-invoice-address{% else %}uk-invoice-address{% endif %}?returnTo=check">
 						Change<span class="govuk-visually-hidden"> address</span>
 					</a>
 				</dd>

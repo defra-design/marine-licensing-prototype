@@ -98,6 +98,8 @@ module.exports = function (router) {
     'invoice-town-city',
     'invoice-county',
     'invoice-postcode',
+    'invoice-country',
+    'invoice-international-address',
     'invoice-full-name',
     'invoice-organisation-name',
     'invoice-phone',
@@ -139,15 +141,52 @@ module.exports = function (router) {
       });
     }
 
-    // International branch is not built yet - selecting it does nothing.
+    const data = req.session.data;
+    // Has the address for the chosen type already been captured?
+    const ukAddressCaptured = data['invoice-address-line-1'] && data['invoice-address-line-1'].trim() !== '';
+    const intlAddressCaptured = data['invoice-country'] && data['invoice-country'].trim() !== '';
+
+    if (returnTo === 'check') {
+      // Changing answers from the check page. If the address for the chosen
+      // type already exists (no real change), bounce straight back to check.
+      // Otherwise route through the relevant address page (still returning to check).
+      if (addressType === 'international') {
+        return res.redirect(intlAddressCaptured ? 'check-invoicing-details' : 'international-invoice-address?returnTo=check');
+      }
+      return res.redirect(ukAddressCaptured ? 'check-invoicing-details' : 'uk-invoice-address?returnTo=check');
+    }
+
+    // Forward flow
     if (addressType === 'international') {
-      return res.redirect('is-invoice-address-uk-or-international' + (returnTo ? '?returnTo=' + returnTo : ''));
+      return res.redirect('international-invoice-address');
+    }
+    res.redirect('uk-invoice-address');
+  });
+
+  // ---- 2b. International invoice address ----
+  router.get(`/versions/${version}/${section}/${subSection}/international-invoice-address`, function (req, res) {
+    renderInvoicing(res, req, 'international-invoice-address');
+  });
+
+  router.post(`/versions/${version}/${section}/${subSection}/international-invoice-address-router`, function (req, res) {
+    const returnTo = req.query.returnTo;
+    const errors = {};
+
+    if (!req.body['invoice-country'] || req.body['invoice-country'].trim() === '') {
+      errors.country = 'Select a country';
+    }
+    if (!req.body['invoice-international-address'] || req.body['invoice-international-address'].trim() === '') {
+      errors.address = 'Enter the address';
+    }
+
+    if (Object.keys(errors).length > 0) {
+      return renderInvoicing(res, req, 'international-invoice-address', { errors: errors });
     }
 
     if (returnTo === 'check') {
       return res.redirect('check-invoicing-details');
     }
-    res.redirect('uk-invoice-address');
+    res.redirect('invoice-contact-details');
   });
 
   // ---- 2. UK invoice address ----
@@ -196,7 +235,7 @@ module.exports = function (router) {
       errors.organisationName = 'Enter organisation name';
     }
     if (!req.body['invoice-phone'] || req.body['invoice-phone'].trim() === '') {
-      errors.phone = 'Enter UK phone number';
+      errors.phone = req.session.data['invoice-address-type'] === 'international' ? 'Enter phone number' : 'Enter UK phone number';
     }
     if (!req.body['invoice-email'] || req.body['invoice-email'].trim() === '') {
       errors.email = 'Enter email address';
@@ -249,10 +288,23 @@ module.exports = function (router) {
   router.get(`/versions/${version}/${section}/${subSection}/check-invoicing-details`, function (req, res) {
     // Reaching this page means the section is complete and the data is saved
     req.session.data['low-complexity-invoicing-completed'] = true;
+
+    // Arriving here via the "Change" link on the main check-your-answers page:
+    // remember so the Continue button returns there rather than to the task list.
+    if (req.query.camefromcheckanswers === 'true') {
+      req.session.data['camefromcheckanswers'] = 'true';
+    }
+
     renderInvoicing(res, req, 'check-invoicing-details');
   });
 
   router.post(`/versions/${version}/${section}/${subSection}/check-invoicing-details-router`, function (req, res) {
+    // Return to the main check-your-answers page if we came from there,
+    // otherwise back to the task list (mirrors the Review site details flow).
+    if (req.session.data['camefromcheckanswers'] === 'true') {
+      req.session.data['camefromcheckanswers'] = false;
+      return res.redirect(`/versions/${version}/${section}/check-your-answers#invoicing`);
+    }
     res.redirect(`/versions/${version}/${section}/marine-licence-start-page`);
   });
 };

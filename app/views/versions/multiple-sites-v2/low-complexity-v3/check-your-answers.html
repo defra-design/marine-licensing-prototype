@@ -1543,6 +1543,87 @@ Check your answers before sending your information
 		</div>
 
 		{# ============================== #}
+		{# INVOICING                     #}
+		{# All edits happen on the invoicing check page; this card has a #}
+		{# single Change link that routes there and returns here on Continue. #}
+		{# ============================== #}
+		{% if data['low-complexity-invoicing-completed'] %}
+		<div class="govuk-summary-card">
+			<div class="govuk-summary-card__title-wrapper">
+				<h2 class="govuk-summary-card__title" id="invoicing">
+					Invoicing details
+				</h2>
+				<ul class="govuk-summary-card__actions">
+					<li class="govuk-summary-card__action">
+						<a class="govuk-link govuk-link--no-visited-state" href="fee-and-invoicing/check-invoicing-details?camefromcheckanswers=true">
+							Change<span class="govuk-visually-hidden"> invoicing details</span>
+						</a>
+					</li>
+				</ul>
+			</div>
+			<div class="govuk-summary-card__content">
+				<dl class="govuk-summary-list">
+
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">Address type</dt>
+						<dd class="govuk-summary-list__value">
+							{% if data['invoice-address-type'] == 'international' %}International{% else %}UK{% endif %}
+						</dd>
+					</div>
+
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">Address</dt>
+						<dd class="govuk-summary-list__value">
+							{% if data['invoice-address-type'] == 'international' %}
+								{{ data['invoice-international-address'] | replace("\n", "<br>") | safe }}<br>
+								{{ data['invoice-country'] }}
+							{% else %}
+								{{ data['invoice-address-line-1'] }}<br>
+								{% if data['invoice-address-line-2'] %}{{ data['invoice-address-line-2'] }}<br>{% endif %}
+								{{ data['invoice-town-city'] }}<br>
+								{% if data['invoice-county'] %}{{ data['invoice-county'] }}<br>{% endif %}
+								{{ data['invoice-postcode'] }}
+							{% endif %}
+						</dd>
+					</div>
+
+					<div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+						<dt class="govuk-summary-list__key">Full name</dt>
+						<dd class="govuk-summary-list__value">{{ data['invoice-full-name'] }}</dd>
+					</div>
+
+					{% if data['user_type'] === 'organisation' %}
+					<div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+						<dt class="govuk-summary-list__key">Organisation</dt>
+						<dd class="govuk-summary-list__value">{{ data['invoice-organisation-name'] }}</dd>
+					</div>
+					{% endif %}
+
+					<div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+						<dt class="govuk-summary-list__key">Telephone number</dt>
+						<dd class="govuk-summary-list__value">{{ data['invoice-phone'] }}</dd>
+					</div>
+
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">Email address</dt>
+						<dd class="govuk-summary-list__value">{{ data['invoice-email'] }}</dd>
+					</div>
+
+					{% if data['user_type'] === 'organisation' %}
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">Purchase order number</dt>
+						<dd class="govuk-summary-list__value">
+							{% if data['invoice-po-required'] == 'yes' %}{{ data['invoice-po-number'] }}{% else %}Not required{% endif %}
+						</dd>
+					</div>
+					{% endif %}
+
+				</dl>
+			</div>
+		</div>
+		{% endif %}
+
+		{# ============================== #}
 		{# SHARING YOUR PROJECT INFO      #}
 		{# ============================== #}
 		<div class="govuk-summary-card">

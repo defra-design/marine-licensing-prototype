@@ -1,0 +1,84 @@
+{% extends "../../layouts/low-complexity-v3.html" %}
+
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% block beforeContent %}
+	{% include "../../includes/phase-banner.html" %}
+	{% if data['organisation-name'] %}
+		{% include "../../includes/organisation-switcher.html" %}
+	{% endif %}
+	{% include "../../includes/back-link.html" %}
+{% endblock %}
+
+{% block head %}
+	{{ super() }}
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/accessible-autocomplete@3.0.1/dist/accessible-autocomplete.min.css" />
+{% endblock %}
+
+{% block bodyEnd %}
+	{{ super() }}
+	<script src="https://cdn.jsdelivr.net/npm/accessible-autocomplete@3.0.1/dist/accessible-autocomplete.min.js"></script>
+{% endblock %}
+
+{% set pageHeadingTextHTML %}
+International invoice address
+{% endset %}
+
+{% block pageTitle %}
+	{% if errors.country or errors.address %}Error: {% endif %}{{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-two-thirds">
+
+		{% if errors.country or errors.address %}
+		{% set errorList = [] %}
+		{% if errors.country %}{% set errorList = (errorList.push({ text: errors.country, href: "#invoice-country" }), errorList) %}{% endif %}
+		{% if errors.address %}{% set errorList = (errorList.push({ text: errors.address, href: "#invoice-international-address" }), errorList) %}{% endif %}
+		{{ govukErrorSummary({
+			titleText: "There is a problem",
+			errorList: errorList
+		}) }}
+		{% endif %}
+
+		<span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
+		<h1 class="govuk-heading-l">{{ pageHeadingTextHTML }}</h1>
+
+		<form action="international-invoice-address-router{% if returnTo %}?returnTo={{ returnTo }}{% endif %}" method="post" novalidate>
+
+			<div class="govuk-form-group {% if errors.country %}govuk-form-group--error{% endif %}">
+				<label class="govuk-label govuk-label--s" for="invoice-country">Country</label>
+				<div class="govuk-hint">Start typing the name of a country to filter the list</div>
+				{% if errors.country %}
+				<p id="invoice-country-error" class="govuk-error-message"><span class="govuk-visually-hidden">Error:</span> {{ errors.country }}</p>
+				{% endif %}
+				{# accessibleAutocomplete is initialised on this container in application.js (guarded by this id). #}
+				{# The library injects an input with id "invoice-country"; a synced hidden input of the same name is submitted. #}
+				<div id="invoice-country-autocomplete-container" data-default-value="{{ data['invoice-country'] }}"></div>
+			</div>
+
+			{{ govukTextarea({
+				id: "invoice-international-address",
+				name: "invoice-international-address",
+				value: data['invoice-international-address'],
+				rows: 5,
+				label: { text: "Address", classes: "govuk-label--s" },
+				hint: { text: "Enter the full address including any region or state" },
+				errorMessage: { text: errors.address } if errors.address
+			}) }}
+
+			<div class="govuk-button-group">
+				{{ govukButton({ text: "Continue" }) }}
+				{% if returnTo !== 'check' %}
+				<a class="govuk-link govuk-link--no-visited-state" href="../marine-licence-start-page">Cancel</a>
+				{% endif %}
+			</div>
+
+		</form>
+
+	</div>
+</div>
+{% endblock %}

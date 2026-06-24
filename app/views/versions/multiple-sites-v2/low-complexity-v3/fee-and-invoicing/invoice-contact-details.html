@@ -13,6 +13,7 @@
 {% endblock %}
 
 {% set isOrganisation = data['user_type'] === 'organisation' %}
+{% set isInternational = data['invoice-address-type'] === 'international' %}
 
 {% set pageHeadingTextHTML %}
 Invoice contact details
@@ -64,7 +65,8 @@ Invoice contact details
 			{% endif %}
 
 			{{ govukInput({
-				label: { text: "UK phone number" },
+				label: { text: "Phone number" if isInternational else "UK phone number" },
+				hint: { text: "For international numbers include the country code" } if isInternational,
 				classes: "govuk-!-width-two-thirds",
 				id: "invoice-phone",
 				name: "invoice-phone",
