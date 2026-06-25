@@ -45,7 +45,7 @@ Invoice contact details
 		<form action="invoice-contact-details-router{% if returnTo %}?returnTo={{ returnTo }}{% endif %}" method="post" novalidate>
 
 			{{ govukInput({
-				label: { text: "Full name" },
+				label: { text: "Full name", classes: "govuk-label--s" },
 				id: "invoice-full-name",
 				name: "invoice-full-name",
 				value: data['invoice-full-name'],
@@ -55,7 +55,7 @@ Invoice contact details
 
 			{% if isOrganisation %}
 			{{ govukInput({
-				label: { text: "Organisation name" },
+				label: { text: "Organisation name", classes: "govuk-label--s" },
 				id: "invoice-organisation-name",
 				name: "invoice-organisation-name",
 				value: data['invoice-organisation-name'],
@@ -65,7 +65,7 @@ Invoice contact details
 			{% endif %}
 
 			{{ govukInput({
-				label: { text: "Phone number" if isInternational else "UK phone number" },
+				label: { text: "Phone number" if isInternational else "UK phone number", classes: "govuk-label--s" },
 				hint: { text: "For international numbers include the country code" } if isInternational,
 				classes: "govuk-!-width-two-thirds",
 				id: "invoice-phone",
@@ -77,7 +77,7 @@ Invoice contact details
 			}) }}
 
 			{{ govukInput({
-				label: { text: "Email address" },
+				label: { text: "Email address", classes: "govuk-label--s" },
 				classes: "govuk-!-width-two-thirds",
 				id: "invoice-email",
 				name: "invoice-email",
