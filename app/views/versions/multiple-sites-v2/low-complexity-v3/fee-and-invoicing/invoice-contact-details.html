@@ -1,0 +1,103 @@
+{% extends "../../layouts/low-complexity-v3.html" %}
+
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% block beforeContent %}
+	{% include "../../includes/phase-banner.html" %}
+	{% if data['organisation-name'] %}
+		{% include "../../includes/organisation-switcher.html" %}
+	{% endif %}
+	{% include "../../includes/back-link.html" %}
+{% endblock %}
+
+{% set isOrganisation = data['user_type'] === 'organisation' %}
+{% set isInternational = data['invoice-address-type'] === 'international' %}
+
+{% set pageHeadingTextHTML %}
+Invoice contact details
+{% endset %}
+
+{% block pageTitle %}
+	{% if errors.fullName or errors.organisationName or errors.phone or errors.email %}Error: {% endif %}{{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-two-thirds">
+
+		{% if errors.fullName or errors.organisationName or errors.phone or errors.email %}
+		{% set errorList = [] %}
+		{% if errors.fullName %}{% set errorList = (errorList.push({ text: errors.fullName, href: "#invoice-full-name" }), errorList) %}{% endif %}
+		{% if errors.organisationName %}{% set errorList = (errorList.push({ text: errors.organisationName, href: "#invoice-organisation-name" }), errorList) %}{% endif %}
+		{% if errors.phone %}{% set errorList = (errorList.push({ text: errors.phone, href: "#invoice-phone" }), errorList) %}{% endif %}
+		{% if errors.email %}{% set errorList = (errorList.push({ text: errors.email, href: "#invoice-email" }), errorList) %}{% endif %}
+		{{ govukErrorSummary({
+			titleText: "There is a problem",
+			errorList: errorList
+		}) }}
+		{% endif %}
+
+		<span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
+		<h1 class="govuk-heading-l">{{ pageHeadingTextHTML }}</h1>
+
+		<form action="invoice-contact-details-router{% if returnTo %}?returnTo={{ returnTo }}{% endif %}" method="post" novalidate>
+
+			{{ govukInput({
+				label: { text: "Full name" },
+				id: "invoice-full-name",
+				name: "invoice-full-name",
+				value: data['invoice-full-name'],
+				autocomplete: "name",
+				errorMessage: { text: errors.fullName } if errors.fullName
+			}) }}
+
+			{% if isOrganisation %}
+			{{ govukInput({
+				label: { text: "Organisation name" },
+				id: "invoice-organisation-name",
+				name: "invoice-organisation-name",
+				value: data['invoice-organisation-name'],
+				autocomplete: "organization",
+				errorMessage: { text: errors.organisationName } if errors.organisationName
+			}) }}
+			{% endif %}
+
+			{{ govukInput({
+				label: { text: "Phone number" if isInternational else "UK phone number" },
+				hint: { text: "For international numbers include the country code" } if isInternational,
+				classes: "govuk-!-width-two-thirds",
+				id: "invoice-phone",
+				name: "invoice-phone",
+				type: "tel",
+				value: data['invoice-phone'],
+				autocomplete: "tel",
+				errorMessage: { text: errors.phone } if errors.phone
+			}) }}
+
+			{{ govukInput({
+				label: { text: "Email address" },
+				classes: "govuk-!-width-two-thirds",
+				id: "invoice-email",
+				name: "invoice-email",
+				type: "email",
+				value: data['invoice-email'],
+				autocomplete: "email",
+				spellcheck: false,
+				errorMessage: { text: errors.email } if errors.email
+			}) }}
+
+			<div class="govuk-button-group">
+				{# Individual users skip the purchase order page, so this is the last page before the check page #}
+				{{ govukButton({ text: "Save and continue" if returnTo === 'check' or not isOrganisation else "Continue" }) }}
+				{% if returnTo !== 'check' %}
+				<a class="govuk-link govuk-link--no-visited-state" href="../marine-licence-start-page">Cancel</a>
+				{% endif %}
+			</div>
+
+		</form>
+
+	</div>
+</div>
+{% endblock %}
