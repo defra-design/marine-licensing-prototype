@@ -41,7 +41,7 @@ UK invoice address
 		<form action="uk-invoice-address-router{% if returnTo %}?returnTo={{ returnTo }}{% endif %}" method="post" novalidate>
 
 			{{ govukInput({
-				label: { text: "Address line 1" },
+				label: { text: "Address line 1", classes: "govuk-label--s" },
 				id: "invoice-address-line-1",
 				name: "invoice-address-line-1",
 				value: data['invoice-address-line-1'],
@@ -50,7 +50,7 @@ UK invoice address
 			}) }}
 
 			{{ govukInput({
-				label: { text: "Address line 2 (optional)" },
+				label: { text: "Address line 2 (optional)", classes: "govuk-label--s" },
 				id: "invoice-address-line-2",
 				name: "invoice-address-line-2",
 				value: data['invoice-address-line-2'],
@@ -58,7 +58,7 @@ UK invoice address
 			}) }}
 
 			{{ govukInput({
-				label: { text: "Town or city" },
+				label: { text: "Town or city", classes: "govuk-label--s" },
 				classes: "govuk-!-width-two-thirds",
 				id: "invoice-town-city",
 				name: "invoice-town-city",
@@ -68,7 +68,7 @@ UK invoice address
 			}) }}
 
 			{{ govukInput({
-				label: { text: "County (optional)" },
+				label: { text: "County (optional)", classes: "govuk-label--s" },
 				classes: "govuk-!-width-two-thirds",
 				id: "invoice-county",
 				name: "invoice-county",
@@ -76,7 +76,7 @@ UK invoice address
 			}) }}
 
 			{{ govukInput({
-				label: { text: "Postcode" },
+				label: { text: "Postcode", classes: "govuk-label--s" },
 				classes: "govuk-input--width-10",
 				id: "invoice-postcode",
 				name: "invoice-postcode",
