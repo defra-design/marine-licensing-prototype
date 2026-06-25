@@ -89,7 +89,8 @@ Invoice contact details
 			}) }}
 
 			<div class="govuk-button-group">
-				{{ govukButton({ text: "Continue" }) }}
+				{# Individual users skip the purchase order page, so this is the last page before the check page #}
+				{{ govukButton({ text: "Save and continue" if returnTo === 'check' or not isOrganisation else "Continue" }) }}
 				{% if returnTo !== 'check' %}
 				<a class="govuk-link govuk-link--no-visited-state" href="../marine-licence-start-page">Cancel</a>
 				{% endif %}

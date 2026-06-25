@@ -71,7 +71,7 @@ International invoice address
 			}) }}
 
 			<div class="govuk-button-group">
-				{{ govukButton({ text: "Continue" }) }}
+				{{ govukButton({ text: "Save and continue" if returnTo === 'check' else "Continue" }) }}
 				{% if returnTo !== 'check' %}
 				<a class="govuk-link govuk-link--no-visited-state" href="../marine-licence-start-page">Cancel</a>
 				{% endif %}

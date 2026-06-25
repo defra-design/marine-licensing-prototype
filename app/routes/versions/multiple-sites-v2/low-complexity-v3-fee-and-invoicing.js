@@ -93,6 +93,7 @@ module.exports = function (router) {
 
   const invoicingKeys = [
     'invoice-address-type',
+    'invoice-address-type-previous',
     'invoice-address-line-1',
     'invoice-address-line-2',
     'invoice-town-city',
@@ -126,8 +127,25 @@ module.exports = function (router) {
     res.redirect('is-invoice-address-uk-or-international');
   });
 
+  // Address fields that belong to a specific address type. Cleared whenever
+  // the user switches between UK and international so stale data isn't kept.
+  const ukAddressKeys = [
+    'invoice-address-line-1',
+    'invoice-address-line-2',
+    'invoice-town-city',
+    'invoice-county',
+    'invoice-postcode'
+  ];
+  const intlAddressKeys = [
+    'invoice-country',
+    'invoice-international-address'
+  ];
+
   // ---- 1. Is the invoice contact's address in the UK or international? ----
   router.get(`/versions/${version}/${section}/${subSection}/is-invoice-address-uk-or-international`, function (req, res) {
+    // Snapshot the currently-stored type so the router can tell whether the
+    // user actually switched (the kit overwrites the live value on POST).
+    req.session.data['invoice-address-type-previous'] = req.session.data['invoice-address-type'] || '';
     renderInvoicing(res, req, 'is-invoice-address-uk-or-international');
   });
 
@@ -141,15 +159,25 @@ module.exports = function (router) {
       });
     }
 
+    const previousType = req.session.data['invoice-address-type-previous'];
+    const typeChanged = previousType && previousType !== addressType;
+
+    // Switching UK <-> international: clear whatever address data was stored
+    // so the user re-enters it fresh on the relevant address page.
+    if (typeChanged) {
+      ukAddressKeys.concat(intlAddressKeys).forEach(function (key) {
+        delete req.session.data[key];
+      });
+    }
+
     const data = req.session.data;
-    // Has the address for the chosen type already been captured?
     const ukAddressCaptured = data['invoice-address-line-1'] && data['invoice-address-line-1'].trim() !== '';
     const intlAddressCaptured = data['invoice-country'] && data['invoice-country'].trim() !== '';
 
     if (returnTo === 'check') {
-      // Changing answers from the check page. If the address for the chosen
-      // type already exists (no real change), bounce straight back to check.
-      // Otherwise route through the relevant address page (still returning to check).
+      // Changing answers from the check page. If the type is unchanged and the
+      // address already exists, bounce straight back to check. Otherwise (switched
+      // type, or address not yet captured) route through the relevant address page.
       if (addressType === 'international') {
         return res.redirect(intlAddressCaptured ? 'check-invoicing-details' : 'international-invoice-address?returnTo=check');
       }
