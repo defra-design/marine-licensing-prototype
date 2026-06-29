@@ -176,12 +176,19 @@ module.exports = function (router) {
 
     if (returnTo === 'check') {
       // Changing answers from the check page. If the type is unchanged and the
-      // address already exists, bounce straight back to check. Otherwise (switched
-      // type, or address not yet captured) route through the relevant address page.
+      // address already exists, bounce straight back to check. If the type
+      // switched, route through address then contact details before check.
+      const addressReturnTo = typeChanged ? 'check-contact' : 'check';
       if (addressType === 'international') {
-        return res.redirect(intlAddressCaptured ? 'check-invoicing-details' : 'international-invoice-address?returnTo=check');
+        if (!typeChanged && intlAddressCaptured) {
+          return res.redirect('check-invoicing-details');
+        }
+        return res.redirect(`international-invoice-address?returnTo=${addressReturnTo}`);
       }
-      return res.redirect(ukAddressCaptured ? 'check-invoicing-details' : 'uk-invoice-address?returnTo=check');
+      if (!typeChanged && ukAddressCaptured) {
+        return res.redirect('check-invoicing-details');
+      }
+      return res.redirect(`uk-invoice-address?returnTo=${addressReturnTo}`);
     }
 
     // Forward flow
@@ -211,6 +218,9 @@ module.exports = function (router) {
       return renderInvoicing(res, req, 'international-invoice-address', { errors: errors });
     }
 
+    if (returnTo === 'check-contact') {
+      return res.redirect('invoice-contact-details?returnTo=check');
+    }
     if (returnTo === 'check') {
       return res.redirect('check-invoicing-details');
     }
@@ -240,6 +250,9 @@ module.exports = function (router) {
       return renderInvoicing(res, req, 'uk-invoice-address', { errors: errors });
     }
 
+    if (returnTo === 'check-contact') {
+      return res.redirect('invoice-contact-details?returnTo=check');
+    }
     if (returnTo === 'check') {
       return res.redirect('check-invoicing-details');
     }
