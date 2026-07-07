@@ -60,3 +60,37 @@ addFilter('todayDate', function() {
   const year = now.getFullYear();
   return `${day} ${month} ${year}`;
 });
+
+/**
+ * Returns a date relative to today formatted in GOV.UK style
+ * Usage: {{ -5 | daysFromToday }} for 5 days ago
+ */
+addFilter('daysFromToday', function(offset) {
+  const days = parseInt(offset, 10) || 0;
+  const date = new Date();
+  date.setDate(date.getDate() + days);
+
+  const day = date.getDate();
+  const monthNames = [
+    'January', 'February', 'March', 'April', 'May', 'June',
+    'July', 'August', 'September', 'October', 'November', 'December'
+  ];
+  const month = monthNames[date.getMonth()];
+  const year = date.getFullYear();
+  return `${day} ${month} ${year}`;
+});
+
+/**
+ * Returns a YYMMDD sort value for a date relative to today
+ * Usage: {{ -5 | daysFromTodaySort }}
+ */
+addFilter('daysFromTodaySort', function(offset) {
+  const days = parseInt(offset, 10) || 0;
+  const date = new Date();
+  date.setDate(date.getDate() + days);
+
+  const year = String(date.getFullYear()).slice(-2);
+  const month = String(date.getMonth() + 1).padStart(2, '0');
+  const day = String(date.getDate()).padStart(2, '0');
+  return `${year}${month}${day}`;
+});
