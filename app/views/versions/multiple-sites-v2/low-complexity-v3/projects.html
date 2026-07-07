@@ -123,6 +123,25 @@ Projects
 				</tr>
 			  </thead>
 			<tbody class="govuk-table__body">
+				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="Installation of floating pontoon, Lyme Regis Harbour, Dorset" data-type="Marine licence application" data-reference="MLA-00003" data-status="Transferred">
+					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Installation of floating pontoon, Lyme Regis Harbour, Dorset</th>
+					<td class="govuk-table__cell">Marine licence application</td>
+					<td class="govuk-table__cell" data-sort-value="MLA-00003">MLA/2026/00003</td>
+					<td class="govuk-table__cell" data-sort-value="004">
+						{{ govukTag({
+							text: "Transferred",
+							classes: "govuk-tag--magenta"
+						}) }}
+					</td>
+					<td class="govuk-table__cell" data-sort-value="{{ -5 | daysFromTodaySort }}">{{ -5 | daysFromToday }}</td>
+					{% if data['user_type'] === 'organisation' %}
+					<td class="govuk-table__cell">Sam Evans</td>
+					{% endif %}
+					<td class="govuk-table__cell">
+						<a href="view-details/transfer" class="govuk-link--no-visited-state">View details</a>
+					</td>
+				</tr>
+
 				<!-- Marine licence (dynamic based on session data) -->
 				{% if data['low-complexity-project-name-text-input'] %}
 				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="{{ data['low-complexity-project-name-text-input'] }}" data-type="Marine licence" data-reference="{% if data['low-complexity-application-status'] == 'sent' %}MLA-10025{% else %}-{% endif %}" data-status="{% if data['low-complexity-application-status'] == 'sent' %}Sent{% else %}Draft{% endif %}">

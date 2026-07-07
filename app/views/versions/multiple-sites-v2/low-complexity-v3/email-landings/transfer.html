@@ -1,0 +1,48 @@
+{% extends "../../layouts/low-complexity-v3.html" %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% if data['organisation-name'] %}
+        {% include "../../includes/organisation-switcher.html" %}
+    {% endif %}
+{% endblock %}
+
+{% block pageTitle %}
+Your application has been transferred - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-two-thirds">
+
+		{% if data['low-complexity-project-name-text-input'] %}
+		<span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
+		{% else %}
+		<span class="govuk-caption-l">Installation of floating pontoon, Lyme Regis Harbour, Dorset</span>
+		{% endif %}
+
+		<h1 class="govuk-heading-l">Your application has been transferred</h1>
+
+		<p class="govuk-body">Your application has been transferred from Get permission for marine work to our Marine Case Management System (MCMS).</p>
+
+		<p class="govuk-body">Get permission for marine work currently processes certain types of marine licence application. MCMS processes all types, so we have transferred your application there.</p>
+
+		<p class="govuk-body">Your application will continue to be managed as normal and you do not need to do anything.</p>
+
+		<h2 class="govuk-heading-m">What happens next</h2>
+
+		<p class="govuk-body">Your fee estimate may change but we will confirm that when we contact you.</p>
+
+		<p class="govuk-body">If you have an MCMS account you can <a class="govuk-link govuk-link--no-visited-state" href="../view-details/transfer">track the progress of your application</a>.</p>
+
+		<p class="govuk-body">If you have not heard from us or do not have access to MCMS, contact us:</p>
+
+		<p class="govuk-body">Email: <a class="govuk-link govuk-link--no-visited-state" href="#">marine.consents@marinemanagement.org.uk</a></p>
+
+		<p class="govuk-body">Phone: 0191 376 2791</p>
+
+	</div>
+</div>
+
+{% endblock %}
