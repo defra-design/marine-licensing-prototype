@@ -24,7 +24,28 @@
 }) }}
 {{ govukServiceNavigation({
   serviceName: "Get permission for marine work",
-  serviceUrl: "/versions/multiple-sites-v2/low-complexity-v3/homepage"
+  serviceUrl: "/versions/multiple-sites-v2/low-complexity-v3/homepage",
+  navigation: [
+    {
+      href: "../homepage",
+      text: "Home",
+      active: false
+    },
+    {
+      href: "../projects",
+      text: "Projects",
+      active: false
+    },
+    {
+      href: "#",
+      text: "Defra account",
+      active: false
+    },
+    {
+      href: "../sign-in?goto=homepage",
+      text: "Sign out"
+    }
+  ]
 }) }}
 {% endblock %}
 
@@ -33,7 +54,7 @@
     {% if data['organisation-name'] %}
         {% include "../../includes/organisation-switcher.html" %}
     {% endif %}
-    <a class="govuk-back-link govuk-link--no-visited-state" href="../projects">Back to your projects</a>
+    <a class="govuk-back-link govuk-link--no-visited-state" href="javascript:history.back()">Back</a>
 {% endblock %}
 
 {% block pageTitle %}
@@ -45,7 +66,7 @@
 <div class="govuk-grid-row app-read-only">
     <div class="govuk-grid-column-full">
 
-        <span class="govuk-caption-l">MLA/2026/00003 – Marine licence</span>
+        <span class="govuk-caption-l">MLA/2026/10003</span>
         <h1 class="govuk-heading-l">
             Installation of floating pontoon, Lyme Regis Harbour, Dorset
         </h1>
@@ -74,7 +95,7 @@
                     </div>
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Reference number</dt>
-                        <dd class="govuk-summary-list__value">MLA/2026/00003</dd>
+                        <dd class="govuk-summary-list__value">MLA/2026/10003</dd>
                     </div>
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Who the Marine licence is for</dt>
@@ -85,7 +106,7 @@
                         <dd class="govuk-summary-list__value">{{ -5 | daysFromToday }}</dd>
                     </div>
                     <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Date of move</dt>
+                        <dt class="govuk-summary-list__key">Date of transfer</dt>
                         <dd class="govuk-summary-list__value">{{ "" | todayDate }}</dd>
                     </div>
                 </dl>

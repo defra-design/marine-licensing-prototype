@@ -1129,4 +1129,18 @@ module.exports = function (router) {
     res.redirect(returnPage);
   });
 
+  // Pontoon landing page – pass showBackToProjects explicitly (query is not
+  // available in auto-rendered views; only session data is)
+  router.get(`/versions/${version}/${section}/email-landings/pontoon-landing`, function (req, res) {
+    const showBackToProjects = req.query.from === 'projects';
+
+    if (!showBackToProjects) {
+      delete req.session.data.from;
+    }
+
+    res.render(`versions/${version}/${section}/email-landings/pontoon-landing`, {
+      showBackToProjects: showBackToProjects
+    });
+  });
+
 }
