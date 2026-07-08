@@ -177,8 +177,8 @@ module.exports = function (router) {
     if (returnTo === 'check') {
       // Changing answers from the check page. If the type is unchanged and the
       // address already exists, bounce straight back to check. If the type
-      // switched, route through address then contact details before check.
-      const addressReturnTo = typeChanged ? 'check-contact' : 'check';
+      // switched, route through address before returning to check.
+      const addressReturnTo = 'check';
       if (addressType === 'international') {
         if (!typeChanged && intlAddressCaptured) {
           return res.redirect('check-invoicing-details');
@@ -218,9 +218,6 @@ module.exports = function (router) {
       return renderInvoicing(res, req, 'international-invoice-address', { errors: errors });
     }
 
-    if (returnTo === 'check-contact') {
-      return res.redirect('invoice-contact-details?returnTo=check');
-    }
     if (returnTo === 'check') {
       return res.redirect('check-invoicing-details');
     }
@@ -250,9 +247,6 @@ module.exports = function (router) {
       return renderInvoicing(res, req, 'uk-invoice-address', { errors: errors });
     }
 
-    if (returnTo === 'check-contact') {
-      return res.redirect('invoice-contact-details?returnTo=check');
-    }
     if (returnTo === 'check') {
       return res.redirect('check-invoicing-details');
     }
@@ -276,7 +270,7 @@ module.exports = function (router) {
       errors.organisationName = 'Enter organisation name';
     }
     if (!req.body['invoice-phone'] || req.body['invoice-phone'].trim() === '') {
-      errors.phone = req.session.data['invoice-address-type'] === 'international' ? 'Enter phone number' : 'Enter UK phone number';
+      errors.phone = 'Enter phone number';
     }
     if (!req.body['invoice-email'] || req.body['invoice-email'].trim() === '') {
       errors.email = 'Enter email address';
