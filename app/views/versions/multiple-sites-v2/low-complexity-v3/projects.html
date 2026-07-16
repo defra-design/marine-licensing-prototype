@@ -142,6 +142,25 @@ Projects
 					</td>
 				</tr>
 
+				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="Plymouth Sound cable laying" data-type="Marine licence application" data-reference="MLA-00002" data-status="Unable to progress">
+					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Plymouth Sound cable laying</th>
+					<td class="govuk-table__cell">Marine licence application</td>
+					<td class="govuk-table__cell" data-sort-value="MLA-00002">MLA/2026/00002</td>
+					<td class="govuk-table__cell" data-sort-value="005">
+						{{ govukTag({
+							text: "Unable to progress",
+							classes: "govuk-tag--orange"
+						}) }}
+					</td>
+					<td class="govuk-table__cell" data-sort-value="{{ -85 | daysFromTodaySort }}">{{ -85 | daysFromToday }}</td>
+					{% if data['user_type'] === 'organisation' %}
+					<td class="govuk-table__cell">Sam Evans</td>
+					{% endif %}
+					<td class="govuk-table__cell">
+						<a href="email-landings/plymouth-sound-landing?from=projects" class="govuk-link--no-visited-state">View details</a>
+					</td>
+				</tr>
+
 				<!-- Marine licence (dynamic based on session data) -->
 				{% if data['low-complexity-project-name-text-input'] %}
 				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="{{ data['low-complexity-project-name-text-input'] }}" data-type="Marine licence" data-reference="{% if data['low-complexity-application-status'] == 'sent' %}MLA-10025{% else %}-{% endif %}" data-status="{% if data['low-complexity-application-status'] == 'sent' %}Sent{% else %}Draft{% endif %}">

@@ -1143,4 +1143,18 @@ module.exports = function (router) {
     });
   });
 
+  // Plymouth Sound landing page – pass showBackToProjects explicitly (query is not
+  // available in auto-rendered views; only session data is)
+  router.get(`/versions/${version}/${section}/email-landings/plymouth-sound-landing`, function (req, res) {
+    const showBackToProjects = req.query.from === 'projects';
+
+    if (!showBackToProjects) {
+      delete req.session.data.from;
+    }
+
+    res.render(`versions/${version}/${section}/email-landings/plymouth-sound-landing`, {
+      showBackToProjects: showBackToProjects
+    });
+  });
+
 }
