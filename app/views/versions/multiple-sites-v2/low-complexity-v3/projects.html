@@ -142,8 +142,61 @@ Projects
 					</td>
 				</tr>
 
+				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="Plymouth Sound cable laying" data-type="Marine licence application" data-reference="MLA-10002" data-status="Unable to progress">
+					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Plymouth Sound cable laying</th>
+					<td class="govuk-table__cell">Marine licence application</td>
+					<td class="govuk-table__cell" data-sort-value="MLA-10002">MLA/2026/10002</td>
+					<td class="govuk-table__cell" data-sort-value="005">
+						{{ govukTag({
+							text: "Unable to progress",
+							classes: "govuk-tag--orange"
+						}) }}
+					</td>
+					<td class="govuk-table__cell" data-sort-value="{{ -85 | daysFromTodaySort }}">{{ -85 | daysFromToday }}</td>
+					{% if data['user_type'] === 'organisation' %}
+					<td class="govuk-table__cell">Sam Evans</td>
+					{% endif %}
+					<td class="govuk-table__cell">
+						<a href="email-landings/plymouth-sound-landing?from=projects" class="govuk-link--no-visited-state">View details</a>
+					</td>
+				</tr>
+
+				<!-- Plymouth Sound cable laying resubmit draft -->
+				<!-- Only appears once the applicant clicks Continue on the Update and resubmit page (sets resubmit-draft-created). Cleared on Delete and on sign-in. -->
+				{% if data['resubmit-draft-created'] and not data['deleted-plymouth-resubmit'] %}
+				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="Plymouth Sound cable laying" data-type="Marine licence application" data-reference="{% if data['low-complexity-application-status'] == 'sent' %}MLA-10025{% else %}-{% endif %}" data-status="{% if data['low-complexity-application-status'] == 'sent' %}Sent{% else %}Draft{% endif %}">
+					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Plymouth Sound cable laying</th>
+					<td class="govuk-table__cell">Marine licence application</td>
+					<td class="govuk-table__cell" data-sort-value="{% if data['low-complexity-application-status'] == 'sent' %}MLA-10025{% else %}-{% endif %}">{% if data['low-complexity-application-status'] == 'sent' %}MLA/2025/10025{% else %}-{% endif %}</td>
+					<td class="govuk-table__cell" data-sort-value="{% if data['low-complexity-application-status'] == 'sent' %}002{% else %}003{% endif %}">
+						{% if data['low-complexity-application-status'] == 'sent' %}
+						{{ govukTag({
+							text: "Sent",
+							classes: "govuk-tag--green"
+						}) }}
+						{% else %}
+						{{ govukTag({
+							text: "Draft",
+							classes: "govuk-tag--light-blue"
+						}) }}
+						{% endif %}
+					</td>
+					<td class="govuk-table__cell" data-sort-value="{% if data['low-complexity-submission-date-sort'] %}{{ data['low-complexity-submission-date-sort'] }}{% else %}-{% endif %}">{% if data['low-complexity-submission-date'] %}{{ data['low-complexity-submission-date'] }}{% else %}-{% endif %}</td>
+					{% if data['user_type'] === 'organisation' %}
+					<td class="govuk-table__cell">Sam Evans</td>
+					{% endif %}
+					<td class="govuk-table__cell">
+						{% if data['low-complexity-application-status'] == 'sent' %}
+						<a href="check-your-answers" class="govuk-link--no-visited-state">View details</a>
+						{% else %}
+						<a href="marine-licence-start-page" class="govuk-link--no-visited-state govuk-!-margin-right-4">Continue</a> <a href="delete?project=plymouth-resubmit&name=Plymouth Sound cable laying&type=Marine licence application&return=projects" class="govuk-link--no-visited-state">Delete</a>
+						{% endif %}
+					</td>
+				</tr>
+				{% endif %}
+
 				<!-- Marine licence (dynamic based on session data) -->
-				{% if data['low-complexity-project-name-text-input'] %}
+				{% if data['low-complexity-project-name-text-input'] and not data['resubmit-draft-created'] %}
 				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="{{ data['low-complexity-project-name-text-input'] }}" data-type="Marine licence" data-reference="{% if data['low-complexity-application-status'] == 'sent' %}MLA-10025{% else %}-{% endif %}" data-status="{% if data['low-complexity-application-status'] == 'sent' %}Sent{% else %}Draft{% endif %}">
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">{{ data['low-complexity-project-name-text-input'] }}</th>
 					<td class="govuk-table__cell">Marine licence application</td>

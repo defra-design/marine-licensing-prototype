@@ -867,6 +867,11 @@ module.exports = function (router) {
     delete req.session.data['low-complexity-sharing-information'];
     delete req.session.data['low-complexity-sharing-information-details'];
     delete req.session.data['low-complexity-sharing-information-completed'];
+
+    // Clear reject / resubmit journey data so the resubmit draft does not linger
+    delete req.session.data['resubmit-draft-created'];
+    delete req.session.data['resubmit-draft-created-date'];
+    delete req.session.data['deleted-plymouth-resubmit'];
     
     // Clear error flags
     delete req.session.data['errorthispage'];
@@ -1141,6 +1146,184 @@ module.exports = function (router) {
     res.render(`versions/${version}/${section}/email-landings/pontoon-landing`, {
       showBackToProjects: showBackToProjects
     });
+  });
+
+  // Plymouth Sound landing page – pass showBackToProjects explicitly (query is not
+  // available in auto-rendered views; only session data is)
+  router.get(`/versions/${version}/${section}/email-landings/plymouth-sound-landing`, function (req, res) {
+    const showBackToProjects = req.query.from === 'projects';
+
+    if (!showBackToProjects) {
+      delete req.session.data.from;
+    }
+
+    res.render(`versions/${version}/${section}/email-landings/plymouth-sound-landing`, {
+      showBackToProjects: showBackToProjects
+    });
+  });
+
+  ///////////////////////////////////////////
+  // Reject / resubmit journey
+  ///////////////////////////////////////////
+
+  // Clears every key the resubmit seed sets, returning the session to its
+  // pre-Continue state. This is what guarantees no resubmit draft can show on
+  // the Projects page (neither the dedicated row nor the generic project-name
+  // row) until Continue is clicked again.
+  function clearResubmitDraft(d) {
+    const keys = [
+      'low-complexity-application-status', 'low-complexity-application-reference',
+      'resubmit-draft-created', 'resubmit-draft-created-date', 'deleted-plymouth-resubmit',
+      'low-complexity-project-name-text-input',
+      'low-complexity-project-background', 'low-complexity-project-background-completed',
+      'start-date-month', 'start-date-year', 'end-date-month', 'end-date-year', 'low-complexity-dates-completed',
+      'low-complexity-site-location-method', 'has-visited-site-details',
+      'low-complexity-site-name', 'low-complexity-site-name-completed',
+      'low-complexity-file-upload-activities', 'site-details-confirmed-complete',
+      'mpp-previously-unlocked',
+      'low-complexity-wfd-within-nautical-mile', 'low-complexity-wfd-completed',
+      'low-complexity-special-legal-powers', 'low-complexity-special-legal-powers-completed',
+      'low-complexity-harbour-authority', 'low-complexity-harbour-authority-details', 'low-complexity-harbour-authority-completed',
+      'low-complexity-other-permissions', 'low-complexity-other-permissions-details', 'low-complexity-other-permissions-completed',
+      'low-complexity-consultation', 'low-complexity-consultation-details', 'low-complexity-consultation-completed',
+      'low-complexity-fee-estimate-completed', 'low-complexity-fee-terms-checkbox', 'low-complexity-fee-acceptance',
+      'invoice-address-type', 'invoice-address-line-1', 'invoice-address-line-2', 'invoice-town-city',
+      'invoice-county', 'invoice-postcode', 'invoice-full-name', 'invoice-organisation-name',
+      'invoice-phone', 'invoice-email', 'invoice-po-required', 'low-complexity-invoicing-completed',
+      'low-complexity-sharing-information', 'low-complexity-sharing-information-completed'
+    ];
+    keys.forEach(function (k) { delete d[k]; });
+    ['s-acc-1', 's-bio-1', 's-agg-4', 's-emp-1', 's-uwn-2'].forEach(function (key) {
+      delete d['marine-plan-policy-' + key + '-completed'];
+      delete d['marine-plan-policy-v2-' + key + '-completed'];
+    });
+  }
+
+  // Update and resubmit page — reset any previously-created resubmit draft so it
+  // only (re)appears once Continue is clicked. Being on this page means the user
+  // is about to create the draft; until they submit, no draft should exist.
+  // no-store prevents the browser serving a cached page on back-navigation.
+  router.get(`/versions/${version}/${section}/update-and-resubmit`, function (req, res) {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+    clearResubmitDraft(req.session.data);
+    res.render(`versions/${version}/${section}/update-and-resubmit`);
+  });
+
+  // Seeds a brand new draft that mirrors the original (rejected) Plymouth Sound
+  // cable laying application, so the marine licence start page shows a fully
+  // completed draft that can be reviewed, corrected and resubmitted.
+  router.get(`/versions/${version}/${section}/seed-resubmit-draft`, function (req, res) {
+    const d = req.session.data;
+
+    // Treat as a fresh draft application
+    d['low-complexity-application-status'] = 'draft';
+    d['low-complexity-application-reference'] = '-';
+
+    // Mark that the resubmit draft has been created. This is what makes the new
+    // draft show on the Projects page and switches the "unable to progress"
+    // landing page and the original application's view-details page to their
+    // post-resubmit state. Store the creation date in GOV.UK format.
+    d['resubmit-draft-created'] = 'true';
+    // Re-running Continue after a delete should bring the draft back
+    delete d['deleted-plymouth-resubmit'];
+    const now = new Date();
+    const monthNames = ['January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'];
+    d['resubmit-draft-created-date'] = `${now.getDate()} ${monthNames[now.getMonth()]} ${now.getFullYear()}`;
+
+    // --- Project details ---
+    d['low-complexity-project-name-text-input'] = 'Plymouth Sound cable laying';
+    d['low-complexity-project-background'] = "Southwest Marine Works Ltd will install a subsea telecommunications cable across Plymouth Sound to connect a new coastal monitoring station on Mount Batten to the mainland network. The works involve laying approximately 2.4 kilometres of fibre optic cable along a pre-surveyed route on the seabed, with sections buried using a jetting sled to protect the cable from vessel anchors and fishing activity. Landfall points will be established at Mount Batten Pier and Queen Anne's Battery, with cable protection installed at both shore ends.";
+    d['low-complexity-project-background-completed'] = true;
+
+    d['start-date-month'] = '6';
+    d['start-date-year'] = '2026';
+    d['end-date-month'] = '1';
+    d['end-date-year'] = '2027';
+    d['low-complexity-dates-completed'] = true;
+
+    // --- Site and activity details (file upload path, single site + activity) ---
+    d['low-complexity-site-location-method'] = 'file-upload';
+    d['has-visited-site-details'] = true;
+    d['low-complexity-site-name'] = "Plymouth Sound cable route – Mount Batten to Queen Anne's Battery";
+    d['low-complexity-site-name-completed'] = true;
+    d['low-complexity-file-upload-activities'] = [
+      {
+        activityNumber: 1,
+        'low-complexity-type-of-activity': 'construction',
+        'low-complexity-type-of-activity-completed': true,
+        'low-complexity-type-of-works': 'construction-new',
+        'low-complexity-construction-structures': ['subsea-cables'],
+        'low-complexity-activity-description': "Installation of a single 48-core armoured fibre optic telecommunications cable (nominal outer diameter 32mm) along a pre-surveyed route of approximately 2.4 kilometres across Plymouth Sound. The cable will be surface-laid from a cable lay barge and buried to a target depth of 0.6 to 1.0 metres using a water-jetting sled. Where burial to target depth is not achievable due to rock or hard substrate, the cable will be protected using concrete mattresses and rock bags. At each landfall (Mount Batten Pier and Queen Anne's Battery) the cable will be brought ashore through pre-installed ducts and protected with cast-iron split-pipe and a short section of rock armour.",
+        'low-complexity-activity-description-completed': true,
+        'low-complexity-site-duration-years': '0',
+        'low-complexity-site-duration-months': '1',
+        'low-complexity-site-duration-completed': true,
+        'low-complexity-date-completed-by': 'No',
+        'low-complexity-date-completed-by-completed': true,
+        'low-complexity-months-of-activity': 'Yes',
+        'low-complexity-months-of-activity-details': 'Installation to be carried out between June and September to make use of the calmer summer weather window and to avoid the peak overwintering period for waterfowl in the Sound.',
+        'low-complexity-months-of-activity-completed': true,
+        'low-complexity-working-hours': 'Marine operations on a 24-hour basis over a continuous installation window of up to 5 days. Landfall works at each shore end limited to Monday to Saturday, 07:00 to 19:00.',
+        'low-complexity-working-hours-completed': true
+      }
+    ];
+    d['site-details-confirmed-complete'] = true;
+
+    // --- Marine plan policy considerations (5 active policies in this prototype) ---
+    // The start page reads either the v1 (marine-plan-policy-) or v2
+    // (marine-plan-policy-v2-) flags depending on the session's mpp-version, so
+    // seed both variants to keep the section Completed whichever is active.
+    d['mpp-previously-unlocked'] = true;
+    ['s-acc-1', 's-bio-1', 's-agg-4', 's-emp-1', 's-uwn-2'].forEach(function (key) {
+      d['marine-plan-policy-' + key + '-completed'] = true;
+      d['marine-plan-policy-v2-' + key + '-completed'] = true;
+    });
+
+    // --- Water Framework Directive ---
+    // Carries over the original (incorrect) answer of "No" so the applicant can
+    // review and correct it before resubmitting.
+    d['low-complexity-wfd-within-nautical-mile'] = 'No';
+    d['low-complexity-wfd-completed'] = true;
+
+    // --- Other permissions ---
+    d['low-complexity-special-legal-powers'] = 'No';
+    d['low-complexity-special-legal-powers-completed'] = true;
+    d['low-complexity-harbour-authority'] = 'Yes';
+    d['low-complexity-harbour-authority-details'] = "Dockyard Port of Plymouth. The works have been discussed with the Queen's Harbour Master (QHM Plymouth), who controls the Dockyard Port, and with Cattewater Harbour Commissioners. A works licence and dive/vessel operation approvals will be obtained from QHM before marine operations begin. QHM ref: QHM/PLY/2026/117.";
+    d['low-complexity-harbour-authority-completed'] = true;
+    d['low-complexity-other-permissions'] = 'Yes';
+    d['low-complexity-other-permissions-details'] = "Plymouth City Council — pre-application advice sought regarding the landfall works. Devon and Severn IFCA — consulted in relation to fishing activity along the route. Natural England — pre-application advice sought in relation to the Plymouth Sound and Estuaries SAC and MCZ.";
+    d['low-complexity-other-permissions-completed'] = true;
+    d['low-complexity-consultation'] = 'Yes';
+    d['low-complexity-consultation-details'] = "Consulted the Queen's Harbour Master, Cattewater Harbour Commissioners, Devon and Severn IFCA, Natural England and local sailing and diving clubs. No objections raised subject to adequate burial and protection and avoidance of designated features.";
+    d['low-complexity-consultation-completed'] = true;
+
+    // --- Fee estimate ---
+    d['low-complexity-fee-estimate-completed'] = 'true';
+    d['low-complexity-fee-terms-checkbox'] = 'agree';
+    d['low-complexity-fee-acceptance'] = 'yes';
+    delete d['low-complexity-fee-estimate-rejected'];
+
+    // --- Invoicing details ---
+    d['invoice-address-type'] = 'uk';
+    d['invoice-address-line-1'] = "Unit 7, Queen Anne's Battery";
+    d['invoice-address-line-2'] = 'Coxside';
+    d['invoice-town-city'] = 'Plymouth';
+    d['invoice-county'] = 'Devon';
+    d['invoice-postcode'] = 'PL4 0LP';
+    d['invoice-full-name'] = 'Rachel Stow';
+    d['invoice-organisation-name'] = 'Southwest Marine Works Ltd';
+    d['invoice-phone'] = '01752 900123';
+    d['invoice-email'] = 'accounts@southwestmarineworks.co.uk';
+    d['invoice-po-required'] = 'no';
+    d['low-complexity-invoicing-completed'] = true;
+
+    // --- Sharing project information publicly ---
+    d['low-complexity-sharing-information'] = 'Yes';
+    d['low-complexity-sharing-information-completed'] = true;
+
+    res.redirect('marine-licence-start-page');
   });
 
 }
