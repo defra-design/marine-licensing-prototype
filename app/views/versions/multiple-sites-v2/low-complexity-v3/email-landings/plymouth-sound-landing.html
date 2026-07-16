@@ -29,7 +29,7 @@ We are unable to progress your application - {{ data['headerNameExemption'] or '
 
 		<h1 class="govuk-heading-l">We are unable to progress your application</h1>
 
-		<p class="govuk-body">We have reviewed your application (MLA/2026/00002) and we are unable to progress it as submitted.</p>
+		<p class="govuk-body">We have reviewed your application (MLA/2026/10002) and we are unable to progress it as submitted.</p>
 
 		<h2 class="govuk-heading-m">Why we are unable to progress your application</h2>
 
@@ -41,6 +41,17 @@ We are unable to progress your application - {{ data['headerNameExemption'] or '
 		</ul>
 
 		<p class="govuk-body">The site location entered indicated that it was within 1 nautical mile of the coast but no Water Framework Directive assessment was uploaded. Check the site location and if it meets the requirements for a WFD assessment.</p>
+
+		{% if data['resubmit-draft-created'] and not data['deleted-plymouth-resubmit'] %}
+
+		<div class="govuk-inset-text">
+			<p class="govuk-body">We created a new draft application for you on {{ data['resubmit-draft-created-date'] }}.</p>
+			<p class="govuk-body govuk-!-margin-bottom-0">View it in <a class="govuk-link govuk-link--no-visited-state" href="../projects">Projects</a>.</p>
+		</div>
+
+		<p class="govuk-body govuk-!-margin-top-6"><a class="govuk-link govuk-link--no-visited-state" href="../view-details/plymouth-sound-cable-laying">View your original application</a></p>
+
+		{% else %}
 
 		<h2 class="govuk-heading-m">What you can do</h2>
 
@@ -56,6 +67,8 @@ We are unable to progress your application - {{ data['headerNameExemption'] or '
 		</div>
 
 		<p class="govuk-body"><a class="govuk-link govuk-link--no-visited-state" href="../view-details/plymouth-sound-cable-laying">View your original application</a></p>
+
+		{% endif %}
 
 	</div>
 </div>
