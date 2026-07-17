@@ -7,6 +7,8 @@ module.exports = function (router) {
   const manualEntry = "manual-entry";
   const basePath = `/versions/multiple-sites-v2/low-complexity-v3/site-details/manual-entry`;
   const viewBase = `${version}/${section}/${subsection}/${manualEntry}`;
+  // Shared activity/upload views live in site-details/ (not the manual-entry subfolder)
+  const sharedViewBase = `${version}/${section}/${subsection}`;
 
   // ==============================================================================================
   // Activity data keys - these are the flat session keys used by the shared activity pages
@@ -161,6 +163,28 @@ module.exports = function (router) {
         delete activity[key];
       }
     });
+  }
+
+  // ==============================================================================================
+  // Construction file upload helpers (manual entry path — per site)
+  // ==============================================================================================
+
+  // True if any activity in the given site is "Construction of new works"
+  function siteHasConstructionNew(site) {
+    if (!site || !site.activities) return false;
+    return site.activities.some(a => a['low-complexity-type-of-works'] === 'construction-new');
+  }
+
+  // Returns a site's construction files array, lazily seeding the first (mandatory)
+  // card only when the site has a construction-new activity.
+  function getConstructionFiles(site) {
+    if (siteHasConstructionNew(site)) {
+      if (!site.constructionFiles) {
+        site.constructionFiles = [{ fileNumber: 1 }];
+      }
+      return site.constructionFiles;
+    }
+    return site.constructionFiles || [];
   }
 
   // ==============================================================================================
@@ -662,6 +686,10 @@ module.exports = function (router) {
       delete req.session.data['low-complexity-manual-current-edit-activity'];
     }
 
+    // Seed the mandatory construction file card for any site with a construction-new
+    // activity (after pending activity data has been saved back to the site above)
+    sites.forEach(site => { getConstructionFiles(site); });
+
     res.render(`${viewBase}/review-site-details`, {
       data: req.session.data,
       sites: sites
@@ -690,6 +718,12 @@ module.exports = function (router) {
         if (!act['low-complexity-months-of-activity-completed']) allComplete = false;
         if (!act['low-complexity-working-hours-completed']) allComplete = false;
       });
+      // Construction file uploads must all be complete when the site has a construction-new activity
+      if (siteHasConstructionNew(site)) {
+        const files = getConstructionFiles(site);
+        if (files.length === 0) allComplete = false;
+        files.forEach(f => { if (!f.filename) allComplete = false; });
+      }
     });
 
     if (allComplete) {
@@ -852,6 +886,88 @@ module.exports = function (router) {
       const site = getSiteByNumber(req.session, siteParam);
       if (site) {
         deleteActivityFromSite(site, activityParam);
+      }
+    }
+    res.redirect(`${basePath}/review-site-details`);
+  });
+
+  // ==============================================================================================
+  // Construction file upload cards (manual entry path)
+  // ==============================================================================================
+
+  // Upload construction drawing page
+  router.get(`${basePath}/construction-upload`, function (req, res) {
+    const site = getSiteByNumber(req.session, req.query.site);
+    if (!site) {
+      return res.redirect(`${basePath}/review-site-details`);
+    }
+    const fileNumber = parseInt(req.query.file) || 1;
+    const files = getConstructionFiles(site);
+    const file = files.find(f => f.fileNumber === fileNumber) || {};
+    res.render(`${sharedViewBase}/construction-upload`, {
+      data: req.session.data,
+      siteNumber: site.siteNumber,
+      fileNumber: fileNumber,
+      filename: file.filename
+    });
+  });
+
+  // Upload construction drawing router (POST) — fakes an uploaded file
+  router.post(`${basePath}/construction-upload-router`, function (req, res) {
+    const site = getSiteByNumber(req.session, req.body['site-number']);
+    const fileNumber = parseInt(req.body['file-number']) || 1;
+    if (site) {
+      const files = getConstructionFiles(site);
+      const file = files.find(f => f.fileNumber === fileNumber);
+      if (file) file.filename = 'tech-drawing.pdf';
+    }
+    const siteNum = site ? site.siteNumber : '';
+    res.redirect(`${basePath}/review-site-details#site-${siteNum}-construction-file-${fileNumber}`);
+  });
+
+  // Add another construction file upload card
+  router.get(`${basePath}/add-construction-file`, function (req, res) {
+    const site = getSiteByNumber(req.session, req.query.site);
+    if (!site) {
+      return res.redirect(`${basePath}/review-site-details`);
+    }
+    const files = getConstructionFiles(site);
+    const fileNumber = files.length + 1;
+    files.push({ fileNumber: fileNumber });
+    // New incomplete card means site details are no longer confirmed complete
+    delete req.session.data['site-details-confirmed-complete'];
+    res.redirect(`${basePath}/review-site-details#site-${site.siteNumber}-construction-file-${fileNumber}`);
+  });
+
+  // Delete construction file upload card — confirmation page
+  router.get(`${basePath}/delete-construction-file`, function (req, res) {
+    const site = getSiteByNumber(req.session, req.query.site);
+    if (!site) {
+      return res.redirect(`${basePath}/review-site-details`);
+    }
+    const fileNumber = parseInt(req.query.file);
+    const files = getConstructionFiles(site);
+    const file = files.find(f => f.fileNumber === fileNumber);
+    if (!file) {
+      return res.redirect(`${basePath}/review-site-details`);
+    }
+    res.render(`${sharedViewBase}/delete-construction-file`, {
+      data: req.session.data,
+      siteNumber: site.siteNumber,
+      fileNumber: fileNumber,
+      filename: file.filename
+    });
+  });
+
+  router.post(`${basePath}/delete-construction-file-router`, function (req, res) {
+    const site = getSiteByNumber(req.session, req.body['site-number']);
+    const fileNumber = parseInt(req.body['file-number']);
+    if (site && fileNumber) {
+      const files = getConstructionFiles(site);
+      const index = files.findIndex(f => f.fileNumber === fileNumber);
+      if (index > -1) {
+        files.splice(index, 1);
+        files.forEach((f, i) => { f.fileNumber = i + 1; });
       }
     }
     res.redirect(`${basePath}/review-site-details`);

@@ -1,0 +1,47 @@
+{% extends "../../layouts/low-complexity-v3.html" %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% if data['organisation-name'] %}
+        {% include "../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set pageHeadingTextHTML %}
+Changing your type of activity will delete your construction drawings
+{% endset %}
+
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
+    <h1 class="govuk-heading-l">
+      {{ pageHeadingTextHTML }}
+    </h1>
+
+    <div class="govuk-inset-text">
+      <p class="govuk-body">You only need construction drawings for construction of new marine works.</p>
+      <p class="govuk-body govuk-!-margin-bottom-0">If you select construction of new marine works again later, you'll need to upload your drawings again.</p>
+    </div>
+
+    <form action="delete-construction-files-on-change-router" method="post" novalidate>
+      <div class="govuk-button-group govuk-!-margin-top-7">
+        {{ govukButton({
+          text: "Yes, continue",
+          classes: "govuk-button--warning"
+        }) }}
+        <a class="govuk-link govuk-link--no-visited-state" href="delete-construction-files-on-change-cancel">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}
