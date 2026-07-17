@@ -196,7 +196,8 @@ Projects
 				{% endif %}
 
 				<!-- Marine licence (dynamic based on session data) -->
-				{% if data['low-complexity-project-name-text-input'] and not data['resubmit-draft-created'] %}
+				<!-- Requires low-complexity-application-status so a project name captured from a query param (e.g. the Reject email link) does not, on its own, render a draft row. -->
+				{% if data['low-complexity-project-name-text-input'] and data['low-complexity-application-status'] and not data['resubmit-draft-created'] %}
 				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="{{ data['low-complexity-project-name-text-input'] }}" data-type="Marine licence" data-reference="{% if data['low-complexity-application-status'] == 'sent' %}MLA-10025{% else %}-{% endif %}" data-status="{% if data['low-complexity-application-status'] == 'sent' %}Sent{% else %}Draft{% endif %}">
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">{{ data['low-complexity-project-name-text-input'] }}</th>
 					<td class="govuk-table__cell">Marine licence application</td>
