@@ -827,6 +827,8 @@ module.exports = function (router) {
     // Clear site details data
     delete req.session.data['has-visited-site-details'];
     delete req.session.data['low-complexity-site-name-completed'];
+    delete req.session.data['low-complexity-construction-files'];
+    delete req.session.data['construction-delete-next'];
     delete req.session.data['low-complexity-type-of-activity'];
     delete req.session.data['low-complexity-type-of-works'];
     delete req.session.data['low-complexity-type-of-works-previous'];
@@ -1179,7 +1181,8 @@ module.exports = function (router) {
       'start-date-month', 'start-date-year', 'end-date-month', 'end-date-year', 'low-complexity-dates-completed',
       'low-complexity-site-location-method', 'has-visited-site-details',
       'low-complexity-site-name', 'low-complexity-site-name-completed',
-      'low-complexity-file-upload-activities', 'site-details-confirmed-complete',
+      'low-complexity-file-upload-activities', 'low-complexity-construction-files',
+      'construction-delete-next', 'site-details-confirmed-complete',
       'mpp-previously-unlocked',
       'low-complexity-wfd-within-nautical-mile', 'low-complexity-wfd-completed',
       'low-complexity-special-legal-powers', 'low-complexity-special-legal-powers-completed',
@@ -1267,6 +1270,10 @@ module.exports = function (router) {
         'low-complexity-working-hours': 'Marine operations on a 24-hour basis over a continuous installation window of up to 5 days. Landfall works at each shore end limited to Monday to Saturday, 07:00 to 19:00.',
         'low-complexity-working-hours-completed': true
       }
+    ];
+    // Construction of new works activity — seed a completed construction drawing upload
+    d['low-complexity-construction-files'] = [
+      { fileNumber: 1, filename: 'tech-drawing.pdf' }
     ];
     d['site-details-confirmed-complete'] = true;
 

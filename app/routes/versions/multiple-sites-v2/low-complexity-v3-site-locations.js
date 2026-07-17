@@ -89,6 +89,59 @@ module.exports = function (router) {
     });
   }
 
+  // ==============================================================================================
+  // Construction file upload helpers (file upload path — single Site 1)
+  // ==============================================================================================
+
+  // True if any activity in the site is "Construction of new works"
+  function siteHasConstructionNew(session) {
+    const activities = getFileUploadActivities(session);
+    return activities.some(a => a['low-complexity-type-of-works'] === 'construction-new');
+  }
+
+  // Returns the construction files array, lazily seeding the first (mandatory)
+  // card only when the site actually has a construction-new activity.
+  function getConstructionFiles(session) {
+    if (siteHasConstructionNew(session)) {
+      if (!session.data['low-complexity-construction-files']) {
+        session.data['low-complexity-construction-files'] = [{ fileNumber: 1 }];
+      }
+      return session.data['low-complexity-construction-files'];
+    }
+    return session.data['low-complexity-construction-files'] || [];
+  }
+
+  function clearConstructionFiles(session) {
+    delete session.data['low-complexity-construction-files'];
+    delete session.data['construction-delete-next'];
+  }
+
+  // The type-of-activity page is shared by the file upload and manual entry paths.
+  // This returns the activity/file context for whichever path is currently editing,
+  // so the "changing your activity deletes your files" flow works for both.
+  function getConstructionEditContext(session) {
+    if (session.data['low-complexity-site-location-method'] === 'manual-entry') {
+      const siteNum = parseInt(session.data['low-complexity-manual-current-edit-site']);
+      const actNum = parseInt(session.data['low-complexity-manual-current-edit-activity']);
+      const sites = session.data['low-complexity-manual-sites'] || [];
+      const site = sites.find(s => s.siteNumber === siteNum);
+      return {
+        method: 'manual-entry',
+        site: site,
+        activities: site ? (site.activities || []) : [],
+        actNum: actNum,
+        files: site ? site.constructionFiles : undefined
+      };
+    }
+    return {
+      method: 'file-upload',
+      site: null,
+      activities: getFileUploadActivities(session),
+      actNum: parseInt(session.data['low-complexity-current-edit-activity']),
+      files: session.data['low-complexity-construction-files']
+    };
+  }
+
   // Helper to redirect to the correct review page based on entry method
   function getReviewUrl(session, anchor) {
     const isManual = session.data['low-complexity-site-location-method'] === 'manual-entry';
@@ -254,8 +307,14 @@ module.exports = function (router) {
     // Ensure activities array exists
     const activities = getFileUploadActivities(req.session);
 
+    // Construction file uploads (only relevant when a construction-new activity exists)
+    const hasConstructionNew = siteHasConstructionNew(req.session);
+    const constructionFiles = hasConstructionNew ? getConstructionFiles(req.session) : [];
+
     res.render(`versions/${version}/${section}/${subsection}/review-site-details`, {
-      activities: activities
+      activities: activities,
+      hasConstructionNew: hasConstructionNew,
+      constructionFiles: constructionFiles
     });
   });
 
@@ -280,6 +339,13 @@ module.exports = function (router) {
       if (!act['low-complexity-months-of-activity-completed']) allComplete = false;
       if (!act['low-complexity-working-hours-completed']) allComplete = false;
     });
+
+    // Construction file uploads must all be complete when a construction-new activity exists
+    if (siteHasConstructionNew(req.session)) {
+      const constructionFiles = getConstructionFiles(req.session);
+      if (constructionFiles.length === 0) allComplete = false;
+      constructionFiles.forEach(f => { if (!f.filename) allComplete = false; });
+    }
 
     if (allComplete) {
       // Validate the radio selection
@@ -379,6 +445,117 @@ module.exports = function (router) {
   });
 
   /////////////////////////////////////////////////////////
+  //////// Construction file upload cards (file upload path)
+  /////////////////////////////////////////////////////////
+
+  // Upload construction drawing page
+  router.get(`/versions/${version}/${section}/${subsection}/construction-upload`, function (req, res) {
+    const fileNumber = parseInt(req.query.file) || 1;
+    const files = getConstructionFiles(req.session);
+    const file = files.find(f => f.fileNumber === fileNumber) || {};
+    res.render(`versions/${version}/${section}/${subsection}/construction-upload`, {
+      siteNumber: 1,
+      fileNumber: fileNumber,
+      filename: file.filename
+    });
+  });
+
+  // Upload construction drawing router (POST) — fakes an uploaded file
+  router.post(`/versions/${version}/${section}/${subsection}/construction-upload-router`, function (req, res) {
+    const fileNumber = parseInt(req.body['file-number']) || 1;
+    const files = getConstructionFiles(req.session);
+    const file = files.find(f => f.fileNumber === fileNumber);
+    if (file) {
+      file.filename = 'tech-drawing.pdf';
+    }
+    res.redirect(`/versions/${version}/${section}/${subsection}/review-site-details#site-1-construction-file-${fileNumber}`);
+  });
+
+  // Add another construction file upload card
+  router.get(`/versions/${version}/${section}/${subsection}/add-construction-file`, function (req, res) {
+    const files = getConstructionFiles(req.session);
+    const fileNumber = files.length + 1;
+    files.push({ fileNumber: fileNumber });
+    // New incomplete card means site details are no longer confirmed complete
+    delete req.session.data['site-details-confirmed-complete'];
+    res.redirect(`/versions/${version}/${section}/${subsection}/review-site-details#site-1-construction-file-${fileNumber}`);
+  });
+
+  // Delete construction file upload card — confirmation page
+  router.get(`/versions/${version}/${section}/${subsection}/delete-construction-file`, function (req, res) {
+    const fileNumber = parseInt(req.query.file);
+    const files = getConstructionFiles(req.session);
+    const file = files.find(f => f.fileNumber === fileNumber);
+    if (!file) {
+      return res.redirect(`/versions/${version}/${section}/${subsection}/review-site-details`);
+    }
+    res.render(`versions/${version}/${section}/${subsection}/delete-construction-file`, {
+      siteNumber: 1,
+      fileNumber: fileNumber,
+      filename: file.filename
+    });
+  });
+
+  router.post(`/versions/${version}/${section}/${subsection}/delete-construction-file-router`, function (req, res) {
+    const fileNumber = parseInt(req.body['file-number']);
+    if (fileNumber) {
+      const files = getConstructionFiles(req.session);
+      const index = files.findIndex(f => f.fileNumber === fileNumber);
+      if (index > -1) {
+        files.splice(index, 1);
+        // Renumber remaining cards
+        files.forEach((f, i) => { f.fileNumber = i + 1; });
+      }
+    }
+    res.redirect(`/versions/${version}/${section}/${subsection}/review-site-details`);
+  });
+
+  // Delete-on-change confirmation page (shared by both paths)
+  router.get(`/versions/${version}/${section}/${subsection}/delete-construction-files-on-change`, function (req, res) {
+    const ctx = getConstructionEditContext(req.session);
+    res.render(`versions/${version}/${section}/${subsection}/delete-construction-files-on-change`, {
+      siteNumber: ctx.method === 'manual-entry' ? (ctx.site ? ctx.site.siteNumber : '') : 1
+    });
+  });
+
+  // Delete-on-change confirmation — Yes, delete files (method-aware)
+  router.post(`/versions/${version}/${section}/${subsection}/delete-construction-files-on-change-router`, function (req, res) {
+    const ctx = getConstructionEditContext(req.session);
+    // Capture the onward URL before clearing (clearConstructionFiles also wipes it)
+    const next = req.session.data['construction-delete-next'] || 'review-site-details';
+    if (ctx.method === 'manual-entry') {
+      if (ctx.site) delete ctx.site.constructionFiles;
+      delete req.session.data['construction-delete-next'];
+    } else {
+      clearConstructionFiles(req.session);
+    }
+    res.redirect(next);
+  });
+
+  // Delete-on-change confirmation — Cancel (courtesy: go back a page to
+  // type-of-activity with the original "Construction of new works" restored)
+  router.get(`/versions/${version}/${section}/${subsection}/delete-construction-files-on-change-cancel`, function (req, res) {
+    const ctx = getConstructionEditContext(req.session);
+    if (ctx.method === 'manual-entry') {
+      // Reload the manual site's activity so the type-of-works reverts to construction-new
+      const activity = ctx.activities.find(a => a.activityNumber === ctx.actNum);
+      if (activity) {
+        ACTIVITY_DATA_KEYS.forEach(key => { delete req.session.data[key]; });
+        ACTIVITY_DATA_KEYS.forEach(key => {
+          if (activity[key] !== undefined) req.session.data[key] = activity[key];
+        });
+      }
+    } else {
+      const currentEditActivity = req.session.data['low-complexity-current-edit-activity'];
+      if (currentEditActivity) {
+        loadFileUploadActivityToSession(req.session, currentEditActivity);
+      }
+    }
+    delete req.session.data['construction-delete-next'];
+    res.redirect('type-of-activity');
+  });
+
+  /////////////////////////////////////////////////////////
   //////// Site name page
   /////////////////////////////////////////////////////////
   router.get(`/versions/${version}/${section}/${subsection}/site-name`, function (req, res) {
@@ -425,6 +602,13 @@ module.exports = function (router) {
     delete req.session.data['low-complexity-type-of-works-error'];
     delete req.session.data['low-complexity-deposit-type-error'];
     delete req.session.data['low-complexity-removal-type-error'];
+
+    // Capture whether the activity being edited was previously "Construction of
+    // new works" — its old value still lives in the activities array (session is
+    // only saved back to the array on the review page). Works for both paths.
+    const editContext = getConstructionEditContext(req.session);
+    const editingActivity = editContext.activities.find(a => a.activityNumber === editContext.actNum);
+    const oldWasConstructionNew = editingActivity && editingActivity['low-complexity-type-of-works'] === 'construction-new';
 
     // Detect changes in sub-types to clear page 2 data when sub-type changes
     const previousTypeOfActivity = req.session.data['low-complexity-type-of-activity-previous'];
@@ -532,18 +716,36 @@ module.exports = function (router) {
     req.session.data['low-complexity-deposit-type-previous'] = req.session.data['low-complexity-deposit-type'];
     req.session.data['low-complexity-removal-type-previous'] = req.session.data['low-complexity-removal-type'];
 
-    // Route based on activity type
+    // Work out where the change would normally take the user next
+    let nextUrl;
     if (req.session.data['low-complexity-type-of-activity'] === 'construction') {
-      res.redirect('construction-structures');
+      nextUrl = 'construction-structures';
     } else if (req.session.data['low-complexity-type-of-activity'] === 'deposit') {
-      res.redirect('deposit-substances-objects');
+      nextUrl = 'deposit-substances-objects';
     } else if (req.session.data['low-complexity-type-of-activity'] === 'removal') {
-      res.redirect('removal-substances-objects');
+      nextUrl = 'removal-substances-objects';
     } else {
-      // Mark as completed and redirect to review page for other activities
+      // Mark as completed and go to review page for other activities
       req.session.data['low-complexity-type-of-activity-completed'] = true;
-      res.redirect(getReviewUrl(req.session, 'site-1-activity-1'));
+      nextUrl = getReviewUrl(req.session, 'site-1-activity-1');
     }
+
+    // If the activity was "Construction of new works" and is being changed away
+    // from it, leaving the site with no construction-new activity while uploaded
+    // drawings exist, warn the user their files will be deleted before proceeding.
+    const newTypeOfWorks = req.session.data['low-complexity-type-of-works'];
+    if (oldWasConstructionNew && newTypeOfWorks !== 'construction-new') {
+      const otherConstructionNew = editContext.activities.some(a =>
+        a.activityNumber !== editContext.actNum &&
+        a['low-complexity-type-of-works'] === 'construction-new');
+      const hasFiles = editContext.files && editContext.files.length > 0;
+      if (!otherConstructionNew && hasFiles) {
+        req.session.data['construction-delete-next'] = nextUrl;
+        return res.redirect('delete-construction-files-on-change');
+      }
+    }
+
+    res.redirect(nextUrl);
   });
 
   /////////////////////////////////////////////////////////
@@ -928,6 +1130,10 @@ module.exports = function (router) {
     // File upload activities array
     delete req.session.data['low-complexity-file-upload-activities'];
     delete req.session.data['low-complexity-current-edit-activity'];
+
+    // Construction file uploads
+    delete req.session.data['low-complexity-construction-files'];
+    delete req.session.data['construction-delete-next'];
 
     // Flat activity session keys
     ACTIVITY_DATA_KEYS.forEach(key => {

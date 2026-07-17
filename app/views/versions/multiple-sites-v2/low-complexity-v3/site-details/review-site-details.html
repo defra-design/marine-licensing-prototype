@@ -56,7 +56,13 @@ Review site details
             {% if not act['low-complexity-months-of-activity-completed'] %}{% set allComplete = false %}{% endif %}
             {% if not act['low-complexity-working-hours-completed'] %}{% set allComplete = false %}{% endif %}
         {% endfor %}
-        
+        {% if hasConstructionNew %}
+            {% if constructionFiles.length == 0 %}{% set allComplete = false %}{% endif %}
+            {% for file in constructionFiles %}
+                {% if not file.filename %}{% set allComplete = false %}{% endif %}
+            {% endfor %}
+        {% endif %}
+
         {% if not allComplete %}
             {{ govukInsetText({
                 html: "The site details you've provided are saved.<br>You must complete all sections marked <span class='govuk-tag govuk-tag--red govuk-!-margin-bottom-2 govuk-!-margin-top-2'>Incomplete</span> before you can send your information.<br>If you cannot finish now, you can return to this page later."
@@ -486,6 +492,53 @@ Review site details
         <p class="govuk-body">
             <a href="add-activity" class="govuk-button govuk-button--secondary">Add another activity for site 1</a>
         </p>
+
+        <!-- Construction activity file uploads (only when a construction-new activity exists) -->
+        {% if hasConstructionNew %}
+            {% for file in constructionFiles %}
+            <div id="site-1-construction-file-{{ file.fileNumber }}" class="govuk-summary-card">
+                <div class="govuk-summary-card__title-wrapper">
+                    <h2 class="govuk-summary-card__title">
+                        Site 1 - Construction activity file upload {{ file.fileNumber }}
+                    </h2>
+                    {% if file.fileNumber > 1 %}
+                    <ul class="govuk-summary-card__actions">
+                        <li class="govuk-summary-card__action">
+                            <a class="govuk-link govuk-link--no-visited-state" href="delete-construction-file?file={{ file.fileNumber }}">
+                                Delete file upload<span class="govuk-visually-hidden"> {{ file.fileNumber }} for site 1</span>
+                            </a>
+                        </li>
+                    </ul>
+                    {% endif %}
+                </div>
+                <div class="govuk-summary-card__content">
+                    <dl class="govuk-summary-list">
+                        <div class="govuk-summary-list__row">
+                            <dt class="govuk-summary-list__key">
+                                File upload
+                            </dt>
+                            <dd class="govuk-summary-list__value">
+                                {% if file.filename %}
+                                    {{ file.filename }}
+                                {% else %}
+                                    <span class="govuk-tag govuk-tag--red">Incomplete</span>
+                                {% endif %}
+                            </dd>
+                            <dd class="govuk-summary-list__actions">
+                                <a href="construction-upload?file={{ file.fileNumber }}" class="govuk-link govuk-link--no-visited-state">
+                                    {% if file.filename %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> construction file upload {{ file.fileNumber }} for site 1</span>
+                                </a>
+                            </dd>
+                        </div>
+                    </dl>
+                </div>
+            </div>
+            {% endfor %}
+
+            <p class="govuk-body">
+                <a href="add-construction-file" class="govuk-button govuk-button--secondary">Add another construction file upload for site 1</a>
+            </p>
+        {% endif %}
 
         <form action="review-site-details-router" method="post" novalidate>
             {% if allComplete %}
