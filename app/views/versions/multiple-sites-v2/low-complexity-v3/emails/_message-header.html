@@ -1,6 +1,6 @@
 {#
   The mail client's message header, shown above the email itself.
-  Set messageSubject and messageDate before including.
+  Set messageSubject, messageDate and inboxHref before including.
 #}
 
 <style>
@@ -72,7 +72,7 @@
 </style>
 
 <div class="msg-head">
-  <p class="msg-head__back"><a href="inbox">Back to inbox</a></p>
+  <p class="msg-head__back"><a href="{{ inboxHref }}">Back to inbox</a></p>
   <div class="msg-head__row">
     <span class="msg-head__avatar">MMO</span>
     <div class="msg-head__detail">

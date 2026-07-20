@@ -1236,7 +1236,7 @@ module.exports = function (router) {
 
     // --- Project details ---
     d['low-complexity-project-name-text-input'] = 'Plymouth Sound cable laying';
-    d['low-complexity-project-background'] = "Jurassic Coast SUP Ltd will install a subsea telecommunications cable across Plymouth Sound to connect a new coastal monitoring station on Mount Batten to the mainland network. The works involve laying approximately 2.4 kilometres of fibre optic cable along a pre-surveyed route on the seabed, with sections buried using a jetting sled to protect the cable from vessel anchors and fishing activity. Landfall points will be established at Mount Batten Pier and Queen Anne's Battery, with cable protection installed at both shore ends.";
+    d['low-complexity-project-background'] = "Southwest Marine Works Ltd will install a subsea telecommunications cable across Plymouth Sound to connect a new coastal monitoring station on Mount Batten to the mainland network. The works involve laying approximately 2.4 kilometres of fibre optic cable along a pre-surveyed route on the seabed, with sections buried using a jetting sled to protect the cable from vessel anchors and fishing activity. Landfall points will be established at Mount Batten Pier and Queen Anne's Battery, with cable protection installed at both shore ends.";
     d['low-complexity-project-background-completed'] = true;
 
     d['start-date-month'] = '6';
@@ -1320,7 +1320,7 @@ module.exports = function (router) {
     d['invoice-county'] = 'Devon';
     d['invoice-postcode'] = 'PL4 0LP';
     d['invoice-full-name'] = 'Rachel Stow';
-    d['invoice-organisation-name'] = 'Jurassic Coast SUP Ltd';
+    d['invoice-organisation-name'] = 'Southwest Marine Works Ltd';
     d['invoice-phone'] = '01752 900123';
     d['invoice-email'] = 'accounts@southwestmarineworks.co.uk';
     d['invoice-po-required'] = 'no';
