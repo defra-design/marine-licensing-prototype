@@ -11,7 +11,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% set pageHeadingTextHTML %}
-Are you sure you want to delete construction drawing {{ fileNumber }} for Site {{ siteNumber }}?
+Are you sure you want to delete Site {{ siteNumber }} construction drawing {{ fileNumber }}?
 {% endset %}
 
 {% block pageTitle %}
@@ -26,10 +26,6 @@ Are you sure you want to delete construction drawing {{ fileNumber }} for Site {
     <h1 class="govuk-heading-l">
       {{ pageHeadingTextHTML }}
     </h1>
-
-    <div class="govuk-inset-text">
-      The drawing '{{ filename or 'tech-drawing.pdf' }}' will be removed from your application.
-    </div>
 
     <form action="delete-construction-file-router" method="post" novalidate>
       <input type="hidden" name="site-number" value="{{ siteNumber }}">
