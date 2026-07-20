@@ -1,0 +1,141 @@
+{% extends "govuk-prototype-kit/layouts/govuk-branded.njk" %}
+
+{% block pageTitle %}
+  Inbox - Sam Evans
+{% endblock %}
+
+{% set inboxHref = "inbox-reject" %}
+
+{% block header %}
+  {% include "./_mail-chrome.html" %}
+{% endblock %}
+
+{% block beforeContent %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block content %}
+
+{% include "./_inbox-styles.html" %}
+
+<div class="mail">
+  <div class="mail__body">
+
+    <nav class="mail__rail" aria-label="Folders">
+      <div class="mail__account">
+        <div class="mail__account-name">Sam Evans</div>
+        <div class="mail__account-org">Southwest Marine Works Ltd</div>
+      </div>
+      <ul class="mail__folders">
+        <li class="mail__folder mail__folder--current">
+          <span>Inbox</span>
+          <span class="mail__folder-count">2</span>
+        </li>
+        <li class="mail__folder"><span>Sent</span></li>
+        <li class="mail__folder"><span>Drafts</span><span class="mail__folder-count">3</span></li>
+        <li class="mail__folder"><span>Archive</span></li>
+        <li class="mail__folder"><span>Deleted</span></li>
+      </ul>
+    </nav>
+
+    <div class="mail__list">
+
+      <div class="mail__list-header">
+        <h1>Inbox</h1>
+        <span>2 unread</span>
+      </div>
+
+      <a class="mail__msg mail__msg--unread" href="unable-to-progress">
+        <div class="mail__msg-top">
+          <span class="mail__msg-from">Marine Management Organisation</span>
+          <span class="mail__msg-date">10:42</span>
+        </div>
+        <div class="mail__msg-subject">Update on your marine licence application MLA/2026/10002</div>
+        <div class="mail__msg-preview">Dear Sam Evans, We have reviewed your application and we are unable to progress it as submitted.</div>
+      </a>
+
+      <div class="mail__msg mail__msg--unread">
+        <div class="mail__msg-top">
+          <span class="mail__msg-from">Cable Route Survey Team</span>
+          <span class="mail__msg-date">{{ -1 | inboxDate }}</span>
+        </div>
+        <div class="mail__msg-subject">Mount Batten landfall — revised route plan</div>
+        <div class="mail__msg-preview">Revised alignment for the shore end following last week's walkover. Drawing rev C attached for your comment.</div>
+      </div>
+
+      <div class="mail__msg">
+        <div class="mail__msg-top">
+          <span class="mail__msg-from">Plymouth City Council</span>
+          <span class="mail__msg-date">{{ -2 | inboxDate }}</span>
+        </div>
+        <div class="mail__msg-subject">Pre-application enquiry PA-PRE-2026-01188</div>
+        <div class="mail__msg-preview">Our informal advice on the landfall works and onshore ducting at Queen Anne's Battery is attached.</div>
+      </div>
+
+      <div class="mail__msg">
+        <div class="mail__msg-top">
+          <span class="mail__msg-from">Devon and Severn IFCA</span>
+          <span class="mail__msg-date">{{ -3 | inboxDate }}</span>
+        </div>
+        <div class="mail__msg-subject">Notice to mariners — seasonal restrictions</div>
+        <div class="mail__msg-preview">Seasonal restrictions come into effect from 1 May across parts of the district. Full details are on our website.</div>
+      </div>
+
+      <div class="mail__msg">
+        <div class="mail__msg-top">
+          <span class="mail__msg-from">Queen Anne's Battery Marina</span>
+          <span class="mail__msg-date">{{ -4 | inboxDate }}</span>
+        </div>
+        <div class="mail__msg-subject">Workboat berthing — April availability</div>
+        <div class="mail__msg-preview">We can hold two berths for the survey vessel through April. Let us know dates to confirm.</div>
+      </div>
+
+      <div class="mail__msg">
+        <div class="mail__msg-top">
+          <span class="mail__msg-from">Met Office Weather Warnings</span>
+          <span class="mail__msg-date">{{ -5 | inboxDate }}</span>
+        </div>
+        <div class="mail__msg-subject">Yellow warning of wind — Devon and Cornwall</div>
+        <div class="mail__msg-preview">Gusts of 45 to 55 mph are expected in exposed coastal areas. Consider the impact on planned marine operations.</div>
+      </div>
+
+      <div class="mail__msg">
+        <div class="mail__msg-top">
+          <span class="mail__msg-from">Subsea Plant Hire</span>
+          <span class="mail__msg-date">{{ -7 | inboxDate }}</span>
+        </div>
+        <div class="mail__msg-subject">Quotation Q-20261-04 — jetting sled hire</div>
+        <div class="mail__msg-preview">Thank you for your enquiry. Our quotation for the 6 week hire period is attached and held for 30 days.</div>
+      </div>
+
+      <div class="mail__msg">
+        <div class="mail__msg-top">
+          <span class="mail__msg-from">Natural England</span>
+          <span class="mail__msg-date">{{ -9 | inboxDate }}</span>
+        </div>
+        <div class="mail__msg-subject">Pre-application advice — Plymouth Sound SAC</div>
+        <div class="mail__msg-preview">Further to your enquiry regarding the proposed route, our advice in relation to the SAC and MCZ is attached.</div>
+      </div>
+
+      <div class="mail__msg">
+        <div class="mail__msg-top">
+          <span class="mail__msg-from">Health and Safety Team</span>
+          <span class="mail__msg-date">{{ -11 | inboxDate }}</span>
+        </div>
+        <div class="mail__msg-subject">Toolbox talk records due</div>
+        <div class="mail__msg-preview">Please upload signed toolbox talk records for the March works before the end of the month.</div>
+      </div>
+
+      <div class="mail__msg">
+        <div class="mail__msg-top">
+          <span class="mail__msg-from">Xero</span>
+          <span class="mail__msg-date">{{ -13 | inboxDate }}</span>
+        </div>
+        <div class="mail__msg-subject">Your VAT return is due</div>
+        <div class="mail__msg-preview">Your VAT return for the quarter is due in 7 days. Review and submit from your account.</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}
