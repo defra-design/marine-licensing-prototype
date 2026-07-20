@@ -4,6 +4,17 @@
   Email - Your marine licence application MLA/2026/10002
 {% endblock %}
 
+{% block header %}
+  {% include "./_mail-chrome.html" %}
+  {% set messageSubject = "Update on your marine licence application MLA/2026/10002" %}
+  {% set messageDate = "Today at 10:42" %}
+  {% include "./_message-header.html" %}
+  {{ govukHeader({
+    homepageUrl: "/",
+    classes: "govuk-header--full-width-border"
+  }) }}
+{% endblock %}
+
 {% block content %}
 
 <style>
@@ -40,7 +51,7 @@ ul {
 </style>
 
 
-<h1>Your marine licence application MLA/2026/10002</h1>
+<h1>Update on your marine licence application MLA/2026/10002</h1>
 
 <p>Dear Sam Evans,</p>
 
