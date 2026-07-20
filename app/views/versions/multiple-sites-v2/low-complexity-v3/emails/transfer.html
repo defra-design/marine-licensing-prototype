@@ -4,6 +4,17 @@
   Email - Update on your marine licence application
 {% endblock %}
 
+{% block header %}
+  {% include "./_mail-chrome.html" %}
+  {% set messageSubject = "Update on your marine licence application MLA/2026/10003" %}
+  {% set messageDate = "Today at 09:15" %}
+  {% include "./_message-header.html" %}
+  {{ govukHeader({
+    homepageUrl: "/",
+    classes: "govuk-header--full-width-border"
+  }) }}
+{% endblock %}
+
 {% block content %}
 
 <style>
