@@ -57,6 +57,13 @@ router.use('*', function(req, res, next) {
     next();
 });
 
+// Clear session data and return the user to the testing links page
+// (used by usability testing participants so they stay off the /index page)
+router.all('/user-testing-links/clear-data', function(req, res) {
+    req.session.data = {};
+    res.redirect('/user-testing-links');
+});
+
 // Including other routing javascript
 // This single line tells this 'routes.js' file to include the routing from the 'templates.js' and other js files
 require('./routes/templates.js')(router);
