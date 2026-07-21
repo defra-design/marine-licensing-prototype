@@ -1281,11 +1281,18 @@ module.exports = function (router) {
     // The start page reads either the v1 (marine-plan-policy-) or v2
     // (marine-plan-policy-v2-) flags depending on the session's mpp-version, so
     // seed both variants to keep the section Completed whichever is active.
+    // Use the latest (v2) Marine plan policies task list (Cross-cutting, etc.).
+    d['mpp-version'] = '2';
     d['mpp-previously-unlocked'] = true;
     ['s-acc-1', 's-bio-1', 's-agg-4', 's-emp-1', 's-uwn-2'].forEach(function (key) {
       d['marine-plan-policy-' + key + '-completed'] = true;
       d['marine-plan-policy-v2-' + key + '-completed'] = true;
     });
+
+    // Carry over the original (incorrect) S-BIO-1 answer of "Not applicable" so
+    // the applicant can review and correct it before resubmitting.
+    d['marine-plan-policy-s-bio-1-text'] = 'Not applicable';
+    d['marine-plan-policy-v2-s-bio-1-text'] = 'Not applicable';
 
     // --- Water Framework Directive ---
     // Carries over the original (incorrect) answer of "No" so the applicant can
