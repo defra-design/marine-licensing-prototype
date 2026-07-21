@@ -74,11 +74,14 @@ Type of activity
                     items: [
                         {
                             value: "construction-new",
-                            text: "Construction of new works"
+                            text: "Construction of new marine works"
                         },
                         {
                             value: "maintenance-existing",
-                            text: "Maintenance of existing works"
+                            text: "Maintenance of existing marine works",
+                            hint: {
+                                text: "Upkeep or repair of a structure or asset that's already there, without changing its size or shape"
+                            }
                         },
                         {
                             value: "alteration-improvement",
@@ -166,7 +169,7 @@ Type of activity
                 items: [
                     {
                         value: "construction",
-                        text: "Construction, alteration or improvement of any works",
+                        text: "Construction, alteration or improvement of any marine works",
                         conditional: {
                             html: constructionRadiosHtml
                         }
