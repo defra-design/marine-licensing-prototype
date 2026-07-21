@@ -93,10 +93,17 @@ module.exports = function (router) {
   // Construction file upload helpers (file upload path — single Site 1)
   // ==============================================================================================
 
-  // True if any activity in the site is "Construction of new works"
+  // A construction drawing is required for these types of works: new construction
+  // and alteration/improvement of existing works. Only one set of drawings is kept
+  // per site, so either activity type triggers (and keeps) the upload cards.
+  function worksNeedsDrawing(type) {
+    return type === 'construction-new' || type === 'alteration-improvement';
+  }
+
+  // True if any activity in the site needs a construction drawing
   function siteHasConstructionNew(session) {
     const activities = getFileUploadActivities(session);
-    return activities.some(a => a['low-complexity-type-of-works'] === 'construction-new');
+    return activities.some(a => worksNeedsDrawing(a['low-complexity-type-of-works']));
   }
 
   // Returns the construction files array, lazily seeding the first (mandatory)
@@ -422,9 +429,17 @@ module.exports = function (router) {
     if (!activity) {
       return res.redirect(`/versions/${version}/${section}/${subsection}/review-site-details`);
     }
+    // Deleting the last drawing-needing activity also removes the site's drawings —
+    // warn the user on this confirmation page.
+    const otherNeedsDrawing = activities.some(a =>
+      a.activityNumber !== activity.activityNumber &&
+      worksNeedsDrawing(a['low-complexity-type-of-works']));
+    const hasFiles = (req.session.data['low-complexity-construction-files'] || []).length > 0;
+    const alsoDeletesDrawings = worksNeedsDrawing(activity['low-complexity-type-of-works']) && !otherNeedsDrawing && hasFiles;
     res.render(`versions/${version}/${section}/${subsection}/delete-activity`, {
       activity: activity,
-      siteNumber: 1
+      siteNumber: 1,
+      alsoDeletesDrawings: alsoDeletesDrawings
     });
   });
 
@@ -440,6 +455,11 @@ module.exports = function (router) {
           act.activityNumber = i + 1;
         });
       }
+    }
+    // If the site no longer has a drawing-needing activity, drop any uploaded
+    // drawings so they don't linger and reappear if a construction activity is re-added.
+    if (!siteHasConstructionNew(req.session)) {
+      clearConstructionFiles(req.session);
     }
     res.redirect(`/versions/${version}/${section}/${subsection}/review-site-details`);
   });
@@ -603,12 +623,12 @@ module.exports = function (router) {
     delete req.session.data['low-complexity-deposit-type-error'];
     delete req.session.data['low-complexity-removal-type-error'];
 
-    // Capture whether the activity being edited was previously "Construction of
-    // new works" — its old value still lives in the activities array (session is
+    // Capture whether the activity being edited previously needed a construction
+    // drawing — its old value still lives in the activities array (session is
     // only saved back to the array on the review page). Works for both paths.
     const editContext = getConstructionEditContext(req.session);
     const editingActivity = editContext.activities.find(a => a.activityNumber === editContext.actNum);
-    const oldWasConstructionNew = editingActivity && editingActivity['low-complexity-type-of-works'] === 'construction-new';
+    const oldNeededDrawing = editingActivity && worksNeedsDrawing(editingActivity['low-complexity-type-of-works']);
 
     // Detect changes in sub-types to clear page 2 data when sub-type changes
     const previousTypeOfActivity = req.session.data['low-complexity-type-of-activity-previous'];
@@ -730,16 +750,16 @@ module.exports = function (router) {
       nextUrl = getReviewUrl(req.session, 'site-1-activity-1');
     }
 
-    // If the activity was "Construction of new works" and is being changed away
-    // from it, leaving the site with no construction-new activity while uploaded
-    // drawings exist, warn the user their files will be deleted before proceeding.
+    // If the activity previously needed a construction drawing and is being changed
+    // to one that doesn't, leaving the site with no drawing-needing activity while
+    // uploaded drawings exist, warn the user their files will be deleted first.
     const newTypeOfWorks = req.session.data['low-complexity-type-of-works'];
-    if (oldWasConstructionNew && newTypeOfWorks !== 'construction-new') {
-      const otherConstructionNew = editContext.activities.some(a =>
+    if (oldNeededDrawing && !worksNeedsDrawing(newTypeOfWorks)) {
+      const otherNeedsDrawing = editContext.activities.some(a =>
         a.activityNumber !== editContext.actNum &&
-        a['low-complexity-type-of-works'] === 'construction-new');
+        worksNeedsDrawing(a['low-complexity-type-of-works']));
       const hasFiles = editContext.files && editContext.files.length > 0;
-      if (!otherConstructionNew && hasFiles) {
+      if (!otherNeedsDrawing && hasFiles) {
         req.session.data['construction-delete-next'] = nextUrl;
         return res.redirect('delete-construction-files-on-change');
       }

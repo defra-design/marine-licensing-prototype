@@ -169,10 +169,16 @@ module.exports = function (router) {
   // Construction file upload helpers (manual entry path — per site)
   // ==============================================================================================
 
-  // True if any activity in the given site is "Construction of new works"
+  // A construction drawing is required for new construction and for alteration/
+  // improvement of existing works. Only one set of drawings is kept per site.
+  function worksNeedsDrawing(type) {
+    return type === 'construction-new' || type === 'alteration-improvement';
+  }
+
+  // True if any activity in the given site needs a construction drawing
   function siteHasConstructionNew(site) {
     if (!site || !site.activities) return false;
-    return site.activities.some(a => a['low-complexity-type-of-works'] === 'construction-new');
+    return site.activities.some(a => worksNeedsDrawing(a['low-complexity-type-of-works']));
   }
 
   // Returns a site's construction files array, lazily seeding the first (mandatory)
@@ -872,10 +878,19 @@ module.exports = function (router) {
       return res.redirect(`${basePath}/review-site-details`);
     }
 
+    // Deleting the last drawing-needing activity also removes this site's drawings —
+    // warn the user on this confirmation page.
+    const otherNeedsDrawing = (site.activities || []).some(a =>
+      a.activityNumber !== activity.activityNumber &&
+      worksNeedsDrawing(a['low-complexity-type-of-works']));
+    const hasFiles = (site.constructionFiles || []).length > 0;
+    const alsoDeletesDrawings = worksNeedsDrawing(activity['low-complexity-type-of-works']) && !otherNeedsDrawing && hasFiles;
+
     res.render(`${viewBase}/delete-activity`, {
       data: req.session.data,
       site: site,
-      activity: activity
+      activity: activity,
+      alsoDeletesDrawings: alsoDeletesDrawings
     });
   });
 
@@ -886,6 +901,11 @@ module.exports = function (router) {
       const site = getSiteByNumber(req.session, siteParam);
       if (site) {
         deleteActivityFromSite(site, activityParam);
+        // If the site no longer has a drawing-needing activity, drop any uploaded
+        // drawings so they don't linger and reappear if construction is re-added.
+        if (!siteHasConstructionNew(site)) {
+          delete site.constructionFiles;
+        }
       }
     }
     res.redirect(`${basePath}/review-site-details`);

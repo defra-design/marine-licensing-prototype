@@ -35,7 +35,11 @@ Site {{ siteNumber }}: Upload construction drawing {{ fileNumber }}
                     </label>
                 </h1>
 
-                <p class="govuk-body">Upload a drawing showing what you plan to build. A simple, clear drawing is fine. It does not need to be produced by an architect or other professional. The file must be a PDF (TBC). (add max file size here - tbc)</p>
+                <p class="govuk-body">Upload a drawing showing what you plan to build or change at this site. A simple, clear drawing is fine. It does not need to be produced by an architect or other professional.</p>
+
+                <p class="govuk-body">Only upload drawings that show the work you're telling us about in this application. If your drawing is part of a larger document, upload only the pages that show this work. Do not upload full project plans or documents that cover other work.</p>
+
+                <p class="govuk-body">The file must be a PDF or image (.bmp, .gif, .jpg, .jpeg, .png, .tif) and no larger than 10MB.</p>
 
                 {{ govukFileUpload({
                     id: "file-upload-1",
