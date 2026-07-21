@@ -39,10 +39,25 @@ html: ''
       <span class="govuk-warning-text__icon info" aria-hidden="true">!</span>
       <strong class="govuk-warning-text__text">
         <span class="govuk-visually-hidden">Warning</span>
-        Remember to <a href="/manage-prototype/clear-data" class=" govuk-link--no-visited-state">clear session data</a>
+        Remember to <span style="position:relative; display:inline-block;"><a href="/index/clear-data" id="clear-session-link" class="govuk-link--no-visited-state">clear session data</a><span id="clear-session-confirm" role="status" aria-live="polite" style="display:none; position:absolute; bottom:100%; left:50%; transform:translateX(-50%); margin-bottom:8px; white-space:nowrap; background:#0f7a52; color:#ffffff; padding:4px 8px; border-radius:3px; font-size:16px; font-weight:400;">Session data cleared</span></span>
         every time you start a journey
       </strong>
     </div>
+
+    <script>
+      (function () {
+        var link = document.getElementById('clear-session-link');
+        var confirm = document.getElementById('clear-session-confirm');
+        if (!link) return;
+        link.addEventListener('click', function (e) {
+          e.preventDefault();
+          fetch('/index/clear-data', { method: 'POST' }).then(function () {
+            confirm.style.display = 'block';
+            setTimeout(function () { confirm.style.display = 'none'; }, 2000);
+          });
+        });
+      })();
+    </script>
 
     <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
     <!-- End of session warning text -->

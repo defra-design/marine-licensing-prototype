@@ -64,6 +64,12 @@ router.all('/user-testing-links/clear-data', function(req, res) {
     res.redirect('/user-testing-links');
 });
 
+// Clear session data and reload the prototype home page
+router.all('/index/clear-data', function(req, res) {
+    req.session.data = {};
+    res.redirect('/');
+});
+
 // Including other routing javascript
 // This single line tells this 'routes.js' file to include the routing from the 'templates.js' and other js files
 require('./routes/templates.js')(router);
