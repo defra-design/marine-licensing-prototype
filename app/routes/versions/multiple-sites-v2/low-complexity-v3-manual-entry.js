@@ -169,10 +169,16 @@ module.exports = function (router) {
   // Construction file upload helpers (manual entry path — per site)
   // ==============================================================================================
 
-  // True if any activity in the given site is "Construction of new works"
+  // A construction drawing is required for new construction and for alteration/
+  // improvement of existing works. Only one set of drawings is kept per site.
+  function worksNeedsDrawing(type) {
+    return type === 'construction-new' || type === 'alteration-improvement';
+  }
+
+  // True if any activity in the given site needs a construction drawing
   function siteHasConstructionNew(site) {
     if (!site || !site.activities) return false;
-    return site.activities.some(a => a['low-complexity-type-of-works'] === 'construction-new');
+    return site.activities.some(a => worksNeedsDrawing(a['low-complexity-type-of-works']));
   }
 
   // Returns a site's construction files array, lazily seeding the first (mandatory)
