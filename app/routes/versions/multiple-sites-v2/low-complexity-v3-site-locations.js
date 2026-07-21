@@ -429,9 +429,17 @@ module.exports = function (router) {
     if (!activity) {
       return res.redirect(`/versions/${version}/${section}/${subsection}/review-site-details`);
     }
+    // Deleting the last drawing-needing activity also removes the site's drawings —
+    // warn the user on this confirmation page.
+    const otherNeedsDrawing = activities.some(a =>
+      a.activityNumber !== activity.activityNumber &&
+      worksNeedsDrawing(a['low-complexity-type-of-works']));
+    const hasFiles = (req.session.data['low-complexity-construction-files'] || []).length > 0;
+    const alsoDeletesDrawings = worksNeedsDrawing(activity['low-complexity-type-of-works']) && !otherNeedsDrawing && hasFiles;
     res.render(`versions/${version}/${section}/${subsection}/delete-activity`, {
       activity: activity,
-      siteNumber: 1
+      siteNumber: 1,
+      alsoDeletesDrawings: alsoDeletesDrawings
     });
   });
 
@@ -447,6 +455,11 @@ module.exports = function (router) {
           act.activityNumber = i + 1;
         });
       }
+    }
+    // If the site no longer has a drawing-needing activity, drop any uploaded
+    // drawings so they don't linger and reappear if a construction activity is re-added.
+    if (!siteHasConstructionNew(req.session)) {
+      clearConstructionFiles(req.session);
     }
     res.redirect(`/versions/${version}/${section}/${subsection}/review-site-details`);
   });

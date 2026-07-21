@@ -11,7 +11,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
 {% set pageHeadingTextHTML %}
-Changing your type of activity will delete your construction drawings
+Changing your type of activity will delete any uploaded construction drawings
 {% endset %}
 
 {% block pageTitle %}
@@ -29,11 +29,10 @@ Changing your type of activity will delete your construction drawings
 
     <div class="govuk-inset-text">
       <p class="govuk-body">You only need construction drawings for:</p>
-      <ul class="govuk-list govuk-list--bullet">
+      <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-0">
         <li>construction of new marine works</li>
         <li>alteration or improvement, including extending, of existing marine works</li>
       </ul>
-      <p class="govuk-body govuk-!-margin-bottom-0">If you select one these 2 options again later, you'll need to upload your drawings again.</p>
     </div>
 
     <form action="delete-construction-files-on-change-router" method="post" novalidate>

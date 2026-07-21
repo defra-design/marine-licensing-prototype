@@ -31,6 +31,10 @@ Are you sure you want to delete this activity?
       Site {{ site.siteNumber }} - Activity {{ activity.activityNumber }}
     </div>
 
+    {% if alsoDeletesDrawings %}
+    <p class="govuk-body">This will also delete any uploaded drawings.</p>
+    {% endif %}
+
     <form action="delete-activity-router" method="post" novalidate>
       <input type="hidden" name="site-number" value="{{ site.siteNumber }}">
       <input type="hidden" name="activity-number" value="{{ activity.activityNumber }}">
