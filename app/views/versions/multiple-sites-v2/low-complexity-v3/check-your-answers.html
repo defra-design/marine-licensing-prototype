@@ -1543,6 +1543,36 @@ Check your answers before sending your information
 		</div>
 
 		{# ============================== #}
+		{# FEE ESTIMATE                   #}
+		{# The Change link routes to the fee estimate page. If the applicant #}
+		{# switches to not accepting the fee, the existing fee-are-you-sure   #}
+		{# warning page takes over and the application drops back to a draft  #}
+		{# that cannot be submitted (mirrors the task-list behaviour).        #}
+		{# ============================== #}
+		{% if data['low-complexity-fee-estimate-completed'] == "true" %}
+		<div class="govuk-summary-card">
+			<div class="govuk-summary-card__title-wrapper">
+				<h2 class="govuk-summary-card__title" id="fee-estimate">
+					Fee estimate
+				</h2>
+			</div>
+			<div class="govuk-summary-card__content">
+				<dl class="govuk-summary-list">
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">Fee estimate accepted</dt>
+						<dd class="govuk-summary-list__value">£1,400</dd>
+						<dd class="govuk-summary-list__actions">
+							<a class="govuk-link govuk-link--no-visited-state" href="fee-and-invoicing/fee-estimate?camefromcheckanswers=true">
+								Change<span class="govuk-visually-hidden"> fee estimate</span>
+							</a>
+						</dd>
+					</div>
+				</dl>
+			</div>
+		</div>
+		{% endif %}
+
+		{# ============================== #}
 		{# INVOICING                     #}
 		{# All edits happen on the invoicing check page; this card has a #}
 		{# single Change link that routes there and returns here on Continue. #}
