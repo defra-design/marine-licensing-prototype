@@ -5,17 +5,25 @@
 
 {% block beforeContent %}
     {% include "../includes/phase-banner.html" %}
+    {% if data['organisation-name'] %}
+    <div class="app-organisation-switcher">
+        <span class="govuk-body-s govuk-!-font-weight-bold app-organisation-switcher__name">{{ data['organisation-name'] }}</span>
+    </div>
+    {% endif %}
     {% include "../includes/back-link.html" %}
 {% endblock %}
-
-{% set pageHeadingTextHTML %}
-Are you sure you want to withdraw this project?
-{% endset %}
 
 {# Set project details from passed variables or session data #}
 {% set projectType = projectTypeFromQuery or data['project-type'] %}
 {% set currentProject = projectFromQuery or data['project'] %}
 {% set projectName = projectNameFromQuery or data['project-name'] %}
+
+{# Marine licence applications get application-specific copy; exemptions keep the existing wording #}
+{% set isMla = projectType and ('Marine licence' in projectType) %}
+
+{% set pageHeadingTextHTML %}
+{% if isMla %}Are you sure you want to withdraw this application?{% else %}Are you sure you want to withdraw this project?{% endif %}
+{% endset %}
 
 {% block pageTitle %}
     {{ pageHeadingTextHTML }} - Get permission for marine work
@@ -36,15 +44,21 @@ Are you sure you want to withdraw this project?
       {% if projectType %}{{ projectType }}: {% endif %}
       {{ projectName or "Project name" }}
     </div>
+    {% if isMla %}
+ <p>If you withdraw this marine licence application, we will not progress it any further. You must not carry out the proposed works unless a valid marine licence is in place.</p>
+
+ <p>We will charge you for the time spent processing your application up to the date of withdrawal, in accordance with our <a class="govuk-link" href="https://assets.publishing.service.gov.uk/media/6938145b6a12691d48491c56/Terms_and_Conditions_for_carrying_out_chargeable_activities_for_marine_licensing.pdf" target="_blank" rel="noreferrer noopener">terms and conditions (opens in new tab)</a>.</p>
+    {% else %}
  <p>If you withdraw this exempt activity notification it will not be valid. You'll need to create a new one for any future activity.</p>
 
  <p>Do not withdraw this project if the activity has already been carried out.</p>
- 
+    {% endif %}
+
     <form action="withdraw-router?project={{ currentProject }}" method="post" novalidate>
-      
+
       <div class="govuk-button-group govuk-!-margin-top-7">
         {{ govukButton({
-          text: "Yes, withdraw project",
+          text: "Yes, withdraw application" if isMla else "Yes, withdraw project",
 		  classes: "govuk-button--warning"
         }) }}
         <a class="govuk-link govuk-link--no-visited-state" href="{% if returnPageFromQuery or data['return-page'] %}{{ returnPageFromQuery or data['return-page'] }}{% else %}projects{% endif %}">Cancel</a>
