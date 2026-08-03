@@ -13,6 +13,12 @@ module.exports = function (router) {
     req.session.data['low-complexity-fee-errortypeone'] = "false";
     req.session.data['low-complexity-fee-errortypetwo'] = "false";
 
+    // Arriving via the "Change" link on the main check-your-answers page:
+    // remember so an accepted fee returns there rather than to the task list.
+    if (req.query.camefromcheckanswers === 'true') {
+      req.session.data['camefromcheckanswers'] = 'true';
+    }
+
     res.render(`versions/${version}/${section}/${subSection}/fee-estimate`);
   });
 
@@ -53,6 +59,11 @@ module.exports = function (router) {
 
     // Conditional routing based on fee acceptance
     if (req.session.data['low-complexity-fee-acceptance'] === 'yes') {
+      // Returning from the main check-your-answers page — go back there
+      if (req.session.data['camefromcheckanswers'] === 'true') {
+        req.session.data['camefromcheckanswers'] = false;
+        return res.redirect(`/versions/${version}/${section}/check-your-answers#fee-estimate`);
+      }
       // Go back to the task list
       res.redirect(`/versions/${version}/${section}/marine-licence-start-page`);
     } else if (req.session.data['low-complexity-fee-acceptance'] === 'no') {
@@ -77,6 +88,8 @@ module.exports = function (router) {
     // Mark fee estimate as rejected/not accepted
     req.session.data['low-complexity-fee-estimate-completed'] = "false";
     req.session.data['low-complexity-fee-estimate-rejected'] = "true";
+    // Abandoning to a draft — clear the check-your-answers return flag
+    req.session.data['camefromcheckanswers'] = false;
 
     // Redirect to projects page - the project will remain as a draft
     res.redirect(`/versions/${version}/${section}/projects`);
