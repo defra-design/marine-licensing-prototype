@@ -121,6 +121,12 @@ Check your answers before sending your information
 						<dt class="govuk-summary-list__key">Date submitted</dt>
 						<dd class="govuk-summary-list__value">{{ "" | todayDate }}</dd>
 					</div>
+					{% if data['withdrawn-mla-submitted'] == 'true' %}
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">Date withdrawn</dt>
+						<dd class="govuk-summary-list__value">{{ "" | todayDate }}</dd>
+					</div>
+					{% endif %}
 				</dl>
 			</div>
 		</div>
