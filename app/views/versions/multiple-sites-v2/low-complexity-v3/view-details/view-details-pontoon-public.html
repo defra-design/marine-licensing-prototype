@@ -2,8 +2,6 @@
 
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 
-{% set organisationName = data['organisation-name'] or 'Jurassic Coast SUP Ltd' %}
-
 {% block head %}
   {{ super() }}
   <style>
@@ -24,37 +22,12 @@
 }) }}
 {{ govukServiceNavigation({
   serviceName: "Get permission for marine work",
-  serviceUrl: "/versions/multiple-sites-v2/low-complexity-v3/homepage",
-  navigation: [
-    {
-      href: "../homepage",
-      text: "Home",
-      active: false
-    },
-    {
-      href: "../projects",
-      text: "Projects",
-      active: false
-    },
-    {
-      href: "#",
-      text: "Defra account",
-      active: false
-    },
-    {
-      href: "../sign-in?goto=homepage",
-      text: "Sign out"
-    }
-  ]
+  serviceUrl: "#"
 }) }}
 {% endblock %}
 
 {% block beforeContent %}
     {% include "../../includes/phase-banner.html" %}
-    {% if data['organisation-name'] %}
-        {% include "../../includes/organisation-switcher.html" %}
-    {% endif %}
-    <a class="govuk-back-link govuk-link--no-visited-state" href="javascript:history.back()">Back</a>
 {% endblock %}
 
 {% block pageTitle %}
@@ -88,8 +61,8 @@
                         <dt class="govuk-summary-list__key">Status</dt>
                         <dd class="govuk-summary-list__value">
                             {{ govukTag({
-                                text: "Transferred",
-                                classes: "govuk-tag--magenta"
+                                text: "Submitted",
+                                classes: "govuk-tag--green"
                             }) }}
                         </dd>
                     </div>
@@ -98,16 +71,12 @@
                         <dd class="govuk-summary-list__value">MLA/2026/10003</dd>
                     </div>
                     <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Who the Marine licence is for</dt>
-                        <dd class="govuk-summary-list__value">{{ organisationName }}</dd>
+                        <dt class="govuk-summary-list__key">Who the marine licence is for</dt>
+                        <dd class="govuk-summary-list__value">Jurassic Coast SUP Ltd</dd>
                     </div>
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Date submitted</dt>
                         <dd class="govuk-summary-list__value">{{ -5 | daysFromToday }}</dd>
-                    </div>
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Date of transfer</dt>
-                        <dd class="govuk-summary-list__value">{{ "" | todayDate }}</dd>
                     </div>
                 </dl>
             </div>
@@ -188,7 +157,7 @@
                         <dd class="govuk-summary-list__value">Construction of new works</dd>
                     </div>
                     <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">What you're constructing</dt>
+                        <dt class="govuk-summary-list__key">What is being constructed</dt>
                         <dd class="govuk-summary-list__value">Pontoons or floating walkways</dd>
                     </div>
                     <div class="govuk-summary-list__row">
