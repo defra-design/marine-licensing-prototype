@@ -21,7 +21,6 @@
   'use strict'
 
   var CURRENT_USER = 'jon-doe'
-  var CURRENT_USER_NAME = 'Sam Evans'
 
   function text (el) {
     return el ? el.textContent.trim() : ''
@@ -78,25 +77,44 @@
       return model.filter(function (item) { return item[key] === value }).length
     }
 
-    // Owners present in the table, current user first. Nobody with zero
-    // projects appears, so no phantom options when session data hides rows.
+    // Owners present in the table. Nobody with zero projects appears, so no
+    // phantom options when session data hides rows.
+    var selfPrefix = mode === 'owners' ? 'Me' : 'You'
+
     var owners = []
     if (hasOwners) {
       model.forEach(function (item) {
         var known = owners.some(function (o) { return o.value === item.creator })
         if (!known && item.creator) {
-          owners.push({ value: item.creator, name: item.ownerName })
+          owners.push({
+            value: item.creator,
+            name: item.ownerName,
+            label: item.creator === CURRENT_USER
+              ? selfPrefix + ' (' + item.ownerName + ')'
+              : item.ownerName
+          })
         }
       })
+
       owners.sort(function (a, b) {
-        if (a.value === CURRENT_USER) return -1
-        if (b.value === CURRENT_USER) return 1
-        return a.name.localeCompare(b.name)
+        // Option C pins the current user to the top; A and B sort them in
+        // alphabetically with everyone else.
+        if (mode === 'owners') {
+          if (a.value === CURRENT_USER) return -1
+          if (b.value === CURRENT_USER) return 1
+        }
+        return a.label.localeCompare(b.label)
       })
     }
 
+    // Plain names read better in prose ("Projects by Sam Evans"); labels carry
+    // the You/Me prefix and are what the controls and tags show.
     var ownerNames = {}
-    owners.forEach(function (o) { ownerNames[o.value] = o.name })
+    var ownerLabels = {}
+    owners.forEach(function (o) {
+      ownerNames[o.value] = o.name
+      ownerLabels[o.value] = o.label
+    })
 
     // ------------------------------------------------------- build controls
 
@@ -126,9 +144,13 @@
       })
     }
 
+    function alphabetical (values) {
+      return values.sort(function (a, b) { return a.localeCompare(b) })
+    }
+
     buildCheckboxes(
       document.getElementById('type-checkboxes'),
-      uniqueBy('type'),
+      alphabetical(uniqueBy('type')),
       'filter-type',
       'type',
       function (v) { return v + ' (' + countBy('type', v) + ')' }
@@ -136,7 +158,7 @@
 
     buildCheckboxes(
       document.getElementById('status-checkboxes'),
-      uniqueBy('status'),
+      alphabetical(uniqueBy('status')),
       'filter-status',
       'status',
       function (v) { return v + ' (' + countBy('status', v) + ')' }
@@ -148,10 +170,7 @@
         owners.map(function (o) { return o.value }),
         'filter-owner',
         'owner',
-        function (v) {
-          var label = v === CURRENT_USER ? 'Me (' + CURRENT_USER_NAME + ')' : ownerNames[v]
-          return label + ' (' + countBy('creator', v) + ')'
-        }
+        function (v) { return ownerLabels[v] + ' (' + countBy('creator', v) + ')' }
       )
     }
 
@@ -167,7 +186,7 @@
         owners.map(function (o) { return o.value }),
         'filter-person',
         'person',
-        function (v) { return ownerNames[v] + ' (' + countBy('creator', v) + ')' }
+        function (v) { return ownerLabels[v] + ' (' + countBy('creator', v) + ')' }
       )
     }
 
@@ -244,7 +263,7 @@
         categories.push({
           heading: 'Owner',
           items: state.people.map(function (v) {
-            return { text: ownerNames[v], type: 'person', value: v }
+            return { text: ownerLabels[v], type: 'person', value: v }
           })
         })
       }
@@ -253,8 +272,7 @@
         categories.push({
           heading: 'Owner',
           items: state.ownersSelected.map(function (v) {
-            var label = v === CURRENT_USER ? 'Me (' + CURRENT_USER_NAME + ')' : ownerNames[v]
-            return { text: label, type: 'owner', value: v }
+            return { text: ownerLabels[v], type: 'owner', value: v }
           })
         })
       }
