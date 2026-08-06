@@ -3,7 +3,7 @@
 {% from "govuk/components/header/macro.njk" import govukHeader %}
 {% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
 
-{% set currentPageId = "low-complexity-projects" %}
+
 
 {% block header %}
 {{ govukHeader({
@@ -12,18 +12,17 @@
 }) }}
 {{ govukServiceNavigation({
   serviceName: "Get permission for marine work",
-  serviceUrl: "../homepage",
-  navigation: [
-    { href: "../homepage", text: "Home", active: false },
-    { href: "../projects", text: "Projects", active: true },
-    { href: "#", text: "Defra account", active: false },
-    { href: "../sign-in?goto=homepage", text: "Sign out" }
-  ]
+  serviceUrl: "../homepage"
 }) }}
 {% endblock %}
 
 {% block beforeContent %}
-  {% include "../../includes/phase-banner.html" %}
+{{ govukPhaseBanner({
+tag: {
+text: "Prototype"
+},
+html: ''
+}) }}
 {% endblock %}
 
 {% set pageHeadingTextHTML %}
