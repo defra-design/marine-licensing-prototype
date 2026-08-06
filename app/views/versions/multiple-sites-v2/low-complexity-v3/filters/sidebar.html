@@ -202,7 +202,6 @@ document.addEventListener('DOMContentLoaded', function () {
   var container = document.getElementById('selected-filter-tags')
 
   LcmlProjectsFilter.init({
-    mode: 'radios',
     tagRenderer: function (categories, remove) {
       container.innerHTML = ''
       categories.forEach(function (category) {
