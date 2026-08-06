@@ -1,0 +1,374 @@
+{% extends "../../layouts/low-complexity-v3.html" %}
+
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "govuk/components/header/macro.njk" import govukHeader %}
+{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
+
+{% set currentPageId = "low-complexity-projects" %}
+{% set filterPage = "top-panel" %}
+
+{#
+  Option A — bespoke top panel.
+
+  Faithful port of sample-plans-v2/projects-filter-button-v2, moved onto the
+  LCML v3 table. Levelled with B and C on counts and the live results region.
+#}
+
+{% block head %}
+  {{ super() }}
+  <style>
+  .filter-button-wrapper {
+    margin-bottom: 20px;
+  }
+
+  .filter-button-wrapper.is-expanded {
+    margin-bottom: 0;
+  }
+
+  #filter-toggle {
+    margin-bottom: 0;
+    padding: 11px 13px;
+    width: auto !important;
+  }
+
+  #filter-toggle[aria-expanded="true"] {
+    box-shadow: none;
+    border-bottom: none;
+    padding-bottom: 18px;
+  }
+
+  .filter-panel {
+    background-color: #f3f2f1;
+    padding: 20px;
+    margin-bottom: 30px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    column-gap: 30px;
+    align-items: start;
+  }
+
+  .filter-panel[hidden] {
+    display: none;
+  }
+
+  .filter-panel > * {
+    min-width: 260px;
+  }
+
+  /* Radios and checkboxes need a white well against the grey panel */
+  .filter-panel .govuk-radios__label::before,
+  .filter-panel .govuk-checkboxes__label::before,
+  .filter-panel .govuk-radios__input:focus + .govuk-radios__label::before,
+  .filter-panel .govuk-checkboxes__input:focus + .govuk-checkboxes__label::before {
+    background-color: #ffffff;
+  }
+
+  .filter-actions {
+    grid-column: 1 / -1;
+    margin-top: 10px;
+  }
+
+  .filter-actions .govuk-button-group {
+    margin-bottom: 0;
+  }
+
+  .filter-checkboxes-group,
+  .filter-inputs-container {
+    margin-bottom: 0;
+  }
+
+  #results-count {
+    margin-top: 20px;
+    margin-bottom: 20px;
+  }
+
+  #results-count.error-message {
+    color: #d4351c;
+  }
+
+  /* Selected filters appear only when the panel is collapsed */
+  .filter-tags-container {
+    display: none;
+    margin-top: 15px;
+    margin-bottom: 20px;
+  }
+
+  .filter-tags-container.show-tags {
+    display: block;
+  }
+
+  .filter-tag {
+    display: inline-block;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    padding: 6px 10px;
+    background-color: #f3f2f1;
+    color: #0b0c0c;
+    text-decoration: none;
+    border: 1px solid #b1b4b6;
+    cursor: pointer;
+    font-size: 16px;
+    font-weight: 400;
+  }
+
+  .filter-tag:hover {
+    background-color: #0b0c0c;
+    color: #ffffff;
+    border-color: #0b0c0c;
+  }
+
+  .filter-tag:focus {
+    background-color: #dfd9d6;
+    outline: 3px solid #ffdd00;
+    outline-offset: 0;
+  }
+
+  .filter-tag-remove {
+    display: inline-block;
+    margin-left: 8px;
+    vertical-align: middle;
+    width: 11px;
+    height: 11px;
+  }
+
+  .filter-tag-remove svg {
+    width: 100%;
+    height: 100%;
+    vertical-align: top;
+  }
+
+  .govuk-radios__conditional.error-state {
+    border-left-color: #d4351c;
+  }
+
+  .person-error-message {
+    display: none;
+    color: #d4351c;
+    font-weight: 700;
+    margin-bottom: 15px;
+  }
+
+  @media (max-width: 600px) {
+    .filter-panel {
+      grid-template-columns: 1fr;
+    }
+
+    .filter-panel > * {
+      min-width: 0;
+    }
+
+    .filter-actions {
+      margin-top: 20px;
+    }
+  }
+
+  @media (min-width: 601px) and (max-width: 1150px) {
+    .filter-panel {
+      grid-template-columns: repeat(2, minmax(260px, 1fr));
+    }
+  }
+
+  @media (min-width: 1151px) {
+    .filter-panel {
+      grid-template-columns: repeat(4, minmax(260px, 1fr));
+    }
+  }
+  </style>
+{% endblock %}
+
+{% block header %}
+{{ govukHeader({
+  homepageUrl: "/",
+  classes: "govuk-header--full-width-border"
+}) }}
+{{ govukServiceNavigation({
+  serviceName: "Get permission for marine work",
+  serviceUrl: "../homepage",
+  navigation: [
+    { href: "../homepage", text: "Home", active: false },
+    { href: "../projects", text: "Projects", active: true },
+    { href: "#", text: "Defra account", active: false },
+    { href: "../sign-in?goto=homepage", text: "Sign out" }
+  ]
+}) }}
+{% endblock %}
+
+{% block beforeContent %}
+  {% include "../../includes/phase-banner.html" %}
+  {% if data['organisation-name'] %}
+  <div class="app-organisation-switcher">
+    <span class="govuk-body-s govuk-!-font-weight-bold app-organisation-switcher__name">{{ data['organisation-name'] }}</span>
+    {% if data['user_type'] === 'organisation' %}
+    <a class="govuk-link app-organisation-switcher__link govuk-link--no-visited-state" href="../organisation-selector?change=true&returnTo=filters/top-panel">
+      Change who you're representing
+    </a>
+    {% endif %}
+  </div>
+  {% endif %}
+{% endblock %}
+
+{% set pageHeadingTextHTML %}
+Projects
+{% endset %}
+
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - Get permission for marine work
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-full">
+		<span class="govuk-caption-l">{{ data['organisation-name'] }}</span>
+		<h1 class="govuk-heading-l">{{ pageHeadingTextHTML }}</h1>
+
+		<div>
+			<div class="filter-button-wrapper is-expanded">
+				<button type="button"
+						class="govuk-button govuk-button--secondary"
+						id="filter-toggle"
+						aria-expanded="true"
+						aria-controls="filter-panel"
+						data-module="govuk-button">
+					Hide filters
+				</button>
+			</div>
+
+			<div class="filter-panel" id="filter-panel">
+
+				{% if data['user_type'] === 'organisation' %}
+				<div class="govuk-form-group">
+					<fieldset class="govuk-fieldset">
+						<legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Show</legend>
+						<div class="govuk-radios govuk-radios--small" data-module="govuk-radios">
+							<div class="govuk-radios__item">
+								<input class="govuk-radios__input" id="filter-all" name="projectFilter" type="radio" value="all-projects" checked>
+								<label class="govuk-label govuk-radios__label" for="filter-all">
+									All {{ data['organisation-name'] or "Ramsgate Marina" }} projects <span id="count-all-projects"></span>
+								</label>
+							</div>
+							<div class="govuk-radios__item">
+								<input class="govuk-radios__input" id="filter-my" name="projectFilter" type="radio" value="my-projects">
+								<label class="govuk-label govuk-radios__label" for="filter-my">
+									My projects <span id="count-my-projects"></span>
+								</label>
+							</div>
+							<div class="govuk-radios__item">
+								<input class="govuk-radios__input" id="filter-specific" name="projectFilter" type="radio" value="specific-person" data-aria-controls="conditional-specific-person">
+								<label class="govuk-label govuk-radios__label" for="filter-specific">Projects by owner</label>
+							</div>
+							<div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-specific-person">
+								<fieldset class="govuk-fieldset">
+									<legend class="govuk-fieldset__legend govuk-visually-hidden">Select an owner</legend>
+									<p class="person-error-message" id="person-error-message">
+										<span class="govuk-visually-hidden">Error:</span> Select an owner to view their projects
+									</p>
+									<div class="govuk-checkboxes govuk-checkboxes--small" id="person-checkboxes"></div>
+								</fieldset>
+							</div>
+						</div>
+					</fieldset>
+				</div>
+				{% endif %}
+
+				<div class="filter-inputs-container">
+					<div class="govuk-form-group">
+						<label class="govuk-label govuk-label--s" for="filter-project-name">Project name</label>
+						<div id="filter-project-name-hint" class="govuk-hint">Enter full or partial name</div>
+						<input class="govuk-input" id="filter-project-name" name="filter-project-name" type="text" aria-describedby="filter-project-name-hint">
+					</div>
+
+					<div class="govuk-form-group">
+						<label class="govuk-label govuk-label--s" for="filter-reference">Reference</label>
+						<div id="filter-reference-hint" class="govuk-hint">Enter full or partial reference</div>
+						<input class="govuk-input" id="filter-reference" name="filter-reference" type="text" aria-describedby="filter-reference-hint">
+					</div>
+				</div>
+
+				<div class="filter-checkboxes-group">
+					<div class="govuk-form-group">
+						<fieldset class="govuk-fieldset">
+							<legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Type</legend>
+							<div class="govuk-checkboxes govuk-checkboxes--small" id="type-checkboxes"></div>
+						</fieldset>
+					</div>
+				</div>
+
+				<div class="filter-checkboxes-group">
+					<div class="govuk-form-group">
+						<fieldset class="govuk-fieldset">
+							<legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Status</legend>
+							<div class="govuk-checkboxes govuk-checkboxes--small" id="status-checkboxes"></div>
+						</fieldset>
+					</div>
+				</div>
+
+				<div class="filter-actions">
+					<div class="govuk-button-group">
+						<button type="button" class="govuk-button" id="apply-filters" data-module="govuk-button">Apply filters</button>
+						<a href="#" id="clear-filters" class="govuk-link govuk-link--no-visited-state">Clear filters</a>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<p id="results-count" class="govuk-body"></p>
+
+		<div id="filter-tags-container" class="filter-tags-container"></div>
+
+		{% include "./_projects-table.html" %}
+
+	</div>
+</div>
+
+<script src="/public/javascripts/lcml-projects-filter.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+	var tagsContainer = document.getElementById('filter-tags-container')
+
+	LcmlProjectsFilter.init({
+		mode: 'radios',
+		tagRenderer: function (categories, remove) {
+			tagsContainer.innerHTML = ''
+			categories.forEach(function (category) {
+				category.items.forEach(function (item) {
+					var button = document.createElement('button')
+					button.className = 'filter-tag'
+					button.type = 'button'
+					button.innerHTML = category.heading + ': ' + item.text +
+						'<span class="filter-tag-remove"><svg viewBox="0 0 13 13" xmlns="http://www.w3.org/2000/svg" focusable="false" aria-hidden="true"><path d="M0 0L13 13M13 0L0 13" fill="none" stroke="currentColor" stroke-width="2"></path></svg></span>'
+					button.addEventListener('click', function () {
+						remove(item.type, item.value)
+					})
+					tagsContainer.appendChild(button)
+				})
+			})
+		}
+	})
+
+	// Panel toggle. Selected filters surface only once the panel is hidden.
+	var toggle = document.getElementById('filter-toggle')
+	var panel = document.getElementById('filter-panel')
+	var wrapper = document.querySelector('.filter-button-wrapper')
+
+	toggle.addEventListener('click', function () {
+		var expanded = this.getAttribute('aria-expanded') === 'true'
+
+		if (expanded) {
+			panel.setAttribute('hidden', '')
+			wrapper.classList.remove('is-expanded')
+			this.setAttribute('aria-expanded', 'false')
+			this.textContent = 'Show filters'
+			tagsContainer.classList.add('show-tags')
+		} else {
+			panel.removeAttribute('hidden')
+			wrapper.classList.add('is-expanded')
+			this.setAttribute('aria-expanded', 'true')
+			this.textContent = 'Hide filters'
+			tagsContainer.classList.remove('show-tags')
+		}
+	})
+})
+</script>
+
+{% endblock %}
