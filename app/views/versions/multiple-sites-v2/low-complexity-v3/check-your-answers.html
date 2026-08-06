@@ -539,6 +539,42 @@ Check your answers before sending your information
 			</div>
 			{% endfor %}
 
+			{# Construction drawings for Site 1 (only when an activity needs a drawing) #}
+			{% set hasConstructionNew = false %}
+			{% for ad in fileUploadActivities %}
+				{% if ad['low-complexity-type-of-works'] == 'construction-new' or ad['low-complexity-type-of-works'] == 'alteration-improvement' %}{% set hasConstructionNew = true %}{% endif %}
+			{% endfor %}
+			{% if hasConstructionNew %}
+				{% for file in (data['low-complexity-construction-files'] if data['low-complexity-construction-files'] else []) %}
+				<div id="site-1-construction-file-{{ file.fileNumber }}" class="govuk-summary-card">
+					<div class="govuk-summary-card__title-wrapper">
+						<h2 class="govuk-summary-card__title">
+							Site 1 - Construction drawing {{ file.fileNumber }}
+						</h2>
+						<ul class="govuk-summary-card__actions">
+							<li class="govuk-summary-card__action">
+								<a class="govuk-link govuk-link--no-visited-state" href="site-details/review-site-details?camefromcheckanswers=true">
+									Change<span class="govuk-visually-hidden"> construction drawing {{ file.fileNumber }} for site 1</span>
+								</a>
+							</li>
+						</ul>
+					</div>
+					<div class="govuk-summary-card__content">
+						<dl class="govuk-summary-list">
+							<div class="govuk-summary-list__row">
+								<dt class="govuk-summary-list__key">
+									File upload
+								</dt>
+								<dd class="govuk-summary-list__value">
+									{{ file.filename if file.filename else '[Data]' }}
+								</dd>
+							</div>
+						</dl>
+					</div>
+				</div>
+				{% endfor %}
+			{% endif %}
+
 		{% else %}
 
 		{# ============================== #}
@@ -947,6 +983,42 @@ Check your answers before sending your information
 				</div>
 			</div>
 			{% endfor %}
+
+			{# Construction drawings for this site (only when an activity needs a drawing) #}
+			{% set siteHasConstructionNew = false %}
+			{% for a in siteActivities %}
+				{% if a['low-complexity-type-of-works'] == 'construction-new' or a['low-complexity-type-of-works'] == 'alteration-improvement' %}{% set siteHasConstructionNew = true %}{% endif %}
+			{% endfor %}
+			{% if siteHasConstructionNew %}
+				{% for file in (site.constructionFiles if site.constructionFiles else []) %}
+				<div id="site-{{ site.siteNumber }}-construction-file-{{ file.fileNumber }}" class="govuk-summary-card">
+					<div class="govuk-summary-card__title-wrapper">
+						<h2 class="govuk-summary-card__title">
+							Site {{ site.siteNumber }} - Construction drawing {{ file.fileNumber }}
+						</h2>
+						<ul class="govuk-summary-card__actions">
+							<li class="govuk-summary-card__action">
+								<a class="govuk-link govuk-link--no-visited-state" href="site-details/manual-entry/review-site-details?camefromcheckanswers=true">
+									Change<span class="govuk-visually-hidden"> construction drawing {{ file.fileNumber }} for site {{ site.siteNumber }}</span>
+								</a>
+							</li>
+						</ul>
+					</div>
+					<div class="govuk-summary-card__content">
+						<dl class="govuk-summary-list">
+							<div class="govuk-summary-list__row">
+								<dt class="govuk-summary-list__key">
+									File upload
+								</dt>
+								<dd class="govuk-summary-list__value">
+									{{ file.filename if file.filename else '[Data]' }}
+								</dd>
+							</div>
+						</dl>
+					</div>
+				</div>
+				{% endfor %}
+			{% endif %}
 
 		{% endfor %}
 		{% endif %}
