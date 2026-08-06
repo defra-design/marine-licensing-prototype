@@ -14,9 +14,10 @@
     1. Selected filters use MOJ's moj-filter-tags markup, not a bespoke tag
     2. Selected filters are always visible, not only when the panel is collapsed
     3. The panel starts collapsed, so results are the first thing you see
-    4. The Show radios and their nested owner reveal are replaced by a single
-       Owner checkbox group. This removes the "Select an owner" error state
-       entirely — there is no longer an invalid combination to guard against.
+    4. Same Show radios and owner reveal as A, but "Projects by owner" with
+       nobody ticked shows everything instead of raising an error. Picking the
+       radio is a step towards a filter, not a mistake to correct, so there is
+       no invalid state left to guard against.
 #}
 
 {% block head %}
@@ -62,6 +63,7 @@
 
   .filter-panel .govuk-radios__label::before,
   .filter-panel .govuk-checkboxes__label::before,
+  .filter-panel .govuk-radios__input:focus + .govuk-radios__label::before,
   .filter-panel .govuk-checkboxes__input:focus + .govuk-checkboxes__label::before {
     background-color: #ffffff;
   }
@@ -178,8 +180,33 @@ Projects
 				{% if data['user_type'] === 'organisation' %}
 				<div class="govuk-form-group">
 					<fieldset class="govuk-fieldset">
-						<legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Owner</legend>
-						<div class="govuk-checkboxes govuk-checkboxes--small" id="owner-checkboxes"></div>
+						<legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Show</legend>
+						<div class="govuk-radios govuk-radios--small" data-module="govuk-radios">
+							<div class="govuk-radios__item">
+								<input class="govuk-radios__input" id="filter-all" name="projectFilter" type="radio" value="all-projects" checked>
+								<label class="govuk-label govuk-radios__label" for="filter-all">
+									All {{ data['organisation-name'] or "Ramsgate Marina" }} projects <span id="count-all-projects"></span>
+								</label>
+							</div>
+							<div class="govuk-radios__item">
+								<input class="govuk-radios__input" id="filter-my" name="projectFilter" type="radio" value="my-projects">
+								<label class="govuk-label govuk-radios__label" for="filter-my">
+									My projects <span id="count-my-projects"></span>
+								</label>
+							</div>
+							<div class="govuk-radios__item">
+								<input class="govuk-radios__input" id="filter-specific" name="projectFilter" type="radio" value="specific-person" data-aria-controls="conditional-specific-person">
+								<label class="govuk-label govuk-radios__label" for="filter-specific">Projects by owner</label>
+							</div>
+							{# No error message here. Picking this with nobody ticked simply
+							   has not narrowed anything yet, so there is nothing to correct. #}
+							<div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-specific-person">
+								<fieldset class="govuk-fieldset">
+									<legend class="govuk-fieldset__legend govuk-visually-hidden">Select an owner</legend>
+									<div class="govuk-checkboxes govuk-checkboxes--small" id="person-checkboxes"></div>
+								</fieldset>
+							</div>
+						</div>
 					</fieldset>
 				</div>
 				{% endif %}
@@ -242,7 +269,9 @@ document.addEventListener('DOMContentLoaded', function () {
 	var container = document.getElementById('selected-filter-tags')
 
 	LcmlProjectsFilter.init({
-		mode: 'owners',
+		selfLabel: 'Me',
+		pinSelf: true,
+		allowEmptyOwner: true,
 		tagRenderer: function (categories, remove) {
 			container.innerHTML = ''
 

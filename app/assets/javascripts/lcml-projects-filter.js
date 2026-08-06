@@ -9,8 +9,12 @@
   Usage:
 
     LcmlProjectsFilter.init({
-      mode: 'radios' | 'owners',
-      tagRenderer: function (categories, remove) { ... }
+      tagRenderer: function (categories, remove) { ... },
+
+      selfLabel: 'You',        // prefix on the current user's own entry
+      pinSelf: false,          // true keeps them top of the list, not sorted in
+      allowEmptyOwner: false   // true treats "by owner, nobody picked" as
+                               // everyone rather than as an error
     })
 
   Counts shown against each option are TOTALS from the rendered table. They do
@@ -27,7 +31,10 @@
   }
 
   function init (options) {
-    var mode = options.mode || 'radios'
+    var selfPrefix = options.selfLabel || 'You'
+    var pinSelf = options.pinSelf === true
+    var allowEmptyOwner = options.allowEmptyOwner === true
+
     var table = document.getElementById('projects-table')
     if (!table) return
 
@@ -41,6 +48,7 @@
 
     var orgCaption = document.querySelector('.govuk-caption-l')
     var orgName = text(orgCaption) || 'Ramsgate Marina'
+    var hasScope = document.querySelectorAll('input[name="projectFilter"]').length > 0
 
     // The Owner column is only rendered for organisation users, so find it by
     // header text rather than assuming a fixed index.
@@ -79,8 +87,6 @@
 
     // Owners present in the table. Nobody with zero projects appears, so no
     // phantom options when session data hides rows.
-    var selfPrefix = mode === 'owners' ? 'Me' : 'You'
-
     var owners = []
     if (hasOwners) {
       model.forEach(function (item) {
@@ -97,9 +103,7 @@
       })
 
       owners.sort(function (a, b) {
-        // Option C pins the current user to the top; A and B sort them in
-        // alphabetically with everyone else.
-        if (mode === 'owners') {
+        if (pinSelf) {
           if (a.value === CURRENT_USER) return -1
           if (b.value === CURRENT_USER) return 1
         }
@@ -164,31 +168,18 @@
       function (v) { return v + ' (' + countBy('status', v) + ')' }
     )
 
-    if (mode === 'owners' && hasOwners) {
-      buildCheckboxes(
-        document.getElementById('owner-checkboxes'),
-        owners.map(function (o) { return o.value }),
-        'filter-owner',
-        'owner',
-        function (v) { return ownerLabels[v] + ' (' + countBy('creator', v) + ')' }
-      )
-    }
+    var countAll = document.getElementById('count-all-projects')
+    var countMine = document.getElementById('count-my-projects')
+    if (countAll) countAll.textContent = '(' + model.length + ')'
+    if (countMine) countMine.textContent = '(' + countBy('creator', CURRENT_USER) + ')'
 
-    // Counts against the Show radios (options A and B).
-    if (mode === 'radios') {
-      var countAll = document.getElementById('count-all-projects')
-      var countMine = document.getElementById('count-my-projects')
-      if (countAll) countAll.textContent = '(' + model.length + ')'
-      if (countMine) countMine.textContent = '(' + countBy('creator', CURRENT_USER) + ')'
-
-      buildCheckboxes(
-        document.getElementById('person-checkboxes'),
-        owners.map(function (o) { return o.value }),
-        'filter-person',
-        'person',
-        function (v) { return ownerLabels[v] + ' (' + countBy('creator', v) + ')' }
-      )
-    }
+    buildCheckboxes(
+      document.getElementById('person-checkboxes'),
+      owners.map(function (o) { return o.value }),
+      'filter-person',
+      'person',
+      function (v) { return ownerLabels[v] + ' (' + countBy('creator', v) + ')' }
+    )
 
     // --------------------------------------------------------------- state
 
@@ -205,21 +196,22 @@
         name: projectNameInput ? projectNameInput.value.trim().toLowerCase() : '',
         reference: referenceInput ? referenceInput.value.trim().toLowerCase() : '',
         people: checkedValues('filter-person'),
-        ownersSelected: checkedValues('filter-owner'),
         types: checkedValues('filter-type'),
         statuses: checkedValues('filter-status')
       }
     }
 
     function matches (item, state) {
-      if (mode === 'radios') {
-        if (state.scope === 'my-projects' && item.creator !== CURRENT_USER) return false
-        if (state.scope === 'specific-person') {
-          if (state.people.length === 0) return false
-          if (state.people.indexOf(item.creator) === -1) return false
+      if (state.scope === 'my-projects' && item.creator !== CURRENT_USER) return false
+
+      if (state.scope === 'specific-person') {
+        if (state.people.length === 0) {
+          // Nobody picked yet. Either that is an error the caller wants to
+          // raise, or the scope simply has not started narrowing anything.
+          if (!allowEmptyOwner) return false
+        } else if (state.people.indexOf(item.creator) === -1) {
+          return false
         }
-      } else if (state.ownersSelected.length > 0) {
-        if (state.ownersSelected.indexOf(item.creator) === -1) return false
       }
 
       if (state.name && item.name.indexOf(state.name) === -1) return false
@@ -259,20 +251,11 @@
         })
       }
 
-      if (mode === 'radios' && state.scope === 'specific-person' && state.people.length > 0) {
+      if (state.scope === 'specific-person' && state.people.length > 0) {
         categories.push({
           heading: 'Owner',
           items: state.people.map(function (v) {
             return { text: ownerLabels[v], type: 'person', value: v }
-          })
-        })
-      }
-
-      if (mode === 'owners' && state.ownersSelected.length > 0) {
-        categories.push({
-          heading: 'Owner',
-          items: state.ownersSelected.map(function (v) {
-            return { text: ownerLabels[v], type: 'owner', value: v }
           })
         })
       }
@@ -304,7 +287,6 @@
       else if (type === 'reference') referenceInput.value = ''
       else if (type === 'type') uncheck('filter-type', value)
       else if (type === 'status') uncheck('filter-status', value)
-      else if (type === 'owner') uncheck('filter-owner', value)
       else if (type === 'person') {
         uncheck('filter-person', value)
         // Dropping the last person leaves the scope radio pointing at nothing
@@ -325,24 +307,33 @@
 
       var word = visible === 1 ? 'result' : 'results'
 
-      if (mode === 'owners') {
-        return visible + ' ' + word + ' found'
-      }
+      // Individual users have no organisation and so no scope radios. Naming
+      // an organisation they are not part of would be wrong.
+      if (!hasScope) return visible + ' ' + word + ' found'
+
+      var allProjects = visible + ' ' + word + " found in 'All " + orgName + " projects'"
 
       if (state.scope === 'my-projects') {
         return visible + ' ' + word + " found in 'My projects'"
       }
+
       if (state.scope === 'specific-person') {
         var names = state.people.map(function (v) { return ownerNames[v] }).join(', ')
-        return visible + ' ' + word + " found in 'Projects by " + (names || 'owner') + "'"
+        if (!names) {
+          // Nothing narrowed yet, so say what is actually on screen rather
+          // than naming a scope the user has not filled in.
+          return allowEmptyOwner ? allProjects : visible + ' ' + word + " found in 'Projects by owner'"
+        }
+        return visible + ' ' + word + " found in 'Projects by " + names + "'"
       }
-      return visible + ' ' + word + " found in 'All " + orgName + " projects'"
+
+      return allProjects
     }
 
     function apply (checkForErrors) {
       var state = readState()
 
-      var isError = mode === 'radios' &&
+      var isError = !allowEmptyOwner &&
         checkForErrors &&
         state.scope === 'specific-person' &&
         state.people.length === 0
@@ -415,7 +406,7 @@
         if (projectNameInput) projectNameInput.value = ''
         if (referenceInput) referenceInput.value = ''
 
-        ;['filter-type', 'filter-status', 'filter-person', 'filter-owner'].forEach(function (name) {
+        ;['filter-type', 'filter-status', 'filter-person'].forEach(function (name) {
           document.querySelectorAll('input[name="' + name + '"]').forEach(function (cb) {
             cb.checked = false
           })
