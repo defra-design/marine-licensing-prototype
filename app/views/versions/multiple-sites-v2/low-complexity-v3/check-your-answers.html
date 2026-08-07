@@ -566,7 +566,11 @@ Check your answers before sending your information
 									File upload
 								</dt>
 								<dd class="govuk-summary-list__value">
+									{% if isSent %}
+									<a class="govuk-link govuk-link--no-visited-state" href="">{{ file.filename if file.filename else '[Data]' }}</a>
+									{% else %}
 									{{ file.filename if file.filename else '[Data]' }}
+									{% endif %}
 								</dd>
 							</div>
 						</dl>
@@ -1011,7 +1015,11 @@ Check your answers before sending your information
 									File upload
 								</dt>
 								<dd class="govuk-summary-list__value">
+									{% if isSent %}
+									<a class="govuk-link govuk-link--no-visited-state" href="">{{ file.filename if file.filename else '[Data]' }}</a>
+									{% else %}
 									{{ file.filename if file.filename else '[Data]' }}
+									{% endif %}
 								</dd>
 							</div>
 						</dl>
@@ -1578,7 +1586,11 @@ Check your answers before sending your information
 							Water Framework Directive assessment upload
 						</dt>
 						<dd class="govuk-summary-list__value">
+							{% if isSent %}
+							<a class="govuk-link govuk-link--no-visited-state" href="">{{ data['low-complexity-wfd-filename'] if data['low-complexity-wfd-filename'] else "WFD.doc" }}</a>
+							{% else %}
 							{{ data['low-complexity-wfd-filename'] if data['low-complexity-wfd-filename'] else "WFD.doc" }}
+							{% endif %}
 						</dd>
 					</div>
 
