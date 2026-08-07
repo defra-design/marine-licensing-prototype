@@ -1,0 +1,86 @@
+{% extends "../../layouts/low-complexity-v4.html" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% if data['organisation-name'] %}
+        {% include "../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link govuk-link--no-visited-state" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+{% block pageTitle %}
+Check your answers for Water Framework Directive - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
+        <h1 class="govuk-heading-l">Check your answers for Water Framework Directive</h1>
+
+        <dl class="govuk-summary-list">
+
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Project located within one nautical mile (1.85km) of low-water, in a tidal river or estuary
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {{ data['low-complexity-wfd-within-nautical-mile'] }}
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                    <a class="govuk-link govuk-link--no-visited-state" href="water-framework-directive?fromcheckanswers=true">
+                        Change<span class="govuk-visually-hidden"> if your project is within one nautical mile of the low-water line, or in a tidal river or estuary</span>
+                    </a>
+                </dd>
+            </div>
+
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Project limited to one of the excluded activities
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {{ data['low-complexity-wfd-excluded-activities'] }}
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                    <a class="govuk-link govuk-link--no-visited-state" href="water-framework-directive-excluded-activities?fromcheckanswers=true">
+                        Change<span class="govuk-visually-hidden"> if your project is limited to one of the excluded activities</span>
+                    </a>
+                </dd>
+            </div>
+
+            {% if data['low-complexity-wfd-excluded-activities'] == "No" %}
+
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Water Framework Directive assessment upload
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {{ data['low-complexity-wfd-filename'] if data['low-complexity-wfd-filename'] else "WFD.doc" }}
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                    <a class="govuk-link govuk-link--no-visited-state" href="water-framework-directive-upload?fromcheckanswers=true">
+                        Change<span class="govuk-visually-hidden"> your Water Framework Directive assessment upload</span>
+                    </a>
+                </dd>
+            </div>
+
+            {% endif %}
+
+        </dl>
+
+        <form action="water-framework-directive-check-answers-router" method="post" novalidate>
+            <div class="govuk-button-group">
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+            </div>
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

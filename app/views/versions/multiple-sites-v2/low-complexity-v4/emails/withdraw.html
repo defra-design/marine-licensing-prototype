@@ -1,0 +1,65 @@
+{% extends "../../layouts/email.html" %}
+
+{% block pageTitle %}
+  Email - Confirming you've withdrawn your marine licence application
+{% endblock %}
+
+{% block header %}
+  {{ govukHeader({
+    homepageUrl: "/",
+    classes: "govuk-header--full-width-border"
+  }) }}
+{% endblock %}
+
+{% block content %}
+
+<style>
+.govuk-width-container {
+	max-width: 640px;
+}
+.govuk-main-wrapper {
+    padding-top: 10px;
+    padding-bottom: 40px;
+}
+h1 {
+	font-size: 36px;
+	font-family: Arial,Helvetica;
+	color: #000;
+}
+p {
+	font-size: 21px;
+	font-family: Arial,Helvetica;
+	color: #000;
+}
+h2 {
+	font-size: 30px;
+	font-family: Arial,Helvetica;
+	color: #000;
+}
+.govuk-template {
+    background-color: #fff;
+}
+</style>
+
+
+<h1>Confirming you've withdrawn your marine licence application MLA/2026/10002</h1>
+
+<p>Dear Sam Evans,</p>
+
+<p>You've withdrawn your application. We will not progress it any further.</p>
+
+<h2>Charges for processing your application</h2>
+
+<p>We will charge you for the time we have spent processing your application up to the date of withdrawal, in accordance with our <a href="https://assets.publishing.service.gov.uk/media/6938145b6a12691d48491c56/Terms_and_Conditions_for_carrying_out_chargeable_activities_for_marine_licensing.pdf">terms and conditions</a>.</p>
+
+<h2>What you need to know</h2>
+
+<p>You must not carry out the proposed works unless a valid marine licence is in place.</p>
+
+<p>Before starting any marine works in the future, check whether you need a marine licence. You'll need to submit a new application if one is required.</p>
+
+<p><a href="#">Sign in to view your withdrawn application</a></p>
+
+<p>From Marine Management Organisation</p>
+
+{% endblock %}

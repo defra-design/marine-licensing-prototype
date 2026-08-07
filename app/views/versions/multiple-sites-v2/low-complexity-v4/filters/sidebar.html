@@ -1,0 +1,257 @@
+{% extends "../../layouts/low-complexity-v4.html" %}
+
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "govuk/components/header/macro.njk" import govukHeader %}
+{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
+
+{% set currentPageId = "low-complexity-projects" %}
+{% set filterPage = "sidebar" %}
+
+{#
+  Option B — MOJ Design System filter.
+  https://design-patterns.service.justice.gov.uk/components/filter/
+
+  Port of sample-plans-v2/projects-filter-side-v3, moved onto the LCML v3 table.
+  One correction: Apply filters now sits at the foot of the options list rather
+  than above the fields it submits.
+#}
+
+{% block head %}
+  {{ super() }}
+  <style>
+  .govuk-radios__conditional.error-state {
+    border-left-color: #d4351c;
+  }
+
+  .person-error-message {
+    display: none;
+    color: #d4351c;
+    font-weight: 700;
+    margin-bottom: 15px;
+  }
+
+  #results-count.error-message {
+    color: #d4351c;
+  }
+
+  .govuk-button--full-width {
+    width: 100%;
+  }
+  </style>
+{% endblock %}
+
+{% block header %}
+{{ govukHeader({
+  homepageUrl: "/",
+  classes: "govuk-header--full-width-border"
+}) }}
+{{ govukServiceNavigation({
+  serviceName: "Get permission for marine work",
+  serviceUrl: "../homepage",
+  navigation: [
+    { href: "../homepage", text: "Home", active: false },
+    { href: "../projects", text: "Projects", active: true },
+    { href: "#", text: "Defra account", active: false },
+    { href: "../sign-in?goto=homepage", text: "Sign out" }
+  ]
+}) }}
+{% endblock %}
+
+{% block beforeContent %}
+  {% include "../../includes/phase-banner.html" %}
+  {% if data['organisation-name'] %}
+  <div class="app-organisation-switcher">
+    <span class="govuk-body-s govuk-!-font-weight-bold app-organisation-switcher__name">{{ data['organisation-name'] }}</span>
+    {% if data['user_type'] === 'organisation' %}
+    <a class="govuk-link app-organisation-switcher__link govuk-link--no-visited-state" href="../organisation-selector?change=true&returnTo=filters/sidebar">
+      Change who you're representing
+    </a>
+    {% endif %}
+  </div>
+  {% endif %}
+{% endblock %}
+
+{% set pageHeadingTextHTML %}
+Projects
+{% endset %}
+
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - Get permission for marine work
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-full">
+    <span class="govuk-caption-l">{{ data['organisation-name'] }}</span>
+    <h1 class="govuk-heading-l">{{ pageHeadingTextHTML }}</h1>
+  </div>
+</div>
+
+<div class="moj-filter-layout">
+  <div class="moj-filter-layout__filter" id="moj-filter">
+    <div class="moj-filter" data-module="moj-filter">
+      <div class="moj-filter__header">
+        <div class="moj-filter__header-title">
+          <h2 class="govuk-heading-m">Filter</h2>
+        </div>
+        <div class="moj-filter__header-action"></div>
+      </div>
+
+      <div class="moj-filter__content">
+        <div class="moj-filter__selected">
+          <div class="moj-filter__selected-heading">
+            <div class="moj-filter__heading-title">
+              <h2 class="govuk-heading-m">Selected filters</h2>
+            </div>
+            <div class="moj-filter__heading-action">
+              <p><a class="govuk-link govuk-link--no-visited-state" href="#" id="clear-filters">Clear filters</a></p>
+            </div>
+          </div>
+          <div id="selected-filter-tags"></div>
+        </div>
+
+        <div class="moj-filter__options">
+
+          {% if data['user_type'] === 'organisation' %}
+          <div class="govuk-form-group">
+            <fieldset class="govuk-fieldset">
+              <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Show</legend>
+              <div class="govuk-radios govuk-radios--small" data-module="govuk-radios">
+                <div class="govuk-radios__item">
+                  <input class="govuk-radios__input" id="filter-all" name="projectFilter" type="radio" value="all-projects" checked>
+                  <label class="govuk-label govuk-radios__label" for="filter-all">
+                    All {{ data['organisation-name'] or "Ramsgate Marina" }} projects <span id="count-all-projects"></span>
+                  </label>
+                </div>
+                <div class="govuk-radios__item">
+                  <input class="govuk-radios__input" id="filter-my" name="projectFilter" type="radio" value="my-projects">
+                  <label class="govuk-label govuk-radios__label" for="filter-my">
+                    My projects <span id="count-my-projects"></span>
+                  </label>
+                </div>
+                <div class="govuk-radios__item">
+                  <input class="govuk-radios__input" id="filter-specific" name="projectFilter" type="radio" value="specific-person" data-aria-controls="conditional-specific-person">
+                  <label class="govuk-label govuk-radios__label" for="filter-specific">Projects by owner</label>
+                </div>
+                <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-specific-person">
+                  <fieldset class="govuk-fieldset">
+                    <legend class="govuk-fieldset__legend govuk-visually-hidden">Select an owner</legend>
+                    <p class="person-error-message" id="person-error-message">
+                      <span class="govuk-visually-hidden">Error:</span> Select an owner to view their projects
+                    </p>
+                    <div class="govuk-checkboxes govuk-checkboxes--small" id="person-checkboxes"></div>
+                  </fieldset>
+                </div>
+              </div>
+            </fieldset>
+          </div>
+          {% endif %}
+
+          <div class="govuk-form-group">
+            <label class="govuk-label govuk-label--s" for="filter-project-name">Project name</label>
+            <div id="filter-project-name-hint" class="govuk-hint">Enter full or partial name</div>
+            <input class="govuk-input" id="filter-project-name" name="filter-project-name" type="text" aria-describedby="filter-project-name-hint">
+          </div>
+
+          <div class="govuk-form-group">
+            <label class="govuk-label govuk-label--s" for="filter-reference">Reference</label>
+            <div id="filter-reference-hint" class="govuk-hint">Enter full or partial reference</div>
+            <input class="govuk-input" id="filter-reference" name="filter-reference" type="text" aria-describedby="filter-reference-hint">
+          </div>
+
+          <div class="govuk-form-group">
+            <fieldset class="govuk-fieldset">
+              <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Type</legend>
+              <div class="govuk-checkboxes govuk-checkboxes--small" id="type-checkboxes"></div>
+            </fieldset>
+          </div>
+
+          <div class="govuk-form-group">
+            <fieldset class="govuk-fieldset">
+              <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Status</legend>
+              <div class="govuk-checkboxes govuk-checkboxes--small" id="status-checkboxes"></div>
+            </fieldset>
+          </div>
+
+          <button type="button" class="govuk-button govuk-button--full-width govuk-!-margin-bottom-0" data-module="govuk-button" id="apply-filters">
+            Apply filters
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="moj-filter-layout__content">
+    {# The Show/Hide filter button is created by MOJ's FilterToggleButton
+       component, which appends it here. Leave this container empty. #}
+    <div class="moj-action-bar">
+      <div class="moj-action-bar__filter"></div>
+    </div>
+
+    <p id="results-count" class="govuk-body"></p>
+
+    {% include "./_projects-table.html" %}
+
+  </div>
+</div>
+
+<script src="/public/javascripts/lcml-projects-filter.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+  var container = document.getElementById('selected-filter-tags')
+
+  LcmlProjectsFilter.init({
+    tagRenderer: function (categories, remove) {
+      container.innerHTML = ''
+      categories.forEach(function (category) {
+        var heading = document.createElement('h3')
+        heading.className = 'govuk-heading-s govuk-!-margin-bottom-0'
+        heading.textContent = category.heading
+        container.appendChild(heading)
+
+        var list = document.createElement('ul')
+        list.className = 'moj-filter-tags'
+
+        category.items.forEach(function (item) {
+          var li = document.createElement('li')
+          var link = document.createElement('a')
+          link.className = 'moj-filter__tag'
+          link.href = '#'
+          link.innerHTML = '<span class="govuk-visually-hidden">Remove this filter</span> ' + item.text
+          link.addEventListener('click', function (e) {
+            e.preventDefault()
+            remove(item.type, item.value)
+          })
+          li.appendChild(link)
+          list.appendChild(li)
+        })
+
+        container.appendChild(list)
+      })
+    }
+  })
+
+  // Hand over the show/hide behaviour to MOJ's own component rather than
+  // reimplementing it. It creates the toggle button, moves focus into the
+  // panel when opened, and swaps in a Close button below 48.0625em.
+  //
+  // MOJ's initAll does not pick this one up (it needs configuration), and its
+  // script is a module, so it lands after DOMContentLoaded — hence the wait.
+  var attempts = 0
+  var ready = setInterval(function () {
+    if (window.MOJFrontend && window.MOJFrontend.FilterToggleButton) {
+      clearInterval(ready)
+      new window.MOJFrontend.FilterToggleButton(document.querySelector('.moj-filter'))
+    } else if (++attempts > 50) {
+      clearInterval(ready)
+    }
+  }, 50)
+
+  // Note for the walkthrough: hiding the filter also hides the Selected
+  // filters summary, since both live in the sidebar. Options A and C keep a
+  // summary visible when collapsed.
+})
+</script>
+
+{% endblock %}
