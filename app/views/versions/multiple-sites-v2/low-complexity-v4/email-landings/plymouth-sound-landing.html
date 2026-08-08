@@ -1,0 +1,85 @@
+{% extends "../../layouts/low-complexity-v4.html" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% if data['organisation-name'] %}
+        {% include "../../includes/organisation-switcher.html" %}
+    {% endif %}
+	{% if showBackToProjects %}
+    <a class="govuk-back-link govuk-link--no-visited-state" href="../projects">Back</a>
+    {% endif %}
+{% endblock %}
+
+{% block pageTitle %}
+We are unable to progress your application - {{ data['headerNameExemption'] or 'Get permission for marine work' }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-two-thirds">
+
+		{% if data['low-complexity-project-name-text-input'] %}
+		<span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
+		{% else %}
+		<span class="govuk-caption-l">Plymouth Sound cable laying</span>
+		{% endif %}
+
+		<h1 class="govuk-heading-l">We are unable to progress your application</h1>
+
+		<p class="govuk-body">We have reviewed your application (MLA/2026/10002) and we are unable to progress it as submitted.</p>
+
+		<h2 class="govuk-heading-m">Why we are unable to progress your application</h2>
+
+		<p class="govuk-body">We've identified issues with the following sections of your application:</p>
+
+		<ul class="govuk-list govuk-list--bullet">
+			<li>Site location</li>
+			<li>Water Framework Directive</li>
+		</ul>
+
+		<p class="govuk-body">The site location entered indicated that it was within 1 nautical mile of the coast but no Water Framework Directive assessment was uploaded. Check the site location and if it meets the requirements for a WFD assessment.</p>
+
+		<h2 class="govuk-heading-m">Charges for reviewing your application</h2>
+
+		<p class="govuk-body">We will charge you for the time we have spent reviewing your application to date. We will send you an invoice separately.</p>
+
+		{% if data['resubmit-draft-created'] and not data['deleted-plymouth-resubmit'] %}
+
+		<div class="govuk-inset-text">
+			<p class="govuk-body">We created a new draft application for you on {{ data['resubmit-draft-created-date'] }}.</p>
+			<p class="govuk-body govuk-!-margin-bottom-0">View it in <a class="govuk-link govuk-link--no-visited-state" href="../projects">Projects</a>.</p>
+		</div>
+
+		<p class="govuk-body govuk-!-margin-top-6"><a class="govuk-link govuk-link--no-visited-state" href="../view-details/plymouth-sound-cable-laying">View your original application</a></p>
+
+		{% else %}
+
+		<h2 class="govuk-heading-m">What you can do</h2>
+
+		<p class="govuk-body">You can apply again for the same project. To support you with this, we will copy your existing application into a new draft application, so you can fix the issues we've identified before you submit.</p>
+
+		<p class="govuk-body">This will be a new application, meaning:</p>
+
+		<ul class="govuk-list govuk-list--bullet">
+			<li>you will get a new fee estimate</li>
+			<li>your new application will have a new reference number</li>
+		</ul>
+
+		<div class="govuk-button-group govuk-!-margin-top-6">
+			{{ govukButton({
+				text: "Apply again",
+				href: "../update-and-resubmit"
+			}) }}
+		</div>
+
+		<p class="govuk-body"><a class="govuk-link govuk-link--no-visited-state" href="../view-details/plymouth-sound-cable-laying">View your original application</a></p>
+
+		{% endif %}
+
+	</div>
+</div>
+
+{% endblock %}

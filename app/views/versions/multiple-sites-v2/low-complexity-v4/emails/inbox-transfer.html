@@ -1,0 +1,141 @@
+{% extends "govuk-prototype-kit/layouts/govuk-branded.njk" %}
+
+{% block pageTitle %}
+  Inbox - Sam Evans
+{% endblock %}
+
+{% set inboxHref = "inbox-transfer" %}
+
+{% block header %}
+  {% include "./_mail-chrome.html" %}
+{% endblock %}
+
+{% block beforeContent %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block content %}
+
+{% include "./_inbox-styles.html" %}
+
+<div class="mail">
+  <div class="mail__body">
+
+    <nav class="mail__rail" aria-label="Folders">
+      <div class="mail__account">
+        <div class="mail__account-name">Sam Evans</div>
+        <div class="mail__account-org">Jurassic Coast SUP Ltd</div>
+      </div>
+      <ul class="mail__folders">
+        <li class="mail__folder mail__folder--current">
+          <span>Inbox</span>
+          <span class="mail__folder-count">2</span>
+        </li>
+        <li class="mail__folder"><span>Sent</span></li>
+        <li class="mail__folder"><span>Drafts</span><span class="mail__folder-count">2</span></li>
+        <li class="mail__folder"><span>Archive</span></li>
+        <li class="mail__folder"><span>Deleted</span></li>
+      </ul>
+    </nav>
+
+    <div class="mail__list">
+
+      <div class="mail__list-header">
+        <h1>Inbox</h1>
+        <span>2 unread</span>
+      </div>
+
+      <a class="mail__msg mail__msg--unread" href="transfer">
+        <div class="mail__msg-top">
+          <span class="mail__msg-from">Marine Management Organisation</span>
+          <span class="mail__msg-date">09:15</span>
+        </div>
+        <div class="mail__msg-subject">Update on your marine licence application MLA/2026/10003</div>
+        <div class="mail__msg-preview">Dear Sam Evans, Your application has been transferred from Get permission for marine work to our Marine Case Management System.</div>
+      </a>
+
+      <div class="mail__msg mail__msg--unread">
+        <div class="mail__msg-top">
+          <span class="mail__msg-from">Lyme Regis Harbour Office</span>
+          <span class="mail__msg-date">{{ -1 | inboxDate }}</span>
+        </div>
+        <div class="mail__msg-subject">Summer berth holder briefing — 14 May</div>
+        <div class="mail__msg-preview">All berth holders and harbour users are invited to the annual briefing at the Harbour Office. Please confirm attendance.</div>
+      </div>
+
+      <div class="mail__msg">
+        <div class="mail__msg-top">
+          <span class="mail__msg-from">Dorset Council Planning</span>
+          <span class="mail__msg-date">{{ -2 | inboxDate }}</span>
+        </div>
+        <div class="mail__msg-subject">Pre-application enquiry PA-PRE-2026-00412</div>
+        <div class="mail__msg-preview">Further to your enquiry regarding works within the harbour area, please find our informal advice attached.</div>
+      </div>
+
+      <div class="mail__msg">
+        <div class="mail__msg-top">
+          <span class="mail__msg-from">Devon and Severn IFCA</span>
+          <span class="mail__msg-date">{{ -3 | inboxDate }}</span>
+        </div>
+        <div class="mail__msg-subject">Notice to mariners — seasonal restrictions</div>
+        <div class="mail__msg-preview">Seasonal restrictions come into effect from 1 May across parts of the district. Full details are on our website.</div>
+      </div>
+
+      <div class="mail__msg">
+        <div class="mail__msg-top">
+          <span class="mail__msg-from">Met Office Weather Warnings</span>
+          <span class="mail__msg-date">{{ -4 | inboxDate }}</span>
+        </div>
+        <div class="mail__msg-subject">Yellow warning of wind — Dorset coast</div>
+        <div class="mail__msg-preview">Gusts of 45 to 55 mph are expected along exposed coastal stretches. Take care near the water.</div>
+      </div>
+
+      <div class="mail__msg">
+        <div class="mail__msg-top">
+          <span class="mail__msg-from">Aquapac Marine Supplies</span>
+          <span class="mail__msg-date">{{ -5 | inboxDate }}</span>
+        </div>
+        <div class="mail__msg-subject">Your order #48213 has been dispatched</div>
+        <div class="mail__msg-preview">Your order of 12 buoyancy aids and 4 tow lines is on its way. Expected delivery in 2 working days.</div>
+      </div>
+
+      <div class="mail__msg">
+        <div class="mail__msg-top">
+          <span class="mail__msg-from">RYA Training</span>
+          <span class="mail__msg-date">{{ -7 | inboxDate }}</span>
+        </div>
+        <div class="mail__msg-subject">Instructor certificate renewal due</div>
+        <div class="mail__msg-preview">One of your instructor certificates expires in 60 days. Renew online to avoid a lapse in cover.</div>
+      </div>
+
+      <div class="mail__msg">
+        <div class="mail__msg-top">
+          <span class="mail__msg-from">Bookings (no-reply)</span>
+          <span class="mail__msg-date">{{ -8 | inboxDate }}</span>
+        </div>
+        <div class="mail__msg-subject">3 new paddleboard bookings this week</div>
+        <div class="mail__msg-preview">You have 3 new bookings for group sessions. Sign in to your dashboard to view the schedule.</div>
+      </div>
+
+      <div class="mail__msg">
+        <div class="mail__msg-top">
+          <span class="mail__msg-from">Dorset Wildlife Trust</span>
+          <span class="mail__msg-date">{{ -11 | inboxDate }}</span>
+        </div>
+        <div class="mail__msg-subject">Seagrass survey volunteers wanted</div>
+        <div class="mail__msg-preview">We are looking for local water users to help with this summer's seagrass monitoring along the Jurassic Coast.</div>
+      </div>
+
+      <div class="mail__msg">
+        <div class="mail__msg-top">
+          <span class="mail__msg-from">Xero</span>
+          <span class="mail__msg-date">{{ -13 | inboxDate }}</span>
+        </div>
+        <div class="mail__msg-subject">Your VAT return is due</div>
+        <div class="mail__msg-preview">Your VAT return for the quarter is due in 7 days. Review and submit from your account.</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% endblock %}

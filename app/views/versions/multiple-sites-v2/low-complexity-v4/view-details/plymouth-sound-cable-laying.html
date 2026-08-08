@@ -1,0 +1,801 @@
+{% extends "../../layouts/low-complexity-v4.html" %}
+
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+
+{% set organisationName = data['organisation-name'] or 'Southwest Marine Works Ltd' %}
+
+{% block head %}
+  {{ super() }}
+  <style>
+    .app-read-only .govuk-summary-list__actions,
+    .app-read-only .govuk-summary-card__actions {
+      display: none;
+    }
+  </style>
+{% endblock %}
+
+{% block header %}
+{% from "govuk/components/header/macro.njk" import govukHeader %}
+{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
+
+{{ govukHeader({
+  homepageUrl: "/",
+  classes: "govuk-header--full-width-border"
+}) }}
+{{ govukServiceNavigation({
+  serviceName: "Get permission for marine work",
+  serviceUrl: "/versions/multiple-sites-v2/low-complexity-v4/homepage",
+  navigation: [
+    {
+      href: "../homepage",
+      text: "Home",
+      active: false
+    },
+    {
+      href: "../projects",
+      text: "Projects",
+      active: false
+    },
+    {
+      href: "#",
+      text: "Defra account",
+      active: false
+    },
+    {
+      href: "../sign-in?goto=homepage",
+      text: "Sign out"
+    }
+  ]
+}) }}
+{% endblock %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% if data['organisation-name'] %}
+        {% include "../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link govuk-link--no-visited-state" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+{% block pageTitle %}
+    Plymouth Sound cable laying - Get permission for marine work
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row app-read-only">
+    <div class="govuk-grid-column-full">
+
+        <span class="govuk-caption-l">MLA/2026/10002</span>
+        <h1 class="govuk-heading-l">
+            {% if data['low-complexity-project-name-text-input'] %}
+            {{ data['low-complexity-project-name-text-input'] }}
+            {% else %}
+            Plymouth Sound cable laying
+            {% endif %}
+        </h1>
+
+        {# ============================== #}
+        {# APPLICATION DETAILS           #}
+        {# ============================== #}
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">Application details</h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Application type</dt>
+                        <dd class="govuk-summary-list__value">Marine licence application</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Status</dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ govukTag({
+                                text: "Unable to progress",
+                                classes: "govuk-tag--orange"
+                            }) }}
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Reference number</dt>
+                        <dd class="govuk-summary-list__value">MLA/2026/10002</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Who the Marine licence is for</dt>
+                        <dd class="govuk-summary-list__value">{{ organisationName }}</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Date submitted</dt>
+                        <dd class="govuk-summary-list__value">{{ -85 | daysFromToday }}</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Date marked as unable to progress</dt>
+                        <dd class="govuk-summary-list__value">{{ -78 | daysFromToday }}</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Reasons marked as unable to progress</dt>
+                        <dd class="govuk-summary-list__value">
+                            <ul class="govuk-list govuk-list--bullet">
+                                <li>Marine plan policies</li>
+                            </ul>
+                            <p class="govuk-body">You answered 'Not applicable' for policy S-BIO-1. Based on the site location you have provided, this policy does apply to your application.</p>
+                            <p class="govuk-body">Your site is in the South marine plan area and includes intertidal foreshore. Placing rock armour and piled structures in this area has the potential to affect coastal habitats and species, so you must consider policy S-BIO-1 whether or not the site is in a protected area.</p>
+                            <p class="govuk-body govuk-!-margin-bottom-0">To resubmit, update your answer for S-BIO-1 to explain how your proposal responds to the policy. Describe any potential impacts on habitats and species at the site, and how you will avoid, minimise or reduce them. If you consider there will be no impacts, explain why.</p>
+                        </dd>
+                    </div>
+                    {% if data['resubmit-draft-created'] and not data['deleted-plymouth-resubmit'] %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">New application</dt>
+                        <dd class="govuk-summary-list__value">
+                            Created on {{ data['resubmit-draft-created-date'] }}.<br>
+                            View it in <a class="govuk-link govuk-link--no-visited-state" href="../projects">Projects</a>.
+                        </dd>
+                    </div>
+                    {% endif %}
+                </dl>
+            </div>
+        </div>
+
+        {# ============================== #}
+        {# PROJECT DETAILS                #}
+        {# ============================== #}
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">Project details</h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Project background</dt>
+                        <dd class="govuk-summary-list__value">Southwest Marine Works Ltd will install a subsea telecommunications cable across Plymouth Sound to connect a new coastal monitoring station on Mount Batten to the mainland network. The works involve laying approximately 2.4 kilometres of fibre optic cable along a pre-surveyed route on the seabed, with sections buried using a jetting sled to protect the cable from vessel anchors and fishing activity. Landfall points will be established at Mount Batten Pier and Queen Anne's Battery, with cable protection installed at both shore ends.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Preferred start and end dates of the licence</dt>
+                        <dd class="govuk-summary-list__value">2 June 2026 to 2 January 2027</dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        {# ============================== #}
+        {# PROVIDING THE SITE LOCATION    #}
+        {# ============================== #}
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">Providing the site location</h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Method of providing site location</dt>
+                        <dd class="govuk-summary-list__value">File upload</dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        {# ============================== #}
+        {# SITE 1                         #}
+        {# ============================== #}
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">Site 1</h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list govuk-summary-list--full-width">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Site name</dt>
+                        <dd class="govuk-summary-list__value">Plymouth Sound cable route – Mount Batten to Queen Anne's Battery</dd>
+                    </div>
+                    <div class="govuk-summary-list__row govuk-summary-list__row--no-actions">
+                        <dt class="govuk-summary-list__key govuk-summary-list__key--full-width map-label">Map view</dt>
+                        <dd class="govuk-summary-list__value govuk-summary-list__value--full-width">
+                            <img src="/public/images/map-5-points.jpg" alt="Map showing site 1 location" />
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        {# ============================== #}
+        {# SITE 1 — ACTIVITY 1            #}
+        {# ============================== #}
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">Site 1 – Activity 1</h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Type of activity</dt>
+                        <dd class="govuk-summary-list__value">Construction of new works</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">What you're constructing</dt>
+                        <dd class="govuk-summary-list__value">
+                            <ul class="govuk-list govuk-list--bullet">
+                                <li>Subsea cables requiring protective construction</li>
+                                <li>Protective mattresses or rock bags</li>
+                            </ul>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Activity description</dt>
+                        <dd class="govuk-summary-list__value">Installation of a single 48-core armoured fibre optic telecommunications cable (nominal outer diameter 32mm) along a pre-surveyed route of approximately 2.4 kilometres across Plymouth Sound. The cable will be surface-laid from a cable lay barge and buried to a target depth of 0.6 to 1.0 metres using a water-jetting sled towed behind the barge. Where burial to target depth is not achievable due to rock or hard substrate, the cable will be protected using concrete mattresses and rock bags. At each landfall (Mount Batten Pier and Queen Anne's Battery) the cable will be brought ashore through pre-installed ducts and protected with cast-iron split-pipe and a short section of rock armour. A pre-lay grapnel run and route clearance survey will be carried out immediately before installation. All marine operations will be supported by a guard vessel and coordinated with the Queen's Harbour Master.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Maximum duration of activity</dt>
+                        <dd class="govuk-summary-list__value">4 weeks</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Completion date</dt>
+                        <dd class="govuk-summary-list__value">Not needed to be completed by a certain date</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Activity limited to specific months</dt>
+                        <dd class="govuk-summary-list__value">Yes — installation to be carried out between June and September to make use of the calmer summer weather window and to avoid the peak overwintering period for waterfowl in the Sound.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Proposed working hours</dt>
+                        <dd class="govuk-summary-list__value">Marine operations will be carried out on a 24-hour basis over a continuous installation window of up to 5 days to minimise the overall duration of works and the time the cable barge is on station. Landfall works at each shore end will be limited to Monday to Saturday, 07:00 to 19:00.</dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        {# ================================================= #}
+        {# MARINE PLAN POLICIES — CROSS-CUTTING #}
+        {# ================================================= #}
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">Marine plan policies – Cross-cutting</h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Climate change 1<br>(SW-CC-1)</dt>
+                        <dd class="govuk-summary-list__value">
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
+                            <p class="govuk-body">Proposals that conserve, restore or enhance habitats that provide flood defence or carbon sequestration will be supported. Proposals that may have significant adverse impacts on habitats that provide a flood defence or carbon sequestration ecosystem service must demonstrate that they will, in order of preference: a) avoid b) minimise c) mitigate - adverse impacts so they are no longer significant d) compensate for significant adverse impacts that cannot be mitigated.</p>
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Your consideration</p>
+                            <p class="govuk-body govuk-!-margin-bottom-0">The project will not affect any habitats that provide flood defence or carbon sequestration services. The cable is buried within the existing seabed and the small areas of mattressing and rock protection do not remove any functioning habitat of value for coastal protection.</p>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Climate change 3<br>(SW-CC-3)</dt>
+                        <dd class="govuk-summary-list__value">
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
+                            <p class="govuk-body">Proposals in the south west marine plan areas, and adjacent marine plan areas, that are likely to have significant adverse impacts on coastal change, or on climate change adaptation measures inside and outside of the proposed project areas, should only be supported if they can demonstrate that they will, in order of preference: a) avoid b) minimise c) mitigate - adverse impacts so they are no longer significant.</p>
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Your consideration</p>
+                            <p class="govuk-body govuk-!-margin-bottom-0">The cable route has been designed with a suitable burial depth and shore-end protection to remain resilient to coastal change and future storm conditions. The infrastructure supports a coastal monitoring station that itself contributes to understanding of climate and coastal change in the area.</p>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Co-existence 1<br>(SW-CO-1)</dt>
+                        <dd class="govuk-summary-list__value">
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
+                            <p class="govuk-body">Proposals that optimise the use of space and incorporate opportunities for co-existence and co-operation with existing activities will be supported. Proposals that may have significant adverse impacts on, or displace, existing activities must demonstrate that they will, in order of preference: a) avoid b) minimise c) mitigate - adverse impacts so they are no longer significant. If it is not possible to mitigate significant adverse impacts, proposals must state the case for proceeding.</p>
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Your consideration</p>
+                            <p class="govuk-body govuk-!-margin-bottom-0">The route has been selected to co-exist with existing users of Plymouth Sound, including recreational sailing, commercial shipping and naval activity. The cable position and protection have been discussed with the Queen's Harbour Master and will be charted and notified to mariners so that other users can continue their activities safely.</p>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Cross-border co-operation 1<br>(SW-CBC-1)</dt>
+                        <dd class="govuk-summary-list__value">
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
+                            <p class="govuk-body">Proposals must consider cross-border impacts throughout the lifetime of the proposed activity. Proposals that impact upon one or more marine plan areas or terrestrial environments must show evidence of the relevant public authorities (including other countries) being consulted and responses considered.</p>
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Your consideration</p>
+                            <p class="govuk-body govuk-!-margin-bottom-0">This project has no cross-border impacts into other marine plan areas. The entire cable route lies within Plymouth Sound in the South West Marine Plan area.</p>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Cumulative effects 1<br>(SW-CE-1)</dt>
+                        <dd class="govuk-summary-list__value">
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
+                            <p class="govuk-body">Proposals which may have adverse cumulative effects with other existing, authorised, or reasonably foreseeable proposals must demonstrate that they will, in order of preference: a) avoid b) minimise c) mitigate - adverse cumulative and/or in-combination effects so they are no longer significant.</p>
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Your consideration</p>
+                            <p class="govuk-body govuk-!-margin-bottom-0">We have reviewed other known and proposed activities in Plymouth Sound, including existing utility crossings, moorings and harbour operations. Given the short duration of the installation, the small seabed footprint and the use of an established cable corridor, the project is not considered to contribute materially to cumulative effects with other activities in the Sound.</p>
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        {# ================================================= #}
+        {# MARINE PLAN POLICIES — ECONOMIC #}
+        {# ================================================= #}
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">Marine plan policies – Economic</h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Aquaculture 2<br>(SW-AQ-2)</dt>
+                        <dd class="govuk-summary-list__value">
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
+                            <p class="govuk-body">Proposals enabling the provision of infrastructure for sustainable aquaculture and related industries will be supported.</p>
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Your consideration</p>
+                            <p class="govuk-body govuk-!-margin-bottom-0">The cable route does not pass through or adjacent to any licensed aquaculture sites and will have no impact on aquaculture activities in the Sound.</p>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Cables 1<br>(SW-CAB-1)</dt>
+                        <dd class="govuk-summary-list__value">
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
+                            <p class="govuk-body">Preference should be given to proposals for cable installation where the method of protection is burial. Where burial is not achievable, decisions should take account of protection measures for the cable that may be proposed by the applicant. Where burial or protection measures are not appropriate, proposals should state the case for proceeding without those measures.</p>
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Your consideration</p>
+                            <p class="govuk-body govuk-!-margin-bottom-0">The proposed cable provides essential telecommunications connectivity to a new coastal monitoring station. The route has been surveyed and selected to make efficient use of an established seabed corridor, to achieve adequate burial for protection, and to avoid conflict with existing subsea infrastructure and other marine users, in line with the plan's support for the safe development of subsea cables.</p>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Cables 3<br>(SW-CAB-3)</dt>
+                        <dd class="govuk-summary-list__value">
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
+                            <p class="govuk-body">Where seeking to locate close to existing subsea cables, proposals should demonstrate compatibility with ongoing function, maintenance and decommissioning activities relating to the cable.</p>
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Your consideration</p>
+                            <p class="govuk-body govuk-!-margin-bottom-0">A desk-based search of KIS-ORCA and Admiralty charts, together with a pre-lay route survey, has been undertaken to identify existing cables and pipelines. One existing utility crossing has been identified and the cable will cross it at as close to a right angle as practicable with appropriate separation and mattress protection at the crossing point. Crossing arrangements will be agreed with the relevant asset owner before installation.</p>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Dredging and disposal 1<br>(SW-DD-1)</dt>
+                        <dd class="govuk-summary-list__value">
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
+                            <p class="govuk-body">In areas of authorised dredging activity, including those subject to navigational dredging, proposals for other activities will not be supported unless they are compatible with the dredging activity.</p>
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Your consideration</p>
+                            <p class="govuk-body govuk-!-margin-bottom-0">No capital or maintenance dredging is required for this project. Cable burial is achieved by fluidising the seabed with a jetting sled, which allows sediment to settle back into the trench rather than removing it.</p>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Dredging and disposal 2<br>(SW-DD-2)</dt>
+                        <dd class="govuk-summary-list__value">
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
+                            <p class="govuk-body">Proposals that cause significant adverse impacts on licensed disposal sites should not be supported. Proposals that may have significant adverse impacts on licensed disposal sites must demonstrate that they will, in order of preference: a) avoid b) minimise c) mitigate - adverse impacts so they are no longer significant. If it is not possible to mitigate the significant adverse impacts, proposals must state the case for proceeding.</p>
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Your consideration</p>
+                            <p class="govuk-body govuk-!-margin-bottom-0">The project will have no impact on licensed disposal sites. No material will be excavated for disposal at sea.</p>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Dredging and disposal 3<br>(SW-DD-3)</dt>
+                        <dd class="govuk-summary-list__value">
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
+                            <p class="govuk-body">Proposals for the disposal of dredged material must demonstrate that they have been assessed against the waste hierarchy. Where there is the need to identify new dredge disposal sites, including alternative use sites, proposals should be supported if they conform to best practice and guidance.</p>
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Your consideration</p>
+                            <p class="govuk-body govuk-!-margin-bottom-0">No dredged material will be produced as part of this project. Jetting temporarily suspends a small volume of seabed sediment which settles locally within the immediate vicinity of the cable route.</p>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Infrastructure 1<br>(SW-INF-1)</dt>
+                        <dd class="govuk-summary-list__value">
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
+                            <p class="govuk-body">Proposals for appropriate marine infrastructure which facilitates land-based activities, or land-based infrastructure which facilitates marine activities (including the diversification or regeneration of sustainable marine industries), should be supported.</p>
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Your consideration</p>
+                            <p class="govuk-body govuk-!-margin-bottom-0">The project delivers new marine telecommunications infrastructure that enables a coastal monitoring station to operate, supporting environmental data collection and the wider communications network serving the Plymouth area.</p>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Infrastructure 2<br>(SW-INF-2)</dt>
+                        <dd class="govuk-summary-list__value">
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
+                            <p class="govuk-body">(1) Proposals for alternative development at existing safeguarded landing facilities will not be supported. (2) Proposals adjacent and opposite existing safeguarded landing facilities must demonstrate that they avoid significant adverse impacts on existing safeguarded landing facilities. (3) Proposals for alternative development at existing landing facilities (excluding safeguarded sites) should not be supported unless that facility is no longer viable or capable of being made viable for waterborne transport. (4) Proposals adjacent and opposite existing landing facilities (excluding safeguarded sites) that may have significant adverse impacts on the landing facilities should demonstrate that they will, in order of preference: a) avoid b) minimise c) mitigate - adverse impacts so they are no longer significant.</p>
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Your consideration</p>
+                            <p class="govuk-body govuk-!-margin-bottom-0">The cable route and shore-end ducts have been designed to make efficient use of existing landfall assets at Mount Batten Pier and Queen Anne's Battery, minimising new works on the foreshore and re-using established infrastructure corridors where possible.</p>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Ports, harbours and shipping 1<br>(SW-PS-1)</dt>
+                        <dd class="govuk-summary-list__value">
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
+                            <p class="govuk-body">In line with the National Policy Statement for Ports, sustainable port and harbour development should be supported. Only proposals demonstrating compatibility with current port and harbour activities will be supported. Proposals within statutory harbour authority areas or their approaches that detrimentally and materially affect safety of navigation, or the compliance by statutory harbour authorities with the Open Port Duty or the Port Marine Safety Code, will not be authorised unless there are exceptional circumstances. Proposals that may have a significant adverse impact upon future opportunity for sustainable expansion of port and harbour activities, must demonstrate that they will, in order of preference: a) avoid b) minimise c) mitigate - adverse impacts so they are no longer significant. If it is not possible to mitigate significant adverse impacts, proposals should state the case for proceeding.</p>
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Your consideration</p>
+                            <p class="govuk-body govuk-!-margin-bottom-0">The works are located within the Dockyard Port of Plymouth. We have consulted the Queen's Harbour Master (QHM Plymouth) and the harbour authorities and the proposed route, working method and timing have been discussed with them. Installation will be coordinated with harbour control and a guard vessel will be on station throughout marine operations. A Notice to Mariners will be issued before works begin.</p>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Ports, harbours and shipping 4<br>(SW-PS-4)</dt>
+                        <dd class="govuk-summary-list__value">
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
+                            <p class="govuk-body">Proposals promoting or facilitating sustainable coastal and/or short sea shipping as an alternative to road, rail or air transport will be supported where appropriate.</p>
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Your consideration</p>
+                            <p class="govuk-body govuk-!-margin-bottom-0">The cable route crosses, but does not obstruct, established navigation channels used by commercial and naval shipping. Adequate burial and mattress protection ensure the cable does not present a snagging hazard, and the route has been positioned to avoid designated anchorages wherever practicable.</p>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Renewables 1<br>(SW-REN-1)</dt>
+                        <dd class="govuk-summary-list__value">
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
+                            <p class="govuk-body">Proposals that enable the provision of renewable energy technologies and associated supply chains, will be supported.</p>
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Your consideration</p>
+                            <p class="govuk-body govuk-!-margin-bottom-0">The project does not directly involve or affect any renewable energy infrastructure or activities within the Sound.</p>
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        {# ================================================= #}
+        {# MARINE PLAN POLICIES — ENVIRONMENTAL #}
+        {# ================================================= #}
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">Marine plan policies – Environmental</h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Air quality 1<br>(SW-AIR-1)</dt>
+                        <dd class="govuk-summary-list__value">
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
+                            <p class="govuk-body">Proposals must assess their direct and indirect impacts upon local air quality and emissions of greenhouse gases. Proposals that are likely to result in increased air pollution or increased emissions of greenhouse gases must demonstrate that they will, in order of preference: a) avoid b) minimise c) mitigate - air pollution and/or greenhouse gas emissions, in line with current national and local air quality objectives and legal requirements.</p>
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Your consideration</p>
+                            <p class="govuk-body govuk-!-margin-bottom-0">Vessel and plant emissions during the short installation window will be temporary and localised. Marine plant will be well maintained and operated efficiently to limit emissions. There will be no lasting impact on air quality.</p>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Biodiversity 1<br>(SW-BIO-1)</dt>
+                        <dd class="govuk-summary-list__value">
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
+                            <p class="govuk-body">Proposals that enhance the distribution of priority habitats and priority species will be supported. Proposals that may have significant adverse impacts on the distribution of priority habitats and priority species must demonstrate that they will, in order of preference: a) avoid b) minimise c) mitigate - adverse impacts so they are no longer significant d) compensate for significant adverse impacts that cannot be mitigated.</p>
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Your consideration</p>
+                            <p class="govuk-body govuk-!-margin-bottom-0">A benthic survey of the cable route has been carried out. The route is predominantly mobile sand and gravel that is regularly disturbed by tidal action and vessel activity. Small areas of more sensitive habitat identified during the survey have been avoided through micro-routeing. Disturbance from jetting is temporary and the seabed is expected to recover naturally within a short period.</p>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Biodiversity 2<br>(SW-BIO-2)</dt>
+                        <dd class="govuk-summary-list__value">
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
+                            <p class="govuk-body">Proposals that enhance or facilitate native species or habitat adaptation or connectivity, or native species migration, will be supported. Proposals that may cause significant adverse impacts on native species or habitat adaptation or connectivity, or native species migration, must demonstrate that they will, in order of preference: a) avoid b) minimise c) mitigate - adverse impacts so they are no longer significant d) compensate for significant adverse impacts that cannot be mitigated.</p>
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Your consideration</p>
+                            <p class="govuk-body govuk-!-margin-bottom-0">No adverse impact on native species is anticipated. Burial by jetting causes only short-term, localised disturbance to the surface sediment and mobile species are able to avoid the works. Hard protection is limited to small discrete areas where target burial cannot be achieved.</p>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Biodiversity 3<br>(SW-BIO-3)</dt>
+                        <dd class="govuk-summary-list__value">
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
+                            <p class="govuk-body">Proposals that conserve, restore or enhance coastal habitats, where important in their own right and/or for ecosystem functioning and provision of ecosystem services, will be supported. Proposals must take account of the space required for coastal habitats, where important in their own right and/or for ecosystem functioning and provision of ecosystem services, and demonstrate that they will, in order of preference: a) avoid b) minimise c) mitigate d) compensate for - net habitat loss.</p>
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Your consideration</p>
+                            <p class="govuk-body govuk-!-margin-bottom-0">The intertidal landfall works are of very limited extent and use pre-installed ducts to avoid open excavation on the foreshore. Coastal habitats will be reinstated on completion. No significant or lasting impact on coastal ecosystems is expected.</p>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Disturbance 1<br>(SW-DIST-1)</dt>
+                        <dd class="govuk-summary-list__value">
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
+                            <p class="govuk-body">Proposals that may have significant adverse impacts on highly mobile species through disturbance or displacement must demonstrate that they will, in order of preference: avoid minimise mitigate - adverse impacts so they are no longer significant.</p>
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Your consideration</p>
+                            <p class="govuk-body govuk-!-margin-bottom-0">No impact piling is involved. The main sources of disturbance are vessel presence and jetting activity, both of which are temporary and short in duration. Works are scheduled outside the peak overwintering period for waterbirds in the Sound. We will comply with any marine mammal or disturbance mitigation requirements set by the MMO.</p>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Habitats 1<br>(SW-HAB-1)</dt>
+                        <dd class="govuk-summary-list__value">
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
+                            <p class="govuk-body">Proposals that incorporate measures to conserve deep sea habitats will be supported. Proposals that may have direct adverse impacts on deep sea habitats must demonstrate that they will, in order of preference: a) avoid b) minimise c) mitigate - direct adverse impacts on deep sea habitats.</p>
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Your consideration</p>
+                            <p class="govuk-body govuk-!-margin-bottom-0">This project will have no impact on deep sea habitats. The works are within the shallow waters of Plymouth Sound.</p>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Invasive non-native species 1<br>(SW-INNS-1)</dt>
+                        <dd class="govuk-summary-list__value">
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
+                            <p class="govuk-body">Proposals that reduce the risk of introduction and/or spread of invasive non-native species should be supported. Proposals must put in place appropriate measures to avoid or minimise significant adverse impacts that would arise through the introduction and transport of invasive non-native species, particularly when: 1) moving equipment, boats or livestock (for example fish or shellfish) from one water body to another 2) introducing structures suitable for settlement of invasive non-native species, or the spread of invasive non-native species known to exist in the area.</p>
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Your consideration</p>
+                            <p class="govuk-body govuk-!-margin-bottom-0">A biosecurity plan will be in place for the installation. All vessels and equipment mobilising to Plymouth Sound will be inspected and, where necessary, cleaned before arrival to prevent the introduction or spread of invasive non-native species.</p>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Invasive non-native species 2<br>(SW-INNS-2)</dt>
+                        <dd class="govuk-summary-list__value">
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
+                            <p class="govuk-body">Public authorities with functions to manage activities that could potentially introduce, transport or spread invasive non-native species should implement adequate biosecurity measures to avoid or minimise the risk of introducing, transporting or spreading invasive non-native species.</p>
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Your consideration</p>
+                            <p class="govuk-body govuk-!-margin-bottom-0">Once installed, the cable is a passive buried asset that does not itself provide a pathway for the spread of INNS. Any future maintenance vessels will follow the same biosecurity measures applied during installation.</p>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Marine litter 1<br>(SW-ML-1)</dt>
+                        <dd class="govuk-summary-list__value">
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
+                            <p class="govuk-body">Public authorities must make adequate provision for the prevention, re-use, recycling and disposal of waste to reduce and prevent marine litter. Public authorities should aspire to undertake measures to remove marine litter within their jurisdiction.</p>
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Your consideration</p>
+                            <p class="govuk-body govuk-!-margin-bottom-0">All materials, offcuts and packaging generated during installation will be retained on board and disposed of responsibly onshore. Cable ends and protection materials are secured so that no material is lost to the marine environment.</p>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Marine litter 2<br>(SW-ML-2)</dt>
+                        <dd class="govuk-summary-list__value">
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
+                            <p class="govuk-body">Proposals that facilitate waste re-use or recycling to reduce or remove marine litter will be supported. Proposals that could potentially increase the amount of marine litter in the marine plan areas must include measures to, in order of preference: a) avoid b) minimise c) mitigate - waste entering the marine environment.</p>
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Your consideration</p>
+                            <p class="govuk-body govuk-!-margin-bottom-0">The project does not involve any activities likely to increase marine litter in the area. A pre-lay grapnel run will additionally recover any existing debris along the route.</p>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Marine protected areas 1<br>(SW-MPA-1)</dt>
+                        <dd class="govuk-summary-list__value">
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
+                            <p class="govuk-body">Proposals that support the objectives of marine protected areas and the ecological coherence of the marine protected area network will be supported. Proposals that may have adverse impacts on the objectives of marine protected areas must demonstrate that they will, in order of preference: a) avoid b) minimise c) mitigate - adverse impacts, with due regard given to statutory advice on an ecologically coherent network.</p>
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Your consideration</p>
+                            <p class="govuk-body govuk-!-margin-bottom-0">Plymouth Sound falls within the Plymouth Sound and Estuaries SAC and the Plymouth Sound and Estuaries MCZ. A Habitats Regulations Assessment screening has been undertaken and the route has been designed to avoid designated Annex I reef and seagrass features. Micro-routeing and the use of jetting rather than open excavation reduce the risk of adverse effect on the protected features.</p>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Marine protected areas 2<br>(SW-MPA-2)</dt>
+                        <dd class="govuk-summary-list__value">
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
+                            <p class="govuk-body">Proposals that enhance a marine protected area‚Äôs ability to adapt to climate change, enhancing the resilience of the marine protected area network, will be supported. Proposals that may have adverse impacts on an individual marine protected area‚Äôs ability to adapt to the effects of climate change, and so reduce the resilience of the marine protected area network, must demonstrate that they will, in order of preference: a) avoid b) minimise c) mitigate - adverse impacts.</p>
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Your consideration</p>
+                            <p class="govuk-body govuk-!-margin-bottom-0">The project will not affect the ability of the protected areas to adapt to climate change. The works are of short duration with a small and largely reversible footprint.</p>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Marine protected areas 3<br>(SW-MPA-3)</dt>
+                        <dd class="govuk-summary-list__value">
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
+                            <p class="govuk-body">Where statutory advice states that a marine protected area site condition is deteriorating or that features are moving or changing due to climate change, a suitable boundary change to ensure continued protection of the site and coherence of the overall network should be considered.</p>
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Your consideration</p>
+                            <p class="govuk-body govuk-!-margin-bottom-0">The protected features of the Plymouth Sound and Estuaries MCZ have been taken into account in designing the route. Sensitive features are avoided and any hard protection is kept to the minimum necessary and located away from designated features.</p>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Underwater noise 1<br>(SW-UWN-1)</dt>
+                        <dd class="govuk-summary-list__value">
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
+                            <p class="govuk-body">Proposals that result in the generation of impulsive sound must contribute data to the UK Marine Noise Registry as per any currently agreed requirements. Public authorities must take account of any currently agreed targets under the Marine Strategy Part One Descriptor 11.</p>
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Your consideration</p>
+                            <p class="govuk-body govuk-!-margin-bottom-0">No impact piling or blasting is proposed. Underwater noise is limited to vessel machinery and the jetting sled, both of which produce continuous low-level noise comparable to existing vessel traffic in the Sound.</p>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Underwater noise 2<br>(SW-UWN-2)</dt>
+                        <dd class="govuk-summary-list__value">
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
+                            <p class="govuk-body">Proposals that result in the generation of impulsive or non-impulsive noise must demonstrate that they will, in order of preference: a) avoid b) minimise c) mitigate - adverse impacts on highly mobile species so they are no longer significant. If it is not possible to mitigate significant adverse impacts, proposals must state the case for proceeding.</p>
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Your consideration</p>
+                            <p class="govuk-body govuk-!-margin-bottom-0">No significant underwater noise impact is anticipated. Plymouth Sound is already exposed to regular commercial, naval and recreational vessel noise and the temporary works do not materially add to background levels.</p>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Water quality 1<br>(SW-WQ-1)</dt>
+                        <dd class="govuk-summary-list__value">
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
+                            <p class="govuk-body">Proposals that protect, enhance and restore water quality will be supported. Proposals that cause deterioration of water quality must demonstrate that they will, in order of preference: a) avoid b) minimise c) mitigate - deterioration of water quality in the marine environment.</p>
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Your consideration</p>
+                            <p class="govuk-body govuk-!-margin-bottom-0">The only effect on the water column is a short-term, localised increase in suspended sediment during jetting, which settles quickly. All materials used are inert. No release of contaminants is anticipated and appropriate pollution prevention measures will be in place on all vessels.</p>
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        {# ================================================= #}
+        {# MARINE PLAN POLICIES — SOCIAL #}
+        {# ================================================= #}
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">Marine plan policies – Social</h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Access 1<br>(SW-ACC-1)</dt>
+                        <dd class="govuk-summary-list__value">
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
+                            <p class="govuk-body">Proposals demonstrating appropriate enhanced and inclusive public access to and within the marine area, including the provision of services for tourism and recreation activities, will be supported. Proposals that may have significant adverse impacts on public access should demonstrate that they will, in order of preference: a) avoid b) minimise c) mitigate - adverse impacts so they are no longer significant.</p>
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Your consideration</p>
+                            <p class="govuk-body govuk-!-margin-bottom-0">Public access to the foreshore at the landfall points will be maintained wherever safe to do so. Short-term localised restrictions may be required during landfall works for public safety, and these will be clearly signed and kept to the minimum duration necessary. The buried cable does not restrict access once installed.</p>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Employment 1<br>(SW-EMP-1)</dt>
+                        <dd class="govuk-summary-list__value">
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
+                            <p class="govuk-body">Proposals that result in a net increase in marine-related employment will be supported, particularly where they meet one or more of the following: 1) are aligned with local skills strategies and support the skills available 2) create a diversity of opportunities 3) create employment in locations identified as the most deprived 4) implement new technologies - in, and adjacent to, the south west marine plan areas.</p>
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Your consideration</p>
+                            <p class="govuk-body govuk-!-margin-bottom-0">The installation will use a specialist marine cable contractor and local support services, including guard vessels, port services and welfare provision, providing short-term employment and business for the Plymouth marine sector.</p>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Fisheries 1<br>(SW-FISH-1)</dt>
+                        <dd class="govuk-summary-list__value">
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
+                            <p class="govuk-body">Proposals that support a sustainable fishing industry, including the industry's diversification, should be supported.</p>
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Your consideration</p>
+                            <p class="govuk-body govuk-!-margin-bottom-0">We have engaged with the Devon and Severn IFCA and local fishing representatives regarding the route and timing. The cable will be buried and, where necessary, protected so that it does not present a long-term snagging hazard to fishing gear. Fishing activity can resume over the route on completion.</p>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Fisheries 2<br>(SW-FISH-2)</dt>
+                        <dd class="govuk-summary-list__value">
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
+                            <p class="govuk-body">Proposals that enhance access for fishing activities should be supported. Proposals that may have significant adverse impacts on access for fishing activities must demonstrate that they will, in order of preference: a) avoid b) minimise c) mitigate - adverse impacts so they are no longer significant. If it is not possible to mitigate significant adverse impacts, proposals should state the case for proceeding.</p>
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Your consideration</p>
+                            <p class="govuk-body govuk-!-margin-bottom-0">The buried cable does not obstruct fish passage or access routes. The small areas of mattress and rock protection are discrete and do not materially affect the wider fishing ground.</p>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Fisheries 3<br>(SW-FISH-3)</dt>
+                        <dd class="govuk-summary-list__value">
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
+                            <p class="govuk-body">Proposals that enhance essential fish habitat, including spawning, nursery and feeding grounds, and migratory routes, should be supported. Proposals that may have significant adverse impacts on essential fish habitat, including spawning, nursery and feeding grounds, and migratory routes, must demonstrate that they will, in order of preference: a) avoid b) minimise c) mitigate - adverse impacts so they are no longer significant.</p>
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Your consideration</p>
+                            <p class="govuk-body govuk-!-margin-bottom-0">The route has been assessed against known spawning and nursery areas and installation is timed to avoid sensitive periods where practicable. Disturbance from installation is short-term and localised.</p>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Heritage assets 1<br>(SW-HER-1)</dt>
+                        <dd class="govuk-summary-list__value">
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
+                            <p class="govuk-body">Proposals that demonstrate they will conserve and enhance the significance of heritage assets will be supported. Where proposals may cause harm to the significance of heritage assets, proponents must demonstrate that they will, in order of preference: a) avoid b) minimise c) mitigate - any harm to the significance of heritage assets. If it is not possible to mitigate, then public benefits for proceeding with the proposal must outweigh the harm to the significance of heritage assets.</p>
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Your consideration</p>
+                            <p class="govuk-body govuk-!-margin-bottom-0">A geophysical survey and an assessment against the Historic Environment Record have been carried out for the route. No designated wrecks or protected heritage assets lie on the cable corridor. An archaeological exclusion zone and a protocol for reporting any unexpected finds during installation will be in place.</p>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Knowledge, understanding, appreciation and enjoyment 1<br>(SW-SOC-1)</dt>
+                        <dd class="govuk-summary-list__value">
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
+                            <p class="govuk-body">Those bringing forward proposals should consider and demonstrate how their development shall enhance public knowledge, understanding, appreciation and enjoyment of the marine environment as part of (the design of) the proposal.</p>
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Your consideration</p>
+                            <p class="govuk-body govuk-!-margin-bottom-0">The cable directly supports a coastal monitoring station that will improve scientific understanding of the marine environment in Plymouth Sound. Data from the station is intended to be made available to support education, research and public awareness of the marine environment.</p>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Seascape and landscape 1<br>(SW-SCP-1)</dt>
+                        <dd class="govuk-summary-list__value">
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
+                            <p class="govuk-body">Proposals should ensure they are compatible with their surroundings and should not have a significant adverse impact on the character and visual resource of the seascape and landscape of the area. The location, scale and design of proposals should take account of the character, quality and distinctiveness of the seascape and landscape. Proposals that may have a significant adverse impact on the seascape and landscape of the area should demonstrate that they will, in order of preference: a) avoid b) minimise c) mitigate - adverse impacts so they are no longer significant. If it is not possible to mitigate, the public benefits for proceeding with the proposal must outweigh significant adverse impacts to the seascape and landscape of the area. Proposals within or relatively close to nationally designated areas should have regard to the specific statutory purposes of the designated area. Great weight should be given to conserving and enhancing landscape and scenic beauty in National Parks and Areas of Outstanding Natural Beauty.</p>
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Your consideration</p>
+                            <p class="govuk-body govuk-!-margin-bottom-0">The cable is buried and the shore-end infrastructure is below ground or below the high water mark, so the project has no lasting visual impact on the seascape or landscape of Plymouth Sound. Marine plant is present only during the short installation window.</p>
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">South West Tourism and recreation 1<br>(SW-TR-1)</dt>
+                        <dd class="govuk-summary-list__value">
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
+                            <p class="govuk-body">Proposals that promote or facilitate sustainable tourism and recreation activities, or that create appropriate opportunities to expand or diversify the current use of facilities, should be supported. Proposals that may have significant adverse impacts on tourism and recreation activities must demonstrate that they will, in order of preference: a) avoid b) minimise c) mitigate - adverse impacts so they are no longer significant.</p>
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Your consideration</p>
+                            <p class="govuk-body govuk-!-margin-bottom-0">Plymouth Sound is an important area for sailing, diving and other water-based recreation. Works are timed and coordinated to minimise disruption to recreational users, and temporary safety zones will be publicised in advance through a Notice to Mariners and local channels.</p>
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        {# ================================================= #}
+        {# WATER FRAMEWORK DIRECTIVE ASSESSMENT               #}
+        {# ================================================= #}
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">Water Framework Directive assessment</h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Is your project within one nautical mile of the coast?</dt>
+                        <dd class="govuk-summary-list__value">No</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">WFD assessment completed</dt>
+                        <dd class="govuk-summary-list__value">No assessment provided — the applicant answered that the project was not within one nautical mile of the coast, so no Water Framework Directive assessment was required or uploaded.</dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        {# ============================== #}
+        {# OTHER PERMISSIONS              #}
+        {# ============================== #}
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">Other permissions</h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Special legal powers to do any of this project</dt>
+                        <dd class="govuk-summary-list__value">No</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Located in a harbour authority area</dt>
+                        <dd class="govuk-summary-list__value">Dockyard Port of Plymouth. The works have been discussed with the Queen's Harbour Master (QHM Plymouth), who controls the Dockyard Port, and with Cattewater Harbour Commissioners. A works licence and dive/vessel operation approvals will be obtained from QHM before marine operations begin. QHM ref: QHM/PLY/2026/117.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Permission from any other authorities in relation to this project</dt>
+                        <dd class="govuk-summary-list__value">Plymouth City Council — pre-application advice sought regarding the landfall works and any onshore ducting at Queen Anne's Battery and Mount Batten. Devon and Severn IFCA — consulted in relation to fishing activity along the route. Natural England — pre-application advice sought in relation to the Plymouth Sound and Estuaries SAC and MCZ. Contact: consents@plymouth.gov.uk, ref PA-PRE-2026-01188.</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Pre-application public groups or organisations consultation</dt>
+                        <dd class="govuk-summary-list__value">We have consulted with the following: • Queen's Harbour Master (QHM Plymouth) — route, method and timing discussed; works licence to follow. • Cattewater Harbour Commissioners — no objection to the proposed route. • Devon and Severn IFCA — engaged regarding the fishing interest along the route; no objection subject to adequate burial and protection. • Natural England — pre-application enquiry submitted regarding the SAC and MCZ; advice received on avoiding designated features and micro-routeing. • Local sailing and diving clubs — notified of the proposed works and the temporary safety zone.</dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        {# ============================== #}
+        {# FEE ESTIMATE                   #}
+        {# ============================== #}
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">Fee estimate</h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Maximum application fee estimate accepted</dt>
+                        <dd class="govuk-summary-list__value">£1,400 (Does not include potential post-consent monitoring of up to £750)</dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        {# ============================== #}
+        {# INVOICING DETAILS              #}
+        {# ============================== #}
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">Invoicing details</h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Address type</dt>
+                        <dd class="govuk-summary-list__value">UK</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Address</dt>
+                        <dd class="govuk-summary-list__value">
+                            Unit 4<br>
+                            Ocean Court<br>
+                            Plymouth<br>
+                            PL1 3RP
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Full name</dt>
+                        <dd class="govuk-summary-list__value">James Carter</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Organisation</dt>
+                        <dd class="govuk-summary-list__value">Southwest Marine Works Ltd</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Phone number</dt>
+                        <dd class="govuk-summary-list__value">01752 555123</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Email address</dt>
+                        <dd class="govuk-summary-list__value">james.carter@southwestmarineworks.co.uk</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Purchase order number</dt>
+                        <dd class="govuk-summary-list__value">PO-2026-4481</dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        {# ============================== #}
+        {# SHARING YOUR PROJECT INFO      #}
+        {# ============================== #}
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">Sharing project information publicly</h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+                        <dt class="govuk-summary-list__key">Consent to publish project information</dt>
+                        <dd class="govuk-summary-list__value">Yes</dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

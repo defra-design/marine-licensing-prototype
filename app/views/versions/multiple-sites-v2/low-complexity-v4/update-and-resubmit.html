@@ -1,0 +1,47 @@
+{% extends "../layouts/low-complexity-v4.html" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block beforeContent %}
+    {% include "../includes/phase-banner.html" %}
+    {% if data['organisation-name'] %}
+        {% include "../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link govuk-link--no-visited-state" href="email-landings/plymouth-sound-landing">Back</a>
+{% endblock %}
+
+{% block pageTitle %}
+Apply again for this project - Get permission for marine work
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-two-thirds">
+
+		{% if data['low-complexity-project-name-text-input'] %}
+		<span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
+		{% else %}
+		<span class="govuk-caption-l">Plymouth Sound cable laying</span>
+		{% endif %}
+
+		<h1 class="govuk-heading-l">Apply again for this project</h1>
+
+		<p class="govuk-body">To support you with this, we will copy all of the information from your original application (<strong>MLA/2026/10002</strong>) into a new draft application.</p>
+
+		<p class="govuk-body">Fix the issues we've identified before you submit. You can also change anything else.</p>
+
+		<p class="govuk-body">Your original application will stay 'Unable to progress'. You can still view it in your projects.</p>
+
+		<div class="govuk-button-group govuk-!-margin-top-6">
+			{{ govukButton({
+				text: "Create new draft and fix issues",
+				href: "seed-resubmit-draft"
+			}) }}
+			<a class="govuk-link govuk-link--no-visited-state" href="email-landings/plymouth-sound-landing">Cancel</a>
+		</div>
+
+	</div>
+</div>
+
+{% endblock %}
