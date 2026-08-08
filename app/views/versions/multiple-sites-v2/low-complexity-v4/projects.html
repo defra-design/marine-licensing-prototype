@@ -1,15 +1,51 @@
 {% extends "../layouts/low-complexity-v4.html" %}
 
 {% from "govuk/components/tag/macro.njk" import govukTag %}
-{% from "govuk/components/radios/macro.njk" import govukRadios %}
 
 {% block head %}
   {{ super() }}
   <style>
-  .govuk-radios--inline .govuk-radios__label {
-    white-space: nowrap;
+  /* ------------------------------------------------------------------
+     FILTER COLUMN WIDTH
+
+     MOJ's default is min-width 260px / max-width 385px, so the panel is
+     usually ~385px wide. Set all three properties to the same value:
+     min-width has to be included or it wins over width and max-width and
+     nothing below 260px has any effect.
+
+     Only applies from 48.0625em up. Below that the panel is a full-screen
+     overlay, which is MOJ's own behaviour and shouldn't be overridden.
+     ------------------------------------------------------------------ */
+  @media (min-width: 48.0625em) {
+    .moj-filter-layout--narrow .moj-filter-layout__filter {
+      width: 260px;
+      min-width: 260px;
+      max-width: 260px;
+    }
+  }
+
+  /* Error state for "Projects by owner" with nobody ticked */
+  .govuk-radios__conditional.error-state {
+    border-left-color: #d4351c;
+  }
+
+  .person-error-message {
+    display: none;
+    color: #d4351c;
+    font-weight: 700;
+    margin-bottom: 15px;
+  }
+
+  #results-count.error-message {
+    color: #d4351c;
   }
   </style>
+{% endblock %}
+
+{% block bodyEnd %}
+  {{ super() }}
+  {# Pulls in MOJ's FilterToggleButton itself - see the notes in the file. #}
+  <script src="/public/javascripts/lcml-v4-projects-filter.js"></script>
 {% endblock %}
 
 <!-- Set a variable to identify this specific page -->
@@ -82,33 +118,108 @@ Projects
 		<h1 class="govuk-heading-l">
 			{{ pageHeadingTextHTML }}
 		</h1>
-		
-		{% if data['user_type'] === 'organisation' %}
-		{{ govukRadios({
-			name: "projectFilter",
-			fieldset: {
-				legend: {
-					text: "Show",
-					classes: "govuk-fieldset__legend--s"
-				}
-			},
-			classes: "govuk-radios--small govuk-radios--inline",
-			items: [
-				{
-					value: "my-projects",
-					text: "My projects",
-					checked: true
-				},
-				{
-					value: "all-projects",
-					text: "All " + (data['organisation-name'] or "Ramsgate Marina") + " projects"
-				}
-			]
-		}) }}
-		{% endif %}
-		
+	</div>
+</div>
+
+{#
+  MOJ Design System "Filter a list" pattern.
+  https://design-patterns.service.justice.gov.uk/patterns/filter-a-list/
+
+  Apply filters sits at the top of the options, above the fields it submits,
+  as it does in the MOJ pattern. The panel starts collapsed - MOJ's
+  FilterToggleButton adds the Show filter button into .moj-action-bar__filter.
+#}
+<div class="moj-filter-layout moj-filter-layout--narrow">
+	<div class="moj-filter-layout__filter">
+		<div class="moj-filter" data-module="moj-filter">
+			<div class="moj-filter__header">
+				<div class="moj-filter__header-title">
+					<h2 class="govuk-heading-m">Filter</h2>
+				</div>
+				<div class="moj-filter__header-action"></div>
+			</div>
+
+			<div class="moj-filter__content">
+				<div class="moj-filter__selected">
+					<div class="moj-filter__selected-heading">
+						<div class="moj-filter__heading-title">
+							<h2 class="govuk-heading-m">Selected filters</h2>
+						</div>
+						<div class="moj-filter__heading-action">
+							<p><a class="govuk-link govuk-link--no-visited-state" href="#" id="clear-filters">Clear filters</a></p>
+						</div>
+					</div>
+					<div id="selected-filter-tags"></div>
+				</div>
+
+				<div class="moj-filter__options">
+					<button type="button" class="govuk-button govuk-!-margin-bottom-6" data-module="govuk-button" id="apply-filters">
+						Apply filters
+					</button>
+
+					{% if data['user_type'] === 'organisation' %}
+					<div class="govuk-form-group">
+						<fieldset class="govuk-fieldset">
+							<legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Show</legend>
+							<div class="govuk-radios govuk-radios--small" data-module="govuk-radios">
+								<div class="govuk-radios__item">
+									<input class="govuk-radios__input" id="filter-all" name="projectFilter" type="radio" value="all-projects" checked>
+									<label class="govuk-label govuk-radios__label" for="filter-all">
+										All {{ data['organisation-name'] or "Ramsgate Marina" }} projects <span id="count-all-projects"></span>
+									</label>
+								</div>
+								<div class="govuk-radios__item">
+									<input class="govuk-radios__input" id="filter-my" name="projectFilter" type="radio" value="my-projects">
+									<label class="govuk-label govuk-radios__label" for="filter-my">
+										My projects <span id="count-my-projects"></span>
+									</label>
+								</div>
+								<div class="govuk-radios__item">
+									<input class="govuk-radios__input" id="filter-specific" name="projectFilter" type="radio" value="specific-person" data-aria-controls="conditional-specific-person">
+									<label class="govuk-label govuk-radios__label" for="filter-specific">Projects by owner</label>
+								</div>
+								<div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-specific-person">
+									<fieldset class="govuk-fieldset">
+										<legend class="govuk-fieldset__legend govuk-visually-hidden">Select an owner</legend>
+										<p class="person-error-message" id="person-error-message">
+											<span class="govuk-visually-hidden">Error:</span> Select an owner to view their projects
+										</p>
+										<div class="govuk-checkboxes govuk-checkboxes--small" id="person-checkboxes"></div>
+									</fieldset>
+								</div>
+							</div>
+						</fieldset>
+					</div>
+					{% endif %}
+
+					<div class="govuk-form-group">
+						<fieldset class="govuk-fieldset">
+							<legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Type</legend>
+							<div class="govuk-checkboxes govuk-checkboxes--small" id="type-checkboxes"></div>
+						</fieldset>
+					</div>
+
+					<div class="govuk-form-group">
+						<fieldset class="govuk-fieldset">
+							<legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Status</legend>
+							<div class="govuk-checkboxes govuk-checkboxes--small" id="status-checkboxes"></div>
+						</fieldset>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div class="moj-filter-layout__content">
+		{# FilterToggleButton appends the Show/Hide filter button here. Leave empty. #}
+		<div class="moj-action-bar">
+			<div class="moj-action-bar__filter"></div>
+		</div>
+
+		<p id="results-count" class="govuk-body"></p>
+
 		<table class="govuk-table" data-module="moj-sortable-table" id="projects-table">
-			<caption class="govuk-table__caption govuk-table__caption--m govuk-visually-hidden" id="projects-caption">My projects</caption>
+			<caption class="govuk-table__caption govuk-table__caption--m govuk-visually-hidden" id="projects-caption">All {{ data['organisation-name'] or "Ramsgate Marina" }} projects</caption>
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
 				  <th scope="col" class="govuk-table__header" aria-sort="none">Project&nbsp;name</th>
@@ -240,7 +351,7 @@ Projects
 				<!-- Marine licence (dynamic based on session data) -->
 				<!-- Requires low-complexity-application-status so a project name captured from a query param (e.g. the Reject email link) does not, on its own, render a draft row. -->
 				{% if data['low-complexity-project-name-text-input'] and data['low-complexity-application-status'] and not data['resubmit-draft-created'] %}
-				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="{{ data['low-complexity-project-name-text-input'] }}" data-type="Marine licence" data-reference="{% if data['low-complexity-application-status'] == 'sent' %}MLA-10025{% else %}-{% endif %}" data-status="{% if data['low-complexity-application-status'] == 'sent' %}{% if data['withdrawn-mla-submitted'] == 'true' %}Withdrawn{% else %}Submitted{% endif %}{% else %}Draft{% endif %}">
+				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="{{ data['low-complexity-project-name-text-input'] }}" data-type="Marine licence application" data-reference="{% if data['low-complexity-application-status'] == 'sent' %}MLA-10025{% else %}-{% endif %}" data-status="{% if data['low-complexity-application-status'] == 'sent' %}{% if data['withdrawn-mla-submitted'] == 'true' %}Withdrawn{% else %}Submitted{% endif %}{% else %}Draft{% endif %}">
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">{{ data['low-complexity-project-name-text-input'] }}</th>
 					<td class="govuk-table__cell">Marine licence application</td>
 					<td class="govuk-table__cell" data-sort-value="{% if data['low-complexity-application-status'] == 'sent' %}MLA-10025{% else %}-{% endif %}">{% if data['low-complexity-application-status'] == 'sent' %}MLA/2025/10025{% else %}-{% endif %}</td>
@@ -444,84 +555,8 @@ Projects
 		</table>
 
 		<p id="no-results-message" class="govuk-body" style="display: none;">There are no projects to display.</p>
-
 	</div>
 </div>
-
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-	const projectFilterRadios = document.querySelectorAll('input[name="projectFilter"]');
-	const tableRows = document.querySelectorAll('#projects-table tbody tr');
-	const projectsTable = document.getElementById('projects-table');
-	const noResultsMessage = document.getElementById('no-results-message');
-	const projectsCaption = document.getElementById('projects-caption');
-	
-	// Get organization name from page (from session data)
-	const orgCaption = document.querySelector('.govuk-caption-l');
-	const orgName = orgCaption ? orgCaption.textContent.trim() : 'Ramsgate Marina';
-	
-	// Update caption display
-	function updateCaption(selectedFilter) {
-		if (!projectsCaption) return;
-		
-		if (selectedFilter === 'all-projects') {
-			projectsCaption.textContent = `All ${orgName} projects`;
-		} else {
-			projectsCaption.textContent = 'My projects';
-		}
-	}
-	
-	// Function to filter projects
-	function filterProjects() {
-		const selectedFilter = document.querySelector('input[name="projectFilter"]:checked');
-		const filterValue = selectedFilter ? selectedFilter.value : 'my-projects';
-		let visibleCount = 0;
-		
-		tableRows.forEach(function(row) {
-			const creator = row.getAttribute('data-creator');
-			let show = true;
-			
-			// If showing my projects, only show Sam Evans's projects (current user)
-			if (filterValue === 'my-projects') {
-				if (!creator || !creator.includes('jon-doe')) {
-					show = false;
-				}
-			}
-			// If filterValue is 'all-projects', show all projects (no filtering needed)
-			
-			// Show/hide row
-			if (show) {
-				row.style.display = '';
-				visibleCount++;
-			} else {
-				row.style.display = 'none';
-			}
-		});
-		
-		// Update caption
-		updateCaption(filterValue);
-		
-		// Show/hide table and no results message based on visible count
-		if (visibleCount === 0) {
-			projectsTable.style.display = 'none';
-			noResultsMessage.style.display = 'block';
-		} else {
-			projectsTable.style.display = 'table';
-			noResultsMessage.style.display = 'none';
-		}
-	}
-	
-	// Add change listener to radio buttons
-	projectFilterRadios.forEach(function(radio) {
-		radio.addEventListener('change', function() {
-			filterProjects();
-		});
-	});
-	
-	// Initialize: run initial filter (default to My projects)
-	filterProjects();
-});
-</script>
 
 {% endblock %}
 
