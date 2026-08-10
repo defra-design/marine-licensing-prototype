@@ -24,7 +24,7 @@
     }
   }
 
-  /* Error state for "Projects by owner" with nobody ticked */
+  /* Error state for "Submissions by owner" with nobody ticked */
   .govuk-radios__conditional.error-state {
     border-left-color: #d4351c;
   }
@@ -135,24 +135,24 @@ Submissions
 								<div class="govuk-radios__item">
 									<input class="govuk-radios__input" id="filter-all" name="projectFilter" type="radio" value="all-projects" checked>
 									<label class="govuk-label govuk-radios__label" for="filter-all">
-										All {{ data['organisation-name'] or "Ramsgate Marina" }} projects <span id="count-all-projects"></span>
+										All {{ data['organisation-name'] or "Ramsgate Marina" }} submissions <span id="count-all-projects"></span>
 									</label>
 								</div>
 								<div class="govuk-radios__item">
 									<input class="govuk-radios__input" id="filter-my" name="projectFilter" type="radio" value="my-projects">
 									<label class="govuk-label govuk-radios__label" for="filter-my">
-										My projects <span id="count-my-projects"></span>
+										My submissions <span id="count-my-projects"></span>
 									</label>
 								</div>
 								<div class="govuk-radios__item">
 									<input class="govuk-radios__input" id="filter-specific" name="projectFilter" type="radio" value="specific-person" data-aria-controls="conditional-specific-person">
-									<label class="govuk-label govuk-radios__label" for="filter-specific">Projects by owner</label>
+									<label class="govuk-label govuk-radios__label" for="filter-specific">Submissions by owner</label>
 								</div>
 								<div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-specific-person">
 									<fieldset class="govuk-fieldset">
 										<legend class="govuk-fieldset__legend govuk-visually-hidden">Select an owner</legend>
 										<p class="person-error-message" id="person-error-message">
-											<span class="govuk-visually-hidden">Error:</span> Select an owner to view their projects
+											<span class="govuk-visually-hidden">Error:</span> Select an owner to view their submissions
 										</p>
 										<div class="govuk-checkboxes govuk-checkboxes--small" id="person-checkboxes"></div>
 									</fieldset>
@@ -164,7 +164,7 @@ Submissions
 
 					<div class="govuk-form-group">
 						<fieldset class="govuk-fieldset">
-							<legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Type</legend>
+							<legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Submission type</legend>
 							<div class="govuk-checkboxes govuk-checkboxes--small" id="type-checkboxes"></div>
 						</fieldset>
 					</div>
@@ -189,7 +189,7 @@ Submissions
 		<p id="results-count" class="govuk-body"></p>
 
 		<table class="govuk-table" data-module="moj-sortable-table" id="projects-table">
-			<caption class="govuk-table__caption govuk-table__caption--m govuk-visually-hidden" id="projects-caption">All {{ data['organisation-name'] or "Ramsgate Marina" }} projects</caption>
+			<caption class="govuk-table__caption govuk-table__caption--m govuk-visually-hidden" id="projects-caption">All {{ data['organisation-name'] or "Ramsgate Marina" }} submissions</caption>
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
 				  <th scope="col" class="govuk-table__header" aria-sort="none">Project&nbsp;name</th>
@@ -524,7 +524,7 @@ Submissions
 			</tbody>
 		</table>
 
-		<p id="no-results-message" class="govuk-body" style="display: none;">There are no projects to display.</p>
+		<p id="no-results-message" class="govuk-body" style="display: none;">There are no submissions to display.</p>
 	</div>
 </div>
 
