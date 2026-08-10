@@ -188,6 +188,21 @@ Submissions
 
 		<p id="results-count" class="govuk-body"></p>
 
+		{#
+		  Status column sorts on data-sort-value, not the tag text, so the order is
+		  ours to choose rather than alphabetical. Ranked by what the applicant can
+		  act on: things needing their attention first, then live, then closed.
+
+		    01 Draft               - not sent yet, needs finishing
+		    02 Submitted           - with us, awaiting a decision
+		    03 Active              - licence or notification in force
+		    04 Transferred         - closed
+		    05 Unable to progress  - closed
+		    06 Withdrawn           - closed
+
+		  The closed group reads T, U, W, so the grouping and alphabetical order
+		  happen to agree. The header is aria-sort="ascending" so 01 lands on top.
+		#}
 		<table class="govuk-table" data-module="moj-sortable-table" id="projects-table">
 			<caption class="govuk-table__caption govuk-table__caption--m govuk-visually-hidden" id="projects-caption">All {{ data['organisation-name'] or "Ramsgate Marina" }} submissions</caption>
 			<thead class="govuk-table__head">
@@ -195,7 +210,7 @@ Submissions
 				  <th scope="col" class="govuk-table__header" aria-sort="none">Project&nbsp;name</th>
 				  <th scope="col" class="govuk-table__header" aria-sort="none">Type</th>
 				  <th scope="col" class="govuk-table__header" aria-sort="none">Reference</th>
-				  <th scope="col" class="govuk-table__header" aria-sort="descending">Status</th>
+				  <th scope="col" class="govuk-table__header" aria-sort="ascending">Status</th>
 				  <th scope="col" class="govuk-table__header" aria-sort="none">Submitted&nbsp;on</th>
 				  {% if data['user_type'] === 'organisation' %}
 				  <th scope="col" class="govuk-table__header" aria-sort="none">Owner</th>
@@ -208,7 +223,7 @@ Submissions
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Installation of floating pontoon, Lyme Regis Harbour, Dorset</th>
 					<td class="govuk-table__cell">Marine licence application</td>
 					<td class="govuk-table__cell" data-sort-value="MLA-10003">MLA/2026/10003</td>
-					<td class="govuk-table__cell" data-sort-value="004">
+					<td class="govuk-table__cell" data-sort-value="04">
 						{{ govukTag({
 							text: "Transferred",
 							classes: "govuk-tag--magenta"
@@ -227,7 +242,7 @@ Submissions
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Plymouth Sound cable laying</th>
 					<td class="govuk-table__cell">Marine licence application</td>
 					<td class="govuk-table__cell" data-sort-value="MLA-10002">MLA/2026/10002</td>
-					<td class="govuk-table__cell" data-sort-value="005">
+					<td class="govuk-table__cell" data-sort-value="05">
 						{{ govukTag({
 							text: "Unable to progress",
 							classes: "govuk-tag--orange"
@@ -247,7 +262,7 @@ Submissions
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Groyne construction, Bournemouth seafront, Dorset</th>
 					<td class="govuk-table__cell">Marine licence application</td>
 					<td class="govuk-table__cell" data-sort-value="MLA-10018">MLA/2026/10018</td>
-					<td class="govuk-table__cell" data-sort-value="{% if data['withdrawn-groyne'] == 'true' %}001{% else %}002{% endif %}">
+					<td class="govuk-table__cell" data-sort-value="{% if data['withdrawn-groyne'] == 'true' %}06{% else %}02{% endif %}">
 						{% if data['withdrawn-groyne'] == 'true' %}
 						{{ govukTag({
 							text: "Withdrawn",
@@ -280,7 +295,7 @@ Submissions
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Plymouth Sound cable laying</th>
 					<td class="govuk-table__cell">Marine licence application</td>
 					<td class="govuk-table__cell" data-sort-value="{% if data['low-complexity-application-status'] == 'sent' %}MLA-10025{% else %}-{% endif %}">{% if data['low-complexity-application-status'] == 'sent' %}MLA/2025/10025{% else %}-{% endif %}</td>
-					<td class="govuk-table__cell" data-sort-value="{% if data['low-complexity-application-status'] == 'sent' %}{% if data['withdrawn-mla-submitted'] == 'true' %}001{% else %}002{% endif %}{% else %}003{% endif %}">
+					<td class="govuk-table__cell" data-sort-value="{% if data['low-complexity-application-status'] == 'sent' %}{% if data['withdrawn-mla-submitted'] == 'true' %}06{% else %}02{% endif %}{% else %}01{% endif %}">
 						{% if data['low-complexity-application-status'] == 'sent' %}
 							{% if data['withdrawn-mla-submitted'] == 'true' %}
 							{{ govukTag({
@@ -325,7 +340,7 @@ Submissions
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">{{ data['low-complexity-project-name-text-input'] }}</th>
 					<td class="govuk-table__cell">Marine licence application</td>
 					<td class="govuk-table__cell" data-sort-value="{% if data['low-complexity-application-status'] == 'sent' %}MLA-10025{% else %}-{% endif %}">{% if data['low-complexity-application-status'] == 'sent' %}MLA/2025/10025{% else %}-{% endif %}</td>
-					<td class="govuk-table__cell" data-sort-value="{% if data['low-complexity-application-status'] == 'sent' %}{% if data['withdrawn-mla-submitted'] == 'true' %}001{% else %}002{% endif %}{% else %}003{% endif %}">
+					<td class="govuk-table__cell" data-sort-value="{% if data['low-complexity-application-status'] == 'sent' %}{% if data['withdrawn-mla-submitted'] == 'true' %}06{% else %}02{% endif %}{% else %}01{% endif %}">
 						{% if data['low-complexity-application-status'] == 'sent' %}
 							{% if data['withdrawn-mla-submitted'] == 'true' %}
 							{{ govukTag({
@@ -368,7 +383,7 @@ Submissions
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Branscombe bore holes</th>
 					<td class="govuk-table__cell">Exempt activity notification</td>
 					<td class="govuk-table__cell" data-sort-value="EXE-10002">EXE/2025/10002</td>
-					<td class="govuk-table__cell" data-sort-value="{% if data['withdrawn-branscombe'] == 'true' %}001{% else %}002{% endif %}">
+					<td class="govuk-table__cell" data-sort-value="{% if data['withdrawn-branscombe'] == 'true' %}06{% else %}03{% endif %}">
 						{% if data['withdrawn-branscombe'] == 'true' %}
 						{{ govukTag({
 							text: "Withdrawn",
@@ -398,7 +413,7 @@ Submissions
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Worthing sediment samples</th>
 					<td class="govuk-table__cell">Exempt activity notification</td>
 					<td class="govuk-table__cell" data-sort-value="EXE-10012">EXE/2025/10012</td>
-					<td class="govuk-table__cell" data-sort-value="{% if data['withdrawn-worthing'] == 'true' %}001{% else %}002{% endif %}">
+					<td class="govuk-table__cell" data-sort-value="{% if data['withdrawn-worthing'] == 'true' %}06{% else %}03{% endif %}">
 						{% if data['withdrawn-worthing'] == 'true' %}
 						{{ govukTag({
 							text: "Withdrawn",
@@ -428,7 +443,7 @@ Submissions
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Plymouth harbour core samples</th>
 					<td class="govuk-table__cell">Exempt activity notification</td>
 					<td class="govuk-table__cell" data-sort-value="EXE-10023">EXE/2025/10023</td>
-					<td class="govuk-table__cell" data-sort-value="002">
+					<td class="govuk-table__cell" data-sort-value="03">
 						{{ govukTag({
 							text: "Active",
 							classes: "govuk-tag--green"
@@ -447,7 +462,7 @@ Submissions
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Sunderland marina maintenance dredge</th>
 					<td class="govuk-table__cell">Exempt activity notification</td>
 					<td class="govuk-table__cell" data-sort-value="EXE-10029">EXE/2025/10029</td>
-					<td class="govuk-table__cell" data-sort-value="002">
+					<td class="govuk-table__cell" data-sort-value="03">
 						{{ govukTag({
 							text: "Active",
 							classes: "govuk-tag--green"
@@ -466,7 +481,7 @@ Submissions
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Teignmouth water quality sampling</th>
 					<td class="govuk-table__cell">Exempt activity notification</td>
 					<td class="govuk-table__cell" data-sort-value="EXE-10034">EXE/2025/10034</td>
-					<td class="govuk-table__cell" data-sort-value="002">
+					<td class="govuk-table__cell" data-sort-value="03">
 						{{ govukTag({
 							text: "Active",
 							classes: "govuk-tag--green"
@@ -486,7 +501,7 @@ Submissions
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Whitstable intertidal survey pits</th>
 					<td class="govuk-table__cell">Exempt activity notification</td>
 					<td class="govuk-table__cell" data-sort-value="-">-</td>
-					<td class="govuk-table__cell" data-sort-value="003">
+					<td class="govuk-table__cell" data-sort-value="01">
 						{{ govukTag({
 							text: "Draft",
 							classes: "govuk-tag--light-blue"
@@ -506,7 +521,7 @@ Submissions
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Scarborough seabed grab samples</th>
 					<td class="govuk-table__cell">Exempt activity notification</td>
 					<td class="govuk-table__cell" data-sort-value="-">-</td>
-					<td class="govuk-table__cell" data-sort-value="003">
+					<td class="govuk-table__cell" data-sort-value="01">
 						{{ govukTag({
 							text: "Draft",
 							classes: "govuk-tag--light-blue"
