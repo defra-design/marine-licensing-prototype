@@ -62,7 +62,7 @@
     <div class="app-organisation-switcher">
 		<span class="govuk-body-s govuk-!-font-weight-bold app-organisation-switcher__name">{{ data['organisation-name'] }}</span>
 		{% if data['user_type'] === 'organisation' %}
-				<a class="govuk-link app-organisation-switcher__link govuk-link--no-visited-state" href="organisation-selector?change=true&returnTo=projects">
+				<a class="govuk-link app-organisation-switcher__link govuk-link--no-visited-state" href="organisation-selector?change=true&returnTo=submissions">
 					Change who you're representing
 				</a>
 		{% endif %}
@@ -219,7 +219,7 @@ Submissions
 					<td class="govuk-table__cell">Sam Evans</td>
 					{% endif %}
 					<td class="govuk-table__cell">
-						<a href="email-landings/pontoon-landing?from=projects" class="govuk-link--no-visited-state">View details</a>
+						<a href="email-landings/pontoon-landing?from=submissions" class="govuk-link--no-visited-state">View details</a>
 					</td>
 				</tr>
 
@@ -238,7 +238,7 @@ Submissions
 					<td class="govuk-table__cell">Sam Evans</td>
 					{% endif %}
 					<td class="govuk-table__cell">
-						<a href="email-landings/plymouth-sound-landing?from=projects" class="govuk-link--no-visited-state">View details</a>
+						<a href="email-landings/plymouth-sound-landing?from=submissions" class="govuk-link--no-visited-state">View details</a>
 					</td>
 				</tr>
 
@@ -268,7 +268,7 @@ Submissions
 						{% if data['withdrawn-groyne'] == 'true' %}
 						<a href="#" class="govuk-link--no-visited-state">View details</a>
 						{% else %}
-						<a href="#" class="govuk-link--no-visited-state govuk-!-margin-right-4">View details</a> <a href="withdraw?project=groyne&name=Groyne construction, Bournemouth seafront, Dorset&type=Marine licence application&return=projects" class="govuk-link--no-visited-state">Withdraw</a>
+						<a href="#" class="govuk-link--no-visited-state govuk-!-margin-right-4">View details</a> <a href="withdraw?project=groyne&name=Groyne construction, Bournemouth seafront, Dorset&type=Marine licence application&return=submissions" class="govuk-link--no-visited-state">Withdraw</a>
 						{% endif %}
 					</td>
 				</tr>
@@ -309,10 +309,10 @@ Submissions
 							{% if data['withdrawn-mla-submitted'] == 'true' %}
 							<a href="check-your-answers" class="govuk-link--no-visited-state">View details</a>
 							{% else %}
-							<a href="check-your-answers" class="govuk-link--no-visited-state govuk-!-margin-right-4">View details</a> <a href="withdraw?project=mla-submitted&name=Plymouth Sound cable laying&type=Marine licence application&return=projects" class="govuk-link--no-visited-state">Withdraw</a>
+							<a href="check-your-answers" class="govuk-link--no-visited-state govuk-!-margin-right-4">View details</a> <a href="withdraw?project=mla-submitted&name=Plymouth Sound cable laying&type=Marine licence application&return=submissions" class="govuk-link--no-visited-state">Withdraw</a>
 							{% endif %}
 						{% else %}
-						<a href="marine-licence-start-page" class="govuk-link--no-visited-state govuk-!-margin-right-4">Continue</a> <a href="delete?project=plymouth-resubmit&name=Plymouth Sound cable laying&type=Marine licence application&return=projects" class="govuk-link--no-visited-state">Delete</a>
+						<a href="marine-licence-start-page" class="govuk-link--no-visited-state govuk-!-margin-right-4">Continue</a> <a href="delete?project=plymouth-resubmit&name=Plymouth Sound cable laying&type=Marine licence application&return=submissions" class="govuk-link--no-visited-state">Delete</a>
 						{% endif %}
 					</td>
 				</tr>
@@ -354,7 +354,7 @@ Submissions
 							{% if data['withdrawn-mla-submitted'] == 'true' %}
 							<a href="check-your-answers" class="govuk-link--no-visited-state">View details</a>
 							{% else %}
-							<a href="check-your-answers" class="govuk-link--no-visited-state govuk-!-margin-right-4">View details</a> <a href="withdraw?project=mla-submitted&name={{ data['low-complexity-project-name-text-input'] }}&type=Marine licence application&return=projects" class="govuk-link--no-visited-state">Withdraw</a>
+							<a href="check-your-answers" class="govuk-link--no-visited-state govuk-!-margin-right-4">View details</a> <a href="withdraw?project=mla-submitted&name={{ data['low-complexity-project-name-text-input'] }}&type=Marine licence application&return=submissions" class="govuk-link--no-visited-state">Withdraw</a>
 							{% endif %}
 						{% else %}
 						<a href="marine-licence-start-page" class="govuk-link--no-visited-state govuk-!-margin-right-4">Continue</a> <a href="#" class="govuk-link--no-visited-state">Delete</a>
@@ -389,7 +389,7 @@ Submissions
 						{% if data['withdrawn-branscombe'] == 'true' %}
 						<a href="#" class="govuk-link--no-visited-state">View details</a>
 						{% else %}
-						<a href="#" class="govuk-link--no-visited-state govuk-!-margin-right-4">View details</a> <a href="withdraw?project=branscombe&name=Branscombe bore holes&type=Exempt activity notification&return=projects" class="govuk-link--no-visited-state">Withdraw</a>
+						<a href="#" class="govuk-link--no-visited-state govuk-!-margin-right-4">View details</a> <a href="withdraw?project=branscombe&name=Branscombe bore holes&type=Exempt activity notification&return=submissions" class="govuk-link--no-visited-state">Withdraw</a>
 						{% endif %}
 					</td>
 				</tr>
@@ -419,7 +419,7 @@ Submissions
 						{% if data['withdrawn-worthing'] == 'true' %}
 						<a href="#" class="govuk-link--no-visited-state">View details</a>
 						{% else %}
-						<a href="#" class="govuk-link--no-visited-state govuk-!-margin-right-4">View details</a> <a href="withdraw?project=worthing&name=Worthing sediment samples&type=Exempt activity notification&return=projects" class="govuk-link--no-visited-state">Withdraw</a>
+						<a href="#" class="govuk-link--no-visited-state govuk-!-margin-right-4">View details</a> <a href="withdraw?project=worthing&name=Worthing sediment samples&type=Exempt activity notification&return=submissions" class="govuk-link--no-visited-state">Withdraw</a>
 						{% endif %}
 					</td>
 				</tr>
@@ -497,7 +497,7 @@ Submissions
 					<td class="govuk-table__cell">Sam Evans</td>
 					{% endif %}
 					<td class="govuk-table__cell">
-						<a href="#" class="govuk-link--no-visited-state govuk-!-margin-right-4">Continue</a> <a href="delete?project=whitstable&name=Whitstable intertidal survey pits&type=Exempt activity notification&return=projects" class="govuk-link--no-visited-state">Delete</a>
+						<a href="#" class="govuk-link--no-visited-state govuk-!-margin-right-4">Continue</a> <a href="delete?project=whitstable&name=Whitstable intertidal survey pits&type=Exempt activity notification&return=submissions" class="govuk-link--no-visited-state">Delete</a>
 					</td>
 				</tr>
 				{% endif %}

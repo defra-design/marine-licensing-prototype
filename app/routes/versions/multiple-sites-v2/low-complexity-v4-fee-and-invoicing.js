@@ -91,8 +91,8 @@ module.exports = function (router) {
     // Abandoning to a draft — clear the check-your-answers return flag
     req.session.data['camefromcheckanswers'] = false;
 
-    // Redirect to projects page - the project will remain as a draft
-    res.redirect(`/versions/${version}/${section}/projects`);
+    // Redirect to submissions page - the application will remain as a draft
+    res.redirect(`/versions/${version}/${section}/submissions`);
   });
 
   ///////////////////////////////////////////
