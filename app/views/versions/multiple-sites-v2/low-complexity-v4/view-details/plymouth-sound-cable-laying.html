@@ -46,11 +46,11 @@
         </h1>
 
         {# ============================== #}
-        {# APPLICATION DETAILS           #}
+        {# APPLICATION OVERVIEW          #}
         {# ============================== #}
         <div class="govuk-summary-card">
             <div class="govuk-summary-card__title-wrapper">
-                <h2 class="govuk-summary-card__title">Application details</h2>
+                <h2 class="govuk-summary-card__title">Application overview</h2>
             </div>
             <div class="govuk-summary-card__content">
                 <dl class="govuk-summary-list">
@@ -108,16 +108,20 @@
         </div>
 
         {# ============================== #}
-        {# PROJECT DETAILS                #}
+        {# APPLICATION DETAILS            #}
         {# ============================== #}
         <div class="govuk-summary-card">
             <div class="govuk-summary-card__title-wrapper">
-                <h2 class="govuk-summary-card__title">Project details</h2>
+                <h2 class="govuk-summary-card__title">Application details</h2>
             </div>
             <div class="govuk-summary-card__content">
                 <dl class="govuk-summary-list">
                     <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Project background</dt>
+                        <dt class="govuk-summary-list__key">Application name</dt>
+                        <dd class="govuk-summary-list__value">{% if data['low-complexity-project-name-text-input'] %}{{ data['low-complexity-project-name-text-input'] }}{% else %}Plymouth Sound cable laying{% endif %}</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Proposed works summary</dt>
                         <dd class="govuk-summary-list__value">Southwest Marine Works Ltd will install a subsea telecommunications cable across Plymouth Sound to connect a new coastal monitoring station on Mount Batten to the mainland network. The works involve laying approximately 2.4 kilometres of fibre optic cable along a pre-surveyed route on the seabed, with sections buried using a jetting sled to protect the cable from vessel anchors and fishing activity. Landfall points will be established at Mount Batten Pier and Queen Anne's Battery, with cable protection installed at both shore ends.</dd>
                     </div>
                     <div class="govuk-summary-list__row">
@@ -645,12 +649,12 @@
             <div class="govuk-summary-card__content">
                 <dl class="govuk-summary-list">
                     <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Is your project within one nautical mile of the coast?</dt>
+                        <dt class="govuk-summary-list__key">Are your proposed works within one nautical mile of the coast?</dt>
                         <dd class="govuk-summary-list__value">No</dd>
                     </div>
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">WFD assessment completed</dt>
-                        <dd class="govuk-summary-list__value">No assessment provided — the applicant answered that the project was not within one nautical mile of the coast, so no Water Framework Directive assessment was required or uploaded.</dd>
+                        <dd class="govuk-summary-list__value">No assessment provided — the applicant answered that the proposed works were not within one nautical mile of the coast, so no Water Framework Directive assessment was required or uploaded.</dd>
                     </div>
                 </dl>
             </div>
@@ -666,7 +670,7 @@
             <div class="govuk-summary-card__content">
                 <dl class="govuk-summary-list">
                     <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Special legal powers to do any of this project</dt>
+                        <dt class="govuk-summary-list__key">Special legal powers to do any of these proposed works</dt>
                         <dd class="govuk-summary-list__value">No</dd>
                     </div>
                     <div class="govuk-summary-list__row">
@@ -674,7 +678,7 @@
                         <dd class="govuk-summary-list__value">Dockyard Port of Plymouth. The works have been discussed with the Queen's Harbour Master (QHM Plymouth), who controls the Dockyard Port, and with Cattewater Harbour Commissioners. A works licence and dive/vessel operation approvals will be obtained from QHM before marine operations begin. QHM ref: QHM/PLY/2026/117.</dd>
                     </div>
                     <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Permission from any other authorities in relation to this project</dt>
+                        <dt class="govuk-summary-list__key">Permission from any other authorities in relation to these proposed works</dt>
                         <dd class="govuk-summary-list__value">Plymouth City Council — pre-application advice sought regarding the landfall works and any onshore ducting at Queen Anne's Battery and Mount Batten. Devon and Severn IFCA — consulted in relation to fishing activity along the route. Natural England — pre-application advice sought in relation to the Plymouth Sound and Estuaries SAC and MCZ. Contact: consents@plymouth.gov.uk, ref PA-PRE-2026-01188.</dd>
                     </div>
                     <div class="govuk-summary-list__row">
@@ -753,12 +757,12 @@
         {# ============================== #}
         <div class="govuk-summary-card">
             <div class="govuk-summary-card__title-wrapper">
-                <h2 class="govuk-summary-card__title">Sharing project information publicly</h2>
+                <h2 class="govuk-summary-card__title">Sharing application information publicly</h2>
             </div>
             <div class="govuk-summary-card__content">
                 <dl class="govuk-summary-list">
                     <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
-                        <dt class="govuk-summary-list__key">Consent to publish project information</dt>
+                        <dt class="govuk-summary-list__key">Consent to publish application information</dt>
                         <dd class="govuk-summary-list__value">Yes</dd>
                     </div>
                 </dl>
