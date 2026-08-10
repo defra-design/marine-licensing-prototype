@@ -177,20 +177,8 @@
 {% endblock %}
 
 {% block header %}
-{{ govukHeader({
-  homepageUrl: "/",
-  classes: "govuk-header--full-width-border"
-}) }}
-{{ govukServiceNavigation({
-  serviceName: "Get permission for marine work",
-  serviceUrl: "../homepage",
-  navigation: [
-    { href: "../homepage", text: "Home", active: false },
-    { href: "../projects", text: "Projects", active: true },
-    { href: "#", text: "Defra account", active: false },
-    { href: "../sign-in?goto=homepage", text: "Sign out" }
-  ]
-}) }}
+{% from "versions/multiple-sites-v2/low-complexity-v4/includes/service-navigation.html" import lcmlV4Header %}
+{{ lcmlV4Header("submissions") }}
 {% endblock %}
 
 {% block beforeContent %}
@@ -208,7 +196,7 @@
 {% endblock %}
 
 {% set pageHeadingTextHTML %}
-Projects
+Submissions
 {% endset %}
 
 {% block pageTitle %}

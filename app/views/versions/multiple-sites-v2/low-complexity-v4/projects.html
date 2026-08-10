@@ -52,38 +52,8 @@
 {% set currentPageId = "low-complexity-projects" %}
 
 {% block header %}
-{% from "govuk/components/header/macro.njk" import govukHeader %}
-{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
-
-{{ govukHeader({
-  homepageUrl: "/",
-  classes: "govuk-header--full-width-border"
-}) }}
-{{ govukServiceNavigation({
-  serviceName: "Get permission for marine work",
-  serviceUrl: "/versions/multiple-sites-v2/low-complexity-v4/homepage",
-  navigation: [
-    {
-      href: "homepage",
-      text: "Home",
-      active: false
-    },
-    {
-      href: "projects",
-      text: "Projects",
-      active: true
-    },
-    {
-      href: "#",
-      text: "Defra account",
-      active: false
-    },
-    {
-      href: "sign-in?goto=homepage",
-      text: "Sign out"
-    }
-  ]
-}) }}
+{% from "versions/multiple-sites-v2/low-complexity-v4/includes/service-navigation.html" import lcmlV4Header %}
+{{ lcmlV4Header("submissions") }}
 {% endblock %}
 
 {% block beforeContent %}
@@ -102,7 +72,7 @@
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-Projects
+Submissions
 {% endset %}
 
 <!-- Text that show in the browser tab. Does NOT need changing -->

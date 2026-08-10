@@ -4,31 +4,8 @@
   {% from "govuk/components/header/macro.njk" import govukHeader %}
   {% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
   {% if changingOrganisation or data['changing-organisation'] === 'true' %}
-    {{ govukHeader({
-  homepageUrl: "/",
-      classes: "govuk-header--full-width-border"
-    }) }}
-    {{ govukServiceNavigation({
-      serviceName: "Get permission for marine work",
-      navigation: [
-        {
-          href: "homepage",
-          text: "Home"
-        },
-        {
-          href: "#",
-          text: "Projects"
-        },
-        {
-          href: "#",
-          text: "Defra account"
-        },
-        {
-          href: "sign-in?goto=homepage",
-          text: "Sign out"
-        }
-      ]
-    }) }}
+    {% from "versions/multiple-sites-v2/low-complexity-v4/includes/service-navigation.html" import lcmlV4Header %}
+    {{ lcmlV4Header() }}
   {% else %}
     {{ govukHeader({
   homepageUrl: "/",

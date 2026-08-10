@@ -7,37 +7,10 @@ https://prototype-kit.service.gov.uk/docs/how-to-use-layouts
 
 {% set bodyClasses = "page-" + currentPageId if currentPageId else "" %}
 
-{% block header %}
-{% from "govuk/components/header/macro.njk" import govukHeader %}
-{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
-
 <!-- project-name-start.html has its own header -->
-{{ govukHeader({
-  homepageUrl: "/",
-  classes: "govuk-header--full-width-border"
-}) }}
-{{ govukServiceNavigation({
-  serviceName: "Get permission for marine work",
-  navigation: [
-    {
-      href: "/versions/multiple-sites-v2/low-complexity-v4/homepage",
-      text: "Home"
-    },
-    {
-      href: "/versions/multiple-sites-v2/low-complexity-v4/projects",
-      text: "Projects"
-    },
-    {
-      href: "#",
-      text: "Defra account",
-      active: false
-    },
-    {
-      href: "#",
-      text: "Sign out"
-    }
-  ]
-}) }}
+{% block header %}
+{% from "versions/multiple-sites-v2/low-complexity-v4/includes/service-navigation.html" import lcmlV4Header %}
+{{ lcmlV4Header() }}
 {% endblock %}
 
 {% block beforeContent %}

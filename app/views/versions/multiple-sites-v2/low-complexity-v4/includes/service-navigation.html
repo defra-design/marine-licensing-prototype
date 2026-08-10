@@ -1,0 +1,53 @@
+{#
+  LCML v4 header and service navigation.
+
+  This is v4-only on purpose. The other low-complexity versions still say
+  "Projects", so nothing here should be moved up into the shared
+  versions/multiple-sites-v2/includes folder.
+
+  Before this existed the same navigation was copy-pasted into a dozen page
+  templates, so renaming a nav item meant hunting through all of them. Pages
+  that need it should now call the macro instead of hand-rolling a header:
+
+    {% from "versions/multiple-sites-v2/low-complexity-v4/includes/service-navigation.html" import lcmlV4Header %}
+    {% block header %}{{ lcmlV4Header("submissions") }}{% endblock %}
+
+  The argument is the nav item to highlight: "home", "submissions", or
+  nothing at all for pages that sit outside both. Links are absolute so the
+  macro works at any folder depth.
+#}
+
+{% from "govuk/components/header/macro.njk" import govukHeader %}
+{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
+
+{% macro lcmlV4Header(activeItem) %}
+{{ govukHeader({
+  homepageUrl: "/",
+  classes: "govuk-header--full-width-border"
+}) }}
+{{ govukServiceNavigation({
+  serviceName: "Get permission for marine work",
+  serviceUrl: "/versions/multiple-sites-v2/low-complexity-v4/homepage",
+  navigation: [
+    {
+      href: "/versions/multiple-sites-v2/low-complexity-v4/homepage",
+      text: "Home",
+      active: activeItem === "home"
+    },
+    {
+      href: "/versions/multiple-sites-v2/low-complexity-v4/projects",
+      text: "Submissions",
+      active: activeItem === "submissions"
+    },
+    {
+      href: "#",
+      text: "Defra account",
+      active: false
+    },
+    {
+      href: "/versions/multiple-sites-v2/low-complexity-v4/sign-in?goto=homepage",
+      text: "Sign out"
+    }
+  ]
+}) }}
+{% endmacro %}
