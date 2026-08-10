@@ -61,7 +61,7 @@
           text: "Yes, withdraw application" if isMla else "Yes, withdraw project",
 		  classes: "govuk-button--warning"
         }) }}
-        <a class="govuk-link govuk-link--no-visited-state" href="{% if returnPageFromQuery or data['return-page'] %}{{ returnPageFromQuery or data['return-page'] }}{% else %}projects{% endif %}">Cancel</a>
+        <a class="govuk-link govuk-link--no-visited-state" href="{% if returnPageFromQuery or data['return-page'] %}{{ returnPageFromQuery or data['return-page'] }}{% else %}submissions{% endif %}">Cancel</a>
     </div>
     </form>
 

@@ -15,7 +15,7 @@
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-Have you applied to, or got permission from, any other authorities in relation to this project?
+Have you applied to, or got permission from, any other authorities in relation to these proposed works?
 {% endset %}
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
@@ -54,7 +54,7 @@ Error:
 			titleText: "There is a problem",
 			errorList: [
 				{
-					text: "Select if you have applied to, or got permission from, any other authorities in relation to this project" if data['errortypeone'] == "true" else "Enter details of the organisations, relevant contact details and any reference numbers",
+					text: "Select if you have applied to, or got permission from, any other authorities in relation to these proposed works" if data['errortypeone'] == "true" else "Enter details of the organisations, relevant contact details and any reference numbers",
 					href: "#low-complexity-other-permissions" if data['errortypeone'] == "true" else "#low-complexity-other-permissions-details"
 				}
 			]
@@ -91,7 +91,7 @@ Error:
 					}
 				],
 				errorMessage: {
-					text: "Select if you have applied to, or got permission from, any other authorities in relation to this project"
+					text: "Select if you have applied to, or got permission from, any other authorities in relation to these proposed works"
 				} if data['errortypeone'] == "true"
 			}) }}
 

@@ -15,7 +15,7 @@
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-Is your project located in a harbour authority area?
+Are your proposed works located in a harbour authority area?
 {% endset %}
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
@@ -54,7 +54,7 @@ Error:
 			titleText: "There is a problem",
 			errorList: [
 				{
-					text: "Select if your project is located in a harbour authority area" if data['errortypeone'] == "true" else "Enter details of the harbour authority",
+					text: "Select if your proposed works are located in a harbour authority area" if data['errortypeone'] == "true" else "Enter details of the harbour authority",
 					href: "#low-complexity-harbour-authority" if data['errortypeone'] == "true" else "#low-complexity-harbour-authority-details"
 				}
 			]
@@ -76,7 +76,7 @@ Error:
 					}
 				},
 				hint: {
-					html: '<p class="govuk-body">A harbour authority is an organisation with legal powers to manage a harbour, and includes municipal, private and trust ports.</p><p class="govuk-body">Use the <a href="https://defra.maps.arcgis.com/apps/webappviewer/index.html?id=28f91021979447d3b43dc83e6e93094c&showLayers=Navigation" class="govuk-link" target="_blank" rel="noopener noreferrer">marine licensing interactive map (opens in new tab)</a> to find out if your project is located in a harbour authority area.</p>'
+					html: '<p class="govuk-body">A harbour authority is an organisation with legal powers to manage a harbour, and includes municipal, private and trust ports.</p><p class="govuk-body">Use the <a href="https://defra.maps.arcgis.com/apps/webappviewer/index.html?id=28f91021979447d3b43dc83e6e93094c&showLayers=Navigation" class="govuk-link" target="_blank" rel="noopener noreferrer">marine licensing interactive map (opens in new tab)</a> to find out if your proposed works are located in a harbour authority area.</p>'
 				},
 				items: [
 					{
@@ -94,7 +94,7 @@ Error:
 					}
 				],
 				errorMessage: {
-					text: "Select if your project is located in a harbour authority area"
+					text: "Select if your proposed works are located in a harbour authority area"
 				} if data['errortypeone'] == "true"
 			}) }}
 

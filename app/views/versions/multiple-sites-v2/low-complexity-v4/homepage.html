@@ -4,38 +4,8 @@
 {% set currentPageId = "low-complexity-home" %}
 
 {% block header %}
-{% from "govuk/components/header/macro.njk" import govukHeader %}
-{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
-
-{{ govukHeader({
-  homepageUrl: "/",
-  classes: "govuk-header--full-width-border"
-}) }}
-{{ govukServiceNavigation({
-  serviceName: "Get permission for marine work",
-  serviceUrl: "/versions/multiple-sites-v2/low-complexity-v4/homepage",
-  navigation: [
-    {
-      href: "homepage",
-      text: "Home",
-      active: true
-    },
-    {
-      href: "projects",
-      text: "Projects",
-      active: false
-    },
-    {
-      href: "#",
-      text: "Defra account",
-      active: false
-    },
-    {
-      href: "sign-in?goto=homepage",
-      text: "Sign out"
-    }
-  ]
-}) }}
+{% from "versions/multiple-sites-v2/low-complexity-v4/includes/service-navigation.html" import lcmlV4Header %}
+{{ lcmlV4Header("home") }}
 {% endblock %}
 
 {% block beforeContent %}
@@ -73,9 +43,9 @@ Home
 
 		<div class="govuk-grid-row">
 		<div class="govuk-grid-column-one-half">
-			<a href="projects" class="homepage-tile-card">
-				<h2 class="govuk-heading-m homepage-tile-card__heading">View projects</h2>
-				<p class="govuk-body homepage-tile-card__description">View all of the existing projects in this account.</p>
+			<a href="submissions" class="homepage-tile-card">
+				<h2 class="govuk-heading-m homepage-tile-card__heading">View submissions</h2>
+				<p class="govuk-body homepage-tile-card__description">View all of the existing submissions in this account.</p>
 			</a>
 		</div>
 
@@ -87,7 +57,7 @@ Home
 		</div>
 
 		<div class="govuk-grid-column-one-half">
-			<a href="project-name-start" class="homepage-tile-card">
+			<a href="application-name-start" class="homepage-tile-card">
 				<h2 class="govuk-heading-m homepage-tile-card__heading">Apply for a marine licence</h2>
 				
 			</a>
@@ -96,7 +66,7 @@ Home
 		<div class="govuk-grid-column-one-half">
 			<a href="https://marinelicensing.marinemanagement.org.uk/mmofox5/fox/live/MMO_LOGIN/login" class="homepage-tile-card">
 				<h2 class="govuk-heading-m homepage-tile-card__heading">Sign in to the Marine Case Management System</h2>
-				<p class="govuk-body homepage-tile-card__description">View or manage projects not available in this account.</p>
+				<p class="govuk-body homepage-tile-card__description">View or manage submissions not available in this account.</p>
 			</a>
 		</div>
 		</div>

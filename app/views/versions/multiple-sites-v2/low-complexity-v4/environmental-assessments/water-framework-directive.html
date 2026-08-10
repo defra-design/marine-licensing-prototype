@@ -5,7 +5,7 @@
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 
 {% set pageHeadingTextHTML %}
-Is your project within one nautical mile (1.85km) of the low-water line, or in a tidal river or estuary?
+Are your proposed works within one nautical mile (1.85km) of the low-water line, or in a tidal river or estuary?
 {% endset %}
 
 {% block beforeContent %}
@@ -30,7 +30,7 @@ Is your project within one nautical mile (1.85km) of the low-water line, or in a
             titleText: "There is a problem",
             errorList: [
                 {
-                    text: "Select whether your project is within one nautical mile (1.85km) of the low-water line, or in a tidal river or estuary",
+                    text: "Select whether your proposed works are within one nautical mile (1.85km) of the low-water line, or in a tidal river or estuary",
                     href: "#low-complexity-wfd-within-nautical-mile"
                 }
             ]
@@ -94,7 +94,7 @@ Is your project within one nautical mile (1.85km) of the low-water line, or in a
                         }
                     ],
                     errorMessage: {
-                        text: "Select whether your project is within one nautical mile (1.85km) of the low-water line, or in a tidal river or estuary"
+                        text: "Select whether your proposed works are within one nautical mile (1.85km) of the low-water line, or in a tidal river or estuary"
                     } if data['low-complexity-wfd-q1-error'] == "true"
                 }) }}
             </div>

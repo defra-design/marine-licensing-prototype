@@ -5,7 +5,7 @@
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 
 {% set pageHeadingTextHTML %}
-Is your project limited to one of the following excluded activities?
+Are your proposed works limited to one of the following excluded activities?
 {% endset %}
 
 {% block beforeContent %}
@@ -30,7 +30,7 @@ Is your project limited to one of the following excluded activities?
             titleText: "There is a problem",
             errorList: [
                 {
-                    text: "Select whether your project is limited to one of the excluded activities",
+                    text: "Select whether your proposed works are limited to one of the excluded activities",
                     href: "#low-complexity-wfd-excluded-activities"
                 }
             ]
@@ -60,7 +60,7 @@ Is your project limited to one of the following excluded activities?
                 items: [
                     {
                         value: "Yes",
-                        text: "Yes - my project is limited to one of these activities",
+                        text: "Yes - my proposed works are limited to one of these activities",
                         hint: {
                             text: "You do not need to complete a Water Framework Directive assessment"
                         },
@@ -73,7 +73,7 @@ Is your project limited to one of the following excluded activities?
                     }
                 ],
                 errorMessage: {
-                    text: "Select whether your project is limited to one of the excluded activities"
+                    text: "Select whether your proposed works are limited to one of the excluded activities"
                 } if data['low-complexity-wfd-q2-error'] == "true"
             }) }}
 

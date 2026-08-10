@@ -3,17 +3,29 @@
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 
+{% block header %}
+{% from "govuk/components/header/macro.njk" import govukHeader %}
+{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
+
+{{ govukHeader({
+  homepageUrl: "/",
+  classes: "govuk-header--full-width-border"
+}) }}
+{{ govukServiceNavigation({
+  serviceName: "Get permission for marine work"
+}) }}
+{% endblock %}
+
 {% block beforeContent %}
     {% include "../includes/phase-banner.html" %}
     {% if data['organisation-name'] %}
         {% include "../includes/organisation-switcher.html" %}
     {% endif %}
-    <a class="govuk-back-link govuk-link--no-visited-state" href="javascript:history.back()">Back</a>
 {% endblock %}
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-Project name
+Application name
 {% endset %}
 
 <!-- Set the text for each error type -->
@@ -21,7 +33,7 @@ Project name
 {% if data['errortypeone'] == "true" and data['errortypetwo'] == "true" %}
 Enter both the project title and project background
 {% elif data['errortypeone'] == "true" %}
-Enter a project name
+Enter an application name
 {% elif data['errortypetwo'] == "true" %}
 Enter the project background
 {% endif %}
@@ -48,7 +60,7 @@ Error:
             <div class="govuk-error-summary__body">
                 <ul class="govuk-list govuk-error-summary__list">
                     {% if data['errortypeone'] == "true" %}
-                    <li><a href="#low-complexity-project-name-text-input">Enter a project name</a></li>
+                    <li><a href="#low-complexity-project-name-text-input">Enter an application name</a></li>
                     {% endif %}
                 </ul>
             </div>
@@ -57,7 +69,9 @@ Error:
 
         <!--  END OF 'error summary' -->
 
-        <form action="project-name-start-router" method="post" novalidate>
+        <span class="govuk-caption-l">Marine licence</span>
+
+        <form action="application-name-start-router" method="post" novalidate>
 
             {{ govukInput({
             label: 
@@ -67,27 +81,21 @@ Error:
                 isPageHeading: true
             },
             hint: {
-                text: "Enter a project name that includes the project location and activity"
+                text: "Enter a name that includes the location and activity"
               },
               
                 autocomplete: "off",
                 id: "low-complexity-project-name-text-input",
                 name: "low-complexity-project-name-text-input",
                 errorMessage: null if data['errortypeone'] != "true"
-                else { text: "Enter a project name" },
+                else { text: "Enter an application name" },
                 value: data['low-complexity-project-name-text-input'],
                 classes: "govuk-input--full-width"
             }) }}
 
-            <div class="govuk-button-group">
-                {{ govukButton({
-                    text: "Save and continue"
-                }) }}
-
-                {% if data['camefromcheckanswers'] != 'true' %}
-                <a class="govuk-link govuk-link--no-visited-state" href="javascript:history.back()">Cancel</a>
-                {% endif %}
-            </div>
+            {{ govukButton({
+text: "Save and continue"
+ }) }}
 
         </form>
 
@@ -116,5 +124,4 @@ Error:
 <!--  END OF ERROR LOGIC -->
 
 {% endblock %}
-
 

@@ -24,7 +24,7 @@
     }
   }
 
-  /* Error state for "Projects by owner" with nobody ticked */
+  /* Error state for "Submissions by owner" with nobody ticked */
   .govuk-radios__conditional.error-state {
     border-left-color: #d4351c;
   }
@@ -52,38 +52,8 @@
 {% set currentPageId = "low-complexity-projects" %}
 
 {% block header %}
-{% from "govuk/components/header/macro.njk" import govukHeader %}
-{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
-
-{{ govukHeader({
-  homepageUrl: "/",
-  classes: "govuk-header--full-width-border"
-}) }}
-{{ govukServiceNavigation({
-  serviceName: "Get permission for marine work",
-  serviceUrl: "/versions/multiple-sites-v2/low-complexity-v4/homepage",
-  navigation: [
-    {
-      href: "homepage",
-      text: "Home",
-      active: false
-    },
-    {
-      href: "projects",
-      text: "Projects",
-      active: true
-    },
-    {
-      href: "#",
-      text: "Defra account",
-      active: false
-    },
-    {
-      href: "sign-in?goto=homepage",
-      text: "Sign out"
-    }
-  ]
-}) }}
+{% from "versions/multiple-sites-v2/low-complexity-v4/includes/service-navigation.html" import lcmlV4Header %}
+{{ lcmlV4Header("submissions") }}
 {% endblock %}
 
 {% block beforeContent %}
@@ -92,7 +62,7 @@
     <div class="app-organisation-switcher">
 		<span class="govuk-body-s govuk-!-font-weight-bold app-organisation-switcher__name">{{ data['organisation-name'] }}</span>
 		{% if data['user_type'] === 'organisation' %}
-				<a class="govuk-link app-organisation-switcher__link govuk-link--no-visited-state" href="organisation-selector?change=true&returnTo=projects">
+				<a class="govuk-link app-organisation-switcher__link govuk-link--no-visited-state" href="organisation-selector?change=true&returnTo=submissions">
 					Change who you're representing
 				</a>
 		{% endif %}
@@ -102,7 +72,7 @@
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-Projects
+Submissions
 {% endset %}
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
@@ -165,24 +135,24 @@ Projects
 								<div class="govuk-radios__item">
 									<input class="govuk-radios__input" id="filter-all" name="projectFilter" type="radio" value="all-projects" checked>
 									<label class="govuk-label govuk-radios__label" for="filter-all">
-										All {{ data['organisation-name'] or "Ramsgate Marina" }} projects <span id="count-all-projects"></span>
+										All {{ data['organisation-name'] or "Ramsgate Marina" }} submissions <span id="count-all-projects"></span>
 									</label>
 								</div>
 								<div class="govuk-radios__item">
 									<input class="govuk-radios__input" id="filter-my" name="projectFilter" type="radio" value="my-projects">
 									<label class="govuk-label govuk-radios__label" for="filter-my">
-										My projects <span id="count-my-projects"></span>
+										My submissions <span id="count-my-projects"></span>
 									</label>
 								</div>
 								<div class="govuk-radios__item">
 									<input class="govuk-radios__input" id="filter-specific" name="projectFilter" type="radio" value="specific-person" data-aria-controls="conditional-specific-person">
-									<label class="govuk-label govuk-radios__label" for="filter-specific">Projects by owner</label>
+									<label class="govuk-label govuk-radios__label" for="filter-specific">Submissions by owner</label>
 								</div>
 								<div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-specific-person">
 									<fieldset class="govuk-fieldset">
 										<legend class="govuk-fieldset__legend govuk-visually-hidden">Select an owner</legend>
 										<p class="person-error-message" id="person-error-message">
-											<span class="govuk-visually-hidden">Error:</span> Select an owner to view their projects
+											<span class="govuk-visually-hidden">Error:</span> Select an owner to view their submissions
 										</p>
 										<div class="govuk-checkboxes govuk-checkboxes--small" id="person-checkboxes"></div>
 									</fieldset>
@@ -194,7 +164,7 @@ Projects
 
 					<div class="govuk-form-group">
 						<fieldset class="govuk-fieldset">
-							<legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Type</legend>
+							<legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Submission type</legend>
 							<div class="govuk-checkboxes govuk-checkboxes--small" id="type-checkboxes"></div>
 						</fieldset>
 					</div>
@@ -218,14 +188,29 @@ Projects
 
 		<p id="results-count" class="govuk-body"></p>
 
+		{#
+		  Status column sorts on data-sort-value, not the tag text, so the order is
+		  ours to choose rather than alphabetical. Ranked by what the applicant can
+		  act on: things needing their attention first, then live, then closed.
+
+		    01 Draft               - not sent yet, needs finishing
+		    02 Submitted           - with us, awaiting a decision
+		    03 Active              - licence or notification in force
+		    04 Transferred         - closed
+		    05 Unable to progress  - closed
+		    06 Withdrawn           - closed
+
+		  The closed group reads T, U, W, so the grouping and alphabetical order
+		  happen to agree. The header is aria-sort="ascending" so 01 lands on top.
+		#}
 		<table class="govuk-table" data-module="moj-sortable-table" id="projects-table">
-			<caption class="govuk-table__caption govuk-table__caption--m govuk-visually-hidden" id="projects-caption">All {{ data['organisation-name'] or "Ramsgate Marina" }} projects</caption>
+			<caption class="govuk-table__caption govuk-table__caption--m govuk-visually-hidden" id="projects-caption">All {{ data['organisation-name'] or "Ramsgate Marina" }} submissions</caption>
 			<thead class="govuk-table__head">
 				<tr class="govuk-table__row">
 				  <th scope="col" class="govuk-table__header" aria-sort="none">Project&nbsp;name</th>
 				  <th scope="col" class="govuk-table__header" aria-sort="none">Type</th>
 				  <th scope="col" class="govuk-table__header" aria-sort="none">Reference</th>
-				  <th scope="col" class="govuk-table__header" aria-sort="descending">Status</th>
+				  <th scope="col" class="govuk-table__header" aria-sort="ascending">Status</th>
 				  <th scope="col" class="govuk-table__header" aria-sort="none">Submitted&nbsp;on</th>
 				  {% if data['user_type'] === 'organisation' %}
 				  <th scope="col" class="govuk-table__header" aria-sort="none">Owner</th>
@@ -238,7 +223,7 @@ Projects
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Installation of floating pontoon, Lyme Regis Harbour, Dorset</th>
 					<td class="govuk-table__cell">Marine licence application</td>
 					<td class="govuk-table__cell" data-sort-value="MLA-10003">MLA/2026/10003</td>
-					<td class="govuk-table__cell" data-sort-value="004">
+					<td class="govuk-table__cell" data-sort-value="04">
 						{{ govukTag({
 							text: "Transferred",
 							classes: "govuk-tag--magenta"
@@ -249,7 +234,7 @@ Projects
 					<td class="govuk-table__cell">Sam Evans</td>
 					{% endif %}
 					<td class="govuk-table__cell">
-						<a href="email-landings/pontoon-landing?from=projects" class="govuk-link--no-visited-state">View details</a>
+						<a href="email-landings/pontoon-landing?from=submissions" class="govuk-link--no-visited-state">View details</a>
 					</td>
 				</tr>
 
@@ -257,7 +242,7 @@ Projects
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Plymouth Sound cable laying</th>
 					<td class="govuk-table__cell">Marine licence application</td>
 					<td class="govuk-table__cell" data-sort-value="MLA-10002">MLA/2026/10002</td>
-					<td class="govuk-table__cell" data-sort-value="005">
+					<td class="govuk-table__cell" data-sort-value="05">
 						{{ govukTag({
 							text: "Unable to progress",
 							classes: "govuk-tag--orange"
@@ -268,7 +253,7 @@ Projects
 					<td class="govuk-table__cell">Sam Evans</td>
 					{% endif %}
 					<td class="govuk-table__cell">
-						<a href="email-landings/plymouth-sound-landing?from=projects" class="govuk-link--no-visited-state">View details</a>
+						<a href="email-landings/plymouth-sound-landing?from=submissions" class="govuk-link--no-visited-state">View details</a>
 					</td>
 				</tr>
 
@@ -277,7 +262,7 @@ Projects
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Groyne construction, Bournemouth seafront, Dorset</th>
 					<td class="govuk-table__cell">Marine licence application</td>
 					<td class="govuk-table__cell" data-sort-value="MLA-10018">MLA/2026/10018</td>
-					<td class="govuk-table__cell" data-sort-value="{% if data['withdrawn-groyne'] == 'true' %}001{% else %}002{% endif %}">
+					<td class="govuk-table__cell" data-sort-value="{% if data['withdrawn-groyne'] == 'true' %}06{% else %}02{% endif %}">
 						{% if data['withdrawn-groyne'] == 'true' %}
 						{{ govukTag({
 							text: "Withdrawn",
@@ -298,7 +283,7 @@ Projects
 						{% if data['withdrawn-groyne'] == 'true' %}
 						<a href="#" class="govuk-link--no-visited-state">View details</a>
 						{% else %}
-						<a href="#" class="govuk-link--no-visited-state govuk-!-margin-right-4">View details</a> <a href="withdraw?project=groyne&name=Groyne construction, Bournemouth seafront, Dorset&type=Marine licence application&return=projects" class="govuk-link--no-visited-state">Withdraw</a>
+						<a href="#" class="govuk-link--no-visited-state govuk-!-margin-right-4">View details</a> <a href="withdraw?project=groyne&name=Groyne construction, Bournemouth seafront, Dorset&type=Marine licence application&return=submissions" class="govuk-link--no-visited-state">Withdraw</a>
 						{% endif %}
 					</td>
 				</tr>
@@ -310,7 +295,7 @@ Projects
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Plymouth Sound cable laying</th>
 					<td class="govuk-table__cell">Marine licence application</td>
 					<td class="govuk-table__cell" data-sort-value="{% if data['low-complexity-application-status'] == 'sent' %}MLA-10025{% else %}-{% endif %}">{% if data['low-complexity-application-status'] == 'sent' %}MLA/2025/10025{% else %}-{% endif %}</td>
-					<td class="govuk-table__cell" data-sort-value="{% if data['low-complexity-application-status'] == 'sent' %}{% if data['withdrawn-mla-submitted'] == 'true' %}001{% else %}002{% endif %}{% else %}003{% endif %}">
+					<td class="govuk-table__cell" data-sort-value="{% if data['low-complexity-application-status'] == 'sent' %}{% if data['withdrawn-mla-submitted'] == 'true' %}06{% else %}02{% endif %}{% else %}01{% endif %}">
 						{% if data['low-complexity-application-status'] == 'sent' %}
 							{% if data['withdrawn-mla-submitted'] == 'true' %}
 							{{ govukTag({
@@ -339,10 +324,10 @@ Projects
 							{% if data['withdrawn-mla-submitted'] == 'true' %}
 							<a href="check-your-answers" class="govuk-link--no-visited-state">View details</a>
 							{% else %}
-							<a href="check-your-answers" class="govuk-link--no-visited-state govuk-!-margin-right-4">View details</a> <a href="withdraw?project=mla-submitted&name=Plymouth Sound cable laying&type=Marine licence application&return=projects" class="govuk-link--no-visited-state">Withdraw</a>
+							<a href="check-your-answers" class="govuk-link--no-visited-state govuk-!-margin-right-4">View details</a> <a href="withdraw?project=mla-submitted&name=Plymouth Sound cable laying&type=Marine licence application&return=submissions" class="govuk-link--no-visited-state">Withdraw</a>
 							{% endif %}
 						{% else %}
-						<a href="marine-licence-start-page" class="govuk-link--no-visited-state govuk-!-margin-right-4">Continue</a> <a href="delete?project=plymouth-resubmit&name=Plymouth Sound cable laying&type=Marine licence application&return=projects" class="govuk-link--no-visited-state">Delete</a>
+						<a href="marine-licence-start-page" class="govuk-link--no-visited-state govuk-!-margin-right-4">Continue</a> <a href="delete?project=plymouth-resubmit&name=Plymouth Sound cable laying&type=Marine licence application&return=submissions" class="govuk-link--no-visited-state">Delete</a>
 						{% endif %}
 					</td>
 				</tr>
@@ -355,7 +340,7 @@ Projects
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">{{ data['low-complexity-project-name-text-input'] }}</th>
 					<td class="govuk-table__cell">Marine licence application</td>
 					<td class="govuk-table__cell" data-sort-value="{% if data['low-complexity-application-status'] == 'sent' %}MLA-10025{% else %}-{% endif %}">{% if data['low-complexity-application-status'] == 'sent' %}MLA/2025/10025{% else %}-{% endif %}</td>
-					<td class="govuk-table__cell" data-sort-value="{% if data['low-complexity-application-status'] == 'sent' %}{% if data['withdrawn-mla-submitted'] == 'true' %}001{% else %}002{% endif %}{% else %}003{% endif %}">
+					<td class="govuk-table__cell" data-sort-value="{% if data['low-complexity-application-status'] == 'sent' %}{% if data['withdrawn-mla-submitted'] == 'true' %}06{% else %}02{% endif %}{% else %}01{% endif %}">
 						{% if data['low-complexity-application-status'] == 'sent' %}
 							{% if data['withdrawn-mla-submitted'] == 'true' %}
 							{{ govukTag({
@@ -384,7 +369,7 @@ Projects
 							{% if data['withdrawn-mla-submitted'] == 'true' %}
 							<a href="check-your-answers" class="govuk-link--no-visited-state">View details</a>
 							{% else %}
-							<a href="check-your-answers" class="govuk-link--no-visited-state govuk-!-margin-right-4">View details</a> <a href="withdraw?project=mla-submitted&name={{ data['low-complexity-project-name-text-input'] }}&type=Marine licence application&return=projects" class="govuk-link--no-visited-state">Withdraw</a>
+							<a href="check-your-answers" class="govuk-link--no-visited-state govuk-!-margin-right-4">View details</a> <a href="withdraw?project=mla-submitted&name={{ data['low-complexity-project-name-text-input'] }}&type=Marine licence application&return=submissions" class="govuk-link--no-visited-state">Withdraw</a>
 							{% endif %}
 						{% else %}
 						<a href="marine-licence-start-page" class="govuk-link--no-visited-state govuk-!-margin-right-4">Continue</a> <a href="#" class="govuk-link--no-visited-state">Delete</a>
@@ -398,7 +383,7 @@ Projects
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Branscombe bore holes</th>
 					<td class="govuk-table__cell">Exempt activity notification</td>
 					<td class="govuk-table__cell" data-sort-value="EXE-10002">EXE/2025/10002</td>
-					<td class="govuk-table__cell" data-sort-value="{% if data['withdrawn-branscombe'] == 'true' %}001{% else %}002{% endif %}">
+					<td class="govuk-table__cell" data-sort-value="{% if data['withdrawn-branscombe'] == 'true' %}06{% else %}03{% endif %}">
 						{% if data['withdrawn-branscombe'] == 'true' %}
 						{{ govukTag({
 							text: "Withdrawn",
@@ -419,7 +404,7 @@ Projects
 						{% if data['withdrawn-branscombe'] == 'true' %}
 						<a href="#" class="govuk-link--no-visited-state">View details</a>
 						{% else %}
-						<a href="#" class="govuk-link--no-visited-state govuk-!-margin-right-4">View details</a> <a href="withdraw?project=branscombe&name=Branscombe bore holes&type=Exempt activity notification&return=projects" class="govuk-link--no-visited-state">Withdraw</a>
+						<a href="#" class="govuk-link--no-visited-state govuk-!-margin-right-4">View details</a> <a href="withdraw?project=branscombe&name=Branscombe bore holes&type=Exempt activity notification&return=submissions" class="govuk-link--no-visited-state">Withdraw</a>
 						{% endif %}
 					</td>
 				</tr>
@@ -428,7 +413,7 @@ Projects
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Worthing sediment samples</th>
 					<td class="govuk-table__cell">Exempt activity notification</td>
 					<td class="govuk-table__cell" data-sort-value="EXE-10012">EXE/2025/10012</td>
-					<td class="govuk-table__cell" data-sort-value="{% if data['withdrawn-worthing'] == 'true' %}001{% else %}002{% endif %}">
+					<td class="govuk-table__cell" data-sort-value="{% if data['withdrawn-worthing'] == 'true' %}06{% else %}03{% endif %}">
 						{% if data['withdrawn-worthing'] == 'true' %}
 						{{ govukTag({
 							text: "Withdrawn",
@@ -449,7 +434,7 @@ Projects
 						{% if data['withdrawn-worthing'] == 'true' %}
 						<a href="#" class="govuk-link--no-visited-state">View details</a>
 						{% else %}
-						<a href="#" class="govuk-link--no-visited-state govuk-!-margin-right-4">View details</a> <a href="withdraw?project=worthing&name=Worthing sediment samples&type=Exempt activity notification&return=projects" class="govuk-link--no-visited-state">Withdraw</a>
+						<a href="#" class="govuk-link--no-visited-state govuk-!-margin-right-4">View details</a> <a href="withdraw?project=worthing&name=Worthing sediment samples&type=Exempt activity notification&return=submissions" class="govuk-link--no-visited-state">Withdraw</a>
 						{% endif %}
 					</td>
 				</tr>
@@ -458,7 +443,7 @@ Projects
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Plymouth harbour core samples</th>
 					<td class="govuk-table__cell">Exempt activity notification</td>
 					<td class="govuk-table__cell" data-sort-value="EXE-10023">EXE/2025/10023</td>
-					<td class="govuk-table__cell" data-sort-value="002">
+					<td class="govuk-table__cell" data-sort-value="03">
 						{{ govukTag({
 							text: "Active",
 							classes: "govuk-tag--green"
@@ -477,7 +462,7 @@ Projects
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Sunderland marina maintenance dredge</th>
 					<td class="govuk-table__cell">Exempt activity notification</td>
 					<td class="govuk-table__cell" data-sort-value="EXE-10029">EXE/2025/10029</td>
-					<td class="govuk-table__cell" data-sort-value="002">
+					<td class="govuk-table__cell" data-sort-value="03">
 						{{ govukTag({
 							text: "Active",
 							classes: "govuk-tag--green"
@@ -496,7 +481,7 @@ Projects
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Teignmouth water quality sampling</th>
 					<td class="govuk-table__cell">Exempt activity notification</td>
 					<td class="govuk-table__cell" data-sort-value="EXE-10034">EXE/2025/10034</td>
-					<td class="govuk-table__cell" data-sort-value="002">
+					<td class="govuk-table__cell" data-sort-value="03">
 						{{ govukTag({
 							text: "Active",
 							classes: "govuk-tag--green"
@@ -516,7 +501,7 @@ Projects
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Whitstable intertidal survey pits</th>
 					<td class="govuk-table__cell">Exempt activity notification</td>
 					<td class="govuk-table__cell" data-sort-value="-">-</td>
-					<td class="govuk-table__cell" data-sort-value="003">
+					<td class="govuk-table__cell" data-sort-value="01">
 						{{ govukTag({
 							text: "Draft",
 							classes: "govuk-tag--light-blue"
@@ -527,7 +512,7 @@ Projects
 					<td class="govuk-table__cell">Sam Evans</td>
 					{% endif %}
 					<td class="govuk-table__cell">
-						<a href="#" class="govuk-link--no-visited-state govuk-!-margin-right-4">Continue</a> <a href="delete?project=whitstable&name=Whitstable intertidal survey pits&type=Exempt activity notification&return=projects" class="govuk-link--no-visited-state">Delete</a>
+						<a href="#" class="govuk-link--no-visited-state govuk-!-margin-right-4">Continue</a> <a href="delete?project=whitstable&name=Whitstable intertidal survey pits&type=Exempt activity notification&return=submissions" class="govuk-link--no-visited-state">Delete</a>
 					</td>
 				</tr>
 				{% endif %}
@@ -536,7 +521,7 @@ Projects
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Scarborough seabed grab samples</th>
 					<td class="govuk-table__cell">Exempt activity notification</td>
 					<td class="govuk-table__cell" data-sort-value="-">-</td>
-					<td class="govuk-table__cell" data-sort-value="003">
+					<td class="govuk-table__cell" data-sort-value="01">
 						{{ govukTag({
 							text: "Draft",
 							classes: "govuk-tag--light-blue"
@@ -554,7 +539,7 @@ Projects
 			</tbody>
 		</table>
 
-		<p id="no-results-message" class="govuk-body" style="display: none;">There are no projects to display.</p>
+		<p id="no-results-message" class="govuk-body" style="display: none;">There are no submissions to display.</p>
 	</div>
 </div>
 

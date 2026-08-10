@@ -43,15 +43,15 @@ module.exports = function (router) {
   // Project name start page
   ///////////////////////////////////////////
 
-  router.get(`/versions/${version}/${section}/project-name-start`, function (req, res) {
+  router.get(`/versions/${version}/${section}/application-name-start`, function (req, res) {
     // Clear error flags when navigating to the page
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
-    res.render(`versions/${version}/${section}/project-name-start`);
+    res.render(`versions/${version}/${section}/application-name-start`);
   });
 
   // Project name start router (POST)
-  router.post(`/versions/${version}/${section}/project-name-start-router`, function (req, res) {
+  router.post(`/versions/${version}/${section}/application-name-start-router`, function (req, res) {
     // Clear error flags
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
@@ -66,7 +66,7 @@ module.exports = function (router) {
       req.session.data['errortypeone'] = "true";
       
       // Redirect back to the same page with errors
-      res.redirect('project-name-start');
+      res.redirect('application-name-start');
     } else {
       // Check if we need to return to check answers
       if (req.session.data['camefromcheckanswers'] === 'true') {
@@ -115,7 +115,7 @@ module.exports = function (router) {
   });
 
   // Project name page (accessible from task list)
-  router.get(`/versions/${version}/${section}/project-name`, function (req, res) {
+  router.get(`/versions/${version}/${section}/application-name`, function (req, res) {
     // Clear error flags when navigating to the page
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
@@ -125,7 +125,7 @@ module.exports = function (router) {
       req.session.data['camefromcheckanswers'] = 'true';
     }
     
-    res.render(`versions/${version}/${section}/project-name`);
+    res.render(`versions/${version}/${section}/application-name`);
   });
 
   ///////////////////////////////////////////
@@ -138,7 +138,7 @@ module.exports = function (router) {
   });
 
   // Project background page
-  router.get(`/versions/${version}/${section}/project-details/project-background`, function (req, res) {
+  router.get(`/versions/${version}/${section}/project-details/proposed-works-summary`, function (req, res) {
     // Clear error flags when navigating to the page
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
@@ -148,11 +148,11 @@ module.exports = function (router) {
       req.session.data['camefromcheckanswers'] = 'true';
     }
     
-    res.render(`versions/${version}/${section}/project-details/project-background`);
+    res.render(`versions/${version}/${section}/project-details/proposed-works-summary`);
   });
 
   // Project background router (POST)
-  router.post(`/versions/${version}/${section}/project-details/project-background-router`, function (req, res) {
+  router.post(`/versions/${version}/${section}/project-details/proposed-works-summary-router`, function (req, res) {
     // Clear error flags
     req.session.data['errorthispage'] = "false";
     req.session.data['errortypeone'] = "false";
@@ -167,7 +167,7 @@ module.exports = function (router) {
       req.session.data['errortypeone'] = "true";
       
       // Redirect back to the same page with errors
-      res.redirect('project-background');
+      res.redirect('proposed-works-summary');
     } else {
       // Validation passed - set completion flag
       req.session.data['low-complexity-project-background-completed'] = true;
@@ -923,7 +923,7 @@ module.exports = function (router) {
         delete req.session.data['goto'];
         res.redirect('homepage');
       } else {
-        res.redirect('project-name-start');
+        res.redirect('application-name-start');
       }
     }
   });
@@ -995,9 +995,9 @@ module.exports = function (router) {
           delete req.session.data['goto'];
           res.redirect('homepage');
         } else {
-          // Default to project-name-start for new users
+          // Default to application-name-start for new users
           delete req.session.data['goto-after-org-selector'];
-          res.redirect('project-name-start');
+          res.redirect('application-name-start');
         }
       }
     }
@@ -1017,8 +1017,8 @@ module.exports = function (router) {
   ///////////////////////////////////////////
 
   // Projects GET route
-  router.get(`/versions/${version}/${section}/projects`, function (req, res) {
-    res.render(`versions/${version}/${section}/projects`);
+  router.get(`/versions/${version}/${section}/submissions`, function (req, res) {
+    res.render(`versions/${version}/${section}/submissions`);
   });
 
   // Projects withdraw GET route (for demo)
@@ -1069,7 +1069,7 @@ module.exports = function (router) {
     }
     
     // Get the return page
-    const returnPage = req.session.data['return-page'] || 'projects';
+    const returnPage = req.session.data['return-page'] || 'submissions';
     
     // Clear the project data
     delete req.session.data['project'];
@@ -1077,7 +1077,7 @@ module.exports = function (router) {
     delete req.session.data['project-name'];
     delete req.session.data['return-page'];
     
-    // Redirect back to the appropriate projects page
+    // Redirect back to the appropriate submissions page
     res.redirect(returnPage);
   });
 
@@ -1124,7 +1124,7 @@ module.exports = function (router) {
     }
     
     // Get the return page
-    const returnPage = req.session.data['return-page'] || 'projects';
+    const returnPage = req.session.data['return-page'] || 'submissions';
     
     // Clear the project data
     delete req.session.data['project'];
@@ -1132,14 +1132,14 @@ module.exports = function (router) {
     delete req.session.data['project-name'];
     delete req.session.data['return-page'];
     
-    // Redirect back to the appropriate projects page
+    // Redirect back to the appropriate submissions page
     res.redirect(returnPage);
   });
 
   // Pontoon landing page – pass showBackToProjects explicitly (query is not
   // available in auto-rendered views; only session data is)
   router.get(`/versions/${version}/${section}/email-landings/pontoon-landing`, function (req, res) {
-    const showBackToProjects = req.query.from === 'projects';
+    const showBackToProjects = req.query.from === 'submissions';
 
     if (!showBackToProjects) {
       delete req.session.data.from;
@@ -1153,7 +1153,7 @@ module.exports = function (router) {
   // Plymouth Sound landing page – pass showBackToProjects explicitly (query is not
   // available in auto-rendered views; only session data is)
   router.get(`/versions/${version}/${section}/email-landings/plymouth-sound-landing`, function (req, res) {
-    const showBackToProjects = req.query.from === 'projects';
+    const showBackToProjects = req.query.from === 'submissions';
 
     if (!showBackToProjects) {
       delete req.session.data.from;
@@ -1170,8 +1170,8 @@ module.exports = function (router) {
 
   // Clears every key the resubmit seed sets, returning the session to its
   // pre-Continue state. This is what guarantees no resubmit draft can show on
-  // the Projects page (neither the dedicated row nor the generic project-name
-  // row) until Continue is clicked again.
+  // the Submissions page (neither the dedicated row nor the generic
+  // application-name row) until Continue is clicked again.
   function clearResubmitDraft(d) {
     const keys = [
       'low-complexity-application-status', 'low-complexity-application-reference',

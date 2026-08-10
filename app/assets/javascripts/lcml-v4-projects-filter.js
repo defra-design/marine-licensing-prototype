@@ -7,8 +7,8 @@
   separate means the live projects page cannot be broken by edits to either.
 
   What it does:
-    - builds the Type, Status and Owner checkboxes from the rendered table, so
-      options and counts always match what is actually on the page
+    - builds the Submission type, Status and Owner checkboxes from the
+      rendered table, so options and counts always match what is on the page
     - filters rows on Apply, and on removing a selected-filter tag
     - renders the MOJ selected-filter tags
     - wires up MOJ's FilterToggleButton so the panel starts hidden
@@ -232,7 +232,7 @@
 
       if (state.types.length > 0) {
         categories.push({
-          heading: 'Type',
+          heading: 'Submission type',
           items: state.types.map(function (v) { return { text: v, type: 'type', value: v } })
         })
       }
@@ -301,18 +301,18 @@
     // ------------------------------------------------------------- results
 
     function scopeName (state) {
-      if (state.scope === 'my-projects') return 'My projects'
+      if (state.scope === 'my-projects') return 'My submissions'
 
       if (state.scope === 'specific-person') {
         var names = state.people.map(function (v) { return ownerNames[v] }).join(', ')
-        return names ? 'Projects by ' + names : 'Projects by owner'
+        return names ? 'Submissions by ' + names : 'Submissions by owner'
       }
 
-      return 'All ' + orgName + ' projects'
+      return 'All ' + orgName + ' submissions'
     }
 
     function resultsMessage (state, visible, isError) {
-      if (isError) return 'Select an owner to view their projects'
+      if (isError) return 'Select an owner to view their submissions'
 
       var word = visible === 1 ? 'result' : 'results'
 

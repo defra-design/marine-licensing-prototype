@@ -17,7 +17,7 @@
 {% if data['errorthispage'] == "true" %}
 Error:
 {% endif %}
-Project background - {{ data['headerNameExemption'] }}
+Proposed works summary - {{ data['headerNameExemption'] }}
 {% endblock %}
 
 {% block content %}
@@ -33,30 +33,30 @@ Project background - {{ data['headerNameExemption'] }}
 			<div class="govuk-error-summary__body">
 				<ul class="govuk-list govuk-error-summary__list">
 					{% if data['errortypeone'] == "true" %}
-					<li><a href="#low-complexity-project-background">Enter the project background</a></li>
+					<li><a href="#low-complexity-project-background">Enter a summary of the proposed works</a></li>
 					{% endif %}
 				</ul>
 			</div>
 		</div>
 		{% endif %}
 
-		<form action="project-background-router" method="post" novalidate>
+		<form action="proposed-works-summary-router" method="post" novalidate>
 
 			{% if data['low-complexity-project-name-text-input'] %}
 			<span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
 			{% endif %}
-			<h1 class="govuk-heading-l">Project background</h1>
+			<h1 class="govuk-heading-l">Proposed works summary</h1>
 
-			<p class="govuk-body">The project background will be displayed on the public register and on the licence. Give a summary of:</p>
+			<p class="govuk-body">This summary will be displayed on the public register and on the licence. Give a summary of:</p>
 			<ul class="govuk-list govuk-list--bullet">
 				<li>what activities you're doing and why</li>
 				<li>where the work will take place</li>
-				<li>which companies or organisations are involved (if applicable)</li>
+				<li>which companies or organisations are involved, if applicable</li>
 			</ul>
 			<p class="govuk-body">You'll be asked to go into further detail about these later in the application.</p>
 
 			{{ govukDetails({
-				summaryText: "Project background examples",
+				summaryText: "Proposed works summary examples",
 				html: "<h2 class=\"govuk-heading-s govuk-!-margin-bottom-1\">Example one</h2><p class=\"govuk-body govuk-!-margin-bottom-4\">The seabed stabilisation works will support the construction of Coastal Offshore Wind Farm. The works consist of depositing material in the form of rock bags, geotextile sand containers, loose rock, and rock mattresses on the seabed to stabilise the surface for jack-up vessel operations. This will take place within the wind farm's array area in 20 distinct locations.</p><h2 class=\"govuk-heading-s govuk-!-margin-bottom-1\">Example two</h2><p class=\"govuk-body\">The works involve the reconstruction and extension of the existing rock armour located at River Point (Reach W1) of the Harbour Tidal Walls, located along the River Harbour. Reach W1 extends from the fort near the mouth of the river to the harbour club.</p>"
 			}) }}
 
@@ -65,7 +65,7 @@ Project background - {{ data['headerNameExemption'] }}
 				id: "low-complexity-project-background",
 				maxlength: 2000,
 				label: {
-					text: "Give a background summary of your project",
+					text: "Give a summary of the proposed works",
 					classes: "govuk-label--s"
 				},
 				hint: {
@@ -73,7 +73,7 @@ Project background - {{ data['headerNameExemption'] }}
 				},
 				value: data['low-complexity-project-background'],
 				errorMessage: {
-					text: "Enter the project background"
+					text: "Enter a summary of the proposed works"
 				} if data['errortypeone'] == "true"
 			}) }}
 
