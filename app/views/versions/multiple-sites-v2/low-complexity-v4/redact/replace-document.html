@@ -1,0 +1,61 @@
+{% extends "../../layouts/low-complexity-v4.html" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block header %}
+{% from "govuk/components/header/macro.njk" import govukHeader %}
+{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
+
+{{ govukHeader({
+  homepageUrl: "/",
+  classes: "govuk-header--full-width-border"
+}) }}
+{{ govukServiceNavigation({
+  serviceName: "Get permission for marine work",
+  serviceUrl: "#"
+}) }}
+{% endblock %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    <a class="govuk-back-link govuk-link--no-visited-state" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+{% block pageTitle %}
+Upload a replacement document - Get permission for marine work
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <form action="replace-document-router" method="post" novalidate>
+
+            <div class="govuk-form-group">
+                <h1 class="govuk-label-wrapper">
+                    <label class="govuk-label govuk-label--l" for="replacement-file-upload">
+                        <span class="govuk-caption-l">MLA/2026/10003 – Redact application for the public register</span>
+                        Upload a replacement document
+                    </label>
+                </h1>
+
+                <div class="govuk-drop-zone" data-module="govuk-file-upload">
+                    <input class="govuk-file-upload" id="replacement-file-upload" name="replacementFileUpload" type="file">
+                </div>
+            </div>
+
+            <div class="govuk-button-group">
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+
+                <a class="govuk-link govuk-link--no-visited-state" href="view-details-redact-links">Cancel</a>
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

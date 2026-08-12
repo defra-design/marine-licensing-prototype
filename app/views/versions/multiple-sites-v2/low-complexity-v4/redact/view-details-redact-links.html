@@ -67,9 +67,6 @@
       flex-shrink: 0;
     }
 
-    /* The grey rule now means "this answer has been touched", so the counter
-       stays plain to avoid overloading it. */
-    .app-redact-counter { margin-bottom: 30px; }
   </style>
 {% endblock %}
 
@@ -164,6 +161,38 @@
 </div>
 {% endmacro %}
 
+{#
+  Something that is withheld whole rather than edited — a map or a document.
+  Wrap the thing itself in {% call %}; the script toggles between it and the
+  "hidden" message.
+#}
+{% macro hideable(noun, context, replaceable=false) %}
+<div class="app-redact" data-hideable data-state="untouched">
+
+    <div data-hideable-shown>{{ caller() }}</div>
+
+    <div data-hideable-hidden hidden>
+        <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">{{ noun | capitalize }} hidden</p>
+        <p class="govuk-body app-redact__original">This {{ noun }} will not be published on the public register.</p>
+    </div>
+
+    <p class="app-redact__links">
+        <a class="govuk-link govuk-link--no-visited-state" href="#" data-hideable-toggle data-hideable-noun="{{ noun }}">
+            <span data-hideable-label>Hide {{ noun }}</span><span class="govuk-visually-hidden"> {{ context }}</span>
+        </a>
+        {% if replaceable %}
+        {# For a document the applicant has resent with their own redactions applied.
+           Deliberately inert in the prototype — navigating away would discard any
+           redactions staged on this page. #}
+        <a class="govuk-link govuk-link--no-visited-state" href="#" data-hideable-replace>
+            Replace {{ noun }}<span class="govuk-visually-hidden"> {{ context }}</span>
+        </a>
+        {% endif %}
+    </p>
+
+</div>
+{% endmacro %}
+
 {% block content %}
 
 <div class="govuk-grid-row app-read-only">
@@ -176,35 +205,33 @@
             Installation of floating pontoon, Lyme Regis Harbour, Dorset
         </h1>
 
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-
-                <div class="govuk-error-summary" data-module="govuk-error-summary" id="redact-error-summary" tabindex="-1" hidden>
-                    <div role="alert">
-                        <h2 class="govuk-error-summary__title">There is a problem</h2>
-                        <div class="govuk-error-summary__body">
-                            <ul class="govuk-list govuk-error-summary__list" id="redact-error-list"></ul>
-                        </div>
-                    </div>
+        <div class="govuk-error-summary" data-module="govuk-error-summary" id="redact-error-summary" tabindex="-1" hidden>
+            <div role="alert">
+                <h2 class="govuk-error-summary__title">There is a problem</h2>
+                <div class="govuk-error-summary__body">
+                    <ul class="govuk-list govuk-error-summary__list" id="redact-error-list"></ul>
                 </div>
-
-                <div class="govuk-notification-banner govuk-notification-banner--success" role="alert"
-                    aria-labelledby="redact-success-title" data-module="govuk-notification-banner"
-                    id="redact-success" tabindex="-1" hidden>
-                    <div class="govuk-notification-banner__header">
-                        <h2 class="govuk-notification-banner__title" id="redact-success-title">Success</h2>
-                    </div>
-                    <div class="govuk-notification-banner__content">
-                        <p class="govuk-notification-banner__heading">Redactions saved</p>
-                        <p class="govuk-body">You would now be returned to the task in MAS.</p>
-                    </div>
-                </div>
-
-                <p class="govuk-body">Check each answer and remove anything that must not appear on the public register. Replace whatever you remove with <span class="app-redacted-marker">***REDACTED***</span>.</p>
-
-                <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
-                <p class="govuk-body app-redact-counter" id="redact-counter">0 of 50 items redacted</p>
             </div>
+        </div>
+
+        <div class="govuk-notification-banner govuk-notification-banner--success" role="alert"
+            aria-labelledby="redact-success-title" data-module="govuk-notification-banner"
+            id="redact-success" tabindex="-1" hidden>
+            <div class="govuk-notification-banner__header">
+                <h2 class="govuk-notification-banner__title" id="redact-success-title">Success</h2>
+            </div>
+            <div class="govuk-notification-banner__content">
+                <p class="govuk-notification-banner__heading">Redactions saved</p>
+                <p class="govuk-body">You would now be returned to the task in MAS.</p>
+            </div>
+        </div>
+
+        <p class="govuk-body">Check each answer and remove anything that must not appear on the public register. Replace whatever you remove with <span class="app-redacted-marker">***REDACTED***</span>.</p>
+
+        <div class="govuk-inset-text">
+            <h2 class="govuk-heading-s">The information the applicant wants withheld and why.</h2>
+            <p class="govuk-body">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+            <p class="govuk-body govuk-!-margin-bottom-0">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
         </div>
 
         {# ============================== #}
@@ -311,24 +338,9 @@
                     <div class="govuk-summary-list__row govuk-summary-list__row--no-actions">
                         <dt class="govuk-summary-list__key govuk-summary-list__key--full-width map-label">Map view</dt>
                         <dd class="govuk-summary-list__value govuk-summary-list__value--full-width">
-                            <div class="app-redact" data-redact-map data-state="untouched">
-
-                                <div data-map-shown>
-                                    <img src="/public/images/map-5-points.jpg" alt="Map showing site 1 location" />
-                                </div>
-
-                                <div data-map-hidden hidden>
-                                    <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Map hidden</p>
-                                    <p class="govuk-body app-redact__original">This map will not be published on the public register.</p>
-                                </div>
-
-                                <p class="app-redact__links">
-                                    <a class="govuk-link govuk-link--no-visited-state" href="#" data-map-toggle>
-                                        <span data-map-toggle-label>Hide map</span><span class="govuk-visually-hidden"> for site 1 from the public register</span>
-                                    </a>
-                                </p>
-
-                            </div>
+                            {% call hideable("map", "for site 1 from the public register") %}
+                                <img src="/public/images/map-5-points.jpg" alt="Map showing site 1 location" />
+                            {% endcall %}
                         </dd>
                     </div>
                 </dl>
@@ -401,7 +413,11 @@
                 <dl class="govuk-summary-list">
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">File upload</dt>
-                        <dd class="govuk-summary-list__value"><a class="govuk-link govuk-link--no-visited-state" href="">pontoon-construction-drawing.pdf</a></dd>
+                        <dd class="govuk-summary-list__value">
+                            {% call hideable("document", "pontoon-construction-drawing.pdf from the public register", true) %}
+                                <a class="govuk-link govuk-link--no-visited-state" href="">pontoon-construction-drawing.pdf</a>
+                            {% endcall %}
+                        </dd>
                     </div>
                 </dl>
             </div>
@@ -770,7 +786,11 @@
                     </div>
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Water Framework Directive assessment upload</dt>
-                        <dd class="govuk-summary-list__value"><a class="govuk-link govuk-link--no-visited-state" href="">WFD.doc</a></dd>
+                        <dd class="govuk-summary-list__value">
+                            {% call hideable("document", "WFD.doc from the public register", true) %}
+                                <a class="govuk-link govuk-link--no-visited-state" href="">WFD.doc</a>
+                            {% endcall %}
+                        </dd>
                     </div>
                 </dl>
             </div>
@@ -837,12 +857,8 @@
     var MARKER = '***REDACTED***'
 
     var fields = [].slice.call(document.querySelectorAll('[data-redact]'))
-    var map = document.querySelector('[data-redact-map]')
-    var counter = document.getElementById('redact-counter')
+    var hideables = [].slice.call(document.querySelectorAll('[data-hideable]'))
     var status = document.getElementById('copy-status')
-
-    // Everything the case officer can act on: the answers, plus the map.
-    var itemCount = fields.length + (map ? 1 : 0)
 
     function escapeHtml (text) {
         return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -853,16 +869,6 @@
         el.innerHTML = escapeHtml(text)
             .split(MARKER)
             .join('<span class="app-redacted-marker">' + MARKER + '</span>')
-    }
-
-    function updateCounter () {
-        var done = fields.filter(function (field) {
-            return field.getAttribute('data-state') === 'redacted'
-        }).length
-
-        if (map && map.getAttribute('data-state') === 'redacted') { done++ }
-
-        counter.textContent = done + ' of ' + itemCount + ' items redacted'
     }
 
     function copyMarker (labelEl) {
@@ -933,7 +939,6 @@
             errorMessage.hidden = true
 
             paint(publishedEl, published)
-            updateCounter()
         }
 
         function openEditor () {
@@ -974,26 +979,32 @@
         render()
     })
 
-    // --- the map, which is hidden or shown rather than edited ---
-    if (map) {
-        var mapShown = map.querySelector('[data-map-shown]')
-        var mapHidden = map.querySelector('[data-map-hidden]')
-        var mapToggle = map.querySelector('[data-map-toggle]')
-        var mapToggleLabel = map.querySelector('[data-map-toggle-label]')
+    // --- maps and documents, which are withheld whole rather than edited ---
+    hideables.forEach(function (item) {
+        var shown = item.querySelector('[data-hideable-shown]')
+        var hiddenMessage = item.querySelector('[data-hideable-hidden]')
+        var toggle = item.querySelector('[data-hideable-toggle]')
+        var toggleLabel = item.querySelector('[data-hideable-label]')
+        var noun = toggle.getAttribute('data-hideable-noun')
+        var replace = item.querySelector('[data-hideable-replace]')
 
-        mapToggle.addEventListener('click', function (event) {
+        // Present so the option is visible in the demo, but deliberately does
+        // nothing — leaving the page would discard redactions staged here.
+        if (replace) {
+            replace.addEventListener('click', function (event) { event.preventDefault() })
+        }
+
+        toggle.addEventListener('click', function (event) {
             event.preventDefault()
 
-            var nowHidden = map.getAttribute('data-state') !== 'redacted'
+            var nowHidden = item.getAttribute('data-state') !== 'redacted'
 
-            map.setAttribute('data-state', nowHidden ? 'redacted' : 'untouched')
-            mapShown.hidden = nowHidden
-            mapHidden.hidden = !nowHidden
-            mapToggleLabel.textContent = nowHidden ? 'Show map' : 'Hide map'
-
-            updateCounter()
+            item.setAttribute('data-state', nowHidden ? 'redacted' : 'untouched')
+            shown.hidden = nowHidden
+            hiddenMessage.hidden = !nowHidden
+            toggleLabel.textContent = (nowHidden ? 'Show ' : 'Hide ') + noun
         })
-    }
+    })
 
     // --- saving everything at the end, once no answer is still open ---
     var submitButton = document.querySelector('[data-redact-submit]')

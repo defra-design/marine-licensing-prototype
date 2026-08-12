@@ -774,6 +774,14 @@ module.exports = function (router) {
   });
 
   // ============================================================
+  // Redact — case officer uploads a replacement for a document the
+  // applicant has resent with their own redactions applied
+  // ============================================================
+  router.post(`/versions/${version}/${section}/redact/replace-document-router`, function (req, res) {
+    return res.redirect('view-details-redact-links');
+  });
+
+  // ============================================================
   // WFD cancel — wipes every WFD session key so next entry is fresh
   // ============================================================
   router.get(`/versions/${version}/${section}/environmental-assessments/wfd-cancel`, function (req, res) {

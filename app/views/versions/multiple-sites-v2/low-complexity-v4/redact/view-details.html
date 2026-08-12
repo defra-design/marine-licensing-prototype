@@ -4,6 +4,7 @@
 {% from "govuk/components/input/macro.njk" import govukInput %}
 {% from "govuk/components/textarea/macro.njk" import govukTextarea %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 
 {% block head %}
   {{ super() }}
@@ -60,10 +61,12 @@
             Installation of floating pontoon, Lyme Regis Harbour, Dorset
         </h1>
 
-        <div class="govuk-grid-row">
-            <div class="govuk-grid-column-two-thirds">
-                <p class="govuk-body">Check each answer and remove anything that must not appear on the public register. Replace whatever you remove with <span class="app-redacted-marker">***REDACTED***</span>.</p>
-            </div>
+        <p class="govuk-body">Check each answer and remove anything that must not appear on the public register. Replace whatever you remove with <span class="app-redacted-marker">***REDACTED***</span>.</p>
+
+        <div class="govuk-inset-text">
+            <h2 class="govuk-heading-s">The information the applicant wants withheld and why.</h2>
+            <p class="govuk-body">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+            <p class="govuk-body govuk-!-margin-bottom-0">Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
         </div>
 
         {# ============================== #}
@@ -204,6 +207,11 @@
                         <dt class="govuk-summary-list__key govuk-summary-list__key--full-width map-label">Map view</dt>
                         <dd class="govuk-summary-list__value govuk-summary-list__value--full-width">
                             <img src="/public/images/map-5-points.jpg" alt="Map showing site 1 location" />
+                            {{ govukCheckboxes({
+                                classes: "govuk-checkboxes--small",
+                                name: "redact-hide-map",
+                                items: [{ value: "yes", text: "Hide map" }]
+                            }) }}
                         </dd>
                     </div>
                 </dl>
@@ -335,7 +343,19 @@
                 <dl class="govuk-summary-list">
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">File upload</dt>
-                        <dd class="govuk-summary-list__value"><a class="govuk-link govuk-link--no-visited-state" href="">pontoon-construction-drawing.pdf</a></dd>
+                        <dd class="govuk-summary-list__value">
+                            <a class="govuk-link govuk-link--no-visited-state" href="">pontoon-construction-drawing.pdf</a>
+                            {{ govukCheckboxes({
+                                classes: "govuk-checkboxes--small",
+                                name: "redact-hide-construction-drawing",
+                                items: [{ value: "yes", text: "Hide document" }]
+                            }) }}
+                            <p class="govuk-body govuk-!-margin-bottom-0">
+                                <a class="govuk-link govuk-link--no-visited-state" href="#" data-inert-link>
+                                    Replace document<span class="govuk-visually-hidden"> pontoon-construction-drawing.pdf</span>
+                                </a>
+                            </p>
+                        </dd>
                     </div>
                 </dl>
             </div>
@@ -1072,7 +1092,19 @@
                     </div>
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Water Framework Directive assessment upload</dt>
-                        <dd class="govuk-summary-list__value"><a class="govuk-link govuk-link--no-visited-state" href="">WFD.doc</a></dd>
+                        <dd class="govuk-summary-list__value">
+                            <a class="govuk-link govuk-link--no-visited-state" href="">WFD.doc</a>
+                            {{ govukCheckboxes({
+                                classes: "govuk-checkboxes--small",
+                                name: "redact-hide-wfd",
+                                items: [{ value: "yes", text: "Hide document" }]
+                            }) }}
+                            <p class="govuk-body govuk-!-margin-bottom-0">
+                                <a class="govuk-link govuk-link--no-visited-state" href="#" data-inert-link>
+                                    Replace document<span class="govuk-visually-hidden"> WFD.doc</span>
+                                </a>
+                            </p>
+                        </dd>
                     </div>
                 </dl>
             </div>
@@ -1153,7 +1185,7 @@
 
         <div class="govuk-button-group">
             {{ govukButton({
-                text: "Save",
+                text: "Save and return to task",
                 classes: ""
             }) }}
         </div>
@@ -1163,4 +1195,14 @@
 
 </form>
 
+{% endblock %}
+
+{% block pageScripts %}
+<script>
+// The "Replace document" links are here to show the option exists. Stop the
+// empty href jumping the page back to the top when they are clicked.
+document.querySelectorAll('[data-inert-link]').forEach(function (link) {
+    link.addEventListener('click', function (event) { event.preventDefault() })
+})
+</script>
 {% endblock %}
