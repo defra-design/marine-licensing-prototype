@@ -64,7 +64,9 @@ What is the invoice contact's UK address?
 
 			<div class="govuk-button-group">
 				{{ govukButton({ text: "Continue" }) }}
+				{% if returnTo !== 'check' and data['camefromcheckanswers'] !== 'true' %}
 				<a class="govuk-link govuk-link--no-visited-state" href="../marine-licence-start-page">Cancel</a>
+				{% endif %}
 			</div>
 
 		</form>

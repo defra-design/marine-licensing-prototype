@@ -45,7 +45,9 @@ Review and confirm
 		<form action="confirm-address-router{% if returnTo %}?returnTo={{ returnTo }}{% endif %}" method="post">
 			<div class="govuk-button-group">
 				{{ govukButton({ text: "Confirm address" }) }}
+				{% if returnTo !== 'check' and data['camefromcheckanswers'] !== 'true' %}
 				<a class="govuk-link govuk-link--no-visited-state" href="../marine-licence-start-page">Cancel</a>
+				{% endif %}
 			</div>
 		</form>
 

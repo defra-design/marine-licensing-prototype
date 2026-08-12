@@ -78,7 +78,7 @@ Do you require a purchase order number on the invoice?
 
 			<div class="govuk-button-group">
 				{{ govukButton({ text: "Save and continue" }) }}
-				{% if returnTo !== 'check' %}
+				{% if returnTo !== 'check' and data['camefromcheckanswers'] !== 'true' %}
 				<a class="govuk-link govuk-link--no-visited-state" href="../marine-licence-start-page">Cancel</a>
 				{% endif %}
 			</div>
