@@ -56,7 +56,9 @@ Check your invoicing details
 					{% endif %}
 				</dd>
 				<dd class="govuk-summary-list__actions">
-					<a class="govuk-link govuk-link--no-visited-state" href="{% if data['invoice-address-type'] == 'international' %}international-invoice-address{% else %}uk-invoice-address{% endif %}?returnTo=check">
+					{# Addresses found by postcode lookup are changed by searching
+					   again; manually entered ones go back to the entry form. #}
+					<a class="govuk-link govuk-link--no-visited-state" href="{% if data['invoice-address-type'] == 'international' %}international-invoice-address{% elif data['invoice-address-source'] == 'lookup' %}postcode-search{% else %}uk-invoice-address{% endif %}?returnTo=check">
 						Change<span class="govuk-visually-hidden"> address</span>
 					</a>
 				</dd>
@@ -81,7 +83,7 @@ Check your invoicing details
 			{% endif %}
 
 			<div class="govuk-summary-list__row govuk-summary-list__row--no-border">
-				<dt class="govuk-summary-list__key">Phone number</dt>
+				<dt class="govuk-summary-list__key">UK phone number</dt>
 				<dd class="govuk-summary-list__value">{{ data['invoice-phone'] }}</dd>
 				<dd class="govuk-summary-list__actions"></dd>
 			</div>
