@@ -13,7 +13,7 @@
 {% endblock %}
 
 {% set pageHeadingTextHTML %}
-UK invoice address
+What is the invoice contact's UK address?
 {% endset %}
 
 {% block pageTitle %}
@@ -91,6 +91,10 @@ UK invoice address
 				<a class="govuk-link govuk-link--no-visited-state" href="../marine-licence-start-page">Cancel</a>
 				{% endif %}
 			</div>
+
+			<p class="govuk-body">
+				<a class="govuk-link govuk-link--no-visited-state" href="postcode-search{% if returnTo %}?returnTo={{ returnTo }}{% endif %}">Back to postcode lookup</a>
+			</p>
 
 		</form>
 

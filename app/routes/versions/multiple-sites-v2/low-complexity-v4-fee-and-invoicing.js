@@ -119,8 +119,94 @@ module.exports = function (router) {
     'invoice-phone',
     'invoice-email',
     'invoice-po-required',
-    'invoice-po-number'
+    'invoice-po-number',
+    // Postcode lookup
+    'invoice-postcode-search',
+    'invoice-property-name-number',
+    'invoice-lookup-results',
+    'invoice-selected-address',
+    'invoice-address-source'
   ];
+
+  ///////////////////////////////////////////
+  // Mock address lookup
+  //
+  // There is no address service in the prototype, so the lookup is faked
+  // against a single made-up Exmouth postcode:
+  //
+  //   EX8 1AN                 -> 5 results, so the address picker is shown
+  //   EX8 1AN + a property    -> 1 result, so Review and confirm is shown
+  //   anything else           -> 0 results, so the "not found" error is shown
+  //
+  // Fields mirror the shape the real lookup returns (ML-1501 AC2).
+  ///////////////////////////////////////////
+
+  const MOCK_POSTCODE = 'EX81AN';
+
+  const mockAddresses = [
+    { buildingNumber: '1', street: 'Marine Parade', locality: '', town: 'Exmouth', ceremonialCounty: 'Devon', postcode: 'EX8 1AN' },
+    { buildingNumber: '2', street: 'Marine Parade', locality: '', town: 'Exmouth', ceremonialCounty: 'Devon', postcode: 'EX8 1AN' },
+    { buildingNumber: '3', street: 'Marine Parade', locality: '', town: 'Exmouth', ceremonialCounty: 'Devon', postcode: 'EX8 1AN' },
+    { subBuildingName: 'Flat 2', buildingNumber: '4', street: 'Marine Parade', locality: '', town: 'Exmouth', ceremonialCounty: 'Devon', postcode: 'EX8 1AN' },
+    { buildingName: 'The Boathouse', buildingNumber: '5', street: 'Marine Parade', locality: 'Point in View', town: 'Exmouth', ceremonialCounty: 'Devon', postcode: 'EX8 1AN' }
+  ];
+
+  // Postcodes are compared with spaces and case removed so "ex8 1an" matches.
+  function normalisePostcode(value) {
+    return (value || '').replace(/\s+/g, '').toUpperCase();
+  }
+
+  // The single line shown on the address picker and confirm pages, built from
+  // whichever of the building fields the address actually has.
+  function buildAddressLine(address) {
+    const parts = [address.subBuildingName, address.buildingName, address.buildingNumber, address.street]
+      .filter(function (part) { return part; })
+      .join(' ');
+    return `${parts}, ${address.town} ${address.postcode}`;
+  }
+
+  // Runs the fake search. Returns every address for the postcode, narrowed to
+  // a single match when a property name or number is given.
+  function lookupAddresses(postcode, property) {
+    if (normalisePostcode(postcode) !== MOCK_POSTCODE) {
+      return [];
+    }
+
+    const results = mockAddresses.map(function (address) {
+      return Object.assign({}, address, { addressLine: buildAddressLine(address) });
+    });
+
+    const search = (property || '').trim().toLowerCase();
+    if (search === '') {
+      return results;
+    }
+
+    return results.filter(function (address) {
+      return [address.buildingNumber, address.buildingName, address.subBuildingName]
+        .filter(function (part) { return part; })
+        .some(function (part) { return part.toLowerCase().indexOf(search) !== -1; });
+    });
+  }
+
+  // Copies a looked-up address into the same session keys a manually entered
+  // address uses, so everything downstream is unaware of where it came from
+  // (ML-1501 AC4b).
+  function storeAddress(req, address) {
+    req.session.data['invoice-address-line-1'] = [address.subBuildingName, address.buildingName, address.buildingNumber, address.street]
+      .filter(function (part) { return part; })
+      .join(' ');
+    req.session.data['invoice-address-line-2'] = address.locality || '';
+    req.session.data['invoice-town-city'] = address.town || '';
+    req.session.data['invoice-county'] = address.ceremonialCounty || '';
+    req.session.data['invoice-postcode'] = address.postcode || '';
+    req.session.data['invoice-address-source'] = 'lookup';
+  }
+
+  // Query string used to carry the "returning to the check page" state through
+  // each step of the lookup.
+  function returnToQuery(returnTo) {
+    return returnTo ? `?returnTo=${returnTo}` : '';
+  }
 
   // Helper: render an invoicing page with locals
   function renderInvoicing(res, req, page, locals) {
@@ -201,14 +287,114 @@ module.exports = function (router) {
       if (!typeChanged && ukAddressCaptured) {
         return res.redirect('check-invoicing-details');
       }
-      return res.redirect(`uk-invoice-address?returnTo=${addressReturnTo}`);
+      return res.redirect(`postcode-search?returnTo=${addressReturnTo}`);
     }
 
     // Forward flow
     if (addressType === 'international') {
       return res.redirect('international-invoice-address');
     }
-    res.redirect('uk-invoice-address');
+    // UK addresses now start with the postcode lookup rather than manual entry
+    res.redirect('postcode-search');
+  });
+
+  ///////////////////////////////////////////
+  // Postcode lookup (UK addresses only)
+  ///////////////////////////////////////////
+
+  // ---- 2a-i. Postcode search ----
+  router.get(`/versions/${version}/${section}/${subSection}/postcode-search`, function (req, res) {
+    renderInvoicing(res, req, 'postcode-search');
+  });
+
+  router.post(`/versions/${version}/${section}/${subSection}/postcode-search-router`, function (req, res) {
+    const returnTo = req.query.returnTo;
+    const postcode = req.body['invoice-postcode-search'] || '';
+    const property = req.body['invoice-property-name-number'] || '';
+    const errors = {};
+
+    if (postcode.trim() === '') {
+      errors.postcode = 'Enter the postcode';
+    } else if (!/^[A-Z]{1,2}\d[A-Z\d]?\s*\d[A-Z]{2}$/i.test(postcode.trim())) {
+      errors.postcode = 'Enter a valid postcode';
+    }
+
+    if (property.trim().length > 50) {
+      errors.property = 'The property name or number must be 50 characters or fewer';
+    }
+
+    if (Object.keys(errors).length > 0) {
+      return renderInvoicing(res, req, 'postcode-search', { errors: errors });
+    }
+
+    const results = lookupAddresses(postcode, property);
+
+    // No matches — stay on the page with the "not found" error
+    if (results.length === 0) {
+      return renderInvoicing(res, req, 'postcode-search', {
+        errors: { postcode: 'We could not find any addresses for that postcode. Enter a known postcode, or enter the address manually.' }
+      });
+    }
+
+    // Exactly one match — skip the picker and go straight to confirmation
+    if (results.length === 1) {
+      req.session.data['invoice-selected-address'] = results[0];
+      return res.redirect(`confirm-address${returnToQuery(returnTo)}`);
+    }
+
+    req.session.data['invoice-lookup-results'] = results;
+    res.redirect(`address-picker${returnToQuery(returnTo)}`);
+  });
+
+  // ---- 2a-ii. Address picker ----
+  router.get(`/versions/${version}/${section}/${subSection}/address-picker`, function (req, res) {
+    renderInvoicing(res, req, 'address-picker');
+  });
+
+  router.post(`/versions/${version}/${section}/${subSection}/address-picker-router`, function (req, res) {
+    const returnTo = req.query.returnTo;
+    const selected = req.body['invoice-selected-address-index'];
+
+    if (selected === undefined || selected === '') {
+      return renderInvoicing(res, req, 'address-picker', {
+        errors: { selectedAddress: 'Select an address, or select "None of these"' }
+      });
+    }
+
+    // "None of these" — fall back to manual entry with the searched postcode
+    // already filled in (ML-1492 AC4c).
+    if (selected === 'none') {
+      req.session.data['invoice-postcode'] = req.session.data['invoice-postcode-search'];
+      req.session.data['invoice-address-source'] = 'manual';
+      return res.redirect(`uk-invoice-address${returnToQuery(returnTo)}`);
+    }
+
+    const results = req.session.data['invoice-lookup-results'] || [];
+    req.session.data['invoice-selected-address'] = results[Number(selected)];
+    res.redirect(`confirm-address${returnToQuery(returnTo)}`);
+  });
+
+  // ---- 2a-iii. Review and confirm ----
+  router.get(`/versions/${version}/${section}/${subSection}/confirm-address`, function (req, res) {
+    renderInvoicing(res, req, 'confirm-address');
+  });
+
+  router.post(`/versions/${version}/${section}/${subSection}/confirm-address-router`, function (req, res) {
+    const returnTo = req.query.returnTo;
+    const address = req.session.data['invoice-selected-address'];
+
+    if (!address) {
+      return res.redirect(`postcode-search${returnToQuery(returnTo)}`);
+    }
+
+    storeAddress(req, address);
+
+    // Changing the address from the check page returns there rather than
+    // continuing through contact details (ML-1508 AC2c).
+    if (returnTo === 'check') {
+      return res.redirect('check-invoicing-details');
+    }
+    res.redirect('invoice-contact-details');
   });
 
   // ---- 2b. International invoice address ----
@@ -259,6 +445,10 @@ module.exports = function (router) {
     if (Object.keys(errors).length > 0) {
       return renderInvoicing(res, req, 'uk-invoice-address', { errors: errors });
     }
+
+    // Remember that this address was typed rather than looked up, so the
+    // check page sends the "Change" link back to the right place (ML-1508 AC3).
+    req.session.data['invoice-address-source'] = 'manual';
 
     if (returnTo === 'check') {
       return res.redirect('check-invoicing-details');

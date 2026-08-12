@@ -1,0 +1,54 @@
+{% extends "../../layouts/low-complexity-v4.html" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block beforeContent %}
+	{% include "../../includes/phase-banner.html" %}
+	{% if data['organisation-name'] %}
+		{% include "../../includes/organisation-switcher.html" %}
+	{% endif %}
+	<a class="govuk-back-link govuk-link--no-visited-state" href="postcode-search{% if returnTo %}?returnTo={{ returnTo }}{% endif %}">Back</a>
+{% endblock %}
+
+{% set pageHeadingTextHTML %}
+Review and confirm
+{% endset %}
+
+{% block pageTitle %}
+	{{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-two-thirds">
+
+		{% set address = data['invoice-selected-address'] %}
+
+		<span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
+		<h1 class="govuk-heading-l">{{ pageHeadingTextHTML }}</h1>
+
+		{# The building fields are shown as one line; not every address has
+		   all of them. #}
+		<p class="govuk-body">
+			{{ [address.subBuildingName, address.buildingName, address.buildingNumber, address.street] | select() | join(" ") }}<br>
+			{% if address.locality %}{{ address.locality }}<br>{% endif %}
+			{{ address.town }}<br>
+			{% if address.ceremonialCounty %}{{ address.ceremonialCounty }}<br>{% endif %}
+			{{ address.postcode }}<br>
+			United Kingdom
+		</p>
+
+		<p class="govuk-body">
+			<a class="govuk-link govuk-link--no-visited-state" href="postcode-search{% if returnTo %}?returnTo={{ returnTo }}{% endif %}">Edit address</a>
+		</p>
+
+		<form action="confirm-address-router{% if returnTo %}?returnTo={{ returnTo }}{% endif %}" method="post">
+			<div class="govuk-button-group">
+				{{ govukButton({ text: "Confirm address" }) }}
+				<a class="govuk-link govuk-link--no-visited-state" href="../marine-licence-start-page">Cancel</a>
+			</div>
+		</form>
+
+	</div>
+</div>
+{% endblock %}
