@@ -42,18 +42,13 @@
 
                     {% if data['low-complexity-file-type'] == "shapefile" %}
                     <p>Upload a ZIP file containing all the files for your shapefile. Your shapefile must include .shp, .shx, .dbf and .prj files.</p>
+                    {% endif %}
                     {% if data['low-complexity-site-location-changing'] %}
                     <p>The file you upload must be for a single site. Your file must only contain a site drawn as a polygon (shape), not a point or a line.</p>
                     {% else %}
                     <p>You can include more than one site. Your file must only contain sites drawn as polygons (shapes), not points or lines.</p>
                     {% endif %}
-                    {% elif data['low-complexity-file-type'] == "kml" %}
-                    {% if data['low-complexity-site-location-changing'] %}
-                    <p>The file you upload must be for a single site. Your file must only contain a site drawn as a polygon (shape), not a point or a line.</p>
-                    {% else %}
-                    <p>You can include more than one site. Your file must only contain sites drawn as polygons (shapes), not points or lines.</p>
-                    {% endif %}
-                    {% endif %}
+                    <p>We’ll use a site name for each area in your file if one is included.</p>
 
 
             {{ govukFileUpload({
