@@ -96,17 +96,21 @@
             value: item.creator,
             name: item.ownerName,
             label: item.creator === CURRENT_USER
-              ? 'You (' + item.ownerName + ')'
+              ? 'Mine (' + item.ownerName + ')'
               : item.ownerName
           })
         }
       })
 
-      owners.sort(function (a, b) { return a.label.localeCompare(b.label) })
+      owners.sort(function (a, b) {
+        if (a.value === CURRENT_USER) return -1
+        if (b.value === CURRENT_USER) return 1
+        return a.label.localeCompare(b.label)
+      })
     }
 
     // Plain names read better in prose ("Projects by Sam Evans"); labels carry
-    // the You prefix and are what the controls and tags show.
+    // the Mine prefix and are what the controls and tags show.
     var ownerNames = {}
     var ownerLabels = {}
     owners.forEach(function (o) {
