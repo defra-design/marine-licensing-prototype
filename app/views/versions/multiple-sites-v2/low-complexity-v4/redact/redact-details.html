@@ -28,9 +28,9 @@
     .app-redact__links a + a { margin-left: 15px; }
 
     .app-redacted-marker {
-      background-color: #f3f2f1;
-      border: 1px solid #b1b4b6;
-      padding: 0 4px;
+      background-color: #0b0c0c;
+      color: #ffffff;
+      padding: 0 5px;
       font-weight: 700;
       white-space: nowrap;
     }
@@ -100,6 +100,8 @@
     redacted  - applicant's text above, published version below, with ***REDACTED*** marked
 #}
 {% macro redactField(id, label, text, single=false) %}
+{# Whatever was last saved, falling back to the applicant's own words. #}
+{% set current = data[id] if data[id] is defined else text %}
 <div class="app-redact" data-redact data-state="untouched" data-redact-label="{{ label }}">
 
     <div class="app-redact__compare" data-redact-compare hidden>
@@ -108,7 +110,7 @@
         <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Text to be published</p>
     </div>
 
-    <p class="govuk-body app-redact__published" data-redact-published>{{ text }}</p>
+    <p class="govuk-body app-redact__published" data-redact-published>{{ current }}</p>
 
     <div class="app-redact__editor" data-redact-editor hidden>
         <div class="govuk-form-group govuk-!-margin-bottom-3" data-redact-group>
@@ -127,12 +129,14 @@
                 </button>
             </div>
 
+            {# The control always carries the current value, even while collapsed,
+               so the form posts the full picture whichever button is used. #}
             {% if single %}
-            <input class="govuk-input" type="text" id="{{ id }}" name="{{ id }}"
+            <input class="govuk-input" type="text" id="{{ id }}" name="{{ id }}" value="{{ current }}"
                 data-redact-control aria-label="Text to be published for {{ label }}">
             {% else %}
             <textarea class="govuk-textarea govuk-!-margin-bottom-0" id="{{ id }}" name="{{ id }}" rows="8"
-                data-redact-control aria-label="Text to be published for {{ label }}"></textarea>
+                data-redact-control aria-label="Text to be published for {{ label }}">{{ current }}</textarea>
             {% endif %}
 
         </div>
@@ -166,24 +170,26 @@
   Wrap the thing itself in {% call %}; the script toggles between it and the
   "hidden" message.
 #}
-{% macro hideable(noun, context, replaceable=false) %}
-<div class="app-redact" data-hideable data-state="untouched">
+{% macro hideable(id, noun, context, replaceable=false) %}
+{% set isHidden = data[id] %}
+<div class="app-redact" data-hideable data-state="{{ 'redacted' if isHidden else 'untouched' }}">
 
-    <div data-hideable-shown>{{ caller() }}</div>
+    <input type="hidden" name="{{ id }}" value="{{ 'yes' if isHidden else '' }}" data-hideable-flag>
 
-    <div data-hideable-hidden hidden>
-        <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">{{ noun | capitalize }} hidden</p>
+    <div data-hideable-shown {{ 'hidden' if isHidden }}>{{ caller() }}</div>
+
+    <div data-hideable-hidden {{ '' if isHidden else 'hidden' }}>
+        <p class="govuk-body govuk-!-margin-bottom-1"><span class="app-redacted-marker">***REDACTED***</span></p>
         <p class="govuk-body app-redact__original">This {{ noun }} will not be published on the public register.</p>
     </div>
 
     <p class="app-redact__links">
         <a class="govuk-link govuk-link--no-visited-state" href="#" data-hideable-toggle data-hideable-noun="{{ noun }}">
-            <span data-hideable-label>Hide {{ noun }}</span><span class="govuk-visually-hidden"> {{ context }}</span>
+            <span data-hideable-label>{{ 'Show' if isHidden else 'Hide' }} {{ noun }}</span><span class="govuk-visually-hidden"> {{ context }}</span>
         </a>
         {% if replaceable %}
         {# For a document the applicant has resent with their own redactions applied.
-           Deliberately inert in the prototype — navigating away would discard any
-           redactions staged on this page. #}
+           Saves the page on the way out so nothing staged here is lost. #}
         <a class="govuk-link govuk-link--no-visited-state" href="#" data-hideable-replace>
             Replace {{ noun }}<span class="govuk-visually-hidden"> {{ context }}</span>
         </a>
@@ -195,6 +201,12 @@
 
 {% block content %}
 
+<form method="post" action="redact-router" novalidate>
+
+{# Set by the script to tell the router where to go next. The leading underscore
+   keeps the kit from storing it as session data. #}
+<input type="hidden" name="_next" value="" data-redact-next>
+
 <div class="govuk-grid-row app-read-only">
     <div class="govuk-grid-column-full">
 
@@ -205,24 +217,20 @@
             Installation of floating pontoon, Lyme Regis Harbour, Dorset
         </h1>
 
+        {% if data['redact-saved'] %}
+        <div class="govuk-inset-text">
+            <h2 class="govuk-heading-s">This application has been redacted</h2>
+            <p class="govuk-body">You can <a class="govuk-link govuk-link--no-visited-state" href="#" data-redact-preview>preview how it will appear on the public register (opens in new tab)</a>.</p>
+            <p class="govuk-body govuk-!-margin-bottom-0">If you make more changes and save them, they will replace the version you have saved.</p>
+        </div>
+        {% endif %}
+
         <div class="govuk-error-summary" data-module="govuk-error-summary" id="redact-error-summary" tabindex="-1" hidden>
             <div role="alert">
                 <h2 class="govuk-error-summary__title">There is a problem</h2>
                 <div class="govuk-error-summary__body">
                     <ul class="govuk-list govuk-error-summary__list" id="redact-error-list"></ul>
                 </div>
-            </div>
-        </div>
-
-        <div class="govuk-notification-banner govuk-notification-banner--success" role="alert"
-            aria-labelledby="redact-success-title" data-module="govuk-notification-banner"
-            id="redact-success" tabindex="-1" hidden>
-            <div class="govuk-notification-banner__header">
-                <h2 class="govuk-notification-banner__title" id="redact-success-title">Success</h2>
-            </div>
-            <div class="govuk-notification-banner__content">
-                <p class="govuk-notification-banner__heading">Redactions saved</p>
-                <p class="govuk-body">You would now be returned to the task in MAS.</p>
             </div>
         </div>
 
@@ -338,7 +346,7 @@
                     <div class="govuk-summary-list__row govuk-summary-list__row--no-actions">
                         <dt class="govuk-summary-list__key govuk-summary-list__key--full-width map-label">Map view</dt>
                         <dd class="govuk-summary-list__value govuk-summary-list__value--full-width">
-                            {% call hideable("map", "for site 1 from the public register") %}
+                            {% call hideable("redact-hide-map", "map", "for site 1 from the public register") %}
                                 <img src="/public/images/map-5-points.jpg" alt="Map showing site 1 location" />
                             {% endcall %}
                         </dd>
@@ -414,7 +422,7 @@
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">File upload</dt>
                         <dd class="govuk-summary-list__value">
-                            {% call hideable("document", "pontoon-construction-drawing.pdf from the public register", true) %}
+                            {% call hideable("redact-hide-drawing", "document", "pontoon-construction-drawing.pdf from the public register", true) %}
                                 <a class="govuk-link govuk-link--no-visited-state" href="">pontoon-construction-drawing.pdf</a>
                             {% endcall %}
                         </dd>
@@ -787,7 +795,7 @@
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Water Framework Directive assessment upload</dt>
                         <dd class="govuk-summary-list__value">
-                            {% call hideable("document", "WFD.doc from the public register", true) %}
+                            {% call hideable("redact-hide-wfd", "document", "WFD.doc from the public register", true) %}
                                 <a class="govuk-link govuk-link--no-visited-state" href="">WFD.doc</a>
                             {% endcall %}
                         </dd>
@@ -835,10 +843,20 @@
 
         <div class="govuk-button-group govuk-!-margin-top-6">
             {{ govukButton({
-                text: "Save and return to task",
+                text: "Save redactions",
                 element: "button",
                 type: "button",
                 attributes: { "data-redact-submit": "" }
+            }) }}
+
+            {# Secondary: a supporting action the case officer may take repeatedly
+               without committing anything. #}
+            {{ govukButton({
+                html: 'Preview with redactions<span class="govuk-visually-hidden"> (opens in new tab)</span>',
+                element: "button",
+                type: "button",
+                classes: "govuk-button--secondary",
+                attributes: { "data-redact-preview": "" }
             }) }}
         </div>
 
@@ -846,6 +864,8 @@
 </div>
 
 <div class="govuk-visually-hidden" aria-live="polite" id="copy-status"></div>
+
+</form>
 
 {% endblock %}
 
@@ -859,6 +879,19 @@
     var fields = [].slice.call(document.querySelectorAll('[data-redact]'))
     var hideables = [].slice.call(document.querySelectorAll('[data-hideable]'))
     var status = document.getElementById('copy-status')
+
+    var form = document.querySelector('form[action="redact-router"]')
+    var nextField = document.querySelector('[data-redact-next]')
+
+    // Post the whole page so the kit stores every answer, then let the router
+    // decide where to go. `newTab` sends the result to a new tab instead, which
+    // leaves this page — and anything half-edited on it — exactly as it was.
+    function submitTo (next, newTab) {
+        nextField.value = next
+        form.target = newTab ? '_blank' : ''
+        form.submit()
+        form.target = ''
+    }
 
     function escapeHtml (text) {
         return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
@@ -922,7 +955,9 @@
         var errorMessage = field.querySelector('[data-redact-error]')
 
         var original = field.querySelector('[data-redact-original]').textContent.trim()
-        var published = original
+        // The control is rendered with whatever was last saved, so it — not the
+        // applicant's original — is where the current value comes from on load.
+        var published = control.value
 
         function render () {
             var isRedacted = published !== original
@@ -937,6 +972,10 @@
 
             group.classList.remove('govuk-form-group--error')
             errorMessage.hidden = true
+
+            // Keep the control in step even while collapsed, so the form always
+            // posts the current state whichever button is used.
+            control.value = published
 
             paint(publishedEl, published)
         }
@@ -986,12 +1025,15 @@
         var toggle = item.querySelector('[data-hideable-toggle]')
         var toggleLabel = item.querySelector('[data-hideable-label]')
         var noun = toggle.getAttribute('data-hideable-noun')
+        var flag = item.querySelector('[data-hideable-flag]')
         var replace = item.querySelector('[data-hideable-replace]')
 
-        // Present so the option is visible in the demo, but deliberately does
-        // nothing — leaving the page would discard redactions staged here.
+        // Save on the way out, so nothing staged on this page is lost.
         if (replace) {
-            replace.addEventListener('click', function (event) { event.preventDefault() })
+            replace.addEventListener('click', function (event) {
+                event.preventDefault()
+                submitTo('replace-document')
+            })
         }
 
         toggle.addEventListener('click', function (event) {
@@ -1003,14 +1045,14 @@
             shown.hidden = nowHidden
             hiddenMessage.hidden = !nowHidden
             toggleLabel.textContent = (nowHidden ? 'Show ' : 'Hide ') + noun
+            flag.value = nowHidden ? 'yes' : ''
         })
     })
 
-    // --- saving everything at the end, once no answer is still open ---
+    // --- saving, previewing, and leaving to replace a document ---
     var submitButton = document.querySelector('[data-redact-submit]')
     var errorSummary = document.getElementById('redact-error-summary')
     var errorList = document.getElementById('redact-error-list')
-    var successBanner = document.getElementById('redact-success')
 
     submitButton.addEventListener('click', function () {
         var stillOpen = fields.filter(function (field) {
@@ -1032,15 +1074,22 @@
                 errorList.appendChild(item)
             })
 
-            successBanner.hidden = true
             errorSummary.hidden = false
             errorSummary.focus()
             return
         }
 
         errorSummary.hidden = true
-        successBanner.hidden = false
-        successBanner.focus()
+        submitTo('')
+    })
+
+    // Preview shows work in progress, so it deliberately skips the "nothing
+    // still open" check and opens in a new tab, leaving this page untouched.
+    document.querySelectorAll('[data-redact-preview]').forEach(function (control) {
+        control.addEventListener('click', function (event) {
+            event.preventDefault()
+            submitTo('preview', true)
+        })
     })
 })()
 </script>
