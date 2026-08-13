@@ -774,11 +774,46 @@ module.exports = function (router) {
   });
 
   // ============================================================
+  // Redact — session writes go to a file store asynchronously, so a
+  // redirect can otherwise be followed before the write lands and the
+  // next page renders stale answers. Flush first, then redirect.
+  // ============================================================
+  function redirectOnceSaved (req, res, target) {
+    req.session.save(function () {
+      res.redirect(target);
+    });
+  }
+
+  // ============================================================
   // Redact — case officer uploads a replacement for a document the
   // applicant has resent with their own redactions applied
   // ============================================================
   router.post(`/versions/${version}/${section}/redact/replace-document-router`, function (req, res) {
-    return res.redirect('view-details-redact-links');
+    return redirectOnceSaved(req, res, 'redact-details');
+  });
+
+  // ============================================================
+  // Redact — the redaction page posts here on save, preview, or on the
+  // way to replacing a document. The kit's autoStoreData has already
+  // written every answer to the session by the time this runs; all this
+  // does is decide where to send the case officer next.
+  //
+  // `_next` starts with an underscore so the kit deliberately does not
+  // store it — it stays a one-off instruction, not session state.
+  // ============================================================
+  router.post(`/versions/${version}/${section}/redact/redact-router`, function (req, res) {
+    // Previewing shows work in progress, so it must not claim the
+    // application has been redacted.
+    if (req.body._next === 'preview') {
+      return redirectOnceSaved(req, res, 'preview');
+    }
+
+    if (req.body._next === 'replace-document') {
+      return redirectOnceSaved(req, res, 'replace-document');
+    }
+
+    req.session.data['redact-saved'] = 'yes';
+    return redirectOnceSaved(req, res, 'redact-details');
   });
 
   // ============================================================
