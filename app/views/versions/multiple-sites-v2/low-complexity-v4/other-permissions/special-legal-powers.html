@@ -15,7 +15,7 @@
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-Does your organisation have special legal powers to do any of this project?
+Does your organisation have special legal powers to do any of these proposed works?
 {% endset %}
 
 <!-- Text that show in the browser tab. Does NOT need changing -->
@@ -54,7 +54,7 @@ Error:
 			titleText: "There is a problem",
 			errorList: [
 				{
-					text: "Select if your organisation has special legal powers to do any of this project" if data['errortypeone'] == "true" else "Enter details of the legal powers including the relevant legislation",
+					text: "Select if your organisation has special legal powers to do any of these proposed works" if data['errortypeone'] == "true" else "Enter details of the legal powers including the relevant legislation",
 					href: "#low-complexity-special-legal-powers" if data['errortypeone'] == "true" else "#low-complexity-special-legal-powers-details"
 				}
 			]
@@ -94,7 +94,7 @@ Error:
 					}
 				],
 				errorMessage: {
-					text: "Select if your organisation has special legal powers to do any of this project"
+					text: "Select if your organisation has special legal powers to do any of these proposed works"
 				} if data['errortypeone'] == "true"
 			}) }}
 
