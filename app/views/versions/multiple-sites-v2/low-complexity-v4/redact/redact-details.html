@@ -13,10 +13,15 @@
 
     .app-redact [hidden] { display: none; }
 
-    /* govuk-frontend sets .govuk-summary-list__row { display: table-row }, which
-       beats the browser's own [hidden] rule — so the attribute alone leaves the
-       row on screen. Needs the extra specificity to actually hide. */
-    .govuk-summary-list__row[hidden] { display: none; }
+    /* A hidden row has to out-argue two things: govuk-frontend's
+       .govuk-summary-list__row { display: table-row }, and application.scss's
+       .govuk-summary-list--full-width .govuk-summary-list__row { display: flex
+       !important }. The second is !important, so this has to be too, and the
+       longer selector outranks it rather than relying on source order. */
+    .govuk-summary-list__row[hidden],
+    .govuk-summary-list--full-width .govuk-summary-list__row[hidden] {
+      display: none !important;
+    }
 
     /* Once an answer is being worked on, or has been redacted, the grey rule
        groups the comparison into one block — the same device as inset text. */
