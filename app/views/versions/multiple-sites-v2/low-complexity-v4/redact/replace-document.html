@@ -21,8 +21,12 @@
     <a class="govuk-back-link govuk-link--no-visited-state" href="javascript:history.back()">Back</a>
 {% endblock %}
 
+{# Named by the router from whichever Replace link was used. Falls back to the
+   generic wording if this page is reached directly. #}
+{% set replacingLabel = data['redact-replacing-label'] %}
+
 {% block pageTitle %}
-Upload a replacement document - Get permission for marine work
+Upload a replacement {% if replacingLabel %}{{ replacingLabel }} {% endif %}document - Get permission for marine work
 {% endblock %}
 
 {% block content %}
@@ -36,7 +40,7 @@ Upload a replacement document - Get permission for marine work
                 <h1 class="govuk-label-wrapper">
                     <label class="govuk-label govuk-label--l" for="replacement-file-upload">
                         <span class="govuk-caption-l">MLA/2026/10003 – Redact application for the public register</span>
-                        Upload a replacement document
+                        Upload a replacement {% if replacingLabel %}{{ replacingLabel }} {% endif %}document
                     </label>
                 </h1>
 
@@ -50,7 +54,7 @@ Upload a replacement document - Get permission for marine work
                     text: "Continue"
                 }) }}
 
-                <a class="govuk-link govuk-link--no-visited-state" href="redact-details">Cancel</a>
+                <a class="govuk-link govuk-link--no-visited-state" href="redact-details#{{ data['redact-replacing-anchor'] }}">Cancel</a>
             </div>
 
         </form>

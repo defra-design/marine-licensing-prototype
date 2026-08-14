@@ -785,11 +785,40 @@ module.exports = function (router) {
   }
 
   // ============================================================
+  // Redact — the documents a case officer can swap for a copy the
+  // applicant has resent with their own redactions applied. Keeping the
+  // wording, the card to return to and the replacement filename in one
+  // place means the templates only ever pass the key around.
+  // ============================================================
+  const REPLACEABLE_DOCUMENTS = {
+    drawing: {
+      label: 'Site 1 - Construction drawing 1',
+      anchor: 'construction-drawing-1',
+      filename: 'site1-drawing1-redacted.pdf'
+    },
+    wfd: {
+      label: 'Water Framework Directive assessment',
+      anchor: 'wfd-assessment',
+      filename: 'wfd-assessment-redacted.doc'
+    }
+  };
+
+  // ============================================================
   // Redact — case officer uploads a replacement for a document the
   // applicant has resent with their own redactions applied
   // ============================================================
   router.post(`/versions/${version}/${section}/redact/replace-document-router`, function (req, res) {
-    return redirectOnceSaved(req, res, 'redact-details');
+    const document = REPLACEABLE_DOCUMENTS[req.session.data['redact-replacing']];
+
+    if (!document) {
+      return redirectOnceSaved(req, res, 'redact-details');
+    }
+
+    // Prototype: pretend the redacted copy was uploaded, and drop the case
+    // officer back at the card they were working on.
+    req.session.data[`redact-${req.session.data['redact-replacing']}-filename`] = document.filename;
+
+    return redirectOnceSaved(req, res, `redact-details#${document.anchor}`);
   });
 
   // ============================================================
@@ -809,6 +838,15 @@ module.exports = function (router) {
     }
 
     if (req.body._next === 'replace-document') {
+      // Tell the upload page which document it is asking for, and where to
+      // send the case officer back to.
+      const document = REPLACEABLE_DOCUMENTS[req.body['redact-replacing']];
+
+      if (document) {
+        req.session.data['redact-replacing-label'] = document.label;
+        req.session.data['redact-replacing-anchor'] = document.anchor;
+      }
+
       return redirectOnceSaved(req, res, 'replace-document');
     }
 

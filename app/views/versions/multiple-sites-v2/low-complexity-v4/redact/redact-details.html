@@ -170,7 +170,7 @@
   Wrap the thing itself in {% call %}; the script toggles between it and the
   "hidden" message.
 #}
-{% macro hideable(id, noun, context, replaceable=false) %}
+{% macro hideable(id, noun, context, replaceKey=false) %}
 {% set isHidden = data[id] %}
 <div class="app-redact" data-hideable data-state="{{ 'redacted' if isHidden else 'untouched' }}">
 
@@ -179,7 +179,7 @@
     <div data-hideable-shown {{ 'hidden' if isHidden }}>{{ caller() }}</div>
 
     <div data-hideable-hidden {{ '' if isHidden else 'hidden' }}>
-        <p class="govuk-body govuk-!-margin-bottom-1"><span class="app-redacted-marker">***REDACTED***</span></p>
+        <p class="govuk-body govuk-!-margin-bottom-1"><span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">Redacted</span></p>
         <p class="govuk-body app-redact__original">This {{ noun }} will not be published on the public register.</p>
     </div>
 
@@ -187,10 +187,10 @@
         <a class="govuk-link govuk-link--no-visited-state" href="#" data-hideable-toggle data-hideable-noun="{{ noun }}">
             <span data-hideable-label>{{ 'Show' if isHidden else 'Hide' }} {{ noun }}</span><span class="govuk-visually-hidden"> {{ context }}</span>
         </a>
-        {% if replaceable %}
+        {% if replaceKey %}
         {# For a document the applicant has resent with their own redactions applied.
            Saves the page on the way out so nothing staged here is lost. #}
-        <a class="govuk-link govuk-link--no-visited-state" href="#" data-hideable-replace>
+        <a class="govuk-link govuk-link--no-visited-state" href="#" data-hideable-replace data-replace-key="{{ replaceKey }}">
             Replace {{ noun }}<span class="govuk-visually-hidden"> {{ context }}</span>
         </a>
         {% endif %}
@@ -207,8 +207,22 @@
    keeps the kit from storing it as session data. #}
 <input type="hidden" name="_next" value="" data-redact-next>
 
+{# Which document the Replace links are asking for. Stored, because the upload
+   page and its router both need it after the redirect. #}
+<input type="hidden" name="redact-replacing" value="" data-redact-replacing>
+
 <div class="govuk-grid-row app-read-only">
     <div class="govuk-grid-column-full">
+
+        {# Above the heading, as the Design System expects. #}
+        <div class="govuk-error-summary" data-module="govuk-error-summary" id="redact-error-summary" tabindex="-1" hidden>
+            <div role="alert">
+                <h2 class="govuk-error-summary__title">There is a problem</h2>
+                <div class="govuk-error-summary__body">
+                    <ul class="govuk-list govuk-error-summary__list" id="redact-error-list"></ul>
+                </div>
+            </div>
+        </div>
 
         <span class="govuk-caption-l">MLA/2026/10003 – Redact application for the public register</span>
         {# Stays as submitted even if the application name is redacted below —
@@ -224,15 +238,6 @@
             <p class="govuk-body govuk-!-margin-bottom-0">If you make more changes and save them, they will replace the version you have saved.</p>
         </div>
         {% endif %}
-
-        <div class="govuk-error-summary" data-module="govuk-error-summary" id="redact-error-summary" tabindex="-1" hidden>
-            <div role="alert">
-                <h2 class="govuk-error-summary__title">There is a problem</h2>
-                <div class="govuk-error-summary__body">
-                    <ul class="govuk-list govuk-error-summary__list" id="redact-error-list"></ul>
-                </div>
-            </div>
-        </div>
 
         <p class="govuk-body">Check each answer and remove anything that must not appear on the public register. Replace whatever you remove with <span class="app-redacted-marker">***REDACTED***</span>.</p>
 
@@ -413,7 +418,7 @@
         {# ============================== #}
         {# SITE 1 — CONSTRUCTION DRAWING 1 #}
         {# ============================== #}
-        <div class="govuk-summary-card">
+        <div class="govuk-summary-card" id="construction-drawing-1">
             <div class="govuk-summary-card__title-wrapper">
                 <h2 class="govuk-summary-card__title">Site 1 - Construction drawing 1</h2>
             </div>
@@ -422,8 +427,9 @@
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">File upload</dt>
                         <dd class="govuk-summary-list__value">
-                            {% call hideable("redact-hide-drawing", "document", "pontoon-construction-drawing.pdf from the public register", true) %}
-                                <a class="govuk-link govuk-link--no-visited-state" href="">pontoon-construction-drawing.pdf</a>
+                            {% set drawingFile = data['redact-drawing-filename'] or 'pontoon-construction-drawing.pdf' %}
+                            {% call hideable("redact-hide-drawing", "document", drawingFile + " from the public register", "drawing") %}
+                                <a class="govuk-link govuk-link--no-visited-state" href="">{{ drawingFile }}</a>
                             {% endcall %}
                         </dd>
                     </div>
@@ -774,7 +780,7 @@
         {# ================================================= #}
         {# WATER FRAMEWORK DIRECTIVE ASSESSMENT               #}
         {# ================================================= #}
-        <div class="govuk-summary-card">
+        <div class="govuk-summary-card" id="wfd-assessment">
             <div class="govuk-summary-card__title-wrapper">
                 <h2 class="govuk-summary-card__title">Water Framework Directive assessment</h2>
             </div>
@@ -795,8 +801,9 @@
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Water Framework Directive assessment upload</dt>
                         <dd class="govuk-summary-list__value">
-                            {% call hideable("redact-hide-wfd", "document", "WFD.doc from the public register", true) %}
-                                <a class="govuk-link govuk-link--no-visited-state" href="">WFD.doc</a>
+                            {% set wfdFile = data['redact-wfd-filename'] or 'WFD.doc' %}
+                            {% call hideable("redact-hide-wfd", "document", wfdFile + " from the public register", "wfd") %}
+                                <a class="govuk-link govuk-link--no-visited-state" href="">{{ wfdFile }}</a>
                             {% endcall %}
                         </dd>
                     </div>
@@ -882,6 +889,7 @@
 
     var form = document.querySelector('form[action="redact-router"]')
     var nextField = document.querySelector('[data-redact-next]')
+    var replacingField = document.querySelector('[data-redact-replacing]')
 
     // Post the whole page so the kit stores every answer, then let the router
     // decide where to go. `newTab` sends the result to a new tab instead, which
@@ -897,11 +905,16 @@
         return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
     }
 
+    // The asterisks are a plain-text affordance — the black box already carries
+    // the meaning on screen. Hide them from screen readers so a page of
+    // redactions does not read as "star star star REDACTED star star star"
+    // over and over, and announce "Redacted" once in their place.
+    var MARKER_HTML = '<span class="app-redacted-marker" aria-hidden="true">' + MARKER +
+        '</span><span class="govuk-visually-hidden">Redacted</span>'
+
     // Show the published text with every ***REDACTED*** marker called out.
     function paint (el, text) {
-        el.innerHTML = escapeHtml(text)
-            .split(MARKER)
-            .join('<span class="app-redacted-marker">' + MARKER + '</span>')
+        el.innerHTML = escapeHtml(text).split(MARKER).join(MARKER_HTML)
     }
 
     function copyMarker (labelEl) {
@@ -1028,10 +1041,12 @@
         var flag = item.querySelector('[data-hideable-flag]')
         var replace = item.querySelector('[data-hideable-replace]')
 
-        // Save on the way out, so nothing staged on this page is lost.
+        // Save on the way out, so nothing staged on this page is lost, and say
+        // which document is being replaced so the upload page can name it.
         if (replace) {
             replace.addEventListener('click', function (event) {
                 event.preventDefault()
+                replacingField.value = replace.getAttribute('data-replace-key')
                 submitTo('replace-document')
             })
         }
