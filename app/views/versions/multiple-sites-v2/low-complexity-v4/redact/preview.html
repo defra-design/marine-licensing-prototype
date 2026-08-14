@@ -249,7 +249,10 @@
                     {% endif %}
 
                     {% if data['redact-hide-location'] %}
-                    <div class="govuk-summary-list__row">
+                    {# --no-border because this is always the last visible row when the
+                       location is withheld: the map row below it is hidden, so it still
+                       counts as :last-child and govuk never drops the rule for us. #}
+                    <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
                         <dt class="govuk-summary-list__key">Site location</dt>
                         <dd class="govuk-summary-list__value">
                             <p class="govuk-body govuk-!-margin-bottom-1"><span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">Redacted</span></p>
