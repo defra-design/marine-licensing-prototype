@@ -13,6 +13,11 @@
 
     .app-redact [hidden] { display: none; }
 
+    /* govuk-frontend sets .govuk-summary-list__row { display: table-row }, which
+       beats the browser's own [hidden] rule — so the attribute alone leaves the
+       row on screen. Needs the extra specificity to actually hide. */
+    .govuk-summary-list__row[hidden] { display: none; }
+
     /* Once an answer is being worked on, or has been redacted, the grey rule
        groups the comparison into one block — the same device as inset text. */
     .app-redact[data-state="editing"],
@@ -423,7 +428,7 @@
                         <dt class="govuk-summary-list__key govuk-summary-list__key--full-width map-label">Map view</dt>
                         <dd class="govuk-summary-list__value govuk-summary-list__value--full-width">
                             <input type="hidden" name="redact-hide-location" value="{{ 'yes' if locationHidden else '' }}" data-location-flag>
-                            <img src="/public/images/{% if siteType == 'circular' %}pontoon-map-circle.jpg{% elif siteType == 'polygon' %}pontoon-map-3-points.jpg{% else %}map-5-points.jpg{% endif %}" alt="Map showing site 1 location" />
+                            <img src="/public/images/{% if siteType == 'circular' %}map-circle.jpg{% elif siteType == 'polygon' %}map-3-points.jpg{% else %}map-5-points.jpg{% endif %}" alt="Map showing site 1 location" />
                             <p class="app-redact__links">
                                 <a class="govuk-link govuk-link--no-visited-state" href="#" data-location-toggle>Hide location<span class="govuk-visually-hidden"> for site 1 from the public register</span></a>
                             </p>

@@ -13,6 +13,11 @@
 
     .app-redact [hidden] { display: none; }
 
+    /* govuk-frontend sets .govuk-summary-list__row { display: table-row }, which
+       beats the browser's own [hidden] rule — so the attribute alone leaves the
+       row on screen. Needs the extra specificity to actually hide. */
+    .govuk-summary-list__row[hidden] { display: none; }
+
 
     .app-redacted-marker {
       background-color: #0b0c0c;
@@ -252,7 +257,7 @@
                     <div class="govuk-summary-list__row govuk-summary-list__row--no-actions">
                         <dt class="govuk-summary-list__key govuk-summary-list__key--full-width map-label">Map view</dt>
                         <dd class="govuk-summary-list__value govuk-summary-list__value--full-width">
-                            <img src="/public/images/{% if siteType == 'circular' %}pontoon-map-circle.jpg{% elif siteType == 'polygon' %}pontoon-map-3-points.jpg{% else %}map-5-points.jpg{% endif %}" alt="Map showing site 1 location" />
+                            <img src="/public/images/{% if siteType == 'circular' %}map-circle.jpg{% elif siteType == 'polygon' %}map-3-points.jpg{% else %}map-5-points.jpg{% endif %}" alt="Map showing site 1 location" />
                         </dd>
                     </div>
                     {% endif %}
