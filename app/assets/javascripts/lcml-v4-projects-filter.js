@@ -8,7 +8,7 @@
 
   What it does:
     - builds the Submission type, Status and Owner checkboxes from the
-      rendered table, so options and counts always match what is on the page
+      rendered table, so options always match what is on the page
     - filters rows on Apply, and on removing a selected-filter tag
     - renders the MOJ selected-filter tags
     - wires up MOJ's FilterToggleButton so the panel starts hidden
@@ -16,15 +16,10 @@
   Deliberately no Project name or Reference search for this iteration - we want
   to usability test the panel without them.
 
-  Counts against each option are TOTALS from the table. They do not respond to
-  other active filters. Facet-style counts would prevent more dead ends but
-  would move as you filter - worth a conversation with the team.
-
   Markup it expects (all optional except the table):
     #projects-table, #projects-caption, #no-results-message, #results-count
     #apply-filters, #clear-filters, #selected-filter-tags
     #type-checkboxes, #status-checkboxes, #person-checkboxes
-    #count-all-projects, #count-my-projects
     #conditional-specific-person, #person-error-message
     input[name="projectFilter"]
 */
@@ -79,10 +74,6 @@
         if (item[key] && seen.indexOf(item[key]) === -1) seen.push(item[key])
       })
       return seen.sort(function (a, b) { return a.localeCompare(b) })
-    }
-
-    function countBy (key, value) {
-      return model.filter(function (item) { return item[key] === value }).length
     }
 
     // Owners present in the table. Nobody with zero projects appears, so no
@@ -152,7 +143,7 @@
       uniqueBy('type'),
       'filter-type',
       'type',
-      function (v) { return v + ' (' + countBy('type', v) + ')' }
+      function (v) { return v }
     )
 
     buildCheckboxes(
@@ -160,7 +151,7 @@
       uniqueBy('status'),
       'filter-status',
       'status',
-      function (v) { return v + ' (' + countBy('status', v) + ')' }
+      function (v) { return v }
     )
 
     buildCheckboxes(
@@ -168,13 +159,8 @@
       owners.map(function (o) { return o.value }),
       'filter-person',
       'person',
-      function (v) { return ownerLabels[v] + ' (' + countBy('creator', v) + ')' }
+      function (v) { return ownerLabels[v] }
     )
-
-    var countAll = document.getElementById('count-all-projects')
-    var countMine = document.getElementById('count-my-projects')
-    if (countAll) countAll.textContent = '(' + model.length + ')'
-    if (countMine) countMine.textContent = '(' + countBy('creator', CURRENT_USER) + ')'
 
     // --------------------------------------------------------------- state
 
