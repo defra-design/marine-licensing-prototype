@@ -57,7 +57,7 @@
 {%- set current = data[id] if data[id] is defined else text -%}
 {%- set parts = current.split("***REDACTED***") -%}
 {%- for part in parts -%}
-{{ part }}{% if not loop.last %}<span class="app-redacted-marker">***REDACTED***</span>{% endif %}
+{{ part }}{% if not loop.last %}<span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">Redacted</span>{% endif %}
 {%- endfor -%}
 {% endmacro %}
 
@@ -65,6 +65,8 @@
 
 <div class="govuk-grid-row app-read-only">
     <div class="govuk-grid-column-full">
+
+        {# Above the heading, as the Design System expects. #}
 
         <span class="govuk-caption-l">MLA/2026/10003 – Preview of the public register entry</span>
         <h1 class="govuk-heading-l">
@@ -74,7 +76,6 @@
         <div class="govuk-inset-text">
             <p class="govuk-body govuk-!-margin-bottom-0">This is a preview of how the application will appear on the public register. It is not published yet.</p>
         </div>
-
 
 
 
@@ -184,7 +185,7 @@
                         <dt class="govuk-summary-list__key govuk-summary-list__key--full-width map-label">Map view</dt>
                         <dd class="govuk-summary-list__value govuk-summary-list__value--full-width">
                             {% if data['redact-hide-map'] %}
-                                <p class="govuk-body govuk-!-margin-bottom-0"><span class="app-redacted-marker">***REDACTED***</span></p>
+                                <p class="govuk-body govuk-!-margin-bottom-0"><span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">Redacted</span></p>
                             {% else %}
                                 <img src="/public/images/map-5-points.jpg" alt="Map showing site 1 location" />
                             {% endif %}
@@ -263,7 +264,7 @@
                         <dd class="govuk-summary-list__value">
                             {% set drawingFile = data['redact-drawing-filename'] or 'pontoon-construction-drawing.pdf' %}
                             {% if data['redact-hide-drawing'] %}
-                                <p class="govuk-body govuk-!-margin-bottom-0"><span class="app-redacted-marker">***REDACTED***</span></p>
+                                <p class="govuk-body govuk-!-margin-bottom-0"><span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">Redacted</span></p>
                             {% else %}
                                 <a class="govuk-link govuk-link--no-visited-state" href="">{{ drawingFile }}</a>
                             {% endif %}
@@ -639,7 +640,7 @@
                         <dd class="govuk-summary-list__value">
                             {% set wfdFile = data['redact-wfd-filename'] or 'WFD.doc' %}
                             {% if data['redact-hide-wfd'] %}
-                                <p class="govuk-body govuk-!-margin-bottom-0"><span class="app-redacted-marker">***REDACTED***</span></p>
+                                <p class="govuk-body govuk-!-margin-bottom-0"><span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">Redacted</span></p>
                             {% else %}
                                 <a class="govuk-link govuk-link--no-visited-state" href="">{{ wfdFile }}</a>
                             {% endif %}

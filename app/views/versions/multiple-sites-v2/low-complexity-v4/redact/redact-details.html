@@ -179,7 +179,7 @@
     <div data-hideable-shown {{ 'hidden' if isHidden }}>{{ caller() }}</div>
 
     <div data-hideable-hidden {{ '' if isHidden else 'hidden' }}>
-        <p class="govuk-body govuk-!-margin-bottom-1"><span class="app-redacted-marker">***REDACTED***</span></p>
+        <p class="govuk-body govuk-!-margin-bottom-1"><span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">Redacted</span></p>
         <p class="govuk-body app-redact__original">This {{ noun }} will not be published on the public register.</p>
     </div>
 
@@ -905,11 +905,16 @@
         return text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
     }
 
+    // The asterisks are a plain-text affordance — the black box already carries
+    // the meaning on screen. Hide them from screen readers so a page of
+    // redactions does not read as "star star star REDACTED star star star"
+    // over and over, and announce "Redacted" once in their place.
+    var MARKER_HTML = '<span class="app-redacted-marker" aria-hidden="true">' + MARKER +
+        '</span><span class="govuk-visually-hidden">Redacted</span>'
+
     // Show the published text with every ***REDACTED*** marker called out.
     function paint (el, text) {
-        el.innerHTML = escapeHtml(text)
-            .split(MARKER)
-            .join('<span class="app-redacted-marker">' + MARKER + '</span>')
+        el.innerHTML = escapeHtml(text).split(MARKER).join(MARKER_HTML)
     }
 
     function copyMarker (labelEl) {
