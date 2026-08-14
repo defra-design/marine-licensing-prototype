@@ -63,6 +63,15 @@
 
 {% block content %}
 
+{#
+  How the applicant defined the site, set once by visiting the page with
+  ?redact-site-type=circular or ?redact-site-type=polygon. The kit stores query
+  parameters in the session, so the choice survives saving, previewing and the
+  replace-document round trip without any extra plumbing. Pass upload to reset.
+#}
+{% set siteType = data['redact-site-type'] or 'upload' %}
+{% set locationHidden = data['redact-hide-location'] %}
+
 <div class="govuk-grid-row app-read-only">
     <div class="govuk-grid-column-full">
 
@@ -160,7 +169,7 @@
                 <dl class="govuk-summary-list">
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Method of providing site location</dt>
-                        <dd class="govuk-summary-list__value">File upload</dd>
+                        <dd class="govuk-summary-list__value">{% if siteType == 'upload' %}File upload{% else %}Enter the coordinates of the site manually{% endif %}</dd>
                     </div>
                 </dl>
             </div>
@@ -181,16 +190,72 @@
                             {{ publishedValue("redact-site-1-name", "Lyme Regis Harbour Outer Pontoon") }}
                         </dd>
                     </div>
+                    {% if siteType != 'upload' %}
+                    {# Describes how the site was defined rather than where it is, so it
+                       stays on the register even when the location is withheld. #}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Single or multiple sets of coordinates</dt>
+                        <dd class="govuk-summary-list__value">{% if siteType == 'circular' %}Manually enter one set of coordinates and a width to create a circular site{% else %}Enter multiple sets of coordinates to mark the boundary of the site{% endif %}</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Coordinate system</dt>
+                        <dd class="govuk-summary-list__value">WGS84 (World Geodetic System 1984)<br>Latitude and longitude</dd>
+                    </div>
+                    {% endif %}
+
+                    {#
+                      The location itself. Coordinates and the map are withheld together —
+                      redacting some boundary points would still publish the location, so
+                      this is one decision rather than one per row.
+                    #}
+                    {% if not data['redact-hide-location'] %}
+                    {% if siteType == 'circular' %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Coordinates at centre of site</dt>
+                        <dd class="govuk-summary-list__value">50.72041, -2.93576</dd>
+                    </div>
+                    {% elif siteType == 'polygon' %}
+                    <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+                        <dt class="govuk-summary-list__key">Start and end points</dt>
+                        <dd class="govuk-summary-list__value">50.72015, -2.93612</dd>
+                    </div>
+                    <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+                        <dt class="govuk-summary-list__key">Point 2</dt>
+                        <dd class="govuk-summary-list__value">50.72068, -2.93544</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Point 3</dt>
+                        <dd class="govuk-summary-list__value">50.71992, -2.93498</dd>
+                    </div>
+                    {% endif %}
+                    {% endif %}
+
+                    {% if siteType == 'circular' %}
+                    {# Size, not position — published either way. #}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Width of circular site</dt>
+                        <dd class="govuk-summary-list__value">30 metres</dd>
+                    </div>
+                    {% endif %}
+
+                    {% if data['redact-hide-location'] %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Site location</dt>
+                        <dd class="govuk-summary-list__value">
+                            <p class="govuk-body govuk-!-margin-bottom-1"><span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">Redacted</span></p>
+                            <p class="govuk-body app-redact__original">This location will not be published on the public register.</p>
+                        </dd>
+                    </div>
+                    {% endif %}
+
+                    {% if not data['redact-hide-location'] %}
                     <div class="govuk-summary-list__row govuk-summary-list__row--no-actions">
                         <dt class="govuk-summary-list__key govuk-summary-list__key--full-width map-label">Map view</dt>
                         <dd class="govuk-summary-list__value govuk-summary-list__value--full-width">
-                            {% if data['redact-hide-map'] %}
-                                <p class="govuk-body govuk-!-margin-bottom-0"><span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">Redacted</span></p>
-                            {% else %}
-                                <img src="/public/images/map-5-points.jpg" alt="Map showing site 1 location" />
-                            {% endif %}
+                            <img src="/public/images/{% if siteType == 'circular' %}pontoon-map-circle.jpg{% elif siteType == 'polygon' %}pontoon-map-3-points.jpg{% else %}map-5-points.jpg{% endif %}" alt="Map showing site 1 location" />
                         </dd>
                     </div>
+                    {% endif %}
                 </dl>
             </div>
         </div>
