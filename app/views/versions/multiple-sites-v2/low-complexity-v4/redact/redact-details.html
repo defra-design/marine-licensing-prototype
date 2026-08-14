@@ -214,6 +214,16 @@
 <div class="govuk-grid-row app-read-only">
     <div class="govuk-grid-column-full">
 
+        {# Above the heading, as the Design System expects. #}
+        <div class="govuk-error-summary" data-module="govuk-error-summary" id="redact-error-summary" tabindex="-1" hidden>
+            <div role="alert">
+                <h2 class="govuk-error-summary__title">There is a problem</h2>
+                <div class="govuk-error-summary__body">
+                    <ul class="govuk-list govuk-error-summary__list" id="redact-error-list"></ul>
+                </div>
+            </div>
+        </div>
+
         <span class="govuk-caption-l">MLA/2026/10003 – Redact application for the public register</span>
         {# Stays as submitted even if the application name is redacted below —
            the case officer needs a stable handle on the case. #}
@@ -228,15 +238,6 @@
             <p class="govuk-body govuk-!-margin-bottom-0">If you make more changes and save them, they will replace the version you have saved.</p>
         </div>
         {% endif %}
-
-        <div class="govuk-error-summary" data-module="govuk-error-summary" id="redact-error-summary" tabindex="-1" hidden>
-            <div role="alert">
-                <h2 class="govuk-error-summary__title">There is a problem</h2>
-                <div class="govuk-error-summary__body">
-                    <ul class="govuk-list govuk-error-summary__list" id="redact-error-list"></ul>
-                </div>
-            </div>
-        </div>
 
         <p class="govuk-body">Check each answer and remove anything that must not appear on the public register. Replace whatever you remove with <span class="app-redacted-marker">***REDACTED***</span>.</p>
 
