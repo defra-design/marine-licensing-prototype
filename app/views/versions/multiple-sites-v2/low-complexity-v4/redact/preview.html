@@ -252,7 +252,7 @@
         {# ============================== #}
         {# SITE 1 — CONSTRUCTION DRAWING 1 #}
         {# ============================== #}
-        <div class="govuk-summary-card">
+        <div class="govuk-summary-card" id="construction-drawing-1">
             <div class="govuk-summary-card__title-wrapper">
                 <h2 class="govuk-summary-card__title">Site 1 - Construction drawing 1</h2>
             </div>
@@ -261,10 +261,11 @@
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">File upload</dt>
                         <dd class="govuk-summary-list__value">
+                            {% set drawingFile = data['redact-drawing-filename'] or 'pontoon-construction-drawing.pdf' %}
                             {% if data['redact-hide-drawing'] %}
                                 <p class="govuk-body govuk-!-margin-bottom-0"><span class="app-redacted-marker">***REDACTED***</span></p>
                             {% else %}
-                                <a class="govuk-link govuk-link--no-visited-state" href="">pontoon-construction-drawing.pdf</a>
+                                <a class="govuk-link govuk-link--no-visited-state" href="">{{ drawingFile }}</a>
                             {% endif %}
                         </dd>
                     </div>
@@ -615,7 +616,7 @@
         {# ================================================= #}
         {# WATER FRAMEWORK DIRECTIVE ASSESSMENT               #}
         {# ================================================= #}
-        <div class="govuk-summary-card">
+        <div class="govuk-summary-card" id="wfd-assessment">
             <div class="govuk-summary-card__title-wrapper">
                 <h2 class="govuk-summary-card__title">Water Framework Directive assessment</h2>
             </div>
@@ -636,10 +637,11 @@
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Water Framework Directive assessment upload</dt>
                         <dd class="govuk-summary-list__value">
+                            {% set wfdFile = data['redact-wfd-filename'] or 'WFD.doc' %}
                             {% if data['redact-hide-wfd'] %}
                                 <p class="govuk-body govuk-!-margin-bottom-0"><span class="app-redacted-marker">***REDACTED***</span></p>
                             {% else %}
-                                <a class="govuk-link govuk-link--no-visited-state" href="">WFD.doc</a>
+                                <a class="govuk-link govuk-link--no-visited-state" href="">{{ wfdFile }}</a>
                             {% endif %}
                         </dd>
                     </div>
