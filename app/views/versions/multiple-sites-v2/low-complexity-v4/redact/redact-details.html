@@ -117,7 +117,9 @@
     <div class="app-redact__compare" data-redact-compare hidden>
         <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Applicant’s text</p>
         <p class="govuk-body app-redact__original" data-redact-original>{{ text }}</p>
-        <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Text to be published</p>
+        {# Hidden while editing — the form group carries its own label there, so the
+           red error bar spans the label as the Design System expects. #}
+        <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1" data-redact-published-label>Text to be published</p>
     </div>
 
     <p class="govuk-body app-redact__published" data-redact-published>{{ current }}</p>
@@ -125,8 +127,14 @@
     <div class="app-redact__editor" data-redact-editor hidden>
         <div class="govuk-form-group govuk-!-margin-bottom-3" data-redact-group>
 
+            <label class="govuk-label govuk-label--s" for="{{ id }}">
+                Text to be published<span class="govuk-visually-hidden"> for {{ label }}</span>
+            </label>
+
+            {# Same wording as the error summary entry, which the script copies from
+               here so the two cannot drift apart. #}
             <p class="govuk-error-message" data-redact-error hidden>
-                <span class="govuk-visually-hidden">Error:</span> Save or cancel this change
+                <span class="govuk-visually-hidden">Error:</span> Save or cancel your change to {{ label }}
             </p>
 
             <div class="app-redact__toolbar">
@@ -143,10 +151,10 @@
                so the form posts the full picture whichever button is used. #}
             {% if single %}
             <input class="govuk-input" type="text" id="{{ id }}" name="{{ id }}" value="{{ current }}"
-                data-redact-control aria-label="Text to be published for {{ label }}">
+                data-redact-control data-error-class="govuk-input--error">
             {% else %}
             <textarea class="govuk-textarea govuk-!-margin-bottom-0" id="{{ id }}" name="{{ id }}" rows="8"
-                data-redact-control aria-label="Text to be published for {{ label }}">{{ current }}</textarea>
+                data-redact-control data-error-class="govuk-textarea--error">{{ current }}</textarea>
             {% endif %}
 
         </div>
@@ -1062,6 +1070,8 @@
         var copyLabel = field.querySelector('[data-redact-copy-label]')
         var group = field.querySelector('[data-redact-group]')
         var errorMessage = field.querySelector('[data-redact-error]')
+        var publishedLabel = field.querySelector('[data-redact-published-label]')
+        var controlErrorClass = control.getAttribute('data-error-class')
 
         var original = field.querySelector('[data-redact-original]').textContent.trim()
         // The control is rendered with whatever was last saved, so it — not the
@@ -1080,7 +1090,9 @@
             openLabel.textContent = isRedacted ? 'Change redaction' : 'Redact'
 
             group.classList.remove('govuk-form-group--error')
+            control.classList.remove(controlErrorClass)
             errorMessage.hidden = true
+            publishedLabel.hidden = false
 
             // Keep the control in step even while collapsed, so the form always
             // posts the current state whichever button is used.
@@ -1092,6 +1104,8 @@
         function openEditor () {
             field.setAttribute('data-state', 'editing')
             compare.hidden = false
+            // The form group supplies the label while editing.
+            publishedLabel.hidden = true
             publishedEl.hidden = true
             editor.hidden = false
             links.hidden = true
@@ -1193,13 +1207,18 @@
             errorList.innerHTML = ''
 
             stillOpen.forEach(function (field) {
+                var control = field.querySelector('[data-redact-control]')
+                var message = field.querySelector('[data-redact-error]')
+
                 field.querySelector('[data-redact-group]').classList.add('govuk-form-group--error')
-                field.querySelector('[data-redact-error]').hidden = false
+                control.classList.add(control.getAttribute('data-error-class'))
+                message.hidden = false
 
                 var item = document.createElement('li')
                 var link = document.createElement('a')
-                link.href = '#' + field.querySelector('[data-redact-control]').id
-                link.textContent = 'Save or cancel your change to ' + field.getAttribute('data-redact-label')
+                link.href = '#' + control.id
+                // Taken from the inline message so the summary always matches it.
+                link.textContent = message.textContent.replace(/^\s*Error:\s*/, '').trim()
                 item.appendChild(link)
                 errorList.appendChild(item)
             })
