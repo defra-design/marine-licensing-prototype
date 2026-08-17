@@ -241,10 +241,14 @@
                     {% endif %}
 
                     {% if siteType == 'circular' %}
-                    {# Size, not position — published either way. #}
+                    {# Size rather than position, so it survives Hide location and gets
+                       its own Redact — the officer may judge the scale sensitive even
+                       when the location is published, or the reverse. #}
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Width of circular site</dt>
-                        <dd class="govuk-summary-list__value">30 metres</dd>
+                        <dd class="govuk-summary-list__value">
+                            {{ publishedValue("redact-site-1-width", "30 metres") }}
+                        </dd>
                     </div>
                     {% endif %}
 
