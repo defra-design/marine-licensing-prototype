@@ -1807,35 +1807,32 @@ Check your answers before sending your information
 				<h2 class="govuk-summary-card__title" id="sharing-your-project-information-publicly">
 					Sharing your application information publicly
 				</h2>
+				<ul class="govuk-summary-card__actions">
+					<li class="govuk-summary-card__action">
+						<a class="govuk-link govuk-link--no-visited-state" href="sharing-your-project-information-publicly?camefromcheckanswers=true">
+							Change<span class="govuk-visually-hidden"> sharing your application information publicly</span>
+						</a>
+					</li>
+				</ul>
 			</div>
 			<div class="govuk-summary-card__content">
 				<dl class="govuk-summary-list">
-					<div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+					<div class="govuk-summary-list__row{% if data['low-complexity-sharing-information'] != 'Yes' %} govuk-summary-list__row--no-border{% endif %}">
 						<dt class="govuk-summary-list__key">
-							Consent to publish your application information
+							Request that information is withheld
 						</dt>
 						<dd class="govuk-summary-list__value">
 							{{ data['low-complexity-sharing-information'] }}
 						</dd>
-						<dd class="govuk-summary-list__actions">
-							<a class="govuk-link govuk-link--no-visited-state" href="sharing-your-project-information-publicly?camefromcheckanswers=true">
-								Change<span class="govuk-visually-hidden"> consent to publish your application information</span>
-							</a>
-						</dd>
 					</div>
 
-					{% if data['low-complexity-sharing-information'] == 'No' %}
-					<div class="govuk-summary-list__row">
+					{% if data['low-complexity-sharing-information'] == 'Yes' %}
+					<div class="govuk-summary-list__row govuk-summary-list__row--no-border">
 						<dt class="govuk-summary-list__key">
-							Why you do not consent
+							Details of information to be withheld and why
 						</dt>
 						<dd class="govuk-summary-list__value">
 							{{ data['low-complexity-sharing-information-details'] }}
-						</dd>
-						<dd class="govuk-summary-list__actions">
-							<a class="govuk-link govuk-link--no-visited-state govuk-visually-hidden" href="sharing-your-project-information-publicly">
-								Change<span class="govuk-visually-hidden"> details of why you do not consent</span>
-							</a>
 						</dd>
 					</div>
 					{% endif %}

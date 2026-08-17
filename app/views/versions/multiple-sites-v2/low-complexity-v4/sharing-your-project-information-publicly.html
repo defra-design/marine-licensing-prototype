@@ -5,6 +5,15 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 
+{% block head %}
+  {{ super() }}
+  <style>
+    #low-complexity-sharing-information-details-hint .govuk-list {
+      color: inherit;
+    }
+  </style>
+{% endblock %}
+
 {% block beforeContent %}
     {% include "../includes/phase-banner.html" %}
     {% if data['organisation-name'] %}
@@ -15,20 +24,20 @@
 
 <!-- Setting the big main heading at the top of the page -->
 {% set pageHeadingTextHTML %}
-Sharing your project information publicly
+Sharing your application information on the public register
 {% endset %}
 
 <!-- Setting the smaller secondary heading lower down the page -->
 {% set questionHeadingTextHTML %}
-Do you consent to the MMO publishing your project information publicly?
+Do you want to request that information is withheld for either of these reasons?
 {% endset %}
 
 <!-- Set the text for the error type -->
 {% set errorTextHTML %}
 {% if data['errortypeone'] == "true" %}
-Select whether you consent to the MMO publishing your project information publicly
+Select if you want to request that information is withheld
 {% elif data['errortypetwo'] == "true" %}
-Enter details of why you do not consent to your project information being published
+Enter details of what you want withheld and why
 {% endif %}
 {% endset %}
 
@@ -41,18 +50,33 @@ Error:
 {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
 {% endblock %}
 
+{% set detailsHintHtml %}
+To help us make a decision, you must tell us:
+<ul class="govuk-list govuk-list--bullet govuk-hint">
+	<li>which information in your application you want withheld</li>
+	<li>whether this is because of national security or commercial confidentiality, and why</li>
+	<li>what the impact would be if this information were published</li>
+</ul>
+Enter a maximum of 1,000 characters
+{% endset %}
+
 {% set detailsHtml %}
 {{ govukTextarea({
     id: "low-complexity-sharing-information-details",
     name: "low-complexity-sharing-information-details",
     value: data['low-complexity-sharing-information-details'],
+    rows: 5,
     label: {
-        text: "Provide details of why you do not consent to your project information being published",
+        text: "Provide details of what you want withheld and why",
         classes: "govuk-label",
         isPageHeading: false
     },
-    errorMessage: null if data['errortypetwo'] != "true"
-    else { text: "Enter details of why you do not consent to your project information being published" }
+    hint: {
+        html: detailsHintHtml
+    },
+    errorMessage: {
+        text: "Enter details of what you want withheld and why"
+    } if data['errortypetwo'] == "true"
 }) }}
 {% endset -%}
 
@@ -82,21 +106,36 @@ Error:
 				{{ pageHeadingTextHTML }}
 			</h1>
 
-			<p>The Marine Management Organisation (MMO) publishes some of the information you provide on <a href="https://www.gov.uk/guidance/explore-marine-plans" rel="noreferrer noopener" target="_blank">Explore Marine Plans (opens in new tab)</a>. In the future, we may also publish this information on the MMO's public register.</p>
+			<p>We are required by law to publish information about your application on the MMO's public register.</p>
 
-			<p>Sharing this information helps you and other applicants:</p>
+			<p>The information may also appear on <a href="https://www.gov.uk/guidance/explore-marine-plans" rel="noreferrer noopener" target="_blank">Explore Marine Plans (opens in new tab)</a>.</p>
+
+			<p>Publishing this information helps you and other applicants:</p>
 
 			<ul class="govuk-list govuk-list--bullet">
 				<li>get a clear picture of activity in the marine environment</li>
 				<li>prepare applications more effectively by avoiding conflicts with existing marine activity</li>
-				<li>evaluate the environmental impact of projects in the context of other marine activity, leading to better applications and evidence for decision-makers</li>
+				<li>evaluate the environmental impact of proposed works in the context of other marine activity, leading to better applications and evidence for decision makers</li>
 			</ul>
 
 			<p>We will not publish contact details, such as your email address, phone number or postal address, or any financial information.</p>
 
+			<h2 class="govuk-heading-m">Requesting information is withheld</h2>
+
+			<p>You can only ask us to withhold specific information from the public register if publishing it would:</p>
+
+			<ul class="govuk-list govuk-list--bullet">
+				<li>compromise national security, or</li>
+				<li>breach a legally protected commercial or industrial confidentiality</li>
+			</ul>
+
+			<p>We will not withhold information for any other reasons.</p>
+
+			<p>You must justify your request. We will review it and decide whether the information can be withheld.</p>
+
 			{{ govukRadios({
 				name: "low-complexity-sharing-information",
-				id: "low-complexity-sharing-information",
+				idPrefix: "low-complexity-sharing-information",
 				fieldset: {
 					legend: {
 						html: questionHeadingTextHTML,
@@ -104,21 +143,22 @@ Error:
 						classes: "govuk-fieldset__legend--m"
 					}
 				},
-				errorMessage: null if data['errortypeone'] != "true"
-				else { html: "Select whether you consent to the MMO publishing your project information publicly" },
+				errorMessage: {
+					text: "Select if you want to request that information is withheld"
+				} if data['errortypeone'] == "true",
 				items: [
-					{
-						value: "Yes",
-						text: "Yes",
-						checked: data['low-complexity-sharing-information'] == "Yes"
-					},
 					{
 						value: "No",
 						text: "No",
+						checked: data['low-complexity-sharing-information'] == "No"
+					},
+					{
+						value: "Yes",
+						text: "Yes",
 						conditional: {
 							html: detailsHtml
 						},
-						checked: data['low-complexity-sharing-information'] == "No"
+						checked: data['low-complexity-sharing-information'] == "Yes" or data['errortypetwo'] == "true"
 					}
 				]
 			}) }}
@@ -144,7 +184,7 @@ Error:
 
 		<option value="errorthispage=true&errortypeone=true&errortypetwo=false&" {% if data['errortypeone'] == 'true' and data['errortypetwo'] != 'true' %}selected{% endif %}>Error 1 - No radio selected</option>
 
-		<option value="errorthispage=true&errortypeone=false&errortypetwo=true&" {% if data['errortypeone'] != 'true' and data['errortypetwo'] == 'true' %}selected{% endif %}>Error 2 - Input text left blank</option>
+		<option value="errorthispage=true&errortypeone=false&errortypetwo=true&low-complexity-sharing-information=Yes&" {% if data['errortypeone'] != 'true' and data['errortypetwo'] == 'true' %}selected{% endif %}>Error 2 - Textarea left blank</option>
 
 	</select>
 
@@ -152,4 +192,3 @@ Error:
 <!--  END OF ERROR LOGIC -->
 
 {% endblock %}
-
