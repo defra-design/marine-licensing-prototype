@@ -426,11 +426,16 @@
                     <div class="govuk-summary-list__row govuk-summary-list__row--no-border" data-location-hidden {{ '' if locationHidden else 'hidden' }}>
                         <dt class="govuk-summary-list__key">Site location</dt>
                         <dd class="govuk-summary-list__value">
-                            <p class="govuk-body govuk-!-margin-bottom-1"><span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">Redacted</span></p>
-                            <p class="govuk-body app-redact__original">This location will not be published on the public register.</p>
-                            <p class="app-redact__links govuk-!-margin-top-0">
-                                <a class="govuk-link govuk-link--no-visited-state" href="#" data-location-toggle>Show location<span class="govuk-visually-hidden"> for site 1</span></a>
-                            </p>
+                            {# Carries the grey rule that marks every other withheld answer.
+                               Only ever on screen when the location is withheld, so the
+                               state is fixed rather than toggled. #}
+                            <div class="app-redact" data-state="redacted">
+                                <p class="govuk-body govuk-!-margin-bottom-1"><span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">Redacted</span></p>
+                                <p class="govuk-body app-redact__original">This location will not be published on the public register.</p>
+                                <p class="app-redact__links govuk-!-margin-top-0">
+                                    <a class="govuk-link govuk-link--no-visited-state" href="#" data-location-toggle>Show location<span class="govuk-visually-hidden"> for site 1</span></a>
+                                </p>
+                            </div>
                         </dd>
                     </div>
                     {# LOCATION-HIDDEN-END #}

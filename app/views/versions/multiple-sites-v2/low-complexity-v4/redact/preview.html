@@ -259,7 +259,12 @@
                     <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
                         <dt class="govuk-summary-list__key">Site location</dt>
                         <dd class="govuk-summary-list__value">
-                            <p class="govuk-body govuk-!-margin-bottom-0"><span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">Redacted</span></p>
+                            {# Carries the grey rule that marks every other withheld answer.
+                               Only ever on screen when the location is withheld, so the
+                               state is fixed rather than toggled. #}
+                            <div class="app-redact" data-state="redacted">
+                                <p class="govuk-body govuk-!-margin-bottom-0"><span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">Redacted</span></p>
+                            </div>
                         </dd>
                     </div>
                     {% endif %}
