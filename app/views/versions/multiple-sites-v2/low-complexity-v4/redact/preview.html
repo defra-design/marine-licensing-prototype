@@ -93,7 +93,7 @@
         </h1>
 
         <div class="govuk-inset-text">
-            <p class="govuk-body govuk-!-margin-bottom-0">This is a preview of how the application will appear on the public register. It is not published yet.</p>
+            <p class="govuk-body govuk-!-margin-bottom-0">This is a preview of how the application will appear on the public register.</p>
         </div>
 
 
@@ -241,10 +241,14 @@
                     {% endif %}
 
                     {% if siteType == 'circular' %}
-                    {# Size, not position — published either way. #}
+                    {# Size rather than position, so it survives Hide location and gets
+                       its own Redact — the officer may judge the scale sensitive even
+                       when the location is published, or the reverse. #}
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Width of circular site</dt>
-                        <dd class="govuk-summary-list__value">30 metres</dd>
+                        <dd class="govuk-summary-list__value">
+                            {{ publishedValue("redact-site-1-width", "30 metres") }}
+                        </dd>
                     </div>
                     {% endif %}
 
@@ -255,7 +259,12 @@
                     <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
                         <dt class="govuk-summary-list__key">Site location</dt>
                         <dd class="govuk-summary-list__value">
-                            <p class="govuk-body govuk-!-margin-bottom-0"><span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">Redacted</span></p>
+                            {# Carries the grey rule that marks every other withheld answer.
+                               Only ever on screen when the location is withheld, so the
+                               state is fixed rather than toggled. #}
+                            <div class="app-redact" data-state="redacted">
+                                <p class="govuk-body govuk-!-margin-bottom-0"><span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">Redacted</span></p>
+                            </div>
                         </dd>
                     </div>
                     {% endif %}

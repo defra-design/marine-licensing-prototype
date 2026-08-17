@@ -117,7 +117,9 @@
     <div class="app-redact__compare" data-redact-compare hidden>
         <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Applicant’s text</p>
         <p class="govuk-body app-redact__original" data-redact-original>{{ text }}</p>
-        <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Text to be published</p>
+        {# Hidden while editing — the form group carries its own label there, so the
+           red error bar spans the label as the Design System expects. #}
+        <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1" data-redact-published-label>Text to be published</p>
     </div>
 
     <p class="govuk-body app-redact__published" data-redact-published>{{ current }}</p>
@@ -125,8 +127,14 @@
     <div class="app-redact__editor" data-redact-editor hidden>
         <div class="govuk-form-group govuk-!-margin-bottom-3" data-redact-group>
 
+            <label class="govuk-label govuk-label--s" for="{{ id }}">
+                Text to be published<span class="govuk-visually-hidden"> for {{ label }}</span>
+            </label>
+
+            {# Same wording as the error summary entry, which the script copies from
+               here so the two cannot drift apart. #}
             <p class="govuk-error-message" data-redact-error hidden>
-                <span class="govuk-visually-hidden">Error:</span> Save or cancel this change
+                <span class="govuk-visually-hidden">Error:</span> Save or cancel your change to {{ label }}
             </p>
 
             <div class="app-redact__toolbar">
@@ -143,10 +151,10 @@
                so the form posts the full picture whichever button is used. #}
             {% if single %}
             <input class="govuk-input" type="text" id="{{ id }}" name="{{ id }}" value="{{ current }}"
-                data-redact-control aria-label="Text to be published for {{ label }}">
+                data-redact-control data-error-class="govuk-input--error">
             {% else %}
             <textarea class="govuk-textarea govuk-!-margin-bottom-0" id="{{ id }}" name="{{ id }}" rows="8"
-                data-redact-control aria-label="Text to be published for {{ label }}">{{ current }}</textarea>
+                data-redact-control data-error-class="govuk-textarea--error">{{ current }}</textarea>
             {% endif %}
 
         </div>
@@ -243,11 +251,11 @@
             </div>
         </div>
 
-        <span class="govuk-caption-l">MLA/2026/10003 – Redact application for the public register</span>
-        {# Stays as submitted even if the application name is redacted below —
-           the case officer needs a stable handle on the case. #}
+        {# The name stays as submitted even if it is redacted below — the case
+           officer needs a stable handle on the case. #}
+        <span class="govuk-caption-l">MLA/2026/10003 – Installation of floating pontoon, Lyme Regis Harbour, Dorset</span>
         <h1 class="govuk-heading-l">
-            Installation of floating pontoon, Lyme Regis Harbour, Dorset
+            Redact application for the public register
         </h1>
 
         {% if data['redact-saved'] %}
@@ -258,7 +266,7 @@
         </div>
         {% endif %}
 
-        <p class="govuk-body">Check each answer and remove anything that must not appear on the public register. Replace whatever you remove with <span class="app-redacted-marker">***REDACTED***</span>.</p>
+        <p class="govuk-body">Check each answer and redact anything that must not appear on the public register. Replace whatever you redact with <span class="app-redacted-marker">***REDACTED***</span>.</p>
 
         <div class="govuk-inset-text">
             <h2 class="govuk-heading-s">The information the applicant wants withheld and why.</h2>
@@ -408,10 +416,14 @@
                     {# LOCATION-ROWS-END #}
 
                     {% if siteType == 'circular' %}
-                    {# Size, not position — published either way. #}
+                    {# Size rather than position, so it survives Hide location and gets
+                       its own Redact — the officer may judge the scale sensitive even
+                       when the location is published, or the reverse. #}
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Width of circular site</dt>
-                        <dd class="govuk-summary-list__value">30 metres</dd>
+                        <dd class="govuk-summary-list__value">
+                            {{ redactField("redact-site-1-width", "Width of circular site", "30 metres", true) }}
+                        </dd>
                     </div>
                     {% endif %}
 
@@ -422,11 +434,16 @@
                     <div class="govuk-summary-list__row govuk-summary-list__row--no-border" data-location-hidden {{ '' if locationHidden else 'hidden' }}>
                         <dt class="govuk-summary-list__key">Site location</dt>
                         <dd class="govuk-summary-list__value">
-                            <p class="govuk-body govuk-!-margin-bottom-1"><span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">Redacted</span></p>
-                            <p class="govuk-body app-redact__original">This location will not be published on the public register.</p>
-                            <p class="app-redact__links govuk-!-margin-top-0">
-                                <a class="govuk-link govuk-link--no-visited-state" href="#" data-location-toggle>Show location<span class="govuk-visually-hidden"> for site 1</span></a>
-                            </p>
+                            {# Carries the grey rule that marks every other withheld answer.
+                               Only ever on screen when the location is withheld, so the
+                               state is fixed rather than toggled. #}
+                            <div class="app-redact" data-state="redacted">
+                                <p class="govuk-body govuk-!-margin-bottom-1"><span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">Redacted</span></p>
+                                <p class="govuk-body app-redact__original">This location will not be published on the public register.</p>
+                                <p class="app-redact__links govuk-!-margin-top-0">
+                                    <a class="govuk-link govuk-link--no-visited-state" href="#" data-location-toggle>Show location<span class="govuk-visually-hidden"> for site 1</span></a>
+                                </p>
+                            </div>
                         </dd>
                     </div>
                     {# LOCATION-HIDDEN-END #}
@@ -1053,6 +1070,8 @@
         var copyLabel = field.querySelector('[data-redact-copy-label]')
         var group = field.querySelector('[data-redact-group]')
         var errorMessage = field.querySelector('[data-redact-error]')
+        var publishedLabel = field.querySelector('[data-redact-published-label]')
+        var controlErrorClass = control.getAttribute('data-error-class')
 
         var original = field.querySelector('[data-redact-original]').textContent.trim()
         // The control is rendered with whatever was last saved, so it — not the
@@ -1071,7 +1090,9 @@
             openLabel.textContent = isRedacted ? 'Change redaction' : 'Redact'
 
             group.classList.remove('govuk-form-group--error')
+            control.classList.remove(controlErrorClass)
             errorMessage.hidden = true
+            publishedLabel.hidden = false
 
             // Keep the control in step even while collapsed, so the form always
             // posts the current state whichever button is used.
@@ -1083,6 +1104,8 @@
         function openEditor () {
             field.setAttribute('data-state', 'editing')
             compare.hidden = false
+            // The form group supplies the label while editing.
+            publishedLabel.hidden = true
             publishedEl.hidden = true
             editor.hidden = false
             links.hidden = true
@@ -1184,13 +1207,18 @@
             errorList.innerHTML = ''
 
             stillOpen.forEach(function (field) {
+                var control = field.querySelector('[data-redact-control]')
+                var message = field.querySelector('[data-redact-error]')
+
                 field.querySelector('[data-redact-group]').classList.add('govuk-form-group--error')
-                field.querySelector('[data-redact-error]').hidden = false
+                control.classList.add(control.getAttribute('data-error-class'))
+                message.hidden = false
 
                 var item = document.createElement('li')
                 var link = document.createElement('a')
-                link.href = '#' + field.querySelector('[data-redact-control]').id
-                link.textContent = 'Save or cancel your change to ' + field.getAttribute('data-redact-label')
+                link.href = '#' + control.id
+                // Taken from the inline message so the summary always matches it.
+                link.textContent = message.textContent.replace(/^\s*Error:\s*/, '').trim()
                 item.appendChild(link)
                 errorList.appendChild(item)
             })
