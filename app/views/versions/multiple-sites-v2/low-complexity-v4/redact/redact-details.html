@@ -203,7 +203,7 @@
 
     <p class="app-redact__links">
         <a class="govuk-link govuk-link--no-visited-state" href="#" data-hideable-toggle data-hideable-noun="{{ noun }}">
-            <span data-hideable-label>{{ 'Show' if isHidden else 'Hide' }} {{ noun }}</span><span class="govuk-visually-hidden"> {{ context }}</span>
+            <span data-hideable-label>{{ 'Display' if isHidden else 'Withhold' }} {{ noun }}</span><span class="govuk-visually-hidden"> {{ context }}</span>
         </a>
         {% if replaceKey %}
         {# For a document the applicant has resent with their own redactions applied.
@@ -532,7 +532,7 @@
                         <dt class="govuk-summary-list__key">File upload</dt>
                         <dd class="govuk-summary-list__value">
                             {% set drawingFile = data['redact-drawing-filename'] or 'pontoon-construction-drawing.pdf' %}
-                            {% call hideable("redact-hide-drawing", "document", drawingFile + " from the public register", "drawing") %}
+                            {% call hideable("redact-hide-drawing", "document", drawingFile, "drawing") %}
                                 <a class="govuk-link govuk-link--no-visited-state" href="">{{ drawingFile }}</a>
                             {% endcall %}
                         </dd>
@@ -906,7 +906,7 @@
                         <dt class="govuk-summary-list__key">Water Framework Directive assessment upload</dt>
                         <dd class="govuk-summary-list__value">
                             {% set wfdFile = data['redact-wfd-filename'] or 'WFD.doc' %}
-                            {% call hideable("redact-hide-wfd", "document", wfdFile + " from the public register", "wfd") %}
+                            {% call hideable("redact-hide-wfd", "document", wfdFile, "wfd") %}
                                 <a class="govuk-link govuk-link--no-visited-state" href="">{{ wfdFile }}</a>
                             {% endcall %}
                         </dd>
@@ -1169,7 +1169,7 @@
             item.setAttribute('data-state', nowHidden ? 'redacted' : 'untouched')
             shown.hidden = nowHidden
             hiddenMessage.hidden = !nowHidden
-            toggleLabel.textContent = (nowHidden ? 'Show ' : 'Hide ') + noun
+            toggleLabel.textContent = (nowHidden ? 'Display ' : 'Withhold ') + noun
             flag.value = nowHidden ? 'yes' : ''
         })
     })
