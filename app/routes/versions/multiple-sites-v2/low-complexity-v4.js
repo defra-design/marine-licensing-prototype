@@ -794,12 +794,14 @@ module.exports = function (router) {
     drawing: {
       label: 'Site 1 - Construction drawing 1',
       anchor: 'construction-drawing-1',
-      filename: 'site1-drawing1-redacted.pdf'
+      filename: 'site1-drawing1-redacted.pdf',
+      hint: 'The file must be a PDF or image (.bmp, .gif, .jpg, .jpeg, .png, .tif) and no larger than 10MB.'
     },
     wfd: {
       label: 'Water Framework Directive assessment',
       anchor: 'wfd-assessment',
-      filename: 'wfd-assessment-redacted.doc'
+      filename: 'wfd-assessment-redacted.doc',
+      hint: 'You can only upload a file that is a .docx or .odt.'
     }
   };
 
@@ -845,6 +847,7 @@ module.exports = function (router) {
       if (document) {
         req.session.data['redact-replacing-label'] = document.label;
         req.session.data['redact-replacing-anchor'] = document.anchor;
+        req.session.data['redact-replacing-hint'] = document.hint;
       }
 
       return redirectOnceSaved(req, res, 'replace-document');
