@@ -24,6 +24,7 @@
 {# Named by the router from whichever Replace link was used. Falls back to the
    generic wording if this page is reached directly. #}
 {% set replacingLabel = data['redact-replacing-label'] %}
+{% set replacingHint = data['redact-replacing-hint'] %}
 
 {% block pageTitle %}
 Upload a replacement {% if replacingLabel %}{{ replacingLabel }} {% endif %}document - Get permission for marine work
@@ -44,8 +45,17 @@ Upload a replacement {% if replacingLabel %}{{ replacingLabel }} {% endif %}docu
                     </label>
                 </h1>
 
+                {# Which file types are allowed depends on the document, so the hint
+                   comes from the same map in the router as the heading. #}
+                {% if replacingHint %}
+                <div id="replacement-file-upload-hint" class="govuk-hint">
+                    {{ replacingHint }}
+                </div>
+                {% endif %}
+
                 <div class="govuk-drop-zone" data-module="govuk-file-upload">
-                    <input class="govuk-file-upload" id="replacement-file-upload" name="replacementFileUpload" type="file">
+                    <input class="govuk-file-upload" id="replacement-file-upload" name="replacementFileUpload" type="file"
+                        {% if replacingHint %}aria-describedby="replacement-file-upload-hint"{% endif %}>
                 </div>
             </div>
 
