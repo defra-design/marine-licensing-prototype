@@ -71,6 +71,19 @@
 {%- endfor -%}
 {% endmacro %}
 
+{#
+  A document as the register will show it: the applicant's file, the
+  replacement standing in for it, or — if it was withheld — nothing but the
+  marker. The replacement is not flagged as such; that is the officer's note.
+#}
+{% macro publishedDocument(id, fileKey, originalFile) %}
+{%- if data[id] -%}
+<p class="govuk-body govuk-!-margin-bottom-0"><span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">Redacted</span></p>
+{%- else -%}
+<a class="govuk-link govuk-link--no-visited-state" href="">{{ data[fileKey] or originalFile }}</a>
+{%- endif -%}
+{% endmacro %}
+
 {% block content %}
 
 {#
@@ -348,12 +361,7 @@
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">File upload</dt>
                         <dd class="govuk-summary-list__value">
-                            {% set drawingFile = data['redact-drawing-filename'] or 'pontoon-construction-drawing.pdf' %}
-                            {% if data['redact-hide-drawing'] %}
-                                <p class="govuk-body govuk-!-margin-bottom-0"><span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">Redacted</span></p>
-                            {% else %}
-                                <a class="govuk-link govuk-link--no-visited-state" href="">{{ drawingFile }}</a>
-                            {% endif %}
+                            {{ publishedDocument("redact-hide-drawing", "redact-drawing-filename", "pontoon-construction-drawing.pdf") }}
                         </dd>
                     </div>
                 </dl>
@@ -724,12 +732,7 @@
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Water Framework Directive assessment upload</dt>
                         <dd class="govuk-summary-list__value">
-                            {% set wfdFile = data['redact-wfd-filename'] or 'WFD.doc' %}
-                            {% if data['redact-hide-wfd'] %}
-                                <p class="govuk-body govuk-!-margin-bottom-0"><span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">Redacted</span></p>
-                            {% else %}
-                                <a class="govuk-link govuk-link--no-visited-state" href="">{{ wfdFile }}</a>
-                            {% endif %}
+                            {{ publishedDocument("redact-hide-wfd", "redact-wfd-filename", "WFD.doc") }}
                         </dd>
                     </div>
                 </dl>

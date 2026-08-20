@@ -35,7 +35,7 @@
     .app-redact__published { margin: 0; }
 
     .app-redact__links { margin: 15px 0 0; }
-    .app-redact__links a + a { margin-left: 15px; }
+    .app-redact__links a:not([hidden]) + a:not([hidden]) { margin-left: 15px; }
 
     .app-redacted-marker {
       background-color: #0b0c0c;
@@ -184,34 +184,46 @@
 {% endmacro %}
 
 {#
-  Something that is withheld whole rather than edited — a map or a document.
-  Wrap the thing itself in {% call %}; the script toggles between it and the
-  "hidden" message.
+  A document. It can be withheld outright, or swapped for a copy the applicant
+  has resent with their own redactions applied. Both are redactions, so both
+  get the grey rule and the ***REDACTED*** marker, and both are undone by the
+  same "Remove redaction" link — back to the file the applicant first sent.
 #}
-{% macro hideable(id, noun, context, replaceKey=false) %}
+{% macro hideable(id, noun, context, replaceKey, fileKey, originalFile) %}
 {% set isHidden = data[id] %}
-<div class="app-redact" data-hideable data-state="{{ 'redacted' if isHidden else 'untouched' }}">
+{% set currentFile = data[fileKey] or originalFile %}
+{% set isReplaced = currentFile != originalFile %}
+{% set isRedacted = isHidden or isReplaced %}
+<div class="app-redact" data-hideable data-state="{{ 'redacted' if isRedacted else 'untouched' }}" data-original-file="{{ originalFile }}">
 
+    {# Both pieces of state travel with the form, so a save keeps the row
+       exactly as the case officer left it. #}
     <input type="hidden" name="{{ id }}" value="{{ 'yes' if isHidden else '' }}" data-hideable-flag>
+    <input type="hidden" name="{{ fileKey }}" value="{{ currentFile }}" data-hideable-file>
 
-    <div data-hideable-shown {{ 'hidden' if isHidden }}>{{ caller() }}</div>
+    <p class="govuk-body govuk-!-margin-bottom-1" data-hideable-marker {{ '' if isRedacted else 'hidden' }}><span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">Redacted</span></p>
 
-    <div data-hideable-hidden {{ '' if isHidden else 'hidden' }}>
-        <p class="govuk-body govuk-!-margin-bottom-1"><span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">Redacted</span></p>
-        <p class="govuk-body app-redact__original">This {{ noun }} will not be published on the public register.</p>
-    </div>
+    <p class="govuk-body app-redact__original" data-hideable-note-withheld {{ '' if isHidden else 'hidden' }}>The {{ noun }} will not be published on the public register.</p>
+
+    <p class="govuk-body app-redact__original" data-hideable-note-replaced {{ '' if isReplaced else 'hidden' }}>The uploaded replacement {{ noun }} will be displayed instead of the original.</p>
+
+    {# The file itself: the applicant's, or the replacement standing in for it. #}
+    <p class="govuk-body govuk-!-margin-bottom-0" data-hideable-shown {{ 'hidden' if isHidden }}>
+        <a class="govuk-link govuk-link--no-visited-state" href="" data-hideable-filename>{{ currentFile }}</a>
+    </p>
 
     <p class="app-redact__links">
-        <a class="govuk-link govuk-link--no-visited-state" href="#" data-hideable-toggle data-hideable-noun="{{ noun }}">
-            <span data-hideable-label>{{ 'Display' if isHidden else 'Withhold' }} {{ noun }}</span><span class="govuk-visually-hidden"> {{ context }}</span>
+        <a class="govuk-link govuk-link--no-visited-state" href="#" data-hideable-toggle {{ 'hidden' if isRedacted }}>
+            Withhold {{ noun }}<span class="govuk-visually-hidden"> for {{ context }}</span>
         </a>
-        {% if replaceKey %}
-        {# For a document the applicant has resent with their own redactions applied.
-           Saves the page on the way out so nothing staged here is lost. #}
-        <a class="govuk-link govuk-link--no-visited-state" href="#" data-hideable-replace data-replace-key="{{ replaceKey }}">
-            Replace {{ noun }}<span class="govuk-visually-hidden"> {{ context }}</span>
+        {# For a document the applicant has resent with their own redactions
+           applied. Saves the page on the way out so nothing staged here is lost. #}
+        <a class="govuk-link govuk-link--no-visited-state" href="#" data-hideable-replace data-replace-key="{{ replaceKey }}" {{ 'hidden' if isRedacted }}>
+            Replace {{ noun }}<span class="govuk-visually-hidden"> for {{ context }}</span>
         </a>
-        {% endif %}
+        <a class="govuk-link govuk-link--no-visited-state" href="#" data-hideable-remove {{ '' if isRedacted else 'hidden' }}>
+            Remove redaction<span class="govuk-visually-hidden"> from {{ context }}</span>
+        </a>
     </p>
 
 </div>
@@ -531,10 +543,7 @@
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">File upload</dt>
                         <dd class="govuk-summary-list__value">
-                            {% set drawingFile = data['redact-drawing-filename'] or 'pontoon-construction-drawing.pdf' %}
-                            {% call hideable("redact-hide-drawing", "document", drawingFile, "drawing") %}
-                                <a class="govuk-link govuk-link--no-visited-state" href="">{{ drawingFile }}</a>
-                            {% endcall %}
+                            {{ hideable("redact-hide-drawing", "document", "Site 1 - Construction drawing 1", "drawing", "redact-drawing-filename", "pontoon-construction-drawing.pdf") }}
                         </dd>
                     </div>
                 </dl>
@@ -905,10 +914,7 @@
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Water Framework Directive assessment upload</dt>
                         <dd class="govuk-summary-list__value">
-                            {% set wfdFile = data['redact-wfd-filename'] or 'WFD.doc' %}
-                            {% call hideable("redact-hide-wfd", "document", wfdFile, "wfd") %}
-                                <a class="govuk-link govuk-link--no-visited-state" href="">{{ wfdFile }}</a>
-                            {% endcall %}
+                            {{ hideable("redact-hide-wfd", "document", "Water Framework Directive assessment", "wfd", "redact-wfd-filename", "WFD.doc") }}
                         </dd>
                     </div>
                 </dl>
@@ -1141,36 +1147,53 @@
         render()
     })
 
-    // --- maps and documents, which are withheld whole rather than edited ---
+    // --- documents, which are withheld or replaced whole rather than edited ---
     hideables.forEach(function (item) {
+        var originalFile = item.getAttribute('data-original-file')
+        var marker = item.querySelector('[data-hideable-marker]')
+        var withheldNote = item.querySelector('[data-hideable-note-withheld]')
+        var replacedNote = item.querySelector('[data-hideable-note-replaced]')
         var shown = item.querySelector('[data-hideable-shown]')
-        var hiddenMessage = item.querySelector('[data-hideable-hidden]')
-        var toggle = item.querySelector('[data-hideable-toggle]')
-        var toggleLabel = item.querySelector('[data-hideable-label]')
-        var noun = toggle.getAttribute('data-hideable-noun')
+        var filename = item.querySelector('[data-hideable-filename]')
         var flag = item.querySelector('[data-hideable-flag]')
+        var file = item.querySelector('[data-hideable-file]')
+        var toggle = item.querySelector('[data-hideable-toggle]')
         var replace = item.querySelector('[data-hideable-replace]')
+        var remove = item.querySelector('[data-hideable-remove]')
 
-        // Save on the way out, so nothing staged on this page is lost, and say
-        // which document is being replaced so the upload page can name it.
-        if (replace) {
-            replace.addEventListener('click', function (event) {
-                event.preventDefault()
-                replacingField.value = replace.getAttribute('data-replace-key')
-                submitTo('replace-document')
-            })
+        // One of 'untouched', 'withheld' or 'replaced'.
+        function render (state) {
+            item.setAttribute('data-state', state === 'untouched' ? 'untouched' : 'redacted')
+            marker.hidden = state === 'untouched'
+            withheldNote.hidden = state !== 'withheld'
+            replacedNote.hidden = state !== 'replaced'
+            shown.hidden = state === 'withheld'
+            toggle.hidden = state !== 'untouched'
+            replace.hidden = state !== 'untouched'
+            remove.hidden = state === 'untouched'
         }
 
         toggle.addEventListener('click', function (event) {
             event.preventDefault()
+            flag.value = 'yes'
+            render('withheld')
+        })
 
-            var nowHidden = item.getAttribute('data-state') !== 'redacted'
+        // Save on the way out, so nothing staged on this page is lost, and say
+        // which document is being replaced so the upload page can name it.
+        replace.addEventListener('click', function (event) {
+            event.preventDefault()
+            replacingField.value = replace.getAttribute('data-replace-key')
+            submitTo('replace-document')
+        })
 
-            item.setAttribute('data-state', nowHidden ? 'redacted' : 'untouched')
-            shown.hidden = nowHidden
-            hiddenMessage.hidden = !nowHidden
-            toggleLabel.textContent = (nowHidden ? 'Display ' : 'Withhold ') + noun
-            flag.value = nowHidden ? 'yes' : ''
+        // Both redactions are undone the same way: back to the applicant's file.
+        remove.addEventListener('click', function (event) {
+            event.preventDefault()
+            flag.value = ''
+            file.value = originalFile
+            filename.textContent = originalFile
+            render('untouched')
         })
     })
 
