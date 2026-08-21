@@ -32,6 +32,15 @@
       white-space: nowrap;
     }
 
+    .govuk-heading-l .app-redacted-marker {
+      font-size: 0.6em;
+      white-space: normal;
+      /* Baseline-aligned, the smaller chip sits low against the cap height of
+         the heading. Nudged with position so it does not alter line spacing. */
+      position: relative;
+      top: -5px;
+    }
+
 
   </style>
 {% endblock %}
@@ -55,7 +64,7 @@
 {% endblock %}
 
 {% block pageTitle %}
-    Preview - Installation of floating pontoon, Teignmouth Harbour, Devon - Get permission for marine work
+    Preview - {{ data['redact-application-name'] if data['redact-application-name'] is defined else 'Installation of floating pontoon, Teignmouth Harbour, Devon' }} - Get permission for marine work
 {% endblock %}
 
 {#
@@ -100,9 +109,9 @@
 
         {# Above the heading, as the Design System expects. #}
 
-        <span class="govuk-caption-l">MLA/2026/10014 – Preview of the public register entry</span>
+        <span class="govuk-caption-l">MLA/2026/10014</span>
         <h1 class="govuk-heading-l">
-            Installation of floating pontoon, Teignmouth Harbour, Devon
+            {{ publishedValue("redact-application-name", "Installation of floating pontoon, Teignmouth Harbour, Devon") }}
         </h1>
 
         <div class="govuk-inset-text">
