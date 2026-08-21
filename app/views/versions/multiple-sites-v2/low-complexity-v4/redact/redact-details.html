@@ -203,9 +203,9 @@
 
     <p class="govuk-body govuk-!-margin-bottom-1" data-hideable-marker {{ '' if isRedacted else 'hidden' }}><span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">Redacted</span></p>
 
-    <p class="govuk-body app-redact__original" data-hideable-note-withheld {{ '' if isHidden else 'hidden' }}>The {{ noun }} will not be published on the public register.</p>
+    <p class="govuk-body app-redact__original" data-hideable-note-withheld {{ '' if isHidden else 'hidden' }}>This {{ noun }} will not be published on the public register.</p>
 
-    <p class="govuk-body app-redact__original" data-hideable-note-replaced {{ '' if isReplaced else 'hidden' }}>The uploaded replacement {{ noun }} will be displayed instead of the original.</p>
+    <p class="govuk-body app-redact__original" data-hideable-note-replaced {{ '' if isReplaced else 'hidden' }}>This {{ noun }} will replace the original on the public register.</p>
 
     {# The file itself: the applicant's, or the replacement standing in for it. #}
     <p class="govuk-body govuk-!-margin-bottom-0" data-hideable-shown {{ 'hidden' if isHidden }}>
