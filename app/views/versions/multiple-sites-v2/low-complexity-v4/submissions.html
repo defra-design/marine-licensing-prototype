@@ -198,6 +198,7 @@ Submissions
 		  ours to choose rather than alphabetical. Ranked by what the applicant can
 		  act on: things needing their attention first, then live, then closed.
 
+		  00 Action required     - the case officer needs something read or answered
 		  01 Draft               - not sent yet, needs finishing
 		  02 Submitted           - with us
 		  03 Scheduled           - exemption upcoming, not yet in force
@@ -225,6 +226,46 @@ Submissions
 				</tr>
 			  </thead>
 			<tbody class="govuk-table__body">
+				{#
+				  Withhold information journey. Status flips to Submitted once the applicant
+				  has read the notification (see withhold-information/notification-router),
+				  and to Withdrawn if they withdraw instead (withdrawn-dawlish).
+				#}
+				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="Dawlish sea defence extension" data-type="Marine licence application" data-reference="MLA-10020" data-status="{% if data['withdrawn-dawlish'] == 'true' %}Withdrawn{% elif data['withhold-information-read'] %}Submitted{% else %}Action required{% endif %}" id="project-dawlish">
+					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Dawlish sea defence extension</th>
+					<td class="govuk-table__cell">Marine licence application</td>
+					<td class="govuk-table__cell" data-sort-value="MLA-10020">MLA/2026/10020</td>
+					<td class="govuk-table__cell" data-sort-value="{% if data['withdrawn-dawlish'] == 'true' %}08{% elif data['withhold-information-read'] %}02{% else %}00{% endif %}">
+						{% if data['withdrawn-dawlish'] == 'true' %}
+						{{ govukTag({
+							text: "Withdrawn",
+							classes: "govuk-tag--grey"
+						}) }}
+						{% elif data['withhold-information-read'] %}
+						{{ govukTag({
+							text: "Submitted",
+							classes: "govuk-tag--green"
+						}) }}
+						{% else %}
+						{{ govukTag({
+							text: "Action required",
+							classes: "govuk-tag--red"
+						}) }}
+						{% endif %}
+					</td>
+					<td class="govuk-table__cell" data-sort-value="{{ -12 | daysFromTodaySort }}">{{ -12 | daysFromToday }}</td>
+					{% if data['user_type'] === 'organisation' %}
+					<td class="govuk-table__cell">Sam Evans</td>
+					{% endif %}
+					<td class="govuk-table__cell">
+						{% if data['withdrawn-dawlish'] == 'true' %}
+						<a href="view-details/dawlish-sea-defence-extension" class="govuk-link--no-visited-state">View details</a>
+						{% else %}
+						<a href="view-details/dawlish-sea-defence-extension" class="govuk-link--no-visited-state govuk-!-margin-right-4">View details</a> <a href="withdraw?project=dawlish&name=Dawlish sea defence extension&type=Marine licence application&return=submissions" class="govuk-link--no-visited-state">Withdraw</a>
+						{% endif %}
+					</td>
+				</tr>
+
 				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="Installation of floating pontoon, Lyme Regis Harbour, Dorset" data-type="Marine licence application" data-reference="MLA-10003" data-status="Transferred">
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Installation of floating pontoon, Lyme Regis Harbour, Dorset</th>
 					<td class="govuk-table__cell">Marine licence application</td>
