@@ -1424,4 +1424,35 @@ module.exports = function (router) {
     res.redirect('marine-licence-start-page');
   });
 
+
+  ///////////////////////////////////////////
+  // Withhold information notification journey
+  ///////////////////////////////////////////
+
+  // Arriving from the Notify email resets the demo so the task starts unread.
+  router.get(`/versions/${version}/${section}/emails/withhold-information`, function (req, res) {
+    delete req.session.data['withhold-information-read'];
+    delete req.session.data['withhold-information-reason'];
+    delete req.session.data['withdrawn-dawlish'];
+    res.render(`versions/${version}/${section}/emails/withhold-information`);
+  });
+
+  // ?reason=national | commercial | both - which reasons the case officer picked
+  // in MAS. Query is not available to auto-rendered views, so pass it as a render
+  // local as well as storing it for when the applicant comes back to the page.
+  router.get(`/versions/${version}/${section}/withhold-information/notification`, function (req, res) {
+    if (req.query.reason) {
+      req.session.data['withhold-information-reason'] = req.query.reason;
+    }
+
+    res.render(`versions/${version}/${section}/withhold-information/notification`, {
+      reason: req.session.data['withhold-information-reason'] || 'both'
+    });
+  });
+
+  router.post(`/versions/${version}/${section}/withhold-information/notification-router`, function (req, res) {
+    req.session.data['withhold-information-read'] = true;
+    res.redirect('../view-details/dawlish-sea-defence-extension');
+  });
+
 }

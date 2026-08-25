@@ -1,0 +1,75 @@
+{% extends "../../layouts/low-complexity-v4.html" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{#
+  Which reasons the case officer selected in MAS. Passed in as a render local by
+  the route (?reason=national | commercial | both) with the session value as a
+  fallback, because query params are not visible to auto-rendered views.
+#}
+{% set withholdReason = reason or data['withhold-information-reason'] or 'both' %}
+
+{% block header %}
+{% from "versions/multiple-sites-v2/low-complexity-v4/includes/service-navigation.html" import lcmlV4Header %}
+{{ lcmlV4Header() }}
+{% endblock %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% if data['organisation-name'] %}
+        {% include "../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link govuk-link--no-visited-state" href="../view-details/dawlish-sea-defence-extension">Back</a>
+{% endblock %}
+
+{% block pageTitle %}
+    Update on the information you asked us to withhold - Get permission for marine work
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-two-thirds">
+
+		<span class="govuk-caption-l">Dawlish sea defence extension</span>
+
+		<h1 class="govuk-heading-l">Update on the information you asked us to withhold</h1>
+
+		<p class="govuk-body">Following consideration of your request, we've reviewed the information you asked us to withhold.</p>
+
+		{% if withholdReason != 'commercial' %}
+		<h2 class="govuk-heading-m">National security</h2>
+
+		<p class="govuk-body">We've decided not to withhold the information you asked us to.</p>
+
+		<p class="govuk-body">The location details you asked us to withhold are already publicly available on navigational charts, so publishing them does not create a risk to national security.</p>
+		{% endif %}
+
+		{% if withholdReason != 'national' %}
+		<h2 class="govuk-heading-m">Commercial or industrial confidentiality</h2>
+
+		<p class="govuk-body">We've agreed to withhold some of the information you asked us to.</p>
+
+		<p class="govuk-body">We agree the unit rates table in section 4 of your method statement is commercially confidential and will withhold this.</p>
+
+		<p class="govuk-body">The vessel movement schedule in appendix B does not meet the test for commercial confidentiality, as this information is standard practice information already available to other operators in the area, so this will be published.</p>
+		{% endif %}
+
+		<h2 class="govuk-heading-m">What you can do</h2>
+
+		<p class="govuk-body">You can withdraw your application if you do not agree with our decision.</p>
+
+		<p class="govuk-body">We'd encourage you to do this as soon as possible, as we'll continue working on your application while you decide.</p>
+
+		<p class="govuk-body">If you do not want this information to be published, you can <a class="govuk-link govuk-link--no-visited-state" href="../submissions">withdraw your application from your Submissions page</a>.</p>
+
+		<form action="notification-router" method="post" novalidate>
+			{{ govukButton({
+				text: "Mark as read and continue"
+			}) }}
+		</form>
+
+	</div>
+</div>
+
+{% endblock %}
