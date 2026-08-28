@@ -10,14 +10,22 @@
 
 {% set organisationName = data['organisation-name'] or 'Southwest Marine Works Ltd' %}
 
+{# No navigation links and no back link: this page is a printable artefact
+   opened in its own tab, so there is nowhere on it to navigate to. #}
 {% block header %}
-{% from "versions/multiple-sites-v2/low-complexity-v4/includes/service-navigation.html" import lcmlV4Header %}
-{{ lcmlV4Header() }}
+{% from "govuk/components/header/macro.njk" import govukHeader %}
+{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
+{{ govukHeader({
+	homepageUrl: "/",
+	classes: "govuk-header--full-width-border"
+}) }}
+{{ govukServiceNavigation({
+	serviceName: "Get permission for marine work"
+}) }}
 {% endblock %}
 
 {% block beforeContent %}
 	{% include "../../includes/phase-banner.html" %}
-	<a class="govuk-back-link govuk-link--no-visited-state" href="display">Back</a>
 {% endblock %}
 
 {% block pageTitle %}
@@ -56,13 +64,25 @@
 		.app-notice__url {
 			overflow-wrap: anywhere;
 		}
+		/* The date is filled in by hand once the notice is up, so the format
+		   sits next to a rule long enough to write on. */
+		.app-notice__date {
+			display: flex;
+			align-items: baseline;
+			gap: 15px;
+			max-width: 26em;
+		}
+		.app-notice__date-rule {
+			flex: 1 1 auto;
+			border-bottom: 2px solid #0b0c0c;
+			height: 2.2em;
+		}
 
 		@media print {
 			.govuk-header,
 			.govuk-service-navigation,
 			.govuk-footer,
 			.govuk-phase-banner,
-			.govuk-back-link,
 			.print-link {
 				display: none;
 			}
@@ -144,7 +164,10 @@
 
 			<p class="govuk-body">To be completed by the applicant before the notice is displayed.</p>
 
-			<p class="govuk-body-l govuk-!-font-weight-bold govuk-!-margin-bottom-0">DD&nbsp; /&nbsp; MM&nbsp; /&nbsp; YYYY</p>
+			<div class="app-notice__date">
+				<span class="govuk-body-l govuk-!-font-weight-bold govuk-!-margin-bottom-0">DD&nbsp; /&nbsp; MM&nbsp; /&nbsp; YYYY</span>
+				<span class="app-notice__date-rule"></span>
+			</div>
 
 		</div>
 
