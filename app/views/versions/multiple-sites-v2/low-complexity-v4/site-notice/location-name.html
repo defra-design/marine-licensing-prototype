@@ -1,0 +1,45 @@
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% set siteNoticeHeading = "Location name" %}
+{% set siteNoticeError = "Enter the location name" %}
+
+{% set siteNoticeForm %}
+<form action="location-name-router?location={{ locationNumber }}" method="post" novalidate>
+
+	{% if showError %}
+		{{ govukErrorSummary({
+			titleText: "There is a problem",
+			errorList: [
+				{
+					text: siteNoticeError,
+					href: "#location-name"
+				}
+			]
+		}) }}
+	{% endif %}
+
+	{{ govukInput({
+		id: "location-name",
+		name: "location-name",
+		value: location.name,
+		classes: "govuk-!-width-two-thirds",
+		label: {
+			text: siteNoticeHeading,
+			classes: "govuk-label--l",
+			isPageHeading: true
+		},
+		errorMessage: {
+			text: siteNoticeError
+		} if showError
+	}) }}
+
+	{{ govukButton({
+		text: "Save and continue"
+	}) }}
+
+</form>
+{% endset %}
+
+{% include "./_location-page.html" %}

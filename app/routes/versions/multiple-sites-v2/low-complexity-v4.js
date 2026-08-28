@@ -39,6 +39,15 @@ module.exports = function (router) {
     next();
   });
 
+  // Clears the site notice task back to its starting state. Both Notify email
+  // entry points call this so each demo starts from a clean task list.
+  function resetSiteNotice(req) {
+    delete req.session.data['site-notice-required'];
+    delete req.session.data['site-notice-locations'];
+    delete req.session.data['site-notice-sent'];
+    delete req.session.data['site-notice-error'];
+  }
+
   ///////////////////////////////////////////
   // Project name start page
   ///////////////////////////////////////////
@@ -1430,10 +1439,13 @@ module.exports = function (router) {
   ///////////////////////////////////////////
 
   // Arriving from the Notify email resets the demo so the task starts unread.
+  // The site notice task is switched off so this journey still has a single
+  // outstanding task and the application returns to Submitted once it is read.
   router.get(`/versions/${version}/${section}/emails/withhold-information`, function (req, res) {
     delete req.session.data['withhold-information-read'];
     delete req.session.data['withhold-information-reason'];
     delete req.session.data['withdrawn-dawlish'];
+    resetSiteNotice(req);
     res.render(`versions/${version}/${section}/emails/withhold-information`);
   });
 
@@ -1454,5 +1466,248 @@ module.exports = function (router) {
     req.session.data['withhold-information-read'] = true;
     res.redirect('../view-details/dawlish-sea-defence-extension');
   });
+
+  ///////////////////////////////////////////
+  // Site notice journey
+  ///////////////////////////////////////////
+
+  {
+    // Evidence is held as an array of location objects on the session so the
+    // "add another location" loop can grow and shrink. One empty location is
+    // seeded so the applicant always has a first card to fill in.
+    //
+    //   { name, day, month, year, closeup, position }
+    //
+    // Every question page saves and returns to the task page, anchored to the
+    // card it belongs to, the same way Review site details works.
+    const SITE_NOTICE_STEPS = ['name', 'day', 'month', 'year', 'closeup', 'position'];
+
+    const SITE_NOTICE_MONTHS = ['January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December'];
+
+    function siteNoticeLocations(req) {
+      let locations = req.session.data['site-notice-locations'];
+      if (!Array.isArray(locations) || locations.length === 0) {
+        locations = [{}];
+        req.session.data['site-notice-locations'] = locations;
+      }
+      return locations;
+    }
+
+    // Index is 1-based in the URL because it is also the number shown on screen.
+    function siteNoticeIndex(req) {
+      const locations = siteNoticeLocations(req);
+      const number = parseInt(req.query.location, 10) || 1;
+      return Math.min(Math.max(number, 1), locations.length);
+    }
+
+    // "15 3 2026" reads like a form field rather than an answer, so the task
+    // list shows the month by name. Anything that is not a month number is left
+    // as typed rather than guessed at.
+    function siteNoticeDate(location) {
+      if (!location.day) {
+        return null;
+      }
+      const month = SITE_NOTICE_MONTHS[parseInt(location.month, 10) - 1] || location.month;
+      return `${location.day} ${month} ${location.year}`;
+    }
+
+    function siteNoticeLocationComplete(location) {
+      return SITE_NOTICE_STEPS.every(function (key) {
+        return Boolean(location && location[key]);
+      });
+    }
+
+    function siteNoticeComplete(req) {
+      return siteNoticeLocations(req).every(siteNoticeLocationComplete);
+    }
+
+    // Form fields are cleared off the session after saving so the next location
+    // does not open with the previous one's answers already in the boxes.
+    function siteNoticeClearFields(req) {
+      const fields = ['location-name', 'displayed-date-day', 'displayed-date-month',
+        'displayed-date-year', 'close-up-filename', 'position-filename'];
+      fields.forEach(function (field) {
+        delete req.session.data[field];
+      });
+    }
+
+    // Saving anything takes the applicant back to the task page, at the card
+    // they were working on.
+    function siteNoticeSaved(req, res, number) {
+      siteNoticeClearFields(req);
+      res.redirect(`display#location-${number}`);
+    }
+
+    // Validation is emptiness only, as on the other prototype question pages.
+    // The flag lives just long enough to survive the redirect back.
+    function siteNoticeInvalid(req, res, page, number) {
+      req.session.data[`site-notice-error-${page}`] = 'true';
+      res.redirect(`${page}?location=${number}`);
+    }
+
+    function renderSiteNoticeQuestion(req, res, page) {
+      const number = siteNoticeIndex(req);
+      const errorKey = `site-notice-error-${page}`;
+      const showError = req.session.data[errorKey] === 'true';
+
+      // Read once and clear, so returning to a page later is not still in error.
+      delete req.session.data[errorKey];
+
+      res.render(`versions/${version}/${section}/site-notice/${page}`, {
+        locationNumber: number,
+        location: siteNoticeLocations(req)[number - 1] || {},
+        showError: showError
+      });
+    }
+
+    // Arriving from the Notify email resets the demo. The withholding
+    // information task is marked as read so this journey starts with the site
+    // notice as the only outstanding thing, matching the design. Add
+    // ?withhold=unread to demo both tasks outstanding at once.
+    router.get(`/versions/${version}/${section}/emails/site-notice`, function (req, res) {
+      resetSiteNotice(req);
+      delete req.session.data['withdrawn-dawlish'];
+      req.session.data['site-notice-required'] = true;
+
+      if (req.query.withhold === 'unread') {
+        delete req.session.data['withhold-information-read'];
+      } else {
+        req.session.data['withhold-information-read'] = true;
+      }
+
+      res.render(`versions/${version}/${section}/emails/site-notice`);
+    });
+
+    router.get(`/versions/${version}/${section}/site-notice/display`, function (req, res) {
+      const locations = siteNoticeLocations(req);
+
+      res.render(`versions/${version}/${section}/site-notice/display`, {
+        locations: locations.map(function (location, position) {
+          return {
+            number: position + 1,
+            name: location.name,
+            date: siteNoticeDate(location),
+            closeup: location.closeup,
+            position: location.position,
+            // Location 1 is part of the task itself, so only the locations the
+            // applicant added can be deleted again.
+            canDelete: position > 0
+          };
+        }),
+        incompleteError: req.session.data['site-notice-error'] === 'true'
+      });
+    });
+
+    // Add another location - adds an empty card to the task page for the
+    // applicant to start filling in, rather than opening the first question.
+    router.get(`/versions/${version}/${section}/site-notice/add-location`, function (req, res) {
+      const locations = siteNoticeLocations(req);
+      locations.push({});
+      delete req.session.data['site-notice-error'];
+      siteNoticeClearFields(req);
+      res.redirect(`display#location-${locations.length}`);
+    });
+
+    router.get(`/versions/${version}/${section}/site-notice/location-name`, function (req, res) {
+      renderSiteNoticeQuestion(req, res, 'location-name');
+    });
+
+    router.post(`/versions/${version}/${section}/site-notice/location-name-router`, function (req, res) {
+      const number = siteNoticeIndex(req);
+      const name = (req.body['location-name'] || '').trim();
+
+      if (!name) {
+        return siteNoticeInvalid(req, res, 'location-name', number);
+      }
+
+      siteNoticeLocations(req)[number - 1].name = name;
+      siteNoticeSaved(req, res, number);
+    });
+
+    router.get(`/versions/${version}/${section}/site-notice/date-displayed`, function (req, res) {
+      renderSiteNoticeQuestion(req, res, 'date-displayed');
+    });
+
+    router.post(`/versions/${version}/${section}/site-notice/date-displayed-router`, function (req, res) {
+      const number = siteNoticeIndex(req);
+      const day = (req.body['displayed-date-day'] || '').trim();
+      const month = (req.body['displayed-date-month'] || '').trim();
+      const year = (req.body['displayed-date-year'] || '').trim();
+
+      if (!day || !month || !year) {
+        return siteNoticeInvalid(req, res, 'date-displayed', number);
+      }
+
+      const location = siteNoticeLocations(req)[number - 1];
+      location.day = day;
+      location.month = month;
+      location.year = year;
+      siteNoticeSaved(req, res, number);
+    });
+
+    router.get(`/versions/${version}/${section}/site-notice/close-up-photo`, function (req, res) {
+      renderSiteNoticeQuestion(req, res, 'close-up-photo');
+    });
+
+    // The form is not multipart, so the page copies the chosen file name into a
+    // hidden field. The uploads are not validated, so the fallback name keeps
+    // the loop moving when someone continues without picking anything.
+    router.post(`/versions/${version}/${section}/site-notice/close-up-photo-router`, function (req, res) {
+      const number = siteNoticeIndex(req);
+      siteNoticeLocations(req)[number - 1].closeup =
+        (req.body['close-up-filename'] || '').trim() || 'close-up-of-notice.jpg';
+      siteNoticeSaved(req, res, number);
+    });
+
+    router.get(`/versions/${version}/${section}/site-notice/position-photo`, function (req, res) {
+      renderSiteNoticeQuestion(req, res, 'position-photo');
+    });
+
+    router.post(`/versions/${version}/${section}/site-notice/position-photo-router`, function (req, res) {
+      const number = siteNoticeIndex(req);
+      siteNoticeLocations(req)[number - 1].position =
+        (req.body['position-filename'] || '').trim() || 'notice-in-position.jpg';
+      siteNoticeSaved(req, res, number);
+    });
+
+    router.get(`/versions/${version}/${section}/site-notice/delete-location`, function (req, res) {
+      const number = siteNoticeIndex(req);
+      res.render(`versions/${version}/${section}/site-notice/delete-location`, {
+        locationNumber: number,
+        location: siteNoticeLocations(req)[number - 1] || {}
+      });
+    });
+
+    // Locations renumber themselves after a delete, so location 3 becomes
+    // location 2 and the captions follow.
+    router.post(`/versions/${version}/${section}/site-notice/delete-location-router`, function (req, res) {
+      const locations = siteNoticeLocations(req);
+      const number = parseInt(req.body['location-number'], 10) || 1;
+
+      if (locations.length > 1) {
+        locations.splice(number - 1, 1);
+      } else {
+        locations[0] = {};
+      }
+
+      delete req.session.data['site-notice-error'];
+      siteNoticeClearFields(req);
+      res.redirect('display');
+    });
+
+    // Everything has to be filled in before the evidence can be sent, otherwise
+    // the applicant is sent back to the task page with an error summary.
+    router.post(`/versions/${version}/${section}/site-notice/send-proof-router`, function (req, res) {
+      if (!siteNoticeComplete(req)) {
+        req.session.data['site-notice-error'] = 'true';
+        return res.redirect('display');
+      }
+
+      delete req.session.data['site-notice-error'];
+      req.session.data['site-notice-sent'] = true;
+      res.redirect('../view-details/dawlish-sea-defence-extension');
+    });
+  }
 
 }
