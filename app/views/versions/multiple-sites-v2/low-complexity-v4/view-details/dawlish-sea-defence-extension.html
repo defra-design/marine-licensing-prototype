@@ -4,6 +4,13 @@
 
 {% set organisationName = data['organisation-name'] or 'Southwest Marine Works Ltd' %}
 
+{# Status text is worked out in the routes middleware from the current stage. #}
+{% set dawlishStatusClass = {
+    'Withdrawn': 'govuk-tag--grey',
+    'Submitted': 'govuk-tag--green',
+    'Action required': 'govuk-tag--red'
+}[data['dawlish-status']] %}
+
 {% block head %}
   {{ super() }}
   <style>
@@ -44,8 +51,18 @@
         {# ============================== #}
         {# THINGS THAT REQUIRE ATTENTION  #}
         {# ============================== #}
-        {# Stays on the page after a withdrawal so there is still a record of what
-           the applicant was told and when they read it. #}
+        {# The two tasks are raised at different points in the assessment, so
+           they are never both outstanding. The withholding information
+           notification goes out when the case officer starts assessing, and is
+           always listed. The site notice only appears once the consultation
+           period opens, by which time the notification has been read, so it is
+           shown above it as a record rather than as something still to do.
+
+           Which stage the application is at is set by whichever Notify email
+           the applicant arrived on - see the middleware in the routes file.
+
+           Tasks stay on the page once done, and after a withdrawal, so there
+           is still a record of what the applicant was told and when. #}
         <h2 class="govuk-heading-m">Things that require your attention</h2>
         <ul class="govuk-task-list">
             <li class="govuk-task-list__item govuk-task-list__item--with-link">
@@ -62,10 +79,7 @@
                     {% endif %}
                 </div>
             </li>
-            {# Site notice task. Only shown when the case officer has asked for a
-               notice (see the site-notice Notify email), so the withholding
-               information journey still stands on its own. #}
-            {% if data['site-notice-required'] %}
+            {% if data['dawlish-stage'] == 'site-notice' %}
             <li class="govuk-task-list__item govuk-task-list__item--with-link">
                 <div class="govuk-task-list__name-and-hint">
                     <a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="../site-notice/display" aria-describedby="site-notice-status">
@@ -99,22 +113,10 @@
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Status</dt>
                         <dd class="govuk-summary-list__value">
-                            {% if data['withdrawn-dawlish'] == 'true' %}
                             {{ govukTag({
-                                text: "Withdrawn",
-                                classes: "govuk-tag--grey"
+                                text: data['dawlish-status'],
+                                classes: dawlishStatusClass
                             }) }}
-                            {% elif data['withhold-information-read'] and (not data['site-notice-required'] or data['site-notice-sent']) %}
-                            {{ govukTag({
-                                text: "Submitted",
-                                classes: "govuk-tag--green"
-                            }) }}
-                            {% else %}
-                            {{ govukTag({
-                                text: "Action required",
-                                classes: "govuk-tag--red"
-                            }) }}
-                            {% endif %}
                         </dd>
                     </div>
                     <div class="govuk-summary-list__row">

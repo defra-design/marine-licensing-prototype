@@ -142,47 +142,54 @@ html: ''
           class="govuk-link--no-visited-state">Reject inbox</a></li>
       <li><a href="versions/multiple-sites-v2/low-complexity-v4/emails/withdraw"
           class="govuk-link--no-visited-state">Withdraw application</a></li>
-      <li><a href="versions/multiple-sites-v2/low-complexity-v4/emails/withhold-information?organisation-name=Southwest%20Marine%20Works%20Ltd&user_type=organisation"
-          class="govuk-link--no-visited-state">Withholding information notification</a></li>
-      <li><a href="versions/multiple-sites-v2/low-complexity-v4/emails/site-notice?organisation-name=Southwest%20Marine%20Works%20Ltd&user_type=organisation"
-          class="govuk-link--no-visited-state">Site notice task</a></li>
+      <li>
+        <a href="versions/multiple-sites-v2/low-complexity-v4/emails/withhold-information?organisation-name=Southwest%20Marine%20Works%20Ltd&user_type=organisation"
+            class="govuk-link--no-visited-state">Withholding information notification</a>
+
+        <details class="govuk-details govuk-!-margin-top-2 govuk-!-margin-bottom-0">
+          <summary class="govuk-details__summary">
+            <span class="govuk-details__summary-text">
+              Variants
+            </span>
+          </summary>
+          <div class="govuk-details__text">
+            <p class="govuk-body">Which reasons the case officer picked in MAS. Each opens the notification itself, skipping the email.</p>
+            <ul class="govuk-list govuk-list--spaced">
+              <li><a href="/versions/multiple-sites-v2/low-complexity-v4/withhold-information/notification?organisation-name=Southwest%20Marine%20Works%20Ltd&user_type=organisation&reason=both"
+                  class="govuk-link--no-visited-state">Both reasons</a></li>
+              <li><a href="/versions/multiple-sites-v2/low-complexity-v4/withhold-information/notification?organisation-name=Southwest%20Marine%20Works%20Ltd&user_type=organisation&reason=national"
+                  class="govuk-link--no-visited-state">National security only</a></li>
+              <li><a href="/versions/multiple-sites-v2/low-complexity-v4/withhold-information/notification?organisation-name=Southwest%20Marine%20Works%20Ltd&user_type=organisation&reason=commercial"
+                  class="govuk-link--no-visited-state">Commercial or industrial confidentiality only</a></li>
+            </ul>
+          </div>
+        </details>
+      </li>
+
+      <li>
+        <a href="versions/multiple-sites-v2/low-complexity-v4/emails/site-notice?organisation-name=Southwest%20Marine%20Works%20Ltd&user_type=organisation"
+            class="govuk-link--no-visited-state">Site notice task</a>
+
+        <details class="govuk-details govuk-!-margin-top-2 govuk-!-margin-bottom-0">
+          <summary class="govuk-details__summary">
+            <span class="govuk-details__summary-text">
+              Variants
+            </span>
+          </summary>
+          <div class="govuk-details__text">
+            <p class="govuk-body">The link above starts the usual journey: a single site application, with the site notice as the one outstanding task.</p>
+            <ul class="govuk-list govuk-list--spaced">
+              <li><a href="versions/multiple-sites-v2/low-complexity-v4/emails/site-notice?organisation-name=Southwest%20Marine%20Works%20Ltd&user_type=organisation&sites=multiple"
+                  class="govuk-link--no-visited-state">Multiple site application</a><br>
+                <span class="govuk-hint">Same email, but the task page adds the Multiple sites section.</span></li>
+              <li><a href="/versions/multiple-sites-v2/low-complexity-v4/site-notice/notice"
+                  class="govuk-link--no-visited-state">Printable site notice</a><br>
+                <span class="govuk-hint">Opens the notice on its own, skipping the journey.</span></li>
+            </ul>
+          </div>
+        </details>
+      </li>
     </ul>
-
-    <details class="govuk-details">
-      <summary class="govuk-details__summary">
-        <span class="govuk-details__summary-text">
-          Site notice task – variants
-        </span>
-      </summary>
-      <div class="govuk-details__text">
-        <ul class="govuk-list govuk-list--spaced">
-          <li><a href="versions/multiple-sites-v2/low-complexity-v4/emails/site-notice?organisation-name=Southwest%20Marine%20Works%20Ltd&user_type=organisation&withhold=unread"
-              class="govuk-link--no-visited-state">Site notice and withholding information both outstanding</a></li>
-          <li><a href="/versions/multiple-sites-v2/low-complexity-v4/site-notice/display?organisation-name=Southwest%20Marine%20Works%20Ltd&user_type=organisation&site-notice-multiple-sites=yes"
-              class="govuk-link--no-visited-state">Display a site notice – multiple sites content</a></li>
-          <li><a href="/versions/multiple-sites-v2/low-complexity-v4/site-notice/notice"
-              class="govuk-link--no-visited-state">Printable site notice</a></li>
-        </ul>
-      </div>
-    </details>
-
-    <details class="govuk-details">
-      <summary class="govuk-details__summary">
-        <span class="govuk-details__summary-text">
-          Withholding information notification – reasons shown
-        </span>
-      </summary>
-      <div class="govuk-details__text">
-        <ul class="govuk-list govuk-list--spaced">
-          <li><a href="/versions/multiple-sites-v2/low-complexity-v4/withhold-information/notification?organisation-name=Southwest%20Marine%20Works%20Ltd&user_type=organisation&reason=both"
-              class="govuk-link--no-visited-state">Both reasons</a></li>
-          <li><a href="/versions/multiple-sites-v2/low-complexity-v4/withhold-information/notification?organisation-name=Southwest%20Marine%20Works%20Ltd&user_type=organisation&reason=national"
-              class="govuk-link--no-visited-state">National security only</a></li>
-          <li><a href="/versions/multiple-sites-v2/low-complexity-v4/withhold-information/notification?organisation-name=Southwest%20Marine%20Works%20Ltd&user_type=organisation&reason=commercial"
-              class="govuk-link--no-visited-state">Commercial or industrial confidentiality only</a></li>
-        </ul>
-      </div>
-    </details>
 
     <h3 class="govuk-heading-s">Check if you need a marine licence (IAT) with multiple activities and LCML filtering</h3>
 

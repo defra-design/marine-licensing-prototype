@@ -227,33 +227,25 @@ Submissions
 			  </thead>
 			<tbody class="govuk-table__body">
 				{#
-				  Withhold information and site notice journeys. Status only flips back to
-				  Submitted once every task the case officer raised has been cleared - the
-				  notification read (withhold-information/notification-router) and, when a
-				  site notice was asked for, the evidence sent (site-notice/send-proof-router).
-				  It goes to Withdrawn if they withdraw instead (withdrawn-dawlish).
+				  Withhold information and site notice journeys. Dawlish has one
+				  outstanding task at a time - the two are sent at different points in
+				  the assessment and never overlap - so the status is worked out from
+				  the current stage in the routes middleware, and read straight off
+				  data['dawlish-status'] here.
 				#}
-				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="Dawlish sea defence extension" data-type="Marine licence application" data-reference="MLA-10020" data-status="{% if data['withdrawn-dawlish'] == 'true' %}Withdrawn{% elif data['withhold-information-read'] and (not data['site-notice-required'] or data['site-notice-sent']) %}Submitted{% else %}Action required{% endif %}" id="project-dawlish">
+				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="Dawlish sea defence extension" data-type="Marine licence application" data-reference="MLA-10020" data-status="{{ data['dawlish-status'] }}" id="project-dawlish">
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Dawlish sea defence extension</th>
 					<td class="govuk-table__cell">Marine licence application</td>
 					<td class="govuk-table__cell" data-sort-value="MLA-10020">MLA/2026/10020</td>
-					<td class="govuk-table__cell" data-sort-value="{% if data['withdrawn-dawlish'] == 'true' %}08{% elif data['withhold-information-read'] and (not data['site-notice-required'] or data['site-notice-sent']) %}02{% else %}00{% endif %}">
-						{% if data['withdrawn-dawlish'] == 'true' %}
+					<td class="govuk-table__cell" data-sort-value="{{ data['dawlish-status-sort'] }}">
 						{{ govukTag({
-							text: "Withdrawn",
-							classes: "govuk-tag--grey"
+							text: data['dawlish-status'],
+							classes: {
+								'Withdrawn': 'govuk-tag--grey',
+								'Submitted': 'govuk-tag--green',
+								'Action required': 'govuk-tag--red'
+							}[data['dawlish-status']]
 						}) }}
-						{% elif data['withhold-information-read'] and (not data['site-notice-required'] or data['site-notice-sent']) %}
-						{{ govukTag({
-							text: "Submitted",
-							classes: "govuk-tag--green"
-						}) }}
-						{% else %}
-						{{ govukTag({
-							text: "Action required",
-							classes: "govuk-tag--red"
-						}) }}
-						{% endif %}
 					</td>
 					<td class="govuk-table__cell" data-sort-value="{{ -12 | daysFromTodaySort }}">{{ -12 | daysFromToday }}</td>
 					{% if data['user_type'] === 'organisation' %}

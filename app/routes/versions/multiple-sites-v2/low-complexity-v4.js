@@ -35,17 +35,60 @@ module.exports = function (router) {
       }
       req.session.data['marine-plan-policies-v2-completed-count'] = completedCountV2;
       req.session.data['marine-plan-policies-v2-not-started-count'] = MARINE_PLAN_POLICIES_TOTAL - completedCountV2;
+
+      // Dawlish has one outstanding task at a time. The withholding
+      // information notification goes out when the case officer starts
+      // assessing; the site notice only comes later, once the consultation
+      // period opens. The two never overlap, so a single stage decides which
+      // task the applicant sees and what the application status is. Whichever
+      // Notify email they arrive on sets it; withholding is the default so
+      // landing cold behaves as it always did.
+      const stage = req.session.data['dawlish-stage'] || 'withhold';
+      req.session.data['dawlish-stage'] = stage;
+
+      const stageTaskDone = stage === 'site-notice'
+        ? Boolean(req.session.data['site-notice-sent'])
+        : Boolean(req.session.data['withhold-information-read']);
+
+      let dawlishStatus = 'Action required';
+      if (req.session.data['withdrawn-dawlish'] === 'true') {
+        dawlishStatus = 'Withdrawn';
+      } else if (stageTaskDone) {
+        dawlishStatus = 'Submitted';
+      }
+
+      // Submissions sorts on this, not the tag text: attention first, then
+      // live, then closed.
+      const dawlishStatusSort =
+        dawlishStatus === 'Withdrawn' ? '08' : (dawlishStatus === 'Submitted' ? '02' : '00');
+
+      // The kit copies the session into res.locals.data before this middleware
+      // runs, so anything derived here has to be written to both. Session only
+      // and the page renders a request behind.
+      const derived = {
+        'dawlish-stage': stage,
+        'dawlish-status': dawlishStatus,
+        'dawlish-status-sort': dawlishStatusSort
+      };
+
+      Object.keys(derived).forEach(function (key) {
+        req.session.data[key] = derived[key];
+        if (res.locals.data) {
+          res.locals.data[key] = derived[key];
+        }
+      });
     }
     next();
   });
 
   // Clears the site notice task back to its starting state. Both Notify email
-  // entry points call this so each demo starts from a clean task list.
+  // entry points call this so each demo starts from a clean task list. The
+  // stage itself is set by the entry point, not here.
   function resetSiteNotice(req) {
-    delete req.session.data['site-notice-required'];
     delete req.session.data['site-notice-locations'];
     delete req.session.data['site-notice-sent'];
     delete req.session.data['site-notice-error'];
+    delete req.session.data['site-notice-multiple-sites'];
   }
 
   ///////////////////////////////////////////
@@ -1438,10 +1481,11 @@ module.exports = function (router) {
   // Withhold information notification journey
   ///////////////////////////////////////////
 
-  // Arriving from the Notify email resets the demo so the task starts unread.
-  // The site notice task is switched off so this journey still has a single
-  // outstanding task and the application returns to Submitted once it is read.
+  // Arriving from the Notify email resets the demo so the task starts unread,
+  // and puts the application back to the assessment stage, where the
+  // notification is the only task and there is no site notice yet.
   router.get(`/versions/${version}/${section}/emails/withhold-information`, function (req, res) {
+    req.session.data['dawlish-stage'] = 'withhold';
     delete req.session.data['withhold-information-read'];
     delete req.session.data['withhold-information-reason'];
     delete req.session.data['withdrawn-dawlish'];
@@ -1561,19 +1605,21 @@ module.exports = function (router) {
       });
     }
 
-    // Arriving from the Notify email resets the demo. The withholding
-    // information task is marked as read so this journey starts with the site
-    // notice as the only outstanding thing, matching the design. Add
-    // ?withhold=unread to demo both tasks outstanding at once.
+    // Arriving from the Notify email resets the demo and moves the application
+    // to the consultation stage, where the site notice is the outstanding task.
     router.get(`/versions/${version}/${section}/emails/site-notice`, function (req, res) {
       resetSiteNotice(req);
       delete req.session.data['withdrawn-dawlish'];
-      req.session.data['site-notice-required'] = true;
+      req.session.data['dawlish-stage'] = 'site-notice';
 
-      if (req.query.withhold === 'unread') {
-        delete req.session.data['withhold-information-read'];
-      } else {
-        req.session.data['withhold-information-read'] = true;
+      // By the time the consultation period opens the withholding information
+      // notification has been dealt with, so it shows as a read record above
+      // the site notice rather than as another outstanding task.
+      req.session.data['withhold-information-read'] = true;
+
+      // ?sites=multiple demos an application covering more than one site.
+      if (req.query.sites === 'multiple') {
+        req.session.data['site-notice-multiple-sites'] = 'yes';
       }
 
       res.render(`versions/${version}/${section}/emails/site-notice`);
