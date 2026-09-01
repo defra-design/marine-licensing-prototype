@@ -87,7 +87,6 @@ module.exports = function (router) {
   function resetSiteNotice(req) {
     delete req.session.data['site-notice-locations'];
     delete req.session.data['site-notice-sent'];
-    delete req.session.data['site-notice-error'];
     delete req.session.data['site-notice-multiple-sites'];
   }
 
@@ -1641,7 +1640,7 @@ module.exports = function (router) {
             canDelete: position > 0
           };
         }),
-        incompleteError: req.session.data['site-notice-error'] === 'true'
+        allComplete: siteNoticeComplete(req)
       });
     });
 
@@ -1650,7 +1649,6 @@ module.exports = function (router) {
     router.get(`/versions/${version}/${section}/site-notice/add-location`, function (req, res) {
       const locations = siteNoticeLocations(req);
       locations.push({});
-      delete req.session.data['site-notice-error'];
       siteNoticeClearFields(req);
       res.redirect(`display#location-${locations.length}`);
     });
@@ -1737,20 +1735,17 @@ module.exports = function (router) {
         locations[0] = {};
       }
 
-      delete req.session.data['site-notice-error'];
       siteNoticeClearFields(req);
       res.redirect('display');
     });
 
-    // Everything has to be filled in before the evidence can be sent, otherwise
-    // the applicant is sent back to the task page with an error summary.
+    // The button is only rendered once every location is complete, so this is
+    // just a backstop against a direct post.
     router.post(`/versions/${version}/${section}/site-notice/send-proof-router`, function (req, res) {
       if (!siteNoticeComplete(req)) {
-        req.session.data['site-notice-error'] = 'true';
         return res.redirect('display');
       }
 
-      delete req.session.data['site-notice-error'];
       req.session.data['site-notice-sent'] = true;
       res.redirect('../view-details/dawlish-sea-defence-extension');
     });

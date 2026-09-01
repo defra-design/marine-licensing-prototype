@@ -2,6 +2,7 @@
 
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 
 {#
   The site notice task. Locations come in from the route (site-notice/display)
@@ -29,7 +30,7 @@
 {% endblock %}
 
 {% block pageTitle %}
-    {% if incompleteError %}Error: {% endif %}Display a site notice - Get permission for marine work
+Display a site notice - Get permission for marine work
 {% endblock %}
 
 {% block content %}
@@ -38,20 +39,6 @@
    evidence cards below it run full width, as on Review site details. #}
 <div class="govuk-grid-row">
 	<div class="govuk-grid-column-two-thirds">
-
-		{% if incompleteError %}
-		<div class="govuk-error-summary" aria-labelledby="error-summary-title" role="alert" tabindex="-1"
-			data-module="govuk-error-summary">
-			<h2 class="govuk-error-summary__title" id="error-summary-title">
-				There is a problem
-			</h2>
-			<div class="govuk-error-summary__body">
-				<ul class="govuk-list govuk-error-summary__list">
-					<li><a href="#location-evidence">Complete the evidence for every location before you send proof</a></li>
-				</ul>
-			</div>
-		</div>
-		{% endif %}
 
 		<span class="govuk-caption-l">MLA/2026/10020 – Dawlish sea defence extension</span>
 
@@ -120,7 +107,13 @@
 
 		<h2 class="govuk-heading-m" id="location-evidence">Send us evidence</h2>
 
-		<p class="govuk-body">Give us the evidence for each site notice you have displayed.</p>
+		<p class="govuk-body">Add the details and photographs for each location where you displayed a site notice.</p>
+
+		{% if not allComplete %}
+			{{ govukInsetText({
+				html: 'You must complete all sections marked <span class="govuk-tag govuk-tag--red govuk-!-margin-bottom-2 govuk-!-margin-top-2">Incomplete</span> before you can send your evidence.'
+			}) }}
+		{% endif %}
 
 		{% for location in locations %}
 		<div class="govuk-summary-card" id="location-{{ location.number }}">
@@ -198,11 +191,15 @@
 			href: "add-location"
 		}) }}
 
+		{% if allComplete %}
+		<p class="govuk-body">Check that you have added evidence for every location where you displayed a site notice.</p>
+
 		<form action="send-proof-router" method="post" novalidate>
 			{{ govukButton({
 				text: "Send evidence"
 			}) }}
 		</form>
+		{% endif %}
 
 	</div>
 </div>
