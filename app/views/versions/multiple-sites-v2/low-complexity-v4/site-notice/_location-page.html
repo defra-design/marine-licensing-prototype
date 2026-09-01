@@ -1,0 +1,36 @@
+{#
+  Chrome shared by the four site notice question pages. Each one sets
+  siteNoticeHeading and siteNoticeForm before including this, so the caption,
+  header and back link only exist in one place as the loop grows.
+#}
+{% extends "../../layouts/low-complexity-v4.html" %}
+
+{% block header %}
+{% from "versions/multiple-sites-v2/low-complexity-v4/includes/service-navigation.html" import lcmlV4Header %}
+{{ lcmlV4Header() }}
+{% endblock %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% if data['organisation-name'] %}
+        {% include "../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link govuk-link--no-visited-state" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+{% block pageTitle %}
+    {% if showError %}Error: {% endif %}{{ siteNoticeHeading }} - Get permission for marine work
+{% endblock %}
+
+{% block content %}
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-two-thirds">
+
+		<span class="govuk-caption-l">Dawlish sea defence extension</span>
+		<span class="govuk-caption-l">Location {{ locationNumber }}</span>
+
+		{{ siteNoticeForm | safe }}
+
+	</div>
+</div>
+{% endblock %}

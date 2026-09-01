@@ -1,0 +1,55 @@
+{% extends "../../layouts/email.html" %}
+
+{% block pageTitle %}
+  Email - Your application MLA/2026/10020 now needs a public notice
+{% endblock %}
+
+{% block header %}
+  {{ govukHeader({
+    homepageUrl: "/",
+    classes: "govuk-header--full-width-border"
+  }) }}
+{% endblock %}
+
+{% block content %}
+
+<style>
+.govuk-width-container {
+	max-width: 640px;
+}
+.govuk-main-wrapper {
+    padding-top: 10px;
+    padding-bottom: 40px;
+}
+h1 {
+	font-size: 36px;
+	font-family: Arial,Helvetica;
+	color: #000;
+}
+p {
+	font-size: 21px;
+	font-family: Arial,Helvetica;
+	color: #000;
+}
+h2 {
+	font-size: 30px;
+	font-family: Arial,Helvetica;
+	color: #000;
+}
+.govuk-template {
+    background-color: #fff;
+}
+</style>
+
+
+<h1>Your application MLA/2026/10020 now needs a public notice</h1>
+
+<p>Dear Sam Evans,</p>
+
+<p>Your application MLA/2026/10020 now needs a public notice.</p>
+
+<p><a href="sign-in-site-notice">Sign in to your account to find out what to do</a></p>
+
+<p>From Marine Management Organisation</p>
+
+{% endblock %}

@@ -1,0 +1,209 @@
+{% extends "../../layouts/low-complexity-v4.html" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+
+{#
+  The site notice task. Locations come in from the route (site-notice/display)
+  rather than straight off the session, because the route flattens the stored
+  date parts into something displayable and works out whether the Delete links
+  should be there at all.
+
+  Multiple sites content is only for applications covering more than one site.
+  Dawlish is a single site application, so it is off unless the demo asks for it
+  with ?site-notice-multiple-sites=yes.
+#}
+{% set multipleSites = data['site-notice-multiple-sites'] == 'yes' %}
+
+{% block header %}
+{% from "versions/multiple-sites-v2/low-complexity-v4/includes/service-navigation.html" import lcmlV4Header %}
+{{ lcmlV4Header() }}
+{% endblock %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% if data['organisation-name'] %}
+        {% include "../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link govuk-link--no-visited-state" href="../view-details/dawlish-sea-defence-extension">Back</a>
+{% endblock %}
+
+{% block pageTitle %}
+Display a site notice - Get permission for marine work
+{% endblock %}
+
+{% block content %}
+
+{# Guidance copy is held to two-thirds so the line length stays readable. The
+   evidence cards below it run full width, as on Review site details. #}
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-two-thirds">
+
+		<span class="govuk-caption-l">MLA/2026/10020 – Dawlish sea defence extension</span>
+
+		<h1 class="govuk-heading-l">Display a site notice</h1>
+
+		<p class="govuk-body">You must publicise your proposed marine activity for 21 days so that people who may be affected by it, or interested in it, can comment during the consultation period.</p>
+
+		<p class="govuk-body">Site notices must be displayed where people are most likely to see them. This means near where the proposed activity is taking place, and in your local community.</p>
+
+		<h2 class="govuk-heading-m">Marine users</h2>
+
+		<p class="govuk-body">These are people who use the marine environment, such as boat users, sailors, or fishing operators. Places to display a notice for this group include:</p>
+
+		<ul class="govuk-list govuk-list--bullet">
+			<li>harbour noticeboards</li>
+			<li>port noticeboards</li>
+			<li>marinas</li>
+			<li>yacht clubs</li>
+			<li>fishing clubs</li>
+		</ul>
+
+		<h2 class="govuk-heading-m">Community users</h2>
+
+		<p class="govuk-body">These are people who live near or visit the area, such as residents and visitors. Places to display a notice for this group include:</p>
+
+		<ul class="govuk-list govuk-list--bullet">
+			<li>beach access points</li>
+			<li>coastal path and access points</li>
+			<li>community noticeboards</li>
+			<li>slipways and water sports clubs</li>
+		</ul>
+
+		{% if multipleSites %}
+		<h2 class="govuk-heading-m">Multiple sites</h2>
+
+		<p class="govuk-body">Your application covers more than one site. You must display a notice at each site, and tell us about each one separately below.</p>
+
+		<p class="govuk-body">If your sites are close together and share the same noticeboards, you can display one notice that covers them all. Tell us which sites it covers when you send us your evidence.</p>
+		{% endif %}
+
+		<h2 class="govuk-heading-m">Evidence you must provide</h2>
+
+		<p class="govuk-body">For each site notice you put up, you must provide:</p>
+
+		<ul class="govuk-list govuk-list--bullet">
+			<li>a close-up photograph clearly showing the notice</li>
+			<li>a photograph showing the notice in its surroundings, so we can see where it is displayed</li>
+			<li>the date you first displayed the notice</li>
+		</ul>
+
+		<p class="govuk-body">Site notices must remain in place for the whole 21 days. You must send us this evidence before we can make a decision on your application.</p>
+
+		<h2 class="govuk-heading-m">Get your site notice</h2>
+
+		<p class="govuk-body">We've prepared your notice using the details from your application. Print it and display it at each location.</p>
+
+		<p class="govuk-body">Write the date you first display it in the space at the bottom of the notice.</p>
+
+		<p class="govuk-body">
+			<a class="govuk-link govuk-link--no-visited-state" href="notice" target="_blank" rel="noreferrer noopener">View and print the site notice (opens in new tab)</a>
+		</p>
+
+	</div>
+</div>
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-full">
+
+		<h2 class="govuk-heading-m" id="location-evidence">Send us evidence</h2>
+
+		<p class="govuk-body">Add the details and photographs for each location where you displayed a site notice.</p>
+
+		{% if not allComplete %}
+			{{ govukInsetText({
+				html: 'You must complete all sections marked <span class="govuk-tag govuk-tag--red govuk-!-margin-bottom-2 govuk-!-margin-top-2">Incomplete</span> before you can send your evidence.'
+			}) }}
+		{% endif %}
+
+		{% for location in locations %}
+		<div class="govuk-summary-card" id="location-{{ location.number }}">
+			<div class="govuk-summary-card__title-wrapper">
+				<h3 class="govuk-summary-card__title">Location {{ location.number }} evidence</h3>
+				{% if location.canDelete %}
+				<ul class="govuk-summary-card__actions">
+					<li class="govuk-summary-card__action">
+						<a class="govuk-link govuk-link--no-visited-state" href="delete-location?location={{ location.number }}">
+							Delete<span class="govuk-visually-hidden"> location {{ location.number }}</span>
+						</a>
+					</li>
+				</ul>
+				{% endif %}
+			</div>
+			<div class="govuk-summary-card__content">
+				<dl class="govuk-summary-list govuk-summary-list--full-width">
+
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">Location name</dt>
+						<dd class="govuk-summary-list__value">
+							{% if location.name %}{{ location.name }}{% else %}{{ govukTag({ text: "Incomplete", classes: "govuk-tag--red" }) }}{% endif %}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							<a class="govuk-link govuk-link--no-visited-state" href="location-name?location={{ location.number }}">
+								{% if location.name %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> location {{ location.number }} name</span>
+							</a>
+						</dd>
+					</div>
+
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">Date you displayed the notice</dt>
+						<dd class="govuk-summary-list__value">
+							{% if location.date %}{{ location.date }}{% else %}{{ govukTag({ text: "Incomplete", classes: "govuk-tag--red" }) }}{% endif %}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							<a class="govuk-link govuk-link--no-visited-state" href="date-displayed?location={{ location.number }}">
+								{% if location.date %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> the date you displayed the notice at location {{ location.number }}</span>
+							</a>
+						</dd>
+					</div>
+
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">Close-up photo of notice</dt>
+						<dd class="govuk-summary-list__value">
+							{% if location.closeup %}{{ location.closeup }}{% else %}{{ govukTag({ text: "Incomplete", classes: "govuk-tag--red" }) }}{% endif %}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							<a class="govuk-link govuk-link--no-visited-state" href="close-up-photo?location={{ location.number }}">
+								{% if location.closeup %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> the close-up photo for location {{ location.number }}</span>
+							</a>
+						</dd>
+					</div>
+
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">Photo evidencing notice position and location</dt>
+						<dd class="govuk-summary-list__value">
+							{% if location.position %}{{ location.position }}{% else %}{{ govukTag({ text: "Incomplete", classes: "govuk-tag--red" }) }}{% endif %}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							<a class="govuk-link govuk-link--no-visited-state" href="position-photo?location={{ location.number }}">
+								{% if location.position %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> the position photo for location {{ location.number }}</span>
+							</a>
+						</dd>
+					</div>
+
+				</dl>
+			</div>
+		</div>
+		{% endfor %}
+
+		{{ govukButton({
+			text: "Add another location",
+			classes: "govuk-button--secondary",
+			href: "add-location"
+		}) }}
+
+		{% if allComplete %}
+		<p class="govuk-body">Check that you have added evidence for every location where you displayed a site notice.</p>
+
+		<form action="send-proof-router" method="post" novalidate>
+			{{ govukButton({
+				text: "Send evidence"
+			}) }}
+		</form>
+		{% endif %}
+
+	</div>
+</div>
+
+{% endblock %}

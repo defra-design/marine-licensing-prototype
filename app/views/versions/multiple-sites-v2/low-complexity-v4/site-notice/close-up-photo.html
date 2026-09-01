@@ -1,0 +1,57 @@
+{% from "govuk/components/file-upload/macro.njk" import govukFileUpload %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set siteNoticeHeading = "Upload close-up photo of notice" %}
+
+{#
+  The heading is the input's label, as on the other upload pages. It has to be a
+  real label for the file upload component to enhance itself into the drop zone.
+
+  The form is not multipart, so nothing about the chosen file survives the post
+  on its own. The change listener copies the file name into a hidden field for
+  the task list to show. It sits on the form rather than the input because
+  enhancement moves the input, and change events bubble.
+#}
+{% set siteNoticeForm %}
+<form action="close-up-photo-router?location={{ locationNumber }}" method="post" novalidate id="close-up-form">
+
+	<input type="hidden" id="close-up-filename" name="close-up-filename" value="{{ location.closeup }}">
+
+	<h1 class="govuk-label-wrapper">
+		<label class="govuk-label govuk-label--l" for="close-up-photo" id="close-up-photo-label">
+			{{ siteNoticeHeading }}
+		</label>
+	</h1>
+
+	<p class="govuk-body">Take the photo close enough that all the text on the notice can be read.</p>
+
+	<p class="govuk-body">The file must be a JPG, JPEG or PNG and no larger than 10MB.</p>
+
+	{# The macro renders its own govuk-form-group, so it is not wrapped in
+	   another one: nested form groups get margin-bottom: 0, which left the
+	   button flush against the drop zone. #}
+	{{ govukFileUpload({
+		id: "close-up-photo",
+		name: "close-up-photo",
+		javascript: true,
+		attributes: {
+			accept: ".jpg,.jpeg,.png"
+		}
+	}) }}
+
+	{{ govukButton({
+		text: "Save and continue"
+	}) }}
+
+	<script>
+		document.getElementById('close-up-form').addEventListener('change', function (event) {
+			if (event.target.type !== 'file') { return; }
+			var file = event.target.files && event.target.files[0];
+			document.getElementById('close-up-filename').value = file ? file.name : '';
+		});
+	</script>
+
+</form>
+{% endset %}
+
+{% include "./_location-page.html" %}

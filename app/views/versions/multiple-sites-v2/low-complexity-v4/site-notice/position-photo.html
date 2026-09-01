@@ -1,0 +1,50 @@
+{% from "govuk/components/file-upload/macro.njk" import govukFileUpload %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set siteNoticeHeading = "Upload photo evidencing notice position and location" %}
+
+{# See close-up-photo.html for why the heading is a label and the change
+   listener sits on the form. #}
+{% set siteNoticeForm %}
+<form action="position-photo-router?location={{ locationNumber }}" method="post" novalidate id="position-form">
+
+	<input type="hidden" id="position-filename" name="position-filename" value="{{ location.position }}">
+
+	<h1 class="govuk-label-wrapper">
+		<label class="govuk-label govuk-label--l" for="position-photo" id="position-photo-label">
+			{{ siteNoticeHeading }}
+		</label>
+	</h1>
+
+	<p class="govuk-body">Take the photo far enough back that we can see the notice and its surroundings, so we can tell where it is displayed.</p>
+
+	<p class="govuk-body">The file must be a JPG, JPEG or PNG and no larger than 10MB.</p>
+
+	{# The macro renders its own govuk-form-group, so it is not wrapped in
+	   another one: nested form groups get margin-bottom: 0, which left the
+	   button flush against the drop zone. #}
+	{{ govukFileUpload({
+		id: "position-photo",
+		name: "position-photo",
+		javascript: true,
+		attributes: {
+			accept: ".jpg,.jpeg,.png"
+		}
+	}) }}
+
+	{{ govukButton({
+		text: "Save and continue"
+	}) }}
+
+	<script>
+		document.getElementById('position-form').addEventListener('change', function (event) {
+			if (event.target.type !== 'file') { return; }
+			var file = event.target.files && event.target.files[0];
+			document.getElementById('position-filename').value = file ? file.name : '';
+		});
+	</script>
+
+</form>
+{% endset %}
+
+{% include "./_location-page.html" %}

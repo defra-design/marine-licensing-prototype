@@ -1,0 +1,53 @@
+{% from "govuk/components/date-input/macro.njk" import govukDateInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% set siteNoticeHeading = "When did you first display the notice?" %}
+{% set siteNoticeError = "Enter the date you first displayed the notice" %}
+
+{% set siteNoticeForm %}
+<form action="date-displayed-router?location={{ locationNumber }}" method="post" novalidate>
+
+	{% if showError %}
+		{{ govukErrorSummary({
+			titleText: "There is a problem",
+			errorList: [
+				{
+					text: siteNoticeError,
+					href: "#displayed-date-day"
+				}
+			]
+		}) }}
+	{% endif %}
+
+	{{ govukDateInput({
+		id: "displayed-date",
+		namePrefix: "displayed-date",
+		fieldset: {
+			legend: {
+				text: siteNoticeHeading,
+				isPageHeading: true,
+				classes: "govuk-fieldset__legend--l"
+			}
+		},
+		hint: {
+			text: "For example, 15 3 2026"
+		},
+		errorMessage: {
+			text: siteNoticeError
+		} if showError,
+		items: [
+			{ name: "day", classes: "govuk-input--width-2", value: location.day, attributes: { autocomplete: "off", inputmode: "numeric" } },
+			{ name: "month", classes: "govuk-input--width-2", value: location.month, attributes: { autocomplete: "off", inputmode: "numeric" } },
+			{ name: "year", classes: "govuk-input--width-4", value: location.year, attributes: { autocomplete: "off", inputmode: "numeric" } }
+		]
+	}) }}
+
+	{{ govukButton({
+		text: "Save and continue"
+	}) }}
+
+</form>
+{% endset %}
+
+{% include "./_location-page.html" %}

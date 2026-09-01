@@ -1,0 +1,177 @@
+{% extends "../../layouts/low-complexity-v4.html" %}
+
+{#
+  The printable site notice. This replaces the DOCX/PDF template the applicant
+  used to download: because it is rendered here we can fill in the application
+  details the case officer set in MAS, and the applicant prints it or saves it
+  as a PDF from the browser. The print-link and page furniture drop out when
+  printed, so what comes off the printer is just the notice itself.
+#}
+
+{% set organisationName = data['organisation-name'] or 'Southwest Marine Works Ltd' %}
+
+{# No navigation links and no back link: this page is a printable artefact
+   opened in its own tab, so there is nowhere on it to navigate to. #}
+{% block header %}
+{% from "govuk/components/header/macro.njk" import govukHeader %}
+{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
+{{ govukHeader({
+	homepageUrl: "/",
+	classes: "govuk-header--full-width-border"
+}) }}
+{{ govukServiceNavigation({
+	serviceName: "Get permission for marine work"
+}) }}
+{% endblock %}
+
+{% block beforeContent %}
+	{% include "../../includes/phase-banner.html" %}
+{% endblock %}
+
+{% block pageTitle %}
+	Marine licence application notice MLA/2026/10020 - Get permission for marine work
+{% endblock %}
+
+{% block head %}
+	{{ super() }}
+	<style>
+		.app-notice {
+			border: 5px solid #0b0c0c;
+			padding: 30px;
+			max-width: 44em;
+		}
+		.app-notice__act {
+			border-bottom: 2px solid #0b0c0c;
+			padding-bottom: 10px;
+		}
+		.app-notice__register {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 30px;
+			align-items: flex-start;
+			margin-bottom: 20px;
+		}
+		.app-notice__qr {
+			display: block;
+			width: 150px;
+			height: 150px;
+		}
+		.app-notice__register-details {
+			flex: 1 1 15em;
+		}
+		/* The register address is one long unbroken string, so it needs telling
+		   it may wrap rather than push through the border of the notice. */
+		.app-notice__url {
+			overflow-wrap: anywhere;
+		}
+		/* The date is filled in by hand once the notice is up, so the format
+		   sits next to a rule long enough to write on. */
+		.app-notice__date {
+			display: flex;
+			align-items: baseline;
+			gap: 15px;
+			max-width: 26em;
+		}
+		.app-notice__date-rule {
+			flex: 1 1 auto;
+			border-bottom: 2px solid #0b0c0c;
+			height: 2.2em;
+		}
+
+		@media print {
+			.govuk-header,
+			.govuk-service-navigation,
+			.govuk-footer,
+			.govuk-phase-banner,
+			.print-link {
+				display: none;
+			}
+
+			.app-notice {
+				border-width: 3px;
+				padding: 20px;
+			}
+		}
+	</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-two-thirds">
+
+		<p class="print-link govuk-body"><a class="govuk-link govuk-link--no-visited-state" href="javascript:window.print()">Print this page</a></p>
+		<p class="print-link govuk-body">To save as a PDF, select 'Print this page' and choose 'Save as PDF' as your printer.</p>
+
+	</div>
+</div>
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-full">
+
+		<div class="app-notice">
+
+			<p class="govuk-body govuk-!-font-weight-bold app-notice__act">MARINE AND COASTAL ACCESS ACT 2009</p>
+
+			<h1 class="govuk-heading-l govuk-!-margin-bottom-2">Have your say on a proposed marine activity</h1>
+
+			<p class="govuk-body-l">Marine licence application notice MLA/2026/10020</p>
+
+			<h2 class="govuk-heading-m">About this application</h2>
+
+			<p class="govuk-body">{{ organisationName }} has applied to the Marine Management Organisation (MMO) under Part 4 of the Marine and Coastal Access Act 2009 for a marine licence.</p>
+
+			<p class="govuk-body">The application proposes:</p>
+
+			<p class="govuk-body govuk-!-font-weight-bold">Installation of a floating pontoon and hinged gangway attached to the existing harbour wall within the outer harbour area at Dawlish Harbour, to provide a launching and landing platform for paddleboards and kayaks.</p>
+
+			<h2 class="govuk-heading-m">View the application and comment</h2>
+
+			<p class="govuk-body">You can view the application documents and send us your comments through the MMO Public Register.</p>
+
+			<div class="app-notice__register">
+				<div>
+					<p class="govuk-body">Scan this QR code:</p>
+					<img class="app-notice__qr" src="/public/images/site-notice-qr.svg" alt="QR code linking to the MMO Public Register">
+				</div>
+				<div class="app-notice__register-details">
+					<p class="govuk-body">Or go to:<br>
+					<span class="govuk-!-font-weight-bold app-notice__url">www.marinelicensing.marinemanagement.org.uk/PUBLIC_REGISTER</span></p>
+
+					<p class="govuk-body">Then search for reference MLA/2026/10020.</p>
+				</div>
+			</div>
+
+			<h2 class="govuk-heading-m">If you cannot access the Public Register</h2>
+
+			<p class="govuk-body">You can also send your comments by post to:</p>
+
+			<p class="govuk-body">Marine Management Organisation, Tyneside House, Skinnerburn Road, Newcastle Business Park, Newcastle upon Tyne, NE4 7AR</p>
+
+			<h2 class="govuk-heading-m">Important information</h2>
+
+			<p class="govuk-body">Your comments must:</p>
+
+			<ul class="govuk-list govuk-list--bullet">
+				<li>be received within 21 days of the date this notice was first displayed</li>
+				<li>quote the application reference MLA/2026/10020</li>
+				<li>include a postal address or email address, so we can respond to you</li>
+			</ul>
+
+			<p class="govuk-body">We may share your comments with the applicant as part of the application process.</p>
+
+			<h2 class="govuk-heading-m">Date notice first displayed</h2>
+
+			<p class="govuk-body">To be completed by the applicant before the notice is displayed.</p>
+
+			<div class="app-notice__date">
+				<span class="govuk-body-l govuk-!-font-weight-bold govuk-!-margin-bottom-0">DD&nbsp; /&nbsp; MM&nbsp; /&nbsp; YYYY</span>
+				<span class="app-notice__date-rule"></span>
+			</div>
+
+		</div>
+
+	</div>
+</div>
+
+{% endblock %}
