@@ -63,11 +63,15 @@
 
 		<p class="govuk-body">If you do not want this information to be published, you can <a class="govuk-link govuk-link--no-visited-state" href="../submissions">withdraw your application from your Submissions page</a>.</p>
 
+		{# Once it has been marked as read the page is a read-only record of what
+		   the applicant was told, so there is nothing left to submit. #}
+		{% if not data['withhold-information-read'] %}
 		<form action="notification-router" method="post" novalidate>
 			{{ govukButton({
 				text: "Mark as read and continue"
 			}) }}
 		</form>
+		{% endif %}
 
 	</div>
 </div>
