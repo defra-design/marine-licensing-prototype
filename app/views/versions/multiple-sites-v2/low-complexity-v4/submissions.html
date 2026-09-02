@@ -203,7 +203,7 @@ Submissions
 		  02 Submitted           - with us
 		  03 Scheduled           - exemption upcoming, not yet in force
 		  04 Active              - exemption in force
-		  05 Finished            - exemption sheduleded window closed
+		  05 Expired             - exemption sheduleded window closed
 		  06 Transferred         - closed
 		  07 Unable to progress  - closed
 		  08 Withdrawn           - closed
@@ -420,7 +420,7 @@ Submissions
 				{% endif %}
 
 				<!-- Exempt activity notifications -->
-				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="Branscombe bore holes" data-type="Exempt activity notification" data-reference="EXE-10002" data-status="{% if data['withdrawn-branscombe'] == 'true' %}Withdrawn{% else %}Finished{% endif %}" id="project-branscombe">
+				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="Branscombe bore holes" data-type="Exempt activity notification" data-reference="EXE-10002" data-status="{% if data['withdrawn-branscombe'] == 'true' %}Withdrawn{% else %}Expired{% endif %}" id="project-branscombe">
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Branscombe bore holes</th>
 					<td class="govuk-table__cell">Exempt activity notification</td>
 					<td class="govuk-table__cell" data-sort-value="EXE-10002">EXE/2025/10002</td>
@@ -432,7 +432,7 @@ Submissions
 						}) }}
 						{% else %}
 						{{ govukTag({
-							text: "Finished",
+							text: "Expired",
 							classes: "govuk-tag--grey"
 						}) }}
 						{% endif %}
@@ -496,13 +496,13 @@ Submissions
 					</td>
 				</tr>
 
-				<tr class="govuk-table__row" data-creator="sarah-chen" data-project-name="Sunderland marina maintenance dredge" data-type="Exempt activity notification" data-reference="EXE-10029" data-status="Finished">
+				<tr class="govuk-table__row" data-creator="sarah-chen" data-project-name="Sunderland marina maintenance dredge" data-type="Exempt activity notification" data-reference="EXE-10029" data-status="Expired">
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Sunderland marina maintenance dredge</th>
 					<td class="govuk-table__cell">Exempt activity notification</td>
 					<td class="govuk-table__cell" data-sort-value="EXE-10029">EXE/2025/10029</td>
 					<td class="govuk-table__cell" data-sort-value="05">
 						{{ govukTag({
-							text: "Finished",
+							text: "Expired",
 							classes: "govuk-tag--grey"
 						}) }}
 					</td>
@@ -515,13 +515,13 @@ Submissions
 					</td>
 				</tr>
 
-				<tr class="govuk-table__row" data-creator="sarah-chen" data-project-name="Teignmouth water quality sampling" data-type="Exempt activity notification" data-reference="EXE-10034" data-status="Finished">
+				<tr class="govuk-table__row" data-creator="sarah-chen" data-project-name="Teignmouth water quality sampling" data-type="Exempt activity notification" data-reference="EXE-10034" data-status="Expired">
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Teignmouth water quality sampling</th>
 					<td class="govuk-table__cell">Exempt activity notification</td>
 					<td class="govuk-table__cell" data-sort-value="EXE-10034">EXE/2025/10034</td>
 					<td class="govuk-table__cell" data-sort-value="05">
 						{{ govukTag({
-							text: "Finished",
+							text: "Expired",
 							classes: "govuk-tag--grey"
 						}) }}
 					</td>
