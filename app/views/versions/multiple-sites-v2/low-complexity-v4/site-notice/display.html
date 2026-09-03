@@ -16,6 +16,11 @@
 #}
 {% set multipleSites = data['site-notice-multiple-sites'] == 'yes' %}
 
+{# Once the evidence has been sent the task becomes a read-only record: no
+   Add, Change or Delete links, nothing to add another location with, and
+   nothing left to submit. #}
+{% set sent = data['site-notice-sent'] %}
+
 {% block header %}
 {% from "versions/multiple-sites-v2/low-complexity-v4/includes/service-navigation.html" import lcmlV4Header %}
 {{ lcmlV4Header() }}
@@ -121,7 +126,7 @@ Display a site notice - Get permission for marine work
 		<div class="govuk-summary-card" id="location-{{ location.number }}">
 			<div class="govuk-summary-card__title-wrapper">
 				<h3 class="govuk-summary-card__title">Location {{ location.number }} evidence</h3>
-				{% if location.canDelete %}
+				{% if location.canDelete and not sent %}
 				<ul class="govuk-summary-card__actions">
 					<li class="govuk-summary-card__action">
 						<a class="govuk-link govuk-link--no-visited-state" href="delete-location?location={{ location.number }}">
@@ -139,11 +144,13 @@ Display a site notice - Get permission for marine work
 						<dd class="govuk-summary-list__value">
 							{% if location.name %}{{ location.name }}{% else %}{{ govukTag({ text: "Incomplete", classes: "govuk-tag--red" }) }}{% endif %}
 						</dd>
+						{% if not sent %}
 						<dd class="govuk-summary-list__actions">
 							<a class="govuk-link govuk-link--no-visited-state" href="location-name?location={{ location.number }}">
 								{% if location.name %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> location {{ location.number }} name</span>
 							</a>
 						</dd>
+						{% endif %}
 					</div>
 
 					<div class="govuk-summary-list__row">
@@ -151,11 +158,13 @@ Display a site notice - Get permission for marine work
 						<dd class="govuk-summary-list__value">
 							{% if location.date %}{{ location.date }}{% else %}{{ govukTag({ text: "Incomplete", classes: "govuk-tag--red" }) }}{% endif %}
 						</dd>
+						{% if not sent %}
 						<dd class="govuk-summary-list__actions">
 							<a class="govuk-link govuk-link--no-visited-state" href="date-displayed?location={{ location.number }}">
 								{% if location.date %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> the date you displayed the notice at location {{ location.number }}</span>
 							</a>
 						</dd>
+						{% endif %}
 					</div>
 
 					<div class="govuk-summary-list__row">
@@ -163,11 +172,13 @@ Display a site notice - Get permission for marine work
 						<dd class="govuk-summary-list__value">
 							{% if location.closeup %}{{ location.closeup }}{% else %}{{ govukTag({ text: "Incomplete", classes: "govuk-tag--red" }) }}{% endif %}
 						</dd>
+						{% if not sent %}
 						<dd class="govuk-summary-list__actions">
 							<a class="govuk-link govuk-link--no-visited-state" href="close-up-photo?location={{ location.number }}">
 								{% if location.closeup %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> the close-up photo for location {{ location.number }}</span>
 							</a>
 						</dd>
+						{% endif %}
 					</div>
 
 					<div class="govuk-summary-list__row">
@@ -175,11 +186,13 @@ Display a site notice - Get permission for marine work
 						<dd class="govuk-summary-list__value">
 							{% if location.position %}{{ location.position }}{% else %}{{ govukTag({ text: "Incomplete", classes: "govuk-tag--red" }) }}{% endif %}
 						</dd>
+						{% if not sent %}
 						<dd class="govuk-summary-list__actions">
 							<a class="govuk-link govuk-link--no-visited-state" href="position-photo?location={{ location.number }}">
 								{% if location.position %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> the position photo for location {{ location.number }}</span>
 							</a>
 						</dd>
+						{% endif %}
 					</div>
 
 				</dl>
@@ -187,13 +200,15 @@ Display a site notice - Get permission for marine work
 		</div>
 		{% endfor %}
 
+		{% if not sent %}
 		{{ govukButton({
 			text: "Add another location",
 			classes: "govuk-button--secondary",
 			href: "add-location"
 		}) }}
+		{% endif %}
 
-		{% if allComplete %}
+		{% if allComplete and not sent %}
 		<p class="govuk-body">Check that you have added evidence for every location where you displayed a site notice.</p>
 
 		<form action="send-proof-router" method="post" novalidate>
