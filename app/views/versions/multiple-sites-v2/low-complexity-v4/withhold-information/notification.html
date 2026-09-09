@@ -1,6 +1,7 @@
 {% extends "../../layouts/low-complexity-v4.html" %}
 
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 
 {#
   Which reasons the case officer selected in MAS. Passed in as a render local by
@@ -8,6 +9,9 @@
   fallback, because query params are not visible to auto-rendered views.
 #}
 {% set withholdReason = reason or data['withhold-information-reason'] or 'both' %}
+
+{# Used in the caption and again in the opening paragraph. #}
+{% set applicationReference = 'MLA/2026/10020' %}
 
 {% block header %}
 {% from "versions/multiple-sites-v2/low-complexity-v4/includes/service-navigation.html" import lcmlV4Header %}
@@ -31,11 +35,28 @@
 <div class="govuk-grid-row">
 	<div class="govuk-grid-column-two-thirds">
 
-		<span class="govuk-caption-l">MLA/2026/10025 – Dawlish sea defence extension</span>
+		<span class="govuk-caption-l">{{ applicationReference }} – Dawlish sea defence extension</span>
 
 		<h1 class="govuk-heading-l">Update on the information you asked us to withhold</h1>
 
-		<p class="govuk-body">Following consideration of your request, we've reviewed the information you asked us to withhold.</p>
+		{# Once read, the page records who dealt with it and when. The date is
+		   always today so the prototype never shows a stale one. #}
+		{% if data['withhold-information-read'] %}
+			{{ govukInsetText({
+				text: "This was marked as read on " + ("" | todayDate) + " by Sam Evans"
+			}) }}
+		{% endif %}
+
+		<p class="govuk-body">We have reviewed your request to withhold some information from the public register for {{ applicationReference }}. This page explains our decision.</p>
+
+		<p class="govuk-body">We can only withhold information from the public register for one of these reasons:</p>
+
+		<ul class="govuk-list govuk-list--bullet">
+			<li>national security</li>
+			<li>commercial or industrial confidentiality that is protected by law</li>
+		</ul>
+
+		<p class="govuk-body">We have assessed your request against these reasons below. This page only covers what we have not fully agreed to withhold.</p>
 
 		{% if withholdReason != 'commercial' %}
 		<h2 class="govuk-heading-m">National security</h2>
@@ -48,7 +69,7 @@
 		{% if withholdReason != 'national' %}
 		<h2 class="govuk-heading-m">Commercial or industrial confidentiality</h2>
 
-		<p class="govuk-body">We've agreed to withhold some of the information you asked us to.</p>
+		<p class="govuk-body">We've decided to withhold some of the information you asked us to.</p>
 
 		<p class="govuk-body">We agree the unit rates table in section 4 of your method statement is commercially confidential and will withhold this.</p>
 
@@ -57,9 +78,9 @@
 
 		<h2 class="govuk-heading-m">What you can do</h2>
 
-		<p class="govuk-body">You can withdraw your application if you do not agree with our decision.</p>
+		<p class="govuk-body">We will continue to progress your application on this basis. If you do not agree with this decision, you can withdraw your application.</p>
 
-		<p class="govuk-body">We'd encourage you to do this as soon as possible, as we'll continue working on your application while you decide.</p>
+		<p class="govuk-body">We would encourage you to do this as soon as possible, as we will continue working on your application while you decide.</p>
 
 		<p class="govuk-body">If you do not want this information to be published, you can <a class="govuk-link govuk-link--no-visited-state" href="../submissions">withdraw your application from your Submissions page</a>.</p>
 
