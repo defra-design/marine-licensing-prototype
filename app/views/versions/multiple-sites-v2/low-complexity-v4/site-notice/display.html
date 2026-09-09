@@ -49,6 +49,14 @@ Display a site notice - Get permission for marine work
 
 		<h1 class="govuk-heading-l">Display a site notice</h1>
 
+		{# Once the evidence is with us the page records who sent it and when.
+		   The date is always today so the prototype never shows a stale one. #}
+		{% if sent %}
+			{{ govukInsetText({
+				text: "Evidence was submitted " + ("" | todayDate) + " by Sam Evans"
+			}) }}
+		{% endif %}
+
 		<p class="govuk-body">You must publicise your proposed marine activity for 21 days so that people who may be affected by it, or interested in it, can comment during the consultation period.</p>
 
 		<p class="govuk-body">Site notices must be displayed where people are most likely to see them. This means near where the proposed activity is taking place, and in your local community.</p>
