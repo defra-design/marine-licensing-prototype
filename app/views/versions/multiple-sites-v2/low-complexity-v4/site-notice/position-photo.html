@@ -16,9 +16,9 @@
 		</label>
 	</h1>
 
-	<p class="govuk-body">Take the photo far enough back that we can see the notice and its surroundings, so we can tell where it is displayed.</p>
+	<div class="govuk-hint" id="position-photo-hint">Take the photo far enough back that the notice and its surroundings are visible. We need to be able to see where the notice has been displayed.</div>
 
-	<p class="govuk-body">The file must be a JPG, JPEG or PNG and no larger than 10MB.</p>
+	<div class="govuk-hint" id="position-photo-file-hint">The file must be a JPG, JPEG or PNG and no larger than 10MB.</div>
 
 	{# The macro renders its own govuk-form-group, so it is not wrapped in
 	   another one: nested form groups get margin-bottom: 0, which left the
@@ -27,6 +27,7 @@
 		id: "position-photo",
 		name: "position-photo",
 		javascript: true,
+		describedBy: "position-photo-hint position-photo-file-hint",
 		attributes: {
 			accept: ".jpg,.jpeg,.png"
 		}
