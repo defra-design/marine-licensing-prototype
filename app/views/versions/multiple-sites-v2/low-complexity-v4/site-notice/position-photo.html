@@ -3,10 +3,10 @@
 
 {% set siteNoticeHeading = "Upload photo evidencing notice position and location" %}
 
-{# See close-up-photo.html for why the heading is a label and the change
-   listener sits on the form. #}
+{# See close-up-photo.html for why the heading is a label, why the change
+   listener sits on the form, and what formAction is for. #}
 {% set siteNoticeForm %}
-<form action="position-photo-router?location={{ locationNumber }}" method="post" novalidate id="position-form">
+<form action="{{ formAction or 'position-photo-router' }}?location={{ locationNumber }}" method="post" novalidate id="position-form">
 
 	<input type="hidden" id="position-filename" name="position-filename" value="{{ location.position }}">
 

@@ -58,6 +58,10 @@
            period opens, by which time the notification has been read, so it is
            shown above it as a record rather than as something still to do.
 
+           If the case officer then rejects any of the site notice photographs,
+           Resubmit site notice evidence is added below it as a separate task,
+           and the site notice stays listed as completed.
+
            Which stage the application is at is set by whichever Notify email
            the applicant arrived on - see the middleware in the routes file.
 
@@ -79,7 +83,7 @@
                     {% endif %}
                 </div>
             </li>
-            {% if data['dawlish-stage'] == 'site-notice' %}
+            {% if data['dawlish-stage'] == 'site-notice' or data['dawlish-stage'] == 'site-notice-resubmit' %}
             <li class="govuk-task-list__item govuk-task-list__item--with-link">
                 <div class="govuk-task-list__name-and-hint">
                     <a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="../site-notice/display" aria-describedby="site-notice-status">
@@ -91,6 +95,22 @@
                     Completed
                     {% else %}
                     <strong class="govuk-tag govuk-tag--red">Not yet responded</strong>
+                    {% endif %}
+                </div>
+            </li>
+            {% endif %}
+            {% if data['dawlish-stage'] == 'site-notice-resubmit' %}
+            <li class="govuk-task-list__item govuk-task-list__item--with-link">
+                <div class="govuk-task-list__name-and-hint">
+                    <a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="../site-notice/resubmit" aria-describedby="site-notice-resubmit-status">
+                        Resubmit site notice evidence
+                    </a>
+                </div>
+                <div class="govuk-task-list__status" id="site-notice-resubmit-status">
+                    {% if data['site-notice-resubmit-sent'] %}
+                    Completed
+                    {% else %}
+                    <strong class="govuk-tag govuk-tag--red">Incomplete</strong>
                     {% endif %}
                 </div>
             </li>

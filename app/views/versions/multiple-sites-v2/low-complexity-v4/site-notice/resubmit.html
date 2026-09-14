@@ -1,0 +1,140 @@
+{% extends "../../layouts/low-complexity-v4.html" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+
+{#
+  Resubmit site notice evidence. A separate task from Display a site notice:
+  the case officer has rejected the photographs for one or more locations,
+  and only those locations are listed here.
+
+  The location name and date were accepted, so they are shown without Change
+  links. Only the two photos can be added, and both are needed again even if
+  only one was rejected.
+
+  Locations come in from the route (site-notice/resubmit), which reads the name
+  and date from the original evidence and the reason from the rejection.
+#}
+
+{% block header %}
+{% from "versions/multiple-sites-v2/low-complexity-v4/includes/service-navigation.html" import lcmlV4Header %}
+{{ lcmlV4Header() }}
+{% endblock %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% if data['organisation-name'] %}
+        {% include "../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link govuk-link--no-visited-state" href="../view-details/dawlish-sea-defence-extension">Back</a>
+{% endblock %}
+
+{% block pageTitle %}
+Resubmit site notice evidence - Get permission for marine work
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-two-thirds">
+
+		<span class="govuk-caption-l">MLA/2026/10020 – Dawlish sea defence extension</span>
+
+		<h1 class="govuk-heading-l">Resubmit site notice evidence</h1>
+
+		{# Once sent, the page is a read-only record of who resubmitted and when.
+		   The date is always today so the prototype never shows a stale one. #}
+		{% if sent %}
+			{{ govukInsetText({
+				text: "Evidence was resubmitted " + ("" | todayDate) + " by Sam Evans"
+			}) }}
+		{% endif %}
+
+		<p class="govuk-body">We could not accept the photographs you provided for one or more locations. Even if only one photograph was rejected, you need to upload both photographs again for that location.</p>
+
+		{% if not allComplete %}
+			{{ govukInsetText({
+				html: 'You must complete all sections marked <span class="govuk-tag govuk-tag--red">Incomplete</span> before you can send your evidence.'
+			}) }}
+		{% endif %}
+
+	</div>
+</div>
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-full">
+
+		{# Until the evidence is sent the photo rows carry Add or Change links,
+		   so the rows without one need the no-actions modifier to keep the
+		   borders lined up. #}
+		{% set fixedRowClass = "" if sent else " govuk-summary-list__row--no-actions" %}
+
+		{% for location in locations %}
+		<div class="govuk-summary-card" id="location-{{ location.number }}">
+			<div class="govuk-summary-card__title-wrapper">
+				<h2 class="govuk-summary-card__title">Location {{ location.number }} evidence</h2>
+			</div>
+			<div class="govuk-summary-card__content">
+				<dl class="govuk-summary-list govuk-summary-list--full-width">
+
+					<div class="govuk-summary-list__row{{ fixedRowClass }}">
+						<dt class="govuk-summary-list__key">Location name</dt>
+						<dd class="govuk-summary-list__value">{{ location.name }}</dd>
+					</div>
+
+					<div class="govuk-summary-list__row{{ fixedRowClass }}">
+						<dt class="govuk-summary-list__key">Date you displayed the notice</dt>
+						<dd class="govuk-summary-list__value">{{ location.date }}</dd>
+					</div>
+
+					<div class="govuk-summary-list__row{{ fixedRowClass }}">
+						<dt class="govuk-summary-list__key">Why we could not accept your photographs</dt>
+						<dd class="govuk-summary-list__value">{{ location.reason }}</dd>
+					</div>
+
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">Close-up photo of notice</dt>
+						<dd class="govuk-summary-list__value">
+							{% if location.closeup %}{{ location.closeup }}{% else %}{{ govukTag({ text: "Incomplete", classes: "govuk-tag--red" }) }}{% endif %}
+						</dd>
+						{% if not sent %}
+						<dd class="govuk-summary-list__actions">
+							<a class="govuk-link govuk-link--no-visited-state" href="resubmit-close-up-photo?location={{ location.number }}">
+								{% if location.closeup %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> the close-up photo for location {{ location.number }}</span>
+							</a>
+						</dd>
+						{% endif %}
+					</div>
+
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">Photo evidencing notice position and location</dt>
+						<dd class="govuk-summary-list__value">
+							{% if location.position %}{{ location.position }}{% else %}{{ govukTag({ text: "Incomplete", classes: "govuk-tag--red" }) }}{% endif %}
+						</dd>
+						{% if not sent %}
+						<dd class="govuk-summary-list__actions">
+							<a class="govuk-link govuk-link--no-visited-state" href="resubmit-position-photo?location={{ location.number }}">
+								{% if location.position %}Change{% else %}Add{% endif %}<span class="govuk-visually-hidden"> the position photo for location {{ location.number }}</span>
+							</a>
+						</dd>
+						{% endif %}
+					</div>
+
+				</dl>
+			</div>
+		</div>
+		{% endfor %}
+
+		{% if allComplete and not sent %}
+		<form action="resubmit-send-router" method="post" novalidate>
+			{{ govukButton({
+				text: "Send evidence"
+			}) }}
+		</form>
+		{% endif %}
+
+	</div>
+</div>
+
+{% endblock %}
