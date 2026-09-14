@@ -40,8 +40,8 @@ Display a site notice - Get permission for marine work
 
 {% block content %}
 
-{# Guidance copy is held to two-thirds so the line length stays readable. The
-   evidence cards below it run full width, as on Review site details. #}
+{# Everything that is prose, down to the Send us evidence inset, is held to
+   two-thirds so the line length stays readable. #}
 <div class="govuk-grid-row">
 	<div class="govuk-grid-column-two-thirds">
 
@@ -57,13 +57,13 @@ Display a site notice - Get permission for marine work
 			}) }}
 		{% endif %}
 
-		<p class="govuk-body">You must publicise your proposed marine activity for 21 days so that people who may be affected by it, or interested in it, can comment during the consultation period.</p>
+		<p class="govuk-body">You must publish one or more site notices to tell people about your application. This gives people who may be affected by, or interested in, the proposed activity the chance to comment.</p>
 
-		<p class="govuk-body">Site notices must be displayed where people are most likely to see them. This means near where the proposed activity is taking place, and in your local community.</p>
+		<p class="govuk-body">Notices should be placed in locations chosen to best bring the proposed application to the attention of the public and interested parties. Consider locations such as those below.</p>
 
 		<h2 class="govuk-heading-m">Marine users</h2>
 
-		<p class="govuk-body">These are people who use the marine environment, such as boat users, sailors, or fishing operators. Places to display a notice for this group include:</p>
+		<p class="govuk-body">This means people who use the water nearby, such as boat users, sailors, or fishing vessels. Prominent locations for this group include:</p>
 
 		<ul class="govuk-list govuk-list--bullet">
 			<li>harbour noticeboards</li>
@@ -75,50 +75,60 @@ Display a site notice - Get permission for marine work
 
 		<h2 class="govuk-heading-m">Community users</h2>
 
-		<p class="govuk-body">These are people who live near or visit the area, such as residents and visitors. Places to display a notice for this group include:</p>
+		<p class="govuk-body">This means people nearby on land, such as residents and visitors. Prominent locations for this group include:</p>
 
 		<ul class="govuk-list govuk-list--bullet">
 			<li>beach access points</li>
-			<li>coastal path and access points</li>
+			<li>coastal path access points</li>
 			<li>community noticeboards</li>
-			<li>slipways and water sports clubs</li>
+			<li>visitor information points</li>
 		</ul>
 
 		{% if multipleSites %}
 		<h2 class="govuk-heading-m">Multiple sites</h2>
 
-		<p class="govuk-body">Your application covers more than one site. You must display a notice at each site, and tell us about each one separately below.</p>
+		<p class="govuk-body">If your application covers multiple sites, check whether your chosen locations are enough to reach interested parties at each one.</p>
 
-		<p class="govuk-body">If your sites are close together and share the same noticeboards, you can display one notice that covers them all. Tell us which sites it covers when you send us your evidence.</p>
+		<p class="govuk-body">You may need extra notice locations if your sites are spread across different beaches, harbours, ports or coastal communities.</p>
 		{% endif %}
 
 		<h2 class="govuk-heading-m">Evidence you must provide</h2>
 
-		<p class="govuk-body">For each site notice you put up, you must provide:</p>
+		<p class="govuk-body">For each site notice you publish, you must provide:</p>
 
 		<ul class="govuk-list govuk-list--bullet">
-			<li>a close-up photograph clearly showing the notice</li>
-			<li>a photograph showing the notice in its surroundings, so we can see where it is displayed</li>
-			<li>the date you first displayed the notice</li>
+			<li>one close-up photograph clearly showing the notice</li>
+			<li>one photograph showing the notice in its surrounding location, showing where it has been displayed</li>
+			<li>the date the notice was first displayed</li>
 		</ul>
 
-		<p class="govuk-body">Site notices must remain in place for the whole 21 days. You must send us this evidence before we can make a decision on your application.</p>
+		<h2 class="govuk-heading-m">When to display your notice</h2>
+
+		<p class="govuk-body">You must display your notice within 7 days of receiving this notification, then provide your evidence as soon as possible.</p>
+
+		<p class="govuk-body">Once displayed, your notice must remain in place for 21 days.</p>
+
+		<h2 class="govuk-heading-m">How we manage consultation responses</h2>
+
+		<p class="govuk-body">We will review any responses we receive and let you know:</p>
+
+		<ul class="govuk-list govuk-list--bullet">
+			<li>a summary of the responses we received</li>
+			<li>whether you need to take any action, and what this involves</li>
+			<li>a deadline for responding, if action is needed</li>
+			<li>what happens if you do not respond</li>
+			<li>any measures you could take to address the issues raised</li>
+		</ul>
+
+		<p class="govuk-body">We aim to give you this in one update, so you do not need to be contacted more than once.</p>
 
 		<h2 class="govuk-heading-m">Get your site notice</h2>
 
-		<p class="govuk-body">We've prepared your notice using the details from your application. Print it and display it at each location.</p>
-
-		<p class="govuk-body">Write the date you first display it in the space at the bottom of the notice.</p>
+		<p class="govuk-body">Print the notice and display it at each location. Most of it is already filled in with your application details. You only need to write in the date when you first display it.</p>
 
 		<p class="govuk-body">
 			<a class="govuk-link govuk-link--no-visited-state" href="notice" target="_blank" rel="noreferrer noopener">View and print the site notice (opens in new tab)</a>
 		</p>
-
-	</div>
-</div>
-
-<div class="govuk-grid-row">
-	<div class="govuk-grid-column-full">
 
 		<h2 class="govuk-heading-m" id="location-evidence">Send us evidence</h2>
 
@@ -126,9 +136,17 @@ Display a site notice - Get permission for marine work
 
 		{% if not allComplete %}
 			{{ govukInsetText({
-				html: 'You must complete all sections marked <span class="govuk-tag govuk-tag--red govuk-!-margin-bottom-2 govuk-!-margin-top-2">Incomplete</span> before you can send your evidence.'
+				html: 'You must complete all sections marked <span class="govuk-tag govuk-tag--red">Incomplete</span> before you can send your evidence.'
 			}) }}
 		{% endif %}
+
+	</div>
+</div>
+
+{# The evidence cards, and the buttons that act on them, run full width as on
+   Review site details. #}
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-full">
 
 		{% for location in locations %}
 		<div class="govuk-summary-card" id="location-{{ location.number }}">
