@@ -11,9 +11,12 @@
   on its own. The change listener copies the file name into a hidden field for
   the task list to show. It sits on the form rather than the input because
   enhancement moves the input, and change events bubble.
+
+  Resubmit site notice evidence uses this page too, and passes formAction so
+  the photo is saved against the resubmission instead.
 #}
 {% set siteNoticeForm %}
-<form action="close-up-photo-router?location={{ locationNumber }}" method="post" novalidate id="close-up-form">
+<form action="{{ formAction or 'close-up-photo-router' }}?location={{ locationNumber }}" method="post" novalidate id="close-up-form">
 
 	<input type="hidden" id="close-up-filename" name="close-up-filename" value="{{ location.closeup }}">
 

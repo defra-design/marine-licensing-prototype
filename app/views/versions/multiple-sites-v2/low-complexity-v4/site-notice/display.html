@@ -50,10 +50,11 @@ Display a site notice - Get permission for marine work
 		<h1 class="govuk-heading-l">Display a site notice</h1>
 
 		{# Once the evidence is with us the page records who sent it and when.
-		   The date is always today so the prototype never shows a stale one. #}
+		   The date is today so the prototype never shows a stale one, unless
+		   the resubmit demo has set an earlier one (sentDate). #}
 		{% if sent %}
 			{{ govukInsetText({
-				text: "Evidence was submitted " + ("" | todayDate) + " by Sam Evans"
+				text: "Evidence was submitted " + (sentDate or ("" | todayDate)) + " by Sam Evans"
 			}) }}
 		{% endif %}
 
@@ -87,7 +88,7 @@ Display a site notice - Get permission for marine work
 		{% if multipleSites %}
 		<h2 class="govuk-heading-m">Multiple sites</h2>
 
-		<p class="govuk-body">If your application covers multiple sites, check whether your chosen locations are enough to reach interested parties at each one.</p>
+		<p class="govuk-body">Check whether your chosen locations are enough to reach interested parties at each one.</p>
 
 		<p class="govuk-body">You may need extra notice locations if your sites are spread across different beaches, harbours, ports or coastal communities.</p>
 		{% endif %}

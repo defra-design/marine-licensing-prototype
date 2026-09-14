@@ -43,12 +43,18 @@ module.exports = function (router) {
       // task the applicant sees and what the application status is. Whichever
       // Notify email they arrive on sets it; withholding is the default so
       // landing cold behaves as it always did.
+      //
+      // site-notice-resubmit comes after the site notice evidence has been
+      // sent and the case officer has rejected some of the photographs.
       const stage = req.session.data['dawlish-stage'] || 'withhold';
       req.session.data['dawlish-stage'] = stage;
 
-      const stageTaskDone = stage === 'site-notice'
-        ? Boolean(req.session.data['site-notice-sent'])
-        : Boolean(req.session.data['withhold-information-read']);
+      let stageTaskDone = Boolean(req.session.data['withhold-information-read']);
+      if (stage === 'site-notice') {
+        stageTaskDone = Boolean(req.session.data['site-notice-sent']);
+      } else if (stage === 'site-notice-resubmit') {
+        stageTaskDone = Boolean(req.session.data['site-notice-resubmit-sent']);
+      }
 
       let dawlishStatus = 'Action required';
       if (req.session.data['withdrawn-dawlish'] === 'true') {
@@ -81,13 +87,16 @@ module.exports = function (router) {
     next();
   });
 
-  // Clears the site notice task back to its starting state. Both Notify email
-  // entry points call this so each demo starts from a clean task list. The
-  // stage itself is set by the entry point, not here.
+  // Clears the site notice tasks back to their starting state. Every Notify
+  // email entry point calls this so each demo starts from a clean task list.
+  // The stage itself is set by the entry point, not here.
   function resetSiteNotice(req) {
     delete req.session.data['site-notice-locations'];
     delete req.session.data['site-notice-sent'];
+    delete req.session.data['site-notice-sent-date'];
     delete req.session.data['site-notice-multiple-sites'];
+    delete req.session.data['site-notice-resubmit-locations'];
+    delete req.session.data['site-notice-resubmit-sent'];
   }
 
   ///////////////////////////////////////////
@@ -1640,7 +1649,9 @@ module.exports = function (router) {
             canDelete: position > 0
           };
         }),
-        allComplete: siteNoticeComplete(req)
+        allComplete: siteNoticeComplete(req),
+        // Only set when the resubmit demo seeds an earlier sent date.
+        sentDate: req.session.data['site-notice-sent-date']
       });
     });
 
@@ -1747,6 +1758,160 @@ module.exports = function (router) {
       }
 
       req.session.data['site-notice-sent'] = true;
+      res.redirect('../view-details/dawlish-sea-defence-extension');
+    });
+
+    ///////////////////////////////////////////
+    // Resubmit site notice evidence journey
+    ///////////////////////////////////////////
+
+    // A separate task that follows Display a site notice. The case officer has
+    // rejected the photographs for one or more locations, and only those
+    // locations come back to the applicant. Each keeps the number it had in the
+    // original task, so "Location 1 evidence" means the same thing on both.
+    //
+    //   { number, reason, closeup, position }
+    //
+    // The name and date were accepted, so they are read from the original
+    // evidence rather than copied. The original evidence is left alone as the
+    // record of what was first sent.
+    const SITE_NOTICE_REJECTION_REASON = 'The close-up photo is blurred, so we cannot read the text on the notice or the date you wrote on it. Take the photo again in good light, holding your camera steady and close enough that all the text is in focus.';
+
+    // A date some days back, split the way the date question stores it.
+    function siteNoticeDateParts(daysAgo) {
+      const date = new Date();
+      date.setDate(date.getDate() - daysAgo);
+      return {
+        day: String(date.getDate()),
+        month: String(date.getMonth() + 1),
+        year: String(date.getFullYear())
+      };
+    }
+
+    // Puts the application where the demo needs it: withholding read, the
+    // site notice evidence sent for one location, and that location's
+    // photographs rejected.
+    //
+    // Dates are relative so they never go stale. The notice went up 8 days
+    // ago and the evidence was sent 6 days ago, so Display a site notice shows
+    // an earlier date than the resubmission. Only this demo sets the sent
+    // date; the first site notice journey still shows today.
+    function siteNoticeResubmitSeed(req) {
+      req.session.data['dawlish-stage'] = 'site-notice-resubmit';
+      req.session.data['withhold-information-read'] = true;
+      req.session.data['site-notice-locations'] = [Object.assign({
+        name: 'Dawlish notice board',
+        closeup: 'Dawlish-notice-close-up.jpg',
+        position: 'Dawlish-notice-surroundings.jpg'
+      }, siteNoticeDateParts(8))];
+      req.session.data['site-notice-sent'] = true;
+      req.session.data['site-notice-sent-date'] = siteNoticeDate(siteNoticeDateParts(6));
+      req.session.data['site-notice-resubmit-locations'] = [{
+        number: 1,
+        reason: SITE_NOTICE_REJECTION_REASON
+      }];
+      delete req.session.data['site-notice-resubmit-sent'];
+    }
+
+    // Landing on the task page cold, without the email, still gets a
+    // rejected location to work with.
+    function siteNoticeResubmitLocations(req) {
+      if (!Array.isArray(req.session.data['site-notice-resubmit-locations'])) {
+        siteNoticeResubmitSeed(req);
+      }
+      return req.session.data['site-notice-resubmit-locations'];
+    }
+
+    function siteNoticeResubmitLocation(req) {
+      const locations = siteNoticeResubmitLocations(req);
+      const number = parseInt(req.query.location, 10);
+      return locations.find(function (location) {
+        return location.number === number;
+      }) || locations[0];
+    }
+
+    // Both photos have to come in again, even if only one was rejected.
+    function siteNoticeResubmitComplete(req) {
+      return siteNoticeResubmitLocations(req).every(function (location) {
+        return Boolean(location.closeup && location.position);
+      });
+    }
+
+    // The upload pages are the same ones Display a site notice uses. Only
+    // where the form posts to changes.
+    function renderSiteNoticeResubmitUpload(req, res, page) {
+      const location = siteNoticeResubmitLocation(req);
+      res.render(`versions/${version}/${section}/site-notice/${page}`, {
+        locationNumber: location.number,
+        location: location,
+        formAction: `resubmit-${page}-router`,
+        showError: false
+      });
+    }
+
+    function siteNoticeResubmitSaved(req, res, number) {
+      siteNoticeClearFields(req);
+      res.redirect(`resubmit#location-${number}`);
+    }
+
+    // Arriving from the Notify email resets the demo and moves the
+    // application to the resubmit stage.
+    router.get(`/versions/${version}/${section}/emails/site-notice-resubmit`, function (req, res) {
+      resetSiteNotice(req);
+      delete req.session.data['withdrawn-dawlish'];
+      siteNoticeResubmitSeed(req);
+      res.render(`versions/${version}/${section}/emails/site-notice-resubmit`);
+    });
+
+    router.get(`/versions/${version}/${section}/site-notice/resubmit`, function (req, res) {
+      const resubmitLocations = siteNoticeResubmitLocations(req);
+      const originals = siteNoticeLocations(req);
+
+      res.render(`versions/${version}/${section}/site-notice/resubmit`, {
+        locations: resubmitLocations.map(function (location) {
+          const original = originals[location.number - 1] || {};
+          return {
+            number: location.number,
+            name: original.name,
+            date: siteNoticeDate(original),
+            reason: location.reason,
+            closeup: location.closeup,
+            position: location.position
+          };
+        }),
+        allComplete: siteNoticeResubmitComplete(req),
+        sent: Boolean(req.session.data['site-notice-resubmit-sent'])
+      });
+    });
+
+    router.get(`/versions/${version}/${section}/site-notice/resubmit-close-up-photo`, function (req, res) {
+      renderSiteNoticeResubmitUpload(req, res, 'close-up-photo');
+    });
+
+    router.post(`/versions/${version}/${section}/site-notice/resubmit-close-up-photo-router`, function (req, res) {
+      const location = siteNoticeResubmitLocation(req);
+      location.closeup = (req.body['close-up-filename'] || '').trim() || 'Dawlish-close-up.jpg';
+      siteNoticeResubmitSaved(req, res, location.number);
+    });
+
+    router.get(`/versions/${version}/${section}/site-notice/resubmit-position-photo`, function (req, res) {
+      renderSiteNoticeResubmitUpload(req, res, 'position-photo');
+    });
+
+    router.post(`/versions/${version}/${section}/site-notice/resubmit-position-photo-router`, function (req, res) {
+      const location = siteNoticeResubmitLocation(req);
+      location.position = (req.body['position-filename'] || '').trim() || 'Dawlish-surroundings.jpg';
+      siteNoticeResubmitSaved(req, res, location.number);
+    });
+
+    // As with Send evidence on the first task, the button only shows once
+    // every photo is in, so this is a backstop.
+    router.post(`/versions/${version}/${section}/site-notice/resubmit-send-router`, function (req, res) {
+      if (!siteNoticeResubmitComplete(req)) {
+        return res.redirect('resubmit');
+      }
+
+      req.session.data['site-notice-resubmit-sent'] = true;
       res.redirect('../view-details/dawlish-sea-defence-extension');
     });
   }
