@@ -201,6 +201,7 @@ Submissions
 		  00 Action required     - the case officer needs something read or answered
 		  01 Draft               - not sent yet, needs finishing
 		  02 Submitted           - with us
+		  02 Consultation        - with us, site notice evidence accepted
 		  03 Scheduled           - exemption upcoming, not yet in force
 		  04 Active              - exemption in force
 		  05 Expired             - exemption sheduleded window closed
@@ -243,6 +244,7 @@ Submissions
 							classes: {
 								'Withdrawn': 'govuk-tag--grey',
 								'Submitted': 'govuk-tag--green',
+								'Consultation': 'govuk-tag--purple',
 								'Action required': 'govuk-tag--red'
 							}[data['dawlish-status']]
 						}) }}
