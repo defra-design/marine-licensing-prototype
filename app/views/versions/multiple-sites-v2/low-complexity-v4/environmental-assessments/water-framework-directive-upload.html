@@ -1,6 +1,7 @@
 {% extends "../../layouts/low-complexity-v4.html" %}
 
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
 
 {% block beforeContent %}
     {% include "../../includes/phase-banner.html" %}
@@ -28,6 +29,13 @@ Upload your Water Framework Directive assessment - {{ data['headerNameExemption'
                         Upload your Water Framework Directive assessment
                     </label>
                 </h1>
+
+                {{ govukDetails({
+                    summaryText: "Help with getting a WFD assessment template",
+                    html: "<p class='govuk-body'>If you need to provide a WFD assessment, you can use the following template. It's called a scoping document.</p>
+                    <p class='govuk-body'><a href='/public/downloads/wfd_scoping_template.odt' class='govuk-link' download>Download the WFD assessment scoping document</a>.</p>
+                    <p class='govuk-body'><a href='https://www.gov.uk/guidance/water-framework-directive-assessment-estuarine-and-coastal-waters' class='govuk-link' rel='noreferrer noopener' target='_blank'>Read the Environment Agency's guidance on the Water Framework Directive assessments for more information (opens in new tab)</a>.</p>"
+                }) }}
 
                 <div id="wfd-file-upload-hint" class="govuk-hint">
                     You can only upload a file that is a .docx or .odt.
