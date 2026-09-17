@@ -56,17 +56,24 @@ module.exports = function (router) {
         stageTaskDone = Boolean(req.session.data['site-notice-resubmit-sent']);
       }
 
+      // Once the resubmitted site notice evidence is in, the application moves
+      // on to consultation rather than back to Submitted.
       let dawlishStatus = 'Action required';
       if (req.session.data['withdrawn-dawlish'] === 'true') {
         dawlishStatus = 'Withdrawn';
       } else if (stageTaskDone) {
-        dawlishStatus = 'Submitted';
+        dawlishStatus = stage === 'site-notice-resubmit' ? 'Consultation' : 'Submitted';
       }
 
       // Submissions sorts on this, not the tag text: attention first, then
-      // live, then closed.
-      const dawlishStatusSort =
-        dawlishStatus === 'Withdrawn' ? '08' : (dawlishStatus === 'Submitted' ? '02' : '00');
+      // live, then closed. Consultation is still with us, so it sits with
+      // Submitted.
+      let dawlishStatusSort = '00';
+      if (dawlishStatus === 'Withdrawn') {
+        dawlishStatusSort = '08';
+      } else if (dawlishStatus === 'Submitted' || dawlishStatus === 'Consultation') {
+        dawlishStatusSort = '02';
+      }
 
       // The kit copies the session into res.locals.data before this middleware
       // runs, so anything derived here has to be written to both. Session only
