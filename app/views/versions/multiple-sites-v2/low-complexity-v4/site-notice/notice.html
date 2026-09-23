@@ -78,18 +78,49 @@
 			height: 2.2em;
 		}
 
+		/* Browsers do not let us set the print-dialog zoom. Scale the notice
+		   in print CSS instead so it reliably fits on one A4 page (~70%). */
 		@media print {
+			@page {
+				size: A4 portrait;
+				margin: 20mm;
+			}
+
 			.govuk-header,
 			.govuk-service-navigation,
 			.govuk-footer,
 			.govuk-phase-banner,
 			.print-link {
-				display: none;
+				display: none !important;
+			}
+
+			/* Drop prototype chrome spacing so the notice can use the page. */
+			.govuk-width-container,
+			.govuk-main-wrapper,
+			.govuk-grid-row,
+			.govuk-grid-column-full {
+				margin: 0 !important;
+				padding: 0 !important;
+				max-width: none !important;
+				width: 100% !important;
+				float: none !important;
 			}
 
 			.app-notice {
 				border-width: 3px;
-				padding: 20px;
+				padding: 16px;
+				max-width: none;
+				/* Chromium / Edge / Safari. Firefox ignores zoom; transform below. */
+				zoom: 0.7;
+			}
+
+			@supports not (zoom: 0.7) {
+				.app-notice {
+					transform: scale(0.7);
+					transform-origin: top left;
+					/* Widen the box so the scaled content still uses the page width. */
+					width: 142.86%;
+				}
 			}
 		}
 	</style>
