@@ -281,6 +281,28 @@ Submissions
 					</td>
 				</tr>
 
+				{% if data['reject-version'] == 'v2' %}
+				<!-- Reject journey v2 – the original application is Rejected. View details opens the
+				     rejected page, or goes straight to view details once a new application exists. -->
+				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="Plymouth Sound cable laying" data-type="Marine licence application" data-reference="MLA-10002" data-status="Rejected">
+					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Plymouth Sound cable laying</th>
+					<td class="govuk-table__cell">Marine licence application</td>
+					<td class="govuk-table__cell" data-sort-value="MLA-10002">MLA/2026/10002</td>
+					<td class="govuk-table__cell" data-sort-value="07">
+						{{ govukTag({
+							text: "Rejected",
+							classes: "govuk-tag--orange"
+						}) }}
+					</td>
+					<td class="govuk-table__cell" data-sort-value="260422">22 Apr 2026</td>
+					{% if data['user_type'] === 'organisation' %}
+					<td class="govuk-table__cell">Sam Evans</td>
+					{% endif %}
+					<td class="govuk-table__cell">
+						<a href="application-rejected?from=submissions" class="govuk-link--no-visited-state">View details</a>
+					</td>
+				</tr>
+				{% else %}
 				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="Plymouth Sound cable laying" data-type="Marine licence application" data-reference="MLA-10002" data-status="Unable to progress">
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Plymouth Sound cable laying</th>
 					<td class="govuk-table__cell">Marine licence application</td>
@@ -299,6 +321,7 @@ Submissions
 						<a href="email-landings/plymouth-sound-landing?from=submissions" class="govuk-link--no-visited-state">View details</a>
 					</td>
 				</tr>
+				{% endif %}
 
 				<!-- Submitted marine licence application (hard-coded) — withdrawable -->
 				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="Groyne construction, Bournemouth seafront, Dorset" data-type="Marine licence application" data-reference="MLA-10018" data-status="{% if data['withdrawn-groyne'] == 'true' %}Withdrawn{% else %}Submitted{% endif %}" id="project-groyne">

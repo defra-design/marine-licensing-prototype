@@ -26,6 +26,9 @@ Marine licence start page
 		<h1 class="govuk-heading-l">
 			{{ data['low-complexity-project-name-text-input'] }}
 		</h1>
+
+		{% include "versions/multiple-sites-v2/low-complexity-v4/includes/reject-banner.html" %}
+
 		<p class="govuk-body">When you provide your information you'll need to complete all sections before you can send your application.</p>
 
 		<p class="govuk-body">You'll be able to start the Marine plan policy considerations once you have completed Site and activity details.</p>
@@ -130,7 +133,11 @@ Marine licence start page
 			  </div>
 
 			  <div class="govuk-task-list__status" id="site-details-status">
-				{% if data['site-details-confirmed-complete'] %}
+				{% if data['reject-v2-sites-attention'] == 'true' %}
+					<strong class="govuk-tag govuk-tag--red">
+						Needs attention
+					</strong>
+				{% elif data['site-details-confirmed-complete'] %}
 					Completed
 				{% elif data['has-visited-site-details'] %}
 					<strong class="govuk-tag govuk-tag--teal">
@@ -213,7 +220,11 @@ Marine licence start page
 			  </div>
 
 			  <div class="govuk-task-list__status" id="wfd-status">
-				{% if data['low-complexity-wfd-completed'] %}
+				{% if data['reject-v2-wfd-attention'] == 'true' %}
+				<strong class="govuk-tag govuk-tag--red">
+					Needs attention
+				</strong>
+				{% elif data['low-complexity-wfd-completed'] %}
 				Completed
 				{% else %}
 				<strong class="govuk-tag govuk-tag--blue">
@@ -365,7 +376,7 @@ Marine licence start page
 			</li>
 		</ul>
 
-	{% if data['low-complexity-project-background-completed'] and data['low-complexity-dates-completed'] and data['site-details-confirmed-complete'] and mppActiveComplete and data['low-complexity-wfd-completed'] and (data['user_type'] !== 'organisation' or data['low-complexity-special-legal-powers-completed']) and data['low-complexity-harbour-authority-completed'] and data['low-complexity-other-permissions-completed'] and data['low-complexity-consultation-completed'] and data['low-complexity-sharing-information-completed'] and data['low-complexity-fee-estimate-completed'] == "true" and data['low-complexity-fee-estimate-rejected'] != "true" %}
+	{% if data['low-complexity-project-background-completed'] and data['low-complexity-dates-completed'] and data['site-details-confirmed-complete'] and mppActiveComplete and data['low-complexity-wfd-completed'] and (data['user_type'] !== 'organisation' or data['low-complexity-special-legal-powers-completed']) and data['low-complexity-harbour-authority-completed'] and data['low-complexity-other-permissions-completed'] and data['low-complexity-consultation-completed'] and data['low-complexity-sharing-information-completed'] and data['low-complexity-fee-estimate-completed'] == "true" and data['low-complexity-fee-estimate-rejected'] != "true" and data['reject-v2-sites-attention'] != 'true' and data['reject-v2-wfd-attention'] != 'true' %}
 	<form action="check-your-answers" method="post">
 		<button class="govuk-button" data-module="govuk-button">
 			Check and send your application

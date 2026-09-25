@@ -777,3 +777,22 @@ body.page-cookie-banner {
   
 
 }
+
+/* Reject journey v2 – "What you need to fix" banner (LCML v4) */
+.app-reject-banner {
+  background-color: #f4d7d7;
+  padding: 30px;
+  margin-bottom: 30px;
+
+  .govuk-heading-m {
+    margin-bottom: 10px;
+  }
+
+  > :last-child {
+    margin-bottom: 0;
+  }
+
+  @media (max-width: 40.0525em) {
+    padding: 15px;
+  }
+}

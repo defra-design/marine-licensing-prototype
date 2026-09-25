@@ -49,6 +49,8 @@ Error:
 
 <div class="govuk-grid-row">
 	<div class="govuk-grid-column-two-thirds">
+
+		{% include "versions/multiple-sites-v2/low-complexity-v4/includes/reject-banner.html" %}
 		{% if data['low-complexity-date-completed-by-errorthispage'] == "true" %}
 		{{ govukErrorSummary({
 			titleText: "There is a problem",

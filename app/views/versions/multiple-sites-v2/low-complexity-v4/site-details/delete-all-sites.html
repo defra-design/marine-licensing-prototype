@@ -29,6 +29,8 @@ Are you sure you want to delete all site details?
       {{ pageHeadingTextHTML }}
     </h1>
 
+    {% include "versions/multiple-sites-v2/low-complexity-v4/includes/reject-banner.html" %}
+
     {% set mppInProgress = data['marine-plan-policy-s-acc-1-completed'] or data['marine-plan-policy-s-bio-1-completed'] or data['marine-plan-policy-s-agg-4-completed'] or data['marine-plan-policy-s-emp-1-completed'] or data['marine-plan-policy-s-uwn-2-completed'] or data['marine-plan-policy-v2-s-acc-1-completed'] or data['marine-plan-policy-v2-s-bio-1-completed'] or data['marine-plan-policy-v2-s-agg-4-completed'] or data['marine-plan-policy-v2-s-emp-1-completed'] or data['marine-plan-policy-v2-s-uwn-2-completed'] %}
     <p class="govuk-inset-text">
       {% if mppInProgress %}

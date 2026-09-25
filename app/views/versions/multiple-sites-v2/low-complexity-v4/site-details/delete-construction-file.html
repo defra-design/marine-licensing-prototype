@@ -27,6 +27,8 @@ Are you sure you want to delete Site {{ siteNumber }} construction drawing {{ fi
       {{ pageHeadingTextHTML }}
     </h1>
 
+    {% include "versions/multiple-sites-v2/low-complexity-v4/includes/reject-banner.html" %}
+
     <form action="delete-construction-file-router" method="post" novalidate>
       <input type="hidden" name="site-number" value="{{ siteNumber }}">
       <input type="hidden" name="file-number" value="{{ fileNumber }}">
