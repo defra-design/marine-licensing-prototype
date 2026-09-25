@@ -792,6 +792,24 @@ body.page-cookie-banner {
     margin-bottom: 0;
   }
 
+  // "View the issues" – the blue link colour is only 3.8:1 on the pink, so use
+  // text colour instead. Mirrors the govuk-link--text-colour class in GOV.UK
+  // Frontend's code (not documented on the design system website).
+  // Hover keeps the thicker underline and focus keeps the yellow and black style.
+  .govuk-details__summary,
+  .govuk-details__summary:hover {
+    color: govuk-functional-colour(text);
+  }
+
+  .govuk-details__summary:focus {
+    color: govuk-functional-colour(focus-text);
+  }
+
+  // The grey line beside the opened issues is 1.5:1 on the pink, so match the text
+  .govuk-details__text {
+    border-left-color: govuk-functional-colour(text);
+  }
+
   @media (max-width: 40.0525em) {
     padding: 15px;
   }
