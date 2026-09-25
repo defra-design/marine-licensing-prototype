@@ -1,0 +1,83 @@
+{% extends "../layouts/low-complexity-v4.html" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block beforeContent %}
+    {% include "../includes/phase-banner.html" %}
+    {% if data['organisation-name'] %}
+        {% include "../includes/organisation-switcher.html" %}
+    {% endif %}
+    {% if showBackToSubmissions %}
+    <a class="govuk-back-link govuk-link--no-visited-state" href="submissions">Back</a>
+    {% endif %}
+{% endblock %}
+
+{% block pageTitle %}
+Your application has been rejected - Get permission for marine work
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-two-thirds">
+
+		<span class="govuk-caption-l">Plymouth Sound cable laying</span>
+		<h1 class="govuk-heading-l">Your application has been rejected</h1>
+
+		<p class="govuk-body">We reviewed your application (MLA/2026/10002) on 29 April 2026 and rejected it.</p>
+
+		<p class="govuk-body">You can fix the issues we found and submit a new application. You will not need to start from a blank application. We will copy everything you have already entered into a new application for you to fix and submit.</p>
+
+		<h2 class="govuk-heading-m">Why your application was rejected</h2>
+
+		<p class="govuk-body">We found the following issues with the following sections of your application:</p>
+
+		{# What the case officer selected and wrote in Dynamics 365 #}
+		<div class="govuk-inset-text">
+			<ul class="govuk-list govuk-list--bullet">
+				<li>Site activities</li>
+				<li>Water Framework Directive</li>
+			</ul>
+			<p class="govuk-body">The description for Activity 2 in Sites and activities has not been completed. There are only 4 words - this needs to be a full description of the activity.</p>
+			<p class="govuk-body govuk-!-margin-bottom-0">The file uploaded for the Water Framework Directive assessment is not a Water Framework Directive assessment. It is a water sample document.</p>
+		</div>
+
+		<h2 class="govuk-heading-m">What you will be charged</h2>
+
+		<p class="govuk-body">We will charge you for the time we have spent reviewing your application up to rejecting it. We will send you an invoice separately.</p>
+
+		<p class="govuk-body">Each application is charged separately. If you submit a new application, you will need to complete a new fee estimate, and you will be charged for that application as well.</p>
+
+		<h2 class="govuk-heading-m">How to submit a new application</h2>
+
+		<p class="govuk-body">We will copy all of your answers from application MLA/2026/10002 into a new application, including any documents you uploaded. Nothing you have already entered will be lost.</p>
+
+		<p class="govuk-body">In the new application, we will highlight the sections you need to fix.</p>
+
+		<p class="govuk-body">You will need to:</p>
+
+		<ul class="govuk-list govuk-list--bullet">
+			<li>fix the sections we have highlighted</li>
+			<li>complete the fee estimate again, because this is a new application</li>
+			<li>submit the new application</li>
+		</ul>
+
+		<p class="govuk-body">Your new application will have a new reference number. Your original application will stay rejected and you can still view it in your submissions.</p>
+
+		<h3 class="govuk-heading-s">If you decide not to submit a new application</h3>
+
+		<p class="govuk-body">You do not need to do anything. We will still send you an invoice for the review we have carried out so far.</p>
+
+		{{ govukButton({
+			text: "Create new application",
+			href: "create-new-application"
+		}) }}
+
+		<p class="govuk-body">
+			<a class="govuk-link govuk-link--no-visited-state" href="view-details/plymouth-sound-cable-laying-rejected">View your original application</a>
+		</p>
+
+	</div>
+</div>
+
+{% endblock %}

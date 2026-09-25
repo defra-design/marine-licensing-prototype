@@ -1,0 +1,64 @@
+{% extends "../../layouts/email.html" %}
+
+{% block pageTitle %}
+  Email - Your marine licence application MLA/2026/10002 has been rejected
+{% endblock %}
+
+{% set inboxHref = "inbox-rejected" %}
+
+{% block header %}
+  {% include "./_mail-chrome.html" %}
+  {% set messageSubject = "Your marine licence application MLA/2026/10002 has been rejected" %}
+  {% set messageDate = "Today at 10:42" %}
+  {% include "./_message-header.html" %}
+  {{ govukHeader({
+    homepageUrl: "/",
+    classes: "govuk-header--full-width-border"
+  }) }}
+{% endblock %}
+
+{% block content %}
+
+<style>
+.govuk-width-container {
+	max-width: 640px;
+}
+.govuk-main-wrapper {
+    padding-top: 10px;
+    padding-bottom: 40px;
+}
+h1 {
+	font-size: 36px;
+	font-family: Arial,Helvetica;
+	color: #000;
+}
+p {
+	font-size: 21px;
+	font-family: Arial,Helvetica;
+	color: #000;
+}
+h2 {
+	font-size: 30px;
+	font-family: Arial,Helvetica;
+	color: #000;
+}
+ul {
+	font-size: 21px;
+	font-family: Arial,Helvetica;
+	color: #000;
+}
+.govuk-template {
+    background-color: #fff;
+}
+</style>
+
+
+<p>Dear Sam Evans,</p>
+
+<p>Your marine licence application MLA/2026/10002 has been rejected.</p>
+
+<p><a href="sign-in-rejected">Sign-in to find out what you can do</a></p>
+
+<p>From Marine Management Organisation</p>
+
+{% endblock %}

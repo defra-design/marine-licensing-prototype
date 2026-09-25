@@ -25,6 +25,8 @@ How do you want to provide the site location?
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
+
+        {% include "versions/multiple-sites-v2/low-complexity-v4/includes/reject-banner.html" %}
         
         <form action="how-do-you-want-to-provide-site-location-router" method="post" novalidate>
             

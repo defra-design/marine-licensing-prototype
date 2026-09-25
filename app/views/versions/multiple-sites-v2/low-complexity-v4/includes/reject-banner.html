@@ -1,0 +1,18 @@
+{#
+  Reject journey v2 – "What you need to fix" banner.
+  Plays back what the case officer selected and wrote in Dynamics 365 when
+  rejecting MLA/2026/10002. Shown on the task list and on every page of the
+  sections that need fixing (Sites and activities, Water Framework Directive),
+  for as long as the new draft is being worked on.
+#}
+{% if data['reject-version'] == 'v2' and data['resubmit-draft-created'] and data['low-complexity-application-status'] != 'sent' %}
+<div class="app-reject-banner">
+    <h2 class="govuk-heading-m">What you need to fix</h2>
+    <ul class="govuk-list govuk-list--bullet">
+        <li>Site activities</li>
+        <li>Water Framework Directive</li>
+    </ul>
+    <p class="govuk-body">The description for Activity 2 in Sites and activities has not been completed. There are only 4 words - this needs to be a full description of the activity.</p>
+    <p class="govuk-body">The file uploaded for the Water Framework Directive assessment is not a Water Framework Directive assessment. It is a water sample document.</p>
+</div>
+{% endif %}

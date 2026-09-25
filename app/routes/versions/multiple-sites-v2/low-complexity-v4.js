@@ -763,6 +763,7 @@ module.exports = function (router) {
       delete req.session.data['low-complexity-wfd-excluded-activities'];
       delete req.session.data['low-complexity-wfd-filename'];
       req.session.data['low-complexity-wfd-completed'] = true;
+      delete req.session.data['reject-v2-wfd-attention'];
       req.session.data['low-complexity-wfd-from-cya'] = false;
       // Came from the main check page — return there, anchored on the WFD card
       if (fromMainCya) {
@@ -835,8 +836,11 @@ module.exports = function (router) {
   });
 
   router.post(`/versions/${version}/${section}/environmental-assessments/water-framework-directive-upload-router`, function (req, res) {
-    // Prototype: pretend a file was uploaded
-    req.session.data['low-complexity-wfd-filename'] = 'WFD.doc';
+    // Prototype: pretend a file was uploaded. In reject journey v2 this replaces
+    // the water sample document with a proper assessment.
+    req.session.data['low-complexity-wfd-filename'] = req.session.data['reject-version'] === 'v2' && req.session.data['resubmit-draft-created']
+      ? 'water-framework-directive-assessment.odt'
+      : 'WFD.doc';
     return res.redirect('water-framework-directive-check-answers');
   });
 
@@ -946,6 +950,7 @@ module.exports = function (router) {
 
   router.post(`/versions/${version}/${section}/environmental-assessments/water-framework-directive-check-answers-router`, function (req, res) {
     req.session.data['low-complexity-wfd-completed'] = true;
+    delete req.session.data['reject-v2-wfd-attention'];
     req.session.data['low-complexity-wfd-from-cya'] = false;
     // Came from the main check page — return there, anchored on the WFD card
     if (req.session.data['low-complexity-wfd-from-main-cya']) {
@@ -1025,7 +1030,10 @@ module.exports = function (router) {
     delete req.session.data['resubmit-draft-created'];
     delete req.session.data['resubmit-draft-created-date'];
     delete req.session.data['deleted-plymouth-resubmit'];
-    
+    delete req.session.data['reject-version'];
+    delete req.session.data['reject-v2-sites-attention'];
+    delete req.session.data['reject-v2-wfd-attention'];
+
     // Clear error flags
     delete req.session.data['errorthispage'];
     delete req.session.data['errortypeone'];
@@ -1336,6 +1344,8 @@ module.exports = function (router) {
       'construction-delete-next', 'site-details-confirmed-complete',
       'mpp-previously-unlocked',
       'low-complexity-wfd-within-nautical-mile', 'low-complexity-wfd-completed',
+      'low-complexity-wfd-excluded-activities', 'low-complexity-wfd-filename',
+      'reject-v2-sites-attention', 'reject-v2-wfd-attention',
       'low-complexity-special-legal-powers', 'low-complexity-special-legal-powers-completed',
       'low-complexity-harbour-authority', 'low-complexity-harbour-authority-details', 'low-complexity-harbour-authority-completed',
       'low-complexity-other-permissions', 'low-complexity-other-permissions-details', 'low-complexity-other-permissions-completed',
@@ -1367,7 +1377,13 @@ module.exports = function (router) {
   // cable laying application, so the marine licence start page shows a fully
   // completed draft that can be reviewed, corrected and resubmitted.
   router.get(`/versions/${version}/${section}/seed-resubmit-draft`, function (req, res) {
-    const d = req.session.data;
+    seedResubmitDraft(req.session.data);
+    res.redirect('marine-licence-start-page');
+  });
+
+  // Shared by the v1 and v2 reject journeys: copies the original Plymouth Sound
+  // answers into a new draft application.
+  function seedResubmitDraft(d) {
 
     // Treat as a fresh draft application
     d['low-complexity-application-status'] = 'draft';
@@ -1487,6 +1503,100 @@ module.exports = function (router) {
     // --- Sharing project information publicly ---
     d['low-complexity-sharing-information'] = 'Yes';
     d['low-complexity-sharing-information-completed'] = true;
+  }
+
+  // v1 email – opening it switches the Submissions row and view details back to
+  // the v1 'Unable to progress' version.
+  router.get(`/versions/${version}/${section}/emails/unable-to-progress`, function (req, res) {
+    delete req.session.data['reject-version'];
+    res.render(`versions/${version}/${section}/emails/unable-to-progress`);
+  });
+
+  ///////////////////////////////////////////
+  // Reject journey v2
+  ///////////////////////////////////////////
+
+  // Arriving from the index page or the inbox resets the demo: the application
+  // is rejected and no new application has been created yet.
+  function startRejectV2(req) {
+    clearResubmitDraft(req.session.data);
+    req.session.data['reject-version'] = 'v2';
+  }
+
+  router.get(`/versions/${version}/${section}/emails/inbox-rejected`, function (req, res) {
+    startRejectV2(req);
+    res.render(`versions/${version}/${section}/emails/inbox-rejected`);
+  });
+
+  router.get(`/versions/${version}/${section}/emails/rejected`, function (req, res) {
+    startRejectV2(req);
+    res.render(`versions/${version}/${section}/emails/rejected`);
+  });
+
+  function rejectV2DraftExists(d) {
+    return d['resubmit-draft-created'] && !d['deleted-plymouth-resubmit'];
+  }
+
+  // 'Your application has been rejected' page. Once a new application has been
+  // created from it, go straight to the original application's view details.
+  router.get(`/versions/${version}/${section}/application-rejected`, function (req, res) {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+    req.session.data['reject-version'] = 'v2';
+    if (rejectV2DraftExists(req.session.data)) {
+      return res.redirect('view-details/plymouth-sound-cable-laying-rejected');
+    }
+    res.render(`versions/${version}/${section}/application-rejected`, {
+      showBackToSubmissions: req.query.from === 'submissions'
+    });
+  });
+
+  // 'Create new application' – copies the rejected application into a new
+  // draft and goes straight to the task list (no interstitial page).
+  router.get(`/versions/${version}/${section}/create-new-application`, function (req, res) {
+    const d = req.session.data;
+    clearResubmitDraft(d);
+    seedResubmitDraft(d);
+    d['reject-version'] = 'v2';
+
+    // Site 1 – Activity 2, with the 4-word description the case officer flagged
+    d['low-complexity-file-upload-activities'].push({
+      activityNumber: 2,
+      'low-complexity-type-of-activity': 'removal',
+      'low-complexity-type-of-activity-completed': true,
+      'low-complexity-removal-type': 'one-off-first-time',
+      'low-complexity-removal-substances-objects': ['piles-piled-structures'],
+      'low-complexity-activity-description': 'The activity will',
+      'low-complexity-activity-description-completed': true,
+      'low-complexity-site-duration-years': '0',
+      'low-complexity-site-duration-months': '1',
+      'low-complexity-site-duration-completed': true,
+      'low-complexity-date-completed-by': 'No',
+      'low-complexity-date-completed-by-completed': true,
+      'low-complexity-months-of-activity': 'No',
+      'low-complexity-months-of-activity-completed': true,
+      'low-complexity-working-hours': 'Monday to Saturday, 07:00 to 19:00, working around low tide at Mount Batten Pier.',
+      'low-complexity-working-hours-completed': true
+    });
+
+    // Water Framework Directive – the wrong document was uploaded
+    d['low-complexity-wfd-within-nautical-mile'] = 'Yes';
+    d['low-complexity-wfd-excluded-activities'] = 'No';
+    d['low-complexity-wfd-filename'] = 'water-sample-results.doc';
+    d['low-complexity-wfd-completed'] = true;
+
+    // The marine plan policy answers were fine this time
+    d['marine-plan-policy-s-bio-1-text'] = 'The cable route has been micro-routed to avoid eelgrass beds and reef features. Burial by jetting limits disturbance to a narrow strip of seabed, which recovers naturally.';
+    d['marine-plan-policy-v2-s-bio-1-text'] = d['marine-plan-policy-s-bio-1-text'];
+
+    // New application, so the fee estimate has to be done again
+    delete d['low-complexity-fee-estimate-completed'];
+    delete d['low-complexity-fee-terms-checkbox'];
+    delete d['low-complexity-fee-acceptance'];
+
+    // Sections the case officer flagged. Cleared when the applicant presses
+    // Continue at the end of that section (not on Back).
+    d['reject-v2-sites-attention'] = 'true';
+    d['reject-v2-wfd-attention'] = 'true';
 
     res.redirect('marine-licence-start-page');
   });

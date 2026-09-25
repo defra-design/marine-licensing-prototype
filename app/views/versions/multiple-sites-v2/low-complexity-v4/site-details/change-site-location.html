@@ -27,6 +27,8 @@ Change site location
       {{ pageHeadingTextHTML }}
     </h1>
 
+    {% include "versions/multiple-sites-v2/low-complexity-v4/includes/reject-banner.html" %}
+
     <div class="govuk-inset-text">
       {% if data['low-complexity-site-name'] %}
         Site 1: {{ data['low-complexity-site-name'] }}

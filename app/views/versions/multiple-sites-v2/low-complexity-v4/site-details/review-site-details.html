@@ -31,6 +31,8 @@ Review site details
             {{ pageHeadingTextHTML }}
         </h1>
 
+        {% include "versions/multiple-sites-v2/low-complexity-v4/includes/reject-banner.html" %}
+
         {% if data['low-complexity-site-details-finished-error'] %}
             {{ govukErrorSummary({
                 titleText: "There is a problem",

@@ -26,6 +26,8 @@ Which type of file do you want to upload?
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
+
+        {% include "versions/multiple-sites-v2/low-complexity-v4/includes/reject-banner.html" %}
         
         <!-- Error summary -->
         {% if data['low-complexity-file-type-errorthispage'] == "true" %}
