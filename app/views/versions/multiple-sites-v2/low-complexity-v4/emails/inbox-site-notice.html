@@ -1,0 +1,28 @@
+{% extends "govuk-prototype-kit/layouts/govuk-branded.njk" %}
+
+{% block pageTitle %}
+  Inbox - Sam Evans
+{% endblock %}
+
+{# ?sites=multiple is passed through so the email, and Back to inbox, keep the
+   multiple site variant. #}
+{% set sitesQuery = "?sites=multiple" if sites == "multiple" else "" %}
+{% set inboxHref = "inbox-site-notice" + sitesQuery %}
+
+{% block header %}
+  {% include "./_mail-chrome.html" %}
+{% endblock %}
+
+{% block beforeContent %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block content %}
+
+{% set inboxStage = "site-notice" %}
+{% set emailHref = "site-notice" + sitesQuery %}
+{% set emailSubject = "Your application MLA/2026/10020 now needs a site notice" %}
+{% set emailPreview = "Dear Sam Evans, Your application MLA/2026/10020 now needs a site notice." %}
+{% set emailTime = "08:47" %}
+{% include "./_inbox-dawlish.html" %}
+
+{% endblock %}

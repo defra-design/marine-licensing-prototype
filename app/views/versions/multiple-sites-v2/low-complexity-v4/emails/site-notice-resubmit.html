@@ -4,7 +4,13 @@
   Email - Your application MLA/2026/10020 now needs some new evidence for your site notice
 {% endblock %}
 
+{% set inboxHref = "inbox-site-notice-resubmit" %}
+
 {% block header %}
+  {% include "./_mail-chrome.html" %}
+  {% set messageSubject = "Your application MLA/2026/10020 now needs some new evidence for your site notice" %}
+  {% set messageDate = "Today at 14:05" %}
+  {% include "./_message-header.html" %}
   {{ govukHeader({
     homepageUrl: "/",
     classes: "govuk-header--full-width-border"

@@ -1,0 +1,25 @@
+{% extends "govuk-prototype-kit/layouts/govuk-branded.njk" %}
+
+{% block pageTitle %}
+  Inbox - Sam Evans
+{% endblock %}
+
+{% set inboxHref = "inbox-site-notice-resubmit" %}
+
+{% block header %}
+  {% include "./_mail-chrome.html" %}
+{% endblock %}
+
+{% block beforeContent %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block content %}
+
+{% set inboxStage = "site-notice-resubmit" %}
+{% set emailHref = "site-notice-resubmit" %}
+{% set emailSubject = "Your application MLA/2026/10020 now needs some new evidence for your site notice" %}
+{% set emailPreview = "Dear Sam Evans, Your application MLA/2026/10020 now needs some new evidence for your site notice." %}
+{% set emailTime = "14:05" %}
+{% include "./_inbox-dawlish.html" %}
+
+{% endblock %}
