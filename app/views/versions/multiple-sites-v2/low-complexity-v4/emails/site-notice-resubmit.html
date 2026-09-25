@@ -1,14 +1,14 @@
 {% extends "../../layouts/email.html" %}
 
 {% block pageTitle %}
-  Email - Your application MLA/2026/10020 now needs some new evidence for your site notice
+  Email - Your marine licence application MLA/2026/10020 – site notice evidence update
 {% endblock %}
 
 {% set inboxHref = "inbox-site-notice-resubmit" %}
 
 {% block header %}
   {% include "./_mail-chrome.html" %}
-  {% set messageSubject = "Your application MLA/2026/10020 now needs some new evidence for your site notice" %}
+  {% set messageSubject = "Your marine licence application MLA/2026/10020 – site notice evidence update" %}
   {% set messageDate = "Today at 14:05" %}
   {% include "./_message-header.html" %}
   {{ govukHeader({
