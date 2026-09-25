@@ -4,7 +4,13 @@
   Email - Notification about withholding information for your application MLA/2026/10020
 {% endblock %}
 
+{% set inboxHref = "inbox-withhold-information" %}
+
 {% block header %}
+  {% include "./_mail-chrome.html" %}
+  {% set messageSubject = "Notification about withholding information for your application MLA/2026/10020" %}
+  {% set messageDate = "Today at 11:20" %}
+  {% include "./_message-header.html" %}
   {{ govukHeader({
     homepageUrl: "/",
     classes: "govuk-header--full-width-border"

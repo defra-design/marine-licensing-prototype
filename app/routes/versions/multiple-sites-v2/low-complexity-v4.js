@@ -1747,7 +1747,17 @@ module.exports = function (router) {
         req.session.data['site-notice-multiple-sites'] = 'yes';
       }
 
-      res.render(`versions/${version}/${section}/emails/site-notice`);
+      res.render(`versions/${version}/${section}/emails/site-notice`, {
+        sites: req.query.sites
+      });
+    });
+
+    // The inbox leaves the demo alone (opening the email resets it) and only
+    // passes ?sites=multiple on to the email link.
+    router.get(`/versions/${version}/${section}/emails/inbox-site-notice`, function (req, res) {
+      res.render(`versions/${version}/${section}/emails/inbox-site-notice`, {
+        sites: req.query.sites
+      });
     });
 
     router.get(`/versions/${version}/${section}/site-notice/display`, function (req, res) {

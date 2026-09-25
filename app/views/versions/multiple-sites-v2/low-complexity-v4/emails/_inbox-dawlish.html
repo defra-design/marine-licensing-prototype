@@ -1,0 +1,146 @@
+{#
+  Mock inbox for the Dawlish sea defence extension journeys (withholding
+  information, site notice, resubmit site notice). Each inbox page sets:
+    inboxHref      - this inbox, for the mail chrome
+    inboxStage     - withhold | site-notice | site-notice-resubmit
+    emailHref      - the new MMO email this inbox opens
+    emailSubject, emailPreview, emailTime
+  Earlier MMO emails for the same application show as read, and are not links
+  because opening them would reset the demo to that earlier stage.
+#}
+
+{% include "./_inbox-styles.html" %}
+
+<div class="mail">
+  <div class="mail__body">
+
+    <nav class="mail__rail" aria-label="Folders">
+      <div class="mail__account">
+        <div class="mail__account-name">Sam Evans</div>
+        <div class="mail__account-org">Southwest Marine Works Ltd</div>
+      </div>
+      <ul class="mail__folders">
+        <li class="mail__folder mail__folder--current">
+          <span>Inbox</span>
+          <span class="mail__folder-count">2</span>
+        </li>
+        <li class="mail__folder"><span>Sent</span></li>
+        <li class="mail__folder"><span>Drafts</span><span class="mail__folder-count">1</span></li>
+        <li class="mail__folder"><span>Archive</span></li>
+        <li class="mail__folder"><span>Deleted</span></li>
+      </ul>
+    </nav>
+
+    <div class="mail__list">
+
+      <div class="mail__list-header">
+        <h1>Inbox</h1>
+        <span>2 unread</span>
+      </div>
+
+      <a class="mail__msg mail__msg--unread" href="{{ emailHref }}">
+        <div class="mail__msg-top">
+          <span class="mail__msg-from">Marine Management Organisation</span>
+          <span class="mail__msg-date">{{ emailTime }}</span>
+        </div>
+        <div class="mail__msg-subject">{{ emailSubject }}</div>
+        <div class="mail__msg-preview">{{ emailPreview }}</div>
+      </a>
+
+      <div class="mail__msg mail__msg--unread">
+        <div class="mail__msg-top">
+          <span class="mail__msg-from">Dawlish Harbour Master</span>
+          <span class="mail__msg-date">{{ -1 | inboxDate }}</span>
+        </div>
+        <div class="mail__msg-subject">Outer harbour berthing – summer season</div>
+        <div class="mail__msg-preview">Please confirm which days your hire boards will be launching from the outer harbour so we can plan slipway use.</div>
+      </div>
+
+      <div class="mail__msg">
+        <div class="mail__msg-top">
+          <span class="mail__msg-from">Teignbridge District Council</span>
+          <span class="mail__msg-date">{{ -2 | inboxDate }}</span>
+        </div>
+        <div class="mail__msg-subject">Pre-application enquiry PA-PRE-2026-00873</div>
+        <div class="mail__msg-preview">Our informal advice on the gangway and harbour wall fixings is attached. Planning permission is not needed for the floating pontoon.</div>
+      </div>
+
+      <div class="mail__msg">
+        <div class="mail__msg-top">
+          <span class="mail__msg-from">Devon and Severn IFCA</span>
+          <span class="mail__msg-date">{{ -3 | inboxDate }}</span>
+        </div>
+        <div class="mail__msg-subject">Notice to mariners – seasonal restrictions</div>
+        <div class="mail__msg-preview">Seasonal restrictions come into effect from 1 May across parts of the district. Full details are on our website.</div>
+      </div>
+
+      {% if inboxStage == "site-notice-resubmit" %}
+      <div class="mail__msg">
+        <div class="mail__msg-top">
+          <span class="mail__msg-from">Marine Management Organisation</span>
+          <span class="mail__msg-date">{{ -4 | inboxDate }}</span>
+        </div>
+        <div class="mail__msg-subject">Your application MLA/2026/10020 now needs a site notice</div>
+        <div class="mail__msg-preview">Dear Sam Evans, Your application MLA/2026/10020 now needs a site notice.</div>
+      </div>
+      {% endif %}
+
+      <div class="mail__msg">
+        <div class="mail__msg-top">
+          <span class="mail__msg-from">Met Office Weather Warnings</span>
+          <span class="mail__msg-date">{{ -5 | inboxDate }}</span>
+        </div>
+        <div class="mail__msg-subject">Yellow warning of wind – Devon coast</div>
+        <div class="mail__msg-preview">Gusts of 45 to 55 mph are expected along exposed coastal stretches. Take care near the water.</div>
+      </div>
+
+      <div class="mail__msg">
+        <div class="mail__msg-top">
+          <span class="mail__msg-from">Aquapac Marine Supplies</span>
+          <span class="mail__msg-date">{{ -7 | inboxDate }}</span>
+        </div>
+        <div class="mail__msg-subject">Your order #48377 has been dispatched</div>
+        <div class="mail__msg-preview">Your order of 10 buoyancy aids and 2 pontoon fenders is on its way. Expected delivery in 2 working days.</div>
+      </div>
+
+      {% if inboxStage == "site-notice" or inboxStage == "site-notice-resubmit" %}
+      <div class="mail__msg">
+        <div class="mail__msg-top">
+          <span class="mail__msg-from">Marine Management Organisation</span>
+          <span class="mail__msg-date">{{ -9 | inboxDate }}</span>
+        </div>
+        <div class="mail__msg-subject">Notification about withholding information for your application MLA/2026/10020</div>
+        <div class="mail__msg-preview">Dear Sam Evans, There is a notification about withholding information for your application MLA/2026/10020.</div>
+      </div>
+      {% endif %}
+
+      <div class="mail__msg">
+        <div class="mail__msg-top">
+          <span class="mail__msg-from">Natural England</span>
+          <span class="mail__msg-date">{{ -10 | inboxDate }}</span>
+        </div>
+        <div class="mail__msg-subject">Pre-application advice – Dawlish Warren SAC</div>
+        <div class="mail__msg-preview">Further to your enquiry about the pontoon, our advice in relation to the Dawlish Warren SAC is attached.</div>
+      </div>
+
+      <div class="mail__msg">
+        <div class="mail__msg-top">
+          <span class="mail__msg-from">Bookings (no-reply)</span>
+          <span class="mail__msg-date">{{ -11 | inboxDate }}</span>
+        </div>
+        <div class="mail__msg-subject">5 new paddleboard bookings this week</div>
+        <div class="mail__msg-preview">You have 5 new bookings for group sessions. Sign in to your dashboard to view the schedule.</div>
+      </div>
+
+      <div class="mail__msg">
+        <div class="mail__msg-top">
+          <span class="mail__msg-from">Xero</span>
+          <span class="mail__msg-date">{{ -13 | inboxDate }}</span>
+        </div>
+        <div class="mail__msg-subject">Your VAT return is due</div>
+        <div class="mail__msg-preview">Your VAT return for the quarter is due in 7 days. Review and submit from your account.</div>
+      </div>
+
+    </div>
+  </div>
+</div>
