@@ -25,6 +25,7 @@ Are your proposed works within one nautical mile (1.85km) of the low-water line,
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
+        {% set rejectBannerCollapsed = true %}
         {% include "versions/multiple-sites-v2/low-complexity-v4/includes/reject-banner.html" %}
 
         {% if data['low-complexity-wfd-q1-error'] == "true" %}

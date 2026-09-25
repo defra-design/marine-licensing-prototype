@@ -4,15 +4,35 @@
   rejecting MLA/2026/10002. Shown on the task list and on every page of the
   sections that need fixing (Sites and activities, Water Framework Directive),
   for as long as the new draft is being worked on.
+
+  Set rejectBannerCollapsed = true before including to put the issues behind a
+  "View the issues" details, for when the case officer's notes are long. Used
+  on the Water Framework Directive pages for usability testing.
 #}
 {% if data['reject-version'] == 'v2' and data['resubmit-draft-created'] and data['low-complexity-application-status'] != 'sent' %}
-<div class="app-reject-banner">
-    <h2 class="govuk-heading-m">What you need to fix</h2>
+{% set rejectIssues %}
     <ul class="govuk-list govuk-list--bullet">
         <li>Site activities</li>
         <li>Water Framework Directive</li>
     </ul>
     <p class="govuk-body">The description for Activity 2 in Sites and activities has not been completed. There are only 4 words - this needs to be a full description of the activity.</p>
     <p class="govuk-body">The file uploaded for the Water Framework Directive assessment is not a Water Framework Directive assessment. It is a water sample document.</p>
+{% endset %}
+<div class="app-reject-banner">
+    <h2 class="govuk-heading-m">What you need to fix</h2>
+    {% if rejectBannerCollapsed %}
+    <details class="govuk-details">
+        <summary class="govuk-details__summary">
+            <span class="govuk-details__summary-text">
+                View the issues
+            </span>
+        </summary>
+        <div class="govuk-details__text">
+            {{ rejectIssues | safe }}
+        </div>
+    </details>
+    {% else %}
+    {{ rejectIssues | safe }}
+    {% endif %}
 </div>
 {% endif %}
