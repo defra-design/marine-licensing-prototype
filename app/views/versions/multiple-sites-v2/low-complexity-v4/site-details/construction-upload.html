@@ -23,8 +23,6 @@ Site {{ siteNumber }}: Upload construction drawing {{ fileNumber }}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
-        {% include "versions/multiple-sites-v2/low-complexity-v4/includes/reject-banner.html" %}
-
         <form action="construction-upload-router" method="post" novalidate>
             <input type="hidden" name="site-number" value="{{ siteNumber }}">
             <input type="hidden" name="file-number" value="{{ fileNumber }}">
@@ -36,6 +34,8 @@ Site {{ siteNumber }}: Upload construction drawing {{ fileNumber }}
                         {{ pageHeadingTextHTML }}
                     </label>
                 </h1>
+
+                {% include "versions/multiple-sites-v2/low-complexity-v4/includes/reject-banner.html" %}
 
                 <p class="govuk-body">Upload a drawing showing what you plan to build or change at this site. Only upload drawings that show the work you're telling us about in this application.</p>
 
@@ -53,7 +53,6 @@ Site {{ siteNumber }}: Upload construction drawing {{ fileNumber }}
                     {{ govukButton({
                         text: "Save and continue"
                     }) }}
-                    <a class="govuk-link govuk-link--no-visited-state" href="review-site-details">Cancel</a>
                 </div>
             </div>
         </form>

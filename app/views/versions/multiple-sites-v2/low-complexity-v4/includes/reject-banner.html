@@ -18,8 +18,8 @@
     <p class="govuk-body">The description for Activity 2 in Sites and activities has not been completed. There are only 4 words - this needs to be a full description of the activity.</p>
     <p class="govuk-body">The file uploaded for the Water Framework Directive assessment is not a Water Framework Directive assessment. It is a water sample document.</p>
 {% endset %}
-<div class="app-reject-banner">
-    <h2 class="govuk-heading-m">What you need to fix</h2>
+<div class="app-reject-banner" role="region" aria-labelledby="reject-banner-title">
+    <h2 class="govuk-heading-m" id="reject-banner-title">What you need to fix</h2>
     {% if rejectBannerCollapsed %}
     <details class="govuk-details">
         <summary class="govuk-details__summary">

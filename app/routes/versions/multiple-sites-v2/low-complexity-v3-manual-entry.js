@@ -670,7 +670,10 @@ module.exports = function (router) {
     }
 
     // Clear validation error and radio selection on fresh load
-    delete req.session.data['low-complexity-site-details-finished-error'];
+    // (keep the error when redirected back from a failed submit)
+    if (req.query.error !== 'true') {
+      delete req.session.data['low-complexity-site-details-finished-error'];
+    }
     delete req.session.data['low-complexity-site-details-finished'];
 
     const sites = getManualSites(req.session);
@@ -737,7 +740,7 @@ module.exports = function (router) {
       const finished = req.session.data['low-complexity-site-details-finished'];
       if (!finished) {
         req.session.data['low-complexity-site-details-finished-error'] = true;
-        return res.redirect(`${basePath}/review-site-details`);
+        return res.redirect(`${basePath}/review-site-details?error=true`);
       }
 
       if (finished === 'Yes') {

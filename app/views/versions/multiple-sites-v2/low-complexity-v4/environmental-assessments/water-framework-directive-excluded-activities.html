@@ -26,7 +26,7 @@ Are your proposed works limited to one of the following excluded activities?
     <div class="govuk-grid-column-two-thirds">
 
         {% set rejectBannerCollapsed = true %}
-        {% include "versions/multiple-sites-v2/low-complexity-v4/includes/reject-banner.html" %}
+        {% set rejectBannerHtml %}{% include "versions/multiple-sites-v2/low-complexity-v4/includes/reject-banner.html" %}{% endset %}
 
         {% if data['low-complexity-wfd-q2-error'] == "true" %}
         {{ govukErrorSummary({
@@ -43,6 +43,9 @@ Are your proposed works limited to one of the following excluded activities?
         <form action="water-framework-directive-excluded-activities-router" method="post" novalidate>
 
             {{ govukRadios({
+                formGroup: {
+                    beforeInputs: { html: rejectBannerHtml }
+                },
                 name: "low-complexity-wfd-excluded-activities",
                 idPrefix: "low-complexity-wfd-excluded-activities",
                 fieldset: {
