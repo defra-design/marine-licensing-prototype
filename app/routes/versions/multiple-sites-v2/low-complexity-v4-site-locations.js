@@ -89,6 +89,30 @@ module.exports = function (router) {
     });
   }
 
+  // True when every task list section is complete – mirrors the condition that shows
+  // the "Check and send your application" button on marine-licence-start-page
+  function allTasksComplete(data) {
+    const mppPrefix = data['mpp-version'] == '2' ? 'marine-plan-policy-v2-' : 'marine-plan-policy-';
+    const mppComplete = ['s-acc-1', 's-bio-1', 's-agg-4', 's-emp-1', 's-uwn-2']
+      .every(key => data[mppPrefix + key + '-completed']);
+    return Boolean(
+      data['low-complexity-project-background-completed'] &&
+      data['low-complexity-dates-completed'] &&
+      data['site-details-confirmed-complete'] &&
+      mppComplete &&
+      data['low-complexity-wfd-completed'] &&
+      (data['user_type'] !== 'organisation' || data['low-complexity-special-legal-powers-completed']) &&
+      data['low-complexity-harbour-authority-completed'] &&
+      data['low-complexity-other-permissions-completed'] &&
+      data['low-complexity-consultation-completed'] &&
+      data['low-complexity-sharing-information-completed'] &&
+      data['low-complexity-fee-estimate-completed'] == 'true' &&
+      data['low-complexity-fee-estimate-rejected'] != 'true' &&
+      data['reject-v2-sites-attention'] != 'true' &&
+      data['reject-v2-wfd-attention'] != 'true'
+    );
+  }
+
   // ==============================================================================================
   // Construction file upload helpers (file upload path — single Site 1)
   // ==============================================================================================
@@ -390,9 +414,9 @@ module.exports = function (router) {
     // Check if we need to return to check answers
     if (req.session.data['camefromcheckanswers'] === 'true') {
       req.session.data['camefromcheckanswers'] = false;
-      // Only return to check-your-answers if site details are still confirmed complete
-      // If the user made changes that broke completeness, send them to the task list instead
-      if (req.session.data['site-details-confirmed-complete']) {
+      // Only return to check-your-answers if every task list section is still complete
+      // If anything is incomplete or not yet started, send them to the task list instead
+      if (allTasksComplete(req.session.data)) {
         res.redirect('../check-your-answers#site-location');
       } else {
         res.redirect('../marine-licence-start-page');
