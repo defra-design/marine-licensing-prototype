@@ -71,8 +71,6 @@ Error:
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-
-        {% set rejectBannerHtml %}{% include "versions/multiple-sites-v2/low-complexity-v4/includes/reject-banner.html" %}{% endset %}
         
         <form action="removal-substances-objects-router" method="post" novalidate>
             
@@ -90,9 +88,6 @@ Error:
             {% endif %}
 
             {{ govukCheckboxes({
-                formGroup: {
-                    beforeInputs: { html: rejectBannerHtml }
-                },
                 name: "low-complexity-removal-substances-objects",
                 fieldset: {
                     legend: {
