@@ -27,7 +27,7 @@ Type of activity
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
-        {% include "versions/multiple-sites-v2/low-complexity-v4/includes/reject-banner.html" %}
+        {% set rejectBannerHtml %}{% include "versions/multiple-sites-v2/low-complexity-v4/includes/reject-banner.html" %}{% endset %}
         
         <form action="type-of-activity-router" method="post" novalidate>
             
@@ -160,6 +160,9 @@ Type of activity
             {% endset %}
 
             {{ govukRadios({
+                formGroup: {
+                    beforeInputs: { html: rejectBannerHtml }
+                },
                 name: "low-complexity-type-of-activity",
                 fieldset: {
                     legend: {
