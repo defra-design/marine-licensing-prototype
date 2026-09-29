@@ -56,13 +56,14 @@ module.exports = function (router) {
         stageTaskDone = Boolean(req.session.data['site-notice-resubmit-sent']);
       }
 
-      // Once the resubmitted site notice evidence is in, the application moves
-      // on to consultation rather than back to Submitted.
+      // Reading the withholding information notification puts the application
+      // back to Submitted. Once site notice evidence is in (first time or
+      // resubmitted) the application moves on to consultation instead.
       let dawlishStatus = 'Action required';
       if (req.session.data['withdrawn-dawlish'] === 'true') {
         dawlishStatus = 'Withdrawn';
       } else if (stageTaskDone) {
-        dawlishStatus = stage === 'site-notice-resubmit' ? 'Consultation' : 'Submitted';
+        dawlishStatus = stage === 'withhold' ? 'Submitted' : 'Consultation';
       }
 
       // Submissions sorts on this, not the tag text: attention first, then
