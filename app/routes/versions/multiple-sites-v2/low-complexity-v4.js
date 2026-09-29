@@ -1505,10 +1505,16 @@ module.exports = function (router) {
     d['low-complexity-sharing-information-completed'] = true;
   }
 
-  // v1 email – opening it switches the Submissions row and view details back to
-  // the v1 'Unable to progress' version.
+  // v1 inbox and email – opening either switches the Submissions row and view
+  // details to the v1 'Unable to progress' version. Every other journey shows
+  // the application as 'Rejected'.
+  router.get(`/versions/${version}/${section}/emails/inbox-reject`, function (req, res) {
+    req.session.data['reject-version'] = 'v1';
+    res.render(`versions/${version}/${section}/emails/inbox-reject`);
+  });
+
   router.get(`/versions/${version}/${section}/emails/unable-to-progress`, function (req, res) {
-    delete req.session.data['reject-version'];
+    req.session.data['reject-version'] = 'v1';
     res.render(`versions/${version}/${section}/emails/unable-to-progress`);
   });
 

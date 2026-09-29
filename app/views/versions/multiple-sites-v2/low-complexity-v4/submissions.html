@@ -281,8 +281,8 @@ Submissions
 					</td>
 				</tr>
 
-				{% if data['reject-version'] == 'v2' %}
-				<!-- Reject journey v2 – the original application is Rejected. View details opens the
+				{% if data['reject-version'] != 'v1' %}
+				<!-- Every journey except reject v1 – the original application is Rejected. View details opens the
 				     rejected page, or goes straight to view details once a new application exists. -->
 				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="Plymouth Sound cable laying" data-type="Marine licence application" data-reference="MLA-10002" data-status="Rejected">
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Plymouth Sound cable laying</th>
@@ -303,6 +303,7 @@ Submissions
 					</td>
 				</tr>
 				{% else %}
+				<!-- Reject journey v1 – the original application is Unable to progress. -->
 				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="Plymouth Sound cable laying" data-type="Marine licence application" data-reference="MLA-10002" data-status="Unable to progress">
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Plymouth Sound cable laying</th>
 					<td class="govuk-table__cell">Marine licence application</td>
