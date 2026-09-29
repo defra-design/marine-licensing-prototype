@@ -56,13 +56,14 @@ module.exports = function (router) {
         stageTaskDone = Boolean(req.session.data['site-notice-resubmit-sent']);
       }
 
-      // Once the resubmitted site notice evidence is in, the application moves
-      // on to consultation rather than back to Submitted.
+      // Reading the withholding information notification puts the application
+      // back to Submitted. Once site notice evidence is in (first time or
+      // resubmitted) the application moves on to consultation instead.
       let dawlishStatus = 'Action required';
       if (req.session.data['withdrawn-dawlish'] === 'true') {
         dawlishStatus = 'Withdrawn';
       } else if (stageTaskDone) {
-        dawlishStatus = stage === 'site-notice-resubmit' ? 'Consultation' : 'Submitted';
+        dawlishStatus = stage === 'withhold' ? 'Submitted' : 'Consultation';
       }
 
       // Submissions sorts on this, not the tag text: attention first, then
@@ -1505,10 +1506,16 @@ module.exports = function (router) {
     d['low-complexity-sharing-information-completed'] = true;
   }
 
-  // v1 email – opening it switches the Submissions row and view details back to
-  // the v1 'Unable to progress' version.
+  // v1 inbox and email – opening either switches the Submissions row and view
+  // details to the v1 'Unable to progress' version. Every other journey shows
+  // the application as 'Rejected'.
+  router.get(`/versions/${version}/${section}/emails/inbox-reject`, function (req, res) {
+    req.session.data['reject-version'] = 'v1';
+    res.render(`versions/${version}/${section}/emails/inbox-reject`);
+  });
+
   router.get(`/versions/${version}/${section}/emails/unable-to-progress`, function (req, res) {
-    delete req.session.data['reject-version'];
+    req.session.data['reject-version'] = 'v1';
     res.render(`versions/${version}/${section}/emails/unable-to-progress`);
   });
 
