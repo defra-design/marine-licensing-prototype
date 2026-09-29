@@ -26,7 +26,7 @@ Which type of file do you want to upload?
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-
+        
         <!-- Error summary -->
         {% if data['low-complexity-file-type-errorthispage'] == "true" %}
             {{ govukErrorSummary({
@@ -47,8 +47,6 @@ Which type of file do you want to upload?
                 <h1 class="govuk-heading-l">
                     {{ pageHeadingTextHTML }}
                 </h1>
-
-                {% include "versions/multiple-sites-v2/low-complexity-v4/includes/reject-banner.html" %}
 
                 <details class="govuk-details">
                     <summary class="govuk-details__summary">

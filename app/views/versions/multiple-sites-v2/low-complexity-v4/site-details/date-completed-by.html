@@ -49,8 +49,6 @@ Error:
 
 <div class="govuk-grid-row">
 	<div class="govuk-grid-column-two-thirds">
-
-		{% set rejectBannerHtml %}{% include "versions/multiple-sites-v2/low-complexity-v4/includes/reject-banner.html" %}{% endset %}
 		{% if data['low-complexity-date-completed-by-errorthispage'] == "true" %}
 		{{ govukErrorSummary({
 			titleText: "There is a problem",
@@ -68,9 +66,6 @@ Error:
 		<form action="date-completed-by-router" method="post" novalidate>
 
 			{{ govukRadios({
-				formGroup: {
-				    beforeInputs: { html: rejectBannerHtml }
-				},
 				name: "low-complexity-date-completed-by",
 				id: "low-complexity-date-completed-by",
 				fieldset: {

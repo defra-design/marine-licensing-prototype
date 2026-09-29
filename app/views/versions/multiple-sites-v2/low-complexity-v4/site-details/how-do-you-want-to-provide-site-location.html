@@ -25,8 +25,6 @@ How do you want to provide the site location?
 {% block content %}
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
-
-        {% set rejectBannerHtml %}{% include "versions/multiple-sites-v2/low-complexity-v4/includes/reject-banner.html" %}{% endset %}
         
         <form action="how-do-you-want-to-provide-site-location-router" method="post" novalidate>
             
@@ -44,9 +42,6 @@ How do you want to provide the site location?
             {% endif %}
 
             {{ govukRadios({
-                formGroup: {
-                    beforeInputs: { html: rejectBannerHtml }
-                },
                 name: "low-complexity-site-location-method",
                 fieldset: {
                     legend: {
