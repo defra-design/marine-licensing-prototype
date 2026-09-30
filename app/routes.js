@@ -16,6 +16,14 @@ router.use('*', function(req, res, next) {
             const decodedState = Buffer.from(req.query.state, 'base64').toString();
             const sessionData = JSON.parse(decodedState);
             
+            // Clear reject / resubmit journey data so the 'What you need to fix'
+            // banner and 'Needs fixing' tags do not linger on the restored
+            // application (same keys the sign-in page clears)
+            ['resubmit-draft-created', 'resubmit-draft-created-date', 'deleted-plymouth-resubmit',
+             'reject-version', 'reject-v2-sites-attention', 'reject-v2-wfd-attention'].forEach(function (key) {
+                delete req.session.data[key];
+            });
+
             // Restore session data
             Object.assign(req.session.data, sessionData);
             
