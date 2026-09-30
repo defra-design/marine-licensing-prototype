@@ -1523,49 +1523,14 @@ module.exports = function (router) {
   // Reject journey v2
   ///////////////////////////////////////////
 
-  // Arriving from the index page or the inbox resets the demo: the application
-  // is rejected and no new application has been created yet.
-  function startRejectV2(req) {
-    clearResubmitDraft(req.session.data);
-    req.session.data['reject-version'] = 'v2';
-  }
-
-  router.get(`/versions/${version}/${section}/emails/inbox-rejected`, function (req, res) {
-    startRejectV2(req);
-    res.render(`versions/${version}/${section}/emails/inbox-rejected`);
-  });
-
-  router.get(`/versions/${version}/${section}/emails/rejected`, function (req, res) {
-    startRejectV2(req);
-    res.render(`versions/${version}/${section}/emails/rejected`);
-  });
-
-  function rejectV2DraftExists(d) {
-    return d['resubmit-draft-created'] && !d['deleted-plymouth-resubmit'];
-  }
-
-  // 'Your application has been rejected' page. Once a new application has been
-  // created from it, go straight to the original application's view details.
-  router.get(`/versions/${version}/${section}/application-rejected`, function (req, res) {
-    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
-    req.session.data['reject-version'] = 'v2';
-    if (rejectV2DraftExists(req.session.data)) {
-      return res.redirect('view-details/plymouth-sound-cable-laying-rejected');
-    }
-    res.render(`versions/${version}/${section}/application-rejected`, {
-      showBackToSubmissions: req.query.from === 'submissions'
-    });
-  });
-
-  // 'Create new application' – copies the rejected application into a new
-  // draft and goes straight to the task list (no interstitial page).
-  router.get(`/versions/${version}/${section}/create-new-application`, function (req, res) {
-    const d = req.session.data;
+  // Copies the rejected application into a new draft, with the two sections
+  // the case officer flagged.
+  function createRejectV2Draft(d) {
     clearResubmitDraft(d);
     seedResubmitDraft(d);
     d['reject-version'] = 'v2';
 
-    // Site 1 – Activity 2, with the 4-word description the case officer flagged
+    // Site 1 – Activity 2, with the 3-word description the case officer flagged
     d['low-complexity-file-upload-activities'].push({
       activityNumber: 2,
       'low-complexity-type-of-activity': 'removal',
@@ -1604,7 +1569,46 @@ module.exports = function (router) {
     // Continue at the end of that section (not on Back).
     d['reject-v2-sites-attention'] = 'true';
     d['reject-v2-wfd-attention'] = 'true';
+  }
 
+  // Opening the email or inbox does not reset anything (session data is cleared
+  // by hand before each demo), so signing back in shows the rejected page as
+  // the applicant left it.
+  function startRejectV2(req) {
+    req.session.data['reject-version'] = 'v2';
+  }
+
+  router.get(`/versions/${version}/${section}/emails/inbox-rejected`, function (req, res) {
+    startRejectV2(req);
+    res.render(`versions/${version}/${section}/emails/inbox-rejected`);
+  });
+
+  router.get(`/versions/${version}/${section}/emails/rejected`, function (req, res) {
+    startRejectV2(req);
+    res.render(`versions/${version}/${section}/emails/rejected`);
+  });
+
+  function rejectV2DraftExists(d) {
+    return d['resubmit-draft-created'] && !d['deleted-plymouth-resubmit'];
+  }
+
+  // 'Your application has been rejected' page. Always shown for the rejected
+  // application, whether the applicant arrives from the email or Submissions.
+  // Once a new application has been created from it, the 'Create new
+  // application' button is replaced by inset text pointing to Submissions.
+  router.get(`/versions/${version}/${section}/application-rejected`, function (req, res) {
+    res.set('Cache-Control', 'no-store, no-cache, must-revalidate, private');
+    req.session.data['reject-version'] = 'v2';
+    res.render(`versions/${version}/${section}/application-rejected`, {
+      showBackToSubmissions: req.query.from === 'submissions',
+      draftExists: rejectV2DraftExists(req.session.data)
+    });
+  });
+
+  // 'Create new application' – copies the rejected application into a new
+  // draft and goes straight to the task list (no interstitial page).
+  router.get(`/versions/${version}/${section}/create-new-application`, function (req, res) {
+    createRejectV2Draft(req.session.data);
     res.redirect('marine-licence-start-page');
   });
 
