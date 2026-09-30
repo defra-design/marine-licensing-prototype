@@ -70,10 +70,17 @@ Your application has been rejected - Get permission for marine work
 
 		<p class="govuk-body">You do not need to do anything. We will still send you an invoice for the review we have carried out so far.</p>
 
+		{% if draftExists %}
+		<div class="govuk-inset-text">
+			<p class="govuk-body">We created a new draft application for you on {{ data['resubmit-draft-created-date'] }}.</p>
+			<p class="govuk-body govuk-!-margin-bottom-0">View it in <a class="govuk-link govuk-link--no-visited-state" href="submissions">Submissions</a>.</p>
+		</div>
+		{% else %}
 		{{ govukButton({
 			text: "Create new application",
 			href: "create-new-application"
 		}) }}
+		{% endif %}
 
 		<p class="govuk-body">
 			<a class="govuk-link govuk-link--no-visited-state" href="view-details/plymouth-sound-cable-laying-rejected">View your original application</a>
