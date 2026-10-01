@@ -37,6 +37,19 @@ module.exports = function (router) {
       respondByOffset: 18,
       summary: 'We are applying for a marine licence to extend the existing sea defence at Dawlish by approximately 150 metres to the east. The extension will reduce wave overtopping onto the railway line and promenade during winter storms. The works involve placing rock armour along the toe of the existing sea wall and building a new concrete wave return wall on top of it. Rock will be delivered by barge and placed by a long-reach excavator working from the beach at low tide. Works are planned outside the main bird overwintering period and will take about 6 months to complete.',
       startAndEndDates: 'April 2026 to September 2027',
+      // Site and activity cards for view-application, made up to match the
+      // sea defence summary.
+      site: {
+        name: 'Dawlish sea wall eastern extension',
+        typeOfActivity: 'Construction of new works',
+        whatIsBeingConstructed: 'Hard coastal defence structures such as rock armour or concrete units',
+        activityDescription: 'Extension of the existing sea defence by approximately 150 metres to the east. Rock armour will be placed along the toe of the existing sea wall on a geotextile and bedding stone layer, below mean high water springs. A new concrete wave return wall will be cast in situ on top of the existing wall. Rock will be delivered by barge and placed by a long-reach excavator working from the beach at low tide.',
+        maximumDuration: '6 months',
+        completionDate: 'Not needed to be completed by a certain date',
+        specificMonths: 'Yes – works to be carried out between April and September only, outside the main bird overwintering period.',
+        workingHours: 'Monday to Friday, 07:30 to 18:00, with some working outside these hours to take advantage of low tides.',
+        drawing: 'sea-defence-construction-drawing.pdf'
+      },
       siteLocation: 'Dawlish, Devon'
     },
     'lyme-regis': {
@@ -49,6 +62,19 @@ module.exports = function (router) {
       respondByOffset: 27,
       summary: 'Jurassic Coast SUP Ltd is a small paddleboarding hire and instruction business operating in Lyme Regis. We are applying for a marine licence to install a small floating pontoon within Lyme Regis Harbour to provide a safe and accessible launching and landing platform for paddleboards and kayaks hired to our customers. At present customers are required to enter the water via the main harbour slipway which is shared with commercial fishing vessels and other harbour traffic. During the summer months this creates significant health and safety concerns particularly for inexperienced users and those with limited mobility. The pontoon would be attached to the existing harbour wall using H-frame wall guides and a short hinged gangway. It will be a floating structure rising and falling with the tide. The works will take place entirely within the outer harbour area.',
       startAndEndDates: 'June 2026 to June 2027',
+      // Site and activity cards for view-application, copied from the LCML v4
+      // pontoon view-details page.
+      site: {
+        name: 'Lyme Regis Harbour Outer Pontoon',
+        typeOfActivity: 'Construction of new works',
+        whatIsBeingConstructed: 'Pontoons or floating walkways',
+        activityDescription: 'Installation of one floating pontoon unit measuring 8 metres in length by 4 metres in width (total area 32 m²). The pontoon will be manufactured off-site from HDPE modular float units set within a hot-dip galvanised steel frame with non-slip GRP mesh decking panels. The pontoon will be fixed to the existing harbour wall using two H-frame steel wall guide rails drilled and resin-anchored to the masonry. No piling or seabed penetration is required. Access to the pontoon from the quayside will be via a 4m hinged aluminium gangway. All works will be carried out from the quayside or using a small harbour workboat. No heavy plant or craneage is anticipated, individual pontoon components can be handled manually or with light lifting equipment.',
+        maximumDuration: '6 weeks',
+        completionDate: 'Not needed to be completed by a certain date',
+        specificMonths: 'Yes — installation works to be carried out between April and September only, avoiding the winter months when harbour conditions make marine works impracticable and harbour traffic is at its lowest.',
+        workingHours: 'Monday to Friday, 08:00 to 17:00. Occasional Saturday morning working may be required to take advantage of suitable tidal windows.',
+        drawing: 'pontoon-construction-drawing.pdf'
+      },
       siteLocation: 'Lyme Regis Harbour, Dorset'
     }
   };

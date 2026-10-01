@@ -47,13 +47,54 @@
             ["Preferred start and end dates of the licence", request.startAndEndDates]
         ]) }}
 
-        {{ summaryCard("Site details", [
-            ["Site location", request.siteLocation]
+        {# Site cards follow the LCML v4 pontoon view-details page #}
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">Site 1</h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list govuk-summary-list--full-width">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Site name</dt>
+                        <dd class="govuk-summary-list__value">{{ request.site.name }}</dd>
+                    </div>
+                    <div class="govuk-summary-list__row govuk-summary-list__row--no-actions">
+                        <dt class="govuk-summary-list__key govuk-summary-list__key--full-width map-label">Map view</dt>
+                        <dd class="govuk-summary-list__value govuk-summary-list__value--full-width">
+                            <img src="/public/images/map-5-points.jpg" alt="Map showing site 1 location" />
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        {{ summaryCard("Site 1 – Activity 1", [
+            ["Type of activity", request.site.typeOfActivity],
+            ["What is being constructed", request.site.whatIsBeingConstructed],
+            ["Activity description", request.site.activityDescription],
+            ["Maximum duration of activity", request.site.maximumDuration],
+            ["Completion date", request.site.completionDate],
+            ["Activity limited to specific months", request.site.specificMonths],
+            ["Proposed working hours", request.site.workingHours]
         ]) }}
 
-        {{ summaryCard("Environmental assessments", [["Details", "To follow"]]) }}
-        {{ summaryCard("Other permissions", [["Details", "To follow"]]) }}
+        {# The drawing link is deliberately dead in the prototype #}
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">Site 1 - Construction drawing 1</h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">File upload</dt>
+                        <dd class="govuk-summary-list__value"><a class="govuk-link govuk-link--no-visited-state" href="#">{{ request.site.drawing }}</a></dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
         {{ summaryCard("Marine plan policies", [["Details", "To follow"]]) }}
+        {{ summaryCard("Other permissions", [["Details", "To follow"]]) }}
 
         <p class="govuk-body">
             <a href="../request-details/{{ request.id }}" class="govuk-link govuk-link--no-visited-state">Back to consultation request</a>
