@@ -29,7 +29,6 @@
         }) }}
         {% endif %}
 
-        <span class="govuk-caption-l">Natural England</span>
         <h1 class="govuk-heading-l">Consultations</h1>
 
         {# Columns are placeholders until the detailed designs are ready. #}
@@ -39,28 +38,21 @@
                 <tr class="govuk-table__row">
                     <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Application name</th>
                     <th scope="col" class="govuk-table__header">Reference</th>
-                    <th scope="col" class="govuk-table__header">Request type</th>
+                    <th scope="col" class="govuk-table__header">Type</th>
                     <th scope="col" class="govuk-table__header">Status</th>
                     <th scope="col" class="govuk-table__header app-nowrap">Received</th>
                     <th scope="col" class="govuk-table__header app-nowrap">Respond by</th>
-                    <th scope="col" class="govuk-table__header">Actions</th>
                 </tr>
             </thead>
             <tbody class="govuk-table__body">
                 {% for request in requests %}
                 <tr class="govuk-table__row">
-                    <th scope="row" class="govuk-table__header govuk-!-font-weight-regular">{{ request.applicationName }}</th>
+                    <th scope="row" class="govuk-table__header govuk-!-font-weight-regular"><a href="request-details/{{ request.id }}" class="govuk-link govuk-link--no-visited-state">{{ request.applicationName }}</a></th>
                     <td class="govuk-table__cell">{{ request.reference }}</td>
                     <td class="govuk-table__cell">{{ requestTypeText(request) }}</td>
                     <td class="govuk-table__cell">{{ statusTag(request) }}</td>
                     <td class="govuk-table__cell app-nowrap" data-sort-value="{{ request.receivedOffset | daysFromTodaySort }}">{{ request.receivedOffset | daysFromTodayShort }}</td>
                     <td class="govuk-table__cell app-nowrap" data-sort-value="{{ request.respondByOffset | daysFromTodaySort }}">{{ request.respondByOffset | daysFromTodayShort }}</td>
-                    <td class="govuk-table__cell">
-                        <ul class="govuk-list govuk-!-margin-bottom-0">
-                            <li class="app-nowrap"><a href="request-details/{{ request.id }}" class="govuk-link govuk-link--no-visited-state">View request<span class="govuk-visually-hidden"> for {{ request.applicationName }}</span></a></li>
-                            <li class="app-nowrap govuk-!-margin-bottom-0"><a href="view-application/{{ request.id }}" class="govuk-link govuk-link--no-visited-state">View application<span class="govuk-visually-hidden"> for {{ request.applicationName }}</span></a></li>
-                        </ul>
-                    </td>
                 </tr>
                 {% endfor %}
             </tbody>
