@@ -637,7 +637,7 @@ module.exports = function (router) {
   router.post(`/versions/${version}/${section}/declaration-router`, function (req, res) {
     // Mark application as sent
     req.session.data['low-complexity-application-status'] = 'sent';
-    req.session.data['low-complexity-application-reference'] = 'MLA/2025/10025';
+    req.session.data['low-complexity-application-reference'] = 'MLA/2026/10025';
     
     // Set submission date to current date
     const today = new Date();
