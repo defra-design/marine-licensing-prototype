@@ -20,7 +20,8 @@ router.use('*', function(req, res, next) {
             // banner and 'Needs fixing' tags do not linger on the restored
             // application (same keys the sign-in page clears)
             ['resubmit-draft-created', 'resubmit-draft-created-date', 'deleted-plymouth-resubmit',
-             'reject-version', 'reject-v2-sites-attention', 'reject-v2-wfd-attention'].forEach(function (key) {
+             'reject-version', 'reject-v2-sites-attention', 'reject-v2-wfd-attention',
+             'reject-v2-mpp-attention'].forEach(function (key) {
                 delete req.session.data[key];
             });
 

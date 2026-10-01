@@ -185,7 +185,8 @@ module.exports = function (router) {
       data['low-complexity-fee-estimate-completed'] == 'true' &&
       data['low-complexity-fee-estimate-rejected'] != 'true' &&
       data['reject-v2-sites-attention'] != 'true' &&
-      data['reject-v2-wfd-attention'] != 'true'
+      data['reject-v2-wfd-attention'] != 'true' &&
+      data['reject-v2-mpp-attention'] != 'true'
     );
   }
 

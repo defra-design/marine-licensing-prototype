@@ -1034,6 +1034,7 @@ module.exports = function (router) {
     delete req.session.data['reject-version'];
     delete req.session.data['reject-v2-sites-attention'];
     delete req.session.data['reject-v2-wfd-attention'];
+    delete req.session.data['reject-v2-mpp-attention'];
 
     // Clear error flags
     delete req.session.data['errorthispage'];
@@ -1346,7 +1347,7 @@ module.exports = function (router) {
       'mpp-previously-unlocked',
       'low-complexity-wfd-within-nautical-mile', 'low-complexity-wfd-completed',
       'low-complexity-wfd-excluded-activities', 'low-complexity-wfd-filename',
-      'reject-v2-sites-attention', 'reject-v2-wfd-attention',
+      'reject-v2-sites-attention', 'reject-v2-wfd-attention', 'reject-v2-mpp-attention',
       'low-complexity-special-legal-powers', 'low-complexity-special-legal-powers-completed',
       'low-complexity-harbour-authority', 'low-complexity-harbour-authority-details', 'low-complexity-harbour-authority-completed',
       'low-complexity-other-permissions', 'low-complexity-other-permissions-details', 'low-complexity-other-permissions-completed',
@@ -1530,14 +1531,14 @@ module.exports = function (router) {
     seedResubmitDraft(d);
     d['reject-version'] = 'v2';
 
-    // Site 1 – Activity 2, with the 3-word description the case officer flagged
+    // Site 1 – Activity 2
     d['low-complexity-file-upload-activities'].push({
       activityNumber: 2,
       'low-complexity-type-of-activity': 'removal',
       'low-complexity-type-of-activity-completed': true,
       'low-complexity-removal-type': 'one-off-first-time',
       'low-complexity-removal-substances-objects': ['piles-piled-structures'],
-      'low-complexity-activity-description': 'The activity will',
+      'low-complexity-activity-description': 'The existing timber mooring piles at Mount Batten Pier, up to 4 in total, will be removed to clear the cable landfall. Each pile will be extracted using a vibro-hammer mounted on a crane barge, working around low tide. The removed piles will be lifted onto the barge and taken ashore for disposal at a licensed waste facility.',
       'low-complexity-activity-description-completed': true,
       'low-complexity-site-duration-years': '0',
       'low-complexity-site-duration-months': '1',
@@ -1550,13 +1551,13 @@ module.exports = function (router) {
       'low-complexity-working-hours-completed': true
     });
 
-    // Water Framework Directive – the wrong document was uploaded
-    d['low-complexity-wfd-within-nautical-mile'] = 'Yes';
-    d['low-complexity-wfd-excluded-activities'] = 'No';
-    d['low-complexity-wfd-filename'] = 'water-sample-results.doc';
-    d['low-complexity-wfd-completed'] = true;
+    // Water Framework Directive – the seeded answer of 'No' to being within one
+    // nautical mile (so no assessment was uploaded) is what the case officer flagged
 
-    // The marine plan policy answers were fine this time
+    // Marine plan policies – S-BIO-1 was answered properly, but S-AGG-4 was
+    // answered 'Not applicable', which the case officer flagged
+    d['marine-plan-policy-s-agg-4-text'] = 'Not applicable';
+    d['marine-plan-policy-v2-s-agg-4-text'] = 'Not applicable';
     d['marine-plan-policy-s-bio-1-text'] = 'The cable route has been micro-routed to avoid eelgrass beds and reef features. Burial by jetting limits disturbance to a narrow strip of seabed, which recovers naturally.';
     d['marine-plan-policy-v2-s-bio-1-text'] = d['marine-plan-policy-s-bio-1-text'];
 
@@ -1569,6 +1570,7 @@ module.exports = function (router) {
     // Continue at the end of that section (not on Back).
     d['reject-v2-sites-attention'] = 'true';
     d['reject-v2-wfd-attention'] = 'true';
+    d['reject-v2-mpp-attention'] = 'true';
   }
 
   // Opening the email or inbox does not reset anything (session data is cleared
