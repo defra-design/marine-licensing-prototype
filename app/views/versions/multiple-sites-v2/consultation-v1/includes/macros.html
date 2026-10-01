@@ -2,14 +2,13 @@
 
 {# Request type wording, shared by the dashboard and the request pages. #}
 {% macro requestTypeText(request) -%}
-{{ "Response required" if request.type === "response-required" else "For information" }}
+{{ "Request for advice" if request.type === "response-required" else "Application notification" }}
 {%- endmacro %}
 
 {% macro statusTag(request) %}
 {{ govukTag({
     text: request.status,
     classes: {
-        'Response needed': 'govuk-tag--red',
         'No response needed': 'govuk-tag--grey',
         'Responded': 'govuk-tag--green'
     }[request.status]

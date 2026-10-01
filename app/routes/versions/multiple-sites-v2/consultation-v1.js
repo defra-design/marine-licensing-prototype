@@ -14,7 +14,9 @@ module.exports = function (router) {
   //   response-required - MMO is asking the consultee for advice
   //   notify-only       - MMO is letting the consultee know; responding is optional
   //
-  // Dates are day offsets from today, run through the daysFromToday filter.
+  // Dates are day offsets from today, run through the daysFromTodayShort filter.
+  // Applicants match the LCML v4 view-details pages. The Dawlish summary is
+  // made up for this steel thread, as LCML v4 only has pontoon text for it.
   const REQUESTS = {
     'dawlish': {
       id: 'dawlish',
@@ -22,11 +24,18 @@ module.exports = function (router) {
       reference: 'MLA/2026/10020',
       applicant: 'Southwest Marine Works Ltd',
       type: 'response-required',
+      // The case officer's request, as plain-text paragraphs from MAS (no
+      // bullets or other formatting). Made up for this steel thread.
+      adviceRequested: [
+        'We would like your advice on whether the proposal is consistent with the following South marine plan policies.',
+        'South Biodiversity 1 (S-BIO-1): whether the works are likely to have a significant adverse effect on Dawlish Warren Special Area of Conservation or the Exe Estuary Special Protection Area, and any measures needed to avoid, minimise or mitigate this.',
+        'South Climate change 3 (S-CC-3): whether the works are likely to have a significant adverse impact on coastal change, including sediment supply to Dawlish Warren.',
+        'South Seascape and landscape 1 (S-SCP-1): whether the rock armour and new wall would have a significant adverse effect on the seascape of the area.',
+        'Tell us about any timing restrictions you would recommend to protect overwintering birds.'
+      ],
       receivedOffset: -3,
       respondByOffset: 18,
-      caseworker: 'Alex Morgan, Marine Licensing Case Officer',
-      requestText: 'Please review the proposed rock placement and advise whether it is likely to have a significant effect on the nearby Dawlish Warren Special Area of Conservation. We would also welcome any advice on timing restrictions to protect overwintering birds.',
-      summary: 'Extension of the existing rock armour sea defence at Dawlish to reduce wave overtopping onto the railway and promenade. Works include placement of approximately 4,000 tonnes of rock below mean high water springs.',
+      summary: 'We are applying for a marine licence to extend the existing sea defence at Dawlish by approximately 150 metres to the east. The extension will reduce wave overtopping onto the railway line and promenade during winter storms. The works involve placing rock armour along the toe of the existing sea wall and building a new concrete wave return wall on top of it. Rock will be delivered by barge and placed by a long-reach excavator working from the beach at low tide. Works are planned outside the main bird overwintering period and will take about 6 months to complete.',
       startAndEndDates: 'April 2026 to September 2027',
       siteLocation: 'Dawlish, Devon'
     },
@@ -34,13 +43,11 @@ module.exports = function (router) {
       id: 'lyme-regis',
       applicationName: 'Installation of floating pontoon, Lyme Regis Harbour, Dorset',
       reference: 'MLA/2026/10003',
-      applicant: 'Lyme Regis Watersports Ltd',
+      applicant: 'Jurassic Coast SUP Ltd',
       type: 'notify-only',
       receivedOffset: -1,
       respondByOffset: 27,
-      caseworker: 'Alex Morgan, Marine Licensing Case Officer',
-      requestText: 'We are letting you know about this application as the site is near the Lyme Bay and Torbay Special Area of Conservation. We do not need a response, but you can send us comments if you have any.',
-      summary: 'Installation of a small floating pontoon within Lyme Regis Harbour, attached to the existing harbour wall using H-frame wall guides and a short hinged gangway, to provide a safe launching and landing platform for paddleboards and kayaks.',
+      summary: 'Jurassic Coast SUP Ltd is a small paddleboarding hire and instruction business operating in Lyme Regis. We are applying for a marine licence to install a small floating pontoon within Lyme Regis Harbour to provide a safe and accessible launching and landing platform for paddleboards and kayaks hired to our customers. At present customers are required to enter the water via the main harbour slipway which is shared with commercial fishing vessels and other harbour traffic. During the summer months this creates significant health and safety concerns particularly for inexperienced users and those with limited mobility. The pontoon would be attached to the existing harbour wall using H-frame wall guides and a short hinged gangway. It will be a floating structure rising and falling with the tide. The works will take place entirely within the outer harbour area.',
       startAndEndDates: 'June 2026 to June 2027',
       siteLocation: 'Lyme Regis Harbour, Dorset'
     }
@@ -59,7 +66,8 @@ module.exports = function (router) {
   function withStatus(req, request) {
     return Object.assign({}, request, {
       status: statusFor(req, request),
-      response: req.session.data[`consultation-${request.id}-response`]
+      response: req.session.data[`consultation-${request.id}-response`],
+      respondedDate: req.session.data[`consultation-${request.id}-responded-date`]
     });
   }
 
@@ -123,6 +131,7 @@ module.exports = function (router) {
 
     req.session.data[`consultation-${request.id}-response`] = response;
     req.session.data[`consultation-${request.id}-status`] = 'Responded';
+    req.session.data[`consultation-${request.id}-responded-date`] = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
     req.session.data['consultation-just-responded'] = request.id;
     res.redirect(`${base}/consultations`);
   });

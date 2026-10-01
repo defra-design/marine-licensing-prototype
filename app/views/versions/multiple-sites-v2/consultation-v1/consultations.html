@@ -4,7 +4,18 @@
 {% from "versions/multiple-sites-v2/consultation-v1/includes/macros.html" import requestTypeText, statusTag %}
 
 {% set navActive = "consultations" %}
+{# Widens the page to match the LCML v4 submissions page #}
+{% set currentPageId = "low-complexity-projects" %}
 {% set pageTitle = "Consultations" %}
+
+{% block head %}
+  {{ super() }}
+  <style>
+    #consultations-table .app-nowrap { white-space: nowrap; }
+    /* Let the success banner text use the full width of the banner */
+    .govuk-notification-banner__content > * { max-width: none; }
+  </style>
+{% endblock %}
 
 {% block content %}
 
@@ -26,12 +37,12 @@
             <caption class="govuk-table__caption govuk-table__caption--m govuk-visually-hidden">Consultation requests for Natural England</caption>
             <thead class="govuk-table__head">
                 <tr class="govuk-table__row">
-                    <th scope="col" class="govuk-table__header">Application name</th>
+                    <th scope="col" class="govuk-table__header govuk-!-width-one-quarter">Application name</th>
                     <th scope="col" class="govuk-table__header">Reference</th>
                     <th scope="col" class="govuk-table__header">Request type</th>
                     <th scope="col" class="govuk-table__header">Status</th>
-                    <th scope="col" class="govuk-table__header">Received</th>
-                    <th scope="col" class="govuk-table__header">Respond by</th>
+                    <th scope="col" class="govuk-table__header app-nowrap">Received</th>
+                    <th scope="col" class="govuk-table__header app-nowrap">Respond by</th>
                     <th scope="col" class="govuk-table__header">Actions</th>
                 </tr>
             </thead>
@@ -42,11 +53,13 @@
                     <td class="govuk-table__cell">{{ request.reference }}</td>
                     <td class="govuk-table__cell">{{ requestTypeText(request) }}</td>
                     <td class="govuk-table__cell">{{ statusTag(request) }}</td>
-                    <td class="govuk-table__cell" data-sort-value="{{ request.receivedOffset | daysFromTodaySort }}">{{ request.receivedOffset | daysFromToday }}</td>
-                    <td class="govuk-table__cell" data-sort-value="{{ request.respondByOffset | daysFromTodaySort }}">{{ request.respondByOffset | daysFromToday }}</td>
+                    <td class="govuk-table__cell app-nowrap" data-sort-value="{{ request.receivedOffset | daysFromTodaySort }}">{{ request.receivedOffset | daysFromTodayShort }}</td>
+                    <td class="govuk-table__cell app-nowrap" data-sort-value="{{ request.respondByOffset | daysFromTodaySort }}">{{ request.respondByOffset | daysFromTodayShort }}</td>
                     <td class="govuk-table__cell">
-                        <a href="request-details/{{ request.id }}" class="govuk-link--no-visited-state govuk-!-margin-right-4">View request<span class="govuk-visually-hidden"> for {{ request.applicationName }}</span></a>
-                        <a href="view-application/{{ request.id }}" class="govuk-link--no-visited-state">View application<span class="govuk-visually-hidden"> for {{ request.applicationName }}</span></a>
+                        <ul class="govuk-list govuk-!-margin-bottom-0">
+                            <li class="app-nowrap"><a href="request-details/{{ request.id }}" class="govuk-link govuk-link--no-visited-state">View request<span class="govuk-visually-hidden"> for {{ request.applicationName }}</span></a></li>
+                            <li class="app-nowrap govuk-!-margin-bottom-0"><a href="view-application/{{ request.id }}" class="govuk-link govuk-link--no-visited-state">View application<span class="govuk-visually-hidden"> for {{ request.applicationName }}</span></a></li>
+                        </ul>
                     </td>
                 </tr>
                 {% endfor %}

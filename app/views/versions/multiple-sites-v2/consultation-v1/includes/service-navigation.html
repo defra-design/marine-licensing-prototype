@@ -2,14 +2,15 @@
   Consultation v1 header and service navigation.
 
   Same service as LCML v4 (Get permission for marine work), but a different
-  dashboard for consultee organisations, so the nav reads Home and
-  Consultations instead of Home and Submissions.
+  dashboard for consultee organisations, so the nav has Consultations
+  instead of Home and Submissions. There is no home page in this steel
+  thread, so the service name links to the consultations page.
 
     {% from "versions/multiple-sites-v2/consultation-v1/includes/service-navigation.html" import consultationV1Header %}
     {% block header %}{{ consultationV1Header("consultations") }}{% endblock %}
 
-  The argument is the nav item to highlight: "home", "consultations", or
-  nothing at all.
+  The argument is the nav item to highlight: "consultations" or nothing
+  at all.
 #}
 
 {% from "govuk/components/header/macro.njk" import govukHeader %}
@@ -22,13 +23,8 @@
 }) }}
 {{ govukServiceNavigation({
   serviceName: "Get permission for marine work",
-  serviceUrl: "/versions/multiple-sites-v2/consultation-v1/home",
+  serviceUrl: "/versions/multiple-sites-v2/consultation-v1/consultations",
   navigation: [
-    {
-      href: "/versions/multiple-sites-v2/consultation-v1/home",
-      text: "Home",
-      active: activeItem === "home"
-    },
     {
       href: "/versions/multiple-sites-v2/consultation-v1/consultations",
       text: "Consultations",

@@ -81,6 +81,22 @@ addFilter('daysFromToday', function(offset) {
 });
 
 /**
+ * Returns a date relative to today with a three-letter month
+ * Usage: {{ -5 | daysFromTodayShort }} gives "26 Sep 2026"
+ */
+addFilter('daysFromTodayShort', function(offset) {
+  const days = parseInt(offset, 10) || 0;
+  const date = new Date();
+  date.setDate(date.getDate() + days);
+
+  const monthNames = [
+    'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+    'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+  ];
+  return `${date.getDate()} ${monthNames[date.getMonth()]} ${date.getFullYear()}`;
+});
+
+/**
  * Returns a short date relative to today, as email clients show it
  * Usage: {{ -5 | inboxDate }} gives "15 Jul"
  */
