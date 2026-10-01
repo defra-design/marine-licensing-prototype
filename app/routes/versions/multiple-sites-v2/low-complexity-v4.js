@@ -764,7 +764,6 @@ module.exports = function (router) {
       delete req.session.data['low-complexity-wfd-excluded-activities'];
       delete req.session.data['low-complexity-wfd-filename'];
       req.session.data['low-complexity-wfd-completed'] = true;
-      delete req.session.data['reject-v2-wfd-attention'];
       req.session.data['low-complexity-wfd-from-cya'] = false;
       // Came from the main check page — return there, anchored on the WFD card
       if (fromMainCya) {
@@ -951,7 +950,6 @@ module.exports = function (router) {
 
   router.post(`/versions/${version}/${section}/environmental-assessments/water-framework-directive-check-answers-router`, function (req, res) {
     req.session.data['low-complexity-wfd-completed'] = true;
-    delete req.session.data['reject-v2-wfd-attention'];
     req.session.data['low-complexity-wfd-from-cya'] = false;
     // Came from the main check page — return there, anchored on the WFD card
     if (req.session.data['low-complexity-wfd-from-main-cya']) {
@@ -1032,9 +1030,6 @@ module.exports = function (router) {
     delete req.session.data['resubmit-draft-created-date'];
     delete req.session.data['deleted-plymouth-resubmit'];
     delete req.session.data['reject-version'];
-    delete req.session.data['reject-v2-sites-attention'];
-    delete req.session.data['reject-v2-wfd-attention'];
-    delete req.session.data['reject-v2-mpp-attention'];
 
     // Clear error flags
     delete req.session.data['errorthispage'];
@@ -1347,7 +1342,6 @@ module.exports = function (router) {
       'mpp-previously-unlocked',
       'low-complexity-wfd-within-nautical-mile', 'low-complexity-wfd-completed',
       'low-complexity-wfd-excluded-activities', 'low-complexity-wfd-filename',
-      'reject-v2-sites-attention', 'reject-v2-wfd-attention', 'reject-v2-mpp-attention',
       'low-complexity-special-legal-powers', 'low-complexity-special-legal-powers-completed',
       'low-complexity-harbour-authority', 'low-complexity-harbour-authority-details', 'low-complexity-harbour-authority-completed',
       'low-complexity-other-permissions', 'low-complexity-other-permissions-details', 'low-complexity-other-permissions-completed',
@@ -1565,12 +1559,6 @@ module.exports = function (router) {
     delete d['low-complexity-fee-estimate-completed'];
     delete d['low-complexity-fee-terms-checkbox'];
     delete d['low-complexity-fee-acceptance'];
-
-    // Sections the case officer flagged. Cleared when the applicant presses
-    // Continue at the end of that section (not on Back).
-    d['reject-v2-sites-attention'] = 'true';
-    d['reject-v2-wfd-attention'] = 'true';
-    d['reject-v2-mpp-attention'] = 'true';
   }
 
   // Opening the email or inbox does not reset anything (session data is cleared

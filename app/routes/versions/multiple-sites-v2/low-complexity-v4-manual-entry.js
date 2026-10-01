@@ -183,10 +183,7 @@ module.exports = function (router) {
       data['low-complexity-consultation-completed'] &&
       data['low-complexity-sharing-information-completed'] &&
       data['low-complexity-fee-estimate-completed'] == 'true' &&
-      data['low-complexity-fee-estimate-rejected'] != 'true' &&
-      data['reject-v2-sites-attention'] != 'true' &&
-      data['reject-v2-wfd-attention'] != 'true' &&
-      data['reject-v2-mpp-attention'] != 'true'
+      data['low-complexity-fee-estimate-rejected'] != 'true'
     );
   }
 

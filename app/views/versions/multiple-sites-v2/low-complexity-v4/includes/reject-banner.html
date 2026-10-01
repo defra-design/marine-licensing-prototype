@@ -2,8 +2,7 @@
   Reject journey v2 – "What you need to fix" notification banner.
   Plays back what the case officer selected and wrote in Dynamics 365 when
   rejecting MLA/2026/10002. Shown on the task list only, above the h1, for as
-  long as the new draft is being worked on. The sections that need fixing are
-  marked with 'Needs fixing' tags on the task list.
+  long as the new draft is being worked on.
 #}
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 {% if data['reject-version'] == 'v2' and data['resubmit-draft-created'] and data['low-complexity-application-status'] != 'sent' %}

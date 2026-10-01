@@ -27,14 +27,6 @@ module.exports = function (router) {
     res.render(`versions/${version}/${section}/${subsection}/index`);
   });
 
-  // Continue at the bottom of the index page. Reject journey v2: this is what
-  // clears 'Needs fixing' on the task list, whether or not anything was
-  // changed. Back leaves it as it is.
-  router.get(`/versions/${version}/${section}/${subsection}/continue`, function (req, res) {
-    delete req.session.data['reject-v2-mpp-attention'];
-    res.redirect('../marine-licence-start-page');
-  });
-
   /////////////////////////////////////////////////////////
   //////// Marine plan policy v2 guidance page
   /////////////////////////////////////////////////////////
