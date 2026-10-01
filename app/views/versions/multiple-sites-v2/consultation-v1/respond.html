@@ -1,0 +1,44 @@
+{% extends "versions/multiple-sites-v2/consultation-v1/includes/layout.html" %}
+
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% set navActive = "consultations" %}
+{% set pageTitle = ("Error: " if error else "") + "Respond to the consultation request" %}
+{% set backLink = "../request-details/" + request.id %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        {% if error %}
+        {{ govukErrorSummary({
+            titleText: "There is a problem",
+            errorList: [{ text: error, href: "#consultation-response-text" }]
+        }) }}
+        {% endif %}
+
+        <form action="{{ request.id }}-router" method="post" novalidate>
+            {{ govukTextarea({
+                name: "consultation-response-text",
+                id: "consultation-response-text",
+                label: {
+                    html: '<span class="govuk-caption-l">' + request.reference + '</span>Respond to the consultation request',
+                    classes: "govuk-label--l",
+                    isPageHeading: true
+                },
+                hint: {
+                    text: "Your advice on " + request.applicationName + "."
+                },
+                errorMessage: { text: error } if error else undefined
+            }) }}
+
+            {{ govukButton({ text: "Submit response" }) }}
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

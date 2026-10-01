@@ -1,0 +1,65 @@
+{% extends "versions/multiple-sites-v2/consultation-v1/includes/layout.html" %}
+
+{% set navActive = "consultations" %}
+{% set pageTitle = request.applicationName %}
+{% set backLink = "javascript:history.back()" %}
+
+{#
+  Read-only view of the submitted application, following the view details
+  page in LCML v4. Only the top-level sections are filled in for the steel
+  thread; the rest are placeholders.
+#}
+{% macro summaryCard(title, rows) %}
+<div class="govuk-summary-card">
+    <div class="govuk-summary-card__title-wrapper">
+        <h2 class="govuk-summary-card__title">{{ title }}</h2>
+    </div>
+    <div class="govuk-summary-card__content">
+        <dl class="govuk-summary-list">
+            {% for row in rows %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">{{ row[0] }}</dt>
+                <dd class="govuk-summary-list__value">{{ row[1] }}</dd>
+            </div>
+            {% endfor %}
+        </dl>
+    </div>
+</div>
+{% endmacro %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+
+        <span class="govuk-caption-l">{{ request.reference }}</span>
+        <h1 class="govuk-heading-l">{{ request.applicationName }}</h1>
+
+        {{ summaryCard("Application overview", [
+            ["Application type", "Marine licence application"],
+            ["Reference number", request.reference],
+            ["Who the Marine licence is for", request.applicant]
+        ]) }}
+
+        {{ summaryCard("Application details", [
+            ["Application name", request.applicationName],
+            ["Proposed works summary", request.summary],
+            ["Preferred start and end dates of the licence", request.startAndEndDates]
+        ]) }}
+
+        {{ summaryCard("Site details", [
+            ["Site location", request.siteLocation]
+        ]) }}
+
+        {{ summaryCard("Environmental assessments", [["Details", "To follow"]]) }}
+        {{ summaryCard("Other permissions", [["Details", "To follow"]]) }}
+        {{ summaryCard("Marine plan policies", [["Details", "To follow"]]) }}
+
+        <p class="govuk-body">
+            <a href="../request-details/{{ request.id }}" class="govuk-link govuk-link--no-visited-state">Back to consultation request</a>
+        </p>
+
+    </div>
+</div>
+
+{% endblock %}

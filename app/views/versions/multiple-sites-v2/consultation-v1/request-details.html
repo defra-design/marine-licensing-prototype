@@ -1,0 +1,80 @@
+{% extends "versions/multiple-sites-v2/consultation-v1/includes/layout.html" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "versions/multiple-sites-v2/consultation-v1/includes/macros.html" import requestTypeText, statusTag %}
+
+{% set navActive = "consultations" %}
+{% set pageTitle = "Consultation request: " + request.applicationName %}
+{% set backLink = "../consultations" %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <span class="govuk-caption-l">{{ request.reference }}</span>
+        <h1 class="govuk-heading-l">Consultation request: {{ request.applicationName }}</h1>
+
+        {# What the MMO is asking for. Placeholder wording. #}
+        {% if request.type === "response-required" %}
+        <p class="govuk-body">The Marine Management Organisation (MMO) is asking Natural England for advice on this marine licence application.</p>
+        <p class="govuk-body">Respond by {{ request.respondByOffset | daysFromToday }}.</p>
+        {% else %}
+        <p class="govuk-body">The Marine Management Organisation (MMO) is letting Natural England know about this marine licence application.</p>
+        <div class="govuk-inset-text">
+            You do not need to respond. If you have any comments, you can send them by {{ request.respondByOffset | daysFromToday }}.
+        </div>
+        {% endif %}
+
+        {# The request text written by the MMO caseworker. #}
+        <h2 class="govuk-heading-m">Request from the MMO</h2>
+        <div class="govuk-inset-text">
+            <p class="govuk-body">{{ request.requestText }}</p>
+            <p class="govuk-body govuk-!-margin-bottom-0">{{ request.caseworker }}</p>
+        </div>
+
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Request type</dt>
+                <dd class="govuk-summary-list__value">{{ requestTypeText(request) }}</dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Status</dt>
+                <dd class="govuk-summary-list__value">{{ statusTag(request) }}</dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Application</dt>
+                <dd class="govuk-summary-list__value">{{ request.applicationName }}</dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Applicant</dt>
+                <dd class="govuk-summary-list__value">{{ request.applicant }}</dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Date received</dt>
+                <dd class="govuk-summary-list__value">{{ request.receivedOffset | daysFromToday }}</dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Respond by</dt>
+                <dd class="govuk-summary-list__value">{{ request.respondByOffset | daysFromToday }}</dd>
+            </div>
+        </dl>
+
+        <p class="govuk-body">
+            <a href="../view-application/{{ request.id }}" class="govuk-link govuk-link--no-visited-state">View application</a>
+        </p>
+
+        {% if request.status === "Responded" %}
+        <h2 class="govuk-heading-m">Your response</h2>
+        <p class="govuk-body">{{ request.response }}</p>
+        {% else %}
+        {{ govukButton({
+            text: "Respond" if request.type === "response-required" else "Respond (optional)",
+            href: "../respond/" + request.id
+        }) }}
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock %}
