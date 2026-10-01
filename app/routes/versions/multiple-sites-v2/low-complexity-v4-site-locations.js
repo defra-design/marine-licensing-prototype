@@ -107,9 +107,7 @@ module.exports = function (router) {
       data['low-complexity-consultation-completed'] &&
       data['low-complexity-sharing-information-completed'] &&
       data['low-complexity-fee-estimate-completed'] == 'true' &&
-      data['low-complexity-fee-estimate-rejected'] != 'true' &&
-      data['reject-v2-sites-attention'] != 'true' &&
-      data['reject-v2-wfd-attention'] != 'true'
+      data['low-complexity-fee-estimate-rejected'] != 'true'
     );
   }
 
@@ -386,10 +384,6 @@ module.exports = function (router) {
         return res.redirect('review-site-details');
       }
     }
-
-    // Reject journey v2: pressing Continue on this page clears 'Needs attention',
-    // whether or not anything was changed. Back leaves it as it is.
-    delete req.session.data['reject-v2-sites-attention'];
 
     if (allComplete) {
       const finished = req.session.data['low-complexity-site-details-finished'];
