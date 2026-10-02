@@ -2,10 +2,11 @@ module.exports = function (router) {
   // Consultation v1 steel thread routes
   //
   // A bare-bones end-to-end journey for a consultee organisation (we are
-  // pretending to be Natural England): consultation dashboard, request
-  // details, respond, and a read-only view of the application. Pages are
-  // deliberately template-level so developers can build the foundations
-  // while the detailed designs are worked on separately.
+  // pretending to be Natural England): consultation dashboard, request for
+  // advice or notification of application, respond, and a read-only view of
+  // the application. Pages are deliberately template-level so developers can
+  // build the foundations while the detailed designs are worked on
+  // separately.
   const version = "multiple-sites-v2";
   const section = "consultation-v1";
   const base = `/versions/${version}/${section}`;
@@ -34,7 +35,6 @@ module.exports = function (router) {
         'Tell us about any timing restrictions you would recommend to protect overwintering birds.'
       ],
       receivedOffset: -3,
-      respondByOffset: 18,
       summary: 'We are applying for a marine licence to extend the existing sea defence at Dawlish by approximately 150 metres to the east. The extension will reduce wave overtopping onto the railway line and promenade during winter storms. The works involve placing rock armour along the toe of the existing sea wall and building a new concrete wave return wall on top of it. Rock will be delivered by barge and placed by a long-reach excavator working from the beach at low tide. Works are planned outside the main bird overwintering period and will take about 6 months to complete.',
       startAndEndDates: 'April 2026 to September 2027',
       // Site and activity cards for view-application, made up to match the
@@ -54,12 +54,11 @@ module.exports = function (router) {
     },
     'lyme-regis': {
       id: 'lyme-regis',
-      applicationName: 'Installation of floating pontoon, Lyme Regis Harbour, Dorset',
+      applicationName: 'Lyme Regis pontoon',
       reference: 'MLA/2026/10003',
       applicant: 'Jurassic Coast SUP Ltd',
       type: 'notify-only',
       receivedOffset: -1,
-      respondByOffset: 27,
       summary: 'Jurassic Coast SUP Ltd is a small paddleboarding hire and instruction business operating in Lyme Regis. We are applying for a marine licence to install a small floating pontoon within Lyme Regis Harbour to provide a safe and accessible launching and landing platform for paddleboards and kayaks hired to our customers. At present customers are required to enter the water via the main harbour slipway which is shared with commercial fishing vessels and other harbour traffic. During the summer months this creates significant health and safety concerns particularly for inexperienced users and those with limited mobility. The pontoon would be attached to the existing harbour wall using H-frame wall guides and a short hinged gangway. It will be a floating structure rising and falling with the tide. The works will take place entirely within the outer harbour area.',
       startAndEndDates: 'June 2026 to June 2027',
       // Site and activity cards for view-application, copied from the LCML v4
@@ -120,11 +119,17 @@ module.exports = function (router) {
     });
   });
 
-  // Request details
-  router.get(`${base}/request-details/:requestId`, function (req, res) {
-    const request = findRequest(req, res);
-    if (!request) return;
-    res.render(`versions/${version}/${section}/request-details`, { request });
+  // Request for advice. A single generic page, shown with the Dawlish request.
+  router.get(`${base}/request-for-advice`, function (req, res) {
+    const request = withStatus(req, REQUESTS['dawlish']);
+    res.render(`versions/${version}/${section}/request-for-advice`, { request });
+  });
+
+  // Notification of an application. A single generic page, shown with the
+  // Lyme Regis request.
+  router.get(`${base}/notification-of-application`, function (req, res) {
+    const request = withStatus(req, REQUESTS['lyme-regis']);
+    res.render(`versions/${version}/${section}/notification-of-application`, { request });
   });
 
   // View application (read-only, like view details in LCML v4)

@@ -2,7 +2,27 @@
 
 {% set navActive = "consultations" %}
 {% set pageTitle = request.applicationName %}
-{% set backLink = "javascript:history.back()" %}
+
+{#
+  The application opens in a new tab, so the header keeps only the service
+  name and the beta banner: no navigation, organisation bar or back link.
+#}
+{% block header %}
+{% from "govuk/components/header/macro.njk" import govukHeader %}
+{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
+{{ govukHeader({
+  homepageUrl: "/",
+  classes: "govuk-header--full-width-border"
+}) }}
+{{ govukServiceNavigation({
+  serviceName: "Get permission for marine work",
+  serviceUrl: "/versions/multiple-sites-v2/consultation-v1/consultations"
+}) }}
+{% endblock %}
+
+{% block beforeContent %}
+    {% include "versions/multiple-sites-v2/includes/phase-banner.html" %}
+{% endblock %}
 
 {#
   Read-only view of the submitted application, following the view details
