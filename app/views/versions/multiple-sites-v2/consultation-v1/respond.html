@@ -6,7 +6,7 @@
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 
 {% set navActive = "consultations" %}
-{% set pageTitle = ("Error: " if error else "") + ("Respond to the request" if request.type === "response-required" else "Respond to the notification") %}
+{% set pageTitle = ("Error: " if error else "") + "Your response" %}
 {% set isAdvice = request.type === "response-required" %}
 {% set backLink = "../request-for-advice" if isAdvice else "../notification-of-application" %}
 
@@ -29,7 +29,7 @@
                 id: "consultation-response-text",
                 rows: 10,
                 label: {
-                    html: '<span class="govuk-caption-l">' + request.applicationName + '</span>Respond to the request',
+                    html: '<span class="govuk-caption-l">' + request.applicationName + '</span>Your response',
                     classes: "govuk-label--l",
                     isPageHeading: true
                 },
@@ -44,7 +44,7 @@
                 id: "consultation-response-text",
                 rows: 10,
                 label: {
-                    html: '<span class="govuk-caption-l">' + request.applicationName + '</span>Respond to the notification',
+                    html: '<span class="govuk-caption-l">' + request.applicationName + '</span>Your response',
                     classes: "govuk-label--l",
                     isPageHeading: true
                 },
