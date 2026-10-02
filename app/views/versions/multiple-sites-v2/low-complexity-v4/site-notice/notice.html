@@ -38,7 +38,12 @@
 		.app-notice {
 			border: 5px solid #0b0c0c;
 			padding: 30px;
-			max-width: 44em;
+		}
+		/* GDS Transport is licensed for GOV.UK web pages only, so the notice
+		   itself – on screen and in print – uses a standard system font. */
+		.app-notice,
+		.app-notice * {
+			font-family: Arial, Helvetica, sans-serif !important;
 		}
 		.app-notice__act {
 			border-bottom: 2px solid #0b0c0c;
@@ -129,16 +134,10 @@
 {% block content %}
 
 <div class="govuk-grid-row">
-	<div class="govuk-grid-column-two-thirds">
+	<div class="govuk-grid-column-full">
 
 		<p class="print-link govuk-body"><a class="govuk-link govuk-link--no-visited-state" href="javascript:window.print()">Print this page</a></p>
 		<p class="print-link govuk-body">To save as a PDF, select 'Print this page' and choose 'Save as PDF' as your printer.</p>
-
-	</div>
-</div>
-
-<div class="govuk-grid-row">
-	<div class="govuk-grid-column-full">
 
 		<div class="app-notice">
 
