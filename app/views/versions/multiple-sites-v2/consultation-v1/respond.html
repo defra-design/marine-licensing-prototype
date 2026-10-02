@@ -6,7 +6,7 @@
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 
 {% set navActive = "consultations" %}
-{% set pageTitle = ("Error: " if error else "") + ("Respond to this request" if request.type === "response-required" else "Respond to the consultation request") %}
+{% set pageTitle = ("Error: " if error else "") + ("Respond to the request" if request.type === "response-required" else "Respond to the notification") %}
 {% set isAdvice = request.type === "response-required" %}
 {% set backLink = "../request-for-advice" if isAdvice else "../notification-of-application" %}
 
@@ -29,7 +29,7 @@
                 id: "consultation-response-text",
                 rows: 10,
                 label: {
-                    html: '<span class="govuk-caption-l">' + request.applicationName + '</span>Respond to this request',
+                    html: '<span class="govuk-caption-l">' + request.applicationName + '</span>Respond to the request',
                     classes: "govuk-label--l",
                     isPageHeading: true
                 },
@@ -38,18 +38,15 @@
 
             {{ govukButton({ text: "Send response" }) }}
         {% else %}
-        <span class="govuk-caption-l">{{ request.applicationName }}</span>
-        <h1 class="govuk-heading-l">Respond to the consultation request</h1>
-
         <form action="{{ request.id }}-router" method="post" novalidate>
             {{ govukTextarea({
                 name: "consultation-response-text",
                 id: "consultation-response-text",
                 rows: 10,
                 label: {
-                    text: "Your response",
-                    classes: "govuk-label--m",
-                    isPageHeading: false
+                    html: '<span class="govuk-caption-l">' + request.applicationName + '</span>Respond to the notification',
+                    classes: "govuk-label--l",
+                    isPageHeading: true
                 },
                 errorMessage: { text: error } if error else undefined
             }) }}
