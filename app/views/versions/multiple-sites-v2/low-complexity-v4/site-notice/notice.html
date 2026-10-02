@@ -38,7 +38,12 @@
 		.app-notice {
 			border: 5px solid #0b0c0c;
 			padding: 30px;
-			max-width: 44em;
+		}
+		/* GDS Transport is licensed for GOV.UK web pages only, so the notice
+		   itself – on screen and in print – uses a standard system font. */
+		.app-notice,
+		.app-notice * {
+			font-family: Arial, Helvetica, sans-serif !important;
 		}
 		.app-notice__act {
 			border-bottom: 2px solid #0b0c0c;
