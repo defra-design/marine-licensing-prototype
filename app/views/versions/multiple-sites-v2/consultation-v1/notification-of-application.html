@@ -1,0 +1,37 @@
+{% extends "versions/multiple-sites-v2/consultation-v1/includes/layout.html" %}
+
+{#
+  Notification of an application, at /notification-of-application with no
+  request id. Shows the Lyme Regis request. Stripped back to a
+  link to the application and a link to respond.
+#}
+
+{% set navActive = "consultations" %}
+{% set pageHeading = "Notification of a marine licence application" %}
+{% set pageTitle = pageHeading %}
+{% set backLink = "consultations" %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <span class="govuk-caption-l">{{ request.applicationName }}</span>
+        <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+
+        <p class="govuk-body"><a href="view-application/{{ request.id }}" class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">View the application (opens in new tab)</a></p>
+
+        {% if request.status === "Responded" %}
+        <h2 class="govuk-heading-m">Your response</h2>
+        <p class="govuk-body">{{ request.response }}</p>
+        {% else %}
+        <h2 class="govuk-heading-m">If you need to respond</h2>
+        <p class="govuk-body">
+            <a href="respond/{{ request.id }}" class="govuk-link govuk-link--no-visited-state">Respond to this application</a>
+        </p>
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock %}
