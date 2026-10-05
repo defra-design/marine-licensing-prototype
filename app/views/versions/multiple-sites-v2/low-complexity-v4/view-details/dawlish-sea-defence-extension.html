@@ -727,16 +727,32 @@
         {# ============================== #}
         {# SHARING YOUR PROJECT INFO      #}
         {# ============================== #}
+        {# In the user testing journeys this matches the current Sharing your
+           application information task, and the request lines up with what the
+           withholding information notification decides. #}
         <div class="govuk-summary-card">
             <div class="govuk-summary-card__title-wrapper">
-                <h2 class="govuk-summary-card__title">Sharing application information publicly</h2>
+                <h2 class="govuk-summary-card__title">Sharing {% if data['ut'] %}your {% endif %}application information publicly</h2>
             </div>
             <div class="govuk-summary-card__content">
                 <dl class="govuk-summary-list">
+                    {% if data['ut'] %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Request that information is withheld</dt>
+                        <dd class="govuk-summary-list__value">Yes</dd>
+                    </div>
+                    <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+                        <dt class="govuk-summary-list__key">Details of information to be withheld and why</dt>
+                        <dd class="govuk-summary-list__value">
+                            <p class="govuk-body govuk-!-margin-bottom-0">We would like two things withheld because they are commercially confidential. First, the unit rates table in section 4 of our method statement. These are the prices we have agreed with our contractor and suppliers, and publishing them would let competitors undercut us on future coastal defence tenders. Second, the vessel movement schedule in appendix B. It shows how we plan and sequence our marine plant, which we have developed over several projects. If this information were published, other contractors could use it to price against us and we could lose future work.</p>
+                        </dd>
+                    </div>
+                    {% else %}
                     <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
                         <dt class="govuk-summary-list__key">Consent to publish application information</dt>
                         <dd class="govuk-summary-list__value">Yes</dd>
                     </div>
+                    {% endif %}
                 </dl>
             </div>
         </div>
