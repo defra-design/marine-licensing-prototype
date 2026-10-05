@@ -18,9 +18,10 @@ router.use('*', function(req, res, next) {
             
             // Clear reject / resubmit journey data so the 'What you need to fix'
             // banner does not linger on the restored application (same keys
-            // the sign-in page clears)
+            // the sign-in page clears). Also clear the Dawlish and user testing
+            // flags, as these links are not part of those scenarios.
             ['resubmit-draft-created', 'resubmit-draft-created-date', 'deleted-plymouth-resubmit',
-             'reject-version'].forEach(function (key) {
+             'reject-version', 'dawlish-active', 'ut'].forEach(function (key) {
                 delete req.session.data[key];
             });
 

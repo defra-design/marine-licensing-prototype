@@ -235,8 +235,11 @@ Submissions
 				  the current stage in the routes middleware, and read straight off
 				  data['dawlish-status'] here.
 				#}
-				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="Dawlish sea defence extension" data-type="Marine licence application" data-reference="MLA-10020" data-status="{{ data['dawlish-status'] }}" id="project-dawlish">
-					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Dawlish sea defence extension</th>
+				{# Only once a Dawlish scenario or user testing journey has been opened –
+				   see dawlish-active in the routes middleware. #}
+				{% if data['dawlish-active'] or data['ut'] %}
+				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="Dawlish Harbour pontoon" data-type="Marine licence application" data-reference="MLA-10020" data-status="{{ data['dawlish-status'] }}" id="project-dawlish">
+					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Dawlish Harbour pontoon</th>
 					<td class="govuk-table__cell">Marine licence application</td>
 					<td class="govuk-table__cell" data-sort-value="MLA-10020">MLA/2026/10020</td>
 					<td class="govuk-table__cell" data-sort-value="{{ data['dawlish-status-sort'] }}">
@@ -256,12 +259,13 @@ Submissions
 					{% endif %}
 					<td class="govuk-table__cell">
 						{% if data['withdrawn-dawlish'] == 'true' %}
-						<a href="view-details/dawlish-sea-defence-extension" class="govuk-link--no-visited-state">View details</a>
+						<a href="view-details/dawlish-harbour-pontoon" class="govuk-link--no-visited-state">View details</a>
 						{% else %}
-						<a href="view-details/dawlish-sea-defence-extension" class="govuk-link--no-visited-state govuk-!-margin-right-4">View details</a> <a href="withdraw?project=dawlish&name=Dawlish sea defence extension&type=Marine licence application&return=submissions" class="govuk-link--no-visited-state">Withdraw</a>
+						<a href="view-details/dawlish-harbour-pontoon" class="govuk-link--no-visited-state govuk-!-margin-right-4">View details</a> <a href="withdraw?project=dawlish&name=Dawlish Harbour pontoon&type=Marine licence application&return=submissions" class="govuk-link--no-visited-state">Withdraw</a>
 						{% endif %}
 					</td>
 				</tr>
+				{% endif %}
 
 				{# Hidden in the user testing journeys – transfer is being redesigned, so
 				   this row would only be a distraction. #}
