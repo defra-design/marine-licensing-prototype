@@ -1569,12 +1569,20 @@ module.exports = function (router) {
     // Water Framework Directive – the seeded answer of 'No' to being within one
     // nautical mile (so no assessment was uploaded) is what the case officer flagged
 
-    // Marine plan policies – S-BIO-1 was answered properly, but S-AGG-4 was
-    // answered 'Not applicable', which the case officer flagged
-    d['marine-plan-policy-s-agg-4-text'] = 'Not applicable';
-    d['marine-plan-policy-v2-s-agg-4-text'] = 'Not applicable';
-    d['marine-plan-policy-s-bio-1-text'] = 'The cable route has been micro-routed to avoid eelgrass beds and reef features. Burial by jetting limits disturbance to a narrow strip of seabed, which recovers naturally.';
-    d['marine-plan-policy-v2-s-bio-1-text'] = d['marine-plan-policy-s-bio-1-text'];
+    // Marine plan policies – the live policies were answered properly, but
+    // S-AGG-4 was answered 'Not applicable', which the case officer flagged.
+    // The text matches the original application's view details page.
+    const mppText = {
+      's-agg-4': 'Not applicable',
+      's-bio-1': 'A benthic survey of the cable route has been carried out. The route is predominantly mobile sand and gravel that is regularly disturbed by tidal action and vessel activity. Small areas of more sensitive habitat identified during the survey have been avoided through micro-routeing. Disturbance from jetting is temporary and the seabed is expected to recover naturally within a short period.',
+      's-uwn-2': 'No significant underwater noise impact is anticipated. Plymouth Sound is already exposed to regular commercial, naval and recreational vessel noise and the temporary works do not materially add to background levels.',
+      's-acc-1': 'Public access to the foreshore at the landfall points will be maintained wherever safe to do so. Short-term localised restrictions may be required during landfall works for public safety, and these will be clearly signed and kept to the minimum duration necessary. The buried cable does not restrict access once installed.',
+      's-emp-1': 'The installation will be led by a specialist marine cable contractor. Where practicable, local vessel crews and support staff will work alongside the specialist team, helping to build cable installation experience in the Plymouth marine sector.'
+    };
+    Object.keys(mppText).forEach(function (key) {
+      d['marine-plan-policy-' + key + '-text'] = mppText[key];
+      d['marine-plan-policy-v2-' + key + '-text'] = mppText[key];
+    });
 
     // New application, so the fee estimate has to be done again
     delete d['low-complexity-fee-estimate-completed'];
