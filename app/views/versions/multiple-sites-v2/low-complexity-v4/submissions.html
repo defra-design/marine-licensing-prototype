@@ -200,7 +200,8 @@ Submissions
 
 		  00 Action required     - the case officer needs something read or answered
 		  01 Draft               - not sent yet, needs finishing
-		  02 Assessment in progress - with us
+		  02 Application received - with us, not picked up yet
+		  02 Assessment in progress - with us, being assessed
 		  02 Consultation        - with us, site notice evidence sent
 		  03 Scheduled           - exemption upcoming, not yet in force
 		  04 Active              - exemption in force
@@ -262,6 +263,9 @@ Submissions
 					</td>
 				</tr>
 
+				{# Hidden in the user testing journeys – transfer is being redesigned, so
+				   this row would only be a distraction. #}
+				{% if not data['ut'] %}
 				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="Installation of floating pontoon, Lyme Regis Harbour, Dorset" data-type="Marine licence application" data-reference="MLA-10003" data-status="Transferred">
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Installation of floating pontoon, Lyme Regis Harbour, Dorset</th>
 					<td class="govuk-table__cell">Marine licence application</td>
@@ -280,6 +284,7 @@ Submissions
 						<a href="email-landings/pontoon-landing?from=submissions" class="govuk-link--no-visited-state">View details</a>
 					</td>
 				</tr>
+				{% endif %}
 
 				{% if data['reject-version'] != 'v1' %}
 				<!-- Every journey except reject v1 – the original application is Rejected. View details opens the
@@ -358,7 +363,7 @@ Submissions
 				<!-- Plymouth Sound cable laying resubmit draft -->
 				<!-- Only appears once the applicant clicks Continue on the Update and resubmit page (sets resubmit-draft-created). Cleared on Delete and on sign-in. -->
 				{% if data['resubmit-draft-created'] and not data['deleted-plymouth-resubmit'] %}
-				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="Plymouth Sound cable laying" data-type="Marine licence application" data-reference="{% if data['low-complexity-application-status'] == 'sent' %}MLA-10025{% else %}-{% endif %}" data-status="{% if data['low-complexity-application-status'] == 'sent' %}{% if data['withdrawn-mla-submitted'] == 'true' %}Withdrawn{% else %}Assessment in progress{% endif %}{% else %}Draft{% endif %}">
+				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="Plymouth Sound cable laying" data-type="Marine licence application" data-reference="{% if data['low-complexity-application-status'] == 'sent' %}MLA-10025{% else %}-{% endif %}" data-status="{% if data['low-complexity-application-status'] == 'sent' %}{% if data['withdrawn-mla-submitted'] == 'true' %}Withdrawn{% else %}Application received{% endif %}{% else %}Draft{% endif %}">
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Plymouth Sound cable laying</th>
 					<td class="govuk-table__cell">Marine licence application</td>
 					<td class="govuk-table__cell" data-sort-value="{% if data['low-complexity-application-status'] == 'sent' %}MLA-10025{% else %}-{% endif %}">{% if data['low-complexity-application-status'] == 'sent' %}MLA/2026/10025{% else %}-{% endif %}</td>
@@ -371,7 +376,7 @@ Submissions
 							}) }}
 							{% else %}
 							{{ govukTag({
-								text: "Assessment in progress",
+								text: "Application received",
 								classes: "govuk-tag--green"
 							}) }}
 							{% endif %}
@@ -403,7 +408,7 @@ Submissions
 				<!-- Marine licence (dynamic based on session data) -->
 				<!-- Requires low-complexity-application-status so a project name captured from a query param (e.g. the Reject email link) does not, on its own, render a draft row. -->
 				{% if data['low-complexity-project-name-text-input'] and data['low-complexity-application-status'] and not data['resubmit-draft-created'] %}
-				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="{{ data['low-complexity-project-name-text-input'] }}" data-type="Marine licence application" data-reference="{% if data['low-complexity-application-status'] == 'sent' %}MLA-10025{% else %}-{% endif %}" data-status="{% if data['low-complexity-application-status'] == 'sent' %}{% if data['withdrawn-mla-submitted'] == 'true' %}Withdrawn{% else %}Assessment in progress{% endif %}{% else %}Draft{% endif %}">
+				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="{{ data['low-complexity-project-name-text-input'] }}" data-type="Marine licence application" data-reference="{% if data['low-complexity-application-status'] == 'sent' %}MLA-10025{% else %}-{% endif %}" data-status="{% if data['low-complexity-application-status'] == 'sent' %}{% if data['withdrawn-mla-submitted'] == 'true' %}Withdrawn{% else %}Application received{% endif %}{% else %}Draft{% endif %}">
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">{{ data['low-complexity-project-name-text-input'] }}</th>
 					<td class="govuk-table__cell">Marine licence application</td>
 					<td class="govuk-table__cell" data-sort-value="{% if data['low-complexity-application-status'] == 'sent' %}MLA-10025{% else %}-{% endif %}">{% if data['low-complexity-application-status'] == 'sent' %}MLA/2026/10025{% else %}-{% endif %}</td>
@@ -416,7 +421,7 @@ Submissions
 							}) }}
 							{% else %}
 							{{ govukTag({
-								text: "Assessment in progress",
+								text: "Application received",
 								classes: "govuk-tag--green"
 							}) }}
 							{% endif %}
