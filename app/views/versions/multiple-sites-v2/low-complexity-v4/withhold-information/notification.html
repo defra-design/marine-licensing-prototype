@@ -71,9 +71,18 @@
 
 		<p class="govuk-body">We've decided to withhold some of the information you asked us to.</p>
 
+		{# The user testing journeys rule on things that are actually in the
+		   Dawlish application. The original copy is recorded in
+		   docs/withhold-notification-original-copy.md. #}
+		{% if data['ut'] %}
+		<p class="govuk-body">We agree the construction details in your activity description are commercially confidential and will withhold these. This covers the materials, the design of the frame and decking, and how the pontoon is fixed to the harbour wall.</p>
+
+		<p class="govuk-body">The size and position of the pontoon do not meet the test for commercial confidentiality. Anyone visiting the harbour will be able to see them once the pontoon is installed, so they will be published.</p>
+		{% else %}
 		<p class="govuk-body">We agree the unit rates table in section 4 of your method statement is commercially confidential and will withhold this.</p>
 
 		<p class="govuk-body">The vessel movement schedule in appendix B does not meet the test for commercial confidentiality, as this information is standard practice information already available to other operators in the area, so this will be published.</p>
+		{% endif %}
 		{% endif %}
 
 		<h2 class="govuk-heading-m">What you can do</h2>
