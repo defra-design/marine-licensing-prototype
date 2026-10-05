@@ -7,7 +7,7 @@
 {# Status text is worked out in the routes middleware from the current stage. #}
 {% set dawlishStatusClass = {
     'Withdrawn': 'govuk-tag--grey',
-    'Submitted': 'govuk-tag--green',
+    'Assessment in progress': 'govuk-tag--green',
     'Consultation': 'govuk-tag--purple',
     'Action required': 'govuk-tag--red'
 }[data['dawlish-status']] %}
@@ -67,7 +67,11 @@
            the applicant arrived on - see the middleware in the routes file.
 
            Tasks stay on the page once done, and after a withdrawal, so there
-           is still a record of what the applicant was told and when. #}
+           is still a record of what the applicant was told and when.
+
+           In user testing journey 1 (reject) Dawlish is not part of the
+           scenario, so it has no updates or tasks yet. #}
+        {% if data['ut'] != '1' %}
         <h2 class="govuk-heading-m">Updates and tasks</h2>
         <ul class="govuk-task-list">
             <li class="govuk-task-list__item govuk-task-list__item--with-link">
@@ -117,6 +121,7 @@
             </li>
             {% endif %}
         </ul>
+        {% endif %}
 
         {# ============================== #}
         {# APPLICATION OVERVIEW          #}

@@ -9,11 +9,16 @@
 {% set rejectIssues %}
     <h3 class="govuk-notification-banner__heading">What you need to fix</h3>
     <ul class="govuk-list govuk-list--bullet">
+        {% if data['ut'] != '1' %}
         <li>Site location</li>
         <li>Water Framework Directive assessment</li>
+        {% endif %}
         <li>Marine plan policies</li>
     </ul>
+    {# User testing journey 1 only plays back the marine plan policies issue #}
+    {% if data['ut'] != '1' %}
     <p class="govuk-body">The site location entered indicated that it was within 1 nautical mile of the coast but no Water Framework Directive assessment was uploaded. Check the site location and if it meets the requirements for a WFD assessment.</p>
+    {% endif %}
     <p class="govuk-body">You answered 'Not applicable' for the South Aggregates 4 (S-AGG-4) marine plan policy, but it does apply to your application. You need to explain how you have considered this policy.</p>
 {% endset %}
 {{ govukNotificationBanner({

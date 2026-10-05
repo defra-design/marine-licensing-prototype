@@ -16,6 +16,22 @@ module.exports = function (router) {
 
   router.use(function (req, res, next) {
     if (req.path.indexOf('low-complexity-v4') !== -1) {
+      // User testing variants. The journey links on /user-testing-links open an
+      // inbox with ?ut=1 (reject), ?ut=2 (withhold) or ?ut=3 (site notice), so
+      // the scenario name is not in the link. The number is kept for the rest
+      // of the journey. Opening an inbox without it, such as from /index,
+      // switches the variants off again so those links behave as they always did.
+      if (/\/emails\/inbox-[^/]+$/.test(req.path)) {
+        if (['1', '2', '3'].includes(req.query.ut)) {
+          req.session.data['ut'] = req.query.ut;
+        } else {
+          delete req.session.data['ut'];
+        }
+        if (res.locals.data) {
+          res.locals.data['ut'] = req.session.data['ut'];
+        }
+      }
+
       // v1 MPP counts
       let completedCount = 0;
       for (const key of MARINE_PLAN_POLICY_KEYS) {
@@ -57,22 +73,27 @@ module.exports = function (router) {
       }
 
       // Reading the withholding information notification puts the application
-      // back to Submitted. Once site notice evidence is in (first time or
+      // back to Assessment in progress. Once site notice evidence is in (first time or
       // resubmitted) the application moves on to consultation instead.
+      //
+      // In user testing journey 1 (reject) Dawlish is not part of the scenario,
+      // so it shows as being assessed with nothing for the applicant to do.
       let dawlishStatus = 'Action required';
       if (req.session.data['withdrawn-dawlish'] === 'true') {
         dawlishStatus = 'Withdrawn';
+      } else if (req.session.data['ut'] === '1') {
+        dawlishStatus = 'Assessment in progress';
       } else if (stageTaskDone) {
-        dawlishStatus = stage === 'withhold' ? 'Submitted' : 'Consultation';
+        dawlishStatus = stage === 'withhold' ? 'Assessment in progress' : 'Consultation';
       }
 
       // Submissions sorts on this, not the tag text: attention first, then
       // live, then closed. Consultation is still with us, so it sits with
-      // Submitted.
+      // Assessment in progress.
       let dawlishStatusSort = '00';
       if (dawlishStatus === 'Withdrawn') {
         dawlishStatusSort = '08';
-      } else if (dawlishStatus === 'Submitted' || dawlishStatus === 'Consultation') {
+      } else if (dawlishStatus === 'Assessment in progress' || dawlishStatus === 'Consultation') {
         dawlishStatusSort = '02';
       }
 
@@ -1627,8 +1648,12 @@ module.exports = function (router) {
       req.session.data['withhold-information-reason'] = req.query.reason;
     }
 
+    // User testing journeys 2 and 3 only show the commercial confidentiality
+    // decision, unless a ?reason= link has picked something else.
+    const defaultReason = ['2', '3'].includes(req.session.data['ut']) ? 'commercial' : 'both';
+
     res.render(`versions/${version}/${section}/withhold-information/notification`, {
-      reason: req.session.data['withhold-information-reason'] || 'both'
+      reason: req.session.data['withhold-information-reason'] || defaultReason
     });
   });
 
