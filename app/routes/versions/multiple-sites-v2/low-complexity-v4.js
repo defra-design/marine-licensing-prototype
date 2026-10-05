@@ -32,6 +32,16 @@ module.exports = function (router) {
         }
       }
 
+      // Dawlish only shows on Submissions once a Dawlish scenario has been
+      // opened (its emails, tasks or view details) or a user testing journey
+      // is running, so the general /index links do not show it.
+      if (/\/(emails\/(inbox-)?(withhold-information|site-notice(-resubmit)?)$|withhold-information\/|site-notice\/|view-details\/dawlish-)/.test(req.path)) {
+        req.session.data['dawlish-active'] = true;
+        if (res.locals.data) {
+          res.locals.data['dawlish-active'] = true;
+        }
+      }
+
       // v1 MPP counts
       let completedCount = 0;
       for (const key of MARINE_PLAN_POLICY_KEYS) {
@@ -114,6 +124,12 @@ module.exports = function (router) {
       });
     }
     next();
+  });
+
+  // Dawlish was renamed from Dawlish sea defence extension – keep the old
+  // address working.
+  router.get(`/versions/${version}/${section}/view-details/dawlish-sea-defence-extension`, function (req, res) {
+    res.redirect('dawlish-harbour-pontoon');
   });
 
   // Clears the site notice tasks back to their starting state. Every Notify
@@ -1667,7 +1683,7 @@ module.exports = function (router) {
 
   router.post(`/versions/${version}/${section}/withhold-information/notification-router`, function (req, res) {
     req.session.data['withhold-information-read'] = true;
-    res.redirect('../view-details/dawlish-sea-defence-extension');
+    res.redirect('../view-details/dawlish-harbour-pontoon');
   });
 
   ///////////////////////////////////////////
@@ -1919,7 +1935,7 @@ module.exports = function (router) {
       }
 
       req.session.data['site-notice-sent'] = true;
-      res.redirect('../view-details/dawlish-sea-defence-extension');
+      res.redirect('../view-details/dawlish-harbour-pontoon');
     });
 
     ///////////////////////////////////////////
@@ -2073,7 +2089,7 @@ module.exports = function (router) {
       }
 
       req.session.data['site-notice-resubmit-sent'] = true;
-      res.redirect('../view-details/dawlish-sea-defence-extension');
+      res.redirect('../view-details/dawlish-harbour-pontoon');
     });
   }
 
