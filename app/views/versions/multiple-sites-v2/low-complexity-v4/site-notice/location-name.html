@@ -5,27 +5,35 @@
 {% set siteNoticeHeading = "Location name" %}
 {% set siteNoticeError = "Enter the location name" %}
 
+{# The captions go inside the label, so the error border runs up to the top
+   of them. _location-page.html then leaves its own captions out. #}
+{% set siteNoticeCaptionsInHeading = true %}
+{% set siteNoticeCaptions %}<span class="govuk-caption-l">Dawlish Harbour pontoon</span><span class="govuk-caption-l">Location {{ locationNumber }}</span>{% endset %}
+
+{# Rendered above the caption and heading by _location-page.html #}
+{% set siteNoticeErrorSummary %}
+{% if showError %}
+	{{ govukErrorSummary({
+		titleText: "There is a problem",
+		errorList: [
+			{
+				text: siteNoticeError,
+				href: "#location-name"
+			}
+		]
+	}) }}
+{% endif %}
+{% endset %}
+
 {% set siteNoticeForm %}
 <form action="location-name-router?location={{ locationNumber }}" method="post" novalidate>
-
-	{% if showError %}
-		{{ govukErrorSummary({
-			titleText: "There is a problem",
-			errorList: [
-				{
-					text: siteNoticeError,
-					href: "#location-name"
-				}
-			]
-		}) }}
-	{% endif %}
 
 	{{ govukInput({
 		id: "location-name",
 		name: "location-name",
 		value: location.name,
 		label: {
-			text: siteNoticeHeading,
+			html: siteNoticeCaptions + siteNoticeHeading,
 			classes: "govuk-label--l",
 			isPageHeading: true
 		},

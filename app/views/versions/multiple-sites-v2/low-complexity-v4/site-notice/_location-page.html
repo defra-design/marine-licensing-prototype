@@ -1,7 +1,10 @@
 {#
   Chrome shared by the four site notice question pages. Each one sets
   siteNoticeHeading and siteNoticeForm before including this, so the caption,
-  header and back link only exist in one place as the loop grows.
+  header and back link only exist in one place as the loop grows. Pages with
+  validation also set siteNoticeErrorSummary, which goes above the caption.
+  A page that puts the captions inside its heading sets
+  siteNoticeCaptionsInHeading so they are not shown twice.
 #}
 {% extends "../../layouts/low-complexity-v4.html" %}
 
@@ -26,8 +29,12 @@
 <div class="govuk-grid-row">
 	<div class="govuk-grid-column-two-thirds">
 
+		{{ siteNoticeErrorSummary | safe }}
+
+		{% if not siteNoticeCaptionsInHeading %}
 		<span class="govuk-caption-l">Dawlish Harbour pontoon</span>
 		<span class="govuk-caption-l">Location {{ locationNumber }}</span>
+		{% endif %}
 
 		{{ siteNoticeForm | safe }}
 
