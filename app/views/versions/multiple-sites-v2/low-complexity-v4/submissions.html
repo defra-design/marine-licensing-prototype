@@ -200,7 +200,8 @@ Submissions
 
 		  00 Action required     - the case officer needs something read or answered
 		  01 Draft               - not sent yet, needs finishing
-		  02 Submitted           - with us
+		  02 Application received - with us, not picked up yet
+		  02 Assessment in progress - with us, being assessed
 		  02 Consultation        - with us, site notice evidence sent
 		  03 Scheduled           - exemption upcoming, not yet in force
 		  04 Active              - exemption in force
@@ -234,8 +235,11 @@ Submissions
 				  the current stage in the routes middleware, and read straight off
 				  data['dawlish-status'] here.
 				#}
-				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="Dawlish sea defence extension" data-type="Marine licence application" data-reference="MLA-10020" data-status="{{ data['dawlish-status'] }}" id="project-dawlish">
-					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Dawlish sea defence extension</th>
+				{# Only once a Dawlish scenario or user testing journey has been opened –
+				   see dawlish-active in the routes middleware. #}
+				{% if data['dawlish-active'] or data['ut'] %}
+				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="Dawlish Harbour pontoon" data-type="Marine licence application" data-reference="MLA-10020" data-status="{{ data['dawlish-status'] }}" id="project-dawlish">
+					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Dawlish Harbour pontoon</th>
 					<td class="govuk-table__cell">Marine licence application</td>
 					<td class="govuk-table__cell" data-sort-value="MLA-10020">MLA/2026/10020</td>
 					<td class="govuk-table__cell" data-sort-value="{{ data['dawlish-status-sort'] }}">
@@ -243,7 +247,7 @@ Submissions
 							text: data['dawlish-status'],
 							classes: {
 								'Withdrawn': 'govuk-tag--grey',
-								'Submitted': 'govuk-tag--green',
+								'Assessment in progress': 'govuk-tag--green',
 								'Consultation': 'govuk-tag--purple',
 								'Action required': 'govuk-tag--red'
 							}[data['dawlish-status']]
@@ -255,13 +259,17 @@ Submissions
 					{% endif %}
 					<td class="govuk-table__cell">
 						{% if data['withdrawn-dawlish'] == 'true' %}
-						<a href="view-details/dawlish-sea-defence-extension" class="govuk-link--no-visited-state">View details</a>
+						<a href="view-details/dawlish-harbour-pontoon" class="govuk-link--no-visited-state">View details</a>
 						{% else %}
-						<a href="view-details/dawlish-sea-defence-extension" class="govuk-link--no-visited-state govuk-!-margin-right-4">View details</a> <a href="withdraw?project=dawlish&name=Dawlish sea defence extension&type=Marine licence application&return=submissions" class="govuk-link--no-visited-state">Withdraw</a>
+						<a href="view-details/dawlish-harbour-pontoon" class="govuk-link--no-visited-state govuk-!-margin-right-4">View details</a> <a href="withdraw?project=dawlish&name=Dawlish Harbour pontoon&type=Marine licence application&return=submissions" class="govuk-link--no-visited-state">Withdraw</a>
 						{% endif %}
 					</td>
 				</tr>
+				{% endif %}
 
+				{# Hidden in the user testing journeys – transfer is being redesigned, so
+				   this row would only be a distraction. #}
+				{% if not data['ut'] %}
 				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="Installation of floating pontoon, Lyme Regis Harbour, Dorset" data-type="Marine licence application" data-reference="MLA-10003" data-status="Transferred">
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Installation of floating pontoon, Lyme Regis Harbour, Dorset</th>
 					<td class="govuk-table__cell">Marine licence application</td>
@@ -280,6 +288,7 @@ Submissions
 						<a href="email-landings/pontoon-landing?from=submissions" class="govuk-link--no-visited-state">View details</a>
 					</td>
 				</tr>
+				{% endif %}
 
 				{% if data['reject-version'] != 'v1' %}
 				<!-- Every journey except reject v1 – the original application is Rejected. View details opens the
@@ -325,7 +334,7 @@ Submissions
 				{% endif %}
 
 				<!-- Submitted marine licence application (hard-coded) — withdrawable -->
-				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="Groyne construction, Bournemouth seafront, Dorset" data-type="Marine licence application" data-reference="MLA-10018" data-status="{% if data['withdrawn-groyne'] == 'true' %}Withdrawn{% else %}Submitted{% endif %}" id="project-groyne">
+				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="Groyne construction, Bournemouth seafront, Dorset" data-type="Marine licence application" data-reference="MLA-10018" data-status="{% if data['withdrawn-groyne'] == 'true' %}Withdrawn{% else %}Assessment in progress{% endif %}" id="project-groyne">
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Groyne construction, Bournemouth seafront, Dorset</th>
 					<td class="govuk-table__cell">Marine licence application</td>
 					<td class="govuk-table__cell" data-sort-value="MLA-10018">MLA/2026/10018</td>
@@ -337,7 +346,7 @@ Submissions
 						}) }}
 						{% else %}
 						{{ govukTag({
-							text: "Submitted",
+							text: "Assessment in progress",
 							classes: "govuk-tag--green"
 						}) }}
 						{% endif %}
@@ -358,7 +367,7 @@ Submissions
 				<!-- Plymouth Sound cable laying resubmit draft -->
 				<!-- Only appears once the applicant clicks Continue on the Update and resubmit page (sets resubmit-draft-created). Cleared on Delete and on sign-in. -->
 				{% if data['resubmit-draft-created'] and not data['deleted-plymouth-resubmit'] %}
-				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="Plymouth Sound cable laying" data-type="Marine licence application" data-reference="{% if data['low-complexity-application-status'] == 'sent' %}MLA-10025{% else %}-{% endif %}" data-status="{% if data['low-complexity-application-status'] == 'sent' %}{% if data['withdrawn-mla-submitted'] == 'true' %}Withdrawn{% else %}Submitted{% endif %}{% else %}Draft{% endif %}">
+				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="Plymouth Sound cable laying" data-type="Marine licence application" data-reference="{% if data['low-complexity-application-status'] == 'sent' %}MLA-10025{% else %}-{% endif %}" data-status="{% if data['low-complexity-application-status'] == 'sent' %}{% if data['withdrawn-mla-submitted'] == 'true' %}Withdrawn{% else %}Application received{% endif %}{% else %}Draft{% endif %}">
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Plymouth Sound cable laying</th>
 					<td class="govuk-table__cell">Marine licence application</td>
 					<td class="govuk-table__cell" data-sort-value="{% if data['low-complexity-application-status'] == 'sent' %}MLA-10025{% else %}-{% endif %}">{% if data['low-complexity-application-status'] == 'sent' %}MLA/2026/10025{% else %}-{% endif %}</td>
@@ -371,7 +380,7 @@ Submissions
 							}) }}
 							{% else %}
 							{{ govukTag({
-								text: "Submitted",
+								text: "Application received",
 								classes: "govuk-tag--green"
 							}) }}
 							{% endif %}
@@ -403,7 +412,7 @@ Submissions
 				<!-- Marine licence (dynamic based on session data) -->
 				<!-- Requires low-complexity-application-status so a project name captured from a query param (e.g. the Reject email link) does not, on its own, render a draft row. -->
 				{% if data['low-complexity-project-name-text-input'] and data['low-complexity-application-status'] and not data['resubmit-draft-created'] %}
-				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="{{ data['low-complexity-project-name-text-input'] }}" data-type="Marine licence application" data-reference="{% if data['low-complexity-application-status'] == 'sent' %}MLA-10025{% else %}-{% endif %}" data-status="{% if data['low-complexity-application-status'] == 'sent' %}{% if data['withdrawn-mla-submitted'] == 'true' %}Withdrawn{% else %}Submitted{% endif %}{% else %}Draft{% endif %}">
+				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="{{ data['low-complexity-project-name-text-input'] }}" data-type="Marine licence application" data-reference="{% if data['low-complexity-application-status'] == 'sent' %}MLA-10025{% else %}-{% endif %}" data-status="{% if data['low-complexity-application-status'] == 'sent' %}{% if data['withdrawn-mla-submitted'] == 'true' %}Withdrawn{% else %}Application received{% endif %}{% else %}Draft{% endif %}">
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">{{ data['low-complexity-project-name-text-input'] }}</th>
 					<td class="govuk-table__cell">Marine licence application</td>
 					<td class="govuk-table__cell" data-sort-value="{% if data['low-complexity-application-status'] == 'sent' %}MLA-10025{% else %}-{% endif %}">{% if data['low-complexity-application-status'] == 'sent' %}MLA/2026/10025{% else %}-{% endif %}</td>
@@ -416,7 +425,7 @@ Submissions
 							}) }}
 							{% else %}
 							{{ govukTag({
-								text: "Submitted",
+								text: "Application received",
 								classes: "govuk-tag--green"
 							}) }}
 							{% endif %}

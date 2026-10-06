@@ -18,9 +18,10 @@ router.use('*', function(req, res, next) {
             
             // Clear reject / resubmit journey data so the 'What you need to fix'
             // banner does not linger on the restored application (same keys
-            // the sign-in page clears)
+            // the sign-in page clears). Also clear the Dawlish and user testing
+            // flags, as these links are not part of those scenarios.
             ['resubmit-draft-created', 'resubmit-draft-created-date', 'deleted-plymouth-resubmit',
-             'reject-version'].forEach(function (key) {
+             'reject-version', 'dawlish-active', 'ut'].forEach(function (key) {
                 delete req.session.data[key];
             });
 
@@ -146,6 +147,7 @@ require('./routes/versions/multiple-sites-v2/low-complexity-v4-marine-plan-polic
 require('./routes/versions/multiple-sites-v2/low-complexity-v4-marine-plan-policies-v2.js')(router);
 require('./routes/versions/multiple-sites-v2/low-complexity-v4-fee-and-invoicing.js')(router);
 require('./routes/versions/multiple-sites-v2/consultation-v0.js')(router);
+require('./routes/versions/multiple-sites-v2/consultation-v1.js')(router);
 require('./routes/versions/multiple-sites-v2/sample-plans-v1.js')(router);
 require('./routes/versions/multiple-sites-v2/sample-plans-v1-dredging-site-locations.js')(router);
 require('./routes/versions/multiple-sites-v2/sample-plans-v1-disposal-site-locations.js')(router);

@@ -7,7 +7,7 @@
 {# Status text is worked out in the routes middleware from the current stage. #}
 {% set dawlishStatusClass = {
     'Withdrawn': 'govuk-tag--grey',
-    'Submitted': 'govuk-tag--green',
+    'Assessment in progress': 'govuk-tag--green',
     'Consultation': 'govuk-tag--purple',
     'Action required': 'govuk-tag--red'
 }[data['dawlish-status']] %}
@@ -36,7 +36,7 @@
 {% endblock %}
 
 {% block pageTitle %}
-    Dawlish sea defence extension - Get permission for marine work
+    Dawlish Harbour pontoon - Get permission for marine work
 {% endblock %}
 
 {% block content %}
@@ -46,7 +46,7 @@
 
         <span class="govuk-caption-l">MLA/2026/10020</span>
         <h1 class="govuk-heading-l">
-            Dawlish sea defence extension
+            Dawlish Harbour pontoon
         </h1>
 
         {# ============================== #}
@@ -67,7 +67,11 @@
            the applicant arrived on - see the middleware in the routes file.
 
            Tasks stay on the page once done, and after a withdrawal, so there
-           is still a record of what the applicant was told and when. #}
+           is still a record of what the applicant was told and when.
+
+           In user testing journey 1 (reject) Dawlish is not part of the
+           scenario, so it has no updates or tasks yet. #}
+        {% if data['ut'] != '1' %}
         <h2 class="govuk-heading-m">Updates and tasks</h2>
         <ul class="govuk-task-list">
             <li class="govuk-task-list__item govuk-task-list__item--with-link">
@@ -117,6 +121,7 @@
             </li>
             {% endif %}
         </ul>
+        {% endif %}
 
         {# ============================== #}
         {# APPLICATION OVERVIEW          #}
@@ -167,7 +172,7 @@
                 <dl class="govuk-summary-list">
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Application name</dt>
-                        <dd class="govuk-summary-list__value">Dawlish sea defence extension</dd>
+                        <dd class="govuk-summary-list__value">Dawlish Harbour pontoon</dd>
                     </div>
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Proposed works summary</dt>
@@ -722,16 +727,32 @@
         {# ============================== #}
         {# SHARING YOUR PROJECT INFO      #}
         {# ============================== #}
+        {# In the user testing journeys this matches the current Sharing your
+           application information task, and the request lines up with what the
+           withholding information notification decides. #}
         <div class="govuk-summary-card">
             <div class="govuk-summary-card__title-wrapper">
-                <h2 class="govuk-summary-card__title">Sharing application information publicly</h2>
+                <h2 class="govuk-summary-card__title">Sharing {% if data['ut'] %}your {% endif %}application information publicly</h2>
             </div>
             <div class="govuk-summary-card__content">
                 <dl class="govuk-summary-list">
+                    {% if data['ut'] %}
+                    <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+                        <dt class="govuk-summary-list__key">Request that information is withheld</dt>
+                        <dd class="govuk-summary-list__value">Yes</dd>
+                    </div>
+                    <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+                        <dt class="govuk-summary-list__key">Details of information to be withheld and why</dt>
+                        <dd class="govuk-summary-list__value">
+                            <p class="govuk-body govuk-!-margin-bottom-0">We would like the construction details of our pontoon withheld because they are commercially confidential. We spent two years developing the design with our supplier, including the float units, the steel frame and decking, and the way it is fixed to the harbour wall. We would also like the size and exact position of the pontoon withheld. Another paddleboard hire business is expected to start up in Dawlish next year. If they can see how our pontoon is built and where it goes, they could copy our set-up without the time and cost we have put in, and compete with us for the same customers.</p>
+                        </dd>
+                    </div>
+                    {% else %}
                     <div class="govuk-summary-list__row govuk-summary-list__row--no-border">
                         <dt class="govuk-summary-list__key">Consent to publish application information</dt>
                         <dd class="govuk-summary-list__value">Yes</dd>
                     </div>
+                    {% endif %}
                 </dl>
             </div>
         </div>

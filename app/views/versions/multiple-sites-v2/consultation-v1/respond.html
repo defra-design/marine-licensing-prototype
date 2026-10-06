@@ -1,0 +1,61 @@
+{% extends "versions/multiple-sites-v2/consultation-v1/includes/layout.html" %}
+
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+
+{% set navActive = "consultations" %}
+{% set pageTitle = ("Error: " if error else "") + "Your response" %}
+{% set isAdvice = request.type === "response-required" %}
+{% set backLink = "../request-for-advice" if isAdvice else "../notification-of-application" %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        {% if error %}
+        {{ govukErrorSummary({
+            titleText: "There is a problem",
+            errorList: [{ text: error, href: "#consultation-response-text" }]
+        }) }}
+        {% endif %}
+
+        {% if isAdvice %}
+        <form action="{{ request.id }}-router" method="post" novalidate>
+            {{ govukTextarea({
+                name: "consultation-response-text",
+                id: "consultation-response-text",
+                rows: 10,
+                label: {
+                    html: '<span class="govuk-caption-l">' + request.applicationName + '</span>Your response',
+                    classes: "govuk-label--l",
+                    isPageHeading: true
+                },
+                errorMessage: { text: error } if error else undefined
+            }) }}
+
+            {{ govukButton({ text: "Send response" }) }}
+        {% else %}
+        <form action="{{ request.id }}-router" method="post" novalidate>
+            {{ govukTextarea({
+                name: "consultation-response-text",
+                id: "consultation-response-text",
+                rows: 10,
+                label: {
+                    html: '<span class="govuk-caption-l">' + request.applicationName + '</span>Your response',
+                    classes: "govuk-label--l",
+                    isPageHeading: true
+                },
+                errorMessage: { text: error } if error else undefined
+            }) }}
+
+            {{ govukButton({ text: "Send response" }) }}
+        {% endif %}
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

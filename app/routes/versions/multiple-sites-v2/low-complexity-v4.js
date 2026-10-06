@@ -16,6 +16,32 @@ module.exports = function (router) {
 
   router.use(function (req, res, next) {
     if (req.path.indexOf('low-complexity-v4') !== -1) {
+      // User testing variants. The journey links on /user-testing-links open an
+      // inbox with ?ut=1 (reject), ?ut=2 (withhold) or ?ut=3 (site notice), so
+      // the scenario name is not in the link. The number is kept for the rest
+      // of the journey. Opening an inbox without it, such as from /index,
+      // switches the variants off again so those links behave as they always did.
+      if (/\/emails\/inbox-[^/]+$/.test(req.path)) {
+        if (['1', '2', '3'].includes(req.query.ut)) {
+          req.session.data['ut'] = req.query.ut;
+        } else {
+          delete req.session.data['ut'];
+        }
+        if (res.locals.data) {
+          res.locals.data['ut'] = req.session.data['ut'];
+        }
+      }
+
+      // Dawlish only shows on Submissions once a Dawlish scenario has been
+      // opened (its emails, tasks or view details) or a user testing journey
+      // is running, so the general /index links do not show it.
+      if (/\/(emails\/(inbox-)?(withhold-information|site-notice(-resubmit)?)$|withhold-information\/|site-notice\/|view-details\/dawlish-)/.test(req.path)) {
+        req.session.data['dawlish-active'] = true;
+        if (res.locals.data) {
+          res.locals.data['dawlish-active'] = true;
+        }
+      }
+
       // v1 MPP counts
       let completedCount = 0;
       for (const key of MARINE_PLAN_POLICY_KEYS) {
@@ -57,22 +83,27 @@ module.exports = function (router) {
       }
 
       // Reading the withholding information notification puts the application
-      // back to Submitted. Once site notice evidence is in (first time or
+      // back to Assessment in progress. Once site notice evidence is in (first time or
       // resubmitted) the application moves on to consultation instead.
+      //
+      // In user testing journey 1 (reject) Dawlish is not part of the scenario,
+      // so it shows as being assessed with nothing for the applicant to do.
       let dawlishStatus = 'Action required';
       if (req.session.data['withdrawn-dawlish'] === 'true') {
         dawlishStatus = 'Withdrawn';
+      } else if (req.session.data['ut'] === '1') {
+        dawlishStatus = 'Assessment in progress';
       } else if (stageTaskDone) {
-        dawlishStatus = stage === 'withhold' ? 'Submitted' : 'Consultation';
+        dawlishStatus = stage === 'withhold' ? 'Assessment in progress' : 'Consultation';
       }
 
       // Submissions sorts on this, not the tag text: attention first, then
       // live, then closed. Consultation is still with us, so it sits with
-      // Submitted.
+      // Assessment in progress.
       let dawlishStatusSort = '00';
       if (dawlishStatus === 'Withdrawn') {
         dawlishStatusSort = '08';
-      } else if (dawlishStatus === 'Submitted' || dawlishStatus === 'Consultation') {
+      } else if (dawlishStatus === 'Assessment in progress' || dawlishStatus === 'Consultation') {
         dawlishStatusSort = '02';
       }
 
@@ -93,6 +124,12 @@ module.exports = function (router) {
       });
     }
     next();
+  });
+
+  // Dawlish was renamed from Dawlish sea defence extension – keep the old
+  // address working.
+  router.get(`/versions/${version}/${section}/view-details/dawlish-sea-defence-extension`, function (req, res) {
+    res.redirect('dawlish-harbour-pontoon');
   });
 
   // Clears the site notice tasks back to their starting state. Every Notify
@@ -1548,12 +1585,20 @@ module.exports = function (router) {
     // Water Framework Directive – the seeded answer of 'No' to being within one
     // nautical mile (so no assessment was uploaded) is what the case officer flagged
 
-    // Marine plan policies – S-BIO-1 was answered properly, but S-AGG-4 was
-    // answered 'Not applicable', which the case officer flagged
-    d['marine-plan-policy-s-agg-4-text'] = 'Not applicable';
-    d['marine-plan-policy-v2-s-agg-4-text'] = 'Not applicable';
-    d['marine-plan-policy-s-bio-1-text'] = 'The cable route has been micro-routed to avoid eelgrass beds and reef features. Burial by jetting limits disturbance to a narrow strip of seabed, which recovers naturally.';
-    d['marine-plan-policy-v2-s-bio-1-text'] = d['marine-plan-policy-s-bio-1-text'];
+    // Marine plan policies – the live policies were answered properly, but
+    // S-AGG-4 was answered 'Not applicable', which the case officer flagged.
+    // The text matches the original application's view details page.
+    const mppText = {
+      's-agg-4': 'Not applicable',
+      's-bio-1': 'A benthic survey of the cable route has been carried out. The route is predominantly mobile sand and gravel that is regularly disturbed by tidal action and vessel activity. Small areas of more sensitive habitat identified during the survey have been avoided through micro-routeing. Disturbance from jetting is temporary and the seabed is expected to recover naturally within a short period.',
+      's-uwn-2': 'No significant underwater noise impact is anticipated. Plymouth Sound is already exposed to regular commercial, naval and recreational vessel noise and the temporary works do not materially add to background levels.',
+      's-acc-1': 'Public access to the foreshore at the landfall points will be maintained wherever safe to do so. Short-term localised restrictions may be required during landfall works for public safety, and these will be clearly signed and kept to the minimum duration necessary. The buried cable does not restrict access once installed.',
+      's-emp-1': 'The installation will be led by a specialist marine cable contractor. Where practicable, local vessel crews and support staff will work alongside the specialist team, helping to build cable installation experience in the Plymouth marine sector.'
+    };
+    Object.keys(mppText).forEach(function (key) {
+      d['marine-plan-policy-' + key + '-text'] = mppText[key];
+      d['marine-plan-policy-v2-' + key + '-text'] = mppText[key];
+    });
 
     // New application, so the fee estimate has to be done again
     delete d['low-complexity-fee-estimate-completed'];
@@ -1627,14 +1672,18 @@ module.exports = function (router) {
       req.session.data['withhold-information-reason'] = req.query.reason;
     }
 
+    // User testing journeys 2 and 3 only show the commercial confidentiality
+    // decision, unless a ?reason= link has picked something else.
+    const defaultReason = ['2', '3'].includes(req.session.data['ut']) ? 'commercial' : 'both';
+
     res.render(`versions/${version}/${section}/withhold-information/notification`, {
-      reason: req.session.data['withhold-information-reason'] || 'both'
+      reason: req.session.data['withhold-information-reason'] || defaultReason
     });
   });
 
   router.post(`/versions/${version}/${section}/withhold-information/notification-router`, function (req, res) {
     req.session.data['withhold-information-read'] = true;
-    res.redirect('../view-details/dawlish-sea-defence-extension');
+    res.redirect('../view-details/dawlish-harbour-pontoon');
   });
 
   ///////////////////////////////////////////
@@ -1886,7 +1935,7 @@ module.exports = function (router) {
       }
 
       req.session.data['site-notice-sent'] = true;
-      res.redirect('../view-details/dawlish-sea-defence-extension');
+      res.redirect('../view-details/dawlish-harbour-pontoon');
     });
 
     ///////////////////////////////////////////
@@ -2040,7 +2089,7 @@ module.exports = function (router) {
       }
 
       req.session.data['site-notice-resubmit-sent'] = true;
-      res.redirect('../view-details/dawlish-sea-defence-extension');
+      res.redirect('../view-details/dawlish-harbour-pontoon');
     });
   }
 

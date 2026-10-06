@@ -1,0 +1,44 @@
+{% extends "versions/multiple-sites-v2/consultation-v1/includes/layout.html" %}
+
+{#
+  Request for advice, at /request-for-advice with no request id. Shows the
+  Dawlish request.
+  Stripped back to a link to the application, the MMO's request and a
+  button to respond.
+#}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set navActive = "consultations" %}
+{% set pageHeading = "Request for advice for a marine licence application" %}
+{% set pageTitle = pageHeading %}
+{% set backLink = "consultations" %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <span class="govuk-caption-l">{{ request.applicationName }}</span>
+        <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+
+        <p class="govuk-body"><a href="view-application/{{ request.id }}" class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">View the application (opens in new tab)</a></p>
+
+        <h2 class="govuk-heading-m">Advice requested by the MMO</h2>
+        {# Placeholder for the case officer's plain-text request from MAS #}
+        <p class="govuk-body">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+
+        {% if request.status === "Responded" %}
+        <h2 class="govuk-heading-m">Your response</h2>
+        <p class="govuk-body">{{ request.response }}</p>
+        {% else %}
+        {{ govukButton({
+            text: "Respond to the request",
+            href: "respond/" + request.id
+        }) }}
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock %}
