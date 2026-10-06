@@ -54,7 +54,7 @@ module.exports = function (router) {
     },
     'lyme-regis': {
       id: 'lyme-regis',
-      applicationName: 'Installation of floating pontoon, Lyme Regis Harbour, Dorset',
+      applicationName: 'Lyme Regis pontoon',
       reference: 'MLA/2026/10003',
       applicant: 'Jurassic Coast SUP Ltd',
       type: 'notify-only',
