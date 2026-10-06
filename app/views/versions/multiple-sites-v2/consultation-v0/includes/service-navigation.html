@@ -1,13 +1,13 @@
 {#
-  Consultation v1 header and service navigation.
+  Consultation v0 header and service navigation.
 
   Same service as LCML v4 (Get permission for marine work), but a different
   dashboard for consultee organisations, so the nav has Consultations
   instead of Home and Submissions. There is no home page in this steel
   thread, so the service name links to the consultations page.
 
-    {% from "versions/multiple-sites-v2/consultation-v1/includes/service-navigation.html" import consultationV1Header %}
-    {% block header %}{{ consultationV1Header("consultations") }}{% endblock %}
+    {% from "versions/multiple-sites-v2/consultation-v0/includes/service-navigation.html" import consultationV0Header %}
+    {% block header %}{{ consultationV0Header("consultations") }}{% endblock %}
 
   The argument is the nav item to highlight: "consultations" or nothing
   at all.
@@ -16,17 +16,17 @@
 {% from "govuk/components/header/macro.njk" import govukHeader %}
 {% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
 
-{% macro consultationV1Header(activeItem) %}
+{% macro consultationV0Header(activeItem) %}
 {{ govukHeader({
   homepageUrl: "/",
   classes: "govuk-header--full-width-border"
 }) }}
 {{ govukServiceNavigation({
   serviceName: "Get permission for marine work",
-  serviceUrl: "/versions/multiple-sites-v2/consultation-v1/consultations",
+  serviceUrl: "/versions/multiple-sites-v2/consultation-v0/consultations",
   navigation: [
     {
-      href: "/versions/multiple-sites-v2/consultation-v1/consultations",
+      href: "/versions/multiple-sites-v2/consultation-v0/consultations",
       text: "Consultations",
       active: activeItem === "consultations"
     },

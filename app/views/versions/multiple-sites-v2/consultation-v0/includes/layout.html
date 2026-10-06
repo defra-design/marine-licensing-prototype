@@ -1,5 +1,5 @@
 {#
-  Consultation v1 layout. Reuses the LCML v4 layout for the footer, and
+  Consultation v0 layout. Reuses the LCML v4 layout for the footer, and
   swaps in the consultation header, the beta phase banner and the
   organisation banner. The consultee organisation is fixed as Natural
   England for this steel thread.
@@ -10,8 +10,8 @@
 {% extends "versions/multiple-sites-v2/layouts/low-complexity-v4.html" %}
 
 {% block header %}
-{% from "versions/multiple-sites-v2/consultation-v1/includes/service-navigation.html" import consultationV1Header %}
-{{ consultationV1Header(navActive) }}
+{% from "versions/multiple-sites-v2/consultation-v0/includes/service-navigation.html" import consultationV0Header %}
+{{ consultationV0Header(navActive) }}
 {% endblock %}
 
 {% block beforeContent %}

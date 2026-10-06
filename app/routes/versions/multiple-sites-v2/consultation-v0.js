@@ -1,5 +1,5 @@
 module.exports = function (router) {
-  // Consultation v1 steel thread routes
+  // Consultation v0 steel thread routes
   //
   // A bare-bones end-to-end journey for a consultee organisation (we are
   // pretending to be Natural England): consultation dashboard, request
@@ -7,7 +7,7 @@ module.exports = function (router) {
   // deliberately template-level so developers can build the foundations
   // while the detailed designs are worked on separately.
   const version = "multiple-sites-v2";
-  const section = "consultation-v1";
+  const section = "consultation-v0";
   const base = `/versions/${version}/${section}`;
 
   // Seeded consultation requests. Two types:
@@ -79,10 +79,10 @@ module.exports = function (router) {
     }
   };
 
-  // Each request's status lives in the session as consultation-<id>-status so
+  // Each request's status lives in the session as consultation-v0-<id>-status so
   // it can be seen and changed through View data like any other key.
   function statusFor(req, request) {
-    const key = `consultation-${request.id}-status`;
+    const key = `consultation-v0-${request.id}-status`;
     if (!req.session.data[key]) {
       req.session.data[key] = request.type === 'response-required' ? 'Response needed' : 'No response needed';
     }
@@ -92,8 +92,8 @@ module.exports = function (router) {
   function withStatus(req, request) {
     return Object.assign({}, request, {
       status: statusFor(req, request),
-      response: req.session.data[`consultation-${request.id}-response`],
-      respondedDate: req.session.data[`consultation-${request.id}-responded-date`]
+      response: req.session.data[`consultation-v0-${request.id}-response`],
+      respondedDate: req.session.data[`consultation-v0-${request.id}-responded-date`]
     });
   }
 
@@ -111,8 +111,8 @@ module.exports = function (router) {
     const requests = Object.values(REQUESTS).map(r => withStatus(req, r));
 
     // Flash the success banner once, after a response is submitted
-    const justResponded = req.session.data['consultation-just-responded'];
-    delete req.session.data['consultation-just-responded'];
+    const justResponded = req.session.data['consultation-v0-just-responded'];
+    delete req.session.data['consultation-v0-just-responded'];
 
     res.render(`versions/${version}/${section}/consultations`, {
       requests,
@@ -145,8 +145,8 @@ module.exports = function (router) {
     const request = REQUESTS[req.params.requestId];
     if (!request) return res.redirect(`${base}/consultations`);
 
-    const response = (req.session.data['consultation-response-text'] || '').trim();
-    delete req.session.data['consultation-response-text'];
+    const response = (req.session.data['consultation-v0-response-text'] || '').trim();
+    delete req.session.data['consultation-v0-response-text'];
 
     if (!response) {
       return res.render(`versions/${version}/${section}/respond`, {
@@ -155,10 +155,10 @@ module.exports = function (router) {
       });
     }
 
-    req.session.data[`consultation-${request.id}-response`] = response;
-    req.session.data[`consultation-${request.id}-status`] = 'Responded';
-    req.session.data[`consultation-${request.id}-responded-date`] = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
-    req.session.data['consultation-just-responded'] = request.id;
+    req.session.data[`consultation-v0-${request.id}-response`] = response;
+    req.session.data[`consultation-v0-${request.id}-status`] = 'Responded';
+    req.session.data[`consultation-v0-${request.id}-responded-date`] = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+    req.session.data['consultation-v0-just-responded'] = request.id;
     res.redirect(`${base}/consultations`);
   });
 };
