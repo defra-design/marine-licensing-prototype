@@ -1,0 +1,29 @@
+{#
+  Consultation v0 layout. Reuses the LCML v4 layout for the footer, and
+  swaps in the consultation header, the beta phase banner and the
+  organisation banner. The consultee organisation is fixed as Natural
+  England for this steel thread.
+
+  Pages set navActive to "consultations" to highlight the nav, and
+  can set backLink to show a back link.
+#}
+{% extends "versions/multiple-sites-v2/layouts/low-complexity-v4.html" %}
+
+{% block header %}
+{% from "versions/multiple-sites-v2/consultation-v0/includes/service-navigation.html" import consultationV0Header %}
+{{ consultationV0Header(navActive) }}
+{% endblock %}
+
+{% block beforeContent %}
+    {% include "versions/multiple-sites-v2/includes/phase-banner.html" %}
+    <div class="app-organisation-switcher">
+        <span class="govuk-body-s govuk-!-font-weight-bold app-organisation-switcher__name">Natural England</span>
+    </div>
+    {% if backLink %}
+    <a class="govuk-back-link govuk-link--no-visited-state" href="{{ backLink }}">Back</a>
+    {% endif %}
+{% endblock %}
+
+{% block pageTitle %}
+    {{ pageTitle }} - Get permission for marine work
+{% endblock %}

@@ -1,0 +1,102 @@
+{% extends "versions/multiple-sites-v2/consultation-v0/includes/layout.html" %}
+
+{% set navActive = "consultations" %}
+{% set pageTitle = request.applicationName %}
+{% set backLink = "javascript:history.back()" %}
+
+{#
+  Read-only view of the submitted application, following the view details
+  page in LCML v4. Only the top-level sections are filled in for the steel
+  thread; the rest are placeholders.
+#}
+{% macro summaryCard(title, rows) %}
+<div class="govuk-summary-card">
+    <div class="govuk-summary-card__title-wrapper">
+        <h2 class="govuk-summary-card__title">{{ title }}</h2>
+    </div>
+    <div class="govuk-summary-card__content">
+        <dl class="govuk-summary-list">
+            {% for row in rows %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">{{ row[0] }}</dt>
+                <dd class="govuk-summary-list__value">{{ row[1] }}</dd>
+            </div>
+            {% endfor %}
+        </dl>
+    </div>
+</div>
+{% endmacro %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+
+        <span class="govuk-caption-l">{{ request.reference }}</span>
+        <h1 class="govuk-heading-l">{{ request.applicationName }}</h1>
+
+        {{ summaryCard("Application overview", [
+            ["Application type", "Marine licence application"],
+            ["Reference number", request.reference],
+            ["Who the Marine licence is for", request.applicant]
+        ]) }}
+
+        {{ summaryCard("Application details", [
+            ["Application name", request.applicationName],
+            ["Proposed works summary", request.summary],
+            ["Preferred start and end dates of the licence", request.startAndEndDates]
+        ]) }}
+
+        {# Site cards follow the LCML v4 pontoon view-details page #}
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">Site 1</h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list govuk-summary-list--full-width">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Site name</dt>
+                        <dd class="govuk-summary-list__value">{{ request.site.name }}</dd>
+                    </div>
+                    <div class="govuk-summary-list__row govuk-summary-list__row--no-actions">
+                        <dt class="govuk-summary-list__key govuk-summary-list__key--full-width map-label">Map view</dt>
+                        <dd class="govuk-summary-list__value govuk-summary-list__value--full-width">
+                            <img src="/public/images/map-5-points.jpg" alt="Map showing site 1 location" />
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        {{ summaryCard("Site 1 – Activity 1", [
+            ["Type of activity", request.site.typeOfActivity],
+            ["What is being constructed", request.site.whatIsBeingConstructed],
+            ["Activity description", request.site.activityDescription],
+            ["Maximum duration of activity", request.site.maximumDuration],
+            ["Completion date", request.site.completionDate],
+            ["Activity limited to specific months", request.site.specificMonths],
+            ["Proposed working hours", request.site.workingHours]
+        ]) }}
+
+        {# The drawing link is deliberately dead in the prototype #}
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">Site 1 - Construction drawing 1</h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">File upload</dt>
+                        <dd class="govuk-summary-list__value"><a class="govuk-link govuk-link--no-visited-state" href="#">{{ request.site.drawing }}</a></dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        {{ summaryCard("Marine plan policies", [["Details", "To follow"]]) }}
+        {{ summaryCard("Other permissions", [["Details", "To follow"]]) }}
+
+    </div>
+</div>
+
+{% endblock %}
