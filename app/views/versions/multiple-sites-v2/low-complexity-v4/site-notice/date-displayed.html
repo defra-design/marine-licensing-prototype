@@ -5,27 +5,35 @@
 {% set siteNoticeHeading = "When did you first display the notice?" %}
 {% set siteNoticeError = "Enter the date you first displayed the notice" %}
 
+{# The captions go inside the legend, so the error border runs up to the top
+   of them. _location-page.html then leaves its own captions out. #}
+{% set siteNoticeCaptionsInHeading = true %}
+{% set siteNoticeCaptions %}<span class="govuk-caption-l">Dawlish Harbour pontoon</span><span class="govuk-caption-l">Location {{ locationNumber }}</span>{% endset %}
+
+{# Rendered above the caption and heading by _location-page.html #}
+{% set siteNoticeErrorSummary %}
+{% if showError %}
+	{{ govukErrorSummary({
+		titleText: "There is a problem",
+		errorList: [
+			{
+				text: siteNoticeError,
+				href: "#displayed-date-day"
+			}
+		]
+	}) }}
+{% endif %}
+{% endset %}
+
 {% set siteNoticeForm %}
 <form action="date-displayed-router?location={{ locationNumber }}" method="post" novalidate>
-
-	{% if showError %}
-		{{ govukErrorSummary({
-			titleText: "There is a problem",
-			errorList: [
-				{
-					text: siteNoticeError,
-					href: "#displayed-date-day"
-				}
-			]
-		}) }}
-	{% endif %}
 
 	{{ govukDateInput({
 		id: "displayed-date",
 		namePrefix: "displayed-date",
 		fieldset: {
 			legend: {
-				text: siteNoticeHeading,
+				html: siteNoticeCaptions + siteNoticeHeading,
 				isPageHeading: true,
 				classes: "govuk-fieldset__legend--l"
 			}
