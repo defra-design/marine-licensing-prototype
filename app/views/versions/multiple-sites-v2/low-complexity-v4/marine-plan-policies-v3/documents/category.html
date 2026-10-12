@@ -71,6 +71,7 @@ Error:
 
 			<span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
 
+			{# Filename shown as an inset so it stands out; kept in the hint slot so it's read out with the question #}
 			{{ govukRadios({
 				name: "mpp-v3-document-category",
 				idPrefix: "mpp-v3-document-category",
@@ -83,7 +84,7 @@ Error:
 					}
 				},
 				hint: {
-					text: draft.filename
+					html: '<div class="govuk-inset-text govuk-!-margin-top-2 govuk-!-margin-bottom-2">' + (draft.filename | escape) + '</div>'
 				},
 				items: categoryItems,
 				errorMessage: {
