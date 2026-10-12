@@ -93,8 +93,13 @@ Error:
 
 			<div class="govuk-button-group">
 				{{ govukButton({
-					text: "Continue"
+					text: "Save and continue" if data['mpp-v3-change-single-page'] == 'category' else "Continue"
 				}) }}
+
+				{# Cancel only when adding a document, not when changing one from the summary #}
+				{% if not data['mpp-v3-change-single-page'] %}
+				<a class="govuk-link govuk-link--no-visited-state" href="cancel">Cancel</a>
+				{% endif %}
 			</div>
 
 		</form>

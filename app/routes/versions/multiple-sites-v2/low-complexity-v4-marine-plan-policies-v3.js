@@ -178,6 +178,16 @@ module.exports = function (router) {
     redirectOnceSaved(req, res, `${docsPath}/${page}`);
   });
 
+  // Cancel while adding a document – drop the draft and go back to where they started
+  router.get(`${docsPath}/cancel`, function (req, res) {
+    clearDraft(req.session.data);
+    resetErrors(req.session.data);
+    if (getDocuments(req.session.data).length > 0) {
+      return redirectOnceSaved(req, res, `${docsPath}/summary`);
+    }
+    redirectOnceSaved(req, res, `/versions/${version}/${section}/${subsection}/`);
+  });
+
   // Delete – confirmation page first, as for deleting sites and construction drawings
   router.get(`${docsPath}/delete`, function (req, res) {
     const id = parseInt(req.query.id, 10);
