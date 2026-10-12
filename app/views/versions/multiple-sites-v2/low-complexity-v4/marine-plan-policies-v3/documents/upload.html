@@ -25,24 +25,25 @@ Upload a supporting document
 	<div class="govuk-grid-column-two-thirds">
 		<form action="upload-router" method="post" novalidate>
 
-			<span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
-			<h1 class="govuk-heading-l">{{ pageHeadingTextHTML }}</h1>
+			<div class="govuk-form-group">
+				<span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
+				{# The page heading is the file upload's label, as on construction-upload #}
+				<h1 class="govuk-label-wrapper">
+					<label class="govuk-label govuk-label--l" for="mpp-v3-document-file">
+						{{ pageHeadingTextHTML }}
+					</label>
+				</h1>
 
-			<p class="govuk-body">Only upload documents that your policy answers rely on. Do not upload documents for background or context.</p>
+				<p class="govuk-body">Only upload documents that your policy answers rely on. Do not upload documents for background or context.</p>
 
-			{% if draft and draft.filename %}
-			<p class="govuk-body">Current file: <strong>{{ draft.filename }}</strong></p>
-			{% endif %}
-
-			{{ govukFileUpload({
-				id: "mpp-v3-document-file",
-				name: "mpp-v3-document-file",
-				label: {
-					text: "Upload a different file" if (draft and draft.filename) else "Upload a file",
-					classes: "govuk-label--s"
-				},
-				javascript: true
-			}) }}
+				{{ govukFileUpload({
+					id: "mpp-v3-document-file",
+					name: "mpp-v3-document-file",
+					label: {},
+					formGroup: { classes: "govuk-!-margin-bottom-0" },
+					javascript: true
+				}) }}
+			</div>
 
 			{# Prototype: choosing a file is optional – a made-up filename is used either way #}
 			<div class="govuk-button-group">

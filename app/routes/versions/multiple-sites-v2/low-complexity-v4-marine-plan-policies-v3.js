@@ -251,6 +251,13 @@ module.exports = function (router) {
     draft.category = category;
     draft.categoryOther = category === 'Other supporting evidence' ? categoryOther : '';
 
+    // 'Other' needs a description – keep the radio selected so the input shows with its error
+    if (category === 'Other supporting evidence' && !categoryOther) {
+      req.session.data['errorthispage'] = "true";
+      req.session.data['errortypetwo'] = "true";
+      return redirectOnceSaved(req, res, `${docsPath}/category`);
+    }
+
     // Only changing the type – save and go back to the summary
     if (req.session.data['mpp-v3-change-single-page'] === 'category') {
       saveDraft(req.session.data);

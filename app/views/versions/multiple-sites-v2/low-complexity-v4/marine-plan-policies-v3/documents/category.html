@@ -33,7 +33,10 @@ Error:
 	label: {
 		text: "Describe the document"
 	},
-	value: draft.categoryOther
+	value: draft.categoryOther,
+	errorMessage: {
+		text: "Enter a description of the document"
+	} if data['errortypetwo'] == "true"
 }) }}
 {% endset %}
 
@@ -53,6 +56,13 @@ Error:
 			titleText: "There is a problem",
 			errorList: [
 				{ text: "Select the type of document", href: "#mpp-v3-document-category" }
+			]
+		}) }}
+		{% elif data['errorthispage'] == "true" and data['errortypetwo'] == "true" %}
+		{{ govukErrorSummary({
+			titleText: "There is a problem",
+			errorList: [
+				{ text: "Enter a description of the document", href: "#mpp-v3-document-category-other" }
 			]
 		}) }}
 		{% endif %}
