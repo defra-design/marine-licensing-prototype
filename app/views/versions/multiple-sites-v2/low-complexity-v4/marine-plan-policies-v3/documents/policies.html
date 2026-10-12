@@ -76,20 +76,19 @@ Error:
 
 		<form action="policies-router" method="post" novalidate>
 
-			<span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
-
+			{# Filename as an inset, as on the type page, followed by the hint – both read out with the question #}
 			{{ govukCheckboxes({
 				name: "mpp-v3-document-policies",
 				idPrefix: "mpp-v3-document-policies",
 				fieldset: {
 					legend: {
-						text: pageHeadingTextHTML,
+						html: '<span class="govuk-caption-l">' + (data['low-complexity-project-name-text-input'] | escape) + '</span>' + pageHeadingTextHTML,
 						isPageHeading: true,
 						classes: "govuk-fieldset__legend--l"
 					}
 				},
 				hint: {
-					text: "Select every policy whose answer relies on this document."
+					html: '<div class="govuk-inset-text govuk-!-margin-top-2 govuk-!-margin-bottom-4">' + (draft.filename | escape) + '</div>Select every policy whose answer relies on this document.'
 				},
 				items: policyItems,
 				errorMessage: {
