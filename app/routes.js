@@ -145,6 +145,7 @@ require('./routes/versions/multiple-sites-v2/low-complexity-v4-site-locations.js
 require('./routes/versions/multiple-sites-v2/low-complexity-v4-manual-entry.js')(router);
 require('./routes/versions/multiple-sites-v2/low-complexity-v4-marine-plan-policies.js')(router);
 require('./routes/versions/multiple-sites-v2/low-complexity-v4-marine-plan-policies-v2.js')(router);
+require('./routes/versions/multiple-sites-v2/low-complexity-v4-marine-plan-policies-v3.js')(router);
 require('./routes/versions/multiple-sites-v2/low-complexity-v4-fee-and-invoicing.js')(router);
 require('./routes/versions/multiple-sites-v2/consultation-v0.js')(router);
 require('./routes/versions/multiple-sites-v2/consultation-v1.js')(router);

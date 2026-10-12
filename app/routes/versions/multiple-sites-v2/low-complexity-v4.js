@@ -1,3 +1,5 @@
+const mppV3Documents = require('./low-complexity-v4-marine-plan-policies-v3-documents.js');
+
 module.exports = function (router) {
   // Low complexity v2 routes
   const version = "multiple-sites-v2";
@@ -61,6 +63,19 @@ module.exports = function (router) {
       }
       req.session.data['marine-plan-policies-v2-completed-count'] = completedCountV2;
       req.session.data['marine-plan-policies-v2-not-started-count'] = MARINE_PLAN_POLICIES_TOTAL - completedCountV2;
+
+      // v3 MPP counts
+      let completedCountV3 = 0;
+      for (const key of MARINE_PLAN_POLICY_KEYS) {
+        if (req.session.data['marine-plan-policy-v3-' + key + '-completed']) {
+          completedCountV3++;
+        }
+      }
+      req.session.data['marine-plan-policies-v3-completed-count'] = completedCountV3;
+      req.session.data['marine-plan-policies-v3-not-started-count'] = MARINE_PLAN_POLICIES_TOTAL - completedCountV3;
+
+      // v3 MPP supporting documents – flagged policies, linked documents and status
+      res.locals.mppV3 = mppV3Documents.summarise(req.session.data);
 
       // Dawlish has one outstanding task at a time. The withholding
       // information notification goes out when the case officer starts

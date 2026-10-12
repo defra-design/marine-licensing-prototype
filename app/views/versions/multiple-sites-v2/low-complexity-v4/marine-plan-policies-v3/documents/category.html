@@ -1,0 +1,95 @@
+{% extends "../../../layouts/low-complexity-v4.html" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% block beforeContent %}
+    {% include "../../../includes/phase-banner.html" %}
+    {% if data['organisation-name'] %}
+        {% include "../../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link govuk-link--no-visited-state" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+{% set pageHeadingTextHTML %}
+What type of document is this?
+{% endset %}
+
+{% block pageTitle %}
+{% if data['errorthispage'] == "true" %}
+Error:
+{% endif %}
+{{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+
+{% set otherHtml %}
+{{ govukInput({
+	id: "mpp-v3-document-category-other",
+	name: "mpp-v3-document-category-other",
+	label: {
+		text: "Describe the document"
+	},
+	value: draft.categoryOther
+}) }}
+{% endset %}
+
+{% set categoryItems = [] %}
+{% for category in categories %}
+	{% if category == 'Other supporting evidence' %}
+		{% set categoryItems = (categoryItems.push({ value: category, text: category, conditional: { html: otherHtml } }), categoryItems) %}
+	{% else %}
+		{% set categoryItems = (categoryItems.push({ value: category, text: category }), categoryItems) %}
+	{% endif %}
+{% endfor %}
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-two-thirds">
+		{% if data['errorthispage'] == "true" and data['errortypeone'] == "true" %}
+		{{ govukErrorSummary({
+			titleText: "There is a problem",
+			errorList: [
+				{ text: "Select the type of document", href: "#mpp-v3-document-category" }
+			]
+		}) }}
+		{% endif %}
+
+		<form action="category-router" method="post" novalidate>
+
+			<span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
+
+			{{ govukRadios({
+				name: "mpp-v3-document-category",
+				idPrefix: "mpp-v3-document-category",
+				value: draft.category,
+				fieldset: {
+					legend: {
+						text: pageHeadingTextHTML,
+						isPageHeading: true,
+						classes: "govuk-fieldset__legend--l"
+					}
+				},
+				hint: {
+					text: draft.filename
+				},
+				items: categoryItems,
+				errorMessage: {
+					text: "Select the type of document"
+				} if data['errortypeone'] == "true"
+			}) }}
+
+			<div class="govuk-button-group">
+				{{ govukButton({
+					text: "Continue"
+				}) }}
+			</div>
+
+		</form>
+
+	</div>
+</div>
+
+{% endblock %}

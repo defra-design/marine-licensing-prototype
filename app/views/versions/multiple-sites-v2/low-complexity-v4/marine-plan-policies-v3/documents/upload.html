@@ -1,0 +1,74 @@
+{% extends "../../../layouts/low-complexity-v4.html" %}
+
+{% from "govuk/components/file-upload/macro.njk" import govukFileUpload %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% block beforeContent %}
+    {% include "../../../includes/phase-banner.html" %}
+    {% if data['organisation-name'] %}
+        {% include "../../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link govuk-link--no-visited-state" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+{% set pageHeadingTextHTML %}
+Upload a supporting document
+{% endset %}
+
+{% block pageTitle %}
+{% if data['errorthispage'] == "true" %}
+Error:
+{% endif %}
+{{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-two-thirds">
+		{% if data['errorthispage'] == "true" and data['errortypeone'] == "true" %}
+		{{ govukErrorSummary({
+			titleText: "There is a problem",
+			errorList: [
+				{ text: "Select a file to upload", href: "#mpp-v3-document-file" }
+			]
+		}) }}
+		{% endif %}
+
+		<form action="upload-router" method="post" novalidate>
+
+			<span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
+			<h1 class="govuk-heading-l">{{ pageHeadingTextHTML }}</h1>
+
+			<p class="govuk-body">Only upload documents that your policy answers rely on. Do not upload documents for background or context.</p>
+
+			{% if draft and draft.filename %}
+			<p class="govuk-body">Current file: <strong>{{ draft.filename }}</strong></p>
+			{% endif %}
+
+			{{ govukFileUpload({
+				id: "mpp-v3-document-file",
+				name: "mpp-v3-document-file",
+				label: {
+					text: "Upload a different file" if (draft and draft.filename) else "Upload a file",
+					classes: "govuk-label--s"
+				},
+				javascript: true,
+				errorMessage: {
+					text: "Select a file to upload"
+				} if data['errortypeone'] == "true"
+			}) }}
+
+			<div class="govuk-button-group">
+				{{ govukButton({
+					text: "Continue"
+				}) }}
+			</div>
+
+		</form>
+
+	</div>
+</div>
+
+{% endblock %}
