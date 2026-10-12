@@ -206,6 +206,10 @@ module.exports = function (router) {
     req.session.data['mpp-v3-documents'] = getDocuments(req.session.data).filter(d => d.id !== id);
     clearDraft(req.session.data);
     resetErrors(req.session.data);
+    // Deleting the last document goes back to the MPP list, as deleting all sites does
+    if (getDocuments(req.session.data).length === 0) {
+      return redirectOnceSaved(req, res, `/versions/${version}/${section}/${subsection}/`);
+    }
     redirectOnceSaved(req, res, `${docsPath}/summary`);
   });
 
@@ -374,6 +378,10 @@ module.exports = function (router) {
     // Leaving the add/change flow part way through drops the unsaved draft
     clearDraft(req.session.data);
     resetErrors(req.session.data);
+    // No empty summary page – with nothing to show, go back to the MPP list
+    if (getDocuments(req.session.data).length === 0) {
+      return redirectOnceSaved(req, res, `/versions/${version}/${section}/${subsection}/`);
+    }
     res.render(`${docsView}/summary`);
   });
 
