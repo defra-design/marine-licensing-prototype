@@ -1,8 +1,6 @@
 {% extends "../../../layouts/low-complexity-v4.html" %}
 
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
-{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
 
 {% block beforeContent %}
     {% include "../../../includes/phase-banner.html" %}
@@ -17,49 +15,62 @@ Supporting documents
 {% endset %}
 
 {% block pageTitle %}
-{% if data['errorthispage'] == "true" %}
-Error:
-{% endif %}
 {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
 {% endblock %}
 
 {% block content %}
 
-{% macro missingDocumentText(policy) -%}
-You said your answer for {{ policy.code }} relies on a document. Add a document for it, or go back to the policy and untick the box.
-{%- endmacro %}
-
 <div class="govuk-grid-row">
 	<div class="govuk-grid-column-full">
-		{% if data['errorthispage'] == "true" and data['errortypeone'] == "true" and mppV3.missing | length %}
-		{% set errorList = [] %}
-		{% for policy in mppV3.missing %}
-			{% set errorList = (errorList.push({ text: missingDocumentText(policy), href: "#missing-" + policy.key }), errorList) %}
-		{% endfor %}
-		<div class="govuk-grid-row">
-			<div class="govuk-grid-column-two-thirds">
-				{{ govukErrorSummary({
-					titleText: "There is a problem",
-					errorList: errorList
-				}) }}
-			</div>
-		</div>
-		{% endif %}
-
 		<span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
 		<h1 class="govuk-heading-l">{{ pageHeadingTextHTML }}</h1>
 
-		{% for policy in mppV3.missing %}
-		<div id="missing-{{ policy.key }}">
-			{{ govukWarningText({
-				text: missingDocumentText(policy),
-				iconFallbackText: "Warning"
-			}) }}
-			<p class="govuk-body"><a href="../{{ policy.page }}" class="govuk-link govuk-link--no-visited-state">Go back to {{ policy.name }} ({{ policy.code }})</a></p>
-		</div>
-		{% endfor %}
+		{% if mppV3.missing | length %}
+		<div class="govuk-inset-text">Still needed for {{ mppV3.missingCodes }}</div>
+		{% endif %}
 
-		{% if mppV3.documents | length %}
+		{# Two layouts to compare: full-width summary cards (default) or a table (?mpp-v3-summary-layout=table) #}
+		{% if mppV3.documents | length and data['mpp-v3-summary-layout'] != 'table' %}
+				{% for document in mppV3.documents %}
+				<div class="govuk-summary-card">
+					<div class="govuk-summary-card__title-wrapper">
+						<h2 class="govuk-summary-card__title">{{ document.filename }}</h2>
+						<ul class="govuk-summary-card__actions">
+							<li class="govuk-summary-card__action">
+								<a href="remove?id={{ document.id }}" class="govuk-link govuk-link--no-visited-state">Remove<span class="govuk-visually-hidden"> {{ document.filename }}</span></a>
+							</li>
+						</ul>
+					</div>
+					<div class="govuk-summary-card__content">
+						<dl class="govuk-summary-list">
+							<div class="govuk-summary-list__row">
+								<dt class="govuk-summary-list__key">Type</dt>
+								<dd class="govuk-summary-list__value">
+									{{ document.category }}
+									{% if document.categoryOther %}<br><span class="govuk-hint govuk-!-margin-bottom-0">{{ document.categoryOther }}</span>{% endif %}
+								</dd>
+								<dd class="govuk-summary-list__actions">
+									<a href="change?id={{ document.id }}&page=category" class="govuk-link govuk-link--no-visited-state">Change<span class="govuk-visually-hidden"> type of {{ document.filename }}</span></a>
+								</dd>
+							</div>
+							<div class="govuk-summary-list__row">
+								<dt class="govuk-summary-list__key">Policies</dt>
+								<dd class="govuk-summary-list__value">
+									<ul class="govuk-list govuk-!-margin-bottom-0">
+										{% for link in document.policies %}
+										<li>{{ link.code }} – {{ link.location }}</li>
+										{% endfor %}
+									</ul>
+								</dd>
+								<dd class="govuk-summary-list__actions">
+									<a href="change?id={{ document.id }}&page=policies" class="govuk-link govuk-link--no-visited-state">Change<span class="govuk-visually-hidden"> policies for {{ document.filename }}</span></a>
+								</dd>
+							</div>
+						</dl>
+					</div>
+				</div>
+				{% endfor %}
+		{% elif mppV3.documents | length %}
 		<table class="govuk-table">
 			<caption class="govuk-table__caption govuk-visually-hidden">Supporting documents</caption>
 			<thead class="govuk-table__head">
@@ -84,7 +95,8 @@ You said your answer for {{ policy.code }} relies on a document. Add a document 
 						{% endfor %}
 					</td>
 					<td class="govuk-table__cell govuk-table__cell--numeric">
-						<a href="change?id={{ document.id }}" class="govuk-link govuk-link--no-visited-state">Change<span class="govuk-visually-hidden"> {{ document.filename }}</span></a><br>
+						<a href="change?id={{ document.id }}&page=policies" class="govuk-link govuk-link--no-visited-state">Change policies<span class="govuk-visually-hidden"> for {{ document.filename }}</span></a><br>
+						<a href="change?id={{ document.id }}&page=category" class="govuk-link govuk-link--no-visited-state">Change type<span class="govuk-visually-hidden"> of {{ document.filename }}</span></a><br>
 						<a href="remove?id={{ document.id }}" class="govuk-link govuk-link--no-visited-state">Remove<span class="govuk-visually-hidden"> {{ document.filename }}</span></a>
 					</td>
 				</tr>

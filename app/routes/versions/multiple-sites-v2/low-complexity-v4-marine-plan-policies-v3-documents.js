@@ -72,6 +72,7 @@ function summarise(data) {
     flaggedCodes: joinCodes(flagged),
     byPolicy: byPolicy,
     missing: missing,
+    missingCodes: joinCodes(missing),
     status: status,
     // True when no flagged policy is waiting for a document
     docsComplete: missing.length === 0

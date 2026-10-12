@@ -2,7 +2,6 @@
 
 {% from "govuk/components/file-upload/macro.njk" import govukFileUpload %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 
 {% block beforeContent %}
     {% include "../../../includes/phase-banner.html" %}
@@ -17,9 +16,6 @@ Upload a supporting document
 {% endset %}
 
 {% block pageTitle %}
-{% if data['errorthispage'] == "true" %}
-Error:
-{% endif %}
 {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
 {% endblock %}
 
@@ -27,15 +23,6 @@ Error:
 
 <div class="govuk-grid-row">
 	<div class="govuk-grid-column-two-thirds">
-		{% if data['errorthispage'] == "true" and data['errortypeone'] == "true" %}
-		{{ govukErrorSummary({
-			titleText: "There is a problem",
-			errorList: [
-				{ text: "Select a file to upload", href: "#mpp-v3-document-file" }
-			]
-		}) }}
-		{% endif %}
-
 		<form action="upload-router" method="post" novalidate>
 
 			<span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
@@ -54,12 +41,10 @@ Error:
 					text: "Upload a different file" if (draft and draft.filename) else "Upload a file",
 					classes: "govuk-label--s"
 				},
-				javascript: true,
-				errorMessage: {
-					text: "Select a file to upload"
-				} if data['errortypeone'] == "true"
+				javascript: true
 			}) }}
 
+			{# Prototype: choosing a file is optional – a made-up filename is used either way #}
 			<div class="govuk-button-group">
 				{{ govukButton({
 					text: "Continue"

@@ -88,11 +88,32 @@ module.exports = function (router) {
   //
   // data['mpp-v3-documents'] holds the saved documents. While one is being
   // added or changed, its working copy lives in data['mpp-v3-document-draft']
-  // and its id in data['editing-document-id']. The draft is only written to
-  // the list when the policies page is saved.
+  // and its id in data['editing-document-id']. A new document is only written
+  // to the list when the policies page is saved; a change is saved from
+  // whichever single page was changed.
   /////////////////////////////////////////////////////////
+  // Session writes go to a file store asynchronously, so a fast redirect can
+  // arrive before the draft is saved. Save first, then redirect (as in low-complexity-v4.js).
+  function redirectOnceSaved(req, res, target) {
+    req.session.save(function () {
+      res.redirect(target);
+    });
+  }
+
   const docsPath = `/versions/${version}/${section}/${subsection}/documents`;
   const docsView = `versions/${version}/${section}/${subsection}/documents`;
+
+  // Made-up filenames given out in turn as documents are added
+  const FAKE_FILENAMES = [
+    'Exmouth intertidal ecology survey.pdf',
+    'Underwater noise assessment.pdf',
+    'Habitats Regulations Assessment screening.pdf',
+    'Navigational risk assessment.pdf',
+    'Coastal processes study.pdf',
+    'Fish and shellfish survey 2025.pdf',
+    'Heritage desk-based assessment.pdf',
+    'Pontoon design and construction report.pdf'
+  ];
 
   function getDraft(data) {
     return data['mpp-v3-document-draft'];
@@ -102,6 +123,21 @@ module.exports = function (router) {
     delete data['mpp-v3-document-draft'];
     delete data['editing-document-id'];
     delete data['mpp-v3-policies-submitted'];
+    delete data['mpp-v3-change-single-page'];
+  }
+
+  // Write the draft into the saved list (replacing it if it already exists)
+  function saveDraft(data) {
+    const draft = getDraft(data);
+    const documents = getDocuments(data);
+    const index = documents.findIndex(d => d.id === draft.id);
+    if (index > -1) {
+      documents[index] = draft;
+    } else {
+      documents.push(draft);
+    }
+    data['mpp-v3-documents'] = documents;
+    clearDraft(data);
   }
 
   function resetErrors(data) {
@@ -113,30 +149,33 @@ module.exports = function (router) {
   // Sub-task entry point: straight to the summary once there's something to show
   router.get(`${docsPath}/`, function (req, res) {
     if (getDocuments(req.session.data).length > 0) {
-      return res.redirect(`${docsPath}/summary`);
+      return redirectOnceSaved(req, res, `${docsPath}/summary`);
     }
-    res.redirect(`${docsPath}/add`);
+    redirectOnceSaved(req, res, `${docsPath}/add`);
   });
 
   // Start a new document
   router.get(`${docsPath}/add`, function (req, res) {
     clearDraft(req.session.data);
     resetErrors(req.session.data);
-    res.redirect(`${docsPath}/upload`);
+    redirectOnceSaved(req, res, `${docsPath}/upload`);
   });
 
-  // Change an existing document – copy it into the draft and walk the three pages again
+  // Change one part of an existing document – ?page=category or ?page=policies.
+  // Copies it into the draft, opens just that page, and saving returns to the summary.
   router.get(`${docsPath}/change`, function (req, res) {
     const id = parseInt(req.query.id, 10);
     const doc = getDocuments(req.session.data).find(d => d.id === id);
     if (!doc) {
-      return res.redirect(`${docsPath}/summary`);
+      return redirectOnceSaved(req, res, `${docsPath}/summary`);
     }
     clearDraft(req.session.data);
     resetErrors(req.session.data);
     req.session.data['editing-document-id'] = id;
     req.session.data['mpp-v3-document-draft'] = JSON.parse(JSON.stringify(doc));
-    res.redirect(`${docsPath}/upload`);
+    const page = req.query.page === 'category' ? 'category' : 'policies';
+    req.session.data['mpp-v3-change-single-page'] = page;
+    redirectOnceSaved(req, res, `${docsPath}/${page}`);
   });
 
   // Remove deletes straight away, no confirmation page
@@ -145,7 +184,7 @@ module.exports = function (router) {
     req.session.data['mpp-v3-documents'] = getDocuments(req.session.data).filter(d => d.id !== id);
     clearDraft(req.session.data);
     resetErrors(req.session.data);
-    res.redirect(`${docsPath}/summary`);
+    redirectOnceSaved(req, res, `${docsPath}/summary`);
   });
 
   /////////////////////////////////////////////////////////
@@ -159,35 +198,24 @@ module.exports = function (router) {
   router.post(`${docsPath}/upload-router`, function (req, res) {
     resetErrors(req.session.data);
 
-    // Prototype: no real upload. The form isn't multipart, so the browser only
-    // sends the chosen file's name, which is all we keep.
-    const filename = (req.body['mpp-v3-document-file'] || '').trim();
+    // Prototype: no real upload and no file needed. For usability testing a
+    // made-up filename is given, so participants don't have to find real files.
     delete req.session.data['mpp-v3-document-file'];
 
-    const draft = getDraft(req.session.data);
-
-    // When changing a document, keeping the current file is fine
-    if (!filename && !(draft && draft.filename)) {
-      req.session.data['errorthispage'] = "true";
-      req.session.data['errortypeone'] = "true";
-      return res.redirect(`${docsPath}/upload`);
-    }
-
-    if (draft) {
-      if (filename) draft.filename = filename;
-    } else {
+    // When changing a document it keeps its current name
+    if (!getDraft(req.session.data)) {
       const nextId = getDocuments(req.session.data).reduce((max, d) => Math.max(max, d.id), 0) + 1;
       req.session.data['editing-document-id'] = nextId;
       req.session.data['mpp-v3-document-draft'] = {
         id: nextId,
-        filename: filename,
+        filename: FAKE_FILENAMES[(nextId - 1) % FAKE_FILENAMES.length],
         category: '',
         categoryOther: '',
         policies: []
       };
     }
 
-    res.redirect(`${docsPath}/category`);
+    redirectOnceSaved(req, res, `${docsPath}/category`);
   });
 
   /////////////////////////////////////////////////////////
@@ -196,7 +224,7 @@ module.exports = function (router) {
   router.get(`${docsPath}/category`, function (req, res) {
     const draft = getDraft(req.session.data);
     if (!draft) {
-      return res.redirect(`${docsPath}/add`);
+      return redirectOnceSaved(req, res, `${docsPath}/add`);
     }
     resetErrors(req.session.data);
     res.render(`${docsView}/category`, { draft: draft, categories: MPP_V3_DOCUMENT_CATEGORIES });
@@ -206,7 +234,7 @@ module.exports = function (router) {
     resetErrors(req.session.data);
     const draft = getDraft(req.session.data);
     if (!draft) {
-      return res.redirect(`${docsPath}/add`);
+      return redirectOnceSaved(req, res, `${docsPath}/add`);
     }
 
     const category = req.body['mpp-v3-document-category'];
@@ -217,12 +245,18 @@ module.exports = function (router) {
     if (!category) {
       req.session.data['errorthispage'] = "true";
       req.session.data['errortypeone'] = "true";
-      return res.redirect(`${docsPath}/category`);
+      return redirectOnceSaved(req, res, `${docsPath}/category`);
     }
 
     draft.category = category;
     draft.categoryOther = category === 'Other supporting evidence' ? categoryOther : '';
-    res.redirect(`${docsPath}/policies`);
+
+    // Only changing the type – save and go back to the summary
+    if (req.session.data['mpp-v3-change-single-page'] === 'category') {
+      saveDraft(req.session.data);
+      return redirectOnceSaved(req, res, `${docsPath}/summary`);
+    }
+    redirectOnceSaved(req, res, `${docsPath}/policies`);
   });
 
   /////////////////////////////////////////////////////////
@@ -238,7 +272,7 @@ module.exports = function (router) {
   router.get(`${docsPath}/policies`, function (req, res) {
     const draft = getDraft(req.session.data);
     if (!draft) {
-      return res.redirect(`${docsPath}/add`);
+      return redirectOnceSaved(req, res, `${docsPath}/add`);
     }
 
     // After an error, show what was submitted; otherwise show what the draft holds
@@ -270,7 +304,7 @@ module.exports = function (router) {
     resetErrors(req.session.data);
     const draft = getDraft(req.session.data);
     if (!draft) {
-      return res.redirect(`${docsPath}/add`);
+      return redirectOnceSaved(req, res, `${docsPath}/add`);
     }
 
     let selected = req.body['mpp-v3-document-policies'] || [];
@@ -292,7 +326,7 @@ module.exports = function (router) {
       if (selected.length === 0) req.session.data['errortypeone'] = "true";
       if (missing.length > 0) req.session.data['errortypetwo'] = "true";
       req.session.data['mpp-v3-policies-submitted'] = { selected: selected, locations: locations, missing: missing };
-      return res.redirect(`${docsPath}/policies`);
+      return redirectOnceSaved(req, res, `${docsPath}/policies`);
     }
 
     // Keep links in index order so the summary reads consistently
@@ -300,17 +334,8 @@ module.exports = function (router) {
       .filter(p => selected.includes(p.key))
       .map(p => ({ key: p.key, code: p.code, name: p.name, location: locations[p.key] }));
 
-    const documents = getDocuments(req.session.data);
-    const index = documents.findIndex(d => d.id === draft.id);
-    if (index > -1) {
-      documents[index] = draft;
-    } else {
-      documents.push(draft);
-    }
-    req.session.data['mpp-v3-documents'] = documents;
-    clearDraft(req.session.data);
-
-    res.redirect(`${docsPath}/summary`);
+    saveDraft(req.session.data);
+    redirectOnceSaved(req, res, `${docsPath}/summary`);
   });
 
   /////////////////////////////////////////////////////////
@@ -323,14 +348,11 @@ module.exports = function (router) {
     res.render(`${docsView}/summary`);
   });
 
+  // Continue is never blocked – applicants can add documents over several visits.
+  // The sub-task and task list stay 'In progress' until every flagged policy has one.
   router.post(`${docsPath}/summary-router`, function (req, res) {
     resetErrors(req.session.data);
-    if (!mppV3Documents.summarise(req.session.data).docsComplete) {
-      req.session.data['errorthispage'] = "true";
-      req.session.data['errortypeone'] = "true";
-      return res.redirect(`${docsPath}/summary`);
-    }
-    res.redirect(`/versions/${version}/${section}/${subsection}/`);
+    redirectOnceSaved(req, res, `/versions/${version}/${section}/${subsection}/`);
   });
 
 };

@@ -454,12 +454,15 @@ Marine plan policies
 		<ul class="govuk-task-list">
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
 			  <div class="govuk-task-list__name-and-hint">
-				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="documents/" aria-describedby="supporting-documents-hint supporting-documents-status">
+				<a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="documents/" aria-describedby="{% if mppV3.missing | length %}supporting-documents-hint {% endif %}supporting-documents-status">
 				  Upload supporting documents
 				</a>
+				{# Only the flagged policies that don't have a document yet #}
+				{% if mppV3.missing | length %}
 				<div id="supporting-documents-hint" class="govuk-task-list__hint">
-				  Needed for {{ mppV3.flaggedCodes }}
+				  Still needed for {{ mppV3.missingCodes }}
 				</div>
+				{% endif %}
 			  </div>
 			  <div class="govuk-task-list__status" id="supporting-documents-status">
 				{% if mppV3.status == 'completed' %}
