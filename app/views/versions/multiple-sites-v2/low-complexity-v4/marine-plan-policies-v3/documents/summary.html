@@ -29,81 +29,45 @@ Supporting documents
 		<div class="govuk-inset-text">Still needed for {{ mppV3.missingCodes }}</div>
 		{% endif %}
 
-		{# Two layouts to compare: full-width summary cards (default) or a table (?mpp-v3-summary-layout=table) #}
-		{% if mppV3.documents | length and data['mpp-v3-summary-layout'] != 'table' %}
-				{% for document in mppV3.documents %}
-				<div class="govuk-summary-card">
-					<div class="govuk-summary-card__title-wrapper">
-						<h2 class="govuk-summary-card__title">{{ document.filename }}</h2>
-						<ul class="govuk-summary-card__actions">
-							<li class="govuk-summary-card__action">
-								<a href="delete?id={{ document.id }}" class="govuk-link govuk-link--no-visited-state">Delete<span class="govuk-visually-hidden"> {{ document.filename }}</span></a>
-							</li>
-						</ul>
-					</div>
-					<div class="govuk-summary-card__content">
-						<dl class="govuk-summary-list">
-							<div class="govuk-summary-list__row">
-								<dt class="govuk-summary-list__key">Type</dt>
-								<dd class="govuk-summary-list__value">
-									{{ document.category }}
-									{% if document.categoryOther %}<br><span class="govuk-hint govuk-!-margin-bottom-0">{{ document.categoryOther }}</span>{% endif %}
-								</dd>
-								<dd class="govuk-summary-list__actions">
-									<a href="change?id={{ document.id }}&page=category" class="govuk-link govuk-link--no-visited-state">Change<span class="govuk-visually-hidden"> type of {{ document.filename }}</span></a>
-								</dd>
-							</div>
-							<div class="govuk-summary-list__row">
-								<dt class="govuk-summary-list__key">Policies</dt>
-								<dd class="govuk-summary-list__value">
-									<ul class="govuk-list govuk-!-margin-bottom-0">
-										{% for link in document.policies %}
-										<li>{{ link.code }} – {{ link.location }}</li>
-										{% endfor %}
-									</ul>
-								</dd>
-								<dd class="govuk-summary-list__actions">
-									<a href="change?id={{ document.id }}&page=policies" class="govuk-link govuk-link--no-visited-state">Change<span class="govuk-visually-hidden"> policies for {{ document.filename }}</span></a>
-								</dd>
-							</div>
-						</dl>
-					</div>
-				</div>
-				{% endfor %}
-		{% elif mppV3.documents | length %}
-		<table class="govuk-table">
-			<caption class="govuk-table__caption govuk-visually-hidden">Supporting documents</caption>
-			<thead class="govuk-table__head">
-				<tr class="govuk-table__row">
-					<th scope="col" class="govuk-table__header">Document</th>
-					<th scope="col" class="govuk-table__header">Type</th>
-					<th scope="col" class="govuk-table__header">Policies</th>
-					<th scope="col" class="govuk-table__header"><span class="govuk-visually-hidden">Actions</span></th>
-				</tr>
-			</thead>
-			<tbody class="govuk-table__body">
-				{% for document in mppV3.documents %}
-				<tr class="govuk-table__row">
-					<td class="govuk-table__cell">{{ document.filename }}</td>
-					<td class="govuk-table__cell">
-						{{ document.category }}
-						{% if document.categoryOther %}<br><span class="govuk-hint govuk-!-margin-bottom-0">{{ document.categoryOther }}</span>{% endif %}
-					</td>
-					<td class="govuk-table__cell">
-						{% for link in document.policies %}
-						{{ link.code }} – {{ link.location }}{% if not loop.last %}<br>{% endif %}
-						{% endfor %}
-					</td>
-					<td class="govuk-table__cell govuk-table__cell--numeric">
-						<a href="change?id={{ document.id }}&page=policies" class="govuk-link govuk-link--no-visited-state">Change policies<span class="govuk-visually-hidden"> for {{ document.filename }}</span></a><br>
-						<a href="change?id={{ document.id }}&page=category" class="govuk-link govuk-link--no-visited-state">Change type<span class="govuk-visually-hidden"> of {{ document.filename }}</span></a><br>
+		{% for document in mppV3.documents %}
+		<div class="govuk-summary-card">
+			<div class="govuk-summary-card__title-wrapper">
+				<h2 class="govuk-summary-card__title">{{ document.filename }}</h2>
+				<ul class="govuk-summary-card__actions">
+					<li class="govuk-summary-card__action">
 						<a href="delete?id={{ document.id }}" class="govuk-link govuk-link--no-visited-state">Delete<span class="govuk-visually-hidden"> {{ document.filename }}</span></a>
-					</td>
-				</tr>
-				{% endfor %}
-			</tbody>
-		</table>
-		{% endif %}
+					</li>
+				</ul>
+			</div>
+			<div class="govuk-summary-card__content">
+				<dl class="govuk-summary-list">
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">Type</dt>
+						<dd class="govuk-summary-list__value">
+							{{ document.category }}
+							{% if document.categoryOther %}<br><span class="govuk-hint govuk-!-margin-bottom-0">{{ document.categoryOther }}</span>{% endif %}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							<a href="change?id={{ document.id }}&page=category" class="govuk-link govuk-link--no-visited-state">Change<span class="govuk-visually-hidden"> type of {{ document.filename }}</span></a>
+						</dd>
+					</div>
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">Policies</dt>
+						<dd class="govuk-summary-list__value">
+							<ul class="govuk-list govuk-!-margin-bottom-0">
+								{% for link in document.policies %}
+								<li>{{ link.code }} – {{ link.location }}</li>
+								{% endfor %}
+							</ul>
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							<a href="change?id={{ document.id }}&page=policies" class="govuk-link govuk-link--no-visited-state">Change<span class="govuk-visually-hidden"> policies for {{ document.filename }}</span></a>
+						</dd>
+					</div>
+				</dl>
+			</div>
+		</div>
+		{% endfor %}
 
 		<form action="summary-router" method="post" novalidate>
 			<div class="govuk-button-group">
