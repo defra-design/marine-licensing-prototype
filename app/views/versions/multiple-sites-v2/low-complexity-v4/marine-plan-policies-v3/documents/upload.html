@@ -34,12 +34,13 @@ Upload a supporting document
 					</label>
 				</h1>
 
-				<p class="govuk-body">Only upload documents that your policy answers rely on. Do not upload documents for background or context.</p>
-
 				{{ govukFileUpload({
 					id: "mpp-v3-document-file",
 					name: "mpp-v3-document-file",
 					label: {},
+					hint: {
+						html: "Only upload documents that your policy answers rely on. Do not upload documents for background or context.<span class='govuk-!-display-block govuk-!-margin-top-3'>[File types and restrictions]</span>"
+					},
 					formGroup: { classes: "govuk-!-margin-bottom-0" },
 					javascript: true
 				}) }}
