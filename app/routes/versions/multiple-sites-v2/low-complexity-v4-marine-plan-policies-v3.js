@@ -178,9 +178,19 @@ module.exports = function (router) {
     redirectOnceSaved(req, res, `${docsPath}/${page}`);
   });
 
-  // Remove deletes straight away, no confirmation page
-  router.get(`${docsPath}/remove`, function (req, res) {
+  // Delete – confirmation page first, as for deleting sites and construction drawings
+  router.get(`${docsPath}/delete`, function (req, res) {
     const id = parseInt(req.query.id, 10);
+    const doc = getDocuments(req.session.data).find(d => d.id === id);
+    if (!doc) {
+      return redirectOnceSaved(req, res, `${docsPath}/summary`);
+    }
+    res.render(`${docsView}/delete`, { document: doc });
+  });
+
+  router.post(`${docsPath}/delete-router`, function (req, res) {
+    const id = parseInt(req.body['document-id'], 10);
+    delete req.session.data['document-id'];
     req.session.data['mpp-v3-documents'] = getDocuments(req.session.data).filter(d => d.id !== id);
     clearDraft(req.session.data);
     resetErrors(req.session.data);

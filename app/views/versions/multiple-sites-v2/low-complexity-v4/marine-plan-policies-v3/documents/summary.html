@@ -37,7 +37,7 @@ Supporting documents
 						<h2 class="govuk-summary-card__title">{{ document.filename }}</h2>
 						<ul class="govuk-summary-card__actions">
 							<li class="govuk-summary-card__action">
-								<a href="remove?id={{ document.id }}" class="govuk-link govuk-link--no-visited-state">Remove<span class="govuk-visually-hidden"> {{ document.filename }}</span></a>
+								<a href="delete?id={{ document.id }}" class="govuk-link govuk-link--no-visited-state">Delete<span class="govuk-visually-hidden"> {{ document.filename }}</span></a>
 							</li>
 						</ul>
 					</div>
@@ -97,7 +97,7 @@ Supporting documents
 					<td class="govuk-table__cell govuk-table__cell--numeric">
 						<a href="change?id={{ document.id }}&page=policies" class="govuk-link govuk-link--no-visited-state">Change policies<span class="govuk-visually-hidden"> for {{ document.filename }}</span></a><br>
 						<a href="change?id={{ document.id }}&page=category" class="govuk-link govuk-link--no-visited-state">Change type<span class="govuk-visually-hidden"> of {{ document.filename }}</span></a><br>
-						<a href="remove?id={{ document.id }}" class="govuk-link govuk-link--no-visited-state">Remove<span class="govuk-visually-hidden"> {{ document.filename }}</span></a>
+						<a href="delete?id={{ document.id }}" class="govuk-link govuk-link--no-visited-state">Delete<span class="govuk-visually-hidden"> {{ document.filename }}</span></a>
 					</td>
 				</tr>
 				{% endfor %}
