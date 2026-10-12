@@ -69,19 +69,6 @@ Error:
 				} if data['errortypeone'] == "true"
 			}) }}
 
-			{% set linkedDocuments = mppV3.byPolicy['s-acc-1'] %}
-			{% if linkedDocuments | length %}
-			<div class="govuk-inset-text">
-				<p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Documents linked to this policy</p>
-				<ul class="govuk-list">
-					{% for document in linkedDocuments %}
-					<li>{{ document.filename }} – {{ document.location }}</li>
-					{% endfor %}
-				</ul>
-				<p class="govuk-body govuk-!-margin-bottom-0"><a href="documents/summary" class="govuk-link govuk-link--no-visited-state">Manage supporting documents</a></p>
-			</div>
-			{% endif %}
-
 			{{ govukCheckboxes({
 				name: "marine-plan-policy-v3-s-acc-1-evidence",
 				idPrefix: "marine-plan-policy-v3-s-acc-1-evidence",
@@ -96,6 +83,18 @@ Error:
 					}
 				]
 			}) }}
+
+			{% set linkedDocuments = mppV3.byPolicy['s-acc-1'] %}
+			{% if linkedDocuments | length %}
+			<div class="govuk-inset-text">
+				<p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Documents linked to this policy</p>
+				<ul class="govuk-list govuk-!-margin-bottom-0">
+					{% for document in linkedDocuments %}
+					<li>{{ document.filename }} – {{ document.location }}</li>
+					{% endfor %}
+				</ul>
+			</div>
+			{% endif %}
 
 			<div class="govuk-button-group">
 				{{ govukButton({

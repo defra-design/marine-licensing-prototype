@@ -103,16 +103,18 @@ module.exports = function (router) {
   const docsPath = `/versions/${version}/${section}/${subsection}/documents`;
   const docsView = `versions/${version}/${section}/${subsection}/documents`;
 
-  // Made-up filenames given out in turn as documents are added
+  // Made-up filenames given out in turn as documents are added. Deliberately
+  // generic so they make sense whatever type the participant then picks.
+  // Each document keeps its name once given.
   const FAKE_FILENAMES = [
-    'Exmouth intertidal ecology survey.pdf',
-    'Underwater noise assessment.pdf',
-    'Habitats Regulations Assessment screening.pdf',
-    'Navigational risk assessment.pdf',
-    'Coastal processes study.pdf',
-    'Fish and shellfish survey 2025.pdf',
-    'Heritage desk-based assessment.pdf',
-    'Pontoon design and construction report.pdf'
+    'Assessment report v2.pdf',
+    'Technical appendix A.pdf',
+    'Baseline study final.pdf',
+    'Specialist report March 2025.pdf',
+    'Technical appendix B.pdf',
+    'Survey findings summary.pdf',
+    'Consultant report rev C.pdf',
+    'Supporting evidence pack.pdf'
   ];
 
   function getDraft(data) {
