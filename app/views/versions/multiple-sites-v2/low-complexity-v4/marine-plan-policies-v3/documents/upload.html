@@ -1,0 +1,66 @@
+{% extends "../../../layouts/low-complexity-v4.html" %}
+
+{% from "govuk/components/file-upload/macro.njk" import govukFileUpload %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block beforeContent %}
+    {% include "../../../includes/phase-banner.html" %}
+    {% if data['organisation-name'] %}
+        {% include "../../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link govuk-link--no-visited-state" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+{% set pageHeadingTextHTML %}
+Upload a supporting document
+{% endset %}
+
+{% block pageTitle %}
+{{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-two-thirds">
+		<form action="upload-router" method="post" novalidate>
+
+			<div class="govuk-form-group">
+				<span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
+				{# The page heading is the file upload's label, as on construction-upload #}
+				<h1 class="govuk-label-wrapper">
+					<label class="govuk-label govuk-label--l" for="mpp-v3-document-file">
+						{{ pageHeadingTextHTML }}
+					</label>
+				</h1>
+
+				{{ govukFileUpload({
+					id: "mpp-v3-document-file",
+					name: "mpp-v3-document-file",
+					label: {},
+					hint: {
+						html: "Only upload documents that your policy answers rely on. Do not upload documents for background or context.<span class='govuk-!-display-block govuk-!-margin-top-3'>[File types and restrictions]</span>"
+					},
+					formGroup: { classes: "govuk-!-margin-bottom-0" },
+					javascript: true
+				}) }}
+			</div>
+
+			{# Prototype: choosing a file is optional – a made-up filename is used either way #}
+			<div class="govuk-button-group">
+				{{ govukButton({
+					text: "Continue"
+				}) }}
+
+				{# Cancel only when adding a document, not when changing one from the summary #}
+				{% if not data['mpp-v3-change-single-page'] %}
+				<a class="govuk-link govuk-link--no-visited-state" href="cancel">Cancel</a>
+				{% endif %}
+			</div>
+
+		</form>
+
+	</div>
+</div>
+
+{% endblock %}

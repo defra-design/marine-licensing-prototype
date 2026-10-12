@@ -1,0 +1,109 @@
+{% extends "../../../layouts/low-complexity-v4.html" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% block beforeContent %}
+    {% include "../../../includes/phase-banner.html" %}
+    {% if data['organisation-name'] %}
+        {% include "../../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link govuk-link--no-visited-state" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+{% set pageHeadingTextHTML %}
+What type of document is this?
+{% endset %}
+
+{% block pageTitle %}
+{% if data['errorthispage'] == "true" %}
+Error:
+{% endif %}
+{{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+
+{% set otherHtml %}
+{{ govukInput({
+	id: "mpp-v3-document-category-other",
+	name: "mpp-v3-document-category-other",
+	label: {
+		text: "Describe the document"
+	},
+	value: draft.categoryOther,
+	errorMessage: {
+		text: "Enter a description of the document"
+	} if data['errortypetwo'] == "true"
+}) }}
+{% endset %}
+
+{% set categoryItems = [] %}
+{% for category in categories %}
+	{% if category == 'Other supporting evidence' %}
+		{% set categoryItems = (categoryItems.push({ value: category, text: category, conditional: { html: otherHtml } }), categoryItems) %}
+	{% else %}
+		{% set categoryItems = (categoryItems.push({ value: category, text: category }), categoryItems) %}
+	{% endif %}
+{% endfor %}
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-two-thirds">
+		{% if data['errorthispage'] == "true" and data['errortypeone'] == "true" %}
+		{{ govukErrorSummary({
+			titleText: "There is a problem",
+			errorList: [
+				{ text: "Select the type of document", href: "#mpp-v3-document-category" }
+			]
+		}) }}
+		{% elif data['errorthispage'] == "true" and data['errortypetwo'] == "true" %}
+		{{ govukErrorSummary({
+			titleText: "There is a problem",
+			errorList: [
+				{ text: "Enter a description of the document", href: "#mpp-v3-document-category-other" }
+			]
+		}) }}
+		{% endif %}
+
+		<form action="category-router" method="post" novalidate>
+
+			{# Filename shown as an inset so it stands out; kept in the hint slot so it's read out with the question #}
+			{{ govukRadios({
+				name: "mpp-v3-document-category",
+				idPrefix: "mpp-v3-document-category",
+				value: draft.category,
+				fieldset: {
+					legend: {
+						html: '<span class="govuk-caption-l">' + (data['low-complexity-project-name-text-input'] | escape) + '</span>' + pageHeadingTextHTML,
+						isPageHeading: true,
+						classes: "govuk-fieldset__legend--l"
+					}
+				},
+				hint: {
+					html: '<div class="govuk-inset-text govuk-!-margin-top-2 govuk-!-margin-bottom-2">' + (draft.filename | escape) + '</div>'
+				},
+				items: categoryItems,
+				errorMessage: {
+					text: "Select the type of document"
+				} if data['errortypeone'] == "true"
+			}) }}
+
+			<div class="govuk-button-group">
+				{{ govukButton({
+					text: "Save and continue" if data['mpp-v3-change-single-page'] == 'category' else "Continue"
+				}) }}
+
+				{# Cancel only when adding a document, not when changing one from the summary #}
+				{% if not data['mpp-v3-change-single-page'] %}
+				<a class="govuk-link govuk-link--no-visited-state" href="cancel">Cancel</a>
+				{% endif %}
+			</div>
+
+		</form>
+
+	</div>
+</div>
+
+{% endblock %}

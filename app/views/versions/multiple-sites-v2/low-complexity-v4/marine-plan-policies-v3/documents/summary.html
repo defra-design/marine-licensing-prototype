@@ -1,0 +1,88 @@
+{% extends "../../../layouts/low-complexity-v4.html" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block beforeContent %}
+    {% include "../../../includes/phase-banner.html" %}
+    {% if data['organisation-name'] %}
+        {% include "../../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link govuk-link--no-visited-state" href="../">Back</a>
+{% endblock %}
+
+{% set pageHeadingTextHTML %}
+Supporting documents
+{% endset %}
+
+{% block pageTitle %}
+{{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-full">
+		<span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
+		<h1 class="govuk-heading-l">{{ pageHeadingTextHTML }}</h1>
+
+		{% if mppV3.missing | length %}
+		<div class="govuk-inset-text">You still need to add a document for {{ mppV3.missingCodes }}.</div>
+		{% endif %}
+
+		{% for document in mppV3.documents %}
+		<div class="govuk-summary-card">
+			<div class="govuk-summary-card__title-wrapper">
+				<h2 class="govuk-summary-card__title">{{ document.filename }}</h2>
+				<ul class="govuk-summary-card__actions">
+					<li class="govuk-summary-card__action">
+						<a href="delete?id={{ document.id }}" class="govuk-link govuk-link--no-visited-state">Delete<span class="govuk-visually-hidden"> {{ document.filename }}</span></a>
+					</li>
+				</ul>
+			</div>
+			<div class="govuk-summary-card__content">
+				<dl class="govuk-summary-list">
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">Type</dt>
+						<dd class="govuk-summary-list__value">
+							{{ document.category }}
+							{% if document.categoryOther %}<br><span class="govuk-hint govuk-!-margin-bottom-0">{{ document.categoryOther }}</span>{% endif %}
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							<a href="change?id={{ document.id }}&page=category" class="govuk-link govuk-link--no-visited-state">Change<span class="govuk-visually-hidden"> type of {{ document.filename }}</span></a>
+						</dd>
+					</div>
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">Policies</dt>
+						<dd class="govuk-summary-list__value">
+							<ul class="govuk-list govuk-!-margin-bottom-0">
+								{% for link in document.policies %}
+								<li>{{ link.code }} – {{ link.location }}</li>
+								{% endfor %}
+							</ul>
+						</dd>
+						<dd class="govuk-summary-list__actions">
+							<a href="change?id={{ document.id }}&page=policies" class="govuk-link govuk-link--no-visited-state">Change<span class="govuk-visually-hidden"> policies for {{ document.filename }}</span></a>
+						</dd>
+					</div>
+				</dl>
+			</div>
+		</div>
+		{% endfor %}
+
+		<form action="summary-router" method="post" novalidate>
+			<div class="govuk-button-group">
+				<a href="add" role="button" draggable="false" class="govuk-button govuk-button--secondary" data-module="govuk-button">
+					Add another document
+				</a>
+			</div>
+			<div class="govuk-button-group">
+				{{ govukButton({
+					text: "Continue"
+				}) }}
+			</div>
+		</form>
+
+	</div>
+</div>
+
+{% endblock %}

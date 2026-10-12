@@ -151,7 +151,11 @@ Marine licence start page
 
 		{# Determine which MPP version to use based on session #}
 		{% set mppVersion = data['mpp-version'] %}
-		{% if mppVersion == '2' %}
+		{% if mppVersion == '3' %}
+			{# MPP v3: textarea-only question pages with supporting documents #}
+			{% set mppPrefix = 'marine-plan-policy-v3-' %}
+			{% set mppFolder = 'marine-plan-policies-v3/' %}
+		{% elif mppVersion == '2' %}
 			{# MPP v2: textarea-only question pages #}
 			{% set mppPrefix = 'marine-plan-policy-v2-' %}
 			{% set mppFolder = 'marine-plan-policies-v2/' %}
@@ -166,6 +170,8 @@ Marine licence start page
 		{# MPP section: only 5 policy pages are active in this prototype; section is complete when all 5 are done. Display as 37 for usability testing. #}
 		{% set mppActiveComplete = data[mppPrefix + 's-acc-1-completed'] and data[mppPrefix + 's-bio-1-completed'] and data[mppPrefix + 's-agg-4-completed'] and data[mppPrefix + 's-emp-1-completed'] and data[mppPrefix + 's-uwn-2-completed'] %}
 		{% set mppActiveCompletedCount = (data[mppPrefix + 's-acc-1-completed'] and 1 or 0) + (data[mppPrefix + 's-bio-1-completed'] and 1 or 0) + (data[mppPrefix + 's-agg-4-completed'] and 1 or 0) + (data[mppPrefix + 's-emp-1-completed'] and 1 or 0) + (data[mppPrefix + 's-uwn-2-completed'] and 1 or 0) %}
+		{# v3: the section is not complete while a policy flagged as relying on a document has none linked #}
+		{% set mppSectionComplete = mppActiveComplete and (mppVersion != '3' or mppV3.docsComplete) %}
 		{% set mppDisplayTotal = 37 %}
 		{% set mppUnlocked = data['site-details-confirmed-complete'] or mppActiveCompletedCount > 0 or data['mpp-previously-unlocked'] %}
 		{% set mppLoadOutcome = data['mpp-load-outcome'] %}
@@ -187,7 +193,7 @@ Marine licence start page
 
 			  <div class="govuk-task-list__status" id="marine-plan-policies-status">
 				{% if mppUnlocked %}
-					{% if mppActiveComplete %}
+					{% if mppSectionComplete %}
 					Completed
 					{% elif mppActiveCompletedCount > 0 %}
 					<strong class="govuk-tag govuk-tag--teal">
@@ -367,7 +373,7 @@ Marine licence start page
 			</li>
 		</ul>
 
-	{% if data['low-complexity-project-background-completed'] and data['low-complexity-dates-completed'] and data['site-details-confirmed-complete'] and mppActiveComplete and data['low-complexity-wfd-completed'] and (data['user_type'] !== 'organisation' or data['low-complexity-special-legal-powers-completed']) and data['low-complexity-harbour-authority-completed'] and data['low-complexity-other-permissions-completed'] and data['low-complexity-consultation-completed'] and data['low-complexity-sharing-information-completed'] and data['low-complexity-fee-estimate-completed'] == "true" and data['low-complexity-fee-estimate-rejected'] != "true" %}
+	{% if data['low-complexity-project-background-completed'] and data['low-complexity-dates-completed'] and data['site-details-confirmed-complete'] and mppSectionComplete and data['low-complexity-wfd-completed'] and (data['user_type'] !== 'organisation' or data['low-complexity-special-legal-powers-completed']) and data['low-complexity-harbour-authority-completed'] and data['low-complexity-other-permissions-completed'] and data['low-complexity-consultation-completed'] and data['low-complexity-sharing-information-completed'] and data['low-complexity-fee-estimate-completed'] == "true" and data['low-complexity-fee-estimate-rejected'] != "true" %}
 	<form action="check-your-answers" method="post">
 		<button class="govuk-button" data-module="govuk-button">
 			Check and send your application

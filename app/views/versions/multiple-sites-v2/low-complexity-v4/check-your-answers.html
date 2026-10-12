@@ -1031,6 +1031,9 @@ Check your answers before sending your information
 		{% endfor %}
 		{% endif %}
 
+		{# MPP answers: v3 reads its own keys; everything else keeps reading v2 as before #}
+		{% set mppCyaPrefix = 'marine-plan-policy-v3-' if data['mpp-version'] == '3' else 'marine-plan-policy-v2-' %}
+
 		{# ================================================= #}
 		{# MARINE PLAN POLICIES — Cross-cutting               #}
 		{# ================================================= #}
@@ -1123,7 +1126,15 @@ Check your answers before sending your information
 							<p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
 							<p class="govuk-body">Where proposals require marine aggregates as part of their construction, preference should be given to using marine aggregates sourced from the south marine plan areas. If this is not appropriate, proposals should state why.</p>
 							<p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Your consideration</p>
-							<p class="govuk-body govuk-!-margin-bottom-0">{{ data['marine-plan-policy-v2-s-agg-4-text'] or "Tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam feugiat vitae ultricies eget tempor sit amet ante donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est mauris placerat eleifend leo vel orci porta non pulvinar neque laoreet." }}</p>
+							<p class="govuk-body govuk-!-margin-bottom-0">{{ data[mppCyaPrefix + 's-agg-4-text'] or "Tristique senectus et netus et malesuada fames ac turpis egestas. Vestibulum tortor quam feugiat vitae ultricies eget tempor sit amet ante donec eu libero sit amet quam egestas semper. Aenean ultricies mi vitae est mauris placerat eleifend leo vel orci porta non pulvinar neque laoreet." }}</p>
+							{% if data['mpp-version'] == '3' and 'yes' in (data['marine-plan-policy-v3-s-agg-4-evidence'] or []) and mppV3.byPolicy['s-agg-4'] | length %}
+							<p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-top-4 govuk-!-margin-bottom-1">Supporting documents</p>
+							<ul class="govuk-list govuk-!-margin-bottom-0">
+								{% for document in mppV3.byPolicy['s-agg-4'] %}
+								<li>{{ document.filename }} – {{ document.location }}</li>
+								{% endfor %}
+							</ul>
+							{% endif %}
 						</dd>
 						{% if not isSent %}
 						<dd class="govuk-summary-list__actions"><a class="govuk-link govuk-link--no-visited-state" href="#">Change<span class="govuk-visually-hidden"> South Aggregates 4</span></a></dd>
@@ -1234,7 +1245,15 @@ Check your answers before sending your information
 							<p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
 							<p class="govuk-body">Proposals that may have significant adverse impacts on natural habitat and species adaptation, migration and connectivity must demonstrate that they will, in order of preference: a) avoid, b) minimise c) mitigate significant adverse impacts.</p>
 							<p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Your consideration</p>
-							<p class="govuk-body govuk-!-margin-bottom-0">{{ data['marine-plan-policy-v2-s-bio-1-text'] or "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur." }}</p>
+							<p class="govuk-body govuk-!-margin-bottom-0">{{ data[mppCyaPrefix + 's-bio-1-text'] or "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur." }}</p>
+							{% if data['mpp-version'] == '3' and 'yes' in (data['marine-plan-policy-v3-s-bio-1-evidence'] or []) and mppV3.byPolicy['s-bio-1'] | length %}
+							<p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-top-4 govuk-!-margin-bottom-1">Supporting documents</p>
+							<ul class="govuk-list govuk-!-margin-bottom-0">
+								{% for document in mppV3.byPolicy['s-bio-1'] %}
+								<li>{{ document.filename }} – {{ document.location }}</li>
+								{% endfor %}
+							</ul>
+							{% endif %}
 						</dd>
 						{% if not isSent %}
 						<dd class="govuk-summary-list__actions"><a class="govuk-link govuk-link--no-visited-state" href="#">Change<span class="govuk-visually-hidden"> South Biodiversity 1</span></a></dd>
@@ -1342,7 +1361,15 @@ Check your answers before sending your information
 							<p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
 							<p class="govuk-body">Proposals that generate impulsive sound and/or ambient noise must demonstrate that they will, in order of preference: a) avoid, b) minimise, c) mitigate significant adverse impacts on highly mobile species, d) if it is not possible to mitigate significant adverse impacts, proposals must state the case for proceeding.</p>
 							<p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Your consideration</p>
-							<p class="govuk-body govuk-!-margin-bottom-0">{{ data['marine-plan-policy-v2-s-uwn-2-text'] or "Curabitur pretium tincidunt lacus nulla gravida orci a odio elementum soluta nobis est eligendi optio cumque nihil impedit quo minus. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor maecenas sed enim ut sem viverra aliquet eget sit amet tellus cras adipiscing enim eu." }}</p>
+							<p class="govuk-body govuk-!-margin-bottom-0">{{ data[mppCyaPrefix + 's-uwn-2-text'] or "Curabitur pretium tincidunt lacus nulla gravida orci a odio elementum soluta nobis est eligendi optio cumque nihil impedit quo minus. Vivamus sagittis lacus vel augue laoreet rutrum faucibus dolor auctor maecenas sed enim ut sem viverra aliquet eget sit amet tellus cras adipiscing enim eu." }}</p>
+							{% if data['mpp-version'] == '3' and 'yes' in (data['marine-plan-policy-v3-s-uwn-2-evidence'] or []) and mppV3.byPolicy['s-uwn-2'] | length %}
+							<p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-top-4 govuk-!-margin-bottom-1">Supporting documents</p>
+							<ul class="govuk-list govuk-!-margin-bottom-0">
+								{% for document in mppV3.byPolicy['s-uwn-2'] %}
+								<li>{{ document.filename }} – {{ document.location }}</li>
+								{% endfor %}
+							</ul>
+							{% endif %}
 						</dd>
 						{% if not isSent %}
 						<dd class="govuk-summary-list__actions"><a class="govuk-link govuk-link--no-visited-state" href="#">Change<span class="govuk-visually-hidden"> South Underwater noise 2</span></a></dd>
@@ -1393,7 +1420,15 @@ Check your answers before sending your information
 							<p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
 							<p class="govuk-body">Proposals, including in relation to tourism and recreation, should demonstrate that they will, in order of preference: a) avoid, b) minimise, c) mitigate significant adverse impacts on public access.</p>
 							<p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Your consideration</p>
-							<p class="govuk-body govuk-!-margin-bottom-0">{{ data['marine-plan-policy-v2-s-acc-1-text'] or "Massa id neque aliquam vestibulum morbi blandit cursus risus at ultrices mi tempus imperdiet nulla malesuada pellentesque elit eget gravida cum sociis natoque. Penatibus et magnis dis parturient montes nascetur ridiculus mus mauris vitae ultricies leo integer malesuada nunc vel risus commodo viverra." }}</p>
+							<p class="govuk-body govuk-!-margin-bottom-0">{{ data[mppCyaPrefix + 's-acc-1-text'] or "Massa id neque aliquam vestibulum morbi blandit cursus risus at ultrices mi tempus imperdiet nulla malesuada pellentesque elit eget gravida cum sociis natoque. Penatibus et magnis dis parturient montes nascetur ridiculus mus mauris vitae ultricies leo integer malesuada nunc vel risus commodo viverra." }}</p>
+							{% if data['mpp-version'] == '3' and 'yes' in (data['marine-plan-policy-v3-s-acc-1-evidence'] or []) and mppV3.byPolicy['s-acc-1'] | length %}
+							<p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-top-4 govuk-!-margin-bottom-1">Supporting documents</p>
+							<ul class="govuk-list govuk-!-margin-bottom-0">
+								{% for document in mppV3.byPolicy['s-acc-1'] %}
+								<li>{{ document.filename }} – {{ document.location }}</li>
+								{% endfor %}
+							</ul>
+							{% endif %}
 						</dd>
 						{% if not isSent %}
 						<dd class="govuk-summary-list__actions"><a class="govuk-link govuk-link--no-visited-state" href="#">Change<span class="govuk-visually-hidden"> South Access 1</span></a></dd>
@@ -1417,7 +1452,15 @@ Check your answers before sending your information
 							<p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
 							<p class="govuk-body">Proposals that develop skills related to marine activities, particularly in line with local skills strategies, will be supported.</p>
 							<p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Your consideration</p>
-							<p class="govuk-body govuk-!-margin-bottom-0">{{ data['marine-plan-policy-v2-s-emp-1-text'] or "Aliquet sagittis id consectetur purus ut faucibus pulvinar elementum integer enim neque volutpat ac tincidunt vitae semper quis lectus nulla at volutpat. Diam maecenas ultricies mi eget mauris pharetra et ultrices neque ornare aenean euismod elementum nisi quis eleifend quam adipiscing vitae proin sagittis." }}</p>
+							<p class="govuk-body govuk-!-margin-bottom-0">{{ data[mppCyaPrefix + 's-emp-1-text'] or "Aliquet sagittis id consectetur purus ut faucibus pulvinar elementum integer enim neque volutpat ac tincidunt vitae semper quis lectus nulla at volutpat. Diam maecenas ultricies mi eget mauris pharetra et ultrices neque ornare aenean euismod elementum nisi quis eleifend quam adipiscing vitae proin sagittis." }}</p>
+							{% if data['mpp-version'] == '3' and 'yes' in (data['marine-plan-policy-v3-s-emp-1-evidence'] or []) and mppV3.byPolicy['s-emp-1'] | length %}
+							<p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-top-4 govuk-!-margin-bottom-1">Supporting documents</p>
+							<ul class="govuk-list govuk-!-margin-bottom-0">
+								{% for document in mppV3.byPolicy['s-emp-1'] %}
+								<li>{{ document.filename }} – {{ document.location }}</li>
+								{% endfor %}
+							</ul>
+							{% endif %}
 						</dd>
 						{% if not isSent %}
 						<dd class="govuk-summary-list__actions"><a class="govuk-link govuk-link--no-visited-state" href="#">Change<span class="govuk-visually-hidden"> South Employment 1</span></a></dd>
@@ -1534,6 +1577,45 @@ Check your answers before sending your information
 				</dl>
 			</div>
 		</div>
+
+		{# ================================================= #}
+		{# MARINE PLAN POLICIES v3 — Supporting documents     #}
+		{# ================================================= #}
+		{% if data['mpp-version'] == '3' and mppV3.documents | length %}
+		<div class="govuk-summary-card">
+			<div class="govuk-summary-card__title-wrapper">
+				<h2 class="govuk-summary-card__title" id="supporting-documents">
+					Supporting documents
+				</h2>
+				{% if not isSent %}
+				<ul class="govuk-summary-card__actions">
+					<li class="govuk-summary-card__action">
+						<a class="govuk-link govuk-link--no-visited-state" href="marine-plan-policies-v3/documents/summary">
+							Change<span class="govuk-visually-hidden"> supporting documents</span>
+						</a>
+					</li>
+				</ul>
+				{% endif %}
+			</div>
+			<div class="govuk-summary-card__content">
+				<dl class="govuk-summary-list">
+					{% for document in mppV3.documents %}
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">{{ document.filename }}</dt>
+						<dd class="govuk-summary-list__value">
+							<p class="govuk-body govuk-!-margin-bottom-1">{{ document.category }}{% if document.categoryOther %}: {{ document.categoryOther }}{% endif %}</p>
+							<ul class="govuk-list govuk-!-margin-bottom-0">
+								{% for link in document.policies %}
+								<li>{{ link.code }} – {{ link.location }}</li>
+								{% endfor %}
+							</ul>
+						</dd>
+					</div>
+					{% endfor %}
+				</dl>
+			</div>
+		</div>
+		{% endif %}
 
 		{# ================================================= #}
 		{# WATER FRAMEWORK DIRECTIVE ASSESSMENT               #}

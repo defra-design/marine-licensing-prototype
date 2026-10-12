@@ -1,4 +1,5 @@
 const path = require('path');
+const mppV3Documents = require('./low-complexity-v4-marine-plan-policies-v3-documents.js');
 
 module.exports = function (router) {
   const version = "versions/multiple-sites-v2";
@@ -168,9 +169,12 @@ module.exports = function (router) {
   // True when every task list section is complete – mirrors the condition that shows
   // the "Check and send your application" button on marine-licence-start-page
   function allTasksComplete(data) {
-    const mppPrefix = data['mpp-version'] == '2' ? 'marine-plan-policy-v2-' : 'marine-plan-policy-';
+    const mppPrefix = data['mpp-version'] == '3' ? 'marine-plan-policy-v3-'
+      : data['mpp-version'] == '2' ? 'marine-plan-policy-v2-' : 'marine-plan-policy-';
     const mppComplete = ['s-acc-1', 's-bio-1', 's-agg-4', 's-emp-1', 's-uwn-2']
-      .every(key => data[mppPrefix + key + '-completed']);
+      .every(key => data[mppPrefix + key + '-completed']) &&
+      // v3: every policy flagged as relying on a document must have one linked
+      (data['mpp-version'] != '3' || mppV3Documents.summarise(data).docsComplete);
     return Boolean(
       data['low-complexity-project-background-completed'] &&
       data['low-complexity-dates-completed'] &&
@@ -859,6 +863,15 @@ module.exports = function (router) {
       });
       delete req.session.data['marine-plan-policies-v2-completed-count'];
       delete req.session.data['marine-plan-policies-v2-not-started-count'];
+      // Clear MPP v3 data, including supporting documents
+      ['s-acc-1', 's-bio-1', 's-agg-4', 's-emp-1', 's-uwn-2'].forEach(function (key) {
+        delete req.session.data['marine-plan-policy-v3-' + key + '-completed'];
+        delete req.session.data['marine-plan-policy-v3-' + key + '-text'];
+        delete req.session.data['marine-plan-policy-v3-' + key + '-evidence'];
+      });
+      delete req.session.data['marine-plan-policies-v3-completed-count'];
+      delete req.session.data['marine-plan-policies-v3-not-started-count'];
+      delete req.session.data['mpp-v3-documents'];
 
       // Reset the "MPPs previously unlocked" flag now that MPP data is wiped
       delete req.session.data['mpp-previously-unlocked'];
@@ -1058,6 +1071,15 @@ module.exports = function (router) {
     });
     delete req.session.data['marine-plan-policies-v2-completed-count'];
     delete req.session.data['marine-plan-policies-v2-not-started-count'];
+    // Clear MPP v3 data, including supporting documents
+    ['s-acc-1', 's-bio-1', 's-agg-4', 's-emp-1', 's-uwn-2'].forEach(function (key) {
+      delete req.session.data['marine-plan-policy-v3-' + key + '-completed'];
+      delete req.session.data['marine-plan-policy-v3-' + key + '-text'];
+      delete req.session.data['marine-plan-policy-v3-' + key + '-evidence'];
+    });
+    delete req.session.data['marine-plan-policies-v3-completed-count'];
+    delete req.session.data['marine-plan-policies-v3-not-started-count'];
+    delete req.session.data['mpp-v3-documents'];
 
     // Reset the "MPPs previously unlocked" flag now that MPP data is wiped
     delete req.session.data['mpp-previously-unlocked'];
