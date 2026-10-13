@@ -236,11 +236,16 @@ module.exports = function (router) {
     // made-up filename is given, so participants don't have to find real files.
     delete req.session.data['mpp-v3-document-file'];
 
-    // Replacing the file from a card – give it a new name, then walk the type and
-    // policies pages (already filled in) so locations can be checked against the new file.
+    // Replacing the file from a card – treat it as a new document in the same place.
+    // Type, policies and locations are cleared so nothing from the old file is carried
+    // over by accident; the applicant answers both pages again from scratch.
     // Nothing is saved until the policies page, so leaving part way keeps the original.
     if (req.session.data['mpp-v3-change-single-page'] === 'upload') {
-      getDraft(req.session.data).filename = nextFakeFilename(req.session.data);
+      const draft = getDraft(req.session.data);
+      draft.filename = nextFakeFilename(req.session.data);
+      draft.category = '';
+      draft.categoryOther = '';
+      draft.policies = [];
       return redirectOnceSaved(req, res, `${docsPath}/category`);
     }
 
