@@ -37,6 +37,9 @@ Supporting documents
 					<li class="govuk-summary-card__action">
 						<a href="delete?id={{ document.id }}" class="govuk-link govuk-link--no-visited-state">Delete<span class="govuk-visually-hidden"> {{ document.filename }}</span></a>
 					</li>
+					<li class="govuk-summary-card__action">
+						<a href="change?id={{ document.id }}&page=upload" class="govuk-link govuk-link--no-visited-state">Change<span class="govuk-visually-hidden"> {{ document.filename }}</span></a>
+					</li>
 				</ul>
 			</div>
 			<div class="govuk-summary-card__content">
@@ -45,7 +48,7 @@ Supporting documents
 						<dt class="govuk-summary-list__key">Type</dt>
 						<dd class="govuk-summary-list__value">
 							{{ document.category }}
-							{% if document.categoryOther %}<br><span class="govuk-hint govuk-!-margin-bottom-0">{{ document.categoryOther }}</span>{% endif %}
+							{% if document.categoryOther %}<br>{{ document.categoryOther }}{% endif %}
 						</dd>
 						<dd class="govuk-summary-list__actions">
 							<a href="change?id={{ document.id }}&page=category" class="govuk-link govuk-link--no-visited-state">Change<span class="govuk-visually-hidden"> type of {{ document.filename }}</span></a>
@@ -54,9 +57,9 @@ Supporting documents
 					<div class="govuk-summary-list__row">
 						<dt class="govuk-summary-list__key">Policies</dt>
 						<dd class="govuk-summary-list__value">
-							<ul class="govuk-list govuk-!-margin-bottom-0">
+							<ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-0">
 								{% for link in document.policies %}
-								<li>{{ link.code }} – {{ link.location }}</li>
+								<li>{{ link.name }} ({{ link.code }}) – {{ link.location }}</li>
 								{% endfor %}
 							</ul>
 						</dd>

@@ -117,6 +117,14 @@ module.exports = function (router) {
     'Supporting evidence pack.pdf'
   ];
 
+  // First made-up name not already used by a document, so names never repeat
+  // while there are spare ones (and changing a document always gives a new name)
+  function nextFakeFilename(data) {
+    const used = getDocuments(data).map(d => d.filename);
+    const unused = FAKE_FILENAMES.find(name => !used.includes(name));
+    return unused || FAKE_FILENAMES[used.length % FAKE_FILENAMES.length];
+  }
+
   function getDraft(data) {
     return data['mpp-v3-document-draft'];
   }
@@ -163,7 +171,7 @@ module.exports = function (router) {
     redirectOnceSaved(req, res, `${docsPath}/upload`);
   });
 
-  // Change one part of an existing document – ?page=category or ?page=policies.
+  // Change one part of an existing document – ?page=upload, category or policies.
   // Copies it into the draft, opens just that page, and saving returns to the summary.
   router.get(`${docsPath}/change`, function (req, res) {
     const id = parseInt(req.query.id, 10);
@@ -175,7 +183,7 @@ module.exports = function (router) {
     resetErrors(req.session.data);
     req.session.data['editing-document-id'] = id;
     req.session.data['mpp-v3-document-draft'] = JSON.parse(JSON.stringify(doc));
-    const page = req.query.page === 'category' ? 'category' : 'policies';
+    const page = ['upload', 'category'].includes(req.query.page) ? req.query.page : 'policies';
     req.session.data['mpp-v3-change-single-page'] = page;
     redirectOnceSaved(req, res, `${docsPath}/${page}`);
   });
@@ -228,13 +236,20 @@ module.exports = function (router) {
     // made-up filename is given, so participants don't have to find real files.
     delete req.session.data['mpp-v3-document-file'];
 
-    // When changing a document it keeps its current name
+    // Replacing the file from a card – give it a new name, then walk the type and
+    // policies pages (already filled in) so locations can be checked against the new file.
+    // Nothing is saved until the policies page, so leaving part way keeps the original.
+    if (req.session.data['mpp-v3-change-single-page'] === 'upload') {
+      getDraft(req.session.data).filename = nextFakeFilename(req.session.data);
+      return redirectOnceSaved(req, res, `${docsPath}/category`);
+    }
+
     if (!getDraft(req.session.data)) {
       const nextId = getDocuments(req.session.data).reduce((max, d) => Math.max(max, d.id), 0) + 1;
       req.session.data['editing-document-id'] = nextId;
       req.session.data['mpp-v3-document-draft'] = {
         id: nextId,
-        filename: FAKE_FILENAMES[(nextId - 1) % FAKE_FILENAMES.length],
+        filename: nextFakeFilename(req.session.data),
         category: '',
         categoryOther: '',
         policies: []
