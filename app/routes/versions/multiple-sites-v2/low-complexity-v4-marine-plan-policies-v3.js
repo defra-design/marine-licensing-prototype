@@ -28,8 +28,6 @@ module.exports = function (router) {
     if (req.session.data['mpp-load-outcome'] === 'timeout') {
       return res.render(`versions/${version}/${section}/${subsection}/policies-unavailable`);
     }
-    // Back on the MPP list, so no longer returning to check your answers
-    delete req.session.data['mpp-v3-docs-from-cya'];
     res.render(`versions/${version}/${section}/${subsection}/index`);
   });
 
@@ -168,19 +166,21 @@ module.exports = function (router) {
   // Leaving the documents flow. If they came from check your answers
   // (?mpp-v3-docs-from-cya=true on its Change link) and the section is still
   // complete, go back there. Otherwise go to the MPP list, whose Continue
-  // goes on to the main task list.
+  // goes on to the main task list. As with review site details, coming from
+  // check your answers is remembered until they leave this way, even if they
+  // visit the MPP list in between.
   function leaveDocuments(req, res) {
     const fromCya = req.session.data['mpp-v3-docs-from-cya'] === 'true';
     delete req.session.data['mpp-v3-docs-from-cya'];
     if (fromCya && mppSectionComplete(req.session.data)) {
-      return redirectOnceSaved(req, res, `/versions/${version}/${section}/check-your-answers`);
+      return redirectOnceSaved(req, res, `/versions/${version}/${section}/check-your-answers#supporting-documents`);
     }
     redirectOnceSaved(req, res, `/versions/${version}/${section}/${subsection}/`);
   }
 
   // Sub-task entry point from the MPP list: straight to the summary once there's something to show
   router.get(`${docsPath}/`, function (req, res) {
-    delete req.session.data['mpp-v3-docs-from-cya'];
+    req.session.data['mpp-v3-docs-entry'] = 'list';
     if (getDocuments(req.session.data).length > 0) {
       return redirectOnceSaved(req, res, `${docsPath}/summary`);
     }
@@ -418,6 +418,11 @@ module.exports = function (router) {
   //////// 4. Summary
   /////////////////////////////////////////////////////////
   router.get(`${docsPath}/summary`, function (req, res) {
+    // How they arrived this time decides where Back goes
+    if (req.query['mpp-v3-docs-from-cya'] === 'true') {
+      req.session.data['mpp-v3-docs-entry'] = 'cya';
+      res.locals.data['mpp-v3-docs-entry'] = 'cya';
+    }
     // Leaving the add/change flow part way through drops the unsaved draft
     clearDraft(req.session.data);
     resetErrors(req.session.data);

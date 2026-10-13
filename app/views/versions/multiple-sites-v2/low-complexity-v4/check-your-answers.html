@@ -1584,12 +1584,14 @@ Check your answers before sending your information
 		{# documents page. Change returns here if the MPP     #}
 		{# section is still complete.                          #}
 		{# ================================================= #}
-		{% if data['mpp-version'] == '3' %}
+		{% if data['mpp-version'] == '3' and mppV3.documents | length %}
+		{# Wrapper is the anchor for returning here from the documents flow #}
+		<div id="supporting-documents">
 		{% for document in mppV3.documents %}
 		<div id="supporting-document-{{ document.id }}" class="govuk-summary-card">
 			<div class="govuk-summary-card__title-wrapper">
 				<h2 class="govuk-summary-card__title">
-					{{ document.filename }}
+					Supporting document – {{ document.filename }}
 				</h2>
 				{% if not isSent %}
 				<ul class="govuk-summary-card__actions">
@@ -1624,6 +1626,7 @@ Check your answers before sending your information
 			</div>
 		</div>
 		{% endfor %}
+		</div>
 		{% endif %}
 
 		{# ================================================= #}

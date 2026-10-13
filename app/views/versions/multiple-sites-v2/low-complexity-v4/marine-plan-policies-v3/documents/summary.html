@@ -7,7 +7,8 @@
     {% if data['organisation-name'] %}
         {% include "../../../includes/organisation-switcher.html" %}
     {% endif %}
-    <a class="govuk-back-link govuk-link--no-visited-state" href="../">Back</a>
+    {# Back to check your answers if they arrived from there this time, otherwise the MPP list #}
+    <a class="govuk-back-link govuk-link--no-visited-state" href="{% if data['mpp-v3-docs-entry'] == 'cya' %}../../check-your-answers#supporting-documents{% else %}../{% endif %}">Back</a>
 {% endblock %}
 
 {% set pageHeadingTextHTML %}
