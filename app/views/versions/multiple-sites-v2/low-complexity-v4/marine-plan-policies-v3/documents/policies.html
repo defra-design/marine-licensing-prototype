@@ -45,7 +45,7 @@ Error:
 		id: locationId,
 		name: locationId,
 		label: {
-			text: "Where in the document is the relevant information?"
+			text: "Where is the information in this document?"
 		},
 		hint: {
 			text: "For example, section 4.2 or pages 12 to 15"
@@ -88,7 +88,7 @@ Error:
 					}
 				},
 				hint: {
-					html: '<div class="govuk-inset-text govuk-!-margin-top-2 govuk-!-margin-bottom-4">' + (draft.filename | escape) + '</div>Select every policy whose answer relies on this document.'
+					html: '<div class="govuk-inset-text govuk-!-margin-top-2 govuk-!-margin-bottom-4">' + (draft.filename | escape) + '</div>Select every policy this document supports. For each one, tell us where in the document the relevant information is.'
 				},
 				items: policyItems,
 				errorMessage: {
