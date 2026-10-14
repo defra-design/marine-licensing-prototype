@@ -156,8 +156,31 @@ module.exports = function (router) {
     data['errortypetwo'] = "false";
   }
 
-  // Sub-task entry point: straight to the summary once there's something to show
+  // The MPP section is complete when all five policies are answered and every
+  // ticked policy has a document (same rule as the task list)
+  function mppSectionComplete(data) {
+    return MPP_V3_POLICIES.every(p => data['marine-plan-policy-v3-' + p.key + '-completed']) &&
+      mppV3Documents.summarise(data).docsComplete;
+  }
+
+  // Leaving the documents flow. If they came from check your answers
+  // (?mpp-v3-docs-from-cya=true on its Change link) and the section is still
+  // complete, go back there. Otherwise go to the MPP list, whose Continue
+  // goes on to the main task list. As with review site details, coming from
+  // check your answers is remembered until they leave this way, even if they
+  // visit the MPP list in between.
+  function leaveDocuments(req, res) {
+    const fromCya = req.session.data['mpp-v3-docs-from-cya'] === 'true';
+    delete req.session.data['mpp-v3-docs-from-cya'];
+    if (fromCya && mppSectionComplete(req.session.data)) {
+      return redirectOnceSaved(req, res, `/versions/${version}/${section}/check-your-answers#supporting-documents`);
+    }
+    redirectOnceSaved(req, res, `/versions/${version}/${section}/${subsection}/`);
+  }
+
+  // Sub-task entry point from the MPP list: straight to the summary once there's something to show
   router.get(`${docsPath}/`, function (req, res) {
+    req.session.data['mpp-v3-docs-entry'] = 'list';
     if (getDocuments(req.session.data).length > 0) {
       return redirectOnceSaved(req, res, `${docsPath}/summary`);
     }
@@ -195,7 +218,7 @@ module.exports = function (router) {
     if (getDocuments(req.session.data).length > 0) {
       return redirectOnceSaved(req, res, `${docsPath}/summary`);
     }
-    redirectOnceSaved(req, res, `/versions/${version}/${section}/${subsection}/`);
+    leaveDocuments(req, res);
   });
 
   // Delete – confirmation page first, as for deleting sites and construction drawings
@@ -214,9 +237,9 @@ module.exports = function (router) {
     req.session.data['mpp-v3-documents'] = getDocuments(req.session.data).filter(d => d.id !== id);
     clearDraft(req.session.data);
     resetErrors(req.session.data);
-    // Deleting the last document goes back to the MPP list, as deleting all sites does
+    // Deleting the last document leaves the flow, as deleting all sites does
     if (getDocuments(req.session.data).length === 0) {
-      return redirectOnceSaved(req, res, `/versions/${version}/${section}/${subsection}/`);
+      return leaveDocuments(req, res);
     }
     redirectOnceSaved(req, res, `${docsPath}/summary`);
   });
@@ -395,12 +418,17 @@ module.exports = function (router) {
   //////// 4. Summary
   /////////////////////////////////////////////////////////
   router.get(`${docsPath}/summary`, function (req, res) {
+    // How they arrived this time decides where Back goes
+    if (req.query['mpp-v3-docs-from-cya'] === 'true') {
+      req.session.data['mpp-v3-docs-entry'] = 'cya';
+      res.locals.data['mpp-v3-docs-entry'] = 'cya';
+    }
     // Leaving the add/change flow part way through drops the unsaved draft
     clearDraft(req.session.data);
     resetErrors(req.session.data);
-    // No empty summary page – with nothing to show, go back to the MPP list
+    // No empty summary page – with nothing to show, leave the flow
     if (getDocuments(req.session.data).length === 0) {
-      return redirectOnceSaved(req, res, `/versions/${version}/${section}/${subsection}/`);
+      return leaveDocuments(req, res);
     }
     res.render(`${docsView}/summary`);
   });
@@ -409,7 +437,7 @@ module.exports = function (router) {
   // The sub-task and task list stay 'In progress' until every flagged policy has one.
   router.post(`${docsPath}/summary-router`, function (req, res) {
     resetErrors(req.session.data);
-    redirectOnceSaved(req, res, `/versions/${version}/${section}/${subsection}/`);
+    leaveDocuments(req, res);
   });
 
 };
