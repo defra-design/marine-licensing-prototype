@@ -58,8 +58,8 @@
                         <dt class="govuk-summary-list__key">Status</dt>
                         <dd class="govuk-summary-list__value">
                             {{ govukTag({
-                                text: "Transferred",
-                                classes: "govuk-tag--magenta"
+                                text: { 'v2-moving': 'Moving to MCMS', 'v2-ready': 'Closed' }[data['transfer-version']] or 'Transferred',
+                                classes: "govuk-tag--grey" if data['transfer-version'] == 'v2-ready' else "govuk-tag--magenta"
                             }) }}
                         </dd>
                     </div>

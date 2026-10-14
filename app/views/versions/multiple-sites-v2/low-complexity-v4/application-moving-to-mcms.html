@@ -1,0 +1,58 @@
+{% extends "../layouts/low-complexity-v4.html" %}
+
+{% block beforeContent %}
+    {% include "../includes/phase-banner.html" %}
+    {% if data['organisation-name'] %}
+        {% include "../includes/organisation-switcher.html" %}
+    {% endif %}
+    {% if showBackToSubmissions %}
+    <a class="govuk-back-link govuk-link--no-visited-state" href="submissions">Back</a>
+    {% endif %}
+{% endblock %}
+
+{% block pageTitle %}
+Your application is moving to a different case management system - Get permission for marine work
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-two-thirds">
+
+		<span class="govuk-caption-l">Installation of floating pontoon, Lyme Regis Harbour, Dorset</span>
+		<h1 class="govuk-heading-l">Your application is moving to a different case management system</h1>
+
+		<p class="govuk-body">We are moving your application (MLA/2026/10003) to the Marine Case Management System (MCMS). This will not affect how we consider or make a decision on your application.</p>
+
+		<h2 class="govuk-heading-m">Why your application is moving</h2>
+
+		<p class="govuk-body">We are changing the systems we use to handle marine licence applications. While we do this, we handle some applications here and others in MCMS.</p>
+
+		<p class="govuk-body">Yours needs to be handled in MCMS.</p>
+
+		<h2 class="govuk-heading-m">What happens next</h2>
+
+		<p class="govuk-body">We will use the information you have entered to recreate your application in MCMS, including any documents you have uploaded.</p>
+
+		<p class="govuk-body">MCMS asks for information in a different way to this service, so your application will not look the same. You will probably need to answer more questions.</p>
+
+		<p class="govuk-body">We will contact you when your draft application is ready for you to review and submit.</p>
+
+		<h2 class="govuk-heading-m">What you need to do now</h2>
+
+		<p class="govuk-body">You need an MCMS account. We need you to have one so we can recreate your application there, and you will use it to manage your application.</p>
+
+		<p class="govuk-body">If you do not already have one, create an account now so we can recreate your application in MCMS.</p>
+
+		<p class="govuk-body"><a class="govuk-link" href="https://marinelicensing.marinemanagement.org.uk/mmofox5/fox/live/MMO_LOGIN/login">Create an MCMS account</a></p>
+
+		<p class="govuk-body">If you already have an MCMS account, you do not need to do anything until we contact you.</p>
+
+		<p class="govuk-body">If you want to refer to what you entered, you can <a class="govuk-link govuk-link--no-visited-state" href="view-details/installation-of-floating-pontoon-lyme-regis-harbour-dorset">view your submitted application in this system</a>.</p>
+
+		<p class="govuk-body">The status of your application will show as 'Moving to MCMS' until we have moved it.</p>
+
+	</div>
+</div>
+
+{% endblock %}

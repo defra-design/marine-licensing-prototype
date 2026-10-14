@@ -1,0 +1,56 @@
+{% extends "../layouts/low-complexity-v4.html" %}
+
+{% block beforeContent %}
+    {% include "../includes/phase-banner.html" %}
+    {% if data['organisation-name'] %}
+        {% include "../includes/organisation-switcher.html" %}
+    {% endif %}
+    {% if showBackToSubmissions %}
+    <a class="govuk-back-link govuk-link--no-visited-state" href="submissions">Back</a>
+    {% endif %}
+{% endblock %}
+
+{% block pageTitle %}
+Your draft application is ready in MCMS - Get permission for marine work
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+	<div class="govuk-grid-column-two-thirds">
+
+		<span class="govuk-caption-l">Installation of floating pontoon, Lyme Regis Harbour, Dorset</span>
+		<h1 class="govuk-heading-l">Your draft application is ready in MCMS</h1>
+
+		<p class="govuk-body">We have recreated your application (MLA/2026/10003) in the Marine Case Management System (MCMS). Your draft application is ready for you to review. This will not affect how we consider or make a decision on your application.</p>
+
+		<p class="govuk-body">Your application will get a new reference number in MCMS when you submit it. Reference MLA/2026/10003 only applies to your application in this system.</p>
+
+		<h2 class="govuk-heading-m">What you need to do</h2>
+
+		<p class="govuk-body">Sign in to MCMS to review and submit your draft application.</p>
+
+		<p class="govuk-body">MCMS asks for information in a different way to this service, so your application will not look the same. You will need to:</p>
+
+		<ul class="govuk-list govuk-list--bullet">
+			<li>check the information we have entered</li>
+			<li>complete any remaining sections and answer any additional questions</li>
+			<li>submit your application</li>
+		</ul>
+
+		<p class="govuk-body"><a class="govuk-link" href="https://marinelicensing.marinemanagement.org.uk/mmofox5/fox/live/MMO_LOGIN/login">Sign in to MCMS</a></p>
+
+		<h2 class="govuk-heading-m">What happens next</h2>
+
+		<p class="govuk-body">After you submit, we will review your application and send you a fee estimate to accept. It may be more than your current one.</p>
+
+		<p class="govuk-body">You can read more about the <a class="govuk-link" href="#" target="_blank" rel="noreferrer noopener">marine licence application timeline (opens in new tab)</a>.</p>
+
+		<p class="govuk-body">If you want to refer to what you entered, you can <a class="govuk-link govuk-link--no-visited-state" href="view-details/installation-of-floating-pontoon-lyme-regis-harbour-dorset">view your submitted application in this system</a>.</p>
+
+		<p class="govuk-body">The status of your application will show as 'Closed' as it is now in MCMS.</p>
+
+	</div>
+</div>
+
+{% endblock %}
