@@ -1671,8 +1671,8 @@ module.exports = function (router) {
   // pontoon application is in, which switches its Submissions row and view
   // details status:
   //   v1        – Transferred
-  //   v2-moving – Moving to MCMS (applicant needs an MCMS account first)
-  //   v2-ready  – Closed (draft has been recreated in MCMS)
+  //   v2-moving – Moving to MCMS (step 1: case officer has requested the transfer)
+  //   v2-ready  – Closed (step 2: draft has been recreated in MCMS)
   [
     ['inbox-transfer', 'v1'], ['transfer', 'v1'],
     ['inbox-transfer-moving', 'v2-moving'], ['transfer-moving', 'v2-moving'],
