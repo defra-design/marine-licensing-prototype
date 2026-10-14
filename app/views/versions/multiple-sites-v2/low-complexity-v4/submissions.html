@@ -269,13 +269,15 @@ Submissions
 
 				{# Hidden in the user testing journeys – transfer is being redesigned, so
 				   this row would only be a distraction. #}
-				{% if not data['ut'] %}
-				{# Status and landing page depend on which transfer journey was last
-				   opened from the index page – see transfer-version in the routes. #}
+				{# Only shown once a transfer journey has been opened from the index page.
+				   Status and landing page depend on which one – see transfer-version in
+				   the routes. #}
 				{% set transfer = {
+					'v1': { status: 'Transferred', tag: 'govuk-tag--magenta', sort: '06', href: 'email-landings/pontoon-landing?from=submissions' },
 					'v2-moving': { status: 'Moving to MCMS', tag: 'govuk-tag--magenta', sort: '02', href: 'application-moving-to-mcms?from=submissions' },
 					'v2-ready': { status: 'Closed', tag: 'govuk-tag--grey', sort: '06', href: 'application-ready-in-mcms?from=submissions' }
-				}[data['transfer-version']] or { status: 'Transferred', tag: 'govuk-tag--magenta', sort: '06', href: 'email-landings/pontoon-landing?from=submissions' } %}
+				}[data['transfer-version']] %}
+				{% if transfer and not data['ut'] %}
 				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="Installation of floating pontoon, Lyme Regis Harbour, Dorset" data-type="Marine licence application" data-reference="MLA-10003" data-status="{{ transfer.status }}">
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Installation of floating pontoon, Lyme Regis Harbour, Dorset</th>
 					<td class="govuk-table__cell">Marine licence application</td>
