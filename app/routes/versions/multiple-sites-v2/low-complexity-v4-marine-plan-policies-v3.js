@@ -118,7 +118,7 @@ module.exports = function (router) {
   ];
 
   // First made-up name not already used by a document, so names never repeat
-  // while there are spare ones (and changing a document always gives a new name)
+  // while there are spare ones
   function nextFakeFilename(data) {
     const used = getDocuments(data).map(d => d.filename);
     const unused = FAKE_FILENAMES.find(name => !used.includes(name));
@@ -194,7 +194,7 @@ module.exports = function (router) {
     redirectOnceSaved(req, res, `${docsPath}/upload`);
   });
 
-  // Change one part of an existing document – ?page=upload, category or policies.
+  // Change one part of an existing document – ?page=category or policies.
   // Copies it into the draft, opens just that page, and saving returns to the summary.
   router.get(`${docsPath}/change`, function (req, res) {
     const id = parseInt(req.query.id, 10);
@@ -206,7 +206,7 @@ module.exports = function (router) {
     resetErrors(req.session.data);
     req.session.data['editing-document-id'] = id;
     req.session.data['mpp-v3-document-draft'] = JSON.parse(JSON.stringify(doc));
-    const page = ['upload', 'category'].includes(req.query.page) ? req.query.page : 'policies';
+    const page = req.query.page === 'category' ? 'category' : 'policies';
     req.session.data['mpp-v3-change-single-page'] = page;
     redirectOnceSaved(req, res, `${docsPath}/${page}`);
   });
@@ -249,7 +249,7 @@ module.exports = function (router) {
   /////////////////////////////////////////////////////////
   router.get(`${docsPath}/upload`, function (req, res) {
     resetErrors(req.session.data);
-    res.render(`${docsView}/upload`, { draft: getDraft(req.session.data) });
+    res.render(`${docsView}/upload`);
   });
 
   router.post(`${docsPath}/upload-router`, function (req, res) {
@@ -258,19 +258,6 @@ module.exports = function (router) {
     // Prototype: no real upload and no file needed. For usability testing a
     // made-up filename is given, so participants don't have to find real files.
     delete req.session.data['mpp-v3-document-file'];
-
-    // Replacing the file from a card – treat it as a new document in the same place.
-    // Type, policies and locations are cleared so nothing from the old file is carried
-    // over by accident; the applicant answers both pages again from scratch.
-    // Nothing is saved until the policies page, so leaving part way keeps the original.
-    if (req.session.data['mpp-v3-change-single-page'] === 'upload') {
-      const draft = getDraft(req.session.data);
-      draft.filename = nextFakeFilename(req.session.data);
-      draft.category = '';
-      draft.categoryOther = '';
-      draft.policies = [];
-      return redirectOnceSaved(req, res, `${docsPath}/category`);
-    }
 
     if (!getDraft(req.session.data)) {
       const nextId = getDocuments(req.session.data).reduce((max, d) => Math.max(max, d.id), 0) + 1;
