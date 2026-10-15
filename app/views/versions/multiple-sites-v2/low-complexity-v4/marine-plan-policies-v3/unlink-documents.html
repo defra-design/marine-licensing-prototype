@@ -1,0 +1,59 @@
+{% extends "../../layouts/low-complexity-v4.html" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% if data['organisation-name'] %}
+        {% include "../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link govuk-link--no-visited-state" href="{{ policy.page }}">Back</a>
+{% endblock %}
+
+{% set single = documents.length == 1 %}
+
+{% set pageHeadingTextHTML %}
+Are you sure you want to delete {{ "this document" if single else "these documents" }}?
+{% endset %}
+
+{% block pageTitle %}
+    {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+    <span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
+    <h1 class="govuk-heading-l">
+      {{ pageHeadingTextHTML }}
+    </h1>
+
+    <div class="govuk-inset-text">
+      {% if single %}
+      {{ documents[0].filename }}
+      {% else %}
+      <ul class="govuk-list govuk-!-margin-bottom-0">
+        {% for document in documents %}
+        <li>{{ document.filename }}</li>
+        {% endfor %}
+      </ul>
+      {% endif %}
+    </div>
+
+    <p class="govuk-body">You have said your consideration for {{ policy.name }} ({{ policy.code }}) does not refer to a document. {{ "This document only supports" if single else "These documents only support" }} {{ policy.code }}, so {{ "it" if single else "they" }} will be deleted.</p>
+
+    <form action="unlink-documents-router" method="post" novalidate>
+      <input type="hidden" name="policy-key" value="{{ policy.key }}">
+      <div class="govuk-button-group govuk-!-margin-top-7">
+        {{ govukButton({
+          text: "Yes, delete " + ("document" if single else "documents"),
+          classes: "govuk-button--warning"
+        }) }}
+        <a class="govuk-link govuk-link--no-visited-state" href="{{ policy.page }}">Cancel</a>
+      </div>
+    </form>
+  </div>
+</div>
+
+{% endblock %}

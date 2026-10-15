@@ -52,10 +52,24 @@ module.exports = function (router) {
       req.session.data['errorthispage'] = "false";
       req.session.data['errortypeone'] = "false";
 
-      // An unticked checkbox sends nothing, so clear the flag ourselves
+      // An unticked checkbox sends nothing without JavaScript, so clear the flag ourselves
+      // (with JavaScript the kit sends '_unchecked' and has already cleared it)
       const evidenceKey = `marine-plan-policy-v3-${sessionKey}-evidence`;
       if (req.body[evidenceKey] === undefined) {
         delete req.session.data[evidenceKey];
+      }
+
+      // Unticked while documents are still linked. Documents that support other
+      // policies too just lose this link. If any would be deleted, keep the tick
+      // until they confirm on the next page, so no document is left unlinked.
+      let confirmDelete = false;
+      if (!isFlagged(req.session.data, sessionKey)) {
+        confirmDelete = documentsOnlyFor(req.session.data, sessionKey).length > 0;
+        if (confirmDelete) {
+          req.session.data[evidenceKey] = ['yes'];
+        } else {
+          unlinkPolicy(req.session.data, sessionKey);
+        }
       }
 
       const value = req.session.data[`marine-plan-policy-v3-${sessionKey}-text`];
@@ -66,13 +80,64 @@ module.exports = function (router) {
         return res.redirect(pageName);
       }
 
-      req.session.data[`marine-plan-policy-v3-${sessionKey}-completed`] = true;
-      const completedCount = (req.session.data['marine-plan-policies-v3-completed-count'] || 0) + 1;
-      const notStartedCount = MARINE_PLAN_POLICIES_TOTAL - completedCount;
-      const redirectUrl = './?marine-plan-policies-v3-completed-count=' + completedCount + '&marine-plan-policies-v3-not-started-count=' + notStartedCount;
-      res.redirect(redirectUrl);
+      if (confirmDelete) {
+        return redirectOnceSaved(req, res, `unlink-documents?policy=${sessionKey}`);
+      }
+
+      completePolicy(req, res, sessionKey);
     });
   }
+
+  // Mark a policy page as done and go back to the MPP list
+  function completePolicy(req, res, sessionKey) {
+    req.session.data[`marine-plan-policy-v3-${sessionKey}-completed`] = true;
+    const completedCount = (req.session.data['marine-plan-policies-v3-completed-count'] || 0) + 1;
+    const notStartedCount = MARINE_PLAN_POLICIES_TOTAL - completedCount;
+    const redirectUrl = './?marine-plan-policies-v3-completed-count=' + completedCount + '&marine-plan-policies-v3-not-started-count=' + notStartedCount;
+    redirectOnceSaved(req, res, redirectUrl);
+  }
+
+  /////////////////////////////////////////////////////////
+  //////// Confirm unticking a policy whose only link is to these documents
+  //
+  // Unticking removes the policy from every document. Documents that only
+  // supported this policy are deleted, so none are left unlinked.
+  /////////////////////////////////////////////////////////
+  function documentsOnlyFor(data, policyKey) {
+    return getDocuments(data).filter(d => d.policies.length === 1 && d.policies[0].key === policyKey);
+  }
+
+  function unlinkPolicy(data, policyKey) {
+    data['mpp-v3-documents'] = getDocuments(data)
+      .map(d => Object.assign({}, d, { policies: d.policies.filter(p => p.key !== policyKey) }))
+      .filter(d => d.policies.length > 0);
+  }
+
+  router.get(`/versions/${version}/${section}/${subsection}/unlink-documents`, function (req, res) {
+    const policy = MPP_V3_POLICIES.find(p => p.key === req.query.policy);
+    if (!policy) {
+      return res.redirect('./');
+    }
+    const documents = documentsOnlyFor(req.session.data, policy.key);
+    if (documents.length === 0) {
+      return res.redirect(policy.page);
+    }
+    res.render(`versions/${version}/${section}/${subsection}/unlink-documents`, {
+      policy: policy,
+      documents: documents
+    });
+  });
+
+  router.post(`/versions/${version}/${section}/${subsection}/unlink-documents-router`, function (req, res) {
+    const policy = MPP_V3_POLICIES.find(p => p.key === req.body['policy-key']);
+    delete req.session.data['policy-key'];
+    if (!policy) {
+      return res.redirect('./');
+    }
+    unlinkPolicy(req.session.data, policy.key);
+    delete req.session.data[`marine-plan-policy-v3-${policy.key}-evidence`];
+    completePolicy(req, res, policy.key);
+  });
 
   /////////////////////////////////////////////////////////
   //////// Policy question pages
@@ -325,13 +390,6 @@ module.exports = function (router) {
   /////////////////////////////////////////////////////////
   //////// 3. Policies
   /////////////////////////////////////////////////////////
-
-  // Flagged policies, plus any this document is already linked to so they can be unlinked
-  function policyOptions(data, draft) {
-    const linkedKeys = (draft.policies || []).map(p => p.key);
-    return MPP_V3_POLICIES.filter(p => isFlagged(data, p.key) || linkedKeys.includes(p.key));
-  }
-
   router.get(`${docsPath}/policies`, function (req, res) {
     const draft = getDraft(req.session.data);
     if (!draft) {
@@ -356,7 +414,7 @@ module.exports = function (router) {
 
     res.render(`${docsView}/policies`, {
       draft: draft,
-      options: policyOptions(req.session.data, draft),
+      options: MPP_V3_POLICIES.filter(p => isFlagged(req.session.data, p.key)),
       selected: selected,
       locations: locations,
       missing: missing
