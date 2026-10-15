@@ -34,11 +34,6 @@ Upload a supporting document
 					</label>
 				</h1>
 
-				{# Replacing a document from its card – show which one #}
-				{% if data['mpp-v3-change-single-page'] == 'upload' and draft %}
-				<div class="govuk-inset-text">Replacing {{ draft.filename }}</div>
-				{% endif %}
-
 				{{ govukFileUpload({
 					id: "mpp-v3-document-file",
 					name: "mpp-v3-document-file",
@@ -57,10 +52,7 @@ Upload a supporting document
 					text: "Continue"
 				}) }}
 
-				{# Cancel only when adding a document, not when changing one from the summary #}
-				{% if not data['mpp-v3-change-single-page'] %}
 				<a class="govuk-link govuk-link--no-visited-state" href="cancel">Cancel</a>
-				{% endif %}
 			</div>
 
 		</form>
