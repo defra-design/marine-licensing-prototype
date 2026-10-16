@@ -27,12 +27,19 @@ Error:
 {% block content %}
 
 {% set locationErrorText = "Enter where in the document the relevant information is" %}
+{# Changing an existing document's policies from its card: unticking them all is
+   better handled by deleting the document, so the error says so #}
+{% if data['mpp-v3-change-single-page'] == 'policies' %}
+{% set noPolicyErrorText = "Select at least one policy this document supports, or go back to supporting documents and delete the document if it is no longer required" %}
+{% else %}
+{% set noPolicyErrorText = "Select at least one policy this document supports" %}
+{% endif %}
 
 {# Build one checkbox per policy, each revealing a 'where in the document' input #}
 {% set policyItems = [] %}
 {% set errorList = [] %}
 {% if data['errortypeone'] == "true" %}
-	{% set errorList = (errorList.push({ text: "Select at least one policy this document supports", href: "#mpp-v3-document-policies" }), errorList) %}
+	{% set errorList = (errorList.push({ text: noPolicyErrorText, href: "#mpp-v3-document-policies" }), errorList) %}
 {% endif %}
 {% for policy in options %}
 	{% set locationId = "mpp-v3-document-location-" + policy.key %}
@@ -92,7 +99,7 @@ Error:
 				},
 				items: policyItems,
 				errorMessage: {
-					text: "Select at least one policy this document supports"
+					text: noPolicyErrorText
 				} if data['errortypeone'] == "true"
 			}) }}
 
