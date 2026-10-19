@@ -1,0 +1,16 @@
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+
+{# Request type wording, shared by the dashboard and the request pages. #}
+{% macro requestTypeText(request) -%}
+{{ "Request for advice" if request.type === "response-required" else "Application notification" }}
+{%- endmacro %}
+
+{% macro statusTag(request) %}
+{{ govukTag({
+    text: request.status,
+    classes: {
+        'No response needed': 'govuk-tag--grey',
+        'Responded': 'govuk-tag--green'
+    }[request.status]
+}) }}
+{% endmacro %}
