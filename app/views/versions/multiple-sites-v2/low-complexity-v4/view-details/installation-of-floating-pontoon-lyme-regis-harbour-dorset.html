@@ -58,8 +58,8 @@
                         <dt class="govuk-summary-list__key">Status</dt>
                         <dd class="govuk-summary-list__value">
                             {{ govukTag({
-                                text: "Transferred",
-                                classes: "govuk-tag--magenta"
+                                text: { 'v2-moving': 'Moving to MCMS', 'v2-ready': 'Closed' }[data['transfer-version']] or 'Transferred',
+                                classes: "govuk-tag--grey" if data['transfer-version'] == 'v2-ready' else "govuk-tag--magenta"
                             }) }}
                         </dd>
                     </div>
@@ -75,10 +75,13 @@
                         <dt class="govuk-summary-list__key">Date submitted</dt>
                         <dd class="govuk-summary-list__value">{{ -5 | daysFromToday }}</dd>
                     </div>
+                    {# Transfer v2 'Moving to MCMS' – not moved yet, so no date #}
+                    {% if data['transfer-version'] != 'v2-moving' %}
                     <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Date of transfer</dt>
+                        <dt class="govuk-summary-list__key">{{ "Date of move" if data['transfer-version'] == 'v2-ready' else "Date of transfer" }}</dt>
                         <dd class="govuk-summary-list__value">{{ "" | todayDate }}</dd>
                     </div>
+                    {% endif %}
                 </dl>
             </div>
         </div>

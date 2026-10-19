@@ -1664,6 +1664,36 @@ module.exports = function (router) {
 
 
   ///////////////////////////////////////////
+  // Transfer to MCMS journeys
+  ///////////////////////////////////////////
+
+  // Opening an inbox or email sets which transfer journey the Lyme Regis
+  // pontoon application is in, which switches its Submissions row and view
+  // details status:
+  //   v1        – Transferred
+  //   v2-moving – Moving to MCMS (step 1: case officer has requested the transfer)
+  //   v2-ready  – Closed (step 2: draft has been recreated in MCMS)
+  [
+    ['inbox-transfer', 'v1'], ['transfer', 'v1'],
+    ['inbox-transfer-moving', 'v2-moving'], ['transfer-moving', 'v2-moving'],
+    ['inbox-transfer-ready', 'v2-ready'], ['transfer-ready', 'v2-ready']
+  ].forEach(function ([page, transferVersion]) {
+    router.get(`/versions/${version}/${section}/emails/${page}`, function (req, res) {
+      req.session.data['transfer-version'] = transferVersion;
+      res.render(`versions/${version}/${section}/emails/${page}`);
+    });
+  });
+
+  ['application-moving-to-mcms', 'application-ready-in-mcms'].forEach(function (page) {
+    router.get(`/versions/${version}/${section}/${page}`, function (req, res) {
+      res.render(`versions/${version}/${section}/${page}`, {
+        showBackToSubmissions: req.query.from === 'submissions'
+      });
+    });
+  });
+
+
+  ///////////////////////////////////////////
   // Withhold information notification journey
   ///////////////////////////////////////////
 
