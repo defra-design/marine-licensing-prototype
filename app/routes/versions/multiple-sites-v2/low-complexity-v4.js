@@ -1680,7 +1680,7 @@ module.exports = function (router) {
     d['low-complexity-invoicing-completed'] = true;
 
     // --- Sharing project information publicly ---
-    d['low-complexity-sharing-information'] = 'Yes';
+    d['low-complexity-sharing-information'] = 'No';
     d['low-complexity-sharing-information-completed'] = true;
   }
 
