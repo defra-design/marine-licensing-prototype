@@ -1,0 +1,111 @@
+{% extends "../layouts/low-complexity-v4.html" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% block beforeContent %}
+    {% include "../includes/phase-banner.html" %}
+    {% if data['organisation-name'] %}
+        {% include "../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link govuk-link--no-visited-state" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+{% block pageTitle %}
+Check your answers for withholding information from the public register - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% set isNationalSecurity = data['low-complexity-sharing-information-reason'] == "National security reasons" %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
+        <h1 class="govuk-heading-l">Check your answers for withholding information from the public register</h1>
+
+        <dl class="govuk-summary-list">
+
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    Do you want to ask us to withhold any information from the public register?
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {{ data['low-complexity-sharing-information'] }} – {{ data['low-complexity-sharing-information-reason'] }}
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                    <a class="govuk-link govuk-link--no-visited-state" href="sharing-your-project-information-publicly?fromcheckanswers=true">
+                        Change<span class="govuk-visually-hidden"> if you want to ask us to withhold any information from the public register</span>
+                    </a>
+                </dd>
+            </div>
+
+            {% if isNationalSecurity %}
+
+            <div class="govuk-summary-list__row{% if data['low-complexity-sharing-information-approval'] == 'Yes' %} govuk-summary-list__row--no-border{% endif %}">
+                <dt class="govuk-summary-list__key">
+                    Do you have approval from the Secretary of State to withhold information for national security reasons?
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {% if data['low-complexity-sharing-information-approval'] == 'No' %}
+                    No – If you get approval later, you can come back and change your answer before you submit your application.
+                    {% else %}
+                    {{ data['low-complexity-sharing-information-approval'] }}
+                    {% endif %}
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                    <a class="govuk-link govuk-link--no-visited-state" href="sharing-your-project-information-publicly-national-security?fromcheckanswers=true">
+                        Change<span class="govuk-visually-hidden"> if you have approval from the Secretary of State to withhold information for national security reasons</span>
+                    </a>
+                </dd>
+            </div>
+
+            {% if data['low-complexity-sharing-information-approval'] == 'Yes' %}
+            <!-- Answered on the same page as the approval question, so the Change link is visually hidden -->
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    What you want withheld and why
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {{ data['low-complexity-sharing-information-details'] }}
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                    <a class="govuk-link govuk-link--no-visited-state govuk-visually-hidden" href="sharing-your-project-information-publicly-national-security?fromcheckanswers=true">
+                        Change what you want withheld and why
+                    </a>
+                </dd>
+            </div>
+            {% endif %}
+
+            {% else %}
+
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">
+                    What you want withheld and why
+                </dt>
+                <dd class="govuk-summary-list__value">
+                    {{ data['low-complexity-sharing-information-details'] }}
+                </dd>
+                <dd class="govuk-summary-list__actions">
+                    <a class="govuk-link govuk-link--no-visited-state" href="sharing-your-project-information-publicly-commercial?fromcheckanswers=true">
+                        Change<span class="govuk-visually-hidden"> what you want withheld and why</span>
+                    </a>
+                </dd>
+            </div>
+
+            {% endif %}
+
+        </dl>
+
+        <form action="sharing-your-project-information-publicly-check-answers-router" method="post" novalidate>
+            <div class="govuk-button-group">
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+            </div>
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}
