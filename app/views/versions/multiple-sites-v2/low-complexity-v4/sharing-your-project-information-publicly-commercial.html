@@ -1,0 +1,124 @@
+{% extends "../layouts/low-complexity-v4.html" %}
+
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% block head %}
+  {{ super() }}
+  <style>
+    #low-complexity-sharing-information-details-hint .govuk-list {
+      color: inherit;
+    }
+  </style>
+{% endblock %}
+
+{% block beforeContent %}
+    {% include "../includes/phase-banner.html" %}
+    {% if data['organisation-name'] %}
+        {% include "../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link govuk-link--no-visited-state" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+{% set pageHeadingTextHTML %}
+Withholding information for commercial or industrial confidentiality reasons
+{% endset %}
+
+{% set errorType = data['low-complexity-sharing-information-error'] %}
+{% set detailsErrorText = "Enter what you want withheld and why" %}
+
+{% block pageTitle %}
+{% if errorType %}Error: {% endif %}{{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% set detailsHintHtml %}
+<p class="govuk-hint">To help us decide whether your request meets the criteria, you must tell us:</p>
+<ul class="govuk-list govuk-list--bullet">
+    <li>what information you want withheld</li>
+    <li>where it appears in your application or supporting documents</li>
+    <li>why that information is sensitive</li>
+    <li>what harm would be caused by publishing it, and who would be affected</li>
+</ul>
+<p class="govuk-hint">If we decide to publish any of the information you asked us to withhold, we will tell you before we publish it, and you can withdraw your application if you want to.</p>
+Enter a maximum of 1,000 characters
+{% endset %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        {% if errorType %}
+        {{ govukErrorSummary({
+            titleText: "There is a problem",
+            errorList: [
+                {
+                    text: detailsErrorText,
+                    href: "#low-complexity-sharing-information-details"
+                }
+            ]
+        }) }}
+        {% endif %}
+
+        <!-- go to routes.js for routing  -->
+        <form action="sharing-your-project-information-publicly-commercial-router" method="post" novalidate>
+            <span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
+            <h1 class="govuk-heading-l">
+                {{ pageHeadingTextHTML }}
+            </h1>
+
+            <p class="govuk-body">This applies where publishing would harm a legitimate commercial interest that is protected by law. It may include:</p>
+
+            <ul class="govuk-list govuk-list--bullet">
+                <li>trade secrets</li>
+                <li>proprietary methods, techniques or processes</li>
+                <li>intellectual property</li>
+                <li>commercial agreements and contractual arrangements</li>
+                <li>pricing structures, cost models or financial information</li>
+                <li>future commercial plans, strategies or investment decisions</li>
+                <li>sensitive operational or technical information that gives a competitive advantage</li>
+            </ul>
+
+            <p class="govuk-body">The information must not already be publicly available, and must be subject to a legally recognised duty of confidentiality.</p>
+
+            <p class="govuk-body">Publishing it would need to cause real harm that you can identify. Wanting to keep it private, being open to public scrutiny or worrying about your reputation is not enough.</p>
+
+            <p class="govuk-body">We will only withhold the specific information that meets the criteria for withholding information for commercial or industrial confidentiality reasons. We will publish the rest of your application and supporting documents.</p>
+
+            <p class="govuk-body">We will decide whether the information you identify meets the criteria. This may delay your application. If we decide it does not, we will publish the information.</p>
+
+            {{ govukTextarea({
+                id: "low-complexity-sharing-information-details",
+                name: "low-complexity-sharing-information-details",
+                value: data['low-complexity-sharing-information-details'],
+                rows: 5,
+                label: {
+                    text: "Tell us what you want withheld and why",
+                    classes: "govuk-label--m",
+                    isPageHeading: false
+                },
+                hint: {
+                    html: detailsHintHtml
+                },
+                errorMessage: {
+                    text: detailsErrorText
+                } if errorType
+            }) }}
+
+            <div class="govuk-button-group">
+                {{ govukButton({
+                    text: "Save and continue"
+                }) }}
+
+                {% if not data['low-complexity-sharing-information-from-cya'] and not data['low-complexity-sharing-information-from-main-cya'] %}
+                <a class="govuk-link govuk-link--no-visited-state" href="sharing-your-project-information-publicly-cancel">Cancel</a>
+                {% endif %}
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

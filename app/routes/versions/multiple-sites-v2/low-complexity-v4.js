@@ -613,67 +613,198 @@ module.exports = function (router) {
   });
 
   ///////////////////////////////////////////
-  // Sharing your project information publicly
+  // Sharing your project information publicly (withholding information
+  // from the public register). Mirrors the WFD flow: a No answer ends the
+  // task on the first page; a Yes answer goes through a reason page and on
+  // to a mini check your answers page, which becomes the entry point.
   ///////////////////////////////////////////
 
-  // Sharing your project information publicly GET route
-  router.get(`/versions/${version}/${section}/sharing-your-project-information-publicly`, function (req, res) {
-    // Clear error flags when navigating to the page
-    req.session.data['errorthispage'] = "false";
-    req.session.data['errortypeone'] = "false";
-    req.session.data['errortypetwo'] = "false";
-    
-    // Capture the query parameter if coming from check answers
-    if (req.query.camefromcheckanswers === 'true') {
-      req.session.data['camefromcheckanswers'] = 'true';
+  const SHARING_NATIONAL_SECURITY = 'National security reasons';
+
+  function clearSharingAnswers(data) {
+    delete data['low-complexity-sharing-information-reason'];
+    delete data['low-complexity-sharing-information-approval'];
+    delete data['low-complexity-sharing-information-details'];
+    delete data['low-complexity-sharing-information-reason-answered'];
+  }
+
+  function clearSharingData(data) {
+    clearSharingAnswers(data);
+    delete data['low-complexity-sharing-information'];
+    delete data['low-complexity-sharing-information-completed'];
+    delete data['low-complexity-sharing-information-from-cya'];
+    delete data['low-complexity-sharing-information-from-main-cya'];
+    delete data['low-complexity-sharing-information-original'];
+    delete data['low-complexity-sharing-information-reason-original'];
+    delete data['low-complexity-sharing-information-error'];
+  }
+
+  function sharingReasonPage(data) {
+    return data['low-complexity-sharing-information-reason'] === SHARING_NATIONAL_SECURITY
+      ? 'sharing-your-project-information-publicly-national-security'
+      : 'sharing-your-project-information-publicly-commercial';
+  }
+
+  // The kit copies the session into the template before these routes run, so
+  // render from the live session to pick up flags set in the same request.
+  // The error is shown once, then cleared so it is gone on the next visit.
+  function renderSharing(req, res, page) {
+    const data = Object.assign({}, req.session.data);
+    delete req.session.data['low-complexity-sharing-information-error'];
+    res.render(`versions/${version}/${section}/${page}`, { data: data });
+  }
+
+  // Leaving the task with a No answer, or from the mini check your answers page
+  function finishSharing(req, res) {
+    const data = req.session.data;
+    data['low-complexity-sharing-information-completed'] = true;
+    data['low-complexity-sharing-information-from-cya'] = false;
+    if (data['low-complexity-sharing-information-from-main-cya']) {
+      data['low-complexity-sharing-information-from-main-cya'] = false;
+      return res.redirect('check-your-answers#sharing-your-project-information-publicly');
     }
-    
-    res.render(`versions/${version}/${section}/sharing-your-project-information-publicly`);
+    res.redirect('marine-licence-start-page');
+  }
+
+  // First question – entry point from the task list
+  router.get(`/versions/${version}/${section}/sharing-your-project-information-publicly`, function (req, res) {
+    const data = req.session.data;
+
+    // Change link on the main check your answers page (the No answer end-point)
+    if (req.query.camefromcheckanswers === 'true') {
+      data['low-complexity-sharing-information-from-main-cya'] = true;
+    }
+
+    // Change link on the mini check your answers page – snapshot the answers so
+    // an unchanged answer can jump straight back
+    if (req.query.fromcheckanswers === 'true') {
+      data['low-complexity-sharing-information-original'] = data['low-complexity-sharing-information'];
+      data['low-complexity-sharing-information-reason-original'] = data['low-complexity-sharing-information-reason'];
+      data['low-complexity-sharing-information-from-cya'] = true;
+      return renderSharing(req, res, 'sharing-your-project-information-publicly');
+    }
+
+    // Re-entry from the task list after a Yes path – go to the mini check page
+    if (data['low-complexity-sharing-information-completed'] && data['low-complexity-sharing-information'] === 'Yes' && !data['low-complexity-sharing-information-error']) {
+      return res.redirect('sharing-your-project-information-publicly-check-answers');
+    }
+
+    renderSharing(req, res, 'sharing-your-project-information-publicly');
   });
 
-  // Sharing your project information publicly router (POST)
   router.post(`/versions/${version}/${section}/sharing-your-project-information-publicly-router`, function (req, res) {
-    // Clear error flags
-    req.session.data['errorthispage'] = "false";
-    req.session.data['errortypeone'] = "false";
-    req.session.data['errortypetwo'] = "false";
+    const data = req.session.data;
+    delete data['low-complexity-sharing-information-error'];
 
-    // Get the radio value
-    const sharingConsent = req.session.data['low-complexity-sharing-information'];
-    const sharingDetails = req.session.data['low-complexity-sharing-information-details'];
+    const answer = data['low-complexity-sharing-information'];
+    const reason = data['low-complexity-sharing-information-reason'];
+    const original = data['low-complexity-sharing-information-original'];
+    const originalReason = data['low-complexity-sharing-information-reason-original'];
+    delete data['low-complexity-sharing-information-original'];
+    delete data['low-complexity-sharing-information-reason-original'];
 
-    // If "No" is selected, clear the textarea data (no withholding requested)
-    if (sharingConsent === 'No') {
-      delete req.session.data['low-complexity-sharing-information-details'];
+    if (!answer) {
+      data['low-complexity-sharing-information-error'] = 'answer';
+      return res.redirect('sharing-your-project-information-publicly');
     }
 
-    // Validate: check if radio is selected
-    if (!sharingConsent) {
-      // Set error flags
-      req.session.data['errorthispage'] = "true";
-      req.session.data['errortypeone'] = "true";
-
-      // Redirect back to the same page with errors
-      res.redirect('sharing-your-project-information-publicly');
-    } else if (sharingConsent === 'Yes' && (!sharingDetails || sharingDetails.trim() === '')) {
-      // If Yes is selected, check if textarea has content
-      req.session.data['errorthispage'] = "true";
-      req.session.data['errortypetwo'] = "true";
-
-      // Redirect back to the same page with errors
-      res.redirect('sharing-your-project-information-publicly');
-    } else {
-      // Validation passed - set completion flag
-      req.session.data['low-complexity-sharing-information-completed'] = true;
-      
-      // Check if we need to return to check answers
-      if (req.session.data['camefromcheckanswers'] === 'true') {
-        req.session.data['camefromcheckanswers'] = false;
-        res.redirect('check-your-answers#sharing-your-project-information-publicly');
-      } else {
-        res.redirect('marine-licence-start-page');
-      }
+    if (answer === 'No') {
+      clearSharingAnswers(data);
+      return finishSharing(req, res);
     }
+
+    if (!reason) {
+      data['low-complexity-sharing-information-error'] = 'reason';
+      return res.redirect('sharing-your-project-information-publicly');
+    }
+
+    // Editing from the mini check page and nothing has changed – jump straight back
+    if (data['low-complexity-sharing-information-from-cya'] && answer === original && reason === originalReason) {
+      return res.redirect('sharing-your-project-information-publicly-check-answers');
+    }
+
+    // A different reason from the one last answered means the earlier answers no
+    // longer apply – however the applicant got back here (Change link or Back)
+    if (reason !== data['low-complexity-sharing-information-reason-answered']) {
+      delete data['low-complexity-sharing-information-approval'];
+      delete data['low-complexity-sharing-information-details'];
+    }
+
+    res.redirect(sharingReasonPage(data));
+  });
+
+  // National security reasons
+  router.get(`/versions/${version}/${section}/sharing-your-project-information-publicly-national-security`, function (req, res) {
+    if (req.query.fromcheckanswers === 'true') {
+      req.session.data['low-complexity-sharing-information-from-cya'] = true;
+    }
+    renderSharing(req, res, 'sharing-your-project-information-publicly-national-security');
+  });
+
+  router.post(`/versions/${version}/${section}/sharing-your-project-information-publicly-national-security-router`, function (req, res) {
+    const data = req.session.data;
+    delete data['low-complexity-sharing-information-error'];
+
+    const approval = data['low-complexity-sharing-information-approval'];
+    const details = data['low-complexity-sharing-information-details'];
+
+    if (!approval) {
+      data['low-complexity-sharing-information-error'] = 'approval';
+      return res.redirect('sharing-your-project-information-publicly-national-security');
+    }
+
+    if (approval === 'No') {
+      delete data['low-complexity-sharing-information-details'];
+    } else if (!details || details.trim() === '') {
+      data['low-complexity-sharing-information-error'] = 'details';
+      return res.redirect('sharing-your-project-information-publicly-national-security');
+    }
+
+    data['low-complexity-sharing-information-reason-answered'] = data['low-complexity-sharing-information-reason'];
+    res.redirect('sharing-your-project-information-publicly-check-answers');
+  });
+
+  // Commercial or industrial confidentiality reasons
+  router.get(`/versions/${version}/${section}/sharing-your-project-information-publicly-commercial`, function (req, res) {
+    if (req.query.fromcheckanswers === 'true') {
+      req.session.data['low-complexity-sharing-information-from-cya'] = true;
+    }
+    renderSharing(req, res, 'sharing-your-project-information-publicly-commercial');
+  });
+
+  router.post(`/versions/${version}/${section}/sharing-your-project-information-publicly-commercial-router`, function (req, res) {
+    const data = req.session.data;
+    delete data['low-complexity-sharing-information-error'];
+
+    const details = data['low-complexity-sharing-information-details'];
+
+    if (!details || details.trim() === '') {
+      data['low-complexity-sharing-information-error'] = 'details';
+      return res.redirect('sharing-your-project-information-publicly-commercial');
+    }
+
+    delete data['low-complexity-sharing-information-approval'];
+    data['low-complexity-sharing-information-reason-answered'] = data['low-complexity-sharing-information-reason'];
+    res.redirect('sharing-your-project-information-publicly-check-answers');
+  });
+
+  // Mini check your answers page
+  router.get(`/versions/${version}/${section}/sharing-your-project-information-publicly-check-answers`, function (req, res) {
+    // Change link on the main check your answers page (the Yes answer path)
+    if (req.query.camefromcheckanswers === 'true') {
+      req.session.data['low-complexity-sharing-information-from-main-cya'] = true;
+    }
+    renderSharing(req, res, 'sharing-your-project-information-publicly-check-answers');
+  });
+
+  router.post(`/versions/${version}/${section}/sharing-your-project-information-publicly-check-answers-router`, function (req, res) {
+    finishSharing(req, res);
+  });
+
+  // Cancel – wipes every answer so the next entry is fresh
+  router.get(`/versions/${version}/${section}/sharing-your-project-information-publicly-cancel`, function (req, res) {
+    clearSharingData(req.session.data);
+    res.redirect('marine-licence-start-page');
   });
 
   // Check your answers GET route (shell)
@@ -1073,9 +1204,7 @@ module.exports = function (router) {
     delete req.session.data['low-complexity-consultation-completed'];
     
     // Clear sharing information data
-    delete req.session.data['low-complexity-sharing-information'];
-    delete req.session.data['low-complexity-sharing-information-details'];
-    delete req.session.data['low-complexity-sharing-information-completed'];
+    clearSharingData(req.session.data);
 
     // Clear reject / resubmit journey data so the resubmit draft does not linger
     delete req.session.data['resubmit-draft-created'];
@@ -1402,7 +1531,9 @@ module.exports = function (router) {
       'invoice-address-type', 'invoice-address-line-1', 'invoice-address-line-2', 'invoice-town-city',
       'invoice-county', 'invoice-postcode', 'invoice-full-name', 'invoice-organisation-name',
       'invoice-phone', 'invoice-email', 'invoice-po-required', 'low-complexity-invoicing-completed',
-      'low-complexity-sharing-information', 'low-complexity-sharing-information-completed'
+      'low-complexity-sharing-information', 'low-complexity-sharing-information-completed',
+      'low-complexity-sharing-information-reason', 'low-complexity-sharing-information-approval',
+      'low-complexity-sharing-information-details', 'low-complexity-sharing-information-reason-answered'
     ];
     keys.forEach(function (k) { delete d[k]; });
     ['s-acc-1', 's-bio-1', 's-agg-4', 's-emp-1', 's-uwn-2'].forEach(function (key) {
