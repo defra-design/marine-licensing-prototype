@@ -19,7 +19,7 @@ const MPP_V3_DOCUMENT_CATEGORIES = [
   'Coastal Processes Assessment',
   'Fisheries Assessment',
   'Heritage Assessment',
-  'Technical / Engineering Report',
+  'Technical or Engineering Report',
   'Environmental Assessment',
   'Other supporting evidence'
 ];
