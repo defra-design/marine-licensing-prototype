@@ -27,7 +27,7 @@ Supporting documents
 		<h1 class="govuk-heading-l">{{ pageHeadingTextHTML }}</h1>
 
 		{% if mppV3.missing | length %}
-		<div class="govuk-inset-text">You still need to add a document for {{ mppV3.missingCodes }}.</div>
+		<div class="govuk-inset-text">You still need to add a document for {{ mppV3.missingCodes }}, or link one you’ve already uploaded.</div>
 		{% endif %}
 
 		{% for document in mppV3.documents %}
