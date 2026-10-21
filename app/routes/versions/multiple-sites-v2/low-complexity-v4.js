@@ -18,14 +18,14 @@ module.exports = function (router) {
 
   router.use(function (req, res, next) {
     if (req.path.indexOf('low-complexity-v4') !== -1) {
-      // User testing variants. Journey 5 on /user-testing-links opens the reject
-      // inbox with ?ut=5, matching its journey number, so the scenario name is
+      // User testing variants. Journey 4 on /user-testing-links opens the reject
+      // inbox with ?ut=4, matching its journey number, so the scenario name is
       // not in the link. ?ut=2 (withhold) and ?ut=3 (site notice) are from an
       // earlier round of testing. The number is kept for the rest of the
       // journey. Opening an inbox without it, such as from /index, switches
       // the variants off again so those links behave as they always did.
       if (/\/emails\/inbox-[^/]+$/.test(req.path)) {
-        if (['2', '3', '5'].includes(req.query.ut)) {
+        if (['2', '3', '4'].includes(req.query.ut)) {
           req.session.data['ut'] = req.query.ut;
         } else {
           delete req.session.data['ut'];
@@ -102,12 +102,12 @@ module.exports = function (router) {
       // back to Assessment in progress. Once site notice evidence is in (first time or
       // resubmitted) the application moves on to consultation instead.
       //
-      // In user testing journey 5 (reject) Dawlish is not part of the scenario,
+      // In user testing journey 4 (reject) Dawlish is not part of the scenario,
       // so it shows as being assessed with nothing for the applicant to do.
       let dawlishStatus = 'Action required';
       if (req.session.data['withdrawn-dawlish'] === 'true') {
         dawlishStatus = 'Withdrawn';
-      } else if (req.session.data['ut'] === '5') {
+      } else if (req.session.data['ut'] === '4') {
         dawlishStatus = 'Assessment in progress';
       } else if (stageTaskDone) {
         dawlishStatus = stage === 'withhold' ? 'Assessment in progress' : 'Consultation';
