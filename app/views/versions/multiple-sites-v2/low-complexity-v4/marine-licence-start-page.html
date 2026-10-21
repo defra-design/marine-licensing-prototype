@@ -170,6 +170,8 @@ Marine licence start page
 		{# MPP section: only 5 policy pages are active in this prototype; section is complete when all 5 are done. Display as 37 for usability testing. #}
 		{% set mppActiveComplete = data[mppPrefix + 's-acc-1-completed'] and data[mppPrefix + 's-bio-1-completed'] and data[mppPrefix + 's-agg-4-completed'] and data[mppPrefix + 's-emp-1-completed'] and data[mppPrefix + 's-uwn-2-completed'] %}
 		{% set mppActiveCompletedCount = (data[mppPrefix + 's-acc-1-completed'] and 1 or 0) + (data[mppPrefix + 's-bio-1-completed'] and 1 or 0) + (data[mppPrefix + 's-agg-4-completed'] and 1 or 0) + (data[mppPrefix + 's-emp-1-completed'] and 1 or 0) + (data[mppPrefix + 's-uwn-2-completed'] and 1 or 0) %}
+		{# User testing journey 2 starts with every policy done except S-AGG-4, so count the placeholder policies as completed #}
+		{% set mppActiveCompletedCount = mppActiveCompletedCount + (32 if mppVersion == '3' and data['mpp-v3-placeholders-completed'] and not mppActiveComplete else 0) %}
 		{# v3: the section is not complete while a policy flagged as relying on a document has none linked #}
 		{% set mppSectionComplete = mppActiveComplete and (mppVersion != '3' or mppV3.docsComplete) %}
 		{% set mppDisplayTotal = 37 %}
