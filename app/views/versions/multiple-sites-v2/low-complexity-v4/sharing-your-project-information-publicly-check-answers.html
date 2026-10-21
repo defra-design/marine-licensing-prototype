@@ -11,7 +11,7 @@
 {% endblock %}
 
 {% block pageTitle %}
-Check your answers for withholding information from the public register - {{ data['headerNameExemption'] }}
+Check your answers for information published on the public register - {{ data['headerNameExemption'] }}
 {% endblock %}
 
 {% set isNationalSecurity = data['low-complexity-sharing-information-reason'] == "National security reasons" %}
@@ -22,7 +22,7 @@ Check your answers for withholding information from the public register - {{ dat
     <div class="govuk-grid-column-two-thirds">
 
         <span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
-        <h1 class="govuk-heading-l">Check your answers for withholding information from the public register</h1>
+        <h1 class="govuk-heading-l">Check your answers for information published on the public register</h1>
 
         <dl class="govuk-summary-list">
 
@@ -44,7 +44,7 @@ Check your answers for withholding information from the public register - {{ dat
 
             <div class="govuk-summary-list__row{% if data['low-complexity-sharing-information-approval'] == 'Yes' %} govuk-summary-list__row--no-border{% endif %}">
                 <dt class="govuk-summary-list__key">
-                    Do you have approval from the Secretary of State to withhold information for national security reasons?
+                    Do you have approval from the Secretary of State for Defence to withhold information for national security reasons?
                 </dt>
                 <dd class="govuk-summary-list__value">
                     {% if data['low-complexity-sharing-information-approval'] == 'No' %}
@@ -55,7 +55,7 @@ Check your answers for withholding information from the public register - {{ dat
                 </dd>
                 <dd class="govuk-summary-list__actions">
                     <a class="govuk-link govuk-link--no-visited-state" href="sharing-your-project-information-publicly-national-security?fromcheckanswers=true">
-                        Change<span class="govuk-visually-hidden"> if you have approval from the Secretary of State to withhold information for national security reasons</span>
+                        Change<span class="govuk-visually-hidden"> if you have approval from the Secretary of State for Defence to withhold information for national security reasons</span>
                     </a>
                 </dd>
             </div>

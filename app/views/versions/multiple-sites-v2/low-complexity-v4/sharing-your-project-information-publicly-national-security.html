@@ -28,12 +28,12 @@ Withholding information for national security reasons
 {% endset %}
 
 {% set questionHeadingTextHTML %}
-Do you have approval from the Secretary of State to withhold information for national security reasons?
+Do you have approval from the Secretary of State for Defence to withhold information for national security reasons?
 {% endset %}
 
 <!-- 'approval' = no radio selected, 'details' = Yes selected with the textarea left blank -->
 {% set errorType = data['low-complexity-sharing-information-error'] %}
-{% set approvalErrorText = "Select if you have approval from the Secretary of State to withhold information for national security reasons" %}
+{% set approvalErrorText = "Select if you have approval from the Secretary of State for Defence to withhold information for national security reasons" %}
 {% set detailsErrorText = "Enter what you want withheld and why" %}
 
 {% block pageTitle %}
@@ -47,7 +47,7 @@ Do you have approval from the Secretary of State to withhold information for nat
     <li>where it appears in your application or supporting documents</li>
     <li>why that information is sensitive</li>
     <li>what harm would be caused by publishing it, and who would be affected</li>
-    <li>details of your approval from the Secretary of State</li>
+    <li>details of your approval from the Secretary of State for Defence</li>
 </ul>
 <p class="govuk-hint">If we decide to publish any of the information you asked us to withhold, we will tell you before we publish it, and you can withdraw your application if you want to.</p>
 Enter a maximum of 1,000 characters
@@ -107,7 +107,7 @@ Enter a maximum of 1,000 characters
             </ul>
 
             {{ govukWarningText({
-                text: "You will need approval from the Secretary of State to withhold information on national security grounds.",
+                text: "You will need approval from the Secretary of State for Defence to withhold information on national security grounds.",
                 iconFallbackText: "Warning"
             }) }}
 
