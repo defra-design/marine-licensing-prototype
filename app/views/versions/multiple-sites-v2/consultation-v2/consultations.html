@@ -301,6 +301,13 @@
                sets up both components, so multi-select sits on a wrapper because
                the table can only have one data-module. #}
             <div{% if checkboxes %} data-module="moj-multi-select"{% endif %}>
+            {#
+              MOJ scrollable pane: when the table is too wide it scrolls
+              sideways, with a shadow at the edge showing there is more. The
+              tabindex and label let keyboard users focus it and scroll with
+              the arrow keys, which the plain overflow box did not allow.
+            #}
+            <div class="moj-scrollable-pane" tabindex="0" role="region" aria-label="Consultations">
             <table class="govuk-table" data-module="moj-sortable-table" id="consultations-table">
                 <caption class="govuk-table__caption govuk-table__caption--m govuk-visually-hidden">Consultation requests for Natural England</caption>
                 <thead class="govuk-table__head">
@@ -365,6 +372,7 @@
                     {% endfor %}
                 </tbody>
             </table>
+            </div>
             </div>
                 {% else %}
                 {# Same as the LCML v4 submissions page, so developers can reuse it #}
