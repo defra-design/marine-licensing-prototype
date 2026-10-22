@@ -465,6 +465,19 @@ module.exports = function (router) {
     return 'All Natural England cases';
   }
 
+  function versionUrls(query) {
+    const keep = {};
+    if (query.assign === 'buttons') keep.assign = 'buttons';
+    if (['bar', 'bar-actions'].includes(query.filter)) keep.filter = query.filter;
+    return {
+      assignCheckboxes: consultationsUrl(keep, { assign: null }),
+      assignButtons: consultationsUrl(keep, { assign: 'buttons' }),
+      filterSide: consultationsUrl(keep, { filter: null }),
+      filterBar: consultationsUrl(keep, { filter: 'bar' }),
+      filterBarActions: consultationsUrl(keep, { filter: 'bar-actions' })
+    };
+  }
+
   // Consultation dashboard
   router.get(`${base}/consultations`, function (req, res) {
     const allRequests = Object.values(REQUESTS).map(r => withStatus(req, r));
@@ -487,6 +500,10 @@ module.exports = function (router) {
       // each row. Read from the URL only, not the session, so the tick boxes
       // come back as soon as the query string is dropped.
       assignMode: req.query.assign === 'buttons' ? 'buttons' : 'checkboxes',
+      // ?filter=bar swaps the MOJ side panel for the horizontal filter bar,
+      // with Show/Hide filter level with the heading. ?filter=bar-actions is
+      // the same bar with Show/Hide filter next to the assign buttons.
+      filterMode: ['bar', 'bar-actions'].includes(req.query.filter) ? req.query.filter : 'side',
       filters,
       showOptions: SHOW_OPTIONS,
       typeOptions: TYPE_OPTIONS,
@@ -494,11 +511,9 @@ module.exports = function (router) {
       team: TEAM,
       selectedFilterGroups: selectedFilterGroups(req.query, filters),
       clearFiltersUrl: consultationsUrl(req.query, withoutFilters),
-      // Version switcher links keep any filters that are applied
-      versionUrls: {
-        assignCheckboxes: consultationsUrl(req.query, { assign: null }),
-        assignButtons: consultationsUrl(req.query, { assign: 'buttons' })
-      }
+      // Version switcher links start each version clean: filters are cleared,
+      // but the other version choice (assign or filter) is kept
+      versionUrls: versionUrls(req.query)
     });
   });
 

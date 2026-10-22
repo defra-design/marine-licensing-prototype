@@ -3,6 +3,11 @@
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "versions/multiple-sites-v2/consultation-v2/includes/macros.html" import requestTypeText, statusTag %}
+{% from "versions/multiple-sites-v2/consultation-v2/includes/filter-fields.html" import filterFields %}
+{# Two horizontal bar versions: ?filter=bar puts Show/Hide filter level with
+   the heading, ?filter=bar-actions puts it next to the assign buttons #}
+{% set filterBar = filterMode === "bar" or filterMode === "bar-actions" %}
+{% set toggleInHeader = filterMode === "bar" %}
 
 {% set navActive = "consultations" %}
 {# Widens the page to match the LCML v4 submissions page #}
@@ -36,7 +41,19 @@
     .app-consultations-actions { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 0 15px; }
     .app-consultations-actions .moj-action-bar { margin-bottom: 0; }
     /* govuk-button-group's negative right margin would make the table area scroll sideways */
-    .app-consultations-actions .govuk-button-group { margin-bottom: 0; margin-right: 0; }
+    /* Keep govuk-button-group's own bottom margin: with its buttons' 17px it
+       gives the same 32px gap above the results count as a lone button */
+    .app-consultations-actions .govuk-button-group { margin-right: 0; }
+    /* Horizontal filter bar, light grey like the MOJ filter header */
+    .app-filter-bar { background: #f3f2f1; padding: 20px 20px 25px; margin-bottom: 30px; }
+    .app-filter-bar .govuk-form-group { margin-bottom: 20px; }
+    .app-filter-bar .govuk-button-group { align-items: center; }
+    /* govuk-button-group gives links a bottom margin, which pushes Clear filters up */
+    .app-filter-bar .govuk-button-group .govuk-link { margin-top: 0; margin-bottom: 0; }
+    /* Same gap under the heading as the side panel version */
+    .moj-page-header-actions { margin-bottom: 30px; }
+    /* When hidden, the whole grey panel goes, not just its contents */
+    .app-filter-bar--collapsed { display: none; }
     /* Hide the panel's own heading row of "Selected filters" when nothing is selected */
     .moj-filter__selected:empty { display: none; }
   </style>
@@ -45,27 +62,59 @@
 {% block bodyEnd %}
   {{ super() }}
   <script>
-    // MOJ's FilterToggleButton adds Show filter to the action bar. The page
-    // reloads when filtering or assigning, so remember whether the panel was
-    // open and keep it that way. The first time, it starts open only if
-    // filters are applied. initAll does not cover it, so import it from the
-    // plugin asset the kit serves, as the LCML v4 submissions filter does.
-    var PANEL_KEY = 'consultation-v2-filter-panel'
-    var stored = null
-    try { stored = window.sessionStorage.getItem(PANEL_KEY) } catch (e) {}
-    var startHidden = stored ? stored === 'hidden' : {{ 'false' if selectedFilterGroups.length else 'true' }}
+    /*
+      Filter panel open or hidden.
 
+      Every version starts with the filter hidden, so arriving from the index
+      page, the tray, the navigation or a back link always gives a clean view.
+      The only exception is the reload after pressing Apply filters, Assign to
+      me or Unassign from me on this page: just before those forms submit, we
+      note whether the filter was open, and put it back that way on the next
+      load. The note is used once and then removed.
+    */
+    var KEEP_KEY = 'consultation-v2-keep-filter-open'
+    var keepOpen = false
+    try {
+      keepOpen = window.sessionStorage.getItem(KEEP_KEY) === 'true'
+      window.sessionStorage.removeItem(KEEP_KEY)
+    } catch (e) {}
+
+    function filterIsOpen () {
+      var side = document.querySelector('.moj-filter')
+      if (side) return !side.classList.contains('moj-js-hidden')
+      var barBody = document.getElementById('app-filter-bar-body')
+      return barBody ? !barBody.hidden : false
+    }
+
+    Array.prototype.forEach.call(document.querySelectorAll('main form'), function (form) {
+      form.addEventListener('submit', function () {
+        try { window.sessionStorage.setItem(KEEP_KEY, filterIsOpen() ? 'true' : 'false') } catch (e) {}
+      })
+    })
+
+    // Horizontal bar versions: our own Show filter / Hide filter button
+    var barToggle = document.getElementById('app-filter-bar-toggle')
+    if (barToggle) {
+      var bar = document.querySelector('.app-filter-bar')
+      var barBody = document.getElementById('app-filter-bar-body')
+      var setBar = function (open) {
+        barBody.hidden = !open
+        bar.classList.toggle('app-filter-bar--collapsed', !open)
+        barToggle.setAttribute('aria-expanded', open ? 'true' : 'false')
+        barToggle.textContent = open ? 'Hide filter' : 'Show filter'
+      }
+      barToggle.hidden = false
+      setBar(keepOpen)
+      barToggle.addEventListener('click', function () { setBar(barBody.hidden) })
+    }
+
+    // Side panel version: MOJ's FilterToggleButton adds Show filter to the
+    // action bar. initAll does not cover it, so import it from the plugin
+    // asset the kit serves, as the LCML v4 submissions filter does.
     import('/plugin-assets/%40ministryofjustice%2Ffrontend/moj/moj-frontend.min.js')
       .then(function (moj) {
         var filter = document.querySelector('.moj-filter')
-        if (!filter) return
-        new moj.FilterToggleButton(filter, { startHidden: startHidden })
-        var button = document.querySelector('.moj-action-bar__filter button')
-        if (!button) return
-        button.addEventListener('click', function () {
-          var open = button.getAttribute('aria-expanded') === 'true'
-          try { window.sessionStorage.setItem(PANEL_KEY, open ? 'open' : 'hidden') } catch (e) {}
-        })
+        if (filter) new moj.FilterToggleButton(filter, { startHidden: !keepOpen })
       })
       .catch(function () { /* panel stays visible */ })
   </script>
@@ -83,7 +132,26 @@
         }) }}
         {% endif %}
 
+        {% if toggleInHeader %}
+        {#
+          MOJ page header actions: Show/Hide filter sits on the white page,
+          level with the heading. A grey button on the grey panel did not have
+          enough contrast to be seen.
+        #}
+        <div class="moj-page-header-actions">
+            <div class="moj-page-header-actions__title">
+                <h1 class="govuk-heading-l">Consultations</h1>
+            </div>
+            <div class="moj-page-header-actions__actions">
+                <div class="moj-button-group moj-button-group--inline">
+                    {# Shown by the script below, so without JavaScript the filters are always open #}
+                    <button type="button" class="govuk-button govuk-button--secondary" id="app-filter-bar-toggle" aria-controls="app-filter-bar-body" aria-expanded="true" hidden>Hide filter</button>
+                </div>
+            </div>
+        </div>
+        {% else %}
         <h1 class="govuk-heading-l">Consultations</h1>
+        {% endif %}
 
         {#
           MOJ "Filter a list" pattern, as on the LCML v4 submissions page.
@@ -91,6 +159,33 @@
           Filtering happens on the server, so ticked rows a filter hides are
           never sent when assigning, and Select all only covers what is shown.
         #}
+        {% if filterBar %}
+        {#
+          Horizontal filter: every option in view in three columns, so the
+          table keeps its full width. Same fields and query string as the
+          side panel. Nothing changes until Apply filters is pressed.
+        #}
+        <form method="get" action="consultations" class="app-filter-bar" novalidate>
+            <input type="hidden" name="filter" value="{{ filterMode }}">
+            {% if assignMode === "buttons" %}
+            <input type="hidden" name="assign" value="buttons">
+            {% endif %}
+            <div class="app-filter-bar__body" id="app-filter-bar-body">
+                <h2 class="govuk-heading-m">Filter</h2>
+                <div class="govuk-grid-row">
+                    {{ filterFields(filters, showOptions, typeOptions, statusOptions, team, true) }}
+                </div>
+                <div class="govuk-button-group govuk-!-margin-bottom-0">
+                    {{ govukButton({
+                        text: "Apply filters",
+                        classes: "govuk-!-margin-bottom-0"
+                    }) }}
+                    <a href="{{ clearFiltersUrl }}" class="govuk-link govuk-link--no-visited-state">Clear filters</a>
+                </div>
+            </div>
+        </form>
+        <div>
+        {% else %}
         <div class="moj-filter-layout moj-filter-layout--narrow">
             <div class="moj-filter-layout__filter">
                 <div class="moj-filter" data-module="moj-filter">
@@ -133,75 +228,28 @@
                                 classes: "govuk-!-margin-bottom-6"
                             }) }}
 
-                            <div class="govuk-form-group">
-                                <fieldset class="govuk-fieldset">
-                                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Show</legend>
-                                    <div class="govuk-radios govuk-radios--small" data-module="govuk-radios">
-                                        {% for option in showOptions %}
-                                        <div class="govuk-radios__item">
-                                            <input class="govuk-radios__input" id="filter-show-{{ option.value }}" name="consultation-v2-show" type="radio" value="{{ option.value }}"{% if filters.show === option.value %} checked{% endif %}{% if option.value === "person" %} data-aria-controls="conditional-filter-person"{% endif %}>
-                                            <label class="govuk-label govuk-radios__label" for="filter-show-{{ option.value }}">{{ option.text }}</label>
-                                        </div>
-                                        {% if option.value === "person" %}
-                                        <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-filter-person">
-                                            <fieldset class="govuk-fieldset">
-                                                <legend class="govuk-fieldset__legend govuk-visually-hidden">Select who the cases are assigned to</legend>
-                                                <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
-                                                    {% for person in team %}
-                                                    <div class="govuk-checkboxes__item">
-                                                        <input class="govuk-checkboxes__input" id="filter-person-{{ loop.index }}" name="consultation-v2-person" type="checkbox" value="{{ person }}"{% if person in filters.people %} checked{% endif %}>
-                                                        <label class="govuk-label govuk-checkboxes__label" for="filter-person-{{ loop.index }}">{{ person }}</label>
-                                                    </div>
-                                                    {% endfor %}
-                                                </div>
-                                            </fieldset>
-                                        </div>
-                                        {% endif %}
-                                        {% endfor %}
-                                    </div>
-                                </fieldset>
-                            </div>
-
-                            <div class="govuk-form-group">
-                                <fieldset class="govuk-fieldset">
-                                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Type</legend>
-                                    <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
-                                        {% for option in typeOptions %}
-                                        <div class="govuk-checkboxes__item">
-                                            <input class="govuk-checkboxes__input" id="filter-type-{{ option.value }}" name="consultation-v2-type" type="checkbox" value="{{ option.value }}"{% if option.value in filters.types %} checked{% endif %}>
-                                            <label class="govuk-label govuk-checkboxes__label" for="filter-type-{{ option.value }}">{{ option.text }}</label>
-                                        </div>
-                                        {% endfor %}
-                                    </div>
-                                </fieldset>
-                            </div>
-
-                            <div class="govuk-form-group">
-                                <fieldset class="govuk-fieldset">
-                                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Status</legend>
-                                    <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
-                                        {% for status in statusOptions %}
-                                        <div class="govuk-checkboxes__item">
-                                            <input class="govuk-checkboxes__input" id="filter-status-{{ loop.index }}" name="consultation-v2-status" type="checkbox" value="{{ status }}"{% if status in filters.statuses %} checked{% endif %}>
-                                            <label class="govuk-label govuk-checkboxes__label" for="filter-status-{{ loop.index }}">{{ status }}</label>
-                                        </div>
-                                        {% endfor %}
-                                    </div>
-                                </fieldset>
-                            </div>
+                            {{ filterFields(filters, showOptions, typeOptions, statusOptions, team, false) }}
                         </form>
                     </div>
                 </div>
             </div>
 
             <div class="moj-filter-layout__content">
+        {% endif %}
                 <form method="post" novalidate>
 
                 <div class="app-consultations-actions">
+                    {% if filterMode === "bar-actions" %}
+                    {# Show/Hide filter alongside the assign buttons, as in the side panel version #}
+                    <div class="govuk-button-group">
+                        <button type="button" class="govuk-button govuk-button--secondary" id="app-filter-bar-toggle" aria-controls="app-filter-bar-body" aria-expanded="true" hidden>Hide filter</button>
+                    </div>
+                    {% elif not filterBar %}
                     {# FilterToggleButton puts Show filter in here #}
                     <div class="moj-action-bar">
                         <div class="moj-action-bar__filter"></div>
                     </div>
+                    {% endif %}
 
                     {% if checkboxes %}
                     <div class="govuk-button-group">
@@ -295,8 +343,12 @@
                 {% endif %}
 
                 </form>
+        {% if filterBar %}
+        </div>
+        {% else %}
             </div>
         </div>
+        {% endif %}
 
     </div>
 </div>

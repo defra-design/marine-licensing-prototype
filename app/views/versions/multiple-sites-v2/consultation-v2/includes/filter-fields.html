@@ -1,0 +1,71 @@
+{#
+  The Show, Type and Status filter fields, shared by the MOJ side panel and
+  the horizontal bar so both send the same query string. In the bar, each
+  group sits in its own column.
+#}
+{% macro filterFields(filters, showOptions, typeOptions, statusOptions, team, columns) %}
+{% set columnOpen = '<div class="govuk-grid-column-one-third">' if columns else '' %}
+{% set columnClose = '</div>' if columns else '' %}
+{{ columnOpen | safe }}
+<div class="govuk-form-group">
+    <fieldset class="govuk-fieldset">
+        <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Show</legend>
+        <div class="govuk-radios govuk-radios--small" data-module="govuk-radios">
+            {% for option in showOptions %}
+            <div class="govuk-radios__item">
+                <input class="govuk-radios__input" id="filter-show-{{ option.value }}" name="consultation-v2-show" type="radio" value="{{ option.value }}"{% if filters.show === option.value %} checked{% endif %}{% if option.value === "person" %} data-aria-controls="conditional-filter-person"{% endif %}>
+                <label class="govuk-label govuk-radios__label" for="filter-show-{{ option.value }}">{{ option.text }}</label>
+            </div>
+            {% if option.value === "person" %}
+            <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-filter-person">
+                <fieldset class="govuk-fieldset">
+                    <legend class="govuk-fieldset__legend govuk-visually-hidden">Select who the cases are assigned to</legend>
+                    <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+                        {% for person in team %}
+                        <div class="govuk-checkboxes__item">
+                            <input class="govuk-checkboxes__input" id="filter-person-{{ loop.index }}" name="consultation-v2-person" type="checkbox" value="{{ person }}"{% if person in filters.people %} checked{% endif %}>
+                            <label class="govuk-label govuk-checkboxes__label" for="filter-person-{{ loop.index }}">{{ person }}</label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </fieldset>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </fieldset>
+</div>
+{{ columnClose | safe }}
+
+{{ columnOpen | safe }}
+<div class="govuk-form-group">
+    <fieldset class="govuk-fieldset">
+        <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Type</legend>
+        <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+            {% for option in typeOptions %}
+            <div class="govuk-checkboxes__item">
+                <input class="govuk-checkboxes__input" id="filter-type-{{ option.value }}" name="consultation-v2-type" type="checkbox" value="{{ option.value }}"{% if option.value in filters.types %} checked{% endif %}>
+                <label class="govuk-label govuk-checkboxes__label" for="filter-type-{{ option.value }}">{{ option.text }}</label>
+            </div>
+            {% endfor %}
+        </div>
+    </fieldset>
+</div>
+{{ columnClose | safe }}
+
+{{ columnOpen | safe }}
+<div class="govuk-form-group">
+    <fieldset class="govuk-fieldset">
+        <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Status</legend>
+        <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+            {% for status in statusOptions %}
+            <div class="govuk-checkboxes__item">
+                <input class="govuk-checkboxes__input" id="filter-status-{{ loop.index }}" name="consultation-v2-status" type="checkbox" value="{{ status }}"{% if status in filters.statuses %} checked{% endif %}>
+                <label class="govuk-label govuk-checkboxes__label" for="filter-status-{{ loop.index }}">{{ status }}</label>
+            </div>
+            {% endfor %}
+        </div>
+    </fieldset>
+</div>
+{{ columnClose | safe }}
+{% endmacro %}

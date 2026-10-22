@@ -98,14 +98,14 @@
   <ul class="govuk-list govuk-list--spaced">
     <li>
       {% if currentAssign === "checkboxes" %}
-      <strong aria-current="true">Checkboxes</strong> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      <span aria-current="true">Checkboxes</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
       {% else %}
       <a href="{{ versionUrls.assignCheckboxes if versionUrls else consultationsUrl }}" class="govuk-link govuk-link--no-visited-state">Checkboxes</a>
       {% endif %}
     </li>
     <li>
       {% if currentAssign === "buttons" %}
-      <strong aria-current="true">Buttons on each row</strong> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      <span aria-current="true">Buttons on each row</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
       {% else %}
       <a href="{{ versionUrls.assignButtons if versionUrls else consultationsUrl + '?assign=buttons' }}" class="govuk-link govuk-link--no-visited-state">Buttons on each row</a>
       {% endif %}
@@ -116,7 +116,27 @@
   <div class="app-version-tray__section">
   <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Filtering</h3>
   <ul class="govuk-list govuk-list--spaced">
-    <li><strong aria-current="true">Side panel (MOJ)</strong> <span class="govuk-hint govuk-!-display-inline">(showing)</span></li>
+    <li>
+      {% if filterMode !== "bar" and filterMode !== "bar-actions" %}
+      <span aria-current="true">Side panel (MOJ)</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ versionUrls.filterSide if versionUrls else consultationsUrl }}" class="govuk-link govuk-link--no-visited-state">Side panel (MOJ)</a>
+      {% endif %}
+    </li>
+    <li>
+      {% if filterMode === "bar-actions" %}
+      <span aria-current="true">Horizontal bar, toggle by buttons</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ versionUrls.filterBarActions if versionUrls else consultationsUrl + '?filter=bar-actions' }}" class="govuk-link govuk-link--no-visited-state">Horizontal bar, toggle by buttons</a>
+      {% endif %}
+    </li>
+    <li>
+      {% if filterMode === "bar" %}
+      <span aria-current="true">Horizontal bar, toggle by heading</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ versionUrls.filterBar if versionUrls else consultationsUrl + '?filter=bar' }}" class="govuk-link govuk-link--no-visited-state">Horizontal bar, toggle by heading</a>
+      {% endif %}
+    </li>
   </ul>
   </div>
 
@@ -140,12 +160,21 @@
     // Side or bottom. Remembered in this browser only, so it survives page
     // changes; storage can be unavailable, so fall back to the side.
     var STORAGE_KEY = 'consultation-v2-version-tray-position'
-    // Whether the tray is open, so it stays open while clicking through versions
-    var OPEN_KEY = 'consultation-v2-version-tray-open'
+    // The tray starts closed on every page, except straight after choosing a
+    // version in it, or submitting a form on the page while it is open, so
+    // you can flick through versions. A one-off note, used once and removed.
+    var KEEP_OPEN_KEY = 'consultation-v2-keep-tray-open'
 
-    function rememberOpen (isOpen) {
-      try { window.localStorage.setItem(OPEN_KEY, isOpen ? 'true' : 'false') } catch (e) {}
+    function keepOpenForNextPage () {
+      try { window.sessionStorage.setItem(KEEP_OPEN_KEY, 'true') } catch (e) {}
     }
+
+    Array.prototype.forEach.call(tray.querySelectorAll('a'), function (link) {
+      link.addEventListener('click', keepOpenForNextPage)
+    })
+    Array.prototype.forEach.call(document.querySelectorAll('main form'), function (form) {
+      form.addEventListener('submit', function () { if (!tray.hidden) keepOpenForNextPage() })
+    })
 
     function setPosition (position) {
       var bottom = position === 'bottom'
@@ -172,7 +201,6 @@
       tray.hidden = false
       toggle.setAttribute('aria-expanded', 'true')
       makeRoom()
-      rememberOpen(true)
       if (!keepFocus) heading.focus()
     }
 
@@ -180,14 +208,17 @@
       tray.hidden = true
       toggle.setAttribute('aria-expanded', 'false')
       makeRoom()
-      rememberOpen(false)
       toggle.focus()
     }
 
     toggle.addEventListener('click', function () { tray.hidden ? open() : shut() })
 
-    // Reopen after following a link in the tray, without moving focus off the page
-    try { if (window.localStorage.getItem(OPEN_KEY) === 'true') open(true) } catch (e) {}
+    // Reopen after choosing a version, without moving focus off the page
+    try {
+      if (window.sessionStorage.getItem(KEEP_OPEN_KEY) === 'true') open(true)
+      window.sessionStorage.removeItem(KEEP_OPEN_KEY)
+      window.localStorage.removeItem('consultation-v2-version-tray-open') // the old always-open setting
+    } catch (e) {}
     close.addEventListener('click', shut)
     document.addEventListener('keydown', function (e) {
       if (e.key === 'Escape' && !tray.hidden) shut()
