@@ -104,7 +104,9 @@
                     {# Ranked by what needs doing, not alphabetically #}
                     <td class="govuk-table__cell" data-sort-value="{{ {'Response needed': 1, 'No response needed': 2, 'Responded': 3}[request.status] }}">{{ statusTag(request) }}</td>
                     <td class="govuk-table__cell">{{ request.assignedToText }}</td>
-                    <td class="govuk-table__cell app-nowrap" data-sort-value="{{ request.respondByOffset | daysFromTodaySort }}">{{ request.respondByOffset | daysFromTodayShort }}</td>
+                    {# Responded cases get a leading 1 so they sort after every open case,
+                       keeping the default sort on open deadlines, soonest first #}
+                    <td class="govuk-table__cell app-nowrap" data-sort-value="{{ ('1' if request.status === 'Responded' else '') + (request.respondByOffset | daysFromTodaySort) }}">{{ request.respondByOffset | daysFromTodayShort }}</td>
                     <td class="govuk-table__cell app-nowrap" data-sort-value="{{ request.receivedOffset | daysFromTodaySort }}">{{ request.receivedOffset | daysFromTodayShort }}</td>
                     {% if not checkboxes %}
                     <td class="govuk-table__cell">
