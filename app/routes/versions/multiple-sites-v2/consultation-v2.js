@@ -14,6 +14,9 @@ module.exports = function (router) {
   //   response-required - MMO is asking the consultee for advice
   //   notify-only       - MMO is letting the consultee know; responding is optional
   //
+  // marinePlanArea is the English marine plan area the site is in, shown on
+  // the request page as the application's location.
+  //
   // Dates are day offsets from today, run through the daysFromTodayShort filter.
   // Respond by is always the received date plus the 14 day response period,
   // so it is worked out in withStatus rather than set here.
@@ -52,7 +55,8 @@ module.exports = function (router) {
         workingHours: 'Monday to Friday, 07:30 to 18:00, with some working outside these hours to take advantage of low tides.',
         drawing: 'sea-defence-construction-drawing.pdf'
       },
-      siteLocation: 'Dawlish, Devon'
+      siteLocation: 'Dawlish, Devon',
+      marinePlanArea: 'South Inshore'
     },
     'lyme-regis': {
       id: 'lyme-regis',
@@ -77,7 +81,8 @@ module.exports = function (router) {
         workingHours: 'Monday to Friday, 08:00 to 17:00. Occasional Saturday morning working may be required to take advantage of suitable tidal windows.',
         drawing: 'pontoon-construction-drawing.pdf'
       },
-      siteLocation: 'Lyme Regis Harbour, Dorset'
+      siteLocation: 'Lyme Regis Harbour, Dorset',
+      marinePlanArea: 'South Inshore'
     },
     // The requests below are made up for v2, so the case list has enough
     // rows to show assigning, filtering and sorting.
@@ -107,7 +112,8 @@ module.exports = function (router) {
         workingHours: 'Monday to Saturday, 07:00 to 19:00, tide dependent.',
         drawing: 'dredge-area-plan.pdf'
       },
-      siteLocation: 'Falmouth, Cornwall'
+      siteLocation: 'Falmouth, Cornwall',
+      marinePlanArea: 'South West Inshore'
     },
     'whitstable': {
       id: 'whitstable',
@@ -134,7 +140,8 @@ module.exports = function (router) {
         workingHours: 'Low tide windows only, any day of the week.',
         drawing: 'trestle-layout-plan.pdf'
       },
-      siteLocation: 'Whitstable, Kent'
+      siteLocation: 'Whitstable, Kent',
+      marinePlanArea: 'South East Inshore'
     },
     'bude': {
       id: 'bude',
@@ -157,7 +164,8 @@ module.exports = function (router) {
         workingHours: 'Monday to Friday, 08:00 to 17:00, tide dependent.',
         drawing: 'outfall-repair-drawing.pdf'
       },
-      siteLocation: 'Bude, Cornwall'
+      siteLocation: 'Bude, Cornwall',
+      marinePlanArea: 'South West Inshore'
     },
     'scarborough': {
       id: 'scarborough',
@@ -184,7 +192,8 @@ module.exports = function (router) {
         workingHours: 'Monday to Friday, 07:30 to 18:00, tide dependent.',
         drawing: 'slipway-drawing.pdf'
       },
-      siteLocation: 'Scarborough, North Yorkshire'
+      siteLocation: 'Scarborough, North Yorkshire',
+      marinePlanArea: 'North East Inshore'
     },
     'poole': {
       id: 'poole',
@@ -207,7 +216,8 @@ module.exports = function (router) {
         workingHours: 'Monday to Friday, 08:00 to 16:00.',
         drawing: 'mooring-layout-plan.pdf'
       },
-      siteLocation: 'Poole Harbour, Dorset'
+      siteLocation: 'Poole Harbour, Dorset',
+      marinePlanArea: 'South Inshore'
     },
     'hayling': {
       id: 'hayling',
@@ -234,7 +244,8 @@ module.exports = function (router) {
         workingHours: 'Monday to Friday, 07:30 to 17:30, tide dependent.',
         drawing: 'groyne-repair-drawing.pdf'
       },
-      siteLocation: 'Hayling Island, Hampshire'
+      siteLocation: 'Hayling Island, Hampshire',
+      marinePlanArea: 'South Inshore'
     },
     // Past requests that have already been responded to, so the case list
     // and request pages show what a finished consultation looks like.
@@ -267,7 +278,8 @@ module.exports = function (router) {
         workingHours: 'Monday to Saturday, 07:00 to 19:00, tide dependent.',
         drawing: 'beach-recharge-profile.pdf'
       },
-      siteLocation: 'Sidmouth, Devon'
+      siteLocation: 'Sidmouth, Devon',
+      marinePlanArea: 'South Inshore'
     },
     'brixham': {
       id: 'brixham',
@@ -297,7 +309,8 @@ module.exports = function (router) {
         workingHours: 'Monday to Friday, 08:00 to 17:00.',
         drawing: 'navigation-light-drawing.pdf'
       },
-      siteLocation: 'Brixham, Devon'
+      siteLocation: 'Brixham, Devon',
+      marinePlanArea: 'South Inshore'
     }
   };
 
@@ -545,6 +558,20 @@ module.exports = function (router) {
     }
 
     backToConsultations();
+  });
+
+  // The Notify email the consultee organisation gets, for either type of request
+  router.get(`${base}/emails/:requestId`, function (req, res) {
+    const request = findRequest(req, res);
+    if (!request) return;
+    res.render(`versions/${version}/${section}/emails/email`, { request });
+  });
+
+  // Government Gateway sign-in from the email, which then opens that request
+  router.get(`${base}/sign-in/:requestId`, function (req, res) {
+    const request = findRequest(req, res);
+    if (!request) return;
+    res.render(`versions/${version}/${section}/emails/sign-in`, { request });
   });
 
   // Request details

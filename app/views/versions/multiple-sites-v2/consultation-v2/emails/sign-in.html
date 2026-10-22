@@ -1,0 +1,7 @@
+{#
+  Government Gateway sign-in from a consultation email. Reuses the LCML v4
+  detached sign-in page, and like the LCML v4 email journeys it goes straight
+  to the page the email is about: here, that request's details.
+#}
+{% set signInNext = "../request-details/" + request.id %}
+{% include "versions/multiple-sites-v2/low-complexity-v4/emails/_gg-sign-in.html" %}
