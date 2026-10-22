@@ -84,6 +84,13 @@ Do you want to ask us to withhold any information from the public register?
 
             <p class="govuk-body">We are required by law to publish information about your application on the MMO’s public register. We publish your application and your supporting documents, including the personal information we are required by law to publish.</p>
 
+            {{ govukDetails({
+                summaryText: "Help with personal information in your application",
+                html: '<p class="govuk-body">We publish the personal information we are required by law to publish. This includes the names and addresses of applicants, licence holders, agents and contractors. This is why we ask for it.</p>
+                <p class="govuk-body">Only give personal information where we ask for it. Do not include personal information about yourself or anyone else anywhere else in your application or in your supporting documents. This includes names, contact details and signatures.</p>
+                <p class="govuk-body">If you include personal information we have not asked for, a case officer will need to remove it before we publish your application. This may delay your decision.</p>'
+            }) }}
+
             <p class="govuk-body">We do not publish the costs of your project, signatures, or administrative information we are not required to publish.</p>
 
             <p class="govuk-body">Most applications do not need anything withheld. We can only withhold information if publishing it would:</p>
@@ -94,13 +101,6 @@ Do you want to ask us to withhold any information from the public register?
             </ul>
 
             <p class="govuk-body">We cannot withhold information for any other reason.</p>
-
-            {{ govukDetails({
-                summaryText: "Help with personal information in your application",
-                html: '<p class="govuk-body">We publish the personal information we are required by law to publish. This includes the names and addresses of applicants, licence holders, agents and contractors. This is why we ask for it.</p>
-                <p class="govuk-body">Only give personal information where we ask for it. Do not include personal information about yourself or anyone else anywhere else in your application or in your supporting documents. This includes names, contact details and signatures.</p>
-                <p class="govuk-body">If you include personal information we have not asked for, a case officer will need to remove it before we publish your application. This may delay your decision.</p>'
-            }) }}
 
             {{ govukWarningText({
                 text: "You will need approval from the Secretary of State for Defence to withhold information on national security grounds.",
