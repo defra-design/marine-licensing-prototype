@@ -520,8 +520,8 @@ module.exports = function (router) {
       // with Show/Hide filter level with the heading. ?filter=bar-actions is
       // the same bar with Show/Hide filter next to the assign buttons.
       filterMode: ['bar', 'bar-actions'].includes(req.query.filter) ? req.query.filter : 'side',
-      // ?layout=full stretches the page to the full width of the screen and
-      // adds a Marine plan area column. An idea to test, not a GOV.UK default.
+      // ?layout=full widens the page to up to 1920px and adds a Marine plan
+      // area column. An idea to test, not a GOV.UK default.
       layoutMode: req.query.layout === 'full' ? 'full' : 'standard',
       filters,
       showOptions: SHOW_OPTIONS,

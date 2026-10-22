@@ -10,8 +10,8 @@
 {% set toggleInHeader = filterMode === "bar" %}
 
 {% set navActive = "consultations" %}
-{# Widens the page to match the LCML v4 submissions page, or to the full
-   width of the screen with ?layout=full #}
+{# Widens the page to match the LCML v4 submissions page, or up to 1920px
+   with ?layout=full #}
 {% set fullWidth = layoutMode === "full" %}
 {% set currentPageId = "consultation-full-width" if fullWidth else "low-complexity-projects" %}
 {% set pageTitle = "Consultations" %}
@@ -21,11 +21,13 @@
   {{ super() }}
   <style>
     #consultations-table .app-nowrap { white-space: nowrap; }
-    /* Full width version: the page, header and navigation use the whole
-       screen, with the usual GOV.UK gutters */
+    /* Wide version: the page, header and navigation go up to 1920px (a full
+       HD screen), with the usual GOV.UK gutters until there is room to centre.
+       Wide enough for the table not to wrap, without spreading out on bigger
+       screens. */
     .page-consultation-full-width .govuk-width-container,
     .page-consultation-full-width .govuk-header__container {
-      max-width: none;
+      max-width: 1920px;
       margin-left: 15px;
       margin-right: 15px;
     }
@@ -34,6 +36,13 @@
       .page-consultation-full-width .govuk-header__container {
         margin-left: 30px;
         margin-right: 30px;
+      }
+    }
+    @media (min-width: 1980px) {
+      .page-consultation-full-width .govuk-width-container,
+      .page-consultation-full-width .govuk-header__container {
+        margin-left: auto;
+        margin-right: auto;
       }
     }
     /* Let the success banner text use the full width of the banner */
