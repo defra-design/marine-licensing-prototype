@@ -100,16 +100,23 @@
       {% if currentAssign === "checkboxes" %}
       <strong aria-current="true">Checkboxes</strong> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
       {% else %}
-      <a href="{{ consultationsUrl }}" class="govuk-link govuk-link--no-visited-state">Checkboxes</a>
+      <a href="{{ versionUrls.assignCheckboxes if versionUrls else consultationsUrl }}" class="govuk-link govuk-link--no-visited-state">Checkboxes</a>
       {% endif %}
     </li>
     <li>
       {% if currentAssign === "buttons" %}
       <strong aria-current="true">Buttons on each row</strong> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
       {% else %}
-      <a href="{{ consultationsUrl }}?assign=buttons" class="govuk-link govuk-link--no-visited-state">Buttons on each row</a>
+      <a href="{{ versionUrls.assignButtons if versionUrls else consultationsUrl + '?assign=buttons' }}" class="govuk-link govuk-link--no-visited-state">Buttons on each row</a>
       {% endif %}
     </li>
+  </ul>
+  </div>
+
+  <div class="app-version-tray__section">
+  <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Filtering</h3>
+  <ul class="govuk-list govuk-list--spaced">
+    <li><strong aria-current="true">Side panel (MOJ)</strong> <span class="govuk-hint govuk-!-display-inline">(showing)</span></li>
   </ul>
   </div>
 

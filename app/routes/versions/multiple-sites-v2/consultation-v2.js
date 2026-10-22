@@ -359,21 +359,146 @@ module.exports = function (router) {
     return withStatus(req, request);
   }
 
+  // Team members who can be assigned, other than you. Used by the Show filter.
+  const TEAM = ['Jenny Adkinson', 'Kevin Morris', 'Morgan Hughes'];
+
+  const TYPE_OPTIONS = [
+    { value: 'response-required', text: 'Request for advice' },
+    { value: 'notify-only', text: 'Application notification' }
+  ];
+  const STATUS_OPTIONS = ['Response needed', 'No response needed', 'Responded'];
+  const SHOW_OPTIONS = [
+    { value: 'all', text: 'All cases' },
+    { value: 'me', text: 'Assigned to me' },
+    { value: 'unassigned', text: 'Unassigned' },
+    { value: 'person', text: 'Assigned to someone else' }
+  ];
+
+  // Filters live in the URL so they survive assigning and can be shared.
+  // Names are prefixed because the kit also copies query strings into the
+  // session, and plain names like "type" or "status" are used elsewhere.
+  const FILTER_KEYS = ['consultation-v2-show', 'consultation-v2-person', 'consultation-v2-type', 'consultation-v2-status'];
+
+  function asArray(value) {
+    return [].concat(value || []).filter(v => v && v !== '_unchecked');
+  }
+
+  function readFilters(query) {
+    const show = SHOW_OPTIONS.some(o => o.value === query['consultation-v2-show']) ? query['consultation-v2-show'] : 'all';
+    return {
+      show,
+      people: show === 'person' ? asArray(query['consultation-v2-person']).filter(p => TEAM.includes(p)) : [],
+      types: asArray(query['consultation-v2-type']).filter(t => TYPE_OPTIONS.some(o => o.value === t)),
+      statuses: asArray(query['consultation-v2-status']).filter(st => STATUS_OPTIONS.includes(st))
+    };
+  }
+
+  function matchesFilters(request, filters) {
+    if (filters.show === 'me' && request.assignedTo !== ME) return false;
+    if (filters.show === 'unassigned' && request.assignedTo) return false;
+    if (filters.show === 'person' && filters.people.length && !filters.people.includes(request.assignedTo)) return false;
+    if (filters.show === 'person' && !filters.people.length && (!request.assignedTo || request.assignedTo === ME)) return false;
+    if (filters.types.length && !filters.types.includes(request.type)) return false;
+    if (filters.statuses.length && !filters.statuses.includes(request.status)) return false;
+    return true;
+  }
+
+  // Builds a consultations URL from the current query, with some keys changed.
+  // A value of null removes the key.
+  function consultationsUrl(query, changes) {
+    const params = new URLSearchParams();
+    const merged = Object.assign({}, query, changes);
+    Object.keys(merged).forEach(key => {
+      [].concat(merged[key] === null || merged[key] === undefined ? [] : merged[key])
+        // The kit adds _unchecked for empty checkbox groups; leave it out of links
+        .filter(value => value !== '_unchecked')
+        .forEach(value => params.append(key, value));
+    });
+    const qs = params.toString();
+    return `${base}/consultations${qs ? '?' + qs : ''}`;
+  }
+
+  // The MOJ "Selected filters" tags, each linking to the page without it
+  function selectedFilterGroups(query, filters) {
+    const groups = [];
+    if (filters.show !== 'all') {
+      const items = filters.show === 'person' && filters.people.length
+        ? filters.people.map(person => ({
+            text: person,
+            href: consultationsUrl(query, { 'consultation-v2-person': filters.people.filter(p => p !== person) })
+          }))
+        : [{
+            text: SHOW_OPTIONS.find(o => o.value === filters.show).text,
+            href: consultationsUrl(query, { 'consultation-v2-show': null, 'consultation-v2-person': null })
+          }];
+      groups.push({ heading: 'Show', items });
+    }
+    if (filters.types.length) {
+      groups.push({
+        heading: 'Type',
+        items: filters.types.map(type => ({
+          text: TYPE_OPTIONS.find(o => o.value === type).text,
+          href: consultationsUrl(query, { 'consultation-v2-type': filters.types.filter(t => t !== type) })
+        }))
+      });
+    }
+    if (filters.statuses.length) {
+      groups.push({
+        heading: 'Status',
+        items: filters.statuses.map(status => ({
+          text: status,
+          href: consultationsUrl(query, { 'consultation-v2-status': filters.statuses.filter(st => st !== status) })
+        }))
+      });
+    }
+    return groups;
+  }
+
+  // Names what is being shown, for the results count, as on the LCML v4
+  // submissions page ("10 results found in 'All Ramsgate Marina submissions'")
+  function scopeName(filters) {
+    if (filters.show === 'me') return 'Cases assigned to me';
+    if (filters.show === 'unassigned') return 'Unassigned cases';
+    if (filters.show === 'person') {
+      return filters.people.length ? `Cases assigned to ${filters.people.join(', ')}` : 'Cases assigned to someone else';
+    }
+    return 'All Natural England cases';
+  }
+
   // Consultation dashboard
   router.get(`${base}/consultations`, function (req, res) {
-    const requests = Object.values(REQUESTS).map(r => withStatus(req, r));
+    const allRequests = Object.values(REQUESTS).map(r => withStatus(req, r));
+    const filters = readFilters(req.query);
+    const requests = allRequests.filter(r => matchesFilters(r, filters));
 
     // Flash the success banner once, after a response is submitted
     const justResponded = req.session.data['consultation-v2-just-responded'];
     delete req.session.data['consultation-v2-just-responded'];
 
+    // Everything but the filters, so Clear filters keeps ?assign=buttons
+    const withoutFilters = {};
+    FILTER_KEYS.forEach(key => { withoutFilters[key] = null; });
+
     res.render(`versions/${version}/${section}/consultations`, {
       requests,
+      scopeName: scopeName(filters),
       justResponded: justResponded ? REQUESTS[justResponded] : null,
       // Add ?assign=buttons to the URL to swap the tick boxes for a button on
       // each row. Read from the URL only, not the session, so the tick boxes
       // come back as soon as the query string is dropped.
-      assignMode: req.query.assign === 'buttons' ? 'buttons' : 'checkboxes'
+      assignMode: req.query.assign === 'buttons' ? 'buttons' : 'checkboxes',
+      filters,
+      showOptions: SHOW_OPTIONS,
+      typeOptions: TYPE_OPTIONS,
+      statusOptions: STATUS_OPTIONS,
+      team: TEAM,
+      selectedFilterGroups: selectedFilterGroups(req.query, filters),
+      clearFiltersUrl: consultationsUrl(req.query, withoutFilters),
+      // Version switcher links keep any filters that are applied
+      versionUrls: {
+        assignCheckboxes: consultationsUrl(req.query, { assign: null }),
+        assignButtons: consultationsUrl(req.query, { assign: 'buttons' })
+      }
     });
   });
 
@@ -384,10 +509,10 @@ module.exports = function (router) {
   router.post(`${base}/consultations`, function (req, res) {
     const data = req.session.data;
     // Save before redirecting, or the file session store can still be
-    // writing when the dashboard reads it back and show the old assignees
-    // The form posts to the current URL, so keep ?assign=buttons on the way back.
-    const query = req.query.assign === 'buttons' ? '?assign=buttons' : '';
-    const backToConsultations = () => req.session.save(() => res.redirect(`${base}/consultations${query}`));
+    // writing when the dashboard reads it back and show the old assignees.
+    // The form posts to the current URL, so going back to it keeps any
+    // filters and ?assign=buttons.
+    const backToConsultations = () => req.session.save(() => res.redirect(req.originalUrl));
     const [action, rowId] = (data['consultation-v2-assign-action'] || '').split(':');
     let ids = rowId ? [rowId] : [].concat(data['consultation-v2-assign-ids'] || []);
     ids = ids.filter(id => id && id !== '_unchecked' && REQUESTS[id]);

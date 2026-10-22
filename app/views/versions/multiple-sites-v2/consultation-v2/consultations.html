@@ -23,7 +23,53 @@
     #consultations-table .app-select-cell .govuk-checkboxes__item { display: block; margin-top: -10px; margin-bottom: -25px; }
     /* Per-row buttons version */
     #consultations-table .app-row-button { margin-bottom: 0; white-space: nowrap; }
+    /* Same filter column width as the LCML v4 submissions page. All three
+       properties are needed, or MOJ's min-width wins. */
+    @media (min-width: 48.0625em) {
+      .moj-filter-layout--narrow .moj-filter-layout__filter {
+        width: 310px;
+        min-width: 310px;
+        max-width: 310px;
+      }
+    }
+    /* Action bar: Show filter, then the assign buttons, all on the left */
+    .app-consultations-actions { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 0 15px; }
+    .app-consultations-actions .moj-action-bar { margin-bottom: 0; }
+    /* govuk-button-group's negative right margin would make the table area scroll sideways */
+    .app-consultations-actions .govuk-button-group { margin-bottom: 0; margin-right: 0; }
+    .app-consultations-actions .govuk-button { margin-bottom: 15px; }
+    /* Hide the panel's own heading row of "Selected filters" when nothing is selected */
+    .moj-filter__selected:empty { display: none; }
   </style>
+{% endblock %}
+
+{% block bodyEnd %}
+  {{ super() }}
+  <script>
+    // MOJ's FilterToggleButton adds Show filter to the action bar. The page
+    // reloads when filtering or assigning, so remember whether the panel was
+    // open and keep it that way. The first time, it starts open only if
+    // filters are applied. initAll does not cover it, so import it from the
+    // plugin asset the kit serves, as the LCML v4 submissions filter does.
+    var PANEL_KEY = 'consultation-v2-filter-panel'
+    var stored = null
+    try { stored = window.sessionStorage.getItem(PANEL_KEY) } catch (e) {}
+    var startHidden = stored ? stored === 'hidden' : {{ 'false' if selectedFilterGroups.length else 'true' }}
+
+    import('/plugin-assets/%40ministryofjustice%2Ffrontend/moj/moj-frontend.min.js')
+      .then(function (moj) {
+        var filter = document.querySelector('.moj-filter')
+        if (!filter) return
+        new moj.FilterToggleButton(filter, { startHidden: startHidden })
+        var button = document.querySelector('.moj-action-bar__filter button')
+        if (!button) return
+        button.addEventListener('click', function () {
+          var open = button.getAttribute('aria-expanded') === 'true'
+          try { window.sessionStorage.setItem(PANEL_KEY, open ? 'open' : 'hidden') } catch (e) {}
+        })
+      })
+      .catch(function () { /* panel stays visible */ })
+  </script>
 {% endblock %}
 
 {% block content %}
@@ -40,91 +86,218 @@
 
         <h1 class="govuk-heading-l">Consultations</h1>
 
-        <form method="post" novalidate>
-
-        {% if checkboxes %}
-        <div class="govuk-button-group">
-            {{ govukButton({
-                text: "Assign to me",
-                classes: "govuk-button--secondary",
-                name: "consultation-v2-assign-action",
-                value: "assign"
-            }) }}
-            {{ govukButton({
-                text: "Unassign from me",
-                classes: "govuk-button--secondary",
-                name: "consultation-v2-assign-action",
-                value: "unassign"
-            }) }}
-        </div>
-        {% endif %}
-
-        {# Columns are placeholders until the detailed designs are ready. #}
-        {# MOJ sortable table, as on the LCML v4 submissions page. MOJ's initAll
-           sets up both components, so multi-select sits on a wrapper because
-           the table can only have one data-module. #}
-        <div{% if checkboxes %} data-module="moj-multi-select"{% endif %}>
-        <table class="govuk-table" data-module="moj-sortable-table" id="consultations-table">
-            <caption class="govuk-table__caption govuk-table__caption--m govuk-visually-hidden">Consultation requests for Natural England</caption>
-            <thead class="govuk-table__head">
-                <tr class="govuk-table__row">
-                    {% if checkboxes %}
-                    {# MOJ multi-select puts the Select all tick box in here #}
-                    <th scope="col" class="govuk-table__header app-select-cell" id="select-all"></th>
-                    {% endif %}
-                    <th scope="col" class="govuk-table__header govuk-!-width-one-quarter" aria-sort="none">Application name</th>
-                    <th scope="col" class="govuk-table__header" aria-sort="none">Reference</th>
-                    <th scope="col" class="govuk-table__header" aria-sort="none">Type</th>
-                    <th scope="col" class="govuk-table__header" aria-sort="none">Status</th>
-                    <th scope="col" class="govuk-table__header app-nowrap" aria-sort="none">Assigned to</th>
-                    {# Sorted by Respond by on load, so the soonest deadline is at the top #}
-                    <th scope="col" class="govuk-table__header app-nowrap" aria-sort="ascending">Respond by</th>
-                    <th scope="col" class="govuk-table__header app-nowrap" aria-sort="none">Received</th>
-                    {% if not checkboxes %}
-                    <th scope="col" class="govuk-table__header"><span class="govuk-visually-hidden">Action</span></th>
-                    {% endif %}
-                </tr>
-            </thead>
-            <tbody class="govuk-table__body">
-                {% for request in requests %}
-                <tr class="govuk-table__row">
-                    {% if checkboxes %}
-                    <td class="govuk-table__cell app-select-cell">
-                        <div class="govuk-checkboxes__item govuk-checkboxes--small moj-multi-select__checkbox">
-                            <input type="checkbox" class="govuk-checkboxes__input" id="select-{{ request.id }}" name="consultation-v2-assign-ids" value="{{ request.id }}">
-                            <label class="govuk-label govuk-checkboxes__label moj-multi-select__toggle-label" for="select-{{ request.id }}">
-                                <span class="govuk-visually-hidden">Select {{ request.applicationName }}</span>
-                            </label>
+        {#
+          MOJ "Filter a list" pattern, as on the LCML v4 submissions page.
+          https://design-patterns.service.justice.gov.uk/patterns/filter-a-list/
+          Filtering happens on the server, so ticked rows a filter hides are
+          never sent when assigning, and Select all only covers what is shown.
+        #}
+        <div class="moj-filter-layout moj-filter-layout--narrow">
+            <div class="moj-filter-layout__filter">
+                <div class="moj-filter" data-module="moj-filter">
+                    <div class="moj-filter__header">
+                        <div class="moj-filter__header-title">
+                            <h2 class="govuk-heading-m">Filter</h2>
                         </div>
-                    </td>
-                    {% endif %}
-                    <th scope="row" class="govuk-table__header govuk-!-font-weight-regular" data-sort-value="{{ request.applicationName }}"><a href="request-details/{{ request.id }}" class="govuk-link govuk-link--no-visited-state">{{ request.applicationName }}</a></th>
-                    <td class="govuk-table__cell">{{ request.reference }}</td>
-                    <td class="govuk-table__cell">{{ requestTypeText(request) }}</td>
-                    {# Ranked by what needs doing, not alphabetically #}
-                    <td class="govuk-table__cell" data-sort-value="{{ {'Response needed': 1, 'No response needed': 2, 'Responded': 3}[request.status] }}">{{ statusTag(request) }}</td>
-                    <td class="govuk-table__cell">{{ request.assignedToText }}</td>
-                    {# Responded cases get a leading 1 so they sort after every open case,
-                       keeping the default sort on open deadlines, soonest first #}
-                    <td class="govuk-table__cell app-nowrap" data-sort-value="{{ ('1' if request.status === 'Responded' else '') + (request.respondByOffset | daysFromTodaySort) }}">{{ request.respondByOffset | daysFromTodayShort }}</td>
-                    <td class="govuk-table__cell app-nowrap" data-sort-value="{{ request.receivedOffset | daysFromTodaySort }}">{{ request.receivedOffset | daysFromTodayShort }}</td>
-                    {% if not checkboxes %}
-                    <td class="govuk-table__cell">
-                        {{ govukButton({
-                            html: ("Unassign from me" if request.assignedToMe else "Assign to me") + '<span class="govuk-visually-hidden"> – ' + request.applicationName + '</span>',
-                            classes: "govuk-button--secondary app-row-button",
-                            name: "consultation-v2-assign-action",
-                            value: ("unassign:" if request.assignedToMe else "assign:") + request.id
-                        }) }}
-                    </td>
-                    {% endif %}
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        </div>
+                        <div class="moj-filter__header-action"></div>
+                    </div>
 
-        </form>
+                    <div class="moj-filter__content">
+                        {% if selectedFilterGroups.length %}
+                        <div class="moj-filter__selected">
+                            <div class="moj-filter__selected-heading">
+                                <div class="moj-filter__heading-title">
+                                    <h2 class="govuk-heading-m">Selected filters</h2>
+                                </div>
+                                <div class="moj-filter__heading-action">
+                                    <p><a class="govuk-link govuk-link--no-visited-state" href="{{ clearFiltersUrl }}">Clear filters</a></p>
+                                </div>
+                            </div>
+                            {% for group in selectedFilterGroups %}
+                            <h3 class="govuk-heading-s govuk-!-margin-bottom-0">{{ group.heading }}</h3>
+                            <ul class="moj-filter-tags">
+                                {% for item in group.items %}
+                                <li><a class="moj-filter__tag" href="{{ item.href }}"><span class="govuk-visually-hidden">Remove this filter</span> {{ item.text }}</a></li>
+                                {% endfor %}
+                            </ul>
+                            {% endfor %}
+                        </div>
+                        {% endif %}
+
+                        <form method="get" action="consultations" class="moj-filter__options" novalidate>
+                            {% if assignMode === "buttons" %}
+                            <input type="hidden" name="assign" value="buttons">
+                            {% endif %}
+
+                            {{ govukButton({
+                                text: "Apply filters",
+                                classes: "govuk-!-margin-bottom-6"
+                            }) }}
+
+                            <div class="govuk-form-group">
+                                <fieldset class="govuk-fieldset">
+                                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Show</legend>
+                                    <div class="govuk-radios govuk-radios--small" data-module="govuk-radios">
+                                        {% for option in showOptions %}
+                                        <div class="govuk-radios__item">
+                                            <input class="govuk-radios__input" id="filter-show-{{ option.value }}" name="consultation-v2-show" type="radio" value="{{ option.value }}"{% if filters.show === option.value %} checked{% endif %}{% if option.value === "person" %} data-aria-controls="conditional-filter-person"{% endif %}>
+                                            <label class="govuk-label govuk-radios__label" for="filter-show-{{ option.value }}">{{ option.text }}</label>
+                                        </div>
+                                        {% if option.value === "person" %}
+                                        <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-filter-person">
+                                            <fieldset class="govuk-fieldset">
+                                                <legend class="govuk-fieldset__legend govuk-visually-hidden">Select who the cases are assigned to</legend>
+                                                <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+                                                    {% for person in team %}
+                                                    <div class="govuk-checkboxes__item">
+                                                        <input class="govuk-checkboxes__input" id="filter-person-{{ loop.index }}" name="consultation-v2-person" type="checkbox" value="{{ person }}"{% if person in filters.people %} checked{% endif %}>
+                                                        <label class="govuk-label govuk-checkboxes__label" for="filter-person-{{ loop.index }}">{{ person }}</label>
+                                                    </div>
+                                                    {% endfor %}
+                                                </div>
+                                            </fieldset>
+                                        </div>
+                                        {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </fieldset>
+                            </div>
+
+                            <div class="govuk-form-group">
+                                <fieldset class="govuk-fieldset">
+                                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Type</legend>
+                                    <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+                                        {% for option in typeOptions %}
+                                        <div class="govuk-checkboxes__item">
+                                            <input class="govuk-checkboxes__input" id="filter-type-{{ option.value }}" name="consultation-v2-type" type="checkbox" value="{{ option.value }}"{% if option.value in filters.types %} checked{% endif %}>
+                                            <label class="govuk-label govuk-checkboxes__label" for="filter-type-{{ option.value }}">{{ option.text }}</label>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </fieldset>
+                            </div>
+
+                            <div class="govuk-form-group">
+                                <fieldset class="govuk-fieldset">
+                                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Status</legend>
+                                    <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+                                        {% for status in statusOptions %}
+                                        <div class="govuk-checkboxes__item">
+                                            <input class="govuk-checkboxes__input" id="filter-status-{{ loop.index }}" name="consultation-v2-status" type="checkbox" value="{{ status }}"{% if status in filters.statuses %} checked{% endif %}>
+                                            <label class="govuk-label govuk-checkboxes__label" for="filter-status-{{ loop.index }}">{{ status }}</label>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </fieldset>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="moj-filter-layout__content">
+                <form method="post" novalidate>
+
+                <div class="app-consultations-actions">
+                    {# FilterToggleButton puts Show filter in here #}
+                    <div class="moj-action-bar">
+                        <div class="moj-action-bar__filter"></div>
+                    </div>
+
+                    {% if checkboxes %}
+                    <div class="govuk-button-group">
+                        {{ govukButton({
+                            text: "Assign to me",
+                            classes: "govuk-button--secondary",
+                            name: "consultation-v2-assign-action",
+                            value: "assign"
+                        }) }}
+                        {{ govukButton({
+                            text: "Unassign from me",
+                            classes: "govuk-button--secondary",
+                            name: "consultation-v2-assign-action",
+                            value: "unassign"
+                        }) }}
+                    </div>
+                    {% endif %}
+                </div>
+
+                {# Same wording and weight as the LCML v4 submissions results count #}
+                <p class="govuk-body" aria-live="polite"><strong>{{ requests.length }} {{ "result" if requests.length === 1 else "results" }} found in '{{ scopeName }}'</strong></p>
+
+                {% if requests.length %}
+            {# Columns are placeholders until the detailed designs are ready. #}
+            {# MOJ sortable table, as on the LCML v4 submissions page. MOJ's initAll
+               sets up both components, so multi-select sits on a wrapper because
+               the table can only have one data-module. #}
+            <div{% if checkboxes %} data-module="moj-multi-select"{% endif %}>
+            <table class="govuk-table" data-module="moj-sortable-table" id="consultations-table">
+                <caption class="govuk-table__caption govuk-table__caption--m govuk-visually-hidden">Consultation requests for Natural England</caption>
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        {% if checkboxes %}
+                        {# MOJ multi-select puts the Select all tick box in here #}
+                        <th scope="col" class="govuk-table__header app-select-cell" id="select-all"></th>
+                        {% endif %}
+                        <th scope="col" class="govuk-table__header govuk-!-width-one-quarter" aria-sort="none">Application name</th>
+                        <th scope="col" class="govuk-table__header" aria-sort="none">Reference</th>
+                        <th scope="col" class="govuk-table__header" aria-sort="none">Type</th>
+                        <th scope="col" class="govuk-table__header" aria-sort="none">Status</th>
+                        <th scope="col" class="govuk-table__header app-nowrap" aria-sort="none">Assigned to</th>
+                        {# Sorted by Respond by on load, so the soonest deadline is at the top #}
+                        <th scope="col" class="govuk-table__header app-nowrap" aria-sort="ascending">Respond by</th>
+                        <th scope="col" class="govuk-table__header app-nowrap" aria-sort="none">Received</th>
+                        {% if not checkboxes %}
+                        <th scope="col" class="govuk-table__header"><span class="govuk-visually-hidden">Action</span></th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody class="govuk-table__body">
+                    {% for request in requests %}
+                    <tr class="govuk-table__row">
+                        {% if checkboxes %}
+                        <td class="govuk-table__cell app-select-cell">
+                            <div class="govuk-checkboxes__item govuk-checkboxes--small moj-multi-select__checkbox">
+                                <input type="checkbox" class="govuk-checkboxes__input" id="select-{{ request.id }}" name="consultation-v2-assign-ids" value="{{ request.id }}">
+                                <label class="govuk-label govuk-checkboxes__label moj-multi-select__toggle-label" for="select-{{ request.id }}">
+                                    <span class="govuk-visually-hidden">Select {{ request.applicationName }}</span>
+                                </label>
+                            </div>
+                        </td>
+                        {% endif %}
+                        <th scope="row" class="govuk-table__header govuk-!-font-weight-regular" data-sort-value="{{ request.applicationName }}"><a href="request-details/{{ request.id }}" class="govuk-link govuk-link--no-visited-state">{{ request.applicationName }}</a></th>
+                        <td class="govuk-table__cell">{{ request.reference }}</td>
+                        <td class="govuk-table__cell">{{ requestTypeText(request) }}</td>
+                        {# Ranked by what needs doing, not alphabetically #}
+                        <td class="govuk-table__cell" data-sort-value="{{ {'Response needed': 1, 'No response needed': 2, 'Responded': 3}[request.status] }}">{{ statusTag(request) }}</td>
+                        <td class="govuk-table__cell">{{ request.assignedToText }}</td>
+                        {# Responded cases get a leading 1 so they sort after every open case,
+                           keeping the default sort on open deadlines, soonest first #}
+                        <td class="govuk-table__cell app-nowrap" data-sort-value="{{ ('1' if request.status === 'Responded' else '') + (request.respondByOffset | daysFromTodaySort) }}">{{ request.respondByOffset | daysFromTodayShort }}</td>
+                        <td class="govuk-table__cell app-nowrap" data-sort-value="{{ request.receivedOffset | daysFromTodaySort }}">{{ request.receivedOffset | daysFromTodayShort }}</td>
+                        {% if not checkboxes %}
+                        <td class="govuk-table__cell">
+                            {{ govukButton({
+                                html: ("Unassign from me" if request.assignedToMe else "Assign to me") + '<span class="govuk-visually-hidden"> – ' + request.applicationName + '</span>',
+                                classes: "govuk-button--secondary app-row-button",
+                                name: "consultation-v2-assign-action",
+                                value: ("unassign:" if request.assignedToMe else "assign:") + request.id
+                            }) }}
+                        </td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            </div>
+                {% else %}
+                {# Same as the LCML v4 submissions page, so developers can reuse it #}
+                <p class="govuk-body" id="no-results-message">There are no consultations to display.</p>
+                {% endif %}
+
+                </form>
+            </div>
+        </div>
 
     </div>
 </div>
