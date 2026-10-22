@@ -31,12 +31,16 @@
                 <dd class="govuk-summary-list__value">{{ statusTag(request) }}</dd>
             </div>
             <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Date received</dt>
-                <dd class="govuk-summary-list__value">{{ request.receivedOffset | daysFromToday }}</dd>
+                <dt class="govuk-summary-list__key">Assigned to</dt>
+                <dd class="govuk-summary-list__value">{{ request.assignedToText }}</dd>
             </div>
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">Respond by</dt>
                 <dd class="govuk-summary-list__value">{{ request.respondByOffset | daysFromToday }}</dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Date received</dt>
+                <dd class="govuk-summary-list__value">{{ request.receivedOffset | daysFromToday }}</dd>
             </div>
         </dl>
 
@@ -66,7 +70,8 @@
         {% for paragraph in request.adviceRequested %}
         <p class="govuk-body">{{ paragraph }}</p>
         {% endfor %}
-        {% else %}
+        {# Only shown to the person assigned, as only they can respond #}
+        {% elif request.assignedToMe %}
         <h2 class="govuk-heading-m">If you need to respond</h2>
         <p class="govuk-body">You can respond up to {{ request.respondByOffset | daysFromToday }} if you need to. We will consider any responses we receive by then when we make our decision.</p>
         {% endif %}
@@ -75,6 +80,8 @@
         <h2 class="govuk-heading-m">Your response</h2>
         <p class="govuk-body govuk-hint">Sent to the MMO on {{ request.respondedDate }}</p>
         <p class="govuk-body">{{ request.response }}</p>
+        {# Only the person assigned to a request can respond to it #}
+        {% elif not request.assignedToMe %}
         {% elif isAdvice %}
         {{ govukButton({
             text: "Respond to this request",

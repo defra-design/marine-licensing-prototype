@@ -1,5 +1,5 @@
 module.exports = function (router) {
-  // Consultation v2 steel thread routes
+  // Consultation v2 MVP routes, copied from the v0 steel thread
   //
   // A bare-bones end-to-end journey for a consultee organisation (we are
   // pretending to be Natural England): consultation dashboard, request
@@ -24,6 +24,7 @@ module.exports = function (router) {
       reference: 'MLA/2026/10020',
       applicant: 'Southwest Marine Works Ltd',
       type: 'response-required',
+      assignedTo: 'Jordan Lee',
       // The case officer's request, as plain-text paragraphs from MAS (no
       // bullets or other formatting). Made up for this steel thread.
       adviceRequested: [
@@ -58,6 +59,7 @@ module.exports = function (router) {
       reference: 'MLA/2026/10003',
       applicant: 'Jurassic Coast SUP Ltd',
       type: 'notify-only',
+      assignedTo: '',
       receivedOffset: -1,
       respondByOffset: 27,
       summary: 'Jurassic Coast SUP Ltd is a small paddleboarding hire and instruction business operating in Lyme Regis. We are applying for a marine licence to install a small floating pontoon within Lyme Regis Harbour to provide a safe and accessible launching and landing platform for paddleboards and kayaks hired to our customers. At present customers are required to enter the water via the main harbour slipway which is shared with commercial fishing vessels and other harbour traffic. During the summer months this creates significant health and safety concerns particularly for inexperienced users and those with limited mobility. The pontoon would be attached to the existing harbour wall using H-frame wall guides and a short hinged gangway. It will be a floating structure rising and falling with the tide. The works will take place entirely within the outer harbour area.',
@@ -76,6 +78,169 @@ module.exports = function (router) {
         drawing: 'pontoon-construction-drawing.pdf'
       },
       siteLocation: 'Lyme Regis Harbour, Dorset'
+    },
+    // The requests below are made up for v2, so the case list has enough
+    // rows to show assigning, filtering and sorting.
+    'falmouth': {
+      id: 'falmouth',
+      applicationName: 'Falmouth marina maintenance dredge',
+      reference: 'MLA/2026/10029',
+      applicant: 'Falmouth Haven Marina Ltd',
+      type: 'response-required',
+      assignedTo: 'Jordan Lee',
+      adviceRequested: [
+        'We would like your advice on the effects of the proposed dredge on the Fal and Helford Special Area of Conservation.',
+        'Tell us whether the dredged material is likely to affect the maerl beds near the disposal site, and any measures you would recommend.',
+        'Tell us about any timing restrictions you would recommend to protect migratory fish.'
+      ],
+      receivedOffset: -6,
+      respondByOffset: 15,
+      summary: 'We are applying for a marine licence to carry out maintenance dredging of the marina basin and access channel to restore the depths needed for berth holders. Silt has built up since the last dredge 5 years ago. We expect to remove about 12,000 cubic metres of material using a backhoe dredger, with the material taken by split hopper barge to the existing licensed disposal site off St Anthony Head.',
+      startAndEndDates: 'October 2026 to March 2027',
+      site: {
+        name: 'Falmouth marina basin and access channel',
+        typeOfActivity: 'Dredging',
+        whatIsBeingConstructed: 'Not applicable',
+        activityDescription: 'Maintenance dredging of the marina basin and access channel to a depth of 2.5 metres below chart datum, using a backhoe dredger. Dredged material will be loaded into a split hopper barge and disposed of at the licensed offshore disposal site.',
+        maximumDuration: '8 weeks',
+        completionDate: 'Not needed to be completed by a certain date',
+        specificMonths: 'Yes – October to March only, outside the main boating season.',
+        workingHours: 'Monday to Saturday, 07:00 to 19:00, tide dependent.',
+        drawing: 'dredge-area-plan.pdf'
+      },
+      siteLocation: 'Falmouth, Cornwall'
+    },
+    'whitstable': {
+      id: 'whitstable',
+      applicationName: 'Whitstable oyster trestles',
+      reference: 'MLA/2026/10031',
+      applicant: 'Kentish Flats Shellfish Ltd',
+      type: 'response-required',
+      assignedTo: 'Kevin Morris',
+      adviceRequested: [
+        'We would like your advice on whether the trestles are likely to have a significant effect on the Swale Special Protection Area.',
+        'Tell us whether the access route across the foreshore is likely to disturb feeding waders, and any measures you would recommend.'
+      ],
+      receivedOffset: -9,
+      respondByOffset: 12,
+      summary: 'We are applying for a marine licence to install 400 oyster trestles on the intertidal foreshore east of Whitstable harbour. The trestles will hold mesh bags of Pacific oysters and will be reached on foot or by tractor at low tide along an existing access route.',
+      startAndEndDates: 'January 2027 to December 2036',
+      site: {
+        name: 'Whitstable east foreshore trestle site',
+        typeOfActivity: 'Construction of new works',
+        whatIsBeingConstructed: 'Aquaculture trestles',
+        activityDescription: 'Installation of 400 steel oyster trestles in rows on the intertidal foreshore, each 3 metres long and 0.5 metres high, pushed into the sediment by hand. Mesh bags of oysters will be strapped to the trestles and turned regularly.',
+        maximumDuration: '4 weeks',
+        completionDate: 'Not needed to be completed by a certain date',
+        specificMonths: 'No',
+        workingHours: 'Low tide windows only, any day of the week.',
+        drawing: 'trestle-layout-plan.pdf'
+      },
+      siteLocation: 'Whitstable, Kent'
+    },
+    'bude': {
+      id: 'bude',
+      applicationName: 'Bude outfall pipe repair',
+      reference: 'MLA/2026/10027',
+      applicant: 'Atlantic Coast Utilities Ltd',
+      type: 'notify-only',
+      assignedTo: 'Jenny Adkinson',
+      receivedOffset: -4,
+      respondByOffset: 24,
+      summary: 'We are applying for a marine licence to repair a damaged section of the surface water outfall pipe on Summerleaze Beach. Storms last winter broke the concrete surround on the last 20 metres of the pipe. We will replace the surround and the pipe joints, working from the beach at low tide.',
+      startAndEndDates: 'March 2027 to April 2027',
+      site: {
+        name: 'Summerleaze Beach outfall',
+        typeOfActivity: 'Construction of new works',
+        whatIsBeingConstructed: 'Outfalls or intakes',
+        activityDescription: 'Removal of the damaged concrete surround on the last 20 metres of the outfall pipe, replacement of 4 pipe joints, and casting of a new concrete surround. Work will be carried out by a small excavator from the beach at low tide.',
+        maximumDuration: '3 weeks',
+        completionDate: 'Yes – before the Easter school holidays',
+        specificMonths: 'Yes – March and April only.',
+        workingHours: 'Monday to Friday, 08:00 to 17:00, tide dependent.',
+        drawing: 'outfall-repair-drawing.pdf'
+      },
+      siteLocation: 'Bude, Cornwall'
+    },
+    'scarborough': {
+      id: 'scarborough',
+      applicationName: 'Scarborough slipway replacement',
+      reference: 'MLA/2026/10035',
+      applicant: 'North Bay Harbour Services Ltd',
+      type: 'response-required',
+      assignedTo: '',
+      adviceRequested: [
+        'We would like your advice on whether the works are likely to affect the rocky shore habitats either side of the slipway.',
+        'Tell us whether any surveys are needed before the works start.'
+      ],
+      receivedOffset: -2,
+      respondByOffset: 19,
+      summary: 'We are applying for a marine licence to replace the old public slipway in the North Bay. The existing concrete slipway is cracked and undermined. We will break it out and cast a new slipway on the same footprint, working from the beach at low tide.',
+      startAndEndDates: 'May 2027 to July 2027',
+      site: {
+        name: 'North Bay public slipway',
+        typeOfActivity: 'Construction of new works',
+        whatIsBeingConstructed: 'Slipways',
+        activityDescription: 'Breaking out of the existing 40 metre concrete slipway and casting a new reinforced concrete slipway on the same footprint. Broken concrete will be taken off site by lorry. Work will be carried out by an excavator from the beach at low tide.',
+        maximumDuration: '10 weeks',
+        completionDate: 'Not needed to be completed by a certain date',
+        specificMonths: 'No',
+        workingHours: 'Monday to Friday, 07:30 to 18:00, tide dependent.',
+        drawing: 'slipway-drawing.pdf'
+      },
+      siteLocation: 'Scarborough, North Yorkshire'
+    },
+    'poole': {
+      id: 'poole',
+      applicationName: 'Poole Harbour swing moorings',
+      reference: 'MLA/2026/10038',
+      applicant: 'Brownsea Moorings Ltd',
+      type: 'notify-only',
+      assignedTo: '',
+      receivedOffset: -1,
+      respondByOffset: 27,
+      summary: 'We are applying for a marine licence to lay 12 new swing moorings in an existing mooring area in Poole Harbour. Each mooring will use a helical screw anchor, a riser chain and a surface buoy. The anchors will be installed by diver from a small workboat.',
+      startAndEndDates: 'February 2027 to March 2027',
+      site: {
+        name: 'Poole Harbour south mooring area',
+        typeOfActivity: 'Construction of new works',
+        whatIsBeingConstructed: 'Moorings or aids to navigation',
+        activityDescription: 'Installation of 12 swing moorings, each with a helical screw anchor installed by diver, a riser chain and a surface buoy. No seabed dredging is needed.',
+        maximumDuration: '2 weeks',
+        completionDate: 'Yes – before the start of the boating season',
+        specificMonths: 'Yes – February and March only.',
+        workingHours: 'Monday to Friday, 08:00 to 16:00.',
+        drawing: 'mooring-layout-plan.pdf'
+      },
+      siteLocation: 'Poole Harbour, Dorset'
+    },
+    'hayling': {
+      id: 'hayling',
+      applicationName: 'Hayling Island groyne repairs',
+      reference: 'MLA/2026/10024',
+      applicant: 'Solent Coastal Services Ltd',
+      type: 'response-required',
+      assignedTo: 'Morgan Hughes',
+      adviceRequested: [
+        'We would like your advice on whether the repairs are likely to have a significant effect on the Chichester and Langstone Harbours Special Protection Area.',
+        'Tell us about any timing restrictions you would recommend to protect overwintering brent geese.'
+      ],
+      receivedOffset: -11,
+      respondByOffset: 10,
+      summary: 'We are applying for a marine licence to repair 6 timber groynes on the Hayling Island seafront. Rotten planks and posts will be replaced like for like with hardwood, working from the beach at low tide.',
+      startAndEndDates: 'April 2027 to June 2027',
+      site: {
+        name: 'Hayling Island seafront groynes 14 to 19',
+        typeOfActivity: 'Construction of new works',
+        whatIsBeingConstructed: 'Hard coastal defence structures such as rock armour or concrete units',
+        activityDescription: 'Like for like replacement of rotten timber planks and posts on 6 groynes, using sustainably sourced hardwood. Posts will be driven by a small excavator working from the beach at low tide.',
+        maximumDuration: '8 weeks',
+        completionDate: 'Not needed to be completed by a certain date',
+        specificMonths: 'Yes – April to June only, after the brent geese have left.',
+        workingHours: 'Monday to Friday, 07:30 to 17:30, tide dependent.',
+        drawing: 'groyne-repair-drawing.pdf'
+      },
+      siteLocation: 'Hayling Island, Hampshire'
     }
   };
 
@@ -89,8 +254,26 @@ module.exports = function (router) {
     return req.session.data[key];
   }
 
+  // The signed-in consultee. Other team members only appear as assignees.
+  const ME = 'Jordan Lee';
+
+  // Who each request is assigned to lives in the session as
+  // consultation-v2-<id>-assigned-to, seeded from REQUESTS. An empty string
+  // means nobody is assigned.
+  function assignedToFor(req, request) {
+    const key = `consultation-v2-${request.id}-assigned-to`;
+    if (req.session.data[key] === undefined) {
+      req.session.data[key] = request.assignedTo;
+    }
+    return req.session.data[key];
+  }
+
   function withStatus(req, request) {
+    const assignedTo = assignedToFor(req, request);
     return Object.assign({}, request, {
+      assignedTo,
+      assignedToMe: assignedTo === ME,
+      assignedToText: !assignedTo ? '-' : assignedTo === ME ? `${ME} (you)` : assignedTo,
       status: statusFor(req, request),
       response: req.session.data[`consultation-v2-${request.id}-response`],
       respondedDate: req.session.data[`consultation-v2-${request.id}-responded-date`]
@@ -116,8 +299,42 @@ module.exports = function (router) {
 
     res.render(`versions/${version}/${section}/consultations`, {
       requests,
-      justResponded: justResponded ? REQUESTS[justResponded] : null
+      justResponded: justResponded ? REQUESTS[justResponded] : null,
+      // Add ?assign=buttons to the URL to swap the tick boxes for a button on
+      // each row. Read from the URL only, not the session, so the tick boxes
+      // come back as soon as the query string is dropped.
+      assignMode: req.query.assign === 'buttons' ? 'buttons' : 'checkboxes'
     });
+  });
+
+  // Assign to me and Unassign from me, from the dashboard.
+  //
+  // Tick boxes version: the button pressed is the action and the ticked rows
+  // are the cases. Buttons version: each row's button carries action:id.
+  router.post(`${base}/consultations`, function (req, res) {
+    const data = req.session.data;
+    // Save before redirecting, or the file session store can still be
+    // writing when the dashboard reads it back and show the old assignees
+    // The form posts to the current URL, so keep ?assign=buttons on the way back.
+    const query = req.query.assign === 'buttons' ? '?assign=buttons' : '';
+    const backToConsultations = () => req.session.save(() => res.redirect(`${base}/consultations${query}`));
+    const [action, rowId] = (data['consultation-v2-assign-action'] || '').split(':');
+    let ids = rowId ? [rowId] : [].concat(data['consultation-v2-assign-ids'] || []);
+    ids = ids.filter(id => id && id !== '_unchecked' && REQUESTS[id]);
+    delete data['consultation-v2-assign-action'];
+    delete data['consultation-v2-assign-ids'];
+
+    // No validation for now. Pressing a button with nothing ticked, or
+    // unassigning only other people's cases, does nothing.
+    if (action === 'assign') {
+      ids.forEach(id => { data[`consultation-v2-${id}-assigned-to`] = ME; });
+    } else if (action === 'unassign') {
+      // Only your own cases are unassigned. Anyone else's ticked cases are left alone.
+      ids.filter(id => assignedToFor(req, REQUESTS[id]) === ME)
+        .forEach(id => { data[`consultation-v2-${id}-assigned-to`] = ''; });
+    }
+
+    backToConsultations();
   });
 
   // Request details
@@ -138,12 +355,15 @@ module.exports = function (router) {
   router.get(`${base}/respond/:requestId`, function (req, res) {
     const request = findRequest(req, res);
     if (!request) return;
+    // Only the person assigned to a request can respond to it
+    if (!request.assignedToMe) return res.redirect(`${base}/request-details/${request.id}`);
     res.render(`versions/${version}/${section}/respond`, { request });
   });
 
   router.post(`${base}/respond/:requestId-router`, function (req, res) {
     const request = REQUESTS[req.params.requestId];
     if (!request) return res.redirect(`${base}/consultations`);
+    if (assignedToFor(req, request) !== ME) return res.redirect(`${base}/request-details/${request.id}`);
 
     const response = (req.session.data['consultation-v2-response-text'] || '').trim();
     delete req.session.data['consultation-v2-response-text'];
