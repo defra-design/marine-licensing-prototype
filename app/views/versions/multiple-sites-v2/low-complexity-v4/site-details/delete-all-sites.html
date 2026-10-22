@@ -29,14 +29,9 @@ Are you sure you want to delete all site details?
       {{ pageHeadingTextHTML }}
     </h1>
 
-    {% set mppInProgress = data['marine-plan-policy-s-acc-1-completed'] or data['marine-plan-policy-s-bio-1-completed'] or data['marine-plan-policy-s-agg-4-completed'] or data['marine-plan-policy-s-emp-1-completed'] or data['marine-plan-policy-s-uwn-2-completed'] or data['marine-plan-policy-v2-s-acc-1-completed'] or data['marine-plan-policy-v2-s-bio-1-completed'] or data['marine-plan-policy-v2-s-agg-4-completed'] or data['marine-plan-policy-v2-s-emp-1-completed'] or data['marine-plan-policy-v2-s-uwn-2-completed'] or data['marine-plan-policy-v3-s-acc-1-completed'] or data['marine-plan-policy-v3-s-bio-1-completed'] or data['marine-plan-policy-v3-s-agg-4-completed'] or data['marine-plan-policy-v3-s-emp-1-completed'] or data['marine-plan-policy-v3-s-uwn-2-completed'] %}
-    <p class="govuk-inset-text">
-      {% if mppInProgress %}
-        You'll lose all the site details you've already entered. You'll also lose any Marine Plan Policy information you've entered.
-      {% else %}
-        You'll lose all the site details you've already entered.
-      {% endif %}
-    </p>
+    <p class="govuk-inset-text">You'll lose all the site details you've already entered. This cannot be undone.</p>
+
+    <p class="govuk-body">If you've started the Marine plan policies, your answers will also be deleted. You'll need to enter your site details again before you can start the Marine plan policies.</p>
  
     <form action="delete-all-sites-router" method="post" novalidate>
       <div class="govuk-button-group govuk-!-margin-top-7">

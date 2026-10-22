@@ -826,11 +826,9 @@ module.exports = function (router) {
       return res.redirect(`${basePath}/review-site-details`);
     }
 
-    const sites = getManualSites(req.session);
     res.render(`${viewBase}/delete-site`, {
       data: req.session.data,
-      site: site,
-      sitesCount: sites.length
+      site: site
     });
   });
 
