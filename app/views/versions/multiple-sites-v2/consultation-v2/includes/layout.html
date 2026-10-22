@@ -27,3 +27,8 @@
 {% block pageTitle %}
     {{ pageTitle }} - Get permission for marine work
 {% endblock %}
+
+{% block bodyEnd %}
+    {{ super() }}
+    {% include "versions/multiple-sites-v2/consultation-v2/includes/version-switcher.html" %}
+{% endblock %}

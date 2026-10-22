@@ -1,0 +1,190 @@
+{#
+  Prototype version switcher. A small triangle in the bottom right corner
+  opens a tray of links to the design versions we are comparing.
+
+  It is for the team, not for research participants. Add ?versions=off to
+  any v2 URL to hide it for the rest of the session (for usability testing),
+  and ?versions=on to bring it back. The kit keeps the value in the session.
+
+  Each option is a link to a URL with a query string, so the version shown
+  is always the one in the address bar.
+#}
+{% if data['versions'] !== 'off' %}
+{% set consultationsUrl = "/versions/multiple-sites-v2/consultation-v2/consultations" %}
+{% set currentAssign = assignMode or "checkboxes" %}
+
+<style>
+  .app-version-switcher__toggle {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+    width: 0;
+    height: 0;
+    padding: 0;
+    border: 0;
+    border-style: solid;
+    border-width: 0 0 36px 36px;
+    border-color: transparent transparent #b1b4b6 transparent;
+    background: none;
+    cursor: pointer;
+  }
+  .app-version-switcher__toggle:hover { border-bottom-color: #505a5f; }
+  .app-version-switcher__toggle:focus {
+    outline: 3px solid #ffdd00;
+    outline-offset: 0;
+    border-bottom-color: #0b0c0c;
+  }
+  .app-version-tray {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1001;
+    width: 320px;
+    max-width: 100%;
+    overflow-y: auto;
+    padding: 20px;
+    box-sizing: border-box;
+    background: #ffffff;
+    border-left: 1px solid #b1b4b6;
+    box-shadow: -4px 0 12px rgba(0, 0, 0, 0.15);
+  }
+  .app-version-tray[hidden] { display: none; }
+  .app-version-tray__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  /* Stacked in the side tray so it fits without scrolling sideways, in a row at the bottom */
+  .app-version-tray__actions { display: flex; flex-direction: column; gap: 10px; flex-shrink: 0; }
+  .app-version-tray--bottom .app-version-tray__actions { flex-direction: row; }
+  .app-version-tray__actions .govuk-button { margin-bottom: 0; }
+  /* Docked along the bottom: full width, sections side by side */
+  .app-version-tray--bottom {
+    top: auto;
+    left: 0;
+    width: 100%;
+    max-height: 50vh;
+    border-left: 0;
+    border-top: 1px solid #b1b4b6;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15);
+  }
+  .app-version-tray--bottom .app-version-tray__body { display: flex; flex-wrap: wrap; gap: 0 60px; }
+  .app-version-tray--bottom .app-version-tray__divider { display: none; }
+  .app-version-tray--bottom .app-version-tray__section { max-width: 400px; }
+  /* Focus moves to the heading when the tray opens; it is not interactive */
+  .app-version-tray__header h2:focus { outline: none; }
+</style>
+
+<button type="button" class="app-version-switcher__toggle" id="app-version-switcher-toggle" aria-expanded="false" aria-controls="app-version-tray">
+  <span class="govuk-visually-hidden">Prototype versions</span>
+</button>
+
+<div class="app-version-tray" id="app-version-tray" role="dialog" aria-labelledby="app-version-tray-heading" hidden>
+  <div class="app-version-tray__header">
+    <h2 class="govuk-heading-m" id="app-version-tray-heading" tabindex="-1">Prototype versions</h2>
+    <div class="app-version-tray__actions">
+      <button type="button" class="govuk-button govuk-button--secondary" id="app-version-tray-move">Move to bottom</button>
+      <button type="button" class="govuk-button govuk-button--secondary" id="app-version-tray-close">Close</button>
+    </div>
+  </div>
+
+  <div class="app-version-tray__body">
+  <div class="app-version-tray__section">
+
+  <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Assign method</h3>
+  <ul class="govuk-list govuk-list--spaced">
+    <li>
+      {% if currentAssign === "checkboxes" %}
+      <strong aria-current="true">Checkboxes</strong> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ consultationsUrl }}" class="govuk-link govuk-link--no-visited-state">Checkboxes</a>
+      {% endif %}
+    </li>
+    <li>
+      {% if currentAssign === "buttons" %}
+      <strong aria-current="true">Buttons on each row</strong> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ consultationsUrl }}?assign=buttons" class="govuk-link govuk-link--no-visited-state">Buttons on each row</a>
+      {% endif %}
+    </li>
+  </ul>
+  </div>
+
+  <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible app-version-tray__divider">
+
+  <div class="app-version-tray__section">
+  <p class="govuk-body-s">To hide this for usability testing, add <code>?versions=off</code> to the URL. Use <code>?versions=on</code> to bring it back.</p>
+  <p class="govuk-body-s"><a href="?versions=off" class="govuk-link govuk-link--no-visited-state">Hide for this session</a></p>
+  </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var toggle = document.getElementById('app-version-switcher-toggle')
+    var tray = document.getElementById('app-version-tray')
+    var close = document.getElementById('app-version-tray-close')
+    var heading = document.getElementById('app-version-tray-heading')
+    var move = document.getElementById('app-version-tray-move')
+
+    // Side or bottom. Remembered in this browser only, so it survives page
+    // changes; storage can be unavailable, so fall back to the side.
+    var STORAGE_KEY = 'consultation-v2-version-tray-position'
+    // Whether the tray is open, so it stays open while clicking through versions
+    var OPEN_KEY = 'consultation-v2-version-tray-open'
+
+    function rememberOpen (isOpen) {
+      try { window.localStorage.setItem(OPEN_KEY, isOpen ? 'true' : 'false') } catch (e) {}
+    }
+
+    function setPosition (position) {
+      var bottom = position === 'bottom'
+      tray.classList.toggle('app-version-tray--bottom', bottom)
+      move.textContent = bottom ? 'Move to side' : 'Move to bottom'
+      try { window.localStorage.setItem(STORAGE_KEY, position) } catch (e) {}
+      makeRoom()
+    }
+
+    // When docked at the bottom, pad the page so the tray never covers the
+    // last rows of the table
+    function makeRoom () {
+      var docked = !tray.hidden && tray.classList.contains('app-version-tray--bottom')
+      document.body.style.paddingBottom = docked ? tray.offsetHeight + 'px' : ''
+    }
+
+    try { setPosition(window.localStorage.getItem(STORAGE_KEY) || 'side') } catch (e) { setPosition('side') }
+
+    move.addEventListener('click', function () {
+      setPosition(tray.classList.contains('app-version-tray--bottom') ? 'side' : 'bottom')
+    })
+
+    function open (keepFocus) {
+      tray.hidden = false
+      toggle.setAttribute('aria-expanded', 'true')
+      makeRoom()
+      rememberOpen(true)
+      if (!keepFocus) heading.focus()
+    }
+
+    function shut () {
+      tray.hidden = true
+      toggle.setAttribute('aria-expanded', 'false')
+      makeRoom()
+      rememberOpen(false)
+      toggle.focus()
+    }
+
+    toggle.addEventListener('click', function () { tray.hidden ? open() : shut() })
+
+    // Reopen after following a link in the tray, without moving focus off the page
+    try { if (window.localStorage.getItem(OPEN_KEY) === 'true') open(true) } catch (e) {}
+    close.addEventListener('click', shut)
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !tray.hidden) shut()
+    })
+  })()
+</script>
+{% endif %}
