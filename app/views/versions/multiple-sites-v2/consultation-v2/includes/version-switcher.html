@@ -140,6 +140,26 @@
   </ul>
   </div>
 
+  <div class="app-version-tray__section">
+  <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Layout</h3>
+  <ul class="govuk-list govuk-list--spaced">
+    <li>
+      {% if layoutMode !== "full" %}
+      <span aria-current="true">Standard width</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ versionUrls.layoutStandard if versionUrls else consultationsUrl }}" class="govuk-link govuk-link--no-visited-state">Standard width</a>
+      {% endif %}
+    </li>
+    <li>
+      {% if layoutMode === "full" %}
+      <span aria-current="true">Full width, with marine plan area</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ versionUrls.layoutFull if versionUrls else consultationsUrl + '?layout=full' }}" class="govuk-link govuk-link--no-visited-state">Full width, with marine plan area</a>
+      {% endif %}
+    </li>
+  </ul>
+  </div>
+
   <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible app-version-tray__divider">
 
   <div class="app-version-tray__section">
