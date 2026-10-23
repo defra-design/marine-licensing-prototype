@@ -515,6 +515,12 @@ module.exports = function (router) {
     const justResponded = req.session.data['consultation-v2-just-responded'];
     delete req.session.data['consultation-v2-just-responded'];
 
+    // Error and ticked boxes from the last assign action, shown once
+    const assignError = req.session.data['consultation-v2-assign-error'];
+    const selected = req.session.data['consultation-v2-assign-selected'] || [];
+    delete req.session.data['consultation-v2-assign-error'];
+    delete req.session.data['consultation-v2-assign-selected'];
+
     // Everything but the filters, so Clear filters keeps ?assign=buttons
     const withoutFilters = {};
     FILTER_KEYS.forEach(key => { withoutFilters[key] = null; });
@@ -523,6 +529,8 @@ module.exports = function (router) {
       requests,
       scopeName: scopeName(filters),
       justResponded: justResponded ? REQUESTS[justResponded] : null,
+      assignError,
+      selected,
       // Add ?assign=buttons to the URL to swap the tick boxes for a button on
       // each row. Read from the URL only, not the session, so the tick boxes
       // come back as soon as the query string is dropped.
@@ -595,25 +603,36 @@ module.exports = function (router) {
     const reassignTo = data['consultation-v2-reassign-to'];
     delete data['consultation-v2-reassign-to'];
 
-    // No validation for now. Pressing a button with nothing ticked, or
-    // unassigning only other people's cases, does nothing.
+    // Errors go back to the dashboard with the ticked boxes kept. Only the
+    // checkbox version can produce them; per-row buttons always have a case.
+    const showError = (text, field) => {
+      data['consultation-v2-assign-error'] = { text, field: field || 'table' };
+      data['consultation-v2-assign-selected'] = ids;
+      return backToConsultations();
+    };
+    const assignActions = ['assign', 'unassign', 'reassign', 'choose'];
+    if (assignActions.includes(action) && !ids.length) {
+      return showError('Select at least one consultation');
+    }
+
     if (action === 'assign') {
       ids.forEach(id => { data[`consultation-v2-${id}-assigned-to`] = ME; });
     } else if (action === 'reassign') {
       // In-page panel: the ticked cases go to whoever was chosen, or to
-      // nobody for "No one". Nothing chosen does nothing.
-      reassign(data, ids, reassignTo);
+      // nobody for "No one"
+      if (!reassign(data, ids, reassignTo)) {
+        return showError('Select who to assign the consultations to', 'reassign');
+      }
     } else if (action === 'choose') {
       // Assign to someone else as a separate page, or the in-page panel
       // without JavaScript: remember the ticked cases and go to the page
-      if (ids.length) {
-        data['consultation-v2-reassign-ids'] = ids;
-        return req.session.save(() => res.redirect(`${base}/assign-to-someone-else${queryOf(req)}`));
-      }
+      data['consultation-v2-reassign-ids'] = ids;
+      return req.session.save(() => res.redirect(`${base}/assign-to-someone-else${queryOf(req)}`));
     } else if (action === 'unassign') {
       // Only your own cases are unassigned. Anyone else's ticked cases are left alone.
-      ids.filter(id => assignedToFor(req, REQUESTS[id]) === ME)
-        .forEach(id => { data[`consultation-v2-${id}-assigned-to`] = ''; });
+      const mine = ids.filter(id => assignedToFor(req, REQUESTS[id]) === ME);
+      if (!mine.length) return showError('Select a consultation assigned to you');
+      mine.forEach(id => { data[`consultation-v2-${id}-assigned-to`] = ''; });
     }
 
     backToConsultations();

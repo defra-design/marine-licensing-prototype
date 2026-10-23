@@ -2,6 +2,7 @@
 
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 {% from "versions/multiple-sites-v2/consultation-v2/includes/macros.html" import requestTypeText, statusTag %}
 {% from "versions/multiple-sites-v2/consultation-v2/includes/filter-fields.html" import filterFields %}
 {# Two horizontal bar versions: ?filter=bar puts Show/Hide filter level with
@@ -14,7 +15,9 @@
    with ?layout=full #}
 {% set fullWidth = layoutMode === "full" %}
 {% set currentPageId = "consultation-full-width" if fullWidth else "low-complexity-projects" %}
-{% set pageTitle = "Consultations" %}
+{% set pageTitle = ("Error: " if assignError else "") + "Consultations" %}
+{% set tableError = assignError and assignError.field === "table" %}
+{% set reassignError = assignError and assignError.field === "reassign" %}
 {% set checkboxes = assignMode === "checkboxes" %}
 
 {% block head %}
@@ -95,8 +98,6 @@
     }
     /* When hidden, the whole grey panel goes, not just its contents */
     .app-filter-bar--collapsed { display: none; }
-    /* Hide the panel's own heading row of "Selected filters" when nothing is selected */
-    .moj-filter__selected:empty { display: none; }
   </style>
 {% endblock %}
 
@@ -109,7 +110,7 @@
       Every version starts with the filter hidden, so arriving from the index
       page, the tray, the navigation or a back link always gives a clean view.
       The only exception is the reload after pressing Apply filters, Assign to
-      me or Unassign from me on this page: just before those forms submit, we
+      me or Unassign from me, or using Clear filters or a filter tag, on this page: just before those forms submit, we
       note whether the filter was open, and put it back that way on the next
       load. The note is used once and then removed.
     */
@@ -130,6 +131,14 @@
     Array.prototype.forEach.call(document.querySelectorAll('main form'), function (form) {
       form.addEventListener('submit', function () {
         try { window.sessionStorage.setItem(KEEP_KEY, filterIsOpen() ? 'true' : 'false') } catch (e) {}
+      })
+    })
+
+    // The same for Clear filters and the selected filter tags: they are links
+    // inside the open filter, so the filter should still be open afterwards
+    Array.prototype.forEach.call(document.querySelectorAll('.moj-filter__selected a, .app-filter-bar a'), function (link) {
+      link.addEventListener('click', function () {
+        try { window.sessionStorage.setItem(KEEP_KEY, 'true') } catch (e) {}
       })
     })
 
@@ -155,14 +164,15 @@
     var reassignPanel = document.getElementById('app-reassign-panel')
     var reassignCancel = document.getElementById('app-reassign-cancel')
     if (reassignToggle && reassignPanel) {
-      var setReassign = function (open) {
+      var setReassign = function (open, keepFocus) {
         reassignPanel.hidden = !open
         reassignToggle.setAttribute('aria-expanded', open ? 'true' : 'false')
-        if (open) reassignPanel.querySelector('input').focus()
+        if (open && !keepFocus) reassignPanel.querySelector('input').focus()
       }
       reassignToggle.setAttribute('aria-controls', 'app-reassign-panel')
       reassignCancel.hidden = false
-      setReassign(false)
+      // Open after an error in the panel, leaving focus on the error summary
+      setReassign(reassignPanel.getAttribute('data-open') === 'true', true)
       reassignToggle.addEventListener('click', function (e) {
         e.preventDefault()
         setReassign(reassignPanel.hidden)
@@ -215,6 +225,13 @@
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-full">
+
+        {% if assignError %}
+        {{ govukErrorSummary({
+            titleText: "There is a problem",
+            errorList: [{ text: assignError.text, href: "#reassign-1" if reassignError else "#select-" + requests[0].id }]
+        }) }}
+        {% endif %}
 
         {% if justResponded %}
         {{ govukNotificationBanner({
@@ -288,7 +305,8 @@
                     </div>
 
                     <div class="moj-filter__content">
-                        {% if selectedFilterGroups.length %}
+                        {# Always shown, as on the LCML v4 submissions page; only the tags
+                           depend on what is applied #}
                         <div class="moj-filter__selected">
                             <div class="moj-filter__selected-heading">
                                 <div class="moj-filter__heading-title">
@@ -307,7 +325,6 @@
                             </ul>
                             {% endfor %}
                         </div>
-                        {% endif %}
 
                         <form method="get" action="consultations" class="moj-filter__options" novalidate>
                             {# Keep the page versions (assign method, layout) #}
@@ -382,13 +399,13 @@
                   the buttons and the table, so the ticked cases stay in view.
                   Only used with JavaScript; otherwise the button goes to the
                   separate page.
-                  Radios, not a dropdown. Nothing chosen, or nothing ticked,
-                  does nothing for now, like the other assign buttons.
+                  Radios, not a dropdown. Nothing ticked, or nobody chosen,
+                  shows an error.
                 #}
                 {# hidden in the markup, so without JavaScript it never shows #}
-                <div class="app-reassign-panel" id="app-reassign-panel" hidden>
-                    <div class="govuk-form-group">
-                        <fieldset class="govuk-fieldset" aria-describedby="app-reassign-count">
+                <div class="app-reassign-panel" id="app-reassign-panel" hidden{% if reassignError %} data-open="true"{% endif %}>
+                    <div class="govuk-form-group{% if reassignError %} govuk-form-group--error{% endif %}">
+                        <fieldset class="govuk-fieldset" aria-describedby="app-reassign-count{% if reassignError %} app-reassign-error{% endif %}">
                             <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Who do you want to assign the selected consultations to?</legend>
                             {#
                               Hint, so it is read out with the question. Kept up to
@@ -397,6 +414,9 @@
                               each box change, and get the count when they reach here.
                             #}
                             <div class="govuk-hint" id="app-reassign-count"></div>
+                            {% if reassignError %}
+                            <p class="govuk-error-message" id="app-reassign-error"><span class="govuk-visually-hidden">Error:</span> {{ assignError.text }}</p>
+                            {% endif %}
                             <div class="govuk-radios govuk-radios--small" data-module="govuk-radios">
                                 {% for person in everyone %}
                                 <div class="govuk-radios__item">
@@ -432,6 +452,11 @@
             {# MOJ sortable table, as on the LCML v4 submissions page. MOJ's initAll
                sets up both components, so multi-select sits on a wrapper because
                the table can only have one data-module. #}
+            {# Error message for the table, GOV.UK form style: red bar and message above it #}
+            <div class="govuk-form-group govuk-!-margin-bottom-0{% if tableError %} govuk-form-group--error{% endif %}">
+            {% if tableError %}
+            <p class="govuk-error-message" id="consultations-error"><span class="govuk-visually-hidden">Error:</span> {{ assignError.text }}</p>
+            {% endif %}
             <div{% if checkboxes %} data-module="moj-multi-select"{% endif %}>
             {#
               MOJ scrollable pane: when the table is too wide it scrolls
@@ -470,7 +495,7 @@
                         {% if checkboxes %}
                         <td class="govuk-table__cell app-select-cell">
                             <div class="govuk-checkboxes__item govuk-checkboxes--small moj-multi-select__checkbox">
-                                <input type="checkbox" class="govuk-checkboxes__input" id="select-{{ request.id }}" name="consultation-v2-assign-ids" value="{{ request.id }}">
+                                <input type="checkbox" class="govuk-checkboxes__input" id="select-{{ request.id }}" name="consultation-v2-assign-ids" value="{{ request.id }}"{% if request.id in selected %} checked{% endif %}{% if tableError %} aria-describedby="consultations-error"{% endif %}>
                                 <label class="govuk-label govuk-checkboxes__label moj-multi-select__toggle-label" for="select-{{ request.id }}">
                                     <span class="govuk-visually-hidden">Select {{ request.applicationName }}</span>
                                 </label>
@@ -504,6 +529,7 @@
                     {% endfor %}
                 </tbody>
             </table>
+            </div>
             </div>
             </div>
                 {% else %}
