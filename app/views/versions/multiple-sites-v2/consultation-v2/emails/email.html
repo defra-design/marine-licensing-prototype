@@ -1,7 +1,7 @@
 {#
   The Notify email a consultee organisation gets when the MMO consults it.
   One template for both types, rendered by the email route with a request:
-    response-required - we need your advice, with the respond by date
+    response-required - we need your advice, with the closing date
     notify-only       - we are telling you about the application
   Body copy and subject lines are from the content designer's Notify templates.
 
@@ -50,7 +50,7 @@ p {
 <p>Dear Natural England,</p>
 
 {% if isAdvice %}
-<p>We need your advice on marine licence application {{ request.reference }}. We need your advice by {{ request.respondByOffset | daysFromToday }}.</p>
+<p>We need your advice on marine licence application {{ request.reference }}. The closing date for responses is {{ request.respondByOffset | daysFromToday }}.</p>
 {% else %}
 <p>We have received marine licence application {{ request.reference }}. We are telling you about it because of your statutory responsibilities or interest in this area.</p>
 {% endif %}
