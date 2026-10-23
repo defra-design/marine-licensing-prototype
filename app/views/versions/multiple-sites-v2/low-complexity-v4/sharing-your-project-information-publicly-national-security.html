@@ -34,22 +34,20 @@ Do you have approval from the Secretary of State for Defence to withhold informa
 <!-- 'approval' = no radio selected, 'details' = Yes selected with the textarea left blank -->
 {% set errorType = data['low-complexity-sharing-information-error'] %}
 {% set approvalErrorText = "Select if you have approval from the Secretary of State for Defence to withhold information for national security reasons" %}
-{% set detailsErrorText = "Enter what you want withheld and why" %}
+{% set detailsErrorText = "Enter what you want withheld" %}
 
 {% block pageTitle %}
 {% if errorType %}Error: {% endif %}{{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
 {% endblock %}
 
 {% set detailsHintHtml %}
-<p class="govuk-hint">To help us decide whether your request meets the criteria, you must tell us:</p>
+<p class="govuk-hint">You must tell us:</p>
 <ul class="govuk-list govuk-list--bullet">
     <li>what information you want withheld</li>
     <li>where it appears in your application or supporting documents</li>
-    <li>why that information is sensitive</li>
-    <li>what harm would be caused by publishing it, and who would be affected</li>
-    <li>details of your approval from the Secretary of State for Defence</li>
+    <li>details of your approval from the Secretary of State for Defence, for example the date and any reference number</li>
 </ul>
-<p class="govuk-hint">If we decide to publish any of the information you asked us to withhold, we will tell you before we publish it, and you can withdraw your application if you want to.</p>
+<p class="govuk-hint">We will withhold the information covered by the approval. We will contact you to ask for evidence of it.</p>
 Enter a maximum of 1,000 characters
 {% endset %}
 
@@ -60,7 +58,7 @@ Enter a maximum of 1,000 characters
     value: data['low-complexity-sharing-information-details'],
     rows: 5,
     label: {
-        text: "Tell us what you want withheld and why"
+        text: "Tell us what you want withheld"
     },
     hint: {
         html: detailsHintHtml
@@ -113,7 +111,7 @@ Enter a maximum of 1,000 characters
 
             <p class="govuk-body">We will only withhold the specific information that meets the criteria for withholding information for national security reasons. We will publish the rest of your application and supporting documents.</p>
 
-            <p class="govuk-body">We will decide whether the information you identify meets the criteria. This may delay your application. If we decide it does not, we will publish the information.</p>
+            <p class="govuk-body">We will only withhold the information covered by the approval from the Secretary of State for Defence. We will publish the rest of your application and supporting documents.</p>
 
             {{ govukRadios({
                 name: "low-complexity-sharing-information-approval",
@@ -141,7 +139,7 @@ Enter a maximum of 1,000 characters
                         value: "No",
                         text: "No",
                         hint: {
-                            text: "If you get approval later, you can come back and change your answer before you submit your application."
+                            text: "Without approval, we cannot withhold information for national security reasons. We will publish it with the rest of your application. If you get approval before you submit, you can come back and change your answer."
                         },
                         checked: data['low-complexity-sharing-information-approval'] == "No"
                     }
