@@ -160,6 +160,18 @@
         setReassign(reassignPanel.hidden)
       })
       reassignCancel.addEventListener('click', function () { setReassign(false); reassignToggle.focus() })
+
+      // "2 consultations selected", counting the ticked rows. Select all ticks
+      // boxes without a change event, so recount after any click in the table.
+      var reassignCount = document.getElementById('app-reassign-count')
+      var table = document.getElementById('consultations-table')
+      var updateCount = function () {
+        var n = table.querySelectorAll('tbody input[type=checkbox]:checked').length
+        reassignCount.textContent = n + (n === 1 ? ' consultation' : ' consultations') + ' selected'
+      }
+      updateCount()
+      table.addEventListener('click', function () { window.setTimeout(updateCount, 0) })
+      table.addEventListener('change', updateCount)
     }
 
     // Side panel version: MOJ's FilterToggleButton adds Show filter to the
@@ -351,8 +363,15 @@
                 {# hidden in the markup, so without JavaScript it never shows #}
                 <div class="app-reassign-panel" id="app-reassign-panel" hidden>
                     <div class="govuk-form-group">
-                        <fieldset class="govuk-fieldset">
+                        <fieldset class="govuk-fieldset" aria-describedby="app-reassign-count">
                             <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Who do you want to assign the selected consultations to?</legend>
+                            {#
+                              Hint, so it is read out with the question. Kept up to
+                              date by the script below as boxes are ticked, but not
+                              announced on each tick: screen reader users already hear
+                              each box change, and get the count when they reach here.
+                            #}
+                            <div class="govuk-hint" id="app-reassign-count"></div>
                             <div class="govuk-radios govuk-radios--small" data-module="govuk-radios">
                                 {% for person in everyone %}
                                 <div class="govuk-radios__item">

@@ -538,7 +538,8 @@ module.exports = function (router) {
       // team members above the table (or the separate page without
       // JavaScript). ?reassign=page always uses the separate page. Off by default.
       reassignMode: ['panel', 'page'].includes(req.query.reassign) ? req.query.reassign : 'off',
-      everyone: [ME].concat(TEAM),
+      // Not you: you would use Assign to me
+      everyone: TEAM,
       // Hidden inputs so the filter forms keep the page versions
       versionParams: versionParams(req.query),
       filters,
@@ -561,7 +562,7 @@ module.exports = function (router) {
       ids.forEach(id => { data[`consultation-v2-${id}-assigned-to`] = ''; });
       return true;
     }
-    if ([ME].concat(TEAM).includes(to)) {
+    if (TEAM.includes(to)) {
       ids.forEach(id => { data[`consultation-v2-${id}-assigned-to`] = to; });
       return true;
     }
@@ -641,7 +642,8 @@ module.exports = function (router) {
     delete req.session.data['consultation-v2-reassign-error'];
     res.render(`versions/${version}/${section}/assign-to-someone-else`, {
       selected: ids.map(id => withStatus(req, REQUESTS[id])),
-      everyone: [ME].concat(TEAM),
+      // Not you: you would use Assign to me
+      everyone: TEAM,
       backUrl: `${base}/consultations${queryOf(req)}`,
       error
     });
