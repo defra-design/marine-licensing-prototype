@@ -85,6 +85,14 @@
     .app-reassign-panel { border: 1px solid #b1b4b6; padding: 20px; margin-bottom: 30px; }
     .app-reassign-panel[hidden] { display: none; }
     .app-reassign-panel .govuk-form-group { margin-bottom: 20px; }
+    /* Scrollable pane focus: only for keyboard users (not after a mouse click
+       in the table), and drawn inside the pane, as the filter layout clips
+       anything drawn outside it */
+    .moj-scrollable-pane:focus { box-shadow: none; outline: none; }
+    .moj-scrollable-pane:focus-visible {
+      outline: 3px solid transparent;
+      box-shadow: inset 0 0 0 4px #ffdd00, inset 0 0 0 8px #0b0c0c;
+    }
     /* When hidden, the whole grey panel goes, not just its contents */
     .app-filter-bar--collapsed { display: none; }
     /* Hide the panel's own heading row of "Selected filters" when nothing is selected */
@@ -172,6 +180,23 @@
       updateCount()
       table.addEventListener('click', function () { window.setTimeout(updateCount, 0) })
       table.addEventListener('change', updateCount)
+    }
+
+    // The scrollable pane only needs to be a tab stop when the table is too
+    // wide and actually scrolls. Otherwise it is an extra, pointless stop.
+    var pane = document.querySelector('.moj-scrollable-pane')
+    if (pane) {
+      var setPaneFocusable = function () {
+        if (pane.scrollWidth > pane.clientWidth + 1) {
+          pane.setAttribute('tabindex', '0')
+        } else {
+          pane.removeAttribute('tabindex')
+        }
+      }
+      setPaneFocusable()
+      window.addEventListener('resize', setPaneFocusable)
+      // Opening or closing the side filter changes the room for the table
+      document.addEventListener('click', function () { window.setTimeout(setPaneFocusable, 0) })
     }
 
     // Side panel version: MOJ's FilterToggleButton adds Show filter to the
