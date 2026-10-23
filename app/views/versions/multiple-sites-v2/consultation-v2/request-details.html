@@ -1,7 +1,6 @@
 {% extends "versions/multiple-sites-v2/consultation-v2/includes/layout.html" %}
 
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
 {% from "versions/multiple-sites-v2/consultation-v2/includes/macros.html" import statusTag %}
 
 {% set navActive = "consultations" %}
@@ -19,9 +18,8 @@
         <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 
         {% if not isAdvice %}
-        {{ govukWarningText({
-            text: "You do not need to respond unless you have specific concerns or information you want to tell us."
-        }) }}
+        <p class="govuk-body">We are telling you about this marine licence application because of your statutory responsibilities or interest in this area.</p>
+        <p class="govuk-body">You do not need to respond unless you have specific concerns or information you want to tell us.</p>
         {% endif %}
 
         <h2 class="govuk-heading-m">About this request</h2>
@@ -31,7 +29,7 @@
                 <dd class="govuk-summary-list__value">{{ statusTag(request) }}</dd>
             </div>
             <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Respond by</dt>
+                <dt class="govuk-summary-list__key">Closing date</dt>
                 <dd class="govuk-summary-list__value">{{ request.respondByOffset | daysFromToday }}</dd>
             </div>
             <div class="govuk-summary-list__row">
