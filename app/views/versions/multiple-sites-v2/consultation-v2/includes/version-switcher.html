@@ -148,6 +148,53 @@
   </div>
 
   <div class="app-version-tray__section">
+  <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Assign on request pages</h3>
+  <ul class="govuk-list govuk-list--spaced">
+    <li>
+      {% if reqassignMode === "off" or not reqassignMode %}
+      <span aria-current="true">Off</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ versionUrls.reqassignOff if versionUrls else consultationsUrl + '' }}" class="govuk-link govuk-link--no-visited-state">Off</a>
+      {% endif %}
+    </li>
+    <li>
+      {% if reqassignMode === "under" %}
+      <span aria-current="true">Under About this request</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ versionUrls.reqassignUnder if versionUrls else consultationsUrl + '?reqassign=under' }}" class="govuk-link govuk-link--no-visited-state">Under About this request</a>
+      {% endif %}
+    </li>
+    <li>
+      {% if reqassignMode === "bottom" %}
+      <span aria-current="true">At the bottom</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ versionUrls.reqassignBottom if versionUrls else consultationsUrl + '?reqassign=bottom' }}" class="govuk-link govuk-link--no-visited-state">At the bottom</a>
+      {% endif %}
+    </li>
+  </ul>
+  </div>
+
+  <div class="app-version-tray__section">
+  <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Banners after assigning</h3>
+  <ul class="govuk-list govuk-list--spaced">
+    <li>
+      {% if bannersOn !== false %}
+      <span aria-current="true">On</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ versionUrls.bannersOn if versionUrls else consultationsUrl + '' }}" class="govuk-link govuk-link--no-visited-state">On</a>
+      {% endif %}
+    </li>
+    <li>
+      {% if bannersOn === false %}
+      <span aria-current="true">Off</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ versionUrls.bannersOff if versionUrls else consultationsUrl + '?banners=off' }}" class="govuk-link govuk-link--no-visited-state">Off</a>
+      {% endif %}
+    </li>
+  </ul>
+  </div>
+
+  <div class="app-version-tray__section">
   <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Filtering</h3>
   <ul class="govuk-list govuk-list--spaced">
     <li>

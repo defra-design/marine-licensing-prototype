@@ -8,7 +8,7 @@
 
 {% set navActive = "consultations" %}
 {% set pageTitle = ("Error: " if error else "") + ("Respond to this request for advice" if request.type === "response-required" else "Respond to this marine licence application") %}
-{% set backLink = "../request-details/" + request.id %}
+{% set backLink = "../request-details/" + request.id + pageQuery %}
 {% set isAdvice = request.type === "response-required" %}
 
 {#
@@ -61,7 +61,7 @@
             html: adviceHelpHtml
         }) }}
 
-        <form action="{{ request.id }}-router" method="post" novalidate>
+        <form action="{{ request.id }}-router{{ pageQuery }}" method="post" novalidate>
             {{ govukTextarea({
                 name: "consultation-v2-response-text",
                 id: "consultation-v2-response-text",
@@ -84,7 +84,7 @@
 
         <p class="govuk-body"><a href="../view-application/{{ request.id }}" class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">View the application (opens in new tab)</a></p>
 
-        <form action="{{ request.id }}-router" method="post" novalidate>
+        <form action="{{ request.id }}-router{{ pageQuery }}" method="post" novalidate>
             {{ govukTextarea({
                 name: "consultation-v2-response-text",
                 id: "consultation-v2-response-text",

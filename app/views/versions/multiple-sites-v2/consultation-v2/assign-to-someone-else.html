@@ -12,8 +12,9 @@
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 
 {% set navActive = "consultations" %}
-{# The single Assign button version uses a more general heading, as you can pick yourself #}
-{% set pageHeading = "Assign consultations" if single else "Assign to someone else" %}
+{# The single Assign button versions (list and request pages) use a more
+   general heading, as you can pick yourself #}
+{% set pageHeading = ("Assign consultation" if selected.length === 1 else "Assign consultations") if single else "Assign to someone else" %}
 {% set pageTitle = ("Error: " if error else "") + pageHeading %}
 {% set backLink = backUrl %}
 

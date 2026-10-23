@@ -419,16 +419,7 @@ module.exports = function (router) {
   // Builds a consultations URL from the current query, with some keys changed.
   // A value of null removes the key.
   function consultationsUrl(query, changes) {
-    const params = new URLSearchParams();
-    const merged = Object.assign({}, query, changes);
-    Object.keys(merged).forEach(key => {
-      [].concat(merged[key] === null || merged[key] === undefined ? [] : merged[key])
-        // The kit adds _unchecked for empty checkbox groups; leave it out of links
-        .filter(value => value !== '_unchecked')
-        .forEach(value => params.append(key, value));
-    });
-    const qs = params.toString();
-    return `${base}/consultations${qs ? '?' + qs : ''}`;
+    return urlWith(`${base}/consultations`, query, changes);
   }
 
   // The MOJ "Selected filters" tags, each linking to the page without it
@@ -479,31 +470,92 @@ module.exports = function (router) {
   }
 
   // The page versions in the URL (not the filters). Kept when filtering,
-  // assigning or switching another version in the tray.
+  // assigning, moving between v2 pages or switching another version in the tray.
   function versionParams(query) {
     const keep = {};
     if (query.assign === 'buttons') keep.assign = 'buttons';
     if (['bar', 'bar-actions'].includes(query.filter)) keep.filter = query.filter;
     if (query.layout === 'full') keep.layout = 'full';
     if (['panel', 'page', 'single'].includes(query.reassign)) keep.reassign = query.reassign;
+    if (['under', 'bottom'].includes(query.reqassign)) keep.reqassign = query.reqassign;
+    if (query.banners === 'off') keep.banners = 'off';
     return keep;
   }
 
-  function versionUrls(query) {
+  // Builds a URL for any v2 page from a query, with some keys changed.
+  // A value of null removes the key.
+  function urlWith(path, query, changes) {
+    const params = new URLSearchParams();
+    const merged = Object.assign({}, query, changes);
+    Object.keys(merged).forEach(key => {
+      [].concat(merged[key] === null || merged[key] === undefined ? [] : merged[key])
+        // The kit adds _unchecked for empty checkbox groups; leave it out of links
+        .filter(value => value !== '_unchecked')
+        .forEach(value => params.append(key, value));
+    });
+    const qs = params.toString();
+    return `${path}${qs ? '?' + qs : ''}`;
+  }
+
+  // Tray links. Each reloads the current page with one version changed,
+  // keeping the other versions but dropping any filters.
+  function versionUrls(query, path) {
     const keep = versionParams(query);
+    const to = changes => urlWith(path, keep, changes);
     return {
-      layoutStandard: consultationsUrl(keep, { layout: null }),
-      layoutFull: consultationsUrl(keep, { layout: 'full' }),
-      assignCheckboxes: consultationsUrl(keep, { assign: null }),
-      assignButtons: consultationsUrl(keep, { assign: 'buttons' }),
-      filterSide: consultationsUrl(keep, { filter: null }),
-      filterBar: consultationsUrl(keep, { filter: 'bar' }),
-      filterBarActions: consultationsUrl(keep, { filter: 'bar-actions' }),
-      reassignOff: consultationsUrl(keep, { reassign: null }),
-      reassignPanel: consultationsUrl(keep, { reassign: 'panel' }),
-      reassignPage: consultationsUrl(keep, { reassign: 'page' }),
-      reassignSingle: consultationsUrl(keep, { reassign: 'single' })
+      layoutStandard: to({ layout: null }),
+      layoutFull: to({ layout: 'full' }),
+      assignCheckboxes: to({ assign: null }),
+      assignButtons: to({ assign: 'buttons' }),
+      filterSide: to({ filter: null }),
+      filterBar: to({ filter: 'bar' }),
+      filterBarActions: to({ filter: 'bar-actions' }),
+      reassignOff: to({ reassign: null }),
+      reassignPanel: to({ reassign: 'panel' }),
+      reassignPage: to({ reassign: 'page' }),
+      reassignSingle: to({ reassign: 'single' }),
+      reqassignOff: to({ reqassign: null }),
+      reqassignUnder: to({ reqassign: 'under' }),
+      reqassignBottom: to({ reqassign: 'bottom' }),
+      bannersOn: to({ banners: null }),
+      bannersOff: to({ banners: 'off' })
     };
+  }
+
+  // Every v2 page knows which page versions are on, so the tray shows the
+  // right ones and links between pages can carry them (versionQuery).
+  router.use(base, function (req, res, next) {
+    const path = req.originalUrl.split('?')[0];
+    const keep = versionParams(req.query);
+    res.locals.versionParams = keep;
+    res.locals.versionQuery = urlWith('', keep, {});
+    // The whole query string, filters included, for links between the list,
+    // request and respond pages, so Back returns to the same view of the list
+    res.locals.pageQuery = queryOf(req);
+    res.locals.versionUrls = versionUrls(req.query, path);
+    res.locals.assignMode = req.query.assign === 'buttons' ? 'buttons' : 'checkboxes';
+    res.locals.filterMode = ['bar', 'bar-actions'].includes(req.query.filter) ? req.query.filter : 'side';
+    res.locals.layoutMode = req.query.layout === 'full' ? 'full' : 'standard';
+    res.locals.reassignMode = keep.reassign || 'off';
+    // ?reqassign=under or ?reqassign=bottom adds an Assign button to the
+    // request pages, under About this request or at the bottom. Off by default.
+    res.locals.reqassignMode = keep.reqassign || 'off';
+    // ?banners=off turns off the banners after assigning from the separate page
+    res.locals.bannersOn = keep.banners !== 'off';
+    next();
+  });
+
+  // A one-off success banner after assigning, for the page we land on
+  function setAssignBanner(req, page, text) {
+    if (req.query.banners === 'off') return;
+    req.session.data['consultation-v2-assign-banner'] = { page, text };
+  }
+
+  function takeAssignBanner(req, page) {
+    const banner = req.session.data['consultation-v2-assign-banner'];
+    if (!banner || banner.page !== page) return null;
+    delete req.session.data['consultation-v2-assign-banner'];
+    return banner.text;
   }
 
   // Consultation dashboard
@@ -532,28 +584,18 @@ module.exports = function (router) {
       justResponded: justResponded ? REQUESTS[justResponded] : null,
       assignError,
       selected,
-      // Add ?assign=buttons to the URL to swap the tick boxes for a button on
-      // each row. Read from the URL only, not the session, so the tick boxes
-      // come back as soon as the query string is dropped.
-      assignMode: req.query.assign === 'buttons' ? 'buttons' : 'checkboxes',
-      // ?filter=bar swaps the MOJ side panel for the horizontal filter bar,
-      // with Show/Hide filter level with the heading. ?filter=bar-actions is
-      // the same bar with Show/Hide filter next to the assign buttons.
-      filterMode: ['bar', 'bar-actions'].includes(req.query.filter) ? req.query.filter : 'side',
-      // ?layout=full widens the page to up to 1920px and adds a Marine plan
-      // area column. An idea to test, not a GOV.UK default.
-      layoutMode: req.query.layout === 'full' ? 'full' : 'standard',
-      // ?reassign=panel adds Assign to someone else, which opens a panel of
-      // team members above the table (or the separate page without
-      // JavaScript). ?reassign=page always uses the separate page.
-      // ?reassign=single replaces all the assign buttons with one Assign
-      // button that goes to the separate page, where you can choose anyone,
-      // including yourself. Off by default.
-      reassignMode: ['panel', 'page', 'single'].includes(req.query.reassign) ? req.query.reassign : 'off',
+      // Page versions (assignMode, filterMode, layoutMode, reassignMode and so
+      // on) come from the router.use above. In brief:
+      //   ?assign=buttons    a button on each row instead of checkboxes
+      //   ?filter=bar        horizontal filter bar, toggle by the heading
+      //   ?filter=bar-actions horizontal filter bar, toggle by the buttons
+      //   ?layout=full       up to 1920px wide, with a Marine plan area column
+      //   ?reassign=page     Assign to someone else on a separate page
+      //   ?reassign=single   one Assign selected button, separate page
+      //   ?reassign=panel    Assign to someone else in a panel on the page
       // Not you: you would use Assign to me
       everyone: TEAM,
-      // Hidden inputs so the filter forms keep the page versions
-      versionParams: versionParams(req.query),
+      assignBanner: takeAssignBanner(req, 'list'),
       filters,
       showOptions: SHOW_OPTIONS,
       typeOptions: TYPE_OPTIONS,
@@ -561,9 +603,9 @@ module.exports = function (router) {
       team: TEAM,
       selectedFilterGroups: selectedFilterGroups(req.query, filters),
       clearFiltersUrl: consultationsUrl(req.query, withoutFilters),
-      // Version switcher links start each version clean: filters are cleared,
-      // but the other version choice (assign or filter) is kept
-      versionUrls: versionUrls(req.query)
+      // Links to the request pages carry the filters too, so Back returns to
+      // the same view of the list
+      listQuery: queryOf(req)
     });
   });
 
@@ -631,6 +673,7 @@ module.exports = function (router) {
       // Assign to someone else as a separate page, or the in-page panel
       // without JavaScript: remember the ticked cases and go to the page
       data['consultation-v2-reassign-ids'] = ids;
+      delete data['consultation-v2-reassign-from'];
       return req.session.save(() => res.redirect(`${base}/assign-to-someone-else${queryOf(req)}`));
     } else if (action === 'unassign') {
       // Only your own cases are unassigned. Anyone else's ticked cases are left alone.
@@ -656,39 +699,76 @@ module.exports = function (router) {
     res.render(`versions/${version}/${section}/emails/sign-in`, { request });
   });
 
+  // Assign from a request page: the one case, then the same separate page
+  router.get(`${base}/assign/:requestId`, function (req, res) {
+    const request = findRequest(req, res);
+    if (!request) return;
+    req.session.data['consultation-v2-reassign-ids'] = [request.id];
+    req.session.data['consultation-v2-reassign-from'] = request.id;
+    req.session.save(() => res.redirect(`${base}/assign-to-someone-else${queryOf(req)}`));
+  });
+
+  // Who the separate page offers. The single Assign button, and the Assign
+  // button on a request page, replace Assign to me, so they list you as well.
+  function assignPageContext(req) {
+    const data = req.session.data;
+    const ids = [].concat(data['consultation-v2-reassign-ids'] || []).filter(id => REQUESTS[id]);
+    const from = data['consultation-v2-reassign-from'];
+    const fromRequest = from && ids.length === 1 && ids[0] === from ? from : null;
+    const includeMe = req.query.reassign === 'single' || !!fromRequest;
+    return { ids, fromRequest, people: includeMe ? [ME].concat(TEAM) : TEAM, includeMe };
+  }
+
   // Assign to someone else, separate page. Lists the cases ticked on the
-  // dashboard, then asks who to give them to.
+  // dashboard (or the one case from a request page), then asks who to give
+  // them to.
   router.get(`${base}/assign-to-someone-else`, function (req, res) {
-    const ids = [].concat(req.session.data['consultation-v2-reassign-ids'] || []).filter(id => REQUESTS[id]);
+    const { ids, fromRequest, people, includeMe } = assignPageContext(req);
     if (!ids.length) return res.redirect(`${base}/consultations${queryOf(req)}`);
     const error = req.session.data['consultation-v2-reassign-error'];
     delete req.session.data['consultation-v2-reassign-error'];
-    // The single Assign button version lists you too, as it replaces Assign to me
-    const single = req.query.reassign === 'single';
     res.render(`versions/${version}/${section}/assign-to-someone-else`, {
       selected: ids.map(id => withStatus(req, REQUESTS[id])),
-      // Not you: you would use Assign to me
-      everyone: single ? [ME].concat(TEAM) : TEAM,
-      single,
-      backUrl: `${base}/consultations${queryOf(req)}`,
+      everyone: people,
+      single: includeMe,
+      // Back and Cancel go to where you came from
+      backUrl: fromRequest
+        ? `${base}/request-details/${fromRequest}${queryOf(req)}`
+        : `${base}/consultations${queryOf(req)}`,
       error
     });
   });
 
   router.post(`${base}/assign-to-someone-else`, function (req, res) {
     const data = req.session.data;
-    const ids = [].concat(data['consultation-v2-reassign-ids'] || []).filter(id => REQUESTS[id]);
+    const { ids, fromRequest, people } = assignPageContext(req);
     const to = data['consultation-v2-reassign-to'];
     delete data['consultation-v2-reassign-to'];
 
     // A normal form page, so it gets a normal GOV.UK error if nobody is chosen
-    const people = req.query.reassign === 'single' ? [ME].concat(TEAM) : TEAM;
     if (!reassign(data, ids, to, people)) {
       data['consultation-v2-reassign-error'] = 'Select who to assign the consultations to';
       return req.session.save(() => res.redirect(req.originalUrl));
     }
-
     delete data['consultation-v2-reassign-ids'];
+    delete data['consultation-v2-reassign-from'];
+
+    // Assigned yourself from a request page: back to it, to work on it.
+    // Anything else: back to the list, as it is someone else's now.
+    if (fromRequest && to === ME) {
+      setAssignBanner(req, 'request', 'This consultation has been assigned to you');
+      return req.session.save(() => res.redirect(`${base}/request-details/${fromRequest}${queryOf(req)}`));
+    }
+
+    const what = ids.length === 1 ? REQUESTS[ids[0]].applicationName : `${ids.length} consultations`;
+    const verb = ids.length === 1 ? 'has' : 'have';
+    const text = to === 'no-one'
+      ? `${what} ${ids.length === 1 ? 'is' : 'are'} now unassigned`
+      : `${what} ${verb} been assigned to ${to === ME ? 'you' : to}`;
+    setAssignBanner(req, 'list', text);
+
+    // From a request page the list opens with just the page versions;
+    // from the list it keeps its filters too
     req.session.save(() => res.redirect(`${base}/consultations${queryOf(req)}`));
   });
 
@@ -696,7 +776,10 @@ module.exports = function (router) {
   router.get(`${base}/request-details/:requestId`, function (req, res) {
     const request = findRequest(req, res);
     if (!request) return;
-    res.render(`versions/${version}/${section}/request-details`, { request });
+    res.render(`versions/${version}/${section}/request-details`, {
+      request,
+      assignBanner: takeAssignBanner(req, 'request')
+    });
   });
 
   // View application (read-only, like view details in LCML v4)
@@ -718,7 +801,7 @@ module.exports = function (router) {
   router.post(`${base}/respond/:requestId-router`, function (req, res) {
     const request = REQUESTS[req.params.requestId];
     if (!request) return res.redirect(`${base}/consultations`);
-    if (assignedToFor(req, request) !== ME) return res.redirect(`${base}/request-details/${request.id}`);
+    if (assignedToFor(req, request) !== ME) return res.redirect(`${base}/request-details/${request.id}${queryOf(req)}`);
 
     const response = (req.session.data['consultation-v2-response-text'] || '').trim();
     delete req.session.data['consultation-v2-response-text'];
@@ -734,6 +817,6 @@ module.exports = function (router) {
     req.session.data[`consultation-v2-${request.id}-status`] = 'Responded';
     req.session.data[`consultation-v2-${request.id}-responded-date`] = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
     req.session.data['consultation-v2-just-responded'] = request.id;
-    res.redirect(`${base}/consultations`);
+    res.redirect(`${base}/consultations${queryOf(req)}`);
   });
 };

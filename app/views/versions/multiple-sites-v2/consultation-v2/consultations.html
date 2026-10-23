@@ -233,6 +233,14 @@
         }) }}
         {% endif %}
 
+        {# After assigning from the separate page, unless ?banners=off #}
+        {% if assignBanner %}
+        {{ govukNotificationBanner({
+            type: "success",
+            html: '<p class="govuk-notification-banner__heading">' + assignBanner + '</p>'
+        }) }}
+        {% endif %}
+
         {% if justResponded %}
         {{ govukNotificationBanner({
             type: "success",
@@ -516,7 +524,7 @@
                             </div>
                         </td>
                         {% endif %}
-                        <th scope="row" class="govuk-table__header govuk-!-font-weight-regular" data-sort-value="{{ request.applicationName }}"><a href="request-details/{{ request.id }}" class="govuk-link govuk-link--no-visited-state">{{ request.applicationName }}</a></th>
+                        <th scope="row" class="govuk-table__header govuk-!-font-weight-regular" data-sort-value="{{ request.applicationName }}"><a href="request-details/{{ request.id }}{{ listQuery }}" class="govuk-link govuk-link--no-visited-state">{{ request.applicationName }}</a></th>
                         <td class="govuk-table__cell">{{ request.reference }}</td>
                     {% if fullWidth %}
                     <td class="govuk-table__cell">{{ request.marinePlanArea }}</td>
