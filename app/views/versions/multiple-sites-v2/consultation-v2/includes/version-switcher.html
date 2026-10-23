@@ -117,10 +117,24 @@
   <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Assign to someone else</h3>
   <ul class="govuk-list govuk-list--spaced">
     <li>
-      {% if reassignMode !== "panel" and reassignMode !== "page" %}
+      {% if reassignMode === "off" or not reassignMode %}
       <span aria-current="true">Off</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
       {% else %}
       <a href="{{ versionUrls.reassignOff if versionUrls else consultationsUrl }}" class="govuk-link govuk-link--no-visited-state">Off</a>
+      {% endif %}
+    </li>
+    <li>
+      {% if reassignMode === "page" %}
+      <span aria-current="true">Multiple assign buttons, separate page</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ versionUrls.reassignPage if versionUrls else consultationsUrl + '?reassign=page' }}" class="govuk-link govuk-link--no-visited-state">Multiple assign buttons, separate page</a>
+      {% endif %}
+    </li>
+    <li>
+      {% if reassignMode === "single" %}
+      <span aria-current="true">One Assign button, separate page</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ versionUrls.reassignSingle if versionUrls else consultationsUrl + '?reassign=single' }}" class="govuk-link govuk-link--no-visited-state">One Assign button, separate page</a>
       {% endif %}
     </li>
     <li>
@@ -129,14 +143,6 @@
       {% else %}
       <a href="{{ versionUrls.reassignPanel if versionUrls else consultationsUrl + '?reassign=panel' }}" class="govuk-link govuk-link--no-visited-state">In-page panel</a>
       {% endif %}
-    </li>
-    <li>
-      {% if reassignMode === "page" %}
-      <span aria-current="true">Separate page</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
-      {% else %}
-      <a href="{{ versionUrls.reassignPage if versionUrls else consultationsUrl + '?reassign=page' }}" class="govuk-link govuk-link--no-visited-state">Separate page</a>
-      {% endif %}
-      <span class="govuk-hint govuk-!-display-block govuk-!-margin-bottom-0">Also what the in-page panel does without JavaScript</span>
     </li>
   </ul>
   </div>

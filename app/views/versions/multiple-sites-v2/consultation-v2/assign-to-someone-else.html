@@ -1,7 +1,8 @@
 {#
   Assign to someone else, separate page version. Reached from the dashboard
-  with the ticked cases, either as its own page version (?reassign=page) or
-  as what the in-page panel does without JavaScript. Filters and page
+  with the ticked cases: as its own page version (?reassign=page), from the
+  single Assign button (?reassign=single, which also lists you), or as what
+  the in-page panel does without JavaScript. Filters and page
   versions ride along in the query string, so Back and Assign return to the
   same view of the dashboard.
 #}
@@ -11,7 +12,9 @@
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 
 {% set navActive = "consultations" %}
-{% set pageTitle = ("Error: " if error else "") + "Assign to someone else" %}
+{# The single Assign button version uses a more general heading, as you can pick yourself #}
+{% set pageHeading = "Assign consultations" if single else "Assign to someone else" %}
+{% set pageTitle = ("Error: " if error else "") + pageHeading %}
 {% set backLink = backUrl %}
 
 {% block content %}
@@ -26,7 +29,7 @@
         }) }}
         {% endif %}
 
-        <h1 class="govuk-heading-l">Assign to someone else</h1>
+        <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 
         <p class="govuk-body">You have selected {{ selected.length }} {{ "consultation" if selected.length === 1 else "consultations" }}:</p>
 

@@ -485,7 +485,7 @@ module.exports = function (router) {
     if (query.assign === 'buttons') keep.assign = 'buttons';
     if (['bar', 'bar-actions'].includes(query.filter)) keep.filter = query.filter;
     if (query.layout === 'full') keep.layout = 'full';
-    if (['panel', 'page'].includes(query.reassign)) keep.reassign = query.reassign;
+    if (['panel', 'page', 'single'].includes(query.reassign)) keep.reassign = query.reassign;
     return keep;
   }
 
@@ -501,7 +501,8 @@ module.exports = function (router) {
       filterBarActions: consultationsUrl(keep, { filter: 'bar-actions' }),
       reassignOff: consultationsUrl(keep, { reassign: null }),
       reassignPanel: consultationsUrl(keep, { reassign: 'panel' }),
-      reassignPage: consultationsUrl(keep, { reassign: 'page' })
+      reassignPage: consultationsUrl(keep, { reassign: 'page' }),
+      reassignSingle: consultationsUrl(keep, { reassign: 'single' })
     };
   }
 
@@ -544,8 +545,11 @@ module.exports = function (router) {
       layoutMode: req.query.layout === 'full' ? 'full' : 'standard',
       // ?reassign=panel adds Assign to someone else, which opens a panel of
       // team members above the table (or the separate page without
-      // JavaScript). ?reassign=page always uses the separate page. Off by default.
-      reassignMode: ['panel', 'page'].includes(req.query.reassign) ? req.query.reassign : 'off',
+      // JavaScript). ?reassign=page always uses the separate page.
+      // ?reassign=single replaces all the assign buttons with one Assign
+      // button that goes to the separate page, where you can choose anyone,
+      // including yourself. Off by default.
+      reassignMode: ['panel', 'page', 'single'].includes(req.query.reassign) ? req.query.reassign : 'off',
       // Not you: you would use Assign to me
       everyone: TEAM,
       // Hidden inputs so the filter forms keep the page versions
@@ -565,12 +569,12 @@ module.exports = function (router) {
 
   // Gives the cases to a team member, or to nobody for "no-one". Returns
   // false if nobody valid was chosen.
-  function reassign(data, ids, to) {
+  function reassign(data, ids, to, people) {
     if (to === 'no-one') {
       ids.forEach(id => { data[`consultation-v2-${id}-assigned-to`] = ''; });
       return true;
     }
-    if (TEAM.includes(to)) {
+    if ((people || TEAM).includes(to)) {
       ids.forEach(id => { data[`consultation-v2-${id}-assigned-to`] = to; });
       return true;
     }
@@ -659,10 +663,13 @@ module.exports = function (router) {
     if (!ids.length) return res.redirect(`${base}/consultations${queryOf(req)}`);
     const error = req.session.data['consultation-v2-reassign-error'];
     delete req.session.data['consultation-v2-reassign-error'];
+    // The single Assign button version lists you too, as it replaces Assign to me
+    const single = req.query.reassign === 'single';
     res.render(`versions/${version}/${section}/assign-to-someone-else`, {
       selected: ids.map(id => withStatus(req, REQUESTS[id])),
       // Not you: you would use Assign to me
-      everyone: TEAM,
+      everyone: single ? [ME].concat(TEAM) : TEAM,
+      single,
       backUrl: `${base}/consultations${queryOf(req)}`,
       error
     });
@@ -675,7 +682,8 @@ module.exports = function (router) {
     delete data['consultation-v2-reassign-to'];
 
     // A normal form page, so it gets a normal GOV.UK error if nobody is chosen
-    if (!reassign(data, ids, to)) {
+    const people = req.query.reassign === 'single' ? [ME].concat(TEAM) : TEAM;
+    if (!reassign(data, ids, to, people)) {
       data['consultation-v2-reassign-error'] = 'Select who to assign the consultations to';
       return req.session.save(() => res.redirect(req.originalUrl));
     }

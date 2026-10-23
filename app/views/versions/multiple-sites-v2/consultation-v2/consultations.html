@@ -360,7 +360,21 @@
                     </div>
                     {% endif %}
 
-                    {% if checkboxes %}
+                    {% if checkboxes and reassignMode === "single" %}
+                    {#
+                      One Assign button instead of Assign to me, Unassign from me
+                      and Assign to someone else. It goes to the separate page,
+                      where you choose anyone, including yourself, or No one.
+                    #}
+                    <div class="govuk-button-group">
+                        {{ govukButton({
+                            text: "Assign selected",
+                            classes: "govuk-button--secondary",
+                            name: "consultation-v2-assign-action",
+                            value: "choose"
+                        }) }}
+                    </div>
+                    {% elif checkboxes %}
                     <div class="govuk-button-group">
                         {{ govukButton({
                             text: "Assign to me",
