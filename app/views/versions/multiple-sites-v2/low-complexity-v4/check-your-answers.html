@@ -1899,36 +1899,78 @@ Check your answers before sending your information
 		<div class="govuk-summary-card">
 			<div class="govuk-summary-card__title-wrapper">
 				<h2 class="govuk-summary-card__title" id="sharing-your-project-information-publicly">
-					Sharing your application information publicly
+					Information published on the public register
 				</h2>
 				<ul class="govuk-summary-card__actions">
 					<li class="govuk-summary-card__action">
-						<a class="govuk-link govuk-link--no-visited-state" href="sharing-your-project-information-publicly?camefromcheckanswers=true">
-							Change<span class="govuk-visually-hidden"> sharing your application information publicly</span>
+						{% if data['low-complexity-sharing-information'] == 'Yes' %}
+						<a class="govuk-link govuk-link--no-visited-state" href="sharing-your-project-information-publicly-check-answers?camefromcheckanswers=true">
+							Change<span class="govuk-visually-hidden"> information published on the public register</span>
 						</a>
+						{% else %}
+						<a class="govuk-link govuk-link--no-visited-state" href="sharing-your-project-information-publicly?camefromcheckanswers=true">
+							Change<span class="govuk-visually-hidden"> information published on the public register</span>
+						</a>
+						{% endif %}
 					</li>
 				</ul>
 			</div>
 			<div class="govuk-summary-card__content">
 				<dl class="govuk-summary-list">
-					<div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+					<div class="govuk-summary-list__row">
 						<dt class="govuk-summary-list__key">
-							Request that information is withheld
+							Do you want to ask us to withhold any information from the public register?
 						</dt>
 						<dd class="govuk-summary-list__value">
+							{% if data['low-complexity-sharing-information'] == 'Yes' %}
+							Yes – {{ data['low-complexity-sharing-information-reason'] }}
+							{% else %}
 							{{ data['low-complexity-sharing-information'] }}
+							{% endif %}
 						</dd>
 					</div>
 
 					{% if data['low-complexity-sharing-information'] == 'Yes' %}
-					<div class="govuk-summary-list__row govuk-summary-list__row--no-border">
+
+					{% if data['low-complexity-sharing-information-reason'] == 'National security reasons' %}
+
+					<div class="govuk-summary-list__row{% if data['low-complexity-sharing-information-approval'] == 'Yes' %} govuk-summary-list__row--no-border{% endif %}">
 						<dt class="govuk-summary-list__key">
-							Details of information to be withheld and why
+							Do you have approval from the Secretary of State for Defence to withhold information for national security reasons?
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{% if data['low-complexity-sharing-information-approval'] == 'No' %}
+							No – Without approval, we cannot withhold information for national security reasons. We will publish it with the rest of your application. If you get approval before you submit, you can come back and change your answer.
+							{% else %}
+							{{ data['low-complexity-sharing-information-approval'] }}
+							{% endif %}
+						</dd>
+					</div>
+
+					{% if data['low-complexity-sharing-information-approval'] == 'Yes' %}
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							What you want withheld
 						</dt>
 						<dd class="govuk-summary-list__value">
 							{{ data['low-complexity-sharing-information-details'] }}
 						</dd>
 					</div>
+					{% endif %}
+
+					{% else %}
+
+					<div class="govuk-summary-list__row">
+						<dt class="govuk-summary-list__key">
+							What you want withheld and why
+						</dt>
+						<dd class="govuk-summary-list__value">
+							{{ data['low-complexity-sharing-information-details'] }}
+						</dd>
+					</div>
+
+					{% endif %}
+
 					{% endif %}
 				</dl>
 			</div>

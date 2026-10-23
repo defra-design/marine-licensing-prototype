@@ -1,0 +1,164 @@
+{% extends "../layouts/low-complexity-v4.html" %}
+
+{% from "govuk/components/radios/macro.njk" import govukRadios %}
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% block head %}
+  {{ super() }}
+  <style>
+    #low-complexity-sharing-information-details-hint .govuk-list {
+      color: inherit;
+    }
+  </style>
+{% endblock %}
+
+{% block beforeContent %}
+    {% include "../includes/phase-banner.html" %}
+    {% if data['organisation-name'] %}
+        {% include "../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link govuk-link--no-visited-state" href="javascript:history.back()">Back</a>
+{% endblock %}
+
+{% set pageHeadingTextHTML %}
+Withholding information for national security reasons
+{% endset %}
+
+{% set questionHeadingTextHTML %}
+Do you have approval from the Secretary of State for Defence to withhold information for national security reasons?
+{% endset %}
+
+<!-- 'approval' = no radio selected, 'details' = Yes selected with the textarea left blank -->
+{% set errorType = data['low-complexity-sharing-information-error'] %}
+{% set approvalErrorText = "Select if you have approval from the Secretary of State for Defence to withhold information for national security reasons" %}
+{% set detailsErrorText = "Enter what you want withheld" %}
+
+{% block pageTitle %}
+{% if errorType %}Error: {% endif %}{{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% set detailsHintHtml %}
+<p class="govuk-hint">You must tell us:</p>
+<ul class="govuk-list govuk-list--bullet">
+    <li>what information you want withheld</li>
+    <li>where it appears in your application or supporting documents</li>
+    <li>details of your approval from the Secretary of State for Defence, for example the date and any reference number</li>
+</ul>
+<p class="govuk-hint">We will withhold the information covered by the approval. We will contact you to ask for evidence of it.</p>
+Enter a maximum of 1,000 characters
+{% endset %}
+
+{% set detailsHtml %}
+{{ govukTextarea({
+    id: "low-complexity-sharing-information-details",
+    name: "low-complexity-sharing-information-details",
+    value: data['low-complexity-sharing-information-details'],
+    rows: 5,
+    label: {
+        text: "Tell us what you want withheld"
+    },
+    hint: {
+        html: detailsHintHtml
+    },
+    errorMessage: {
+        text: detailsErrorText
+    } if errorType == "details"
+}) }}
+{% endset -%}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        {% if errorType %}
+        {{ govukErrorSummary({
+            titleText: "There is a problem",
+            errorList: [
+                {
+                    text: detailsErrorText if errorType == "details" else approvalErrorText,
+                    href: "#low-complexity-sharing-information-details" if errorType == "details" else "#low-complexity-sharing-information-approval"
+                }
+            ]
+        }) }}
+        {% endif %}
+
+        <!-- go to routes.js for routing  -->
+        <form action="sharing-your-project-information-publicly-national-security-router" method="post" novalidate>
+            <span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}</span>
+            <h1 class="govuk-heading-l">
+                {{ pageHeadingTextHTML }}
+            </h1>
+
+            <p class="govuk-body">This covers the security and wellbeing of the UK, its people, its institutions and its system of government. It may include information about:</p>
+
+            <ul class="govuk-list govuk-list--bullet">
+                <li>protection against terrorism or hostile state activity</li>
+                <li>critical national infrastructure</li>
+                <li>defence and military capability</li>
+                <li>national resilience and preparedness</li>
+                <li>international security co-operation</li>
+                <li>locations, assets, systems or capabilities that may be vulnerable to hostile acts</li>
+            </ul>
+
+            {{ govukWarningText({
+                text: "You will need approval from the Secretary of State for Defence to withhold information on national security grounds.",
+                iconFallbackText: "Warning"
+            }) }}
+
+            <p class="govuk-body">We will only withhold the specific information that meets the criteria for withholding information for national security reasons. We will publish the rest of your application and supporting documents.</p>
+
+            <p class="govuk-body">We will only withhold the information covered by the approval from the Secretary of State for Defence. We will publish the rest of your application and supporting documents.</p>
+
+            {{ govukRadios({
+                name: "low-complexity-sharing-information-approval",
+                idPrefix: "low-complexity-sharing-information-approval",
+                fieldset: {
+                    legend: {
+                        html: questionHeadingTextHTML,
+                        isPageHeading: false,
+                        classes: "govuk-fieldset__legend--m"
+                    }
+                },
+                errorMessage: {
+                    text: approvalErrorText
+                } if errorType == "approval",
+                items: [
+                    {
+                        value: "Yes",
+                        text: "Yes",
+                        conditional: {
+                            html: detailsHtml
+                        },
+                        checked: data['low-complexity-sharing-information-approval'] == "Yes"
+                    },
+                    {
+                        value: "No",
+                        text: "No",
+                        hint: {
+                            text: "Without approval, we cannot withhold information for national security reasons. We will publish it with the rest of your application. If you get approval before you submit, you can come back and change your answer."
+                        },
+                        checked: data['low-complexity-sharing-information-approval'] == "No"
+                    }
+                ]
+            }) }}
+
+            <div class="govuk-button-group">
+                {{ govukButton({
+                    text: "Continue"
+                }) }}
+
+                {% if not data['low-complexity-sharing-information-from-cya'] and not data['low-complexity-sharing-information-from-main-cya'] %}
+                <a class="govuk-link govuk-link--no-visited-state" href="sharing-your-project-information-publicly-cancel">Cancel</a>
+                {% endif %}
+            </div>
+
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

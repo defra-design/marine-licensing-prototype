@@ -30,7 +30,7 @@ Error:
 {# Changing an existing document's policies from its card: unticking them all is
    better handled by deleting the document, so the error says so #}
 {% if data['mpp-v3-change-single-page'] == 'policies' %}
-{% set noPolicyErrorText = "Select at least one policy this document supports, or go back to supporting documents and delete the document if it is no longer required" %}
+{% set noPolicyErrorText = "Select at least one policy this document supports, or go back and delete the document if you no longer need it" %}
 {% else %}
 {% set noPolicyErrorText = "Select at least one policy this document supports" %}
 {% endif %}

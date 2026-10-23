@@ -10,7 +10,7 @@
     "@ministryofjustice/frontend": "^9.0.0",
     "@x-govuk/govuk-prototype-filters": "2.0.0",
     "accessible-autocomplete": "^3.0.1",
-    "govuk-frontend": "^6.1.0",
+    "govuk-frontend": "^6.6.0",
     "govuk-prototype-kit": "13.18.1",
     "jquery": "3.7.1"
   }

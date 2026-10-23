@@ -35,54 +35,72 @@ Activity description
                     titleText: "There is a problem",
                     errorList: [
                         {
-                            text: "Enter the activity description",
+                            text: "Describe how you'll carry out this activity",
                             href: "#low-complexity-activity-description"
                         }
                     ]
                 }) }}
             {% endif %}
 
+            <span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}<span class="govuk-!-display-block">Site {{ data['low-complexity-manual-current-edit-site'] or '1' }} - Activity {{ data['low-complexity-manual-current-edit-activity'] or data['low-complexity-current-edit-activity'] or '1' }}</span></span>
+            <h1 class="govuk-heading-l">
+                {{ pageHeadingTextHTML }}
+            </h1>
+
+            <p class="govuk-body">Tell us step by step how you'll carry out this activity. This is sometimes called a methodology.</p>
+
+            <p class="govuk-body">We use it to assess the activity's likely impacts, for example on navigation, wildlife, habitats and water quality. If we grant a licence, your description sets the limits of what you're allowed to do.</p>
+
+            <p class="govuk-body">Only describe this activity, not your wider project. We'll ask about timings on the next pages.</p>
+
+            <h2 class="govuk-heading-m">What to include</h2>
+
+            <ul class="govuk-list govuk-list--bullet">
+                <li><strong>Method:</strong> the order of works and any specific techniques, for example vibro piling</li>
+                <li><strong>Equipment:</strong> what type, how many, the maximum size and how it will be used, for example ‘up to 2 excavators of no more than 20 tonnes’</li>
+                <li><strong>Materials:</strong> what type, the maximum quantity, and what will happen to any waste or removed material</li>
+                <li><strong>Getting to the site:</strong> how people, equipment and materials will get there, for example by road or by sea, and which harbour any vessels will come from. If you're only using existing roads, access points or shipping routes, you just need to say so. Give more detail if you need a new or temporary access route, or if your route passes through or next to a protected or sensitive area.</li>
+                <li><strong>Size of the works:</strong> the maximum dimensions, and the total area you'll use at any one time, including equipment, storage and temporary works</li>
+                <li><strong>Temporary storage and works:</strong> what, where, how big and for how long, and whether any of it will be below Mean High Water Springs (the average level the sea reaches at its highest tides)</li>
+                <li><strong>When you've finished:</strong> how you'll remove equipment, materials and temporary works, and restore the site</li>
+            </ul>
+
+            <h2 class="govuk-heading-m">If some details are not confirmed yet</h2>
+
+            <p class="govuk-body">For anything you're not sure about, either:</p>
+
+            <ul class="govuk-list govuk-list--bullet">
+                <li>give the maximum, for example ‘no more than 200 tonnes of armour stone’</li>
+                <li>name the alternatives, for example ‘vibro piling, or impact piling if ground conditions do not allow it’</li>
+            </ul>
+
+            <p class="govuk-body">We'll assess the maximum, or every alternative you give us.</p>
+
+            <p class="govuk-body">Do not use words like ‘approximately’, ‘where practicable’ or ‘may be required’ without giving a limit. We cannot assess them.</p>
+
+            {{ govukDetails({
+                summaryText: "Activity description examples",
+                html: "<h2 class=\"govuk-heading-s\">Example one</h2><p class=\"govuk-body\">Up to 15 timber fenders and their fixings will be removed from the quay face, one at a time, at low tide.</p><p class=\"govuk-body\">A crane of no more than 50 tonnes with a man basket will work from the quayside.</p><p class=\"govuk-body\">No more than 3 tonnes of timber and metal fixings will be removed and taken to a licensed waste facility.</p><p class=\"govuk-body\">The crane will reach the quay by road, using the existing port access.</p><p class=\"govuk-body\">The working area, including the crane, will not exceed 100 square metres at any one time.</p><p class=\"govuk-body\">Removed materials will be stored in a skip, no larger than 6 cubic metres, on the quayside above Mean High Water Springs for no more than 2 weeks. No temporary works are needed.</p><p class=\"govuk-body govuk-!-margin-bottom-6\">When the work is finished, the crane and skip will be removed and the quayside cleared.</p><h2 class=\"govuk-heading-s\">Example two</h2><p class=\"govuk-body\">A timber pontoon will be installed against the quay wall. The piles will be installed first, then the pontoon sections will be floated into position at high tide and fixed to the piles.</p><p class=\"govuk-body\">The piles will be installed from a jack-up barge, no more than 30 metres long, with a piling rig, using vibro piling, or impact piling if ground conditions do not allow it.</p><p class=\"govuk-body\">The pontoon will be no more than 12 metres long, 3 metres wide and 0.8 metres deep. It will be secured with 4 steel piles, each no more than 8 metres long and 0.4 metres in diameter.</p><p class=\"govuk-body\">All materials will arrive by barge from a harbour no more than 10 nautical miles from the site, using existing navigation channels.</p><p class=\"govuk-body\">The total working area, including the barge, will not exceed 60 square metres.</p><p class=\"govuk-body\">Pontoon sections will stay on the barge until they're installed. Nothing else will be placed on the seabed or foreshore, and no temporary works are needed.</p><p class=\"govuk-body\">When the work is finished, the barge will leave and any surplus materials will be taken to a licensed waste facility.</p>"
+            }) }}
+
             <div class="govuk-form-group {% if data['low-complexity-activity-description-errorthispage'] == 'true' %}govuk-form-group--error{% endif %}">
-                <h1 class="govuk-label-wrapper">
-                    <label class="govuk-label govuk-label--l" for="low-complexity-activity-description">
-                        <span class="govuk-caption-l">{{ data['low-complexity-project-name-text-input'] }}<span class="govuk-!-display-block">Site {{ data['low-complexity-manual-current-edit-site'] or '1' }} - Activity {{ data['low-complexity-manual-current-edit-activity'] or data['low-complexity-current-edit-activity'] or '1' }}</span></span>
-                        {{ pageHeadingTextHTML }}
-                    </label>
-                </h1>
-
-                <p class="govuk-body">This is a summary of what you're going to do and in what order, including your methodology.</p>
-
-                <p class="govuk-body">Your description should explain step by step how you will carry out the activity. Include:</p>
-
-                <ul class="govuk-list govuk-list--bullet">
-                    <li>the equipment you will use, including all plant and general tools</li>
-                    <li>the maximum amounts of materials you will use, for example, the total number of piles or gabion baskets</li>
-                    <li>how materials will be transported to the site, for example by road, boat or barge</li>
-                    <li>the route through the marine area if materials are transported by sea</li>
-                    <li>whether the activity will be carried out from land, the marine area, or both - and any temporary structures you will use</li>
-                    <li>the maximum dimensions of any works or structures, for example length, depth, volume and height</li>
-                </ul>
-
-                <p class="govuk-body">If the method could change, provide a worst-case scenario covering the maximum dimensions and duration.</p>
-
-                {{ govukDetails({
-                    summaryText: "Activity description examples",
-                    html: "<h2 class=\"govuk-heading-s govuk-!-margin-bottom-1\">Example one</h2><p class=\"govuk-body\">Up to 15 existing timber fenders, together with associated fixings and fixtures (including bolts and brackets), will be removed from the quay face.</p><p class=\"govuk-body\">The fenders will be removed using a crane and man basket, operated from the quayside during low tide.</p><p class=\"govuk-body govuk-!-margin-bottom-4\">All removed materials, including timber fenders and associated debris (for example bolts and fittings), will be lifted directly onto the quayside.</p><h2 class=\"govuk-heading-s govuk-!-margin-bottom-1\">Example two</h2><p class=\"govuk-body\">A new timber pontoon, measuring a maximum of 12 metres long, 3 metres wide and 0.8 metres deep, will be installed against the existing quay wall. It will be secured with 4 steel piles, each up to 8 metres long and 0.4 metres in diameter.</p><p class=\"govuk-body\">The piles will be driven into the seabed using a vibro-piling hammer operated from a jack-up barge. All materials will be transported to the site by barge.</p><p class=\"govuk-body\">The pontoon sections will be assembled on land and floated into position at high tide. The maximum footprint of the completed works, including piles and fixings, will be 40 square metres.</p>"
-                }) }}
+                <label class="govuk-label govuk-label--s" for="low-complexity-activity-description">
+                    Describe how you'll carry out this activity
+                </label>
 
                 <div id="low-complexity-activity-description-hint" class="govuk-hint">
-                    Enter a maximum of 1,000 characters
+                    Enter a maximum of 2,000 characters
                 </div>
 
                 {% if data['low-complexity-activity-description-errorthispage'] == "true" %}
                 <p id="low-complexity-activity-description-error" class="govuk-error-message">
-                    <span class="govuk-visually-hidden">Error:</span> Enter the activity description
+                    <span class="govuk-visually-hidden">Error:</span> Describe how you'll carry out this activity
                 </p>
                 {% endif %}
-                
-                <textarea class="govuk-textarea {% if data['low-complexity-activity-description-errorthispage'] == 'true' %}govuk-textarea--error{% endif %}" id="low-complexity-activity-description" name="low-complexity-activity-description" rows="5" aria-describedby="low-complexity-activity-description-hint{% if data['low-complexity-activity-description-errorthispage'] == 'true' %} low-complexity-activity-description-error{% endif %}">{{ data['low-complexity-activity-description'] }}</textarea>
+
+                <textarea class="govuk-textarea {% if data['low-complexity-activity-description-errorthispage'] == 'true' %}govuk-textarea--error{% endif %}" id="low-complexity-activity-description" name="low-complexity-activity-description" rows="8" maxlength="2000" aria-describedby="low-complexity-activity-description-hint{% if data['low-complexity-activity-description-errorthispage'] == 'true' %} low-complexity-activity-description-error{% endif %}">{{ data['low-complexity-activity-description'] }}</textarea>
             </div>
-            
+
             <div class="govuk-button-group">
                 {{ govukButton({
                     text: "Save and continue"

@@ -41,6 +41,9 @@ Marine plan policies
 		{% set mppActiveCompletedCount = (data['marine-plan-policy-v3-s-acc-1-completed'] and 1 or 0) + (data['marine-plan-policy-v3-s-bio-1-completed'] and 1 or 0) + (data['marine-plan-policy-v3-s-agg-4-completed'] and 1 or 0) + (data['marine-plan-policy-v3-s-emp-1-completed'] and 1 or 0) + (data['marine-plan-policy-v3-s-uwn-2-completed'] and 1 or 0) %}
 		{% set mppActiveComplete = data['marine-plan-policy-v3-s-acc-1-completed'] and data['marine-plan-policy-v3-s-bio-1-completed'] and data['marine-plan-policy-v3-s-agg-4-completed'] and data['marine-plan-policy-v3-s-emp-1-completed'] and data['marine-plan-policy-v3-s-uwn-2-completed'] %}
 		{% set mppDisplayTotal = 37 %}
+		{# User testing journey 1 starts with every policy done except S-AGG-4, so the placeholder rows show as completed #}
+		{% set mppPlaceholdersComplete = mppActiveComplete or data['mpp-v3-placeholders-completed'] %}
+		{% set mppActiveCompletedCount = mppActiveCompletedCount + (32 if data['mpp-v3-placeholders-completed'] and not mppActiveComplete else 0) %}
 		<p class="govuk-body">{% if mppActiveCompletedCount == 0 %}{{ mppDisplayTotal }} policies to complete{% elif mppActiveComplete %}37 of 37 policies completed{% else %}{{ mppActiveCompletedCount }} of {{ mppDisplayTotal }} policies completed{% endif %}</p>
 		<h2 class="govuk-heading-m">Cross-cutting</h2>
 		<ul class="govuk-task-list">
@@ -51,7 +54,7 @@ Marine plan policies
 				</a>
 			  </div>
 			  <div class="govuk-task-list__status" id="s-cc-1-status">
-				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
+				{% if mppPlaceholdersComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
 			  </div>
 			</li>
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
@@ -61,7 +64,7 @@ Marine plan policies
 				</a>
 			  </div>
 			  <div class="govuk-task-list__status" id="s-cc-2-status">
-				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
+				{% if mppPlaceholdersComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
 			  </div>
 			</li>
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
@@ -71,7 +74,7 @@ Marine plan policies
 				</a>
 			  </div>
 			  <div class="govuk-task-list__status" id="s-cc-3-status">
-				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
+				{% if mppPlaceholdersComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
 			  </div>
 			</li>
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
@@ -81,7 +84,7 @@ Marine plan policies
 				</a>
 			  </div>
 			  <div class="govuk-task-list__status" id="s-cc-4-status">
-				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
+				{% if mppPlaceholdersComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
 			  </div>
 			</li>
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
@@ -91,7 +94,7 @@ Marine plan policies
 				</a>
 			  </div>
 			  <div class="govuk-task-list__status" id="s-co-1-status">
-				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
+				{% if mppPlaceholdersComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
 			  </div>
 			</li>
 		</ul>
@@ -119,7 +122,7 @@ Marine plan policies
 				</a>
 			  </div>
 			  <div class="govuk-task-list__status" id="s-aq-2-status">
-				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
+				{% if mppPlaceholdersComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
 			  </div>
 			</li>
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
@@ -129,7 +132,7 @@ Marine plan policies
 				</a>
 			  </div>
 			  <div class="govuk-task-list__status" id="s-cab-1-status">
-				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
+				{% if mppPlaceholdersComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
 			  </div>
 			</li>
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
@@ -139,7 +142,7 @@ Marine plan policies
 				</a>
 			  </div>
 			  <div class="govuk-task-list__status" id="s-cab-2-status">
-				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
+				{% if mppPlaceholdersComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
 			  </div>
 			</li>
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
@@ -149,7 +152,7 @@ Marine plan policies
 				</a>
 			  </div>
 			  <div class="govuk-task-list__status" id="s-dd-2-status">
-				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
+				{% if mppPlaceholdersComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
 			  </div>
 			</li>
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
@@ -159,7 +162,7 @@ Marine plan policies
 				</a>
 			  </div>
 			  <div class="govuk-task-list__status" id="s-inf-1-status">
-				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
+				{% if mppPlaceholdersComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
 			  </div>
 			</li>
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
@@ -169,7 +172,7 @@ Marine plan policies
 				</a>
 			  </div>
 			  <div class="govuk-task-list__status" id="s-ps-1-status">
-				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
+				{% if mppPlaceholdersComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
 			  </div>
 			</li>
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
@@ -179,7 +182,7 @@ Marine plan policies
 				</a>
 			  </div>
 			  <div class="govuk-task-list__status" id="s-ren-1-status">
-				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
+				{% if mppPlaceholdersComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
 			  </div>
 			</li>
 		</ul>
@@ -207,7 +210,7 @@ Marine plan policies
 				</a>
 			  </div>
 			  <div class="govuk-task-list__status" id="s-bio-2-status">
-				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
+				{% if mppPlaceholdersComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
 			  </div>
 			</li>
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
@@ -217,7 +220,7 @@ Marine plan policies
 				</a>
 			  </div>
 			  <div class="govuk-task-list__status" id="s-bio-3-status">
-				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
+				{% if mppPlaceholdersComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
 			  </div>
 			</li>
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
@@ -227,7 +230,7 @@ Marine plan policies
 				</a>
 			  </div>
 			  <div class="govuk-task-list__status" id="s-bio-4-status">
-				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
+				{% if mppPlaceholdersComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
 			  </div>
 			</li>
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
@@ -237,7 +240,7 @@ Marine plan policies
 				</a>
 			  </div>
 			  <div class="govuk-task-list__status" id="s-dist-1-status">
-				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
+				{% if mppPlaceholdersComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
 			  </div>
 			</li>
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
@@ -247,7 +250,7 @@ Marine plan policies
 				</a>
 			  </div>
 			  <div class="govuk-task-list__status" id="s-nis-1-status">
-				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
+				{% if mppPlaceholdersComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
 			  </div>
 			</li>
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
@@ -257,7 +260,7 @@ Marine plan policies
 				</a>
 			  </div>
 			  <div class="govuk-task-list__status" id="s-ml-1-status">
-				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
+				{% if mppPlaceholdersComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
 			  </div>
 			</li>
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
@@ -267,7 +270,7 @@ Marine plan policies
 				</a>
 			  </div>
 			  <div class="govuk-task-list__status" id="s-ml-2-status">
-				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
+				{% if mppPlaceholdersComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
 			  </div>
 			</li>
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
@@ -277,7 +280,7 @@ Marine plan policies
 				</a>
 			  </div>
 			  <div class="govuk-task-list__status" id="s-uwn-1-status">
-				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
+				{% if mppPlaceholdersComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
 			  </div>
 			</li>
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
@@ -301,7 +304,7 @@ Marine plan policies
 				</a>
 			  </div>
 			  <div class="govuk-task-list__status" id="s-wq-1-status">
-				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
+				{% if mppPlaceholdersComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
 			  </div>
 			</li>
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
@@ -311,7 +314,7 @@ Marine plan policies
 				</a>
 			  </div>
 			  <div class="govuk-task-list__status" id="s-wq-2-status">
-				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
+				{% if mppPlaceholdersComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
 			  </div>
 			</li>
 		</ul>
@@ -339,7 +342,7 @@ Marine plan policies
 				</a>
 			  </div>
 			  <div class="govuk-task-list__status" id="s-acc-2-status">
-				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
+				{% if mppPlaceholdersComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
 			  </div>
 			</li>
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
@@ -363,7 +366,7 @@ Marine plan policies
 				</a>
 			  </div>
 			  <div class="govuk-task-list__status" id="s-emp-2-status">
-				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
+				{% if mppPlaceholdersComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
 			  </div>
 			</li>
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
@@ -373,7 +376,7 @@ Marine plan policies
 				</a>
 			  </div>
 			  <div class="govuk-task-list__status" id="s-fish-1-status">
-				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
+				{% if mppPlaceholdersComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
 			  </div>
 			</li>
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
@@ -383,7 +386,7 @@ Marine plan policies
 				</a>
 			  </div>
 			  <div class="govuk-task-list__status" id="s-fish-2-status">
-				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
+				{% if mppPlaceholdersComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
 			  </div>
 			</li>
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
@@ -393,7 +396,7 @@ Marine plan policies
 				</a>
 			  </div>
 			  <div class="govuk-task-list__status" id="s-fish-4-status">
-				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
+				{% if mppPlaceholdersComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
 			  </div>
 			</li>
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
@@ -403,7 +406,7 @@ Marine plan policies
 				</a>
 			  </div>
 			  <div class="govuk-task-list__status" id="s-her-1-status">
-				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
+				{% if mppPlaceholdersComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
 			  </div>
 			</li>
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
@@ -413,7 +416,7 @@ Marine plan policies
 				</a>
 			  </div>
 			  <div class="govuk-task-list__status" id="s-soc-1-status">
-				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
+				{% if mppPlaceholdersComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
 			  </div>
 			</li>
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
@@ -423,7 +426,7 @@ Marine plan policies
 				</a>
 			  </div>
 			  <div class="govuk-task-list__status" id="s-scp-1-status">
-				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
+				{% if mppPlaceholdersComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
 			  </div>
 			</li>
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
@@ -433,7 +436,7 @@ Marine plan policies
 				</a>
 			  </div>
 			  <div class="govuk-task-list__status" id="s-tr-1-status">
-				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
+				{% if mppPlaceholdersComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
 			  </div>
 			</li>
 			<li class="govuk-task-list__item govuk-task-list__item--with-link">
@@ -443,7 +446,7 @@ Marine plan policies
 				</a>
 			  </div>
 			  <div class="govuk-task-list__status" id="s-tr-2-status">
-				{% if mppActiveComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
+				{% if mppPlaceholdersComplete %}Completed{% else %}<strong class="govuk-tag govuk-tag--blue">Not yet started</strong>{% endif %}
 			  </div>
 			</li>
 		</ul>
