@@ -478,11 +478,19 @@ module.exports = function (router) {
     return 'All Natural England cases';
   }
 
-  function versionUrls(query) {
+  // The page versions in the URL (not the filters). Kept when filtering,
+  // assigning or switching another version in the tray.
+  function versionParams(query) {
     const keep = {};
     if (query.assign === 'buttons') keep.assign = 'buttons';
     if (['bar', 'bar-actions'].includes(query.filter)) keep.filter = query.filter;
     if (query.layout === 'full') keep.layout = 'full';
+    if (['panel', 'page'].includes(query.reassign)) keep.reassign = query.reassign;
+    return keep;
+  }
+
+  function versionUrls(query) {
+    const keep = versionParams(query);
     return {
       layoutStandard: consultationsUrl(keep, { layout: null }),
       layoutFull: consultationsUrl(keep, { layout: 'full' }),
@@ -490,7 +498,10 @@ module.exports = function (router) {
       assignButtons: consultationsUrl(keep, { assign: 'buttons' }),
       filterSide: consultationsUrl(keep, { filter: null }),
       filterBar: consultationsUrl(keep, { filter: 'bar' }),
-      filterBarActions: consultationsUrl(keep, { filter: 'bar-actions' })
+      filterBarActions: consultationsUrl(keep, { filter: 'bar-actions' }),
+      reassignOff: consultationsUrl(keep, { reassign: null }),
+      reassignPanel: consultationsUrl(keep, { reassign: 'panel' }),
+      reassignPage: consultationsUrl(keep, { reassign: 'page' })
     };
   }
 
@@ -523,6 +534,13 @@ module.exports = function (router) {
       // ?layout=full widens the page to up to 1920px and adds a Marine plan
       // area column. An idea to test, not a GOV.UK default.
       layoutMode: req.query.layout === 'full' ? 'full' : 'standard',
+      // ?reassign=panel adds Assign to someone else, which opens a panel of
+      // team members above the table (or the separate page without
+      // JavaScript). ?reassign=page always uses the separate page. Off by default.
+      reassignMode: ['panel', 'page'].includes(req.query.reassign) ? req.query.reassign : 'off',
+      everyone: [ME].concat(TEAM),
+      // Hidden inputs so the filter forms keep the page versions
+      versionParams: versionParams(req.query),
       filters,
       showOptions: SHOW_OPTIONS,
       typeOptions: TYPE_OPTIONS,
@@ -535,6 +553,27 @@ module.exports = function (router) {
       versionUrls: versionUrls(req.query)
     });
   });
+
+  // Gives the cases to a team member, or to nobody for "no-one". Returns
+  // false if nobody valid was chosen.
+  function reassign(data, ids, to) {
+    if (to === 'no-one') {
+      ids.forEach(id => { data[`consultation-v2-${id}-assigned-to`] = ''; });
+      return true;
+    }
+    if ([ME].concat(TEAM).includes(to)) {
+      ids.forEach(id => { data[`consultation-v2-${id}-assigned-to`] = to; });
+      return true;
+    }
+    return false;
+  }
+
+  // The query string of the current URL, to carry filters and page versions
+  // between the dashboard and the Assign to someone else page
+  function queryOf(req) {
+    const i = req.originalUrl.indexOf('?');
+    return i === -1 ? '' : req.originalUrl.slice(i);
+  }
 
   // Assign to me and Unassign from me, from the dashboard.
   //
@@ -552,11 +591,24 @@ module.exports = function (router) {
     ids = ids.filter(id => id && id !== '_unchecked' && REQUESTS[id]);
     delete data['consultation-v2-assign-action'];
     delete data['consultation-v2-assign-ids'];
+    const reassignTo = data['consultation-v2-reassign-to'];
+    delete data['consultation-v2-reassign-to'];
 
     // No validation for now. Pressing a button with nothing ticked, or
     // unassigning only other people's cases, does nothing.
     if (action === 'assign') {
       ids.forEach(id => { data[`consultation-v2-${id}-assigned-to`] = ME; });
+    } else if (action === 'reassign') {
+      // In-page panel: the ticked cases go to whoever was chosen, or to
+      // nobody for "No one". Nothing chosen does nothing.
+      reassign(data, ids, reassignTo);
+    } else if (action === 'choose') {
+      // Assign to someone else as a separate page, or the in-page panel
+      // without JavaScript: remember the ticked cases and go to the page
+      if (ids.length) {
+        data['consultation-v2-reassign-ids'] = ids;
+        return req.session.save(() => res.redirect(`${base}/assign-to-someone-else${queryOf(req)}`));
+      }
     } else if (action === 'unassign') {
       // Only your own cases are unassigned. Anyone else's ticked cases are left alone.
       ids.filter(id => assignedToFor(req, REQUESTS[id]) === ME)
@@ -578,6 +630,37 @@ module.exports = function (router) {
     const request = findRequest(req, res);
     if (!request) return;
     res.render(`versions/${version}/${section}/emails/sign-in`, { request });
+  });
+
+  // Assign to someone else, separate page. Lists the cases ticked on the
+  // dashboard, then asks who to give them to.
+  router.get(`${base}/assign-to-someone-else`, function (req, res) {
+    const ids = [].concat(req.session.data['consultation-v2-reassign-ids'] || []).filter(id => REQUESTS[id]);
+    if (!ids.length) return res.redirect(`${base}/consultations${queryOf(req)}`);
+    const error = req.session.data['consultation-v2-reassign-error'];
+    delete req.session.data['consultation-v2-reassign-error'];
+    res.render(`versions/${version}/${section}/assign-to-someone-else`, {
+      selected: ids.map(id => withStatus(req, REQUESTS[id])),
+      everyone: [ME].concat(TEAM),
+      backUrl: `${base}/consultations${queryOf(req)}`,
+      error
+    });
+  });
+
+  router.post(`${base}/assign-to-someone-else`, function (req, res) {
+    const data = req.session.data;
+    const ids = [].concat(data['consultation-v2-reassign-ids'] || []).filter(id => REQUESTS[id]);
+    const to = data['consultation-v2-reassign-to'];
+    delete data['consultation-v2-reassign-to'];
+
+    // A normal form page, so it gets a normal GOV.UK error if nobody is chosen
+    if (!reassign(data, ids, to)) {
+      data['consultation-v2-reassign-error'] = 'Select who to assign the consultations to';
+      return req.session.save(() => res.redirect(req.originalUrl));
+    }
+
+    delete data['consultation-v2-reassign-ids'];
+    req.session.save(() => res.redirect(`${base}/consultations${queryOf(req)}`));
   });
 
   // Request details

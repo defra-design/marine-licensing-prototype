@@ -48,7 +48,9 @@
     /* Let the success banner text use the full width of the banner */
     .govuk-notification-banner__content > * { max-width: none; }
     /* Tick box column: no gap to the left of the table, MOJ multi-select style */
-    #consultations-table .app-select-cell { width: 40px; padding-right: 0; }
+    /* 10px in from the left, so the 10px grey hover ring round the small
+       checkboxes is not cut off by the scrollable pane's edge */
+    #consultations-table .app-select-cell { width: 50px; padding-left: 10px; padding-right: 0; }
     /* Line the tick boxes up with the first line of text in each row and the
        header, and stop the tick box adding extra height to the header row */
     #consultations-table .app-select-cell .govuk-checkboxes__item { display: block; margin-top: -10px; margin-bottom: -25px; }
@@ -78,6 +80,11 @@
     .app-filter-bar .govuk-button-group .govuk-link { margin-top: 0; margin-bottom: 0; }
     /* Same gap under the heading as the side panel version */
     .moj-page-header-actions { margin-bottom: 30px; }
+    /* Assign to someone else panel: white with a grey border, so its
+       buttons keep their contrast */
+    .app-reassign-panel { border: 1px solid #b1b4b6; padding: 20px; margin-bottom: 30px; }
+    .app-reassign-panel[hidden] { display: none; }
+    .app-reassign-panel .govuk-form-group { margin-bottom: 20px; }
     /* When hidden, the whole grey panel goes, not just its contents */
     .app-filter-bar--collapsed { display: none; }
     /* Hide the panel's own heading row of "Selected filters" when nothing is selected */
@@ -132,6 +139,27 @@
       barToggle.hidden = false
       setBar(keepOpen)
       barToggle.addEventListener('click', function () { setBar(barBody.hidden) })
+    }
+
+    // Assign to someone else, panel version: the button would normally submit
+    // to the separate page. With JavaScript, open the panel instead.
+    var reassignToggle = document.getElementById('app-reassign-toggle')
+    var reassignPanel = document.getElementById('app-reassign-panel')
+    var reassignCancel = document.getElementById('app-reassign-cancel')
+    if (reassignToggle && reassignPanel) {
+      var setReassign = function (open) {
+        reassignPanel.hidden = !open
+        reassignToggle.setAttribute('aria-expanded', open ? 'true' : 'false')
+        if (open) reassignPanel.querySelector('input').focus()
+      }
+      reassignToggle.setAttribute('aria-controls', 'app-reassign-panel')
+      reassignCancel.hidden = false
+      setReassign(false)
+      reassignToggle.addEventListener('click', function (e) {
+        e.preventDefault()
+        setReassign(reassignPanel.hidden)
+      })
+      reassignCancel.addEventListener('click', function () { setReassign(false); reassignToggle.focus() })
     }
 
     // Side panel version: MOJ's FilterToggleButton adds Show filter to the
@@ -192,13 +220,10 @@
           side panel. Nothing changes until Apply filters is pressed.
         #}
         <form method="get" action="consultations" class="app-filter-bar" novalidate>
-            <input type="hidden" name="filter" value="{{ filterMode }}">
-            {% if assignMode === "buttons" %}
-            <input type="hidden" name="assign" value="buttons">
-            {% endif %}
-            {% if fullWidth %}
-            <input type="hidden" name="layout" value="full">
-            {% endif %}
+            {# Keep the page versions (this bar, assign method, layout) #}
+            {% for name, value in versionParams %}
+            <input type="hidden" name="{{ name }}" value="{{ value }}">
+            {% endfor %}
             <div class="app-filter-bar__body" id="app-filter-bar-body">
                 <h2 class="govuk-heading-m">Filter</h2>
                 <div class="govuk-grid-row">
@@ -248,12 +273,10 @@
                         {% endif %}
 
                         <form method="get" action="consultations" class="moj-filter__options" novalidate>
-                            {% if assignMode === "buttons" %}
-                            <input type="hidden" name="assign" value="buttons">
-                            {% endif %}
-                            {% if fullWidth %}
-                            <input type="hidden" name="layout" value="full">
-                            {% endif %}
+                            {# Keep the page versions (assign method, layout) #}
+                            {% for name, value in versionParams %}
+                            <input type="hidden" name="{{ name }}" value="{{ value }}">
+                            {% endfor %}
 
                             {{ govukButton({
                                 text: "Apply filters",
@@ -297,9 +320,65 @@
                             name: "consultation-v2-assign-action",
                             value: "unassign"
                         }) }}
+                        {% if reassignMode !== "off" %}
+                        {#
+                          A real submit button: it sends the ticked cases to the
+                          Assign to someone else page. In the panel version the
+                          script below catches it and opens the panel instead, so
+                          the page is what people without JavaScript get.
+                        #}
+                        {{ govukButton({
+                            text: "Assign to someone else",
+                            classes: "govuk-button--secondary",
+                            name: "consultation-v2-assign-action",
+                            value: "choose",
+                            attributes: { id: "app-reassign-toggle" }
+                        }) }}
+                        {% endif %}
                     </div>
                     {% endif %}
                 </div>
+
+                {% if checkboxes and reassignMode === "panel" %}
+                {#
+                  Assign to someone else, in-page panel version. Opens between
+                  the buttons and the table, so the ticked cases stay in view.
+                  Only used with JavaScript; otherwise the button goes to the
+                  separate page.
+                  Radios, not a dropdown. Nothing chosen, or nothing ticked,
+                  does nothing for now, like the other assign buttons.
+                #}
+                {# hidden in the markup, so without JavaScript it never shows #}
+                <div class="app-reassign-panel" id="app-reassign-panel" hidden>
+                    <div class="govuk-form-group">
+                        <fieldset class="govuk-fieldset">
+                            <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Who do you want to assign the selected consultations to?</legend>
+                            <div class="govuk-radios govuk-radios--small" data-module="govuk-radios">
+                                {% for person in everyone %}
+                                <div class="govuk-radios__item">
+                                    <input class="govuk-radios__input" id="reassign-{{ loop.index }}" name="consultation-v2-reassign-to" type="radio" value="{{ person }}">
+                                    <label class="govuk-label govuk-radios__label" for="reassign-{{ loop.index }}">{{ person }}</label>
+                                </div>
+                                {% endfor %}
+                                <div class="govuk-radios__divider">or</div>
+                                <div class="govuk-radios__item">
+                                    <input class="govuk-radios__input" id="reassign-no-one" name="consultation-v2-reassign-to" type="radio" value="no-one">
+                                    <label class="govuk-label govuk-radios__label" for="reassign-no-one">No one</label>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <div class="govuk-button-group govuk-!-margin-bottom-0">
+                        {{ govukButton({
+                            text: "Assign",
+                            name: "consultation-v2-assign-action",
+                            value: "reassign",
+                            classes: "govuk-!-margin-bottom-0"
+                        }) }}
+                        <button type="button" class="govuk-button govuk-button--secondary govuk-!-margin-bottom-0" id="app-reassign-cancel" hidden>Cancel</button>
+                    </div>
+                </div>
+                {% endif %}
 
                 {# Same wording and weight as the LCML v4 submissions results count #}
                 <p class="govuk-body" aria-live="polite"><strong>{{ requests.length }} {{ "result" if requests.length === 1 else "results" }} found in '{{ scopeName }}'</strong></p>

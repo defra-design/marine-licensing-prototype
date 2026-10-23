@@ -1,0 +1,75 @@
+{#
+  Assign to someone else, separate page version. Reached from the dashboard
+  with the ticked cases, either as its own page version (?reassign=page) or
+  as what the in-page panel does without JavaScript. Filters and page
+  versions ride along in the query string, so Back and Assign return to the
+  same view of the dashboard.
+#}
+{% extends "versions/multiple-sites-v2/consultation-v2/includes/layout.html" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% set navActive = "consultations" %}
+{% set pageTitle = ("Error: " if error else "") + "Assign to someone else" %}
+{% set backLink = backUrl %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        {% if error %}
+        {{ govukErrorSummary({
+            titleText: "There is a problem",
+            errorList: [{ text: error, href: "#reassign-1" }]
+        }) }}
+        {% endif %}
+
+        <h1 class="govuk-heading-l">Assign to someone else</h1>
+
+        <p class="govuk-body">You have selected {{ selected.length }} {{ "consultation" if selected.length === 1 else "consultations" }}:</p>
+
+        <ul class="govuk-list govuk-list--bullet">
+            {% for request in selected %}
+            <li>{{ request.applicationName }} ({{ request.reference }}) – currently assigned to {{ request.assignedTo or "no one" }}</li>
+            {% endfor %}
+        </ul>
+
+        <form method="post" novalidate>
+            <div class="govuk-form-group{% if error %} govuk-form-group--error{% endif %}">
+                <fieldset class="govuk-fieldset"{% if error %} aria-describedby="reassign-error"{% endif %}>
+                    <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
+                        <h2 class="govuk-fieldset__heading">Who do you want to assign {{ "it" if selected.length === 1 else "them" }} to?</h2>
+                    </legend>
+                    {% if error %}
+                    <p id="reassign-error" class="govuk-error-message">
+                        <span class="govuk-visually-hidden">Error:</span> {{ error }}
+                    </p>
+                    {% endif %}
+                    <div class="govuk-radios" data-module="govuk-radios">
+                        {% for person in everyone %}
+                        <div class="govuk-radios__item">
+                            <input class="govuk-radios__input" id="reassign-{{ loop.index }}" name="consultation-v2-reassign-to" type="radio" value="{{ person }}">
+                            <label class="govuk-label govuk-radios__label" for="reassign-{{ loop.index }}">{{ person }}</label>
+                        </div>
+                        {% endfor %}
+                        <div class="govuk-radios__divider">or</div>
+                        <div class="govuk-radios__item">
+                            <input class="govuk-radios__input" id="reassign-no-one" name="consultation-v2-reassign-to" type="radio" value="no-one">
+                            <label class="govuk-label govuk-radios__label" for="reassign-no-one">No one</label>
+                        </div>
+                    </div>
+                </fieldset>
+            </div>
+
+            <div class="govuk-button-group">
+                {{ govukButton({ text: "Assign" }) }}
+                <a href="{{ backUrl }}" class="govuk-link govuk-link--no-visited-state">Cancel</a>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

@@ -79,12 +79,12 @@
 </style>
 
 <button type="button" class="app-version-switcher__toggle" id="app-version-switcher-toggle" aria-expanded="false" aria-controls="app-version-tray">
-  <span class="govuk-visually-hidden">Prototype versions</span>
+  <span class="govuk-visually-hidden">Page versions</span>
 </button>
 
 <div class="app-version-tray" id="app-version-tray" role="dialog" aria-labelledby="app-version-tray-heading" hidden>
   <div class="app-version-tray__header">
-    <h2 class="govuk-heading-m" id="app-version-tray-heading" tabindex="-1">Prototype versions</h2>
+    <h2 class="govuk-heading-m" id="app-version-tray-heading" tabindex="-1">Page versions</h2>
     <div class="app-version-tray__actions">
       <button type="button" class="govuk-button govuk-button--secondary" id="app-version-tray-move">Move to bottom</button>
       <button type="button" class="govuk-button govuk-button--secondary" id="app-version-tray-close">Close</button>
@@ -109,6 +109,34 @@
       {% else %}
       <a href="{{ versionUrls.assignButtons if versionUrls else consultationsUrl + '?assign=buttons' }}" class="govuk-link govuk-link--no-visited-state">Buttons on each row</a>
       {% endif %}
+    </li>
+  </ul>
+  </div>
+
+  <div class="app-version-tray__section">
+  <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Assign to someone else</h3>
+  <ul class="govuk-list govuk-list--spaced">
+    <li>
+      {% if reassignMode !== "panel" and reassignMode !== "page" %}
+      <span aria-current="true">Off</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ versionUrls.reassignOff if versionUrls else consultationsUrl }}" class="govuk-link govuk-link--no-visited-state">Off</a>
+      {% endif %}
+    </li>
+    <li>
+      {% if reassignMode === "panel" %}
+      <span aria-current="true">In-page panel</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ versionUrls.reassignPanel if versionUrls else consultationsUrl + '?reassign=panel' }}" class="govuk-link govuk-link--no-visited-state">In-page panel</a>
+      {% endif %}
+    </li>
+    <li>
+      {% if reassignMode === "page" %}
+      <span aria-current="true">Separate page</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ versionUrls.reassignPage if versionUrls else consultationsUrl + '?reassign=page' }}" class="govuk-link govuk-link--no-visited-state">Separate page</a>
+      {% endif %}
+      <span class="govuk-hint govuk-!-display-block govuk-!-margin-bottom-0">Also what the in-page panel does without JavaScript</span>
     </li>
   </ul>
   </div>
