@@ -48,7 +48,7 @@ Check your answers for information published on the public register - {{ data['h
                 </dt>
                 <dd class="govuk-summary-list__value">
                     {% if data['low-complexity-sharing-information-approval'] == 'No' %}
-                    No – If you get approval later, you can come back and change your answer before you submit your application.
+                    No – Without approval, we cannot withhold information for national security reasons. We will publish it with the rest of your application. If you get approval before you submit, you can come back and change your answer.
                     {% else %}
                     {{ data['low-complexity-sharing-information-approval'] }}
                     {% endif %}
@@ -64,14 +64,14 @@ Check your answers for information published on the public register - {{ data['h
             <!-- Answered on the same page as the approval question, so the Change link is visually hidden -->
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">
-                    What you want withheld and why
+                    What you want withheld
                 </dt>
                 <dd class="govuk-summary-list__value">
                     {{ data['low-complexity-sharing-information-details'] }}
                 </dd>
                 <dd class="govuk-summary-list__actions">
                     <a class="govuk-link govuk-link--no-visited-state govuk-visually-hidden" href="sharing-your-project-information-publicly-national-security?fromcheckanswers=true">
-                        Change what you want withheld and why
+                        Change what you want withheld
                     </a>
                 </dd>
             </div>
