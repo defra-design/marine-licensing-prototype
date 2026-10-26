@@ -241,6 +241,26 @@
   </ul>
   </div>
 
+  <div class="app-version-tray__section">
+  <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Horizontal scroll pane</h3>
+  <ul class="govuk-list govuk-list--spaced">
+    <li>
+      {% if scrollOn !== false %}
+      <span aria-current="true">On</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ versionUrls.scrollOn if versionUrls else consultationsUrl }}" class="govuk-link govuk-link--no-visited-state">On</a>
+      {% endif %}
+    </li>
+    <li>
+      {% if scrollOn === false %}
+      <span aria-current="true">Off</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ versionUrls.scrollOff if versionUrls else consultationsUrl + '?scroll=off' }}" class="govuk-link govuk-link--no-visited-state">Off</a>
+      {% endif %}
+    </li>
+  </ul>
+  </div>
+
   <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible app-version-tray__divider">
 
   <div class="app-version-tray__section">

@@ -481,6 +481,7 @@ module.exports = function (router) {
     if (['off', 'panel', 'page'].includes(query.reassign)) keep.reassign = query.reassign;
     if (['off', 'under'].includes(query.reqassign)) keep.reqassign = query.reqassign;
     if (query.banners === 'off') keep.banners = 'off';
+    if (query.scroll === 'off') keep.scroll = 'off';
     return keep;
   }
 
@@ -520,7 +521,10 @@ module.exports = function (router) {
       reqassignUnder: to({ reqassign: 'under' }),
       reqassignBottom: to({ reqassign: null }),
       bannersOn: to({ banners: null }),
-      bannersOff: to({ banners: 'off' })
+      bannersOff: to({ banners: 'off' }),
+      // The scroll pane links keep the filters too, so only the pane changes
+      scrollOn: urlWith(path, query, { scroll: null }),
+      scrollOff: urlWith(path, query, { scroll: 'off' })
     };
   }
 
@@ -544,6 +548,8 @@ module.exports = function (router) {
     res.locals.reqassignMode = keep.reqassign || 'bottom';
     // ?banners=off turns off the banners after assigning from the separate page
     res.locals.bannersOn = keep.banners !== 'off';
+    // ?scroll=off shows the table without the MOJ scrollable pane round it
+    res.locals.scrollOn = keep.scroll !== 'off';
     next();
   });
 
