@@ -56,7 +56,8 @@
           below the Assigned to row. Goes to the same separate page as the
           single Assign selected button on the list.
         #}
-        {% if reqassignMode === "under" %}
+        {# Not once a response has been sent: there is nothing left to assign #}
+        {% if reqassignMode === "under" and request.status !== "Responded" %}
         {{ govukButton({ text: "Assign", href: assignUrl, classes: "govuk-button--secondary" }) }}
         {% endif %}
 
@@ -98,12 +99,9 @@
 
         {% set assignAtBottom = reqassignMode === "bottom" %}
         {% if request.status === "Responded" %}
-        <h2 class="govuk-heading-m">Your response</h2>
-        <p class="govuk-body govuk-hint">Sent to the MMO on {{ request.respondedDate }}</p>
+        <h2 class="govuk-heading-m">Response sent</h2>
+        <p class="govuk-body govuk-hint">Sent to the MMO{% if request.respondedBy %} by {{ request.respondedBy }}{% endif %} on {{ request.respondedDate }}</p>
         <p class="govuk-body">{{ request.response }}</p>
-        {% if assignAtBottom %}
-        {{ govukButton({ text: "Assign", href: assignUrl, classes: "govuk-button--secondary" }) }}
-        {% endif %}
         {# Only the person assigned to a request can respond to it #}
         {% elif not request.assignedToMe %}
         {% if assignAtBottom %}

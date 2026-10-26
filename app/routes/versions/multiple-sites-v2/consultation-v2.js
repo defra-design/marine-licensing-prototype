@@ -263,7 +263,8 @@ module.exports = function (router) {
       receivedOffset: -30,
       seededResponse: {
         text: 'Natural England has no objection to the proposal, provided the shingle is sourced from the licensed aggregate area named in the application and the works avoid the seabird nesting season. Based on the information provided, the proposal is unlikely to have a significant effect on the Special Area of Conservation.',
-        respondedOffset: -19
+        respondedOffset: -19,
+        respondedBy: 'Jordan Lee'
       },
       summary: 'We are applying for a marine licence to place about 20,000 cubic metres of shingle on Sidmouth beach to restore levels lost in recent storms. The shingle will be brought in by barge from a licensed aggregate area and pumped ashore, then spread by bulldozers.',
       startAndEndDates: 'September 2026 to November 2026',
@@ -294,7 +295,8 @@ module.exports = function (router) {
       receivedOffset: -42,
       seededResponse: {
         text: 'Natural England recommends that works on the outer end of the breakwater are carried out between April and August, when seals are least likely to be hauled out. With this timing in place we have no further comments.',
-        respondedOffset: -33
+        respondedOffset: -33,
+        respondedBy: 'Kevin Morris'
       },
       summary: 'We are applying for a marine licence to replace the 2 navigation lights on the end of Brixham breakwater, including new steel posts bolted to the existing concrete. Work will be done from a small workboat and from the breakwater itself.',
       startAndEndDates: 'April 2027 to May 2027',
@@ -359,7 +361,9 @@ module.exports = function (router) {
       status: statusFor(req, request),
       respondByOffset: request.receivedOffset + RESPONSE_PERIOD_DAYS,
       response: req.session.data[`consultation-v2-${request.id}-response`] || (request.seededResponse && request.seededResponse.text),
-      respondedDate: req.session.data[`consultation-v2-${request.id}-responded-date`] || (request.seededResponse && dateFromToday(request.seededResponse.respondedOffset))
+      respondedDate: req.session.data[`consultation-v2-${request.id}-responded-date`] || (request.seededResponse && dateFromToday(request.seededResponse.respondedOffset)),
+      // Who sent the response, as it might not be you
+      respondedBy: req.session.data[`consultation-v2-${request.id}-responded-by`] || (request.seededResponse && request.seededResponse.respondedBy)
     });
   }
 
@@ -836,6 +840,7 @@ module.exports = function (router) {
 
     req.session.data[`consultation-v2-${request.id}-response`] = response;
     req.session.data[`consultation-v2-${request.id}-status`] = 'Responded';
+    req.session.data[`consultation-v2-${request.id}-responded-by`] = ME;
     req.session.data[`consultation-v2-${request.id}-responded-date`] = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
     req.session.data['consultation-v2-just-responded'] = request.id;
     res.redirect(`${base}/consultations${queryOf(req)}`);
