@@ -9,24 +9,25 @@
     {% from "versions/multiple-sites-v2/consultation-v2/includes/service-navigation.html" import consultationV2Header %}
     {% block header %}{{ consultationV2Header("consultations") }}{% endblock %}
 
-  The argument is the nav item to highlight: "consultations" or nothing
-  at all.
+  The first argument is the nav item to highlight: "consultations" or
+  nothing at all. The second is the page versions query string, so the
+  Consultations links keep the versions chosen in the tray.
 #}
 
 {% from "govuk/components/header/macro.njk" import govukHeader %}
 {% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
 
-{% macro consultationV2Header(activeItem) %}
+{% macro consultationV2Header(activeItem, versionQuery) %}
 {{ govukHeader({
   homepageUrl: "/",
   classes: "govuk-header--full-width-border"
 }) }}
 {{ govukServiceNavigation({
   serviceName: "Get permission for marine work",
-  serviceUrl: "/versions/multiple-sites-v2/consultation-v2/consultations",
+  serviceUrl: "/versions/multiple-sites-v2/consultation-v2/consultations" + (versionQuery or ""),
   navigation: [
     {
-      href: "/versions/multiple-sites-v2/consultation-v2/consultations",
+      href: "/versions/multiple-sites-v2/consultation-v2/consultations" + (versionQuery or ""),
       text: "Consultations",
       active: activeItem === "consultations"
     },

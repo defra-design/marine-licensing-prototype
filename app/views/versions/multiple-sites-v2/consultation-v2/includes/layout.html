@@ -11,7 +11,7 @@
 
 {% block header %}
 {% from "versions/multiple-sites-v2/consultation-v2/includes/service-navigation.html" import consultationV2Header %}
-{{ consultationV2Header(navActive) }}
+{{ consultationV2Header(navActive, versionQuery) }}
 {% endblock %}
 
 {% block beforeContent %}

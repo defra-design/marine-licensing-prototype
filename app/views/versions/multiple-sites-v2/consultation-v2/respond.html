@@ -41,7 +41,7 @@
         <h1 class="govuk-heading-l">Respond to this request for advice</h1>
 
         <p class="govuk-body">The closing date for responses is {{ request.respondByOffset | daysFromToday }}.</p>
-        <p class="govuk-body"><a href="../view-application/{{ request.id }}" class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">View the application (opens in new tab)</a></p>
+        <p class="govuk-body"><a href="../view-application/{{ request.id }}{{ versionQuery }}" class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">View the application (opens in new tab)</a></p>
 
         <h2 class="govuk-heading-m">Advice requested by the MMO</h2>
         {% set adviceHtml %}
@@ -82,7 +82,7 @@
         <span class="govuk-caption-l">{{ request.reference }} – {{ request.applicationName }}</span>
         <h1 class="govuk-heading-l">Respond to this marine licence application</h1>
 
-        <p class="govuk-body"><a href="../view-application/{{ request.id }}" class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">View the application (opens in new tab)</a></p>
+        <p class="govuk-body"><a href="../view-application/{{ request.id }}{{ versionQuery }}" class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">View the application (opens in new tab)</a></p>
 
         <form action="{{ request.id }}-router{{ pageQuery }}" method="post" novalidate>
             {{ govukTextarea({
