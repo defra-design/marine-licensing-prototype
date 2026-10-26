@@ -117,10 +117,17 @@
   <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Assign to someone else</h3>
   <ul class="govuk-list govuk-list--spaced">
     <li>
-      {% if reassignMode === "off" or not reassignMode %}
+      {% if reassignMode === "single" %}
+      <span aria-current="true">One Assign button, separate page</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ versionUrls.reassignSingle if versionUrls else consultationsUrl }}" class="govuk-link govuk-link--no-visited-state">One Assign button, separate page</a>
+      {% endif %}
+    </li>
+    <li>
+      {% if reassignMode === "off" %}
       <span aria-current="true">Off</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
       {% else %}
-      <a href="{{ versionUrls.reassignOff if versionUrls else consultationsUrl }}" class="govuk-link govuk-link--no-visited-state">Off</a>
+      <a href="{{ versionUrls.reassignOff if versionUrls else consultationsUrl + '?reassign=off' }}" class="govuk-link govuk-link--no-visited-state">Off</a>
       {% endif %}
     </li>
     <li>
@@ -128,13 +135,6 @@
       <span aria-current="true">Multiple assign buttons, separate page</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
       {% else %}
       <a href="{{ versionUrls.reassignPage if versionUrls else consultationsUrl + '?reassign=page' }}" class="govuk-link govuk-link--no-visited-state">Multiple assign buttons, separate page</a>
-      {% endif %}
-    </li>
-    <li>
-      {% if reassignMode === "single" %}
-      <span aria-current="true">One Assign button, separate page</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
-      {% else %}
-      <a href="{{ versionUrls.reassignSingle if versionUrls else consultationsUrl + '?reassign=single' }}" class="govuk-link govuk-link--no-visited-state">One Assign button, separate page</a>
       {% endif %}
     </li>
     <li>
@@ -151,7 +151,14 @@
   <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Assign on request pages</h3>
   <ul class="govuk-list govuk-list--spaced">
     <li>
-      {% if reqassignMode === "off" or not reqassignMode %}
+      {% if reqassignMode === "bottom" %}
+      <span aria-current="true">At the bottom</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ versionUrls.reqassignBottom if versionUrls else consultationsUrl }}" class="govuk-link govuk-link--no-visited-state">At the bottom</a>
+      {% endif %}
+    </li>
+    <li>
+      {% if reqassignMode === "off" %}
       <span aria-current="true">Off</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
       {% else %}
       <a href="{{ versionUrls.reqassignOff if versionUrls else consultationsUrl + '' }}" class="govuk-link govuk-link--no-visited-state">Off</a>
@@ -162,13 +169,6 @@
       <span aria-current="true">Under About this request</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
       {% else %}
       <a href="{{ versionUrls.reqassignUnder if versionUrls else consultationsUrl + '?reqassign=under' }}" class="govuk-link govuk-link--no-visited-state">Under About this request</a>
-      {% endif %}
-    </li>
-    <li>
-      {% if reqassignMode === "bottom" %}
-      <span aria-current="true">At the bottom</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
-      {% else %}
-      <a href="{{ versionUrls.reqassignBottom if versionUrls else consultationsUrl + '?reqassign=bottom' }}" class="govuk-link govuk-link--no-visited-state">At the bottom</a>
       {% endif %}
     </li>
   </ul>

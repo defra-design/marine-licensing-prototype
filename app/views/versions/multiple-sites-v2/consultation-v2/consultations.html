@@ -164,6 +164,18 @@
     var reassignPanel = document.getElementById('app-reassign-panel')
     var reassignCancel = document.getElementById('app-reassign-cancel')
     if (reassignToggle && reassignPanel) {
+      var clearTableError = function () {
+        var message = document.getElementById('consultations-error')
+        if (!message) return
+        message.parentNode.classList.remove('govuk-form-group--error')
+        message.remove()
+        var summary = document.querySelector('.govuk-error-summary')
+        if (summary) summary.remove()
+        document.title = document.title.replace(/^Error: /, '')
+        Array.prototype.forEach.call(document.querySelectorAll('[aria-describedby="consultations-error"]'), function (input) {
+          input.removeAttribute('aria-describedby')
+        })
+      }
       var setReassign = function (open, keepFocus) {
         reassignPanel.hidden = !open
         reassignToggle.setAttribute('aria-expanded', open ? 'true' : 'false')
@@ -174,7 +186,14 @@
       // Open after an error in the panel, leaving focus on the error summary
       setReassign(reassignPanel.getAttribute('data-open') === 'true', true)
       reassignToggle.addEventListener('click', function (e) {
+        // Nothing ticked: let the button submit as normal, so the page shows
+        // "Select at least one consultation" like the other buttons
+        var ticked = document.querySelectorAll('#consultations-table tbody input[type=checkbox]:checked').length
+        if (reassignPanel.hidden && !ticked) return
         e.preventDefault()
+        // Opening the panel does not reload the page, so clear a "Select at
+        // least one consultation" error from before, as a reload would
+        if (reassignPanel.hidden) clearTableError()
         setReassign(reassignPanel.hidden)
       })
       reassignCancel.addEventListener('click', function () { setReassign(false); reassignToggle.focus() })
@@ -376,7 +395,7 @@
                     #}
                     <div class="govuk-button-group">
                         {{ govukButton({
-                            text: "Assign selected",
+                            text: "Assign",
                             classes: "govuk-button--secondary",
                             name: "consultation-v2-assign-action",
                             value: "choose"

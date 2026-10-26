@@ -476,8 +476,10 @@ module.exports = function (router) {
     if (query.assign === 'buttons') keep.assign = 'buttons';
     if (['bar', 'bar-actions'].includes(query.filter)) keep.filter = query.filter;
     if (query.layout === 'full') keep.layout = 'full';
-    if (['panel', 'page', 'single'].includes(query.reassign)) keep.reassign = query.reassign;
-    if (['under', 'bottom'].includes(query.reqassign)) keep.reqassign = query.reqassign;
+    // Defaults (left out of the URL): one Assign button and Assign at the
+    // bottom of request pages. Anything else, including off, is kept.
+    if (['off', 'panel', 'page'].includes(query.reassign)) keep.reassign = query.reassign;
+    if (['off', 'under'].includes(query.reqassign)) keep.reqassign = query.reqassign;
     if (query.banners === 'off') keep.banners = 'off';
     return keep;
   }
@@ -510,13 +512,13 @@ module.exports = function (router) {
       filterSide: to({ filter: null }),
       filterBar: to({ filter: 'bar' }),
       filterBarActions: to({ filter: 'bar-actions' }),
-      reassignOff: to({ reassign: null }),
+      reassignOff: to({ reassign: 'off' }),
       reassignPanel: to({ reassign: 'panel' }),
       reassignPage: to({ reassign: 'page' }),
-      reassignSingle: to({ reassign: 'single' }),
-      reqassignOff: to({ reqassign: null }),
+      reassignSingle: to({ reassign: null }),
+      reqassignOff: to({ reqassign: 'off' }),
       reqassignUnder: to({ reqassign: 'under' }),
-      reqassignBottom: to({ reqassign: 'bottom' }),
+      reqassignBottom: to({ reqassign: null }),
       bannersOn: to({ banners: null }),
       bannersOff: to({ banners: 'off' })
     };
@@ -536,14 +538,22 @@ module.exports = function (router) {
     res.locals.assignMode = req.query.assign === 'buttons' ? 'buttons' : 'checkboxes';
     res.locals.filterMode = ['bar', 'bar-actions'].includes(req.query.filter) ? req.query.filter : 'side';
     res.locals.layoutMode = req.query.layout === 'full' ? 'full' : 'standard';
-    res.locals.reassignMode = keep.reassign || 'off';
-    // ?reqassign=under or ?reqassign=bottom adds an Assign button to the
-    // request pages, under About this request or at the bottom. Off by default.
-    res.locals.reqassignMode = keep.reqassign || 'off';
+    res.locals.reassignMode = keep.reassign || 'single';
+    // Assign button on the request pages: at the bottom by default,
+    // ?reqassign=under puts it under About this request, ?reqassign=off removes it.
+    res.locals.reqassignMode = keep.reqassign || 'bottom';
     // ?banners=off turns off the banners after assigning from the separate page
     res.locals.bannersOn = keep.banners !== 'off';
     next();
   });
+
+  // "Bude outfall pipe repair has been assigned to Kevin Morris",
+  // "2 consultations are now unassigned" and so on
+  function assignedText(ids, to) {
+    const what = ids.length === 1 ? REQUESTS[ids[0]].applicationName : `${ids.length} consultations`;
+    if (to === 'no-one') return `${what} ${ids.length === 1 ? 'is' : 'are'} now unassigned`;
+    return `${what} ${ids.length === 1 ? 'has' : 'have'} been assigned to ${to === ME ? 'you' : to}`;
+  }
 
   // A one-off success banner after assigning, for the page we land on
   function setAssignBanner(req, page, text) {
@@ -590,9 +600,13 @@ module.exports = function (router) {
       //   ?filter=bar        horizontal filter bar, toggle by the heading
       //   ?filter=bar-actions horizontal filter bar, toggle by the buttons
       //   ?layout=full       up to 1920px wide, with a Marine plan area column
-      //   ?reassign=page     Assign to someone else on a separate page
-      //   ?reassign=single   one Assign selected button, separate page
-      //   ?reassign=panel    Assign to someone else in a panel on the page
+      //   (default)          one Assign button, separate page
+      //   ?reassign=off      Assign to me and Unassign from me only
+      //   ?reassign=page     those plus Assign to someone else, separate page
+      //   ?reassign=panel    those plus Assign to someone else, in a panel
+      //   (default)          Assign at the bottom of request pages
+      //   ?reqassign=under   Assign under About this request instead
+      //   ?reqassign=off     no Assign on request pages
       // Not you: you would use Assign to me
       everyone: TEAM,
       assignBanner: takeAssignBanner(req, 'list'),
@@ -663,12 +677,16 @@ module.exports = function (router) {
 
     if (action === 'assign') {
       ids.forEach(id => { data[`consultation-v2-${id}-assigned-to`] = ME; });
+      // Banners are consistent: every assign gets one, unless ?banners=off
+      setAssignBanner(req, 'list', assignedText(ids, ME));
     } else if (action === 'reassign') {
       // In-page panel: the ticked cases go to whoever was chosen, or to
       // nobody for "No one"
       if (!reassign(data, ids, reassignTo)) {
         return showError('Select who to assign the consultations to', 'reassign');
       }
+      // The panel gets the same banner as the separate page, unless ?banners=off
+      setAssignBanner(req, 'list', assignedText(ids, reassignTo));
     } else if (action === 'choose') {
       // Assign to someone else as a separate page, or the in-page panel
       // without JavaScript: remember the ticked cases and go to the page
@@ -680,6 +698,7 @@ module.exports = function (router) {
       const mine = ids.filter(id => assignedToFor(req, REQUESTS[id]) === ME);
       if (!mine.length) return showError('Select a consultation assigned to you');
       mine.forEach(id => { data[`consultation-v2-${id}-assigned-to`] = ''; });
+      setAssignBanner(req, 'list', assignedText(mine, 'no-one'));
     }
 
     backToConsultations();
@@ -715,7 +734,8 @@ module.exports = function (router) {
     const ids = [].concat(data['consultation-v2-reassign-ids'] || []).filter(id => REQUESTS[id]);
     const from = data['consultation-v2-reassign-from'];
     const fromRequest = from && ids.length === 1 && ids[0] === from ? from : null;
-    const includeMe = req.query.reassign === 'single' || !!fromRequest;
+    // One Assign button is the default, so no ?reassign means single
+    const includeMe = !['off', 'panel', 'page'].includes(req.query.reassign) || !!fromRequest;
     return { ids, fromRequest, people: includeMe ? [ME].concat(TEAM) : TEAM, includeMe };
   }
 
@@ -760,12 +780,7 @@ module.exports = function (router) {
       return req.session.save(() => res.redirect(`${base}/request-details/${fromRequest}${queryOf(req)}`));
     }
 
-    const what = ids.length === 1 ? REQUESTS[ids[0]].applicationName : `${ids.length} consultations`;
-    const verb = ids.length === 1 ? 'has' : 'have';
-    const text = to === 'no-one'
-      ? `${what} ${ids.length === 1 ? 'is' : 'are'} now unassigned`
-      : `${what} ${verb} been assigned to ${to === ME ? 'you' : to}`;
-    setAssignBanner(req, 'list', text);
+    setAssignBanner(req, 'list', assignedText(ids, to));
 
     // From a request page the list opens with just the page versions;
     // from the list it keeps its filters too
