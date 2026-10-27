@@ -9,6 +9,10 @@ module.exports = function (router) {
   // Must match low-complexity-v4.js MARINE_PLAN_POLICIES_TOTAL for redirect counts
   const MARINE_PLAN_POLICIES_TOTAL = 37;
 
+  // Shortest consideration we accept, after trimming spaces. Low enough for MMO's
+  // shortest example answers, high enough to stop "See document" or "Not applicable"
+  const MIN_CONSIDERATION_LENGTH = 70;
+
   const { MPP_V3_POLICIES, MPP_V3_DOCUMENT_CATEGORIES, isFlagged, getDocuments } = mppV3Documents;
 
   /////////////////////////////////////////////////////////
@@ -45,12 +49,16 @@ module.exports = function (router) {
     router.get(`/versions/${version}/${section}/${subsection}/${pageName}`, function (req, res) {
       req.session.data['errorthispage'] = "false";
       req.session.data['errortypeone'] = "false";
+      req.session.data['errortypetwo'] = "false";
+      req.session.data['errortypethree'] = "false";
       res.render(`versions/${version}/${section}/${subsection}/${pageName}`);
     });
 
     router.post(`/versions/${version}/${section}/${subsection}/${pageName}-router`, function (req, res) {
       req.session.data['errorthispage'] = "false";
       req.session.data['errortypeone'] = "false";
+      req.session.data['errortypetwo'] = "false";
+      req.session.data['errortypethree'] = "false";
 
       // An unticked checkbox sends nothing without JavaScript, so clear the flag ourselves
       // (with JavaScript the kit sends '_unchecked' and has already cleared it)
@@ -74,9 +82,22 @@ module.exports = function (router) {
 
       const value = req.session.data[`marine-plan-policy-v3-${sessionKey}-text`];
 
-      if (!value || value.trim() === '') {
+      const length = (value || '').trim().length;
+
+      if (length === 0) {
         req.session.data['errorthispage'] = "true";
         req.session.data['errortypeone'] = "true";
+        return res.redirect(pageName);
+      }
+
+      // Too short to explain anything – the message differs if they've said it relies on a document
+      if (length < MIN_CONSIDERATION_LENGTH) {
+        req.session.data['errorthispage'] = "true";
+        if (isFlagged(req.session.data, sessionKey)) {
+          req.session.data['errortypetwo'] = "true";
+        } else {
+          req.session.data['errortypethree'] = "true";
+        }
         return res.redirect(pageName);
       }
 
