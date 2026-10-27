@@ -168,6 +168,33 @@
   </div>
 
   <div class="app-version-tray__section">
+  <h3 class="govuk-heading-s govuk-!-margin-bottom-2">People on the Assign page</h3>
+  <ul class="govuk-list govuk-list--spaced">
+    <li>
+      {% if assignlistMode !== "filter" and assignlistMode !== "autocomplete" %}
+      <span aria-current="true">A few people</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ versionUrls.assignlistShort if versionUrls else consultationsUrl }}" class="govuk-link govuk-link--no-visited-state">A few people</a>
+      {% endif %}
+    </li>
+    <li>
+      {% if assignlistMode === "filter" %}
+      <span aria-current="true">Long list with a filter box</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ versionUrls.assignlistFilter if versionUrls else consultationsUrl + '?assignlist=filter' }}" class="govuk-link govuk-link--no-visited-state">Long list with a filter box</a>
+      {% endif %}
+    </li>
+    <li>
+      {% if assignlistMode === "autocomplete" %}
+      <span aria-current="true">Type-ahead, all names shown</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ versionUrls.assignlistAutocomplete if versionUrls else consultationsUrl + '?assignlist=autocomplete' }}" class="govuk-link govuk-link--no-visited-state">Type-ahead, all names shown</a>
+      {% endif %}
+    </li>
+  </ul>
+  </div>
+
+  <div class="app-version-tray__section">
   <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Assign on request pages</h3>
   <ul class="govuk-list govuk-list--spaced">
     <li>

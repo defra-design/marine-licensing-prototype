@@ -26,7 +26,7 @@
         {% if error %}
         {{ govukErrorSummary({
             titleText: "There is a problem",
-            errorList: [{ text: error, href: "#reassign-1" }]
+            errorList: [{ text: error, href: "#reassign-to" if assignlistMode === "autocomplete" else "#reassign-1" }]
         }) }}
         {% endif %}
 
@@ -40,7 +40,47 @@
             {% endfor %}
         </ul>
 
+        {#
+          Long list and type-ahead versions: Unassign is a button up here, by who has them now,
+          so nobody scrolls past every name to find it. Its own form, so it
+          never mixes with the radios. Shown if any selected consultation is
+          assigned; it unassigns them all.
+        #}
+        {% if assignlistMode !== "short" and (selected | selectattr("assignedTo") | length) %}
         <form method="post" novalidate>
+            <input type="hidden" name="consultation-v2-reassign-to" value="no-one">
+            {{ govukButton({ text: "Unassign", classes: "govuk-button--secondary" }) }}
+        </form>
+        {% endif %}
+
+        <form method="post" novalidate>
+            {#
+              Type-ahead version (?assignlist=autocomplete): the accessible
+              autocomplete, opening on all names when the box gets focus, you
+              first. It builds on this select, so without JavaScript it is a
+              plain dropdown.
+            #}
+            {% if assignlistMode === "autocomplete" %}
+            <div class="govuk-form-group{% if error %} govuk-form-group--error{% endif %}">
+                <h2 class="govuk-label-wrapper">
+                    <label class="govuk-label govuk-label--m" for="reassign-to">Who do you want to assign {{ "it" if selected.length === 1 else "them" }} to?</label>
+                </h2>
+                <div id="reassign-hint" class="govuk-hint">Start typing a name, or choose from the list</div>
+                {% if error %}
+                <p id="reassign-error" class="govuk-error-message">
+                    <span class="govuk-visually-hidden">Error:</span> {{ error }}
+                </p>
+                {% endif %}
+                <div class="app-assign-autocomplete">
+                    <select class="govuk-select" id="reassign-to" name="consultation-v2-reassign-to" aria-describedby="reassign-hint{% if error %} reassign-error{% endif %}">
+                        <option value=""></option>
+                        {% for person in everyone %}
+                        <option value="{{ person }}">{{ person }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            {% else %}
             <div class="govuk-form-group{% if error %} govuk-form-group--error{% endif %}">
                 <fieldset class="govuk-fieldset"{% if error %} aria-describedby="reassign-error"{% endif %}>
                     <legend class="govuk-fieldset__legend govuk-fieldset__legend--m">
@@ -51,21 +91,43 @@
                         <span class="govuk-visually-hidden">Error:</span> {{ error }}
                     </p>
                     {% endif %}
+                    {#
+                      Long list with a filter box version (?assignlist=filter),
+                      like the live search on GOV.UK Notify's long lists. Typing
+                      hides the names that do not match. Only shown once the
+                      script below runs, so without JavaScript it is just the
+                      full list of radios.
+                    #}
+                    {% if assignlistMode === "filter" %}
+                    <div class="govuk-form-group app-live-search" id="app-live-search" hidden>
+                        <label class="govuk-label" for="app-live-search-input">Filter by name</label>
+                        <div class="app-live-search__row">
+                            <input class="govuk-input app-live-search__input" id="app-live-search-input" type="text" spellcheck="false" autocomplete="off">
+                            <button type="button" class="govuk-button govuk-button--secondary app-live-search__clear" data-module="govuk-button" id="app-live-search-clear">Clear filter</button>
+                        </div>
+                        <p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0" id="app-live-search-none" hidden>No names match your filter</p>
+                        <p class="govuk-visually-hidden" id="app-live-search-count" aria-live="polite"></p>
+                    </div>
+                    {% endif %}
                     <div class="govuk-radios" data-module="govuk-radios">
                         {% for person in everyone %}
-                        <div class="govuk-radios__item">
+                        <div class="govuk-radios__item" data-person="{{ person }}">
                             <input class="govuk-radios__input" id="reassign-{{ loop.index }}" name="consultation-v2-reassign-to" type="radio" value="{{ person }}">
                             <label class="govuk-label govuk-radios__label" for="reassign-{{ loop.index }}">{{ person }}</label>
                         </div>
                         {% endfor %}
+                        {# The long list version has an Unassign button above instead #}
+                        {% if assignlistMode !== "filter" %}
                         <div class="govuk-radios__divider">or</div>
                         <div class="govuk-radios__item">
                             <input class="govuk-radios__input" id="reassign-no-one" name="consultation-v2-reassign-to" type="radio" value="no-one">
                             <label class="govuk-label govuk-radios__label" for="reassign-no-one">Unassign</label>
                         </div>
+                        {% endif %}
                     </div>
                 </fieldset>
             </div>
+            {% endif %}
 
             <div class="govuk-button-group">
                 {{ govukButton({ text: "Assign" }) }}
@@ -75,5 +137,113 @@
 
     </div>
 </div>
+
+{% if assignlistMode === "autocomplete" %}
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/accessible-autocomplete@3.0.1/dist/accessible-autocomplete.min.css">
+<style>
+  .app-assign-autocomplete { max-width: 20em; }
+</style>
+<script src="https://cdn.jsdelivr.net/npm/accessible-autocomplete@3.0.1/dist/accessible-autocomplete.min.js"></script>
+<script>
+  // showAllValues opens every name as soon as the box is focused or its
+  // arrow pressed, in the order of the select, so you are first
+  var select = document.getElementById('reassign-to')
+  accessibleAutocomplete.enhanceSelectElement({
+    selectElement: select,
+    defaultValue: '',
+    showAllValues: true,
+    // Otherwise leaving the box picks whichever name is highlighted, so
+    // clicking in and then on Assign would quietly assign it to you
+    confirmOnBlur: false
+  })
+
+  // The autocomplete does not copy aria-describedby from the select, and
+  // rewrites its own after the first key, so the hint (and any error) are
+  // added back whenever that happens, for screen readers
+  var input = document.getElementById('reassign-to')
+  var describedBy = select.getAttribute('aria-describedby').split(' ')
+  function describe () {
+    var ids = (input.getAttribute('aria-describedby') || '').split(' ').filter(Boolean)
+    var missing = describedBy.filter(function (id) { return ids.indexOf(id) === -1 })
+    if (missing.length) input.setAttribute('aria-describedby', missing.concat(ids).join(' '))
+  }
+  describe()
+  new MutationObserver(describe).observe(input, { attributes: true, attributeFilter: ['aria-describedby'] })
+
+  // Only what is in the box counts: a name typed in full (without picking it
+  // from the list) is used, and an empty or unknown name gives the error
+  input.form.addEventListener('submit', function () {
+    var typed = input.value.trim().toLowerCase()
+    var match = Array.prototype.find.call(select.options, function (option) {
+      return option.value && option.text.toLowerCase() === typed
+    })
+    select.value = match ? match.value : ''
+  })
+</script>
+{% endif %}
+
+{% if assignlistMode === "filter" %}
+<style>
+  /* GOV.UK radios set display: flex, which would otherwise beat [hidden] */
+  .govuk-radios__item[hidden] { display: none; }
+  .app-live-search__row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px; }
+  .app-live-search__input { max-width: 20em; }
+  /* A secondary button, like Show filter and Assign on the list */
+  .app-live-search__clear { margin-bottom: 0; }
+</style>
+<script>
+  (function () {
+    var search = document.getElementById('app-live-search')
+    var input = document.getElementById('app-live-search-input')
+    var none = document.getElementById('app-live-search-none')
+    var count = document.getElementById('app-live-search-count')
+    var clear = document.getElementById('app-live-search-clear')
+    var people = Array.prototype.slice.call(document.querySelectorAll('[data-person]'))
+    var timer
+
+    search.hidden = false
+
+    function filter () {
+      var term = input.value.trim().toLowerCase()
+      var shown = 0
+      people.forEach(function (item) {
+        // The person already chosen stays in view, so the choice is never hidden
+        var chosen = item.querySelector('input').checked
+        var match = !term || chosen || item.getAttribute('data-person').toLowerCase().indexOf(term) !== -1
+        item.hidden = !match
+        if (match) shown++
+      })
+      none.hidden = !term || shown > 0
+      // Announced after a short pause, not on every key
+      clearTimeout(timer)
+      timer = setTimeout(function () {
+        count.textContent = term ? (shown === 1 ? '1 person found' : shown + ' people found') : ''
+      }, 500)
+    }
+
+    input.addEventListener('input', filter)
+    // Empties the box and shows everyone again, ready to type afresh
+    clear.addEventListener('click', function () {
+      input.value = ''
+      filter()
+      input.focus()
+    })
+    // Enter in the filter box does not send the form. Stopped on the keys and
+    // again on the form, as browsers differ in how Enter submits.
+    var enterPressed = false
+    function stopEnter (e) {
+      if (e.key !== 'Enter' && e.keyCode !== 13) return
+      e.preventDefault()
+      enterPressed = true
+      setTimeout(function () { enterPressed = false }, 0)
+    }
+    input.addEventListener('keydown', stopEnter)
+    input.addEventListener('keypress', stopEnter)
+    input.form.addEventListener('submit', function (e) {
+      if (enterPressed) e.preventDefault()
+    })
+  })()
+</script>
+{% endif %}
 
 {% endblock %}
