@@ -379,7 +379,8 @@ module.exports = function (router) {
 
   // A whole organisation's worth of people, for the "Long list with a filter
   // box" version of the separate Assign page (?assignlist=filter). Includes
-  // the team, so cases already assigned to them still make sense.
+  // the team, so cases already assigned to them still make sense. The
+  // type-ahead version (?assignlist=autocomplete) uses the same people.
   const EVERYONE = TEAM.concat([
     'Aisha Rahman', 'Alex Turner', 'Amira Haddad', 'Ben Whitfield', 'Callum Reid',
     'Chloe Bennett', 'Daniel Okafor', 'Eleanor Price', 'Ethan Clarke', 'Fatima Begum',
@@ -498,7 +499,7 @@ module.exports = function (router) {
     if (['off', 'under'].includes(query.reqassign)) keep.reqassign = query.reqassign;
     if (query.banners === 'off') keep.banners = 'off';
     if (query.scroll === 'off') keep.scroll = 'off';
-    if (query.assignlist === 'filter') keep.assignlist = 'filter';
+    if (['filter', 'autocomplete'].includes(query.assignlist)) keep.assignlist = query.assignlist;
     return keep;
   }
 
@@ -544,6 +545,7 @@ module.exports = function (router) {
       scrollOff: urlWith(path, query, { scroll: 'off' }),
       assignlistShort: to({ assignlist: null }),
       assignlistFilter: to({ assignlist: 'filter' }),
+      assignlistAutocomplete: to({ assignlist: 'autocomplete' }),
       rolesConsultee: to({ 'consultation-v2-roles': 'consultee' }),
       rolesBoth: to({ 'consultation-v2-roles': 'both' })
     };
@@ -586,7 +588,8 @@ module.exports = function (router) {
     // ?scroll=off shows the table without the MOJ scrollable pane round it
     res.locals.scrollOn = keep.scroll !== 'off';
     // ?assignlist=filter gives the separate Assign page a long list of people
-    // with a filter box above it, instead of the few in the team
+    // with a filter box above it, instead of the few in the team.
+    // ?assignlist=autocomplete gives the same people in a type-ahead.
     res.locals.assignlistMode = keep.assignlist || 'short';
     // Always render afresh, so the browser's Back button never shows an old
     // copy of a page from before assigning or responding
@@ -785,7 +788,7 @@ module.exports = function (router) {
     const fromRequest = from && ids.length === 1 && ids[0] === from ? from : null;
     // One Assign button is the default, so no ?reassign means single
     const includeMe = !['off', 'panel', 'page'].includes(req.query.reassign) || !!fromRequest;
-    const others = req.query.assignlist === 'filter' ? EVERYONE : TEAM;
+    const others = ['filter', 'autocomplete'].includes(req.query.assignlist) ? EVERYONE : TEAM;
     return { ids, fromRequest, people: includeMe ? [ME].concat(others) : others, includeMe };
   }
 
