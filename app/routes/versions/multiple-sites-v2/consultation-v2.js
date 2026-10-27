@@ -356,8 +356,6 @@ module.exports = function (router) {
     return Object.assign({}, request, {
       assignedTo,
       assignedToMe: assignedTo === ME,
-      // No "(you)" after your own name, to match the LCML v4 submissions page
-      assignedToText: assignedTo || '-',
       status: statusFor(req, request),
       respondByOffset: request.receivedOffset + RESPONSE_PERIOD_DAYS,
       response: req.session.data[`consultation-v2-${request.id}-response`] || (request.seededResponse && request.seededResponse.text),
@@ -385,7 +383,7 @@ module.exports = function (router) {
   ];
   const STATUS_OPTIONS = ['Response needed', 'No response needed', 'Responded'];
   const SHOW_OPTIONS = [
-    { value: 'all', text: 'All cases' },
+    { value: 'all', text: 'All consultations' },
     { value: 'me', text: 'Assigned to me' },
     { value: 'unassigned', text: 'Unassigned' },
     { value: 'person', text: 'Assigned to someone else' }
@@ -465,12 +463,12 @@ module.exports = function (router) {
   // Names what is being shown, for the results count, as on the LCML v4
   // submissions page ("10 results found in 'All Ramsgate Marina submissions'")
   function scopeName(filters) {
-    if (filters.show === 'me') return 'Cases assigned to me';
-    if (filters.show === 'unassigned') return 'Unassigned cases';
+    if (filters.show === 'me') return 'Consultations assigned to me';
+    if (filters.show === 'unassigned') return 'Unassigned consultations';
     if (filters.show === 'person') {
-      return filters.people.length ? `Cases assigned to ${filters.people.join(', ')}` : 'Cases assigned to someone else';
+      return filters.people.length ? `Consultations assigned to ${filters.people.join(', ')}` : 'Consultations assigned to someone else';
     }
-    return 'All Natural England cases';
+    return 'All Natural England consultations';
   }
 
   // The page versions in the URL (not the filters). Kept when filtering,
@@ -577,10 +575,10 @@ module.exports = function (router) {
   });
 
   // "Bude outfall pipe repair has been assigned to Kevin Morris",
-  // "2 consultations are now unassigned" and so on
+  // "4 consultations have been unassigned" and so on
   function assignedText(ids, to) {
     const what = ids.length === 1 ? REQUESTS[ids[0]].applicationName : `${ids.length} consultations`;
-    if (to === 'no-one') return `${what} ${ids.length === 1 ? 'is' : 'are'} now unassigned`;
+    if (to === 'no-one') return `${what} ${ids.length === 1 ? 'has' : 'have'} been unassigned`;
     return `${what} ${ids.length === 1 ? 'has' : 'have'} been assigned to ${to === ME ? 'you' : to}`;
   }
 
@@ -702,7 +700,7 @@ module.exports = function (router) {
     };
     const assignActions = ['assign', 'unassign', 'reassign', 'choose'];
     if (assignActions.includes(action) && !ids.length) {
-      return showError('Select at least one consultation');
+      return showError('Select the consultations you want to assign');
     }
 
     if (action === 'assign') {

@@ -36,7 +36,7 @@
 
         <ul class="govuk-list govuk-list--bullet">
             {% for request in selected %}
-            <li>{{ request.applicationName }} ({{ request.reference }}) – currently assigned to {{ request.assignedTo or "no one" }}</li>
+            <li>{{ request.applicationName }} ({{ request.reference }}) – {{ ("currently assigned to " + request.assignedTo) if request.assignedTo else "currently unassigned" }}</li>
             {% endfor %}
         </ul>
 
@@ -61,7 +61,7 @@
                         <div class="govuk-radios__divider">or</div>
                         <div class="govuk-radios__item">
                             <input class="govuk-radios__input" id="reassign-no-one" name="consultation-v2-reassign-to" type="radio" value="no-one">
-                            <label class="govuk-label govuk-radios__label" for="reassign-no-one">No one</label>
+                            <label class="govuk-label govuk-radios__label" for="reassign-no-one">Unassign</label>
                         </div>
                     </div>
                 </fieldset>

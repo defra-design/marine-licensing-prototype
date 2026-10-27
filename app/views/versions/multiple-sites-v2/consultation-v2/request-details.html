@@ -2,7 +2,7 @@
 
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
-{% from "versions/multiple-sites-v2/consultation-v2/includes/macros.html" import statusTag %}
+{% from "versions/multiple-sites-v2/consultation-v2/includes/macros.html" import statusTag, assignedTo %}
 
 {% set navActive = "consultations" %}
 {% set isAdvice = request.type === "response-required" %}
@@ -27,7 +27,8 @@
         <span class="govuk-caption-l">{{ request.reference }} – {{ request.applicationName }}</span>
         <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
 
-        {% if not isAdvice %}
+        {# Not once responded, when they are no longer relevant #}
+        {% if not isAdvice and request.status !== "Responded" %}
         <p class="govuk-body">We are telling you about this marine licence application because of your statutory responsibilities or interest in this area.</p>
         <p class="govuk-body">You do not need to respond unless you have specific concerns or information you want to tell us.</p>
         {% endif %}
@@ -48,7 +49,7 @@
             </div>
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">Assigned to</dt>
-                <dd class="govuk-summary-list__value">{{ request.assignedToText }}</dd>
+                <dd class="govuk-summary-list__value">{{ assignedTo(request) }}</dd>
             </div>
         </dl>
         {#
@@ -86,7 +87,7 @@
         </dl>
 
         {% if isAdvice %}
-        <h2 class="govuk-heading-m">Advice requested by the MMO</h2>
+        <h2 class="govuk-heading-m">Advice requested</h2>
         {# The case officer's plain-text request from MAS, one paragraph per line break #}
         {% for paragraph in request.adviceRequested %}
         <p class="govuk-body">{{ paragraph }}</p>
@@ -101,7 +102,7 @@
         {% set assignAtBottom = reqassignMode === "bottom" %}
         {% if request.status === "Responded" %}
         <h2 class="govuk-heading-m">Response sent</h2>
-        <p class="govuk-body govuk-hint">Sent to the MMO{% if request.respondedBy %} by {{ request.respondedBy }}{% endif %} on {{ request.respondedDate }}</p>
+        <p class="govuk-body govuk-hint">Sent{% if request.respondedBy %} by {{ request.respondedBy }}{% endif %} on {{ request.respondedDate }}</p>
         <p class="govuk-body">{{ request.response }}</p>
         {# Only the person assigned to a request can respond to it #}
         {% elif not request.assignedToMe %}

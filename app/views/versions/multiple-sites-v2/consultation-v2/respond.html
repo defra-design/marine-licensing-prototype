@@ -43,7 +43,7 @@
         <p class="govuk-body">The closing date for responses is {{ request.respondByOffset | daysFromToday }}.</p>
         <p class="govuk-body"><a href="../view-application/{{ request.id }}{{ versionQuery }}" class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">View the application (opens in new tab)</a></p>
 
-        <h2 class="govuk-heading-m">Advice requested by the MMO</h2>
+        <h2 class="govuk-heading-m">Advice requested</h2>
         {% set adviceHtml %}
         {% for paragraph in request.adviceRequested %}
         <p class="govuk-body{{ ' govuk-!-margin-bottom-0' if loop.last }}">{{ paragraph }}</p>
@@ -52,9 +52,9 @@
         {{ govukInsetText({ html: adviceHtml }) }}
 
         {% set adviceHelpHtml %}
-        <p class="govuk-body">We are seeking your advice because of your relevant expertise, responsibilities or knowledge, which may help us assess and determine this application.</p>
-        <p class="govuk-body">The advice you provide should focus on matters within your area of expertise or responsibility, with particular emphasis on the information requested below.</p>
-        <p class="govuk-body govuk-!-margin-bottom-0">You may also raise any other relevant matters or concerns that you consider should be brought to our attention.</p>
+        <p class="govuk-body">Focus on matters within your area of expertise or responsibility, and answer the questions we’ve asked.</p>
+        <p class="govuk-body">You can also tell us about anything else you think we should consider.</p>
+        <p class="govuk-body govuk-!-margin-bottom-0">It helps us if, for each point you raise, you tell us what the issue is, why it matters and what could avoid or reduce it.</p>
         {% endset %}
         {{ govukDetails({
             summaryText: "Help with providing your advice",
@@ -71,7 +71,7 @@
                     classes: "govuk-label--m",
                     isPageHeading: false
                 },
-                hint: { text: "Keep your answers concise. If you do not know the answer to something, tell us that rather than leaving it blank." },
+                hint: { text: "Write your response in plain language so the applicant can understand it. Explain any technical terms." },
                 errorMessage: { text: error } if error else undefined
             }) }}
 

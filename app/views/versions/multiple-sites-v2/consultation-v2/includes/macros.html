@@ -5,6 +5,12 @@
 {{ "Request for advice" if request.type === "response-required" else "Application notification" }}
 {%- endmacro %}
 
+{# Who a request is assigned to. No "(you)" after your own name, to match the
+   LCML v4 submissions page. Nobody shows a dash, read out as "Unassigned". #}
+{% macro assignedTo(request) -%}
+{% if request.assignedTo %}{{ request.assignedTo }}{% else %}<span aria-hidden="true">-</span><span class="govuk-visually-hidden">Unassigned</span>{% endif %}
+{%- endmacro %}
+
 {% macro statusTag(request) %}
 {{ govukTag({
     text: request.status,

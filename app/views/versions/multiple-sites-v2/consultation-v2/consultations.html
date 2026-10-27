@@ -3,7 +3,7 @@
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
-{% from "versions/multiple-sites-v2/consultation-v2/includes/macros.html" import requestTypeText, statusTag %}
+{% from "versions/multiple-sites-v2/consultation-v2/includes/macros.html" import requestTypeText, statusTag, assignedTo %}
 {% from "versions/multiple-sites-v2/consultation-v2/includes/filter-fields.html" import filterFields %}
 {# Two horizontal bar versions: ?filter=bar puts Show/Hide filter level with
    the heading, ?filter=bar-actions puts it next to the assign buttons #}
@@ -187,7 +187,7 @@
       setReassign(reassignPanel.getAttribute('data-open') === 'true', true)
       reassignToggle.addEventListener('click', function (e) {
         // Nothing ticked: let the button submit as normal, so the page shows
-        // "Select at least one consultation" like the other buttons
+        // "Select the consultations you want to assign" like the other buttons
         var ticked = document.querySelectorAll('#consultations-table tbody input[type=checkbox]:checked').length
         if (reassignPanel.hidden && !ticked) return
         e.preventDefault()
@@ -263,7 +263,7 @@
         {% if justResponded %}
         {{ govukNotificationBanner({
             type: "success",
-            html: '<h3 class="govuk-notification-banner__heading">Response sent</h3><p class="govuk-body">Your response to ' + justResponded.applicationName + ' (' + justResponded.reference + ') has been sent to the MMO.</p>'
+            html: '<h3 class="govuk-notification-banner__heading">Response sent</h3><p class="govuk-body">Your response to ' + justResponded.applicationName + ' (' + justResponded.reference + ') has been sent.</p>'
         }) }}
         {% endif %}
 
@@ -391,7 +391,7 @@
                     {#
                       One Assign button instead of Assign to me, Unassign from me
                       and Assign to someone else. It goes to the separate page,
-                      where you choose anyone, including yourself, or No one.
+                      where you choose anyone, including yourself, or Unassign.
                     #}
                     <div class="govuk-button-group">
                         {{ govukButton({
@@ -468,7 +468,7 @@
                                 <div class="govuk-radios__divider">or</div>
                                 <div class="govuk-radios__item">
                                     <input class="govuk-radios__input" id="reassign-no-one" name="consultation-v2-reassign-to" type="radio" value="no-one">
-                                    <label class="govuk-label govuk-radios__label" for="reassign-no-one">No one</label>
+                                    <label class="govuk-label govuk-radios__label" for="reassign-no-one">Unassign</label>
                                 </div>
                             </div>
                         </fieldset>
@@ -561,7 +561,7 @@
                            keeping the default sort on open deadlines, soonest first #}
                         <td class="govuk-table__cell app-nowrap" data-sort-value="{{ ('1' if request.status === 'Responded' else '') + (request.respondByOffset | daysFromTodaySort) }}">{{ request.respondByOffset | daysFromTodayShort }}</td>
                         <td class="govuk-table__cell app-nowrap" data-sort-value="{{ request.receivedOffset | daysFromTodaySort }}">{{ request.receivedOffset | daysFromTodayShort }}</td>
-                        <td class="govuk-table__cell">{{ request.assignedToText }}</td>
+                        <td class="govuk-table__cell">{{ assignedTo(request) }}</td>
                         {% if not checkboxes %}
                         <td class="govuk-table__cell">
                             {% if request.status !== "Responded" %}
