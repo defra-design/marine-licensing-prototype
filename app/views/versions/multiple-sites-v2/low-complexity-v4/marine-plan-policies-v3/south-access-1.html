@@ -26,13 +26,22 @@ Error:
 
 {% block content %}
 
+{# Empty, or under 70 characters – the short message depends on whether the checkbox is ticked #}
+{% if data['errortypeone'] == "true" %}
+{% set considerationErrorText = "Enter how you have considered this policy" %}
+{% elif data['errortypetwo'] == "true" %}
+{% set considerationErrorText = "Your consideration must be 70 characters or more. Have you explained it in full, rather than only referring to your document? If not, we will reject your application." %}
+{% elif data['errortypethree'] == "true" %}
+{% set considerationErrorText = "Your consideration must be 70 characters or more. If you do not explain fully how you have considered this policy, we will reject your application." %}
+{% endif %}
+
 <div class="govuk-grid-row">
 	<div class="govuk-grid-column-two-thirds">
-		{% if data['errorthispage'] == "true" and data['errortypeone'] == "true" %}
+		{% if data['errorthispage'] == "true" and considerationErrorText %}
 		{{ govukErrorSummary({
 			titleText: "There is a problem",
 			errorList: [
-				{ text: "Enter how you have considered this policy", href: "#marine-plan-policy-v3-s-acc-1-text" }
+				{ text: considerationErrorText, href: "#marine-plan-policy-v3-s-acc-1-text" }
 			]
 		}) }}
 		{% endif %}
@@ -57,7 +66,7 @@ Error:
 					classes: "govuk-label--m"
 				},
 				hint: {
-					text: "Enter a maximum of 2,000 characters"
+					html: "This is your chance to show how your proposals fit with this policy, including anything you’ve done to avoid or reduce impacts. Explain your reasoning in full. It must make sense without reading any documents. If it only points to a document, we will reject your application.<span class='govuk-!-display-block govuk-!-margin-top-4'>Enter between 70 and 2,000 characters</span>"
 				},
 				rows: 8,
 				value: data['marine-plan-policy-v3-s-acc-1-text'],
@@ -65,8 +74,8 @@ Error:
 					maxlength: "2000"
 				},
 				errorMessage: {
-					text: "Enter how you have considered this policy"
-				} if data['errortypeone'] == "true"
+					text: considerationErrorText
+				} if considerationErrorText
 			}) }}
 
 			{{ govukCheckboxes({
@@ -78,7 +87,7 @@ Error:
 						value: "yes",
 						text: "My consideration refers to an assessment, report or other document",
 						hint: {
-							text: "Only select this if your consideration relies on information in the document. You will be asked to upload the document and tell us where the relevant information is in it."
+							text: "Only select this if your consideration relies on information in a document. You still need to explain your consideration in full in the text box. We’ll ask you to upload the document and tell us where the relevant information is at the bottom of the policy list page."
 						}
 					}
 				]
