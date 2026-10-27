@@ -91,10 +91,11 @@
         {% for paragraph in request.adviceRequested %}
         <p class="govuk-body">{{ paragraph }}</p>
         {% endfor %}
-        {# Only shown to the person assigned, as only they can respond #}
-        {% elif request.assignedToMe %}
+        {# Only shown to the person assigned, as only they can respond, and
+           not once they have #}
+        {% elif request.assignedToMe and request.status !== "Responded" %}
         <h2 class="govuk-heading-m">If you need to respond</h2>
-        <p class="govuk-body">You can respond up to {{ request.respondByOffset | daysFromToday }} if you need to. We will consider any responses we receive by then when we make our decision.</p>
+        <p class="govuk-body">The closing date for responses is {{ request.respondByOffset | daysFromToday }}. We will consider any responses we receive by then when we make our decision.</p>
         {% endif %}
 
         {% set assignAtBottom = reqassignMode === "bottom" %}

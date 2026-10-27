@@ -538,12 +538,15 @@
                     <tr class="govuk-table__row">
                         {% if checkboxes %}
                         <td class="govuk-table__cell app-select-cell">
+                            {# Not once responded: there is nothing left to assign #}
+                            {% if request.status !== "Responded" %}
                             <div class="govuk-checkboxes__item govuk-checkboxes--small moj-multi-select__checkbox">
                                 <input type="checkbox" class="govuk-checkboxes__input" id="select-{{ request.id }}" name="consultation-v2-assign-ids" value="{{ request.id }}"{% if request.id in selected %} checked{% endif %}{% if tableError %} aria-describedby="consultations-error"{% endif %}>
                                 <label class="govuk-label govuk-checkboxes__label moj-multi-select__toggle-label" for="select-{{ request.id }}">
                                     <span class="govuk-visually-hidden">Select {{ request.applicationName }}</span>
                                 </label>
                             </div>
+                            {% endif %}
                         </td>
                         {% endif %}
                         <th scope="row" class="govuk-table__header govuk-!-font-weight-regular" data-sort-value="{{ request.applicationName }}"><a href="request-details/{{ request.id }}{{ listQuery }}" class="govuk-link govuk-link--no-visited-state">{{ request.applicationName }}</a></th>
@@ -561,12 +564,14 @@
                         <td class="govuk-table__cell">{{ request.assignedToText }}</td>
                         {% if not checkboxes %}
                         <td class="govuk-table__cell">
+                            {% if request.status !== "Responded" %}
                             {{ govukButton({
                                 html: ("Unassign from me" if request.assignedToMe else "Assign to me") + '<span class="govuk-visually-hidden"> – ' + request.applicationName + '</span>',
                                 classes: "govuk-button--secondary app-row-button",
                                 name: "consultation-v2-assign-action",
                                 value: ("unassign:" if request.assignedToMe else "assign:") + request.id
                             }) }}
+                            {% endif %}
                         </td>
                         {% endif %}
                     </tr>

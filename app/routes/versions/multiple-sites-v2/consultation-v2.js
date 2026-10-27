@@ -554,6 +554,9 @@ module.exports = function (router) {
     res.locals.bannersOn = keep.banners !== 'off';
     // ?scroll=off shows the table without the MOJ scrollable pane round it
     res.locals.scrollOn = keep.scroll !== 'off';
+    // Always render afresh, so the browser's Back button never shows an old
+    // copy of a page from before assigning or responding
+    res.set('Cache-Control', 'no-store');
     next();
   });
 
@@ -667,7 +670,8 @@ module.exports = function (router) {
     const backToConsultations = () => req.session.save(() => res.redirect(req.originalUrl));
     const [action, rowId] = (data['consultation-v2-assign-action'] || '').split(':');
     let ids = rowId ? [rowId] : [].concat(data['consultation-v2-assign-ids'] || []);
-    ids = ids.filter(id => id && id !== '_unchecked' && REQUESTS[id]);
+    // Responded cases have nothing left to assign
+    ids = ids.filter(id => id && id !== '_unchecked' && REQUESTS[id] && statusFor(req, REQUESTS[id]) !== 'Responded');
     delete data['consultation-v2-assign-action'];
     delete data['consultation-v2-assign-ids'];
     const reassignTo = data['consultation-v2-reassign-to'];
@@ -732,6 +736,7 @@ module.exports = function (router) {
   router.get(`${base}/assign/:requestId`, function (req, res) {
     const request = findRequest(req, res);
     if (!request) return;
+    if (request.status === 'Responded') return res.redirect(`${base}/request-details/${request.id}${queryOf(req)}`);
     req.session.data['consultation-v2-reassign-ids'] = [request.id];
     req.session.data['consultation-v2-reassign-from'] = request.id;
     req.session.save(() => res.redirect(`${base}/assign-to-someone-else${queryOf(req)}`));
@@ -818,15 +823,19 @@ module.exports = function (router) {
   router.get(`${base}/respond/:requestId`, function (req, res) {
     const request = findRequest(req, res);
     if (!request) return;
-    // Only the person assigned to a request can respond to it
-    if (!request.assignedToMe) return res.redirect(`${base}/request-details/${request.id}`);
+    // Only the person assigned to a request can respond to it, and only once
+    if (!request.assignedToMe || request.status === 'Responded') {
+      return res.redirect(`${base}/request-details/${request.id}${queryOf(req)}`);
+    }
     res.render(`versions/${version}/${section}/respond`, { request });
   });
 
   router.post(`${base}/respond/:requestId-router`, function (req, res) {
     const request = REQUESTS[req.params.requestId];
     if (!request) return res.redirect(`${base}/consultations`);
-    if (assignedToFor(req, request) !== ME) return res.redirect(`${base}/request-details/${request.id}${queryOf(req)}`);
+    if (assignedToFor(req, request) !== ME || statusFor(req, request) === 'Responded') {
+      return res.redirect(`${base}/request-details/${request.id}${queryOf(req)}`);
+    }
 
     const response = (req.session.data['consultation-v2-response-text'] || '').trim();
     delete req.session.data['consultation-v2-response-text'];
@@ -843,6 +852,7 @@ module.exports = function (router) {
     req.session.data[`consultation-v2-${request.id}-responded-by`] = ME;
     req.session.data[`consultation-v2-${request.id}-responded-date`] = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
     req.session.data['consultation-v2-just-responded'] = request.id;
-    res.redirect(`${base}/consultations${queryOf(req)}`);
+    // Save first, as when assigning, or the list can show it as not responded
+    req.session.save(() => res.redirect(`${base}/consultations${queryOf(req)}`));
   });
 };
