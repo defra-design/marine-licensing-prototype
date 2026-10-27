@@ -40,6 +40,19 @@
             {% endfor %}
         </ul>
 
+        {#
+          Long list version: Unassign is a button up here, by who has them now,
+          so nobody scrolls past every name to find it. Its own form, so it
+          never mixes with the radios. Shown if any selected consultation is
+          assigned; it unassigns them all.
+        #}
+        {% if assignlistMode === "filter" and (selected | selectattr("assignedTo") | length) %}
+        <form method="post" novalidate>
+            <input type="hidden" name="consultation-v2-reassign-to" value="no-one">
+            {{ govukButton({ text: "Unassign", classes: "govuk-button--secondary" }) }}
+        </form>
+        {% endif %}
+
         <form method="post" novalidate>
             <div class="govuk-form-group{% if error %} govuk-form-group--error{% endif %}">
                 <fieldset class="govuk-fieldset"{% if error %} aria-describedby="reassign-error"{% endif %}>
@@ -51,18 +64,39 @@
                         <span class="govuk-visually-hidden">Error:</span> {{ error }}
                     </p>
                     {% endif %}
+                    {#
+                      Long list with a filter box version (?assignlist=filter),
+                      like the live search on GOV.UK Notify's long lists. Typing
+                      hides the names that do not match. Only shown once the
+                      script below runs, so without JavaScript it is just the
+                      full list of radios.
+                    #}
+                    {% if assignlistMode === "filter" %}
+                    <div class="govuk-form-group app-live-search" id="app-live-search" hidden>
+                        <label class="govuk-label" for="app-live-search-input">Filter by name</label>
+                        <div class="app-live-search__row">
+                            <input class="govuk-input app-live-search__input" id="app-live-search-input" type="text" spellcheck="false" autocomplete="off">
+                            <button type="button" class="govuk-button govuk-button--secondary app-live-search__clear" data-module="govuk-button" id="app-live-search-clear">Clear filter</button>
+                        </div>
+                        <p class="govuk-body govuk-!-margin-top-2 govuk-!-margin-bottom-0" id="app-live-search-none" hidden>No names match your filter</p>
+                        <p class="govuk-visually-hidden" id="app-live-search-count" aria-live="polite"></p>
+                    </div>
+                    {% endif %}
                     <div class="govuk-radios" data-module="govuk-radios">
                         {% for person in everyone %}
-                        <div class="govuk-radios__item">
+                        <div class="govuk-radios__item" data-person="{{ person }}">
                             <input class="govuk-radios__input" id="reassign-{{ loop.index }}" name="consultation-v2-reassign-to" type="radio" value="{{ person }}">
                             <label class="govuk-label govuk-radios__label" for="reassign-{{ loop.index }}">{{ person }}</label>
                         </div>
                         {% endfor %}
+                        {# The long list version has an Unassign button above instead #}
+                        {% if assignlistMode !== "filter" %}
                         <div class="govuk-radios__divider">or</div>
                         <div class="govuk-radios__item">
                             <input class="govuk-radios__input" id="reassign-no-one" name="consultation-v2-reassign-to" type="radio" value="no-one">
                             <label class="govuk-label govuk-radios__label" for="reassign-no-one">Unassign</label>
                         </div>
+                        {% endif %}
                     </div>
                 </fieldset>
             </div>
@@ -75,5 +109,69 @@
 
     </div>
 </div>
+
+{% if assignlistMode === "filter" %}
+<style>
+  /* GOV.UK radios set display: flex, which would otherwise beat [hidden] */
+  .govuk-radios__item[hidden] { display: none; }
+  .app-live-search__row { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px; }
+  .app-live-search__input { max-width: 20em; }
+  /* A secondary button, like Show filter and Assign on the list */
+  .app-live-search__clear { margin-bottom: 0; }
+</style>
+<script>
+  (function () {
+    var search = document.getElementById('app-live-search')
+    var input = document.getElementById('app-live-search-input')
+    var none = document.getElementById('app-live-search-none')
+    var count = document.getElementById('app-live-search-count')
+    var clear = document.getElementById('app-live-search-clear')
+    var people = Array.prototype.slice.call(document.querySelectorAll('[data-person]'))
+    var timer
+
+    search.hidden = false
+
+    function filter () {
+      var term = input.value.trim().toLowerCase()
+      var shown = 0
+      people.forEach(function (item) {
+        // The person already chosen stays in view, so the choice is never hidden
+        var chosen = item.querySelector('input').checked
+        var match = !term || chosen || item.getAttribute('data-person').toLowerCase().indexOf(term) !== -1
+        item.hidden = !match
+        if (match) shown++
+      })
+      none.hidden = !term || shown > 0
+      // Announced after a short pause, not on every key
+      clearTimeout(timer)
+      timer = setTimeout(function () {
+        count.textContent = term ? (shown === 1 ? '1 person found' : shown + ' people found') : ''
+      }, 500)
+    }
+
+    input.addEventListener('input', filter)
+    // Empties the box and shows everyone again, ready to type afresh
+    clear.addEventListener('click', function () {
+      input.value = ''
+      filter()
+      input.focus()
+    })
+    // Enter in the filter box does not send the form. Stopped on the keys and
+    // again on the form, as browsers differ in how Enter submits.
+    var enterPressed = false
+    function stopEnter (e) {
+      if (e.key !== 'Enter' && e.keyCode !== 13) return
+      e.preventDefault()
+      enterPressed = true
+      setTimeout(function () { enterPressed = false }, 0)
+    }
+    input.addEventListener('keydown', stopEnter)
+    input.addEventListener('keypress', stopEnter)
+    input.form.addEventListener('submit', function (e) {
+      if (enterPressed) e.preventDefault()
+    })
+  })()
+</script>
+{% endif %}
 
 {% endblock %}
