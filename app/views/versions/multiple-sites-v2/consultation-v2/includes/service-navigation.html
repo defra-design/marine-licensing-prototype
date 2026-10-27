@@ -11,23 +11,36 @@
 
   The first argument is the nav item to highlight: "consultations" or
   nothing at all. The second is the page versions query string, so the
-  Consultations links keep the versions chosen in the tray.
+  Consultations links keep the versions chosen in the tray. The third is
+  true for someone who is an applicant as well as a consultee: they also
+  get Home and Submissions from LCML v4, and the service name goes Home.
 #}
 
 {% from "govuk/components/header/macro.njk" import govukHeader %}
 {% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
 
-{% macro consultationV2Header(activeItem, versionQuery) %}
+{% macro consultationV2Header(activeItem, versionQuery, bothRoles) %}
+{% set consultationsHref = "/versions/multiple-sites-v2/consultation-v2/consultations" + (versionQuery or "") %}
+{% set applicantItems = [
+  {
+    href: "/versions/multiple-sites-v2/low-complexity-v4/homepage",
+    text: "Home"
+  },
+  {
+    href: "/versions/multiple-sites-v2/low-complexity-v4/submissions",
+    text: "Submissions"
+  }
+] if bothRoles else [] %}
 {{ govukHeader({
   homepageUrl: "/",
   classes: "govuk-header--full-width-border"
 }) }}
 {{ govukServiceNavigation({
   serviceName: "Get permission for marine work",
-  serviceUrl: "/versions/multiple-sites-v2/consultation-v2/consultations" + (versionQuery or ""),
-  navigation: [
+  serviceUrl: "/versions/multiple-sites-v2/low-complexity-v4/homepage" if bothRoles else consultationsHref,
+  navigation: applicantItems.concat([
     {
-      href: "/versions/multiple-sites-v2/consultation-v2/consultations" + (versionQuery or ""),
+      href: consultationsHref,
       text: "Consultations",
       active: activeItem === "consultations"
     },
@@ -40,6 +53,6 @@
       href: "/",
       text: "Sign out"
     }
-  ]
+  ])
 }) }}
 {% endmacro %}

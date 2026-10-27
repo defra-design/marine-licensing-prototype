@@ -4,7 +4,7 @@
 {% set currentPageId = "low-complexity-home" %}
 
 {% block header %}
-{% from "versions/multiple-sites-v2/low-complexity-v4/includes/service-navigation.html" import lcmlV4Header %}
+{% from "versions/multiple-sites-v2/low-complexity-v4/includes/service-navigation.html" import lcmlV4Header with context %}
 {{ lcmlV4Header("home") }}
 {% endblock %}
 
@@ -41,29 +41,41 @@ Home
 			{{ pageHeadingTextHTML }}
 		</h1>
 
+		{# Three across when the consultation v2 "Applicant and consultee"
+		   version adds a fifth tile, so it fits in two rows #}
+		{% set tileColumn = "govuk-grid-column-one-third" if bothRoles else "govuk-grid-column-one-half" %}
 		<div class="govuk-grid-row">
-		<div class="govuk-grid-column-one-half">
+		<div class="{{ tileColumn }}">
 			<a href="submissions" class="homepage-tile-card">
 				<h2 class="govuk-heading-m homepage-tile-card__heading">View submissions</h2>
 				<p class="govuk-body homepage-tile-card__description">View all of the existing submissions in this account.</p>
 			</a>
 		</div>
 
-		<div class="govuk-grid-column-one-half">
+		{% if bothRoles %}
+		<div class="{{ tileColumn }}">
+			<a href="{{ consultationsUrl }}" class="homepage-tile-card">
+				<h2 class="govuk-heading-m homepage-tile-card__heading">View consultations</h2>
+				<p class="govuk-body homepage-tile-card__description">View requests for advice and application notifications.</p>
+			</a>
+		</div>
+		{% endif %}
+
+		<div class="{{ tileColumn }}">
 			<a href="https://marinelicensing.marinemanagement.org.uk/mmofox5/journey/self-service/start" class="homepage-tile-card">
 				<h2 class="govuk-heading-m homepage-tile-card__heading">Check if I need a marine licence</h2>
 				<p class="govuk-body homepage-tile-card__description">Find out if an activity needs a marine licence or if it's exempt.</p>
 			</a>
 		</div>
 
-		<div class="govuk-grid-column-one-half">
+		<div class="{{ tileColumn }}">
 			<a href="application-name-start" class="homepage-tile-card">
 				<h2 class="govuk-heading-m homepage-tile-card__heading">Apply for a marine licence</h2>
 				
 			</a>
 		</div>
 
-		<div class="govuk-grid-column-one-half">
+		<div class="{{ tileColumn }}">
 			<a href="https://marinelicensing.marinemanagement.org.uk/mmofox5/fox/live/MMO_LOGIN/login" class="homepage-tile-card">
 				<h2 class="govuk-heading-m homepage-tile-card__heading">Sign in to the Marine Case Management System</h2>
 				<p class="govuk-body homepage-tile-card__description">View or manage submissions not available in this account.</p>

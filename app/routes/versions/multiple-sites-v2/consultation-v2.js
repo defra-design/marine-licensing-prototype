@@ -528,15 +528,31 @@ module.exports = function (router) {
       bannersOff: to({ banners: 'off' }),
       // The scroll pane links keep the filters too, so only the pane changes
       scrollOn: urlWith(path, query, { scroll: null }),
-      scrollOff: urlWith(path, query, { scroll: 'off' })
+      scrollOff: urlWith(path, query, { scroll: 'off' }),
+      rolesConsultee: to({ 'consultation-v2-roles': 'consultee' }),
+      rolesBoth: to({ 'consultation-v2-roles': 'both' })
     };
   }
 
   // Every v2 page knows which page versions are on, so the tray shows the
   // right ones and links between pages can carry them (versionQuery).
   router.use(base, function (req, res, next) {
+    const data = req.session.data;
     const path = req.originalUrl.split('?')[0];
     const keep = versionParams(req.query);
+
+    // Applicant and consultee: Home and Submissions tabs from LCML v4 sit
+    // before Consultations. Unlike the other page versions this one is kept
+    // in the session, as LCML v4 pages do not carry the v2 query string.
+    // LCML v4 only shows the tabs when reached from these pages (see its
+    // routes), so its usual journeys are unchanged.
+    if (['consultee', 'both'].includes(req.query['consultation-v2-roles'])) {
+      data['consultation-v2-roles'] = req.query['consultation-v2-roles'];
+    }
+    res.locals.bothRoles = data['consultation-v2-roles'] === 'both';
+    // So the Consultations tab on LCML v4 pages comes back to the same versions
+    data['consultation-v2-version-query'] = urlWith('', keep, {});
+
     res.locals.versionParams = keep;
     res.locals.versionQuery = urlWith('', keep, {});
     // The whole query string, filters included, for links between the list,

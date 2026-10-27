@@ -93,7 +93,27 @@
 
   <div class="app-version-tray__body">
   <div class="app-version-tray__section">
+  {# Kept in the session, so it also applies on the LCML v4 pages reached from here #}
+  <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Roles</h3>
+  <ul class="govuk-list govuk-list--spaced">
+    <li>
+      {% if not bothRoles %}
+      <span aria-current="true">Consultee only</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ versionUrls.rolesConsultee }}" class="govuk-link govuk-link--no-visited-state">Consultee only</a>
+      {% endif %}
+    </li>
+    <li>
+      {% if bothRoles %}
+      <span aria-current="true">Applicant and consultee</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ versionUrls.rolesBoth }}" class="govuk-link govuk-link--no-visited-state">Applicant and consultee</a>
+      {% endif %}
+    </li>
+  </ul>
+  </div>
 
+  <div class="app-version-tray__section">
   <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Assign method</h3>
   <ul class="govuk-list govuk-list--spaced">
     <li>
