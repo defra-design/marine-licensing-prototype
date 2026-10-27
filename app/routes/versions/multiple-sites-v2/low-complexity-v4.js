@@ -16,6 +16,32 @@ module.exports = function (router) {
   ];
   const MARINE_PLAN_POLICIES_TOTAL = MARINE_PLAN_POLICY_KEYS.length;
 
+  // Consultation v2 "Applicant and consultee" version. When it is switched on
+  // in the consultation v2 tray and you come here from the consultations
+  // journey, the v4 pages add a Consultations tab and tile, and show Natural
+  // England as the organisation. Arriving from anywhere else (the index,
+  // the emails, a typed URL) gives LCML v4 exactly as it always was. Moving
+  // between v4 pages keeps whichever journey you were in.
+  router.use(`/versions/${version}/${section}`, function (req, res, next) {
+    const data = req.session.data;
+    const from = (req.get('Referer') || '').replace(/^https?:\/\/[^/]+/, '');
+    if (from.startsWith(`/versions/${version}/consultation-v2/`)) {
+      data['consultation-v2-in-journey'] = true;
+    } else if (!from.startsWith(`/versions/${version}/${section}/`)) {
+      delete data['consultation-v2-in-journey'];
+    }
+    res.locals.bothRoles = data['consultation-v2-roles'] === 'both' && !!data['consultation-v2-in-journey'];
+    if (res.locals.bothRoles) {
+      res.locals.consultationsUrl = `/versions/${version}/consultation-v2/consultations${data['consultation-v2-version-query'] || ''}`;
+      // Display only: res.locals.data is a copy, so the session keeps the
+      // applicant organisation for the usual v4 journeys
+      if (res.locals.data) {
+        res.locals.data['organisation-name'] = 'Natural England';
+      }
+    }
+    next();
+  });
+
   router.use(function (req, res, next) {
     if (req.path.indexOf('low-complexity-v4') !== -1) {
       // User testing variants. Journey 4 on /user-testing-links opens the reject

@@ -149,6 +149,7 @@ require('./routes/versions/multiple-sites-v2/low-complexity-v4-marine-plan-polic
 require('./routes/versions/multiple-sites-v2/low-complexity-v4-fee-and-invoicing.js')(router);
 require('./routes/versions/multiple-sites-v2/consultation-v0.js')(router);
 require('./routes/versions/multiple-sites-v2/consultation-v1.js')(router);
+require('./routes/versions/multiple-sites-v2/consultation-v2.js')(router);
 require('./routes/versions/multiple-sites-v2/sample-plans-v1.js')(router);
 require('./routes/versions/multiple-sites-v2/sample-plans-v1-dredging-site-locations.js')(router);
 require('./routes/versions/multiple-sites-v2/sample-plans-v1-disposal-site-locations.js')(router);

@@ -9,12 +9,16 @@
   templates, so renaming a nav item meant hunting through all of them. Pages
   that need it should now call the macro instead of hand-rolling a header:
 
-    {% from "versions/multiple-sites-v2/low-complexity-v4/includes/service-navigation.html" import lcmlV4Header %}
+    {% from "versions/multiple-sites-v2/low-complexity-v4/includes/service-navigation.html" import lcmlV4Header with context %}
     {% block header %}{{ lcmlV4Header("submissions") }}{% endblock %}
 
   The argument is the nav item to highlight: "home", "submissions", or
   nothing at all for pages that sit outside both. Links are absolute so the
   macro works at any folder depth.
+
+  Import it "with context" so it can see bothRoles, set by the v4 routes
+  when you come from the consultation v2 "Applicant and consultee" version.
+  That adds a Consultations tab after Submissions. Otherwise nothing changes.
 #}
 
 {% from "govuk/components/header/macro.njk" import govukHeader %}
@@ -38,7 +42,13 @@
       href: "/versions/multiple-sites-v2/low-complexity-v4/submissions",
       text: "Submissions",
       active: activeItem === "submissions"
-    },
+    }
+  ].concat([
+    {
+      href: consultationsUrl,
+      text: "Consultations"
+    }
+  ] if bothRoles else []).concat([
     {
       href: "#",
       text: "Defra account",
@@ -48,6 +58,6 @@
       href: "/versions/multiple-sites-v2/low-complexity-v4/sign-in?goto=homepage",
       text: "Sign out"
     }
-  ]
+  ])
 }) }}
 {% endmacro %}

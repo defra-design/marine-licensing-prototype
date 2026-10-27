@@ -1,0 +1,109 @@
+{% extends "versions/multiple-sites-v2/consultation-v2/includes/layout.html" %}
+
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% from "govuk/components/details/macro.njk" import govukDetails %}
+
+{% set navActive = "consultations" %}
+{% set pageTitle = ("Error: " if error else "") + ("Respond to this request for advice" if request.type === "response-required" else "Respond to this marine licence application") %}
+{% set backLink = "../request-details/" + request.id + pageQuery %}
+{% set isAdvice = request.type === "response-required" %}
+
+{#
+  How we share your response. Shown on both request types, just above the
+  Send response button, so people read it before they send. Not in a details
+  component, as it says their response and names may be published.
+#}
+{% set howWeShareHtml %}
+            <h2 class="govuk-heading-s">How we share your response</h2>
+            <p class="govuk-body">We will share a summary of your response with the applicant.</p>
+            <p class="govuk-body">We may publish your response on our public register. If we do not publish it, we may still have to share it under the Freedom of Information Act 2000 or the Environmental Information Regulations 2004.</p>
+            <p class="govuk-body">This includes the names of any staff who respond on behalf of your organisation.</p>
+{% endset %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        {% if error %}
+        {{ govukErrorSummary({
+            titleText: "There is a problem",
+            errorList: [{ text: error, href: "#consultation-v2-response-text" }]
+        }) }}
+        {% endif %}
+
+        {% if isAdvice %}
+        {# Requests for advice keep the questions in view while the consultee writes #}
+        <span class="govuk-caption-l">{{ request.reference }} – {{ request.applicationName }}</span>
+        <h1 class="govuk-heading-l">Respond to this request for advice</h1>
+
+        <p class="govuk-body">The closing date for responses is {{ request.respondByOffset | daysFromToday }}.</p>
+        <p class="govuk-body"><a href="../view-application/{{ request.id }}{{ versionQuery }}" class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">View the application (opens in new tab)</a></p>
+
+        <h2 class="govuk-heading-m">Advice requested</h2>
+        {% set adviceHtml %}
+        {% for paragraph in request.adviceRequested %}
+        <p class="govuk-body{{ ' govuk-!-margin-bottom-0' if loop.last }}">{{ paragraph }}</p>
+        {% endfor %}
+        {% endset %}
+        {{ govukInsetText({ html: adviceHtml }) }}
+
+        {% set adviceHelpHtml %}
+        <p class="govuk-body">Focus on matters within your area of expertise or responsibility, and answer the questions we’ve asked.</p>
+        <p class="govuk-body">You can also tell us about anything else you think we should consider.</p>
+        <p class="govuk-body govuk-!-margin-bottom-0">It helps us if, for each point you raise, you tell us what the issue is, why it matters and what could avoid or reduce it.</p>
+        {% endset %}
+        {{ govukDetails({
+            summaryText: "Help with providing your advice",
+            html: adviceHelpHtml
+        }) }}
+
+        <form action="{{ request.id }}-router{{ pageQuery }}" method="post" novalidate>
+            {{ govukTextarea({
+                name: "consultation-v2-response-text",
+                id: "consultation-v2-response-text",
+                rows: 10,
+                label: {
+                    text: "Your response",
+                    classes: "govuk-label--m",
+                    isPageHeading: false
+                },
+                hint: { text: "Write your response in plain language so the applicant can understand it. Explain any technical terms." },
+                errorMessage: { text: error } if error else undefined
+            }) }}
+
+            {{ howWeShareHtml | safe }}
+
+            {{ govukButton({ text: "Send response" }) }}
+        {% else %}
+        <span class="govuk-caption-l">{{ request.reference }} – {{ request.applicationName }}</span>
+        <h1 class="govuk-heading-l">Respond to this marine licence application</h1>
+
+        <p class="govuk-body"><a href="../view-application/{{ request.id }}{{ versionQuery }}" class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">View the application (opens in new tab)</a></p>
+
+        <form action="{{ request.id }}-router{{ pageQuery }}" method="post" novalidate>
+            {{ govukTextarea({
+                name: "consultation-v2-response-text",
+                id: "consultation-v2-response-text",
+                rows: 10,
+                label: {
+                    text: "Your response",
+                    classes: "govuk-label--m",
+                    isPageHeading: false
+                },
+                errorMessage: { text: error } if error else undefined
+            }) }}
+
+            {{ howWeShareHtml | safe }}
+
+            {{ govukButton({ text: "Send response" }) }}
+        {% endif %}
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

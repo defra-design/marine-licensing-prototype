@@ -1,0 +1,62 @@
+{#
+  The Notify email a consultee organisation gets when the MMO consults it.
+  One template for both types, rendered by the email route with a request:
+    response-required - we need your advice, with the closing date
+    notify-only       - we are telling you about the application
+  Body copy and subject lines are from the content designer's Notify templates.
+
+  The webmail chrome and message header are copies of the LCML v4 email ones,
+  addressed to Natural England rather than an applicant.
+#}
+{% extends "versions/multiple-sites-v2/layouts/email.html" %}
+
+{% set isAdvice = request.type === "response-required" %}
+{% set messageSubject = "Consultation - Request for advice for a marine licence application" if isAdvice else "Consultation - notification of a marine licence application" %}
+
+{% block pageTitle %}
+  Email - {{ messageSubject }}
+{% endblock %}
+
+{% block header %}
+  {% include "./_mail-chrome.html" %}
+  {% set messageDate = request.receivedOffset | daysFromTodayShort %}
+  {% include "./_message-header.html" %}
+  {{ govukHeader({
+    homepageUrl: "/",
+    classes: "govuk-header--full-width-border"
+  }) }}
+{% endblock %}
+
+{% block content %}
+
+<style>
+.govuk-width-container {
+	max-width: 640px;
+}
+.govuk-main-wrapper {
+    padding-top: 10px;
+    padding-bottom: 40px;
+}
+p {
+	font-size: 21px;
+	font-family: Arial,Helvetica;
+	color: #000;
+}
+.govuk-template {
+    background-color: #fff;
+}
+</style>
+
+<p>Dear Natural England,</p>
+
+{% if isAdvice %}
+<p>We need your advice on marine licence application {{ request.reference }}. The closing date for responses is {{ request.respondByOffset | daysFromToday }}.</p>
+{% else %}
+<p>We have received marine licence application {{ request.reference }}. We are telling you about it because of your statutory responsibilities or interest in this area.</p>
+{% endif %}
+
+<p><a href="../sign-in/{{ request.id }}">Sign in to find out what you need to do</a></p>
+
+<p>From Marine Management Organisation</p>
+
+{% endblock %}

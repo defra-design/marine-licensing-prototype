@@ -1,0 +1,602 @@
+{% extends "versions/multiple-sites-v2/consultation-v2/includes/layout.html" %}
+
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "versions/multiple-sites-v2/consultation-v2/includes/macros.html" import requestTypeText, statusTag, assignedTo %}
+{% from "versions/multiple-sites-v2/consultation-v2/includes/filter-fields.html" import filterFields %}
+{# Two horizontal bar versions: ?filter=bar puts Show/Hide filter level with
+   the heading, ?filter=bar-actions puts it next to the assign buttons #}
+{% set filterBar = filterMode === "bar" or filterMode === "bar-actions" %}
+{% set toggleInHeader = filterMode === "bar" %}
+
+{% set navActive = "consultations" %}
+{# Widens the page to match the LCML v4 submissions page, or up to 1920px
+   with ?layout=full #}
+{% set fullWidth = layoutMode === "full" %}
+{% set currentPageId = "consultation-full-width" if fullWidth else "low-complexity-projects" %}
+{% set pageTitle = ("Error: " if assignError else "") + "Consultations" %}
+{% set tableError = assignError and assignError.field === "table" %}
+{% set reassignError = assignError and assignError.field === "reassign" %}
+{% set checkboxes = assignMode === "checkboxes" %}
+
+{% block head %}
+  {{ super() }}
+  <style>
+    #consultations-table .app-nowrap { white-space: nowrap; }
+    /* Wide version: the page, header and navigation go up to 1920px (a full
+       HD screen), with the usual GOV.UK gutters until there is room to centre.
+       Wide enough for the table not to wrap, without spreading out on bigger
+       screens. */
+    .page-consultation-full-width .govuk-width-container,
+    .page-consultation-full-width .govuk-header__container {
+      max-width: 1920px;
+      margin-left: 15px;
+      margin-right: 15px;
+    }
+    @media (min-width: 40.0625em) {
+      .page-consultation-full-width .govuk-width-container,
+      .page-consultation-full-width .govuk-header__container {
+        margin-left: 30px;
+        margin-right: 30px;
+      }
+    }
+    @media (min-width: 1980px) {
+      .page-consultation-full-width .govuk-width-container,
+      .page-consultation-full-width .govuk-header__container {
+        margin-left: auto;
+        margin-right: auto;
+      }
+    }
+    /* Let the success banner text use the full width of the banner */
+    .govuk-notification-banner__content > * { max-width: none; }
+    /* Tick box column: no gap to the left of the table, MOJ multi-select style */
+    /* 10px in from the left, so the 10px grey hover ring round the small
+       checkboxes is not cut off by the scrollable pane's edge */
+    #consultations-table .app-select-cell { width: 50px; padding-left: 10px; padding-right: 0; }
+    /* Line the tick boxes up with the first line of text in each row and the
+       header, and stop the tick box adding extra height to the header row */
+    #consultations-table .app-select-cell .govuk-checkboxes__item { display: block; margin-top: -10px; margin-bottom: -25px; }
+    /* Per-row buttons version */
+    #consultations-table .app-row-button { margin-bottom: 0; white-space: nowrap; }
+    /* Same filter column width as the LCML v4 submissions page. All three
+       properties are needed, or MOJ's min-width wins. */
+    @media (min-width: 48.0625em) {
+      .moj-filter-layout--narrow .moj-filter-layout__filter {
+        width: 310px;
+        min-width: 310px;
+        max-width: 310px;
+      }
+    }
+    /* Action bar: Show filter, then the assign buttons, all on the left */
+    .app-consultations-actions { display: flex; flex-wrap: wrap; align-items: flex-start; gap: 0 15px; }
+    .app-consultations-actions .moj-action-bar { margin-bottom: 0; }
+    /* govuk-button-group's negative right margin would make the table area scroll sideways */
+    /* Keep govuk-button-group's own bottom margin: with its buttons' 17px it
+       gives the same 32px gap above the results count as a lone button */
+    .app-consultations-actions .govuk-button-group { margin-right: 0; }
+    /* Horizontal filter bar, light grey like the MOJ filter header */
+    .app-filter-bar { background: #f3f2f1; padding: 20px 20px 25px; margin-bottom: 30px; }
+    .app-filter-bar .govuk-form-group { margin-bottom: 20px; }
+    .app-filter-bar .govuk-button-group { align-items: center; }
+    /* govuk-button-group gives links a bottom margin, which pushes Clear filters up */
+    .app-filter-bar .govuk-button-group .govuk-link { margin-top: 0; margin-bottom: 0; }
+    /* Same gap under the heading as the side panel version */
+    .moj-page-header-actions { margin-bottom: 30px; }
+    /* Assign to someone else panel: white with a grey border, so its
+       buttons keep their contrast */
+    .app-reassign-panel { border: 1px solid #b1b4b6; padding: 20px; margin-bottom: 30px; }
+    .app-reassign-panel[hidden] { display: none; }
+    .app-reassign-panel .govuk-form-group { margin-bottom: 20px; }
+    /* Scrollable pane focus: only for keyboard users (not after a mouse click
+       in the table), and drawn inside the pane, as the filter layout clips
+       anything drawn outside it */
+    .moj-scrollable-pane:focus { box-shadow: none; outline: none; }
+    .moj-scrollable-pane:focus-visible {
+      outline: 3px solid transparent;
+      box-shadow: inset 0 0 0 4px #ffdd00, inset 0 0 0 8px #0b0c0c;
+    }
+    /* When hidden, the whole grey panel goes, not just its contents */
+    .app-filter-bar--collapsed { display: none; }
+  </style>
+{% endblock %}
+
+{% block bodyEnd %}
+  {{ super() }}
+  <script>
+    /*
+      Filter panel open or hidden.
+
+      Every version starts with the filter hidden, so arriving from the index
+      page, the tray, the navigation or a back link always gives a clean view.
+      The only exception is the reload after pressing Apply filters, Assign to
+      me or Unassign from me, or using Clear filters or a filter tag, on this page: just before those forms submit, we
+      note whether the filter was open, and put it back that way on the next
+      load. The note is used once and then removed.
+    */
+    var KEEP_KEY = 'consultation-v2-keep-filter-open'
+    var keepOpen = false
+    try {
+      keepOpen = window.sessionStorage.getItem(KEEP_KEY) === 'true'
+      window.sessionStorage.removeItem(KEEP_KEY)
+    } catch (e) {}
+
+    function filterIsOpen () {
+      var side = document.querySelector('.moj-filter')
+      if (side) return !side.classList.contains('moj-js-hidden')
+      var barBody = document.getElementById('app-filter-bar-body')
+      return barBody ? !barBody.hidden : false
+    }
+
+    Array.prototype.forEach.call(document.querySelectorAll('main form'), function (form) {
+      form.addEventListener('submit', function () {
+        try { window.sessionStorage.setItem(KEEP_KEY, filterIsOpen() ? 'true' : 'false') } catch (e) {}
+      })
+    })
+
+    // The same for Clear filters and the selected filter tags: they are links
+    // inside the open filter, so the filter should still be open afterwards
+    Array.prototype.forEach.call(document.querySelectorAll('.moj-filter__selected a, .app-filter-bar a'), function (link) {
+      link.addEventListener('click', function () {
+        try { window.sessionStorage.setItem(KEEP_KEY, 'true') } catch (e) {}
+      })
+    })
+
+    // Horizontal bar versions: our own Show filter / Hide filter button
+    var barToggle = document.getElementById('app-filter-bar-toggle')
+    if (barToggle) {
+      var bar = document.querySelector('.app-filter-bar')
+      var barBody = document.getElementById('app-filter-bar-body')
+      var setBar = function (open) {
+        barBody.hidden = !open
+        bar.classList.toggle('app-filter-bar--collapsed', !open)
+        barToggle.setAttribute('aria-expanded', open ? 'true' : 'false')
+        barToggle.textContent = open ? 'Hide filter' : 'Show filter'
+      }
+      barToggle.hidden = false
+      setBar(keepOpen)
+      barToggle.addEventListener('click', function () { setBar(barBody.hidden) })
+    }
+
+    // Assign to someone else, panel version: the button would normally submit
+    // to the separate page. With JavaScript, open the panel instead.
+    var reassignToggle = document.getElementById('app-reassign-toggle')
+    var reassignPanel = document.getElementById('app-reassign-panel')
+    var reassignCancel = document.getElementById('app-reassign-cancel')
+    if (reassignToggle && reassignPanel) {
+      var clearTableError = function () {
+        var message = document.getElementById('consultations-error')
+        if (!message) return
+        message.parentNode.classList.remove('govuk-form-group--error')
+        message.remove()
+        var summary = document.querySelector('.govuk-error-summary')
+        if (summary) summary.remove()
+        document.title = document.title.replace(/^Error: /, '')
+        Array.prototype.forEach.call(document.querySelectorAll('[aria-describedby="consultations-error"]'), function (input) {
+          input.removeAttribute('aria-describedby')
+        })
+      }
+      var setReassign = function (open, keepFocus) {
+        reassignPanel.hidden = !open
+        reassignToggle.setAttribute('aria-expanded', open ? 'true' : 'false')
+        if (open && !keepFocus) reassignPanel.querySelector('input').focus()
+      }
+      reassignToggle.setAttribute('aria-controls', 'app-reassign-panel')
+      reassignCancel.hidden = false
+      // Open after an error in the panel, leaving focus on the error summary
+      setReassign(reassignPanel.getAttribute('data-open') === 'true', true)
+      reassignToggle.addEventListener('click', function (e) {
+        // Nothing ticked: let the button submit as normal, so the page shows
+        // "Select the consultations you want to assign" like the other buttons
+        var ticked = document.querySelectorAll('#consultations-table tbody input[type=checkbox]:checked').length
+        if (reassignPanel.hidden && !ticked) return
+        e.preventDefault()
+        // Opening the panel does not reload the page, so clear a "Select at
+        // least one consultation" error from before, as a reload would
+        if (reassignPanel.hidden) clearTableError()
+        setReassign(reassignPanel.hidden)
+      })
+      reassignCancel.addEventListener('click', function () { setReassign(false); reassignToggle.focus() })
+
+      // "2 consultations selected", counting the ticked rows. Select all ticks
+      // boxes without a change event, so recount after any click in the table.
+      var reassignCount = document.getElementById('app-reassign-count')
+      var table = document.getElementById('consultations-table')
+      var updateCount = function () {
+        var n = table.querySelectorAll('tbody input[type=checkbox]:checked').length
+        reassignCount.textContent = n + (n === 1 ? ' consultation' : ' consultations') + ' selected'
+      }
+      updateCount()
+      table.addEventListener('click', function () { window.setTimeout(updateCount, 0) })
+      table.addEventListener('change', updateCount)
+    }
+
+    // The scrollable pane only needs to be a tab stop when the table is too
+    // wide and actually scrolls. Otherwise it is an extra, pointless stop.
+    var pane = document.querySelector('.moj-scrollable-pane')
+    if (pane) {
+      var setPaneFocusable = function () {
+        if (pane.scrollWidth > pane.clientWidth + 1) {
+          pane.setAttribute('tabindex', '0')
+        } else {
+          pane.removeAttribute('tabindex')
+        }
+      }
+      setPaneFocusable()
+      window.addEventListener('resize', setPaneFocusable)
+      // Opening or closing the side filter changes the room for the table
+      document.addEventListener('click', function () { window.setTimeout(setPaneFocusable, 0) })
+    }
+
+    // Side panel version: MOJ's FilterToggleButton adds Show filter to the
+    // action bar. initAll does not cover it, so import it from the plugin
+    // asset the kit serves, as the LCML v4 submissions filter does.
+    import('/plugin-assets/%40ministryofjustice%2Ffrontend/moj/moj-frontend.min.js')
+      .then(function (moj) {
+        var filter = document.querySelector('.moj-filter')
+        if (filter) new moj.FilterToggleButton(filter, { startHidden: !keepOpen })
+      })
+      .catch(function () { /* panel stays visible */ })
+  </script>
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+
+        {% if assignError %}
+        {{ govukErrorSummary({
+            titleText: "There is a problem",
+            errorList: [{ text: assignError.text, href: "#reassign-1" if reassignError else "#select-" + requests[0].id }]
+        }) }}
+        {% endif %}
+
+        {# After assigning from the separate page, unless ?banners=off #}
+        {% if assignBanner %}
+        {{ govukNotificationBanner({
+            type: "success",
+            html: '<p class="govuk-notification-banner__heading">' + assignBanner + '</p>'
+        }) }}
+        {% endif %}
+
+        {% if justResponded %}
+        {{ govukNotificationBanner({
+            type: "success",
+            html: '<h3 class="govuk-notification-banner__heading">Response sent</h3><p class="govuk-body">Your response to ' + justResponded.applicationName + ' (' + justResponded.reference + ') has been sent.</p>'
+        }) }}
+        {% endif %}
+
+        {% if toggleInHeader %}
+        {#
+          MOJ page header actions: Show/Hide filter sits on the white page,
+          level with the heading. A grey button on the grey panel did not have
+          enough contrast to be seen.
+        #}
+        <div class="moj-page-header-actions">
+            <div class="moj-page-header-actions__title">
+                <h1 class="govuk-heading-l">Consultations</h1>
+            </div>
+            <div class="moj-page-header-actions__actions">
+                <div class="moj-button-group moj-button-group--inline">
+                    {# Shown by the script below, so without JavaScript the filters are always open #}
+                    <button type="button" class="govuk-button govuk-button--secondary" id="app-filter-bar-toggle" aria-controls="app-filter-bar-body" aria-expanded="true" hidden>Hide filter</button>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <h1 class="govuk-heading-l">Consultations</h1>
+        {% endif %}
+
+        {#
+          MOJ "Filter a list" pattern, as on the LCML v4 submissions page.
+          https://design-patterns.service.justice.gov.uk/patterns/filter-a-list/
+          Filtering happens on the server, so ticked rows a filter hides are
+          never sent when assigning, and Select all only covers what is shown.
+        #}
+        {% if filterBar %}
+        {#
+          Horizontal filter: every option in view in three columns, so the
+          table keeps its full width. Same fields and query string as the
+          side panel. Nothing changes until Apply filters is pressed.
+        #}
+        <form method="get" action="consultations" class="app-filter-bar" novalidate>
+            {# Keep the page versions (this bar, assign method, layout) #}
+            {% for name, value in versionParams %}
+            <input type="hidden" name="{{ name }}" value="{{ value }}">
+            {% endfor %}
+            <div class="app-filter-bar__body" id="app-filter-bar-body">
+                <h2 class="govuk-heading-m">Filter</h2>
+                <div class="govuk-grid-row">
+                    {{ filterFields(filters, showOptions, typeOptions, statusOptions, team, true) }}
+                </div>
+                <div class="govuk-button-group govuk-!-margin-bottom-0">
+                    {{ govukButton({
+                        text: "Apply filters",
+                        classes: "govuk-!-margin-bottom-0"
+                    }) }}
+                    <a href="{{ clearFiltersUrl }}" class="govuk-link govuk-link--no-visited-state">Clear filters</a>
+                </div>
+            </div>
+        </form>
+        <div>
+        {% else %}
+        <div class="moj-filter-layout moj-filter-layout--narrow">
+            <div class="moj-filter-layout__filter">
+                <div class="moj-filter" data-module="moj-filter">
+                    <div class="moj-filter__header">
+                        <div class="moj-filter__header-title">
+                            <h2 class="govuk-heading-m">Filter</h2>
+                        </div>
+                        <div class="moj-filter__header-action"></div>
+                    </div>
+
+                    <div class="moj-filter__content">
+                        {# Always shown, as on the LCML v4 submissions page; only the tags
+                           depend on what is applied #}
+                        <div class="moj-filter__selected">
+                            <div class="moj-filter__selected-heading">
+                                <div class="moj-filter__heading-title">
+                                    <h2 class="govuk-heading-m">Selected filters</h2>
+                                </div>
+                                <div class="moj-filter__heading-action">
+                                    <p><a class="govuk-link govuk-link--no-visited-state" href="{{ clearFiltersUrl }}">Clear filters</a></p>
+                                </div>
+                            </div>
+                            {% for group in selectedFilterGroups %}
+                            <h3 class="govuk-heading-s govuk-!-margin-bottom-0">{{ group.heading }}</h3>
+                            <ul class="moj-filter-tags">
+                                {% for item in group.items %}
+                                <li><a class="moj-filter__tag" href="{{ item.href }}"><span class="govuk-visually-hidden">Remove this filter</span> {{ item.text }}</a></li>
+                                {% endfor %}
+                            </ul>
+                            {% endfor %}
+                        </div>
+
+                        <form method="get" action="consultations" class="moj-filter__options" novalidate>
+                            {# Keep the page versions (assign method, layout) #}
+                            {% for name, value in versionParams %}
+                            <input type="hidden" name="{{ name }}" value="{{ value }}">
+                            {% endfor %}
+
+                            {{ govukButton({
+                                text: "Apply filters",
+                                classes: "govuk-!-margin-bottom-6"
+                            }) }}
+
+                            {{ filterFields(filters, showOptions, typeOptions, statusOptions, team, false) }}
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div class="moj-filter-layout__content">
+        {% endif %}
+                <form method="post" novalidate>
+
+                <div class="app-consultations-actions">
+                    {% if filterMode === "bar-actions" %}
+                    {# Show/Hide filter alongside the assign buttons, as in the side panel version #}
+                    <div class="govuk-button-group">
+                        <button type="button" class="govuk-button govuk-button--secondary" id="app-filter-bar-toggle" aria-controls="app-filter-bar-body" aria-expanded="true" hidden>Hide filter</button>
+                    </div>
+                    {% elif not filterBar %}
+                    {# FilterToggleButton puts Show filter in here #}
+                    <div class="moj-action-bar">
+                        <div class="moj-action-bar__filter"></div>
+                    </div>
+                    {% endif %}
+
+                    {% if checkboxes and reassignMode === "single" %}
+                    {#
+                      One Assign button instead of Assign to me, Unassign from me
+                      and Assign to someone else. It goes to the separate page,
+                      where you choose anyone, including yourself, or Unassign.
+                    #}
+                    <div class="govuk-button-group">
+                        {{ govukButton({
+                            text: "Assign",
+                            classes: "govuk-button--secondary",
+                            name: "consultation-v2-assign-action",
+                            value: "choose"
+                        }) }}
+                    </div>
+                    {% elif checkboxes %}
+                    <div class="govuk-button-group">
+                        {{ govukButton({
+                            text: "Assign to me",
+                            classes: "govuk-button--secondary",
+                            name: "consultation-v2-assign-action",
+                            value: "assign"
+                        }) }}
+                        {{ govukButton({
+                            text: "Unassign from me",
+                            classes: "govuk-button--secondary",
+                            name: "consultation-v2-assign-action",
+                            value: "unassign"
+                        }) }}
+                        {% if reassignMode !== "off" %}
+                        {#
+                          A real submit button: it sends the ticked cases to the
+                          Assign to someone else page. In the panel version the
+                          script below catches it and opens the panel instead, so
+                          the page is what people without JavaScript get.
+                        #}
+                        {{ govukButton({
+                            text: "Assign to someone else",
+                            classes: "govuk-button--secondary",
+                            name: "consultation-v2-assign-action",
+                            value: "choose",
+                            attributes: { id: "app-reassign-toggle" }
+                        }) }}
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                {% if checkboxes and reassignMode === "panel" %}
+                {#
+                  Assign to someone else, in-page panel version. Opens between
+                  the buttons and the table, so the ticked cases stay in view.
+                  Only used with JavaScript; otherwise the button goes to the
+                  separate page.
+                  Radios, not a dropdown. Nothing ticked, or nobody chosen,
+                  shows an error.
+                #}
+                {# hidden in the markup, so without JavaScript it never shows #}
+                <div class="app-reassign-panel" id="app-reassign-panel" hidden{% if reassignError %} data-open="true"{% endif %}>
+                    <div class="govuk-form-group{% if reassignError %} govuk-form-group--error{% endif %}">
+                        <fieldset class="govuk-fieldset" aria-describedby="app-reassign-count{% if reassignError %} app-reassign-error{% endif %}">
+                            <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Who do you want to assign the selected consultations to?</legend>
+                            {#
+                              Hint, so it is read out with the question. Kept up to
+                              date by the script below as boxes are ticked, but not
+                              announced on each tick: screen reader users already hear
+                              each box change, and get the count when they reach here.
+                            #}
+                            <div class="govuk-hint" id="app-reassign-count"></div>
+                            {% if reassignError %}
+                            <p class="govuk-error-message" id="app-reassign-error"><span class="govuk-visually-hidden">Error:</span> {{ assignError.text }}</p>
+                            {% endif %}
+                            <div class="govuk-radios govuk-radios--small" data-module="govuk-radios">
+                                {% for person in everyone %}
+                                <div class="govuk-radios__item">
+                                    <input class="govuk-radios__input" id="reassign-{{ loop.index }}" name="consultation-v2-reassign-to" type="radio" value="{{ person }}">
+                                    <label class="govuk-label govuk-radios__label" for="reassign-{{ loop.index }}">{{ person }}</label>
+                                </div>
+                                {% endfor %}
+                                <div class="govuk-radios__divider">or</div>
+                                <div class="govuk-radios__item">
+                                    <input class="govuk-radios__input" id="reassign-no-one" name="consultation-v2-reassign-to" type="radio" value="no-one">
+                                    <label class="govuk-label govuk-radios__label" for="reassign-no-one">Unassign</label>
+                                </div>
+                            </div>
+                        </fieldset>
+                    </div>
+                    <div class="govuk-button-group govuk-!-margin-bottom-0">
+                        {{ govukButton({
+                            text: "Assign",
+                            name: "consultation-v2-assign-action",
+                            value: "reassign",
+                            classes: "govuk-!-margin-bottom-0"
+                        }) }}
+                        <button type="button" class="govuk-button govuk-button--secondary govuk-!-margin-bottom-0" id="app-reassign-cancel" hidden>Cancel</button>
+                    </div>
+                </div>
+                {% endif %}
+
+                {# Same wording and weight as the LCML v4 submissions results count #}
+                <p class="govuk-body" aria-live="polite"><strong>{{ requests.length }} {{ "result" if requests.length === 1 else "results" }} found in '{{ scopeName }}'</strong></p>
+
+                {% if requests.length %}
+            {# Columns are placeholders until the detailed designs are ready. #}
+            {# MOJ sortable table, as on the LCML v4 submissions page. MOJ's initAll
+               sets up both components, so multi-select sits on a wrapper because
+               the table can only have one data-module. #}
+            {# Error message for the table, GOV.UK form style: red bar and message above it #}
+            <div class="govuk-form-group govuk-!-margin-bottom-0{% if tableError %} govuk-form-group--error{% endif %}">
+            {% if tableError %}
+            <p class="govuk-error-message" id="consultations-error"><span class="govuk-visually-hidden">Error:</span> {{ assignError.text }}</p>
+            {% endif %}
+            <div{% if checkboxes %} data-module="moj-multi-select"{% endif %}>
+            {#
+              MOJ scrollable pane: when the table is too wide it scrolls
+              sideways, with a shadow at the edge showing there is more. The
+              tabindex and label let keyboard users focus it and scroll with
+              the arrow keys, which the plain overflow box did not allow.
+              ?scroll=off leaves it out, to show the layouts without it.
+            #}
+            {% if scrollOn %}
+            <div class="moj-scrollable-pane" tabindex="0" role="region" aria-label="Consultations">
+            {% endif %}
+            <table class="govuk-table" data-module="moj-sortable-table" id="consultations-table">
+                <caption class="govuk-table__caption govuk-table__caption--m govuk-visually-hidden">Consultation requests for Natural England</caption>
+                <thead class="govuk-table__head">
+                    <tr class="govuk-table__row">
+                        {% if checkboxes %}
+                        {# MOJ multi-select puts the Select all tick box in here #}
+                        <th scope="col" class="govuk-table__header app-select-cell" id="select-all"></th>
+                        {% endif %}
+                        <th scope="col" class="govuk-table__header govuk-!-width-one-quarter" aria-sort="none">Application name</th>
+                        <th scope="col" class="govuk-table__header" aria-sort="none">Reference</th>
+                    {% if fullWidth %}
+                    <th scope="col" class="govuk-table__header app-nowrap" aria-sort="none">Marine plan area</th>
+                    {% endif %}
+                        <th scope="col" class="govuk-table__header" aria-sort="none">Type</th>
+                        <th scope="col" class="govuk-table__header" aria-sort="none">Status</th>
+                        {# Sorted by Closing date on load, so the soonest is at the top #}
+                        <th scope="col" class="govuk-table__header app-nowrap" aria-sort="ascending">Closing date</th>
+                        <th scope="col" class="govuk-table__header app-nowrap" aria-sort="none">Received</th>
+                        <th scope="col" class="govuk-table__header app-nowrap" aria-sort="none">Assigned to</th>
+                        {% if not checkboxes %}
+                        <th scope="col" class="govuk-table__header"><span class="govuk-visually-hidden">Action</span></th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody class="govuk-table__body">
+                    {% for request in requests %}
+                    <tr class="govuk-table__row">
+                        {% if checkboxes %}
+                        <td class="govuk-table__cell app-select-cell">
+                            {# Not once responded: there is nothing left to assign #}
+                            {% if request.status !== "Responded" %}
+                            <div class="govuk-checkboxes__item govuk-checkboxes--small moj-multi-select__checkbox">
+                                <input type="checkbox" class="govuk-checkboxes__input" id="select-{{ request.id }}" name="consultation-v2-assign-ids" value="{{ request.id }}"{% if request.id in selected %} checked{% endif %}{% if tableError %} aria-describedby="consultations-error"{% endif %}>
+                                <label class="govuk-label govuk-checkboxes__label moj-multi-select__toggle-label" for="select-{{ request.id }}">
+                                    <span class="govuk-visually-hidden">Select {{ request.applicationName }}</span>
+                                </label>
+                            </div>
+                            {% endif %}
+                        </td>
+                        {% endif %}
+                        <th scope="row" class="govuk-table__header govuk-!-font-weight-regular" data-sort-value="{{ request.applicationName }}"><a href="request-details/{{ request.id }}{{ listQuery }}" class="govuk-link govuk-link--no-visited-state">{{ request.applicationName }}</a></th>
+                        <td class="govuk-table__cell">{{ request.reference }}</td>
+                    {% if fullWidth %}
+                    <td class="govuk-table__cell">{{ request.marinePlanArea }}</td>
+                    {% endif %}
+                        <td class="govuk-table__cell">{{ requestTypeText(request) }}</td>
+                        {# Ranked by what needs doing, not alphabetically #}
+                        <td class="govuk-table__cell" data-sort-value="{{ {'Response needed': 1, 'No response needed': 2, 'Responded': 3}[request.status] }}">{{ statusTag(request) }}</td>
+                        {# Responded cases get a leading 1 so they sort after every open case,
+                           keeping the default sort on open deadlines, soonest first #}
+                        <td class="govuk-table__cell app-nowrap" data-sort-value="{{ ('1' if request.status === 'Responded' else '') + (request.respondByOffset | daysFromTodaySort) }}">{{ request.respondByOffset | daysFromTodayShort }}</td>
+                        <td class="govuk-table__cell app-nowrap" data-sort-value="{{ request.receivedOffset | daysFromTodaySort }}">{{ request.receivedOffset | daysFromTodayShort }}</td>
+                        <td class="govuk-table__cell">{{ assignedTo(request) }}</td>
+                        {% if not checkboxes %}
+                        <td class="govuk-table__cell">
+                            {% if request.status !== "Responded" %}
+                            {{ govukButton({
+                                html: ("Unassign from me" if request.assignedToMe else "Assign to me") + '<span class="govuk-visually-hidden"> – ' + request.applicationName + '</span>',
+                                classes: "govuk-button--secondary app-row-button",
+                                name: "consultation-v2-assign-action",
+                                value: ("unassign:" if request.assignedToMe else "assign:") + request.id
+                            }) }}
+                            {% endif %}
+                        </td>
+                        {% endif %}
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% if scrollOn %}
+            </div>
+            {% endif %}
+            </div>
+            </div>
+                {% else %}
+                {# Same as the LCML v4 submissions page, so developers can reuse it #}
+                <p class="govuk-body" id="no-results-message">There are no consultations to display.</p>
+                {% endif %}
+
+                </form>
+        {% if filterBar %}
+        </div>
+        {% else %}
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock %}
