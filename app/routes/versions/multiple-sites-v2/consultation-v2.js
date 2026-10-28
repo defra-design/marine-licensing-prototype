@@ -20,6 +20,12 @@ module.exports = function (router) {
   // Dates are day offsets from today, run through the daysFromTodayShort filter.
   // Respond by is always the received date plus the 14 day response period,
   // so it is worked out in withStatus rather than set here.
+  // The open requests for advice are spread so the closing date warnings
+  // (?deadline=...) show every state: Scarborough passed 2 days ago, Hayling
+  // closes today, Falmouth tomorrow, Whitstable in 3 days and Dawlish in 5,
+  // the edge of the closing soon window. Bude and Poole are notifications
+  // closing in 2 and 4 days, which mixes up the statuses in the default sort
+  // and shows that notifications never get a warning.
   // Applicants match the LCML v4 view-details pages. The Dawlish summary is
   // made up for this steel thread, as LCML v4 only has pontoon text for it.
   const REQUESTS = {
@@ -39,7 +45,7 @@ module.exports = function (router) {
         'South Seascape and landscape 1 (S-SCP-1): whether the rock armour and new wall would have a significant adverse effect on the seascape of the area.',
         'Tell us about any timing restrictions you would recommend to protect overwintering birds.'
       ],
-      receivedOffset: -3,
+      receivedOffset: -9,
       summary: 'We are applying for a marine licence to extend the existing sea defence at Dawlish by approximately 150 metres to the east. The extension will reduce wave overtopping onto the railway line and promenade during winter storms. The works involve placing rock armour along the toe of the existing sea wall and building a new concrete wave return wall on top of it. Rock will be delivered by barge and placed by a long-reach excavator working from the beach at low tide. Works are planned outside the main bird overwintering period and will take about 6 months to complete.',
       startAndEndDates: 'April 2026 to September 2027',
       // Site and activity cards for view-application, made up to match the
@@ -98,7 +104,7 @@ module.exports = function (router) {
         'Tell us whether the dredged material is likely to affect the maerl beds near the disposal site, and any measures you would recommend.',
         'Tell us about any timing restrictions you would recommend to protect migratory fish.'
       ],
-      receivedOffset: -6,
+      receivedOffset: -13,
       summary: 'We are applying for a marine licence to carry out maintenance dredging of the marina basin and access channel to restore the depths needed for berth holders. Silt has built up since the last dredge 5 years ago. We expect to remove about 12,000 cubic metres of material using a backhoe dredger, with the material taken by split hopper barge to the existing licensed disposal site off St Anthony Head.',
       startAndEndDates: 'October 2026 to March 2027',
       site: {
@@ -126,7 +132,7 @@ module.exports = function (router) {
         'We would like your advice on whether the trestles are likely to have a significant effect on the Swale Special Protection Area.',
         'Tell us whether the access route across the foreshore is likely to disturb feeding waders, and any measures you would recommend.'
       ],
-      receivedOffset: -9,
+      receivedOffset: -11,
       summary: 'We are applying for a marine licence to install 400 oyster trestles on the intertidal foreshore east of Whitstable harbour. The trestles will hold mesh bags of Pacific oysters and will be reached on foot or by tractor at low tide along an existing access route.',
       startAndEndDates: 'January 2027 to December 2036',
       site: {
@@ -150,7 +156,7 @@ module.exports = function (router) {
       applicant: 'Atlantic Coast Utilities Ltd',
       type: 'notify-only',
       assignedTo: 'Jenny Adkinson',
-      receivedOffset: -4,
+      receivedOffset: -12,
       summary: 'We are applying for a marine licence to repair a damaged section of the surface water outfall pipe on Summerleaze Beach. Storms last winter broke the concrete surround on the last 20 metres of the pipe. We will replace the surround and the pipe joints, working from the beach at low tide.',
       startAndEndDates: 'March 2027 to April 2027',
       site: {
@@ -178,7 +184,7 @@ module.exports = function (router) {
         'We would like your advice on whether the works are likely to affect the rocky shore habitats either side of the slipway.',
         'Tell us whether any surveys are needed before the works start.'
       ],
-      receivedOffset: -2,
+      receivedOffset: -16,
       summary: 'We are applying for a marine licence to replace the old public slipway in the North Bay. The existing concrete slipway is cracked and undermined. We will break it out and cast a new slipway on the same footprint, working from the beach at low tide.',
       startAndEndDates: 'May 2027 to July 2027',
       site: {
@@ -202,7 +208,7 @@ module.exports = function (router) {
       applicant: 'Brownsea Moorings Ltd',
       type: 'notify-only',
       assignedTo: '',
-      receivedOffset: -1,
+      receivedOffset: -10,
       summary: 'We are applying for a marine licence to lay 12 new swing moorings in an existing mooring area in Poole Harbour. Each mooring will use a helical screw anchor, a riser chain and a surface buoy. The anchors will be installed by diver from a small workboat.',
       startAndEndDates: 'February 2027 to March 2027',
       site: {
@@ -230,7 +236,7 @@ module.exports = function (router) {
         'We would like your advice on whether the repairs are likely to have a significant effect on the Chichester and Langstone Harbours Special Protection Area.',
         'Tell us about any timing restrictions you would recommend to protect overwintering brent geese.'
       ],
-      receivedOffset: -11,
+      receivedOffset: -14,
       summary: 'We are applying for a marine licence to repair 6 timber groynes on the Hayling Island seafront. Rotten planks and posts will be replaced like for like with hardwood, working from the beach at low tide.',
       startAndEndDates: 'April 2027 to June 2027',
       site: {
@@ -330,6 +336,23 @@ module.exports = function (router) {
   // Consultees have 14 days from receiving a request to respond.
   const RESPONSE_PERIOD_DAYS = 14;
 
+  // Closing date warnings (?deadline=...). A request is closing soon when it
+  // still needs a response and closes within this many calendar days. Five is
+  // about the last third of the 14 day period: a starting point for the team.
+  const CLOSING_SOON_DAYS = 5;
+  // In the bar version, closing within this many days (or passed) is red, and
+  // the rest of the closing soon window is orange
+  const CLOSING_URGENT_DAYS = 2;
+
+  // Short label for a closing date, under 20 characters as the MOJ contextual
+  // date component asks
+  function closingLabel(daysLeft) {
+    if (daysLeft < 0) return 'Closing date passed';
+    if (daysLeft === 0) return 'Closes today';
+    if (daysLeft === 1) return 'Closes tomorrow';
+    return `Closes in ${daysLeft} days`;
+  }
+
   // Matches the date format used when a response is sent, e.g. 3 October 2026
   function dateFromToday(offset) {
     const date = new Date();
@@ -353,11 +376,18 @@ module.exports = function (router) {
 
   function withStatus(req, request) {
     const assignedTo = assignedToFor(req, request);
+    const status = statusFor(req, request);
+    const respondByOffset = request.receivedOffset + RESPONSE_PERIOD_DAYS;
     return Object.assign({}, request, {
       assignedTo,
       assignedToMe: assignedTo === ME,
-      status: statusFor(req, request),
-      respondByOffset: request.receivedOffset + RESPONSE_PERIOD_DAYS,
+      status,
+      respondByOffset,
+      // Only requests for advice still waiting for a response. Notifications
+      // are left out, as responding to them is optional.
+      closingSoon: status === 'Response needed' && respondByOffset <= CLOSING_SOON_DAYS,
+      closingLabel: closingLabel(respondByOffset),
+      closingUrgent: respondByOffset <= CLOSING_URGENT_DAYS,
       response: req.session.data[`consultation-v2-${request.id}-response`] || (request.seededResponse && request.seededResponse.text),
       respondedDate: req.session.data[`consultation-v2-${request.id}-responded-date`] || (request.seededResponse && dateFromToday(request.seededResponse.respondedOffset)),
       // Who sent the response, as it might not be you
@@ -407,7 +437,9 @@ module.exports = function (router) {
   // Filters live in the URL so they survive assigning and can be shared.
   // Names are prefixed because the kit also copies query strings into the
   // session, and plain names like "type" or "status" are used elsewhere.
-  const FILTER_KEYS = ['consultation-v2-show', 'consultation-v2-person', 'consultation-v2-type', 'consultation-v2-status'];
+  const FILTER_KEYS = ['consultation-v2-show', 'consultation-v2-person', 'consultation-v2-type', 'consultation-v2-status', 'consultation-v2-closing'];
+  // Only offered with the closing soon summary (?deadlinesummary=on)
+  const CLOSING_FILTER_TEXT = `Closes in the next ${CLOSING_SOON_DAYS} days or has passed`;
 
   function asArray(value) {
     return [].concat(value || []).filter(v => v && v !== '_unchecked');
@@ -419,7 +451,8 @@ module.exports = function (router) {
       show,
       people: show === 'person' ? asArray(query['consultation-v2-person']).filter(p => TEAM.includes(p)) : [],
       types: asArray(query['consultation-v2-type']).filter(t => TYPE_OPTIONS.some(o => o.value === t)),
-      statuses: asArray(query['consultation-v2-status']).filter(st => STATUS_OPTIONS.includes(st))
+      statuses: asArray(query['consultation-v2-status']).filter(st => STATUS_OPTIONS.includes(st)),
+      closingSoon: asArray(query['consultation-v2-closing']).includes('soon')
     };
   }
 
@@ -430,6 +463,7 @@ module.exports = function (router) {
     if (filters.show === 'person' && !filters.people.length && (!request.assignedTo || request.assignedTo === ME)) return false;
     if (filters.types.length && !filters.types.includes(request.type)) return false;
     if (filters.statuses.length && !filters.statuses.includes(request.status)) return false;
+    if (filters.closingSoon && !request.closingSoon) return false;
     return true;
   }
 
@@ -472,6 +506,12 @@ module.exports = function (router) {
         }))
       });
     }
+    if (filters.closingSoon) {
+      groups.push({
+        heading: 'Closing date',
+        items: [{ text: CLOSING_FILTER_TEXT, href: consultationsUrl(query, { 'consultation-v2-closing': null }) }]
+      });
+    }
     return groups;
   }
 
@@ -500,6 +540,9 @@ module.exports = function (router) {
     if (query.banners === 'off') keep.banners = 'off';
     if (query.scroll === 'off') keep.scroll = 'off';
     if (['filter', 'autocomplete'].includes(query.assignlist)) keep.assignlist = query.assignlist;
+    // Closing date warnings: off by default while the team reviews them
+    if (['text', 'bar', 'icon', 'tag'].includes(query.deadline)) keep.deadline = query.deadline;
+    if (query.deadlinesummary === 'on') keep.deadlinesummary = 'on';
     return keep;
   }
 
@@ -546,6 +589,13 @@ module.exports = function (router) {
       assignlistShort: to({ assignlist: null }),
       assignlistFilter: to({ assignlist: 'filter' }),
       assignlistAutocomplete: to({ assignlist: 'autocomplete' }),
+      deadlineOff: to({ deadline: null }),
+      deadlineText: to({ deadline: 'text' }),
+      deadlineBar: to({ deadline: 'bar' }),
+      deadlineIcon: to({ deadline: 'icon' }),
+      deadlineTag: to({ deadline: 'tag' }),
+      deadlineSummaryOff: to({ deadlinesummary: null }),
+      deadlineSummaryOn: to({ deadlinesummary: 'on' }),
       rolesConsultee: to({ 'consultation-v2-roles': 'consultee' }),
       rolesBoth: to({ 'consultation-v2-roles': 'both' })
     };
@@ -591,6 +641,16 @@ module.exports = function (router) {
     // with a filter box above it, instead of the few in the team.
     // ?assignlist=autocomplete gives the same people in a type-ahead.
     res.locals.assignlistMode = keep.assignlist || 'short';
+    // Closing date warnings, off by default:
+    //   ?deadline=text  "Closes in 3 days" under the date, no colour
+    //   ?deadline=bar   MOJ contextual date: bold date, label and a red bar
+    //   ?deadline=icon  the GOV.UK warning "!" icon and a bold label
+    //   ?deadline=tag   a red tag under the date
+    // Any of them also adds warning text to the request page.
+    // ?deadlinesummary=on adds a count above the list and a Closing date filter.
+    res.locals.deadlineMode = keep.deadline || 'off';
+    res.locals.deadlineSummary = keep.deadlinesummary === 'on';
+    res.locals.closingSoonDays = CLOSING_SOON_DAYS;
     // Always render afresh, so the browser's Back button never shows an old
     // copy of a page from before assigning or responding
     res.set('Cache-Control', 'no-store');
@@ -640,6 +700,13 @@ module.exports = function (router) {
 
     res.render(`versions/${version}/${section}/consultations`, {
       requests,
+      // For the closing soon summary: counted across what the filters show,
+      // without the Closing date filter itself
+      // Passed ones are counted apart, as they no longer "close in the next 5 days"
+      closingSoonCount: allRequests.filter(r => r.closingSoon && r.respondByOffset >= 0 && matchesFilters(r, Object.assign({}, filters, { closingSoon: false }))).length,
+      closingPassedCount: allRequests.filter(r => r.closingSoon && r.respondByOffset < 0 && matchesFilters(r, Object.assign({}, filters, { closingSoon: false }))).length,
+      closingSoonUrl: consultationsUrl(req.query, { 'consultation-v2-closing': 'soon' }),
+      closingFilterText: CLOSING_FILTER_TEXT,
       scopeName: scopeName(filters),
       justResponded: justResponded ? REQUESTS[justResponded] : null,
       assignError,

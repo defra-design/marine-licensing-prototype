@@ -11,6 +11,30 @@
 {% if request.assignedTo %}{{ request.assignedTo }}{% else %}<span aria-hidden="true">-</span><span class="govuk-visually-hidden">Unassigned</span>{% endif %}
 {%- endmacro %}
 
+{#
+  Closing date in the list, with a warning when it is closing soon. mode is
+  the ?deadline= page version; "off" shows the date alone. The label is always
+  visible text, so neither the colour nor the icon carries the meaning alone.
+  Styles are in consultations.html.
+#}
+{% macro closingDate(request, mode) -%}
+{% set date = request.respondByOffset | daysFromTodayShort %}
+{% if mode === "off" or not request.closingSoon %}
+{{ date }}
+{% elif mode === "text" %}
+{{ date }}<br><span class="app-closing__label">{{ request.closingLabel }}</span>
+{% elif mode === "bar" %}
+{# MOJ contextual date: https://design-patterns.service.justice.gov.uk/components/contextual-date/ #}
+<span class="app-closing app-closing--bar{% if not request.closingUrgent %} app-closing--soon{% endif %}"><strong>{{ date }}</strong><span class="app-closing__label app-closing__label--dark">{{ request.closingLabel }}</span></span>
+{% elif mode === "icon" %}
+{# The GOV.UK warning text icon, decorative: the label says what it means #}
+{{ date }}<span class="app-closing__icon-row"><span class="govuk-warning-text__icon app-closing__icon" aria-hidden="true">!</span><strong class="app-closing__label app-closing__label--dark">{{ request.closingLabel }}</strong></span>
+{% elif mode === "tag" %}
+{# Red up to 2 days or passed, orange for the rest, as in the bar version #}
+{{ date }}<br>{{ govukTag({ text: request.closingLabel, classes: ("govuk-tag--red" if request.closingUrgent else "govuk-tag--orange") + " app-closing__tag" }) }}
+{% endif %}
+{%- endmacro %}
+
 {% macro statusTag(request) %}
 {{ govukTag({
     text: request.status,

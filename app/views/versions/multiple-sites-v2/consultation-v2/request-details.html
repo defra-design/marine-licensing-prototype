@@ -2,6 +2,7 @@
 
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+{% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
 {% from "versions/multiple-sites-v2/consultation-v2/includes/macros.html" import statusTag, assignedTo %}
 
 {% set navActive = "consultations" %}
@@ -31,6 +32,13 @@
         {% if not isAdvice and request.status !== "Responded" %}
         <p class="govuk-body">We are telling you about this marine licence application because of your statutory responsibilities or interest in this area.</p>
         <p class="govuk-body">You do not need to respond unless you have specific concerns or information you want to tell us.</p>
+        {% endif %}
+
+        {# Closing date warnings (?deadline=...), whichever list version is on #}
+        {% if deadlineMode !== "off" and request.closingSoon %}
+        {{ govukWarningText({
+            text: ("The closing date for this request was " + (request.respondByOffset | daysFromToday) + ".") if request.respondByOffset < 0 else ("This request " + (request.closingLabel | lower) + ". Responses must be sent by " + (request.respondByOffset | daysFromToday) + ".")
+        }) }}
         {% endif %}
 
         <h2 class="govuk-heading-m">{{ "About this request" if isAdvice else "About this notification" }}</h2>
