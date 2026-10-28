@@ -427,6 +427,12 @@ module.exports = function (router) {
     { value: 'notify-only', text: 'Application notification' }
   ];
   const STATUS_OPTIONS = ['Response needed', 'No response needed', 'Responded'];
+  // Only offered with the MOJ contextual date (?deadline=bar), and only
+  // matches what the bar marks: requests still needing a response
+  const CLOSING_OPTIONS = [
+    { value: 'passed', text: 'Closing date passed' },
+    { value: 'soon', text: `Closes in the next ${CLOSING_SOON_DAYS} days` }
+  ];
   const SHOW_OPTIONS = [
     { value: 'all', text: 'All consultations' },
     { value: 'me', text: 'Assigned to me' },
@@ -437,7 +443,7 @@ module.exports = function (router) {
   // Filters live in the URL so they survive assigning and can be shared.
   // Names are prefixed because the kit also copies query strings into the
   // session, and plain names like "type" or "status" are used elsewhere.
-  const FILTER_KEYS = ['consultation-v2-show', 'consultation-v2-person', 'consultation-v2-type', 'consultation-v2-status'];
+  const FILTER_KEYS = ['consultation-v2-show', 'consultation-v2-person', 'consultation-v2-type', 'consultation-v2-status', 'consultation-v2-closing'];
 
   function asArray(value) {
     return [].concat(value || []).filter(v => v && v !== '_unchecked');
@@ -449,7 +455,9 @@ module.exports = function (router) {
       show,
       people: show === 'person' ? asArray(query['consultation-v2-person']).filter(p => TEAM.includes(p)) : [],
       types: asArray(query['consultation-v2-type']).filter(t => TYPE_OPTIONS.some(o => o.value === t)),
-      statuses: asArray(query['consultation-v2-status']).filter(st => STATUS_OPTIONS.includes(st))
+      statuses: asArray(query['consultation-v2-status']).filter(st => STATUS_OPTIONS.includes(st)),
+      // Ignored with the MOJ contextual date off, as the filter is not shown
+      closing: query.deadline === 'bar' ? asArray(query['consultation-v2-closing']).filter(c => CLOSING_OPTIONS.some(o => o.value === c)) : []
     };
   }
 
@@ -460,6 +468,10 @@ module.exports = function (router) {
     if (filters.show === 'person' && !filters.people.length && (!request.assignedTo || request.assignedTo === ME)) return false;
     if (filters.types.length && !filters.types.includes(request.type)) return false;
     if (filters.statuses.length && !filters.statuses.includes(request.status)) return false;
+    if (filters.closing.length) {
+      if (!request.closingSoon) return false;
+      if (!filters.closing.includes(request.respondByOffset < 0 ? 'passed' : 'soon')) return false;
+    }
     return true;
   }
 
@@ -499,6 +511,15 @@ module.exports = function (router) {
         items: filters.statuses.map(status => ({
           text: status,
           href: consultationsUrl(query, { 'consultation-v2-status': filters.statuses.filter(st => st !== status) })
+        }))
+      });
+    }
+    if (filters.closing.length) {
+      groups.push({
+        heading: 'Closing date',
+        items: filters.closing.map(value => ({
+          text: CLOSING_OPTIONS.find(o => o.value === value).text,
+          href: consultationsUrl(query, { 'consultation-v2-closing': filters.closing.filter(c => c !== value) })
         }))
       });
     }
@@ -702,6 +723,7 @@ module.exports = function (router) {
       showOptions: SHOW_OPTIONS,
       typeOptions: TYPE_OPTIONS,
       statusOptions: STATUS_OPTIONS,
+      closingOptions: CLOSING_OPTIONS,
       team: TEAM,
       selectedFilterGroups: selectedFilterGroups(req.query, filters),
       clearFiltersUrl: consultationsUrl(req.query, withoutFilters),

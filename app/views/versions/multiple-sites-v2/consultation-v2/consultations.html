@@ -309,7 +309,7 @@
             <div class="app-filter-bar__body" id="app-filter-bar-body">
                 <h2 class="govuk-heading-m">Filter</h2>
                 <div class="govuk-grid-row">
-                    {{ filterFields(filters, showOptions, typeOptions, statusOptions, team, true) }}
+                    {{ filterFields(filters, showOptions, typeOptions, statusOptions, team, true, closingOptions if deadlineMode === 'bar' else false) }}
                 </div>
                 <div class="govuk-button-group govuk-!-margin-bottom-0">
                     {{ govukButton({
@@ -365,7 +365,7 @@
                                 classes: "govuk-!-margin-bottom-6"
                             }) }}
 
-                            {{ filterFields(filters, showOptions, typeOptions, statusOptions, team, false) }}
+                            {{ filterFields(filters, showOptions, typeOptions, statusOptions, team, false, closingOptions if deadlineMode === 'bar' else false) }}
                         </form>
                     </div>
                 </div>
