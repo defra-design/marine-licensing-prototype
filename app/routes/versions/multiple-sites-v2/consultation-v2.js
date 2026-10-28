@@ -261,7 +261,8 @@ module.exports = function (router) {
       reference: 'MLA/2026/09987',
       applicant: 'East Devon Coastal Partnership Ltd',
       type: 'response-required',
-      assignedTo: 'Jordan Lee',
+      // Unassigned, as responding takes it off the person
+      assignedTo: '',
       adviceRequested: [
         'We would like your advice on whether placing shingle on the beach is likely to affect the Sidmouth to West Bay Special Area of Conservation.',
         'Tell us whether the source of the shingle raises any concerns about introducing non-native species.'
@@ -294,7 +295,8 @@ module.exports = function (router) {
       reference: 'MLA/2026/09964',
       applicant: 'Torbay Harbour Works Ltd',
       type: 'response-required',
-      assignedTo: 'Kevin Morris',
+      // Unassigned, as responding takes it off the person
+      assignedTo: '',
       adviceRequested: [
         'We would like your advice on whether the works are likely to disturb seals hauling out on the breakwater, and any measures you would recommend.'
       ],
@@ -949,6 +951,9 @@ module.exports = function (router) {
     req.session.data[`consultation-v2-${request.id}-status`] = 'Responded';
     req.session.data[`consultation-v2-${request.id}-responded-by`] = ME;
     req.session.data[`consultation-v2-${request.id}-responded-date`] = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' });
+    // Unassigned once responded, as it can no longer be selected to assign,
+    // so there would be no way to take yourself off it
+    req.session.data[`consultation-v2-${request.id}-assigned-to`] = '';
     req.session.data['consultation-v2-just-responded'] = request.id;
     // Save first, as when assigning, or the list can show it as not responded
     req.session.save(() => res.redirect(`${base}/consultations${queryOf(req)}`));
