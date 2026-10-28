@@ -3,7 +3,8 @@
   the horizontal bar so both send the same query string. In the bar, each
   group sits in its own column.
 #}
-{% macro filterFields(filters, showOptions, typeOptions, statusOptions, team, columns) %}
+{# closingOptions: only passed with the MOJ contextual date (?deadline=bar) #}
+{% macro filterFields(filters, showOptions, typeOptions, statusOptions, team, columns, closingOptions) %}
 {% set columnOpen = '<div class="govuk-grid-column-one-third">' if columns else '' %}
 {% set columnClose = '</div>' if columns else '' %}
 {{ columnOpen | safe }}
@@ -67,5 +68,21 @@
         </div>
     </fieldset>
 </div>
+{# In the Status column of the bar, as a fourth column would wrap #}
+{% if closingOptions %}
+<div class="govuk-form-group">
+    <fieldset class="govuk-fieldset">
+        <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Closing date</legend>
+        <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+            {% for option in closingOptions %}
+            <div class="govuk-checkboxes__item">
+                <input class="govuk-checkboxes__input" id="filter-closing-{{ option.value }}" name="consultation-v2-closing" type="checkbox" value="{{ option.value }}"{% if option.value in filters.closing %} checked{% endif %}>
+                <label class="govuk-label govuk-checkboxes__label" for="filter-closing-{{ option.value }}">{{ option.text }}</label>
+            </div>
+            {% endfor %}
+        </div>
+    </fieldset>
+</div>
+{% endif %}
 {{ columnClose | safe }}
 {% endmacro %}

@@ -11,6 +11,23 @@
 {% if request.assignedTo %}{{ request.assignedTo }}{% else %}<span aria-hidden="true">-</span><span class="govuk-visually-hidden">Unassigned</span>{% endif %}
 {%- endmacro %}
 
+{#
+  Closing date, as the MOJ contextual date when it is closing soon or has
+  passed. mode is the ?deadline= page version; "off" shows the date alone.
+  The label is always visible text, so the colour never carries the meaning
+  alone. Styles are in closing-date-styles.html. longDate gives
+  "31 October 2026", as in the request page summary list.
+#}
+{% macro closingDate(request, mode, longDate) -%}
+{% set date = (request.respondByOffset | daysFromToday) if longDate else (request.respondByOffset | daysFromTodayShort) %}
+{% if mode === "off" or not request.closingSoon %}
+{{ date }}
+{% else %}
+{# MOJ contextual date: https://design-patterns.service.justice.gov.uk/components/contextual-date/ #}
+<span class="app-closing app-closing--bar{% if not request.closingUrgent %} app-closing--soon{% endif %}"><strong>{{ date }}</strong><span class="app-closing__label">{{ request.closingLabel }}</span></span>
+{% endif %}
+{%- endmacro %}
+
 {% macro statusTag(request) %}
 {{ govukTag({
     text: request.status,

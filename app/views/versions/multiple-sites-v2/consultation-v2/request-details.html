@@ -2,7 +2,7 @@
 
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
-{% from "versions/multiple-sites-v2/consultation-v2/includes/macros.html" import statusTag, assignedTo %}
+{% from "versions/multiple-sites-v2/consultation-v2/includes/macros.html" import statusTag, assignedTo, closingDate %}
 
 {% set navActive = "consultations" %}
 {% set isAdvice = request.type === "response-required" %}
@@ -11,6 +11,11 @@
 {# pageQuery carries the page versions (and the list's filters) between pages #}
 {% set backLink = "../consultations" + pageQuery %}
 {% set assignUrl = "../assign/" + request.id + pageQuery %}
+
+{% block head %}
+  {{ super() }}
+  {% include "versions/multiple-sites-v2/consultation-v2/includes/closing-date-styles.html" %}
+{% endblock %}
 
 {% block content %}
 
@@ -41,7 +46,8 @@
             </div>
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">Closing date</dt>
-                <dd class="govuk-summary-list__value">{{ request.respondByOffset | daysFromToday }}</dd>
+                {# Same as the list (?deadline=bar) #}
+                <dd class="govuk-summary-list__value">{{ closingDate(request, deadlineMode, true) }}</dd>
             </div>
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">Date received</dt>

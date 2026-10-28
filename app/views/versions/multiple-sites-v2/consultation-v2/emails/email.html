@@ -55,7 +55,7 @@ p {
 <p>We have received marine licence application {{ request.reference }}. We are telling you about it because of your statutory responsibilities or interest in this area.</p>
 {% endif %}
 
-<p><a href="../sign-in/{{ request.id }}">Sign in to find out what you need to do</a></p>
+<p><a href="../sign-in/{{ request.id }}">{{ "Sign in to find out what you need to do" if isAdvice else "Sign in to view the application" }}</a></p>
 
 <p>From Marine Management Organisation</p>
 

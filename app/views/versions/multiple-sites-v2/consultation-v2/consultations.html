@@ -3,7 +3,7 @@
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
-{% from "versions/multiple-sites-v2/consultation-v2/includes/macros.html" import requestTypeText, statusTag, assignedTo %}
+{% from "versions/multiple-sites-v2/consultation-v2/includes/macros.html" import requestTypeText, statusTag, assignedTo, closingDate %}
 {% from "versions/multiple-sites-v2/consultation-v2/includes/filter-fields.html" import filterFields %}
 {# Two horizontal bar versions: ?filter=bar puts Show/Hide filter level with
    the heading, ?filter=bar-actions puts it next to the assign buttons #}
@@ -22,6 +22,7 @@
 
 {% block head %}
   {{ super() }}
+  {% include "versions/multiple-sites-v2/consultation-v2/includes/closing-date-styles.html" %}
   <style>
     #consultations-table .app-nowrap { white-space: nowrap; }
     /* Wide version: the page, header and navigation go up to 1920px (a full
@@ -308,7 +309,7 @@
             <div class="app-filter-bar__body" id="app-filter-bar-body">
                 <h2 class="govuk-heading-m">Filter</h2>
                 <div class="govuk-grid-row">
-                    {{ filterFields(filters, showOptions, typeOptions, statusOptions, team, true) }}
+                    {{ filterFields(filters, showOptions, typeOptions, statusOptions, team, true, closingOptions if deadlineMode === 'bar' else false) }}
                 </div>
                 <div class="govuk-button-group govuk-!-margin-bottom-0">
                     {{ govukButton({
@@ -364,7 +365,7 @@
                                 classes: "govuk-!-margin-bottom-6"
                             }) }}
 
-                            {{ filterFields(filters, showOptions, typeOptions, statusOptions, team, false) }}
+                            {{ filterFields(filters, showOptions, typeOptions, statusOptions, team, false, closingOptions if deadlineMode === 'bar' else false) }}
                         </form>
                     </div>
                 </div>
@@ -559,7 +560,7 @@
                         <td class="govuk-table__cell" data-sort-value="{{ {'Response needed': 1, 'No response needed': 2, 'Responded': 3}[request.status] }}">{{ statusTag(request) }}</td>
                         {# Responded cases get a leading 1 so they sort after every open case,
                            keeping the default sort on open deadlines, soonest first #}
-                        <td class="govuk-table__cell app-nowrap" data-sort-value="{{ ('1' if request.status === 'Responded' else '') + (request.respondByOffset | daysFromTodaySort) }}">{{ request.respondByOffset | daysFromTodayShort }}</td>
+                        <td class="govuk-table__cell app-nowrap" data-sort-value="{{ ('1' if request.status === 'Responded' else '') + (request.respondByOffset | daysFromTodaySort) }}">{{ closingDate(request, deadlineMode) }}</td>
                         <td class="govuk-table__cell app-nowrap" data-sort-value="{{ request.receivedOffset | daysFromTodaySort }}">{{ request.receivedOffset | daysFromTodayShort }}</td>
                         <td class="govuk-table__cell">{{ assignedTo(request) }}</td>
                         {% if not checkboxes %}
