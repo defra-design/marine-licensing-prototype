@@ -15,10 +15,11 @@
   Closing date in the list, with a warning when it is closing soon. mode is
   the ?deadline= page version; "off" shows the date alone. The label is always
   visible text, so neither the colour nor the icon carries the meaning alone.
-  Styles are in consultations.html.
+  Styles are in closing-date-styles.html. longDate gives "31 October 2026",
+  as in the request page summary list.
 #}
-{% macro closingDate(request, mode) -%}
-{% set date = request.respondByOffset | daysFromTodayShort %}
+{% macro closingDate(request, mode, longDate) -%}
+{% set date = (request.respondByOffset | daysFromToday) if longDate else (request.respondByOffset | daysFromTodayShort) %}
 {% if mode === "off" or not request.closingSoon %}
 {{ date }}
 {% elif mode === "text" %}

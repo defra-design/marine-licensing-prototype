@@ -3,7 +3,7 @@
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 {% from "govuk/components/warning-text/macro.njk" import govukWarningText %}
-{% from "versions/multiple-sites-v2/consultation-v2/includes/macros.html" import statusTag, assignedTo %}
+{% from "versions/multiple-sites-v2/consultation-v2/includes/macros.html" import statusTag, assignedTo, closingDate %}
 
 {% set navActive = "consultations" %}
 {% set isAdvice = request.type === "response-required" %}
@@ -12,6 +12,11 @@
 {# pageQuery carries the page versions (and the list's filters) between pages #}
 {% set backLink = "../consultations" + pageQuery %}
 {% set assignUrl = "../assign/" + request.id + pageQuery %}
+
+{% block head %}
+  {{ super() }}
+  {% include "versions/multiple-sites-v2/consultation-v2/includes/closing-date-styles.html" %}
+{% endblock %}
 
 {% block content %}
 
@@ -34,8 +39,9 @@
         <p class="govuk-body">You do not need to respond unless you have specific concerns or information you want to tell us.</p>
         {% endif %}
 
-        {# Closing date warnings (?deadline=...), whichever list version is on #}
-        {% if deadlineMode !== "off" and request.closingSoon %}
+        {# Warning text (?deadlinewarning=on), off by default, to compare the
+           page with and without it alongside the Closing date row's marker #}
+        {% if deadlineWarning and request.closingSoon %}
         {{ govukWarningText({
             text: ("The closing date for this request was " + (request.respondByOffset | daysFromToday) + ".") if request.respondByOffset < 0 else ("This request " + (request.closingLabel | lower) + ". Responses must be sent by " + (request.respondByOffset | daysFromToday) + ".")
         }) }}
@@ -49,7 +55,8 @@
             </div>
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">Closing date</dt>
-                <dd class="govuk-summary-list__value">{{ request.respondByOffset | daysFromToday }}</dd>
+                {# Same marker as the list (?deadline=...) #}
+                <dd class="govuk-summary-list__value">{{ closingDate(request, deadlineMode, true) }}</dd>
             </div>
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">Date received</dt>

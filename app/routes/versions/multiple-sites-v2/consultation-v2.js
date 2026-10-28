@@ -543,6 +543,7 @@ module.exports = function (router) {
     // Closing date warnings: off by default while the team reviews them
     if (['text', 'bar', 'icon', 'tag'].includes(query.deadline)) keep.deadline = query.deadline;
     if (query.deadlinesummary === 'on') keep.deadlinesummary = 'on';
+    if (query.deadlinewarning === 'on') keep.deadlinewarning = 'on';
     return keep;
   }
 
@@ -596,6 +597,8 @@ module.exports = function (router) {
       deadlineTag: to({ deadline: 'tag' }),
       deadlineSummaryOff: to({ deadlinesummary: null }),
       deadlineSummaryOn: to({ deadlinesummary: 'on' }),
+      deadlineWarningOff: to({ deadlinewarning: null }),
+      deadlineWarningOn: to({ deadlinewarning: 'on' }),
       rolesConsultee: to({ 'consultation-v2-roles': 'consultee' }),
       rolesBoth: to({ 'consultation-v2-roles': 'both' })
     };
@@ -646,10 +649,13 @@ module.exports = function (router) {
     //   ?deadline=bar   MOJ contextual date: bold date, label and a red bar
     //   ?deadline=icon  the GOV.UK warning "!" icon and a bold label
     //   ?deadline=tag   a red tag under the date
-    // Any of them also adds warning text to the request page.
+    // The request page's Closing date row shows the same marker.
     // ?deadlinesummary=on adds a count above the list and a Closing date filter.
+    // ?deadlinewarning=on adds GOV.UK warning text to request pages closing
+    // soon, whatever the list version, to review with and without it.
     res.locals.deadlineMode = keep.deadline || 'off';
     res.locals.deadlineSummary = keep.deadlinesummary === 'on';
+    res.locals.deadlineWarning = keep.deadlinewarning === 'on';
     res.locals.closingSoonDays = CLOSING_SOON_DAYS;
     // Always render afresh, so the browser's Back button never shows an old
     // copy of a page from before assigning or responding

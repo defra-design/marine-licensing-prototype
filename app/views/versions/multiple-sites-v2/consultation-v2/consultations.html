@@ -22,6 +22,7 @@
 
 {% block head %}
   {{ super() }}
+  {% include "versions/multiple-sites-v2/consultation-v2/includes/closing-date-styles.html" %}
   <style>
     #consultations-table .app-nowrap { white-space: nowrap; }
     /* Wide version: the page, header and navigation go up to 1920px (a full
@@ -98,29 +99,6 @@
     }
     /* When hidden, the whole grey panel goes, not just its contents */
     .app-filter-bar--collapsed { display: none; }
-    /* Closing date warnings (?deadline=...). Label 16px under the date, as
-       the MOJ contextual date asks; secondary text colour when it is the only
-       signal, black when it sits with a bar, icon or tag. */
-    .app-closing__label { display: block; font-size: 16px; color: #484949; }
-    .app-closing__label--dark { color: #0b0c0c; }
-    /* MOJ contextual date: red bar to the left of the bold date and label.
-       GOV.UK red #ca3535 has over 3:1 contrast with white, so the bar is
-       visible enough; the label gives it its meaning. Red for passed and up
-       to 2 days. */
-    .app-closing--bar { display: block; border-left: 5px solid #ca3535; padding-left: 10px; }
-    /* 3 to 5 days: GOV.UK primary orange. Only 2.78:1 on white, under the
-       3:1 for graphics, but the label carries the meaning. Shade 25% passed
-       (4.69:1) but could not be told apart from the red. */
-    .app-closing--bar.app-closing--soon { border-left-color: #f47738; }
-    /* The GOV.UK warning text "!", sized down to sit beside the label */
-    .app-closing__icon-row { display: flex; align-items: center; gap: 8px; margin-top: 5px; white-space: nowrap; }
-    .app-closing__icon-row .app-closing__label { display: inline; }
-    .govuk-warning-text__icon.app-closing__icon {
-      position: static; flex: none; margin-top: 0;
-      min-width: 24px; min-height: 24px; width: 24px; height: 24px;
-      border-width: 2px; font-size: 16px; line-height: 20px; font-weight: 700;
-    }
-    .app-closing__tag { margin-top: 5px; }
     /* Closing soon summary above the list (?deadlinesummary=on) */
     .app-closing-summary { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
     .app-closing-summary .app-closing__icon { min-width: 30px; min-height: 30px; width: 30px; height: 30px; font-size: 20px; line-height: 26px; }
