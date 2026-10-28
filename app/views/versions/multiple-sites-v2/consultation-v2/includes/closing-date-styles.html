@@ -1,11 +1,8 @@
-{# Closing date warning styles (?deadline=...), shared by the list and the
-   request page so both show the same marker #}
+{# MOJ contextual date styles (?deadline=bar), shared by the list and the
+   request page so both show the same #}
 <style>
-    /* Closing date warnings (?deadline=...). Label 16px under the date, as
-       the MOJ contextual date asks; secondary text colour when it is the only
-       signal, black when it sits with a bar, icon or tag. */
-    .app-closing__label { display: block; font-size: 16px; color: #484949; }
-    .app-closing__label--dark { color: #0b0c0c; }
+    /* Label 16px under the date, as the MOJ contextual date asks */
+    .app-closing__label { display: block; font-size: 16px; color: #0b0c0c; }
     /* MOJ contextual date: red bar to the left of the bold date and label.
        GOV.UK red #ca3535 has over 3:1 contrast with white, so the bar is
        visible enough; the label gives it its meaning. Red for passed and up
@@ -15,13 +12,4 @@
        3:1 for graphics, but the label carries the meaning. Shade 25% passed
        (4.69:1) but could not be told apart from the red. */
     .app-closing--bar.app-closing--soon { border-left-color: #f47738; }
-    /* The GOV.UK warning text "!", sized down to sit beside the label */
-    .app-closing__icon-row { display: flex; align-items: center; gap: 8px; margin-top: 5px; white-space: nowrap; }
-    .app-closing__icon-row .app-closing__label { display: inline; }
-    .govuk-warning-text__icon.app-closing__icon {
-      position: static; flex: none; margin-top: 0;
-      min-width: 24px; min-height: 24px; width: 24px; height: 24px;
-      border-width: 2px; font-size: 16px; line-height: 20px; font-weight: 700;
-    }
-    .app-closing__tag { margin-top: 5px; }
 </style>

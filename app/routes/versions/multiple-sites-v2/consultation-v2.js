@@ -20,8 +20,8 @@ module.exports = function (router) {
   // Dates are day offsets from today, run through the daysFromTodayShort filter.
   // Respond by is always the received date plus the 14 day response period,
   // so it is worked out in withStatus rather than set here.
-  // The open requests for advice are spread so the closing date warnings
-  // (?deadline=...) show every state: Scarborough passed 2 days ago, Hayling
+  // The open requests for advice are spread so the closing date warning
+  // (?deadline=bar) shows every state: Scarborough passed 2 days ago, Hayling
   // closes today, Falmouth tomorrow, Whitstable in 3 days and Dawlish in 5,
   // the edge of the closing soon window. Bude and Poole are notifications
   // closing in 2 and 4 days, which mixes up the statuses in the default sort
@@ -336,11 +336,11 @@ module.exports = function (router) {
   // Consultees have 14 days from receiving a request to respond.
   const RESPONSE_PERIOD_DAYS = 14;
 
-  // Closing date warnings (?deadline=...). A request is closing soon when it
+  // Closing date warning (?deadline=bar). A request is closing soon when it
   // still needs a response and closes within this many calendar days. Five is
   // about the last third of the 14 day period: a starting point for the team.
   const CLOSING_SOON_DAYS = 5;
-  // In the bar version, closing within this many days (or passed) is red, and
+  // Closing within this many days (or passed) is red, and
   // the rest of the closing soon window is orange
   const CLOSING_URGENT_DAYS = 2;
 
@@ -437,9 +437,7 @@ module.exports = function (router) {
   // Filters live in the URL so they survive assigning and can be shared.
   // Names are prefixed because the kit also copies query strings into the
   // session, and plain names like "type" or "status" are used elsewhere.
-  const FILTER_KEYS = ['consultation-v2-show', 'consultation-v2-person', 'consultation-v2-type', 'consultation-v2-status', 'consultation-v2-closing'];
-  // Only offered with the closing soon summary (?deadlinesummary=on)
-  const CLOSING_FILTER_TEXT = `Closes in the next ${CLOSING_SOON_DAYS} days or has passed`;
+  const FILTER_KEYS = ['consultation-v2-show', 'consultation-v2-person', 'consultation-v2-type', 'consultation-v2-status'];
 
   function asArray(value) {
     return [].concat(value || []).filter(v => v && v !== '_unchecked');
@@ -451,8 +449,7 @@ module.exports = function (router) {
       show,
       people: show === 'person' ? asArray(query['consultation-v2-person']).filter(p => TEAM.includes(p)) : [],
       types: asArray(query['consultation-v2-type']).filter(t => TYPE_OPTIONS.some(o => o.value === t)),
-      statuses: asArray(query['consultation-v2-status']).filter(st => STATUS_OPTIONS.includes(st)),
-      closingSoon: asArray(query['consultation-v2-closing']).includes('soon')
+      statuses: asArray(query['consultation-v2-status']).filter(st => STATUS_OPTIONS.includes(st))
     };
   }
 
@@ -463,7 +460,6 @@ module.exports = function (router) {
     if (filters.show === 'person' && !filters.people.length && (!request.assignedTo || request.assignedTo === ME)) return false;
     if (filters.types.length && !filters.types.includes(request.type)) return false;
     if (filters.statuses.length && !filters.statuses.includes(request.status)) return false;
-    if (filters.closingSoon && !request.closingSoon) return false;
     return true;
   }
 
@@ -506,12 +502,6 @@ module.exports = function (router) {
         }))
       });
     }
-    if (filters.closingSoon) {
-      groups.push({
-        heading: 'Closing date',
-        items: [{ text: CLOSING_FILTER_TEXT, href: consultationsUrl(query, { 'consultation-v2-closing': null }) }]
-      });
-    }
     return groups;
   }
 
@@ -541,9 +531,7 @@ module.exports = function (router) {
     if (query.scroll === 'off') keep.scroll = 'off';
     if (['filter', 'autocomplete'].includes(query.assignlist)) keep.assignlist = query.assignlist;
     // Closing date warnings: off by default while the team reviews them
-    if (['text', 'bar', 'icon', 'tag'].includes(query.deadline)) keep.deadline = query.deadline;
-    if (query.deadlinesummary === 'on') keep.deadlinesummary = 'on';
-    if (query.deadlinewarning === 'on') keep.deadlinewarning = 'on';
+    if (query.deadline === 'bar') keep.deadline = 'bar';
     return keep;
   }
 
@@ -591,14 +579,7 @@ module.exports = function (router) {
       assignlistFilter: to({ assignlist: 'filter' }),
       assignlistAutocomplete: to({ assignlist: 'autocomplete' }),
       deadlineOff: to({ deadline: null }),
-      deadlineText: to({ deadline: 'text' }),
       deadlineBar: to({ deadline: 'bar' }),
-      deadlineIcon: to({ deadline: 'icon' }),
-      deadlineTag: to({ deadline: 'tag' }),
-      deadlineSummaryOff: to({ deadlinesummary: null }),
-      deadlineSummaryOn: to({ deadlinesummary: 'on' }),
-      deadlineWarningOff: to({ deadlinewarning: null }),
-      deadlineWarningOn: to({ deadlinewarning: 'on' }),
       rolesConsultee: to({ 'consultation-v2-roles': 'consultee' }),
       rolesBoth: to({ 'consultation-v2-roles': 'both' })
     };
@@ -644,19 +625,10 @@ module.exports = function (router) {
     // with a filter box above it, instead of the few in the team.
     // ?assignlist=autocomplete gives the same people in a type-ahead.
     res.locals.assignlistMode = keep.assignlist || 'short';
-    // Closing date warnings, off by default:
-    //   ?deadline=text  "Closes in 3 days" under the date, no colour
-    //   ?deadline=bar   MOJ contextual date: bold date, label and a red bar
-    //   ?deadline=icon  the GOV.UK warning "!" icon and a bold label
-    //   ?deadline=tag   a red tag under the date
-    // The request page's Closing date row shows the same marker.
-    // ?deadlinesummary=on adds a count above the list and a Closing date filter.
-    // ?deadlinewarning=on adds GOV.UK warning text to request pages closing
-    // soon, whatever the list version, to review with and without it.
+    // ?deadline=bar adds the MOJ contextual date to closing dates that are
+    // soon or passed: bold date, label and a red or orange bar. Off by
+    // default. The request page's Closing date row shows the same.
     res.locals.deadlineMode = keep.deadline || 'off';
-    res.locals.deadlineSummary = keep.deadlinesummary === 'on';
-    res.locals.deadlineWarning = keep.deadlinewarning === 'on';
-    res.locals.closingSoonDays = CLOSING_SOON_DAYS;
     // Always render afresh, so the browser's Back button never shows an old
     // copy of a page from before assigning or responding
     res.set('Cache-Control', 'no-store');
@@ -706,13 +678,6 @@ module.exports = function (router) {
 
     res.render(`versions/${version}/${section}/consultations`, {
       requests,
-      // For the closing soon summary: counted across what the filters show,
-      // without the Closing date filter itself
-      // Passed ones are counted apart, as they no longer "close in the next 5 days"
-      closingSoonCount: allRequests.filter(r => r.closingSoon && r.respondByOffset >= 0 && matchesFilters(r, Object.assign({}, filters, { closingSoon: false }))).length,
-      closingPassedCount: allRequests.filter(r => r.closingSoon && r.respondByOffset < 0 && matchesFilters(r, Object.assign({}, filters, { closingSoon: false }))).length,
-      closingSoonUrl: consultationsUrl(req.query, { 'consultation-v2-closing': 'soon' }),
-      closingFilterText: CLOSING_FILTER_TEXT,
       scopeName: scopeName(filters),
       justResponded: justResponded ? REQUESTS[justResponded] : null,
       assignError,

@@ -3,9 +3,7 @@
   the horizontal bar so both send the same query string. In the bar, each
   group sits in its own column.
 #}
-{# closingText: the Closing date option's wording, only passed with the
-   closing soon summary version (?deadlinesummary=on) #}
-{% macro filterFields(filters, showOptions, typeOptions, statusOptions, team, columns, closingText) %}
+{% macro filterFields(filters, showOptions, typeOptions, statusOptions, team, columns) %}
 {% set columnOpen = '<div class="govuk-grid-column-one-third">' if columns else '' %}
 {% set columnClose = '</div>' if columns else '' %}
 {{ columnOpen | safe }}
@@ -71,19 +69,4 @@
 </div>
 {{ columnClose | safe }}
 
-{% if closingText %}
-{{ columnOpen | safe }}
-<div class="govuk-form-group">
-    <fieldset class="govuk-fieldset">
-        <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Closing date</legend>
-        <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
-            <div class="govuk-checkboxes__item">
-                <input class="govuk-checkboxes__input" id="filter-closing-soon" name="consultation-v2-closing" type="checkbox" value="soon"{% if filters.closingSoon %} checked{% endif %}>
-                <label class="govuk-label govuk-checkboxes__label" for="filter-closing-soon">{{ closingText }}</label>
-            </div>
-        </div>
-    </fieldset>
-</div>
-{{ columnClose | safe }}
-{% endif %}
 {% endmacro %}

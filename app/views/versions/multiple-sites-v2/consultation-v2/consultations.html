@@ -99,10 +99,6 @@
     }
     /* When hidden, the whole grey panel goes, not just its contents */
     .app-filter-bar--collapsed { display: none; }
-    /* Closing soon summary above the list (?deadlinesummary=on) */
-    .app-closing-summary { display: flex; align-items: center; gap: 12px; margin-bottom: 20px; }
-    .app-closing-summary .app-closing__icon { min-width: 30px; min-height: 30px; width: 30px; height: 30px; font-size: 20px; line-height: 26px; }
-    .app-closing-summary p { margin: 0; }
   </style>
 {% endblock %}
 
@@ -313,7 +309,7 @@
             <div class="app-filter-bar__body" id="app-filter-bar-body">
                 <h2 class="govuk-heading-m">Filter</h2>
                 <div class="govuk-grid-row">
-                    {{ filterFields(filters, showOptions, typeOptions, statusOptions, team, true, closingFilterText if deadlineSummary else false) }}
+                    {{ filterFields(filters, showOptions, typeOptions, statusOptions, team, true) }}
                 </div>
                 <div class="govuk-button-group govuk-!-margin-bottom-0">
                     {{ govukButton({
@@ -369,7 +365,7 @@
                                 classes: "govuk-!-margin-bottom-6"
                             }) }}
 
-                            {{ filterFields(filters, showOptions, typeOptions, statusOptions, team, false, closingFilterText if deadlineSummary else false) }}
+                            {{ filterFields(filters, showOptions, typeOptions, statusOptions, team, false) }}
                         </form>
                     </div>
                 </div>
@@ -487,21 +483,6 @@
                         }) }}
                         <button type="button" class="govuk-button govuk-button--secondary govuk-!-margin-bottom-0" id="app-reassign-cancel" hidden>Cancel</button>
                     </div>
-                </div>
-                {% endif %}
-
-                {#
-                  Closing soon summary (?deadlinesummary=on). Counts what the
-                  other filters show, and links to the Closing date filter.
-                  Not shown once that filter is on, or with nothing to count.
-                #}
-                {% set closingSoonText = (closingSoonCount + (" consultation closes" if closingSoonCount === 1 else " consultations close") + " in the next " + closingSoonDays + " days") if closingSoonCount else "" %}
-                {% set closingPassedText = (closingPassedCount + (" has" if closingPassedCount === 1 else " have") + " passed " + ("its" if closingPassedCount === 1 else "their") + " closing date") if closingPassedCount else "" %}
-                {% set closingTotal = closingSoonCount + closingPassedCount %}
-                {% if deadlineSummary and closingTotal and not filters.closingSoon %}
-                <div class="app-closing-summary">
-                    <span class="govuk-warning-text__icon app-closing__icon" aria-hidden="true">!</span>
-                    <p class="govuk-body"><strong>{{ closingSoonText }}{{ " and " if closingSoonText and closingPassedText }}{{ closingPassedText if closingSoonText else (closingPassedText | capitalize) }}.</strong> <a href="{{ closingSoonUrl }}" class="govuk-link govuk-link--no-visited-state">Show only {{ "this" if closingTotal === 1 else "these" }}</a></p>
                 </div>
                 {% endif %}
 

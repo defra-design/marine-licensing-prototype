@@ -222,16 +222,12 @@
   </div>
 
   <div class="app-version-tray__section">
-  {# Off by default while the team reviews them. The request page's Closing
-     date row shows the same marker as the list. #}
+  {# Off by default. The request page's Closing date row shows the same. #}
   <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Closing date warnings</h3>
   <ul class="govuk-list govuk-list--spaced">
     {% for option in [
       { mode: "off", text: "Off", url: versionUrls.deadlineOff },
-      { mode: "text", text: "Text only, no colour", url: versionUrls.deadlineText },
-      { mode: "bar", text: "Red and orange bar and label (MOJ contextual date)", url: versionUrls.deadlineBar },
-      { mode: "icon", text: "Warning icon and label", url: versionUrls.deadlineIcon },
-      { mode: "tag", text: "Red and orange tag", url: versionUrls.deadlineTag }
+      { mode: "bar", text: "MOJ contextual date", url: versionUrls.deadlineBar }
     ] %}
     <li>
       {% if (deadlineMode or "off") === option.mode %}
@@ -241,48 +237,6 @@
       {% endif %}
     </li>
     {% endfor %}
-  </ul>
-  </div>
-
-  <div class="app-version-tray__section">
-  {# A count above the list linking to a Closing date filter #}
-  <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Closing soon summary</h3>
-  <ul class="govuk-list govuk-list--spaced">
-    <li>
-      {% if not deadlineSummary %}
-      <span aria-current="true">Off</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
-      {% else %}
-      <a href="{{ versionUrls.deadlineSummaryOff if versionUrls else consultationsUrl }}" class="govuk-link govuk-link--no-visited-state">Off</a>
-      {% endif %}
-    </li>
-    <li>
-      {% if deadlineSummary %}
-      <span aria-current="true">On, with a Closing date filter</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
-      {% else %}
-      <a href="{{ versionUrls.deadlineSummaryOn if versionUrls else consultationsUrl + '?deadlinesummary=on' }}" class="govuk-link govuk-link--no-visited-state">On, with a Closing date filter</a>
-      {% endif %}
-    </li>
-  </ul>
-  </div>
-
-  <div class="app-version-tray__section">
-  {# GOV.UK warning text above About this request, when closing soon #}
-  <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Warning text on request pages</h3>
-  <ul class="govuk-list govuk-list--spaced">
-    <li>
-      {% if not deadlineWarning %}
-      <span aria-current="true">Off</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
-      {% else %}
-      <a href="{{ versionUrls.deadlineWarningOff if versionUrls else consultationsUrl }}" class="govuk-link govuk-link--no-visited-state">Off</a>
-      {% endif %}
-    </li>
-    <li>
-      {% if deadlineWarning %}
-      <span aria-current="true">On</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
-      {% else %}
-      <a href="{{ versionUrls.deadlineWarningOn if versionUrls else consultationsUrl + '?deadlinewarning=on' }}" class="govuk-link govuk-link--no-visited-state">On</a>
-      {% endif %}
-    </li>
   </ul>
   </div>
 

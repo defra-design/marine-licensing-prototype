@@ -12,27 +12,19 @@
 {%- endmacro %}
 
 {#
-  Closing date in the list, with a warning when it is closing soon. mode is
-  the ?deadline= page version; "off" shows the date alone. The label is always
-  visible text, so neither the colour nor the icon carries the meaning alone.
-  Styles are in closing-date-styles.html. longDate gives "31 October 2026",
-  as in the request page summary list.
+  Closing date, as the MOJ contextual date when it is closing soon or has
+  passed. mode is the ?deadline= page version; "off" shows the date alone.
+  The label is always visible text, so the colour never carries the meaning
+  alone. Styles are in closing-date-styles.html. longDate gives
+  "31 October 2026", as in the request page summary list.
 #}
 {% macro closingDate(request, mode, longDate) -%}
 {% set date = (request.respondByOffset | daysFromToday) if longDate else (request.respondByOffset | daysFromTodayShort) %}
 {% if mode === "off" or not request.closingSoon %}
 {{ date }}
-{% elif mode === "text" %}
-{{ date }}<br><span class="app-closing__label">{{ request.closingLabel }}</span>
-{% elif mode === "bar" %}
+{% else %}
 {# MOJ contextual date: https://design-patterns.service.justice.gov.uk/components/contextual-date/ #}
-<span class="app-closing app-closing--bar{% if not request.closingUrgent %} app-closing--soon{% endif %}"><strong>{{ date }}</strong><span class="app-closing__label app-closing__label--dark">{{ request.closingLabel }}</span></span>
-{% elif mode === "icon" %}
-{# The GOV.UK warning text icon, decorative: the label says what it means #}
-{{ date }}<span class="app-closing__icon-row"><span class="govuk-warning-text__icon app-closing__icon" aria-hidden="true">!</span><strong class="app-closing__label app-closing__label--dark">{{ request.closingLabel }}</strong></span>
-{% elif mode === "tag" %}
-{# Red up to 2 days or passed, orange for the rest, as in the bar version #}
-{{ date }}<br>{{ govukTag({ text: request.closingLabel, classes: ("govuk-tag--red" if request.closingUrgent else "govuk-tag--orange") + " app-closing__tag" }) }}
+<span class="app-closing app-closing--bar{% if not request.closingUrgent %} app-closing--soon{% endif %}"><strong>{{ date }}</strong><span class="app-closing__label">{{ request.closingLabel }}</span></span>
 {% endif %}
 {%- endmacro %}
 
