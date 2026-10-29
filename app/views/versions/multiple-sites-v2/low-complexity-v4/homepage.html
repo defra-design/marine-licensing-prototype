@@ -36,7 +36,10 @@ Home
 
 <div class="govuk-grid-row">
 	<div class="govuk-grid-column-full">
+		{# Not in the consultation journey, to match the consultations page #}
+		{% if not bothRoles %}
 		<span class="govuk-caption-l">{{ data['organisation-name'] }}</span>
+		{% endif %}
 		<h1 class="govuk-heading-l">
 			{{ pageHeadingTextHTML }}
 		</h1>

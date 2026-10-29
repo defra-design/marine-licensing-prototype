@@ -4,6 +4,9 @@
 
 {% block head %}
   {{ super() }}
+  {% if bothRoles %}
+  {% include "versions/multiple-sites-v2/consultation-v2/includes/wide-layout-styles.html" %}
+  {% endif %}
   <style>
   /* ------------------------------------------------------------------
      FILTER COLUMN WIDTH
@@ -44,14 +47,24 @@
 
 {% block bodyEnd %}
   {{ super() }}
-  {% if data['user_type'] === 'organisation' %}
+  {% if isOrganisation %}
   {# Pulls in MOJ's FilterToggleButton itself - see the notes in the file. #}
   <script src="/public/javascripts/lcml-v4-projects-filter.js"></script>
   {% endif %}
 {% endblock %}
 
+{#
+  Consultation v2 "Applicant and consultee" version (bothRoles, set in the
+  v4 routes): Natural England is an organisation, so it gets the
+  organisation view with the filter, whatever user_type the v4 journeys
+  have left in the session. Its organisation cannot be changed from here.
+#}
+{% set isOrganisation = data['user_type'] === 'organisation' or bothRoles %}
+
 <!-- Set a variable to identify this specific page -->
-{% set currentPageId = "low-complexity-projects" %}
+{# In the consultation journey, the same width as the consultations page:
+   wide unless the tray has it on standard width #}
+{% set currentPageId = "consultation-full-width" if bothRoles and consultationWide else "low-complexity-projects" %}
 
 {% block header %}
 {% from "versions/multiple-sites-v2/low-complexity-v4/includes/service-navigation.html" import lcmlV4Header with context %}
@@ -63,7 +76,7 @@
     {% if data['organisation-name'] %}
     <div class="app-organisation-switcher">
 		<span class="govuk-body-s govuk-!-font-weight-bold app-organisation-switcher__name">{{ data['organisation-name'] }}</span>
-		{% if data['user_type'] === 'organisation' %}
+		{% if data['user_type'] === 'organisation' and not bothRoles %}
 				<a class="govuk-link app-organisation-switcher__link govuk-link--no-visited-state" href="organisation-selector?change=true&returnTo=submissions">
 					Change who you're representing
 				</a>
@@ -86,7 +99,10 @@ Submissions
 
 <div class="govuk-grid-row">
 	<div class="govuk-grid-column-full">
+		{# Not in the consultation journey, to match the consultations page #}
+		{% if not bothRoles %}
 		<span class="govuk-caption-l">{{ data['organisation-name'] }}</span>
+		{% endif %}
 		<h1 class="govuk-heading-l">
 			{{ pageHeadingTextHTML }}
 		</h1>
@@ -104,7 +120,7 @@ Submissions
   as it does in the MOJ pattern. The panel starts collapsed - MOJ's
   FilterToggleButton adds the Show filter button into .moj-action-bar__filter.
 #}
-{% if data['user_type'] === 'organisation' %}
+{% if isOrganisation %}
 <div class="moj-filter-layout moj-filter-layout--narrow">
 	<div class="moj-filter-layout__filter">
 		<div class="moj-filter" data-module="moj-filter">
@@ -221,7 +237,7 @@ Submissions
 				  <th scope="col" class="govuk-table__header" aria-sort="none">Reference</th>
 				  <th scope="col" class="govuk-table__header" aria-sort="ascending">Status</th>
 				  <th scope="col" class="govuk-table__header" aria-sort="none">Submitted&nbsp;on</th>
-				  {% if data['user_type'] === 'organisation' %}
+				  {% if isOrganisation %}
 				  <th scope="col" class="govuk-table__header" aria-sort="none">Owner</th>
 				  {% endif %}
 				  <th scope="col" class="govuk-table__header" aria-sort="none">Actions</th>
@@ -254,7 +270,7 @@ Submissions
 						}) }}
 					</td>
 					<td class="govuk-table__cell" data-sort-value="{{ -12 | daysFromTodaySort }}">{{ -12 | daysFromToday }}</td>
-					{% if data['user_type'] === 'organisation' %}
+					{% if isOrganisation %}
 					<td class="govuk-table__cell">Sam Evans</td>
 					{% endif %}
 					<td class="govuk-table__cell">
@@ -289,7 +305,7 @@ Submissions
 						}) }}
 					</td>
 					<td class="govuk-table__cell" data-sort-value="{{ -5 | daysFromTodaySort }}">{{ -5 | daysFromToday }}</td>
-					{% if data['user_type'] === 'organisation' %}
+					{% if isOrganisation %}
 					<td class="govuk-table__cell">Sam Evans</td>
 					{% endif %}
 					<td class="govuk-table__cell">
@@ -312,7 +328,7 @@ Submissions
 						}) }}
 					</td>
 					<td class="govuk-table__cell" data-sort-value="260422">22 Apr 2026</td>
-					{% if data['user_type'] === 'organisation' %}
+					{% if isOrganisation %}
 					<td class="govuk-table__cell">Sam Evans</td>
 					{% endif %}
 					<td class="govuk-table__cell">
@@ -332,7 +348,7 @@ Submissions
 						}) }}
 					</td>
 					<td class="govuk-table__cell" data-sort-value="{{ -85 | daysFromTodaySort }}">{{ -85 | daysFromToday }}</td>
-					{% if data['user_type'] === 'organisation' %}
+					{% if isOrganisation %}
 					<td class="govuk-table__cell">Sam Evans</td>
 					{% endif %}
 					<td class="govuk-table__cell">
@@ -360,7 +376,7 @@ Submissions
 						{% endif %}
 					</td>
 					<td class="govuk-table__cell" data-sort-value="260803">3 Aug 2026</td>
-					{% if data['user_type'] === 'organisation' %}
+					{% if isOrganisation %}
 					<td class="govuk-table__cell">Sam Evans</td>
 					{% endif %}
 					<td class="govuk-table__cell">
@@ -400,7 +416,7 @@ Submissions
 						{% endif %}
 					</td>
 					<td class="govuk-table__cell" data-sort-value="{% if data['low-complexity-submission-date-sort'] %}{{ data['low-complexity-submission-date-sort'] }}{% else %}-{% endif %}">{% if data['low-complexity-submission-date'] %}{{ data['low-complexity-submission-date'] }}{% else %}-{% endif %}</td>
-					{% if data['user_type'] === 'organisation' %}
+					{% if isOrganisation %}
 					<td class="govuk-table__cell">Sam Evans</td>
 					{% endif %}
 					<td class="govuk-table__cell">
@@ -445,7 +461,7 @@ Submissions
 						{% endif %}
 					</td>
 					<td class="govuk-table__cell" data-sort-value="{% if data['low-complexity-submission-date-sort'] %}{{ data['low-complexity-submission-date-sort'] }}{% else %}-{% endif %}">{% if data['low-complexity-submission-date'] %}{{ data['low-complexity-submission-date'] }}{% else %}-{% endif %}</td>
-					{% if data['user_type'] === 'organisation' %}
+					{% if isOrganisation %}
 					<td class="govuk-table__cell">Sam Evans</td>
 					{% endif %}
 					<td class="govuk-table__cell">
@@ -481,7 +497,7 @@ Submissions
 						{% endif %}
 					</td>
 					<td class="govuk-table__cell" data-sort-value="260112">12 Jan 2026</td>
-					{% if data['user_type'] === 'organisation' %}
+					{% if isOrganisation %}
 					<td class="govuk-table__cell">Sam Evans</td>
 					{% endif %}
 					<td class="govuk-table__cell">
@@ -507,7 +523,7 @@ Submissions
 						{% endif %}
 					</td>
 					<td class="govuk-table__cell" data-sort-value="260815">15 Aug 2026</td>
-					{% if data['user_type'] === 'organisation' %}
+					{% if isOrganisation %}
 					<td class="govuk-table__cell">Sam Evans</td>
 					{% endif %}
 					<td class="govuk-table__cell">
@@ -519,7 +535,7 @@ Submissions
 					</td>
 				</tr>
 
-				{% if data['user_type'] === 'organisation' %}
+				{% if isOrganisation %}
 				<tr class="govuk-table__row" data-creator="alex-williams" data-project-name="Plymouth harbour core samples" data-type="Exempt activity notification" data-reference="EXE-10052" data-status="Active">
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Plymouth harbour core samples</th>
 					<td class="govuk-table__cell">Exempt activity notification</td>
@@ -531,7 +547,7 @@ Submissions
 						}) }}
 					</td>
 					<td class="govuk-table__cell" data-sort-value="260917">17 Sep 2026</td>
-					{% if data['user_type'] === 'organisation' %}
+					{% if isOrganisation %}
 					<td class="govuk-table__cell">Alex Williams</td>
 					{% endif %}
 					<td class="govuk-table__cell">
@@ -550,7 +566,7 @@ Submissions
 						}) }}
 					</td>
 					<td class="govuk-table__cell" data-sort-value="251101">1 Nov 2025</td>
-					{% if data['user_type'] === 'organisation' %}
+					{% if isOrganisation %}
 					<td class="govuk-table__cell">Sarah Chen</td>
 					{% endif %}
 					<td class="govuk-table__cell">
@@ -569,7 +585,7 @@ Submissions
 						}) }}
 					</td>
 					<td class="govuk-table__cell" data-sort-value="251109">9 Nov 2025</td>
-					{% if data['user_type'] === 'organisation' %}
+					{% if isOrganisation %}
 					<td class="govuk-table__cell">Sarah Chen</td>
 					{% endif %}
 					<td class="govuk-table__cell">
@@ -590,7 +606,7 @@ Submissions
 						}) }}
 					</td>
 					<td class="govuk-table__cell" data-sort-value="-">-</td>
-					{% if data['user_type'] === 'organisation' %}
+					{% if isOrganisation %}
 					<td class="govuk-table__cell">Sam Evans</td>
 					{% endif %}
 					<td class="govuk-table__cell">
@@ -599,7 +615,7 @@ Submissions
 				</tr>
 				{% endif %}
 
-				{% if data['user_type'] === 'organisation' %}
+				{% if isOrganisation %}
 				<tr class="govuk-table__row" data-creator="alex-williams" data-project-name="Scarborough seabed grab samples" data-type="Exempt activity notification" data-reference="-" data-status="Draft">
 					<th scope="row" class="govuk-table__header govuk-!-font-weight-regular">Scarborough seabed grab samples</th>
 					<td class="govuk-table__cell">Exempt activity notification</td>
@@ -611,7 +627,7 @@ Submissions
 						}) }}
 					</td>
 					<td class="govuk-table__cell" data-sort-value="-">-</td>
-					{% if data['user_type'] === 'organisation' %}
+					{% if isOrganisation %}
 					<td class="govuk-table__cell">Alex Williams</td>
 					{% endif %}
 					<td class="govuk-table__cell">
@@ -623,7 +639,7 @@ Submissions
 			</tbody>
 		</table>
 
-		{% if data['user_type'] === 'organisation' %}
+		{% if isOrganisation %}
 		<p id="no-results-message" class="govuk-body" style="display: none;">There are no submissions to display.</p>
 	</div>
 </div>

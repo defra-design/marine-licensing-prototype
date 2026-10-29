@@ -33,6 +33,9 @@ module.exports = function (router) {
     res.locals.bothRoles = data['consultation-v2-roles'] === 'both' && !!data['consultation-v2-in-journey'];
     if (res.locals.bothRoles) {
       res.locals.consultationsUrl = `/versions/${version}/consultation-v2/consultations${data['consultation-v2-version-query'] || ''}`;
+      // The submissions page matches the consultations page width: wide
+      // unless the tray has it on standard width (?layout=standard)
+      res.locals.consultationWide = !/[?&]layout=standard(&|$)/.test(data['consultation-v2-version-query'] || '');
       // Display only: res.locals.data is a copy, so the session keeps the
       // applicant organisation for the usual v4 journeys
       if (res.locals.data) {
