@@ -25,7 +25,7 @@ module.exports = function (router) {
   // The open requests for advice are spread so the closing date warning
   // (?deadline=bar) shows every state: Scarborough passed 2 days ago (hidden
   // unless ?passed=on, see hiddenByDefault), Hayling
-  // closes today, Falmouth tomorrow, Whitstable in 3 days and Dawlish in 5,
+  // closes today, Falmouth tomorrow, Whitstable in 3 days and Dawlish in 7,
   // the edge of the closing soon window. Bude and Poole are notifications
   // closing in 2 and 4 days, which mixes up the statuses in the default sort
   // and shows that notifications never get a warning.
@@ -48,7 +48,7 @@ module.exports = function (router) {
         'South Seascape and landscape 1 (S-SCP-1): whether the rock armour and new wall would have a significant adverse effect on the seascape of the area.',
         'Tell us about any timing restrictions you would recommend to protect overwintering birds.'
       ],
-      receivedOffset: -9,
+      receivedOffset: -7,
       summary: 'We are applying for a marine licence to extend the existing sea defence at Dawlish by approximately 150 metres to the east. The extension will reduce wave overtopping onto the railway line and promenade during winter storms. The works involve placing rock armour along the toe of the existing sea wall and building a new concrete wave return wall on top of it. Rock will be delivered by barge and placed by a long-reach excavator working from the beach at low tide. Works are planned outside the main bird overwintering period and will take about 6 months to complete.',
       startAndEndDates: 'April 2026 to September 2027',
       // Site and activity cards for view-application, made up to match the
@@ -347,9 +347,9 @@ module.exports = function (router) {
   const RESPONSE_PERIOD_DAYS = 14;
 
   // Closing date warning (?deadline=bar). A request is closing soon when it
-  // still needs a response and closes within this many calendar days. Five is
-  // about the last third of the 14 day period: a starting point for the team.
-  const CLOSING_SOON_DAYS = 5;
+  // still needs a response and closes within this many calendar days. Seven,
+  // the last half of the 14 day period, was agreed in a team call.
+  const CLOSING_SOON_DAYS = 7;
   // Closing within this many days (or passed) is red, and
   // the rest of the closing soon window is orange
   const CLOSING_URGENT_DAYS = 2;
