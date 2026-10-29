@@ -3,7 +3,7 @@
   the horizontal bar so both send the same query string. In the bar, each
   group sits in its own column.
 #}
-{# closingOptions: only passed with the MOJ contextual date (?deadline=bar) #}
+{# closingOptions: only passed with the MOJ contextual date (not ?deadline=off) #}
 {# search: the Search box, only with the Open and Closed tabs (?tabs=on) #}
 {% macro filterFields(filters, showOptions, typeOptions, statusOptions, team, columns, closingOptions, search) %}
 {% set columnOpen = '<div class="govuk-grid-column-one-third">' if columns else '' %}

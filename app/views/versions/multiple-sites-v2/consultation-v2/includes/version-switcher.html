@@ -222,15 +222,15 @@
   </div>
 
   <div class="app-version-tray__section">
-  {# Off by default. The request page's Closing date row shows the same. #}
+  {# MOJ contextual date by default. The request page's Closing date row shows the same. #}
   <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Closing date warnings</h3>
   <ul class="govuk-list govuk-list--spaced">
     {% for option in [
-      { mode: "off", text: "Off", url: versionUrls.deadlineOff },
-      { mode: "bar", text: "MOJ contextual date", url: versionUrls.deadlineBar }
+      { mode: "bar", text: "MOJ contextual date", url: versionUrls.deadlineBar },
+      { mode: "off", text: "Off", url: versionUrls.deadlineOff }
     ] %}
     <li>
-      {% if (deadlineMode or "off") === option.mode %}
+      {% if (deadlineMode or "bar") === option.mode %}
       <span aria-current="true">{{ option.text }}</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
       {% else %}
       <a href="{{ option.url if versionUrls else consultationsUrl }}" class="govuk-link govuk-link--no-visited-state">{{ option.text }}</a>

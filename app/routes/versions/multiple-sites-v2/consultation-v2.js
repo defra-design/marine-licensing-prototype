@@ -23,7 +23,7 @@ module.exports = function (router) {
   // Respond by is always the received date plus the 14 day response period,
   // so it is worked out in withStatus rather than set here.
   // The open requests for advice are spread so the closing date warning
-  // (?deadline=bar) shows every state: Scarborough passed 2 days ago (hidden
+  // (on by default, ?deadline=off turns it off) shows every state: Scarborough passed 2 days ago (hidden
   // unless ?passed=on, see hiddenByDefault), Hayling
   // closes today, Falmouth tomorrow, Whitstable in 3 days and Dawlish in 7,
   // the edge of the closing soon window. Bude and Poole are notifications
@@ -375,7 +375,7 @@ module.exports = function (router) {
   // Consultees have 14 days from receiving a request to respond.
   const RESPONSE_PERIOD_DAYS = 14;
 
-  // Closing date warning (?deadline=bar). A request is closing soon when it
+  // Closing date warning (the default, unless ?deadline=off). A request is closing soon when it
   // still needs a response and closes within this many calendar days. Seven,
   // the last half of the 14 day period, was agreed in a team call.
   const CLOSING_SOON_DAYS = 7;
@@ -469,7 +469,7 @@ module.exports = function (router) {
     { value: 'notify-only', text: 'Application notification' }
   ];
   const STATUS_OPTIONS = ['Response needed', 'No response needed', 'Responded'];
-  // Only offered with the MOJ contextual date (?deadline=bar), and only
+  // Only offered with the MOJ contextual date (not with ?deadline=off), and only
   // matches what the bar marks: requests still needing a response
   const CLOSING_OPTIONS = [
     { value: 'passed', text: 'Closing date passed' },
@@ -499,7 +499,7 @@ module.exports = function (router) {
       types: asArray(query['consultation-v2-type']).filter(t => TYPE_OPTIONS.some(o => o.value === t)),
       statuses: asArray(query['consultation-v2-status']).filter(st => STATUS_OPTIONS.includes(st)),
       // Ignored with the MOJ contextual date off, as the filter is not shown
-      closing: query.deadline === 'bar' ? asArray(query['consultation-v2-closing']).filter(c => CLOSING_OPTIONS.some(o => o.value === c)) : [],
+      closing: query.deadline !== 'off' ? asArray(query['consultation-v2-closing']).filter(c => CLOSING_OPTIONS.some(o => o.value === c)) : [],
       // Ignored without the Open and Closed tabs, as the box is not shown
       search: query.tabs === 'on' ? String(query['consultation-v2-search'] || '').trim() : ''
     };
@@ -606,8 +606,8 @@ module.exports = function (router) {
     if (query.banners === 'off') keep.banners = 'off';
     if (query.scroll === 'off') keep.scroll = 'off';
     if (['filter', 'short'].includes(query.assignlist)) keep.assignlist = query.assignlist;
-    // Closing date warnings: off by default while the team reviews them
-    if (query.deadline === 'bar') keep.deadline = 'bar';
+    // Closing date warnings: the MOJ contextual date by default
+    if (query.deadline === 'off') keep.deadline = 'off';
     // The request whose closing date has passed: hidden by default
     if (query.passed === 'on') keep.passed = 'on';
     // Pagination: off by default
@@ -665,8 +665,8 @@ module.exports = function (router) {
       assignlistAutocomplete: to({ assignlist: null }),
       assignlistShort: to({ assignlist: 'short' }),
       assignlistFilter: to({ assignlist: 'filter' }),
-      deadlineOff: to({ deadline: null }),
-      deadlineBar: to({ deadline: 'bar' }),
+      deadlineBar: to({ deadline: null }),
+      deadlineOff: to({ deadline: 'off' }),
       passedOff: to({ passed: null }),
       passedOn: to({ passed: 'on' }),
       paginationOff: to({ pagination: null }),
@@ -718,10 +718,11 @@ module.exports = function (router) {
     // ?assignlist=short gives just the few people in the team, and
     // ?assignlist=filter the same long list with a filter box above it.
     res.locals.assignlistMode = keep.assignlist || 'autocomplete';
-    // ?deadline=bar adds the MOJ contextual date to closing dates that are
-    // soon or passed: bold date, label and a red or orange bar. Off by
-    // default. The request page's Closing date row shows the same.
-    res.locals.deadlineMode = keep.deadline || 'off';
+    // By default closing dates that are soon or passed get the MOJ
+    // contextual date: bold date, label and a red or orange bar.
+    // ?deadline=off shows the date alone. The request page's Closing date
+    // row shows the same.
+    res.locals.deadlineMode = keep.deadline || 'bar';
     res.locals.passedOn = keep.passed === 'on';
     res.locals.paginationOn = keep.pagination === 'on';
     res.locals.tabsOn = keep.tabs === 'on';
