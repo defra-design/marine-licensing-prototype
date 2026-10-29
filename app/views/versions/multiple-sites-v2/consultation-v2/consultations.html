@@ -291,6 +291,24 @@
         {% endif %}
 
         {#
+          Open and Closed tabs (?tabs=on), so finished cases do not pile up
+          under the ones that still need action. MOJ sub navigation rather
+          than GOV.UK tabs, as each tab is its own page of the list. Counts
+          follow the filters, so a search shows which tab a case is on.
+        #}
+        {% if tabs %}
+        <nav class="moj-sub-navigation" aria-label="Consultations">
+            <ul class="moj-sub-navigation__list">
+                {% for tab in tabs %}
+                <li class="moj-sub-navigation__item">
+                    <a class="moj-sub-navigation__link" href="{{ tab.href }}"{% if tab.current %} aria-current="page"{% endif %}>{{ tab.text }} ({{ tab.count }})</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </nav>
+        {% endif %}
+
+        {#
           MOJ "Filter a list" pattern, as on the LCML v4 submissions page.
           https://design-patterns.service.justice.gov.uk/patterns/filter-a-list/
           Filtering happens on the server, so ticked rows a filter hides are
@@ -307,10 +325,11 @@
             {% for name, value in versionParams %}
             <input type="hidden" name="{{ name }}" value="{{ value }}">
             {% endfor %}
+            {% if listTab === "closed" %}<input type="hidden" name="consultation-v2-list" value="closed">{% endif %}
             <div class="app-filter-bar__body" id="app-filter-bar-body">
                 <h2 class="govuk-heading-m">Filter</h2>
                 <div class="govuk-grid-row">
-                    {{ filterFields(filters, showOptions, typeOptions, statusOptions, team, true, closingOptions if deadlineMode === 'bar' else false) }}
+                    {{ filterFields(filters, showOptions, typeOptions, statusOptions, team, true, closingOptions if deadlineMode === 'bar' else false, tabsOn) }}
                 </div>
                 <div class="govuk-button-group govuk-!-margin-bottom-0">
                     {{ govukButton({
@@ -360,13 +379,14 @@
                             {% for name, value in versionParams %}
                             <input type="hidden" name="{{ name }}" value="{{ value }}">
                             {% endfor %}
+                            {% if listTab === "closed" %}<input type="hidden" name="consultation-v2-list" value="closed">{% endif %}
 
                             {{ govukButton({
                                 text: "Apply filters",
                                 classes: "govuk-!-margin-bottom-6"
                             }) }}
 
-                            {{ filterFields(filters, showOptions, typeOptions, statusOptions, team, false, closingOptions if deadlineMode === 'bar' else false) }}
+                            {{ filterFields(filters, showOptions, typeOptions, statusOptions, team, false, closingOptions if deadlineMode === 'bar' else false, tabsOn) }}
                         </form>
                     </div>
                 </div>
@@ -561,8 +581,9 @@
                         {# Ranked by what needs doing, not alphabetically #}
                         <td class="govuk-table__cell" data-sort-value="{{ {'Response needed': 1, 'No response needed': 2, 'Responded': 3}[request.status] }}">{{ statusTag(request) }}</td>
                         {# Responded cases get a leading 1 so they sort after every open case,
-                           keeping the default sort on open deadlines, soonest first #}
-                        <td class="govuk-table__cell app-nowrap" data-sort-value="{{ ('1' if request.status === 'Responded' else '') + (request.respondByOffset | daysFromTodaySort) }}">{{ closingDate(request, deadlineMode) }}</td>
+                           keeping the default sort on open deadlines, soonest first.
+                           Not on the Closed tab, which is by date alone. #}
+                        <td class="govuk-table__cell app-nowrap" data-sort-value="{{ ('1' if request.status === 'Responded' and listTab !== 'closed' else '') + (request.respondByOffset | daysFromTodaySort) }}">{{ closingDate(request, deadlineMode) }}</td>
                         <td class="govuk-table__cell app-nowrap" data-sort-value="{{ request.receivedOffset | daysFromTodaySort }}">{{ request.receivedOffset | daysFromTodayShort }}</td>
                         <td class="govuk-table__cell">{{ assignedTo(request) }}</td>
                         {% if not checkboxes %}
@@ -608,11 +629,9 @@
                 var order = current === 'ascending' ? 'descending' : 'ascending';
                 var params = new URLSearchParams(window.location.search);
                 params.delete('page');
-                params.delete('sort');
-                params.delete('order');
-                // Closing date, soonest first, is the default
-                if (heading.dataset.sortKey !== 'closing') params.set('sort', heading.dataset.sortKey);
-                if (order === 'descending') params.set('order', 'descending');
+                // Both always set, as the default order differs by tab
+                params.set('sort', heading.dataset.sortKey);
+                params.set('order', order);
                 var query = params.toString();
                 window.location.href = window.location.pathname + (query ? '?' + query : '');
               }, true);

@@ -4,9 +4,20 @@
   group sits in its own column.
 #}
 {# closingOptions: only passed with the MOJ contextual date (?deadline=bar) #}
-{% macro filterFields(filters, showOptions, typeOptions, statusOptions, team, columns, closingOptions) %}
+{# search: the Search box, only with the Open and Closed tabs (?tabs=on) #}
+{% macro filterFields(filters, showOptions, typeOptions, statusOptions, team, columns, closingOptions, search) %}
 {% set columnOpen = '<div class="govuk-grid-column-one-third">' if columns else '' %}
 {% set columnClose = '</div>' if columns else '' %}
+{% if search %}
+{# Across the top of the bar, above the three columns #}
+{{ ('<div class="govuk-grid-column-full">' if columns else '') | safe }}
+<div class="govuk-form-group">
+    <label class="govuk-label govuk-label--s" for="filter-search">Search</label>
+    <div class="govuk-hint" id="filter-search-hint">Application name or reference</div>
+    <input class="govuk-input{% if columns %} govuk-!-width-one-half{% endif %}" id="filter-search" name="consultation-v2-search" type="text" spellcheck="false" aria-describedby="filter-search-hint" value="{{ filters.search }}">
+</div>
+{{ ('</div>' if columns else '') | safe }}
+{% endif %}
 {{ columnOpen | safe }}
 <div class="govuk-form-group">
     <fieldset class="govuk-fieldset">

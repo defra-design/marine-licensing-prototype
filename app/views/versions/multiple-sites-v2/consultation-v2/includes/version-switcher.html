@@ -307,6 +307,25 @@
   </div>
 
   <div class="app-version-tray__section">
+  {# Off by default. Closed is responded or past the closing date. #}
+  <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Open and closed cases</h3>
+  <ul class="govuk-list govuk-list--spaced">
+    {% for option in [
+      { on: false, text: "One list", url: versionUrls.tabsOff },
+      { on: true, text: "Open and Closed tabs, with search", url: versionUrls.tabsOn }
+    ] %}
+    <li>
+      {% if (tabsOn or false) === option.on %}
+      <span aria-current="true">{{ option.text }}</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ option.url if versionUrls else consultationsUrl }}" class="govuk-link govuk-link--no-visited-state">{{ option.text }}</a>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  </div>
+
+  <div class="app-version-tray__section">
   {# Off by default. Only shows when there is more than one page of results. #}
   <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Pagination</h3>
   <ul class="govuk-list govuk-list--spaced">

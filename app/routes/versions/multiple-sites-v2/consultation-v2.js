@@ -28,7 +28,10 @@ module.exports = function (router) {
   // closes today, Falmouth tomorrow, Whitstable in 3 days and Dawlish in 7,
   // the edge of the closing soon window. Bude and Poole are notifications
   // closing in 2 and 4 days, which mixes up the statuses in the default sort
-  // and shows that notifications never get a warning.
+  // and shows that notifications never get a warning. Salcombe is a
+  // notification whose closing date passed 6 days ago, so it is on the
+  // Closed tab without anyone responding. It is only listed with the tabs
+  // on (?tabs=on, see onlyWithTabs).
   // Applicants match the LCML v4 view-details pages. The Dawlish summary is
   // made up for this steel thread, as LCML v4 only has pontoon text for it.
   const REQUESTS = {
@@ -174,6 +177,32 @@ module.exports = function (router) {
         drawing: 'outfall-repair-drawing.pdf'
       },
       siteLocation: 'Bude, Cornwall',
+      marinePlanArea: 'South West Inshore'
+    },
+    'salcombe': {
+      id: 'salcombe',
+      applicationName: 'Salcombe visitor pontoon replacement',
+      reference: 'MLA/2026/10012',
+      applicant: 'Salcombe Harbour Moorings Ltd',
+      type: 'notify-only',
+      assignedTo: '',
+      // Left out of the list unless the Open and Closed tabs are on
+      onlyWithTabs: true,
+      receivedOffset: -20,
+      summary: 'We are applying for a marine licence to replace the visitor pontoon at Whitestrand in Salcombe harbour. The existing timber pontoon has reached the end of its life. We will remove it and install a new floating pontoon of the same size on the existing piles.',
+      startAndEndDates: 'November 2026 to February 2027',
+      site: {
+        name: 'Whitestrand visitor pontoon',
+        typeOfActivity: 'Construction of new works',
+        whatIsBeingConstructed: 'Pontoons or floating walkways',
+        activityDescription: 'Removal of the existing 30 metre timber visitor pontoon and installation of a new modular floating pontoon of the same size, held on the 4 existing steel piles. No new piling is needed. The old pontoon will be towed away for recycling.',
+        maximumDuration: '3 weeks',
+        completionDate: 'Yes – before the start of the visitor season',
+        specificMonths: 'Yes – November to February only.',
+        workingHours: 'Monday to Friday, 08:00 to 16:30.',
+        drawing: 'visitor-pontoon-layout.pdf'
+      },
+      siteLocation: 'Salcombe, Devon',
       marinePlanArea: 'South West Inshore'
     },
     'scarborough': {
@@ -456,7 +485,7 @@ module.exports = function (router) {
   // Filters live in the URL so they survive assigning and can be shared.
   // Names are prefixed because the kit also copies query strings into the
   // session, and plain names like "type" or "status" are used elsewhere.
-  const FILTER_KEYS = ['consultation-v2-show', 'consultation-v2-person', 'consultation-v2-type', 'consultation-v2-status', 'consultation-v2-closing'];
+  const FILTER_KEYS = ['consultation-v2-show', 'consultation-v2-person', 'consultation-v2-type', 'consultation-v2-status', 'consultation-v2-closing', 'consultation-v2-search'];
 
   function asArray(value) {
     return [].concat(value || []).filter(v => v && v !== '_unchecked');
@@ -470,7 +499,9 @@ module.exports = function (router) {
       types: asArray(query['consultation-v2-type']).filter(t => TYPE_OPTIONS.some(o => o.value === t)),
       statuses: asArray(query['consultation-v2-status']).filter(st => STATUS_OPTIONS.includes(st)),
       // Ignored with the MOJ contextual date off, as the filter is not shown
-      closing: query.deadline === 'bar' ? asArray(query['consultation-v2-closing']).filter(c => CLOSING_OPTIONS.some(o => o.value === c)) : []
+      closing: query.deadline === 'bar' ? asArray(query['consultation-v2-closing']).filter(c => CLOSING_OPTIONS.some(o => o.value === c)) : [],
+      // Ignored without the Open and Closed tabs, as the box is not shown
+      search: query.tabs === 'on' ? String(query['consultation-v2-search'] || '').trim() : ''
     };
   }
 
@@ -484,6 +515,10 @@ module.exports = function (router) {
     if (filters.closing.length) {
       if (!request.closingSoon) return false;
       if (!filters.closing.includes(request.respondByOffset < 0 ? 'passed' : 'soon')) return false;
+    }
+    if (filters.search) {
+      const term = filters.search.toLowerCase();
+      if (!request.applicationName.toLowerCase().includes(term) && !request.reference.toLowerCase().includes(term)) return false;
     }
     return true;
   }
@@ -525,6 +560,12 @@ module.exports = function (router) {
           text: status,
           href: consultationsUrl(query, { 'consultation-v2-status': filters.statuses.filter(st => st !== status) })
         }))
+      });
+    }
+    if (filters.search) {
+      groups.push({
+        heading: 'Search',
+        items: [{ text: filters.search, href: consultationsUrl(query, { 'consultation-v2-search': null }) }]
       });
     }
     if (filters.closing.length) {
@@ -571,10 +612,13 @@ module.exports = function (router) {
     if (query.passed === 'on') keep.passed = 'on';
     // Pagination: off by default
     if (query.pagination === 'on') keep.pagination = 'on';
-    // Sort order, set by the column headings when pagination is on. Closing
-    // date, soonest first, is the default and is left out of the URL.
-    if (SORTS[query.sort] && query.sort !== 'closing') keep.sort = query.sort;
-    if (query.order === 'descending') keep.order = 'descending';
+    // Open and Closed tabs, with a search box: off by default
+    if (query.tabs === 'on') keep.tabs = 'on';
+    // Sort order, set by the column headings when pagination is on. Left out
+    // of the URL it is closing date: soonest first, or on the Closed tab
+    // most recent first.
+    if (SORTS[query.sort]) keep.sort = query.sort;
+    if (['ascending', 'descending'].includes(query.order)) keep.order = query.order;
     return keep;
   }
 
@@ -627,6 +671,8 @@ module.exports = function (router) {
       passedOn: to({ passed: 'on' }),
       paginationOff: to({ pagination: null }),
       paginationOn: to({ pagination: 'on' }),
+      tabsOff: to({ tabs: null }),
+      tabsOn: to({ tabs: 'on' }),
       rolesConsultee: to({ 'consultation-v2-roles': 'consultee' }),
       rolesBoth: to({ 'consultation-v2-roles': 'both' })
     };
@@ -678,6 +724,7 @@ module.exports = function (router) {
     res.locals.deadlineMode = keep.deadline || 'off';
     res.locals.passedOn = keep.passed === 'on';
     res.locals.paginationOn = keep.pagination === 'on';
+    res.locals.tabsOn = keep.tabs === 'on';
     // Always render afresh, so the browser's Back button never shows an old
     // copy of a page from before assigning or responding
     res.set('Cache-Control', 'no-store');
@@ -750,14 +797,40 @@ module.exports = function (router) {
   router.get(`${base}/consultations`, function (req, res) {
     const allRequests = Object.values(REQUESTS)
       .filter(r => !r.hiddenByDefault || req.query.passed === 'on')
+      .filter(r => !r.onlyWithTabs || res.locals.tabsOn)
       .map(r => withStatus(req, r));
     const filters = readFilters(req.query);
+    const filtered = allRequests.filter(r => matchesFilters(r, filters));
+
+    // Open and Closed tabs (?tabs=on). Closed is anything that no longer needs
+    // action: responded, or past its closing date (notifications included).
+    // Which tab is showing (?consultation-v2-list=closed) is kept by the
+    // filters, as Clear filters should not take you to the other tab.
+    const isClosed = r => r.status === 'Responded' || r.closed;
+    const listTab = res.locals.tabsOn && req.query['consultation-v2-list'] === 'closed' ? 'closed' : 'open';
+    let tabs = null;
+    if (res.locals.tabsOn) {
+      // Switching tab starts again on page 1, sorted by that tab's default
+      const tabUrl = list => consultationsUrl(req.query, { 'consultation-v2-list': list === 'closed' ? 'closed' : null, page: null, sort: null, order: null });
+      tabs = [
+        { text: 'Open', count: filtered.filter(r => !isClosed(r)).length, href: tabUrl('open'), current: listTab === 'open' },
+        { text: 'Closed', count: filtered.filter(isClosed).length, href: tabUrl('closed'), current: listTab === 'closed' }
+      ];
+    }
+    const inTab = res.locals.tabsOn ? filtered.filter(r => isClosed(r) === (listTab === 'closed')) : filtered;
+
     // Sorted here as well as in the browser, so each page of the list holds
-    // the right cases. Closing date, soonest first, unless ?sort= says otherwise.
-    const sort = { key: res.locals.versionParams.sort || 'closing', order: res.locals.versionParams.order || 'ascending' };
-    const matching = allRequests
-      .filter(r => matchesFilters(r, filters))
-      .sort((a, b) => SORTS[sort.key](a, b) * (sort.order === 'descending' ? -1 : 1));
+    // the right cases. Closing date unless ?sort= says otherwise: soonest
+    // first, or most recent first on the Closed tab, where responded cases
+    // are not put last as they are everywhere else.
+    const sort = {
+      key: res.locals.versionParams.sort || 'closing',
+      order: res.locals.versionParams.order || (listTab === 'closed' ? 'descending' : 'ascending')
+    };
+    const compare = sort.key === 'closing' && listTab === 'closed'
+      ? (a, b) => a.respondByOffset - b.respondByOffset
+      : SORTS[sort.key];
+    const matching = inTab.sort((a, b) => compare(a, b) * (sort.order === 'descending' ? -1 : 1));
 
     // With pagination on, only this page's cases go in the table
     let requests = matching;
@@ -790,6 +863,8 @@ module.exports = function (router) {
       // Every matching case, for the results count
       total: matching.length,
       sort,
+      tabs,
+      listTab,
       pagination,
       scopeName: scopeName(filters),
       justResponded: justResponded ? REQUESTS[justResponded] : null,
@@ -811,6 +886,7 @@ module.exports = function (router) {
       //   ?reqassign=off     no Assign on request pages
       //   ?pagination=on     5 cases a page, with GOV.UK pagination, and the
       //                      column headings sort every page (?sort=, ?order=)
+      //   ?tabs=on           Open and Closed tabs, and a search box in the filters
       // Not you: you would use Assign to me
       everyone: TEAM,
       assignBanner: takeAssignBanner(req, 'list'),
