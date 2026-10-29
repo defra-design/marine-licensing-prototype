@@ -398,6 +398,9 @@ module.exports = function (router) {
       closingSoon: status === 'Response needed' && respondByOffset <= CLOSING_SOON_DAYS,
       closingLabel: closingLabel(respondByOffset),
       closingUrgent: respondByOffset <= CLOSING_URGENT_DAYS,
+      // Nobody can respond once the closing date has passed. The status stays
+      // as it is for now while we work out what it should be.
+      closed: respondByOffset < 0,
       response: req.session.data[`consultation-v2-${request.id}-response`] || (request.seededResponse && request.seededResponse.text),
       respondedDate: req.session.data[`consultation-v2-${request.id}-responded-date`] || (request.seededResponse && dateFromToday(request.seededResponse.respondedOffset)),
       // Who sent the response, as it might not be you
@@ -938,8 +941,9 @@ module.exports = function (router) {
   router.get(`${base}/respond/:requestId`, function (req, res) {
     const request = findRequest(req, res);
     if (!request) return;
-    // Only the person assigned to a request can respond to it, and only once
-    if (!request.assignedToMe || request.status === 'Responded') {
+    // Only the person assigned to a request can respond to it, only once,
+    // and only before the closing date
+    if (!request.assignedToMe || request.status === 'Responded' || request.closed) {
       return res.redirect(`${base}/request-details/${request.id}${queryOf(req)}`);
     }
     res.render(`versions/${version}/${section}/respond`, { request });
@@ -948,7 +952,7 @@ module.exports = function (router) {
   router.post(`${base}/respond/:requestId-router`, function (req, res) {
     const request = REQUESTS[req.params.requestId];
     if (!request) return res.redirect(`${base}/consultations`);
-    if (assignedToFor(req, request) !== ME || statusFor(req, request) === 'Responded') {
+    if (assignedToFor(req, request) !== ME || statusFor(req, request) === 'Responded' || withStatus(req, request).closed) {
       return res.redirect(`${base}/request-details/${request.id}${queryOf(req)}`);
     }
 
