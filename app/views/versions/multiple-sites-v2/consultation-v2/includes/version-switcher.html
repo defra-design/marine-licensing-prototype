@@ -307,20 +307,39 @@
   </div>
 
   <div class="app-version-tray__section">
+  {# Off by default. Only shows when there is more than one page of results. #}
+  <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Pagination</h3>
+  <ul class="govuk-list govuk-list--spaced">
+    {% for option in [
+      { on: false, text: "Off", url: versionUrls.paginationOff },
+      { on: true, text: "On, 5 per page", url: versionUrls.paginationOn }
+    ] %}
+    <li>
+      {% if (paginationOn or false) === option.on %}
+      <span aria-current="true">{{ option.text }}</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ option.url if versionUrls else consultationsUrl }}" class="govuk-link govuk-link--no-visited-state">{{ option.text }}</a>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  </div>
+
+  <div class="app-version-tray__section">
   <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Layout</h3>
   <ul class="govuk-list govuk-list--spaced">
     <li>
-      {% if layoutMode !== "full" %}
-      <span aria-current="true">Standard width</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% if layoutMode !== "standard" %}
+      <span aria-current="true">Wide, with marine plan area</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
       {% else %}
-      <a href="{{ versionUrls.layoutStandard if versionUrls else consultationsUrl }}" class="govuk-link govuk-link--no-visited-state">Standard width</a>
+      <a href="{{ versionUrls.layoutFull if versionUrls else consultationsUrl }}" class="govuk-link govuk-link--no-visited-state">Wide, with marine plan area</a>
       {% endif %}
     </li>
     <li>
-      {% if layoutMode === "full" %}
-      <span aria-current="true">Wide, with marine plan area</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% if layoutMode === "standard" %}
+      <span aria-current="true">Standard width</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
       {% else %}
-      <a href="{{ versionUrls.layoutFull if versionUrls else consultationsUrl + '?layout=full' }}" class="govuk-link govuk-link--no-visited-state">Wide, with marine plan area</a>
+      <a href="{{ versionUrls.layoutStandard if versionUrls else consultationsUrl + '?layout=standard' }}" class="govuk-link govuk-link--no-visited-state">Standard width</a>
       {% endif %}
     </li>
   </ul>

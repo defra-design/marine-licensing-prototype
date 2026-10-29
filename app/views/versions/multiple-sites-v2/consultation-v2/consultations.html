@@ -3,6 +3,7 @@
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/pagination/macro.njk" import govukPagination %}
 {% from "versions/multiple-sites-v2/consultation-v2/includes/macros.html" import requestTypeText, statusTag, assignedTo, closingDate %}
 {% from "versions/multiple-sites-v2/consultation-v2/includes/filter-fields.html" import filterFields %}
 {# Two horizontal bar versions: ?filter=bar puts Show/Hide filter level with
@@ -11,8 +12,8 @@
 {% set toggleInHeader = filterMode === "bar" %}
 
 {% set navActive = "consultations" %}
-{# Widens the page to match the LCML v4 submissions page, or up to 1920px
-   with ?layout=full #}
+{# Up to 1920px wide by default, or the width of the LCML v4 submissions
+   page with ?layout=standard #}
 {% set fullWidth = layoutMode === "full" %}
 {% set currentPageId = "consultation-full-width" if fullWidth else "low-complexity-projects" %}
 {% set pageTitle = ("Error: " if assignError else "") + "Consultations" %}
@@ -487,7 +488,7 @@
                 {% endif %}
 
                 {# Same wording and weight as the LCML v4 submissions results count #}
-                <p class="govuk-body" aria-live="polite"><strong>{{ requests.length }} {{ "result" if requests.length === 1 else "results" }} found in '{{ scopeName }}'</strong></p>
+                <p class="govuk-body" aria-live="polite"><strong>{{ total }} {{ "result" if total === 1 else "results" }} found in '{{ scopeName }}'</strong></p>
 
                 {% if requests.length %}
             {# Columns are placeholders until the detailed designs are ready. #}
@@ -518,17 +519,18 @@
                         {# MOJ multi-select puts the Select all tick box in here #}
                         <th scope="col" class="govuk-table__header app-select-cell" id="select-all"></th>
                         {% endif %}
-                        <th scope="col" class="govuk-table__header govuk-!-width-one-quarter" aria-sort="none">Application name</th>
-                        <th scope="col" class="govuk-table__header" aria-sort="none">Reference</th>
+                        <th scope="col" class="govuk-table__header govuk-!-width-one-quarter" data-sort-key="name" aria-sort="{{ sort.order if sort.key === 'name' else 'none' }}">Application name</th>
+                        <th scope="col" class="govuk-table__header" data-sort-key="reference" aria-sort="{{ sort.order if sort.key === 'reference' else 'none' }}">Reference</th>
                     {% if fullWidth %}
-                    <th scope="col" class="govuk-table__header app-nowrap" aria-sort="none">Marine plan area</th>
+                    <th scope="col" class="govuk-table__header app-nowrap" data-sort-key="area" aria-sort="{{ sort.order if sort.key === 'area' else 'none' }}">Marine plan area</th>
                     {% endif %}
-                        <th scope="col" class="govuk-table__header" aria-sort="none">Type</th>
-                        <th scope="col" class="govuk-table__header" aria-sort="none">Status</th>
-                        {# Sorted by Closing date on load, so the soonest is at the top #}
-                        <th scope="col" class="govuk-table__header app-nowrap" aria-sort="ascending">Closing date</th>
-                        <th scope="col" class="govuk-table__header app-nowrap" aria-sort="none">Received</th>
-                        <th scope="col" class="govuk-table__header app-nowrap" aria-sort="none">Assigned to</th>
+                        <th scope="col" class="govuk-table__header" data-sort-key="type" aria-sort="{{ sort.order if sort.key === 'type' else 'none' }}">Type</th>
+                        <th scope="col" class="govuk-table__header" data-sort-key="status" aria-sort="{{ sort.order if sort.key === 'status' else 'none' }}">Status</th>
+                        {# Sorted by Closing date on load, so the soonest is at the top,
+                           unless ?sort= (pagination on) has chosen another column #}
+                        <th scope="col" class="govuk-table__header app-nowrap" data-sort-key="closing" aria-sort="{{ sort.order if sort.key === 'closing' else 'none' }}">Closing date</th>
+                        <th scope="col" class="govuk-table__header app-nowrap" data-sort-key="received" aria-sort="{{ sort.order if sort.key === 'received' else 'none' }}">Received</th>
+                        <th scope="col" class="govuk-table__header app-nowrap" data-sort-key="assigned" aria-sort="{{ sort.order if sort.key === 'assigned' else 'none' }}">Assigned to</th>
                         {% if not checkboxes %}
                         <th scope="col" class="govuk-table__header"><span class="govuk-visually-hidden">Action</span></th>
                         {% endif %}
@@ -584,6 +586,38 @@
             {% endif %}
             </div>
             </div>
+            {# ?pagination=on, only when there is more than one page #}
+            {% if pagination %}
+            {{ govukPagination(pagination) }}
+            {% endif %}
+            {% if paginationOn %}
+            {#
+              With pagination the browser only has one page of cases, so the
+              MOJ sort buttons would only sort those. Instead a click reloads
+              the list sorted on the server, back on page 1. The listener runs
+              before MOJ's, as it is on the table in the capture phase. The
+              buttons, arrows and next direction are still MOJ's.
+            #}
+            <script>
+              document.getElementById('consultations-table').addEventListener('click', function (event) {
+                var button = event.target.closest('thead button');
+                if (!button) return;
+                event.stopPropagation();
+                var heading = button.parentElement;
+                var current = heading.getAttribute('aria-sort');
+                var order = current === 'ascending' ? 'descending' : 'ascending';
+                var params = new URLSearchParams(window.location.search);
+                params.delete('page');
+                params.delete('sort');
+                params.delete('order');
+                // Closing date, soonest first, is the default
+                if (heading.dataset.sortKey !== 'closing') params.set('sort', heading.dataset.sortKey);
+                if (order === 'descending') params.set('order', 'descending');
+                var query = params.toString();
+                window.location.href = window.location.pathname + (query ? '?' + query : '');
+              }, true);
+            </script>
+            {% endif %}
                 {% else %}
                 {# Same as the LCML v4 submissions page, so developers can reuse it #}
                 <p class="govuk-body" id="no-results-message">There are no consultations to display.</p>

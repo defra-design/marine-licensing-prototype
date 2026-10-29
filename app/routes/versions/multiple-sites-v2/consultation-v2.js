@@ -556,7 +556,8 @@ module.exports = function (router) {
     const keep = {};
     if (query.assign === 'buttons') keep.assign = 'buttons';
     if (['bar', 'bar-actions'].includes(query.filter)) keep.filter = query.filter;
-    if (query.layout === 'full') keep.layout = 'full';
+    // Wide, with the marine plan area column, is the default
+    if (query.layout === 'standard') keep.layout = 'standard';
     // Defaults (left out of the URL): one Assign button and Assign at the
     // bottom of request pages. Anything else, including off, is kept.
     if (['off', 'panel', 'page'].includes(query.reassign)) keep.reassign = query.reassign;
@@ -568,6 +569,12 @@ module.exports = function (router) {
     if (query.deadline === 'bar') keep.deadline = 'bar';
     // The request whose closing date has passed: hidden by default
     if (query.passed === 'on') keep.passed = 'on';
+    // Pagination: off by default
+    if (query.pagination === 'on') keep.pagination = 'on';
+    // Sort order, set by the column headings when pagination is on. Closing
+    // date, soonest first, is the default and is left out of the URL.
+    if (SORTS[query.sort] && query.sort !== 'closing') keep.sort = query.sort;
+    if (query.order === 'descending') keep.order = 'descending';
     return keep;
   }
 
@@ -592,8 +599,8 @@ module.exports = function (router) {
     const keep = versionParams(query);
     const to = changes => urlWith(path, keep, changes);
     return {
-      layoutStandard: to({ layout: null }),
-      layoutFull: to({ layout: 'full' }),
+      layoutFull: to({ layout: null }),
+      layoutStandard: to({ layout: 'standard' }),
       assignCheckboxes: to({ assign: null }),
       assignButtons: to({ assign: 'buttons' }),
       filterSide: to({ filter: null }),
@@ -618,6 +625,8 @@ module.exports = function (router) {
       deadlineBar: to({ deadline: 'bar' }),
       passedOff: to({ passed: null }),
       passedOn: to({ passed: 'on' }),
+      paginationOff: to({ pagination: null }),
+      paginationOn: to({ pagination: 'on' }),
       rolesConsultee: to({ 'consultation-v2-roles': 'consultee' }),
       rolesBoth: to({ 'consultation-v2-roles': 'both' })
     };
@@ -650,7 +659,7 @@ module.exports = function (router) {
     res.locals.versionUrls = versionUrls(req.query, path);
     res.locals.assignMode = req.query.assign === 'buttons' ? 'buttons' : 'checkboxes';
     res.locals.filterMode = ['bar', 'bar-actions'].includes(req.query.filter) ? req.query.filter : 'side';
-    res.locals.layoutMode = req.query.layout === 'full' ? 'full' : 'standard';
+    res.locals.layoutMode = req.query.layout === 'standard' ? 'standard' : 'full';
     res.locals.reassignMode = keep.reassign || 'single';
     // Assign button on the request pages: at the bottom by default,
     // ?reqassign=under puts it under About this request, ?reqassign=off removes it.
@@ -668,6 +677,7 @@ module.exports = function (router) {
     // default. The request page's Closing date row shows the same.
     res.locals.deadlineMode = keep.deadline || 'off';
     res.locals.passedOn = keep.passed === 'on';
+    res.locals.paginationOn = keep.pagination === 'on';
     // Always render afresh, so the browser's Back button never shows an old
     // copy of a page from before assigning or responding
     res.set('Cache-Control', 'no-store');
@@ -695,13 +705,69 @@ module.exports = function (router) {
     return banner.text;
   }
 
+  // How each column of the case list sorts, matching the data-sort-value
+  // (or text) the MOJ sortable table uses, so sorting on the server for
+  // pagination gives the same order as sorting in the browser.
+  const STATUS_RANK = { 'Response needed': 1, 'No response needed': 2, 'Responded': 3 };
+  const byText = key => (a, b) => (a[key] || '').localeCompare(b[key] || '');
+  const SORTS = {
+    name: byText('applicationName'),
+    reference: byText('reference'),
+    area: byText('marinePlanArea'),
+    type: byText('type'),
+    status: (a, b) => STATUS_RANK[a.status] - STATUS_RANK[b.status],
+    // Open cases by closing date, then responded ones
+    closing: (a, b) => (a.status === 'Responded') - (b.status === 'Responded') || a.respondByOffset - b.respondByOffset,
+    received: (a, b) => a.receivedOffset - b.receivedOffset,
+    // Unassigned first, as in the browser
+    assigned: byText('assignedTo')
+  };
+
+  // Pagination (?pagination=on). Only shown when there are more results than
+  // fit on a page. The page size is small so the seeded cases make 2 pages;
+  // a real service would use something like 20 or 50.
+  const PAGE_SIZE = 5;
+
+  // The GOV.UK pagination component's settings for page ?page= of the list,
+  // or null when everything fits on one page. Links keep the filters.
+  function paginationFor(req, total, page) {
+    const pages = Math.ceil(total / PAGE_SIZE);
+    if (pages <= 1) return null;
+    const path = `${base}/consultations`;
+    const href = n => urlWith(path, req.query, { page: n === 1 ? null : n });
+    const items = [];
+    for (let n = 1; n <= pages; n++) {
+      items.push({ number: n, href: href(n), current: n === page });
+    }
+    return {
+      previous: page > 1 ? { href: href(page - 1) } : null,
+      next: page < pages ? { href: href(page + 1) } : null,
+      items
+    };
+  }
+
   // Consultation dashboard
   router.get(`${base}/consultations`, function (req, res) {
     const allRequests = Object.values(REQUESTS)
       .filter(r => !r.hiddenByDefault || req.query.passed === 'on')
       .map(r => withStatus(req, r));
     const filters = readFilters(req.query);
-    const requests = allRequests.filter(r => matchesFilters(r, filters));
+    // Sorted here as well as in the browser, so each page of the list holds
+    // the right cases. Closing date, soonest first, unless ?sort= says otherwise.
+    const sort = { key: res.locals.versionParams.sort || 'closing', order: res.locals.versionParams.order || 'ascending' };
+    const matching = allRequests
+      .filter(r => matchesFilters(r, filters))
+      .sort((a, b) => SORTS[sort.key](a, b) * (sort.order === 'descending' ? -1 : 1));
+
+    // With pagination on, only this page's cases go in the table
+    let requests = matching;
+    let pagination = null;
+    if (res.locals.paginationOn) {
+      const pages = Math.max(1, Math.ceil(matching.length / PAGE_SIZE));
+      const page = Math.min(Math.max(parseInt(req.query.page, 10) || 1, 1), pages);
+      requests = matching.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+      pagination = paginationFor(req, matching.length, page);
+    }
 
     // Flash the success banner once, after a response is submitted
     const justResponded = req.session.data['consultation-v2-just-responded'];
@@ -716,9 +782,15 @@ module.exports = function (router) {
     // Everything but the filters, so Clear filters keeps ?assign=buttons
     const withoutFilters = {};
     FILTER_KEYS.forEach(key => { withoutFilters[key] = null; });
+    // Back to the first page too
+    withoutFilters.page = null;
 
     res.render(`versions/${version}/${section}/consultations`, {
       requests,
+      // Every matching case, for the results count
+      total: matching.length,
+      sort,
+      pagination,
       scopeName: scopeName(filters),
       justResponded: justResponded ? REQUESTS[justResponded] : null,
       assignError,
@@ -728,7 +800,8 @@ module.exports = function (router) {
       //   ?assign=buttons    a button on each row instead of checkboxes
       //   ?filter=bar        horizontal filter bar, toggle by the heading
       //   ?filter=bar-actions horizontal filter bar, toggle by the buttons
-      //   ?layout=full       up to 1920px wide, with a Marine plan area column
+      //   (default)          up to 1920px wide, with a Marine plan area column
+      //   ?layout=standard   standard width, without it
       //   (default)          one Assign button, separate page
       //   ?reassign=off      Assign to me and Unassign from me only
       //   ?reassign=page     those plus Assign to someone else, separate page
@@ -736,6 +809,8 @@ module.exports = function (router) {
       //   (default)          Assign at the bottom of request pages
       //   ?reqassign=under   Assign under About this request instead
       //   ?reqassign=off     no Assign on request pages
+      //   ?pagination=on     5 cases a page, with GOV.UK pagination, and the
+      //                      column headings sort every page (?sort=, ?order=)
       // Not you: you would use Assign to me
       everyone: TEAM,
       assignBanner: takeAssignBanner(req, 'list'),
