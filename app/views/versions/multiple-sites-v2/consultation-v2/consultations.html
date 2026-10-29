@@ -50,6 +50,19 @@
         margin-right: auto;
       }
     }
+    /* Wide version: keep the status tags on one line once there is room, so
+       a two-line "No response needed" does not stand out more than "Response
+       needed". Measured: the table has room from about 1330px with the side
+       filter closed (or the horizontal bar), and 1690px with it open. MOJ
+       adds moj-js-hidden to the side filter when it is closed. Below these
+       the tags wrap as usual. GOV.UK tags have a 160px max-width, which has
+       to go too, or the text runs over the right-hand padding. */
+    @media (min-width: 1340px) {
+      .page-consultation-full-width:not(:has(.moj-filter:not(.moj-js-hidden))) #consultations-table .app-status-cell .govuk-tag { white-space: nowrap; max-width: none; }
+    }
+    @media (min-width: 1700px) {
+      .page-consultation-full-width #consultations-table .app-status-cell .govuk-tag { white-space: nowrap; max-width: none; }
+    }
     /* Let the success banner text use the full width of the banner */
     .govuk-notification-banner__content > * { max-width: none; }
     /* Tick box column: no gap to the left of the table, MOJ multi-select style */
@@ -579,7 +592,7 @@
                     {% endif %}
                         <td class="govuk-table__cell">{{ requestTypeText(request) }}</td>
                         {# Ranked by what needs doing, not alphabetically #}
-                        <td class="govuk-table__cell" data-sort-value="{{ {'Response needed': 1, 'No response needed': 2, 'Responded': 3}[request.status] }}">{{ statusTag(request) }}</td>
+                        <td class="govuk-table__cell app-status-cell" data-sort-value="{{ {'Response needed': 1, 'No response needed': 2, 'Responded': 3}[request.status] }}">{{ statusTag(request) }}</td>
                         {# Responded cases get a leading 1 so they sort after every open case,
                            keeping the default sort on open deadlines, soonest first.
                            Not on the Closed tab, which is by date alone. #}
