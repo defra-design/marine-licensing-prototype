@@ -1,3 +1,5 @@
+const APPLICATIONS = require('./consultation-v2-applications.js');
+
 module.exports = function (router) {
   // Consultation v2 MVP routes, copied from the v0 steel thread
   //
@@ -21,7 +23,8 @@ module.exports = function (router) {
   // Respond by is always the received date plus the 14 day response period,
   // so it is worked out in withStatus rather than set here.
   // The open requests for advice are spread so the closing date warning
-  // (?deadline=bar) shows every state: Scarborough passed 2 days ago, Hayling
+  // (?deadline=bar) shows every state: Scarborough passed 2 days ago (hidden
+  // unless ?passed=on, see hiddenByDefault), Hayling
   // closes today, Falmouth tomorrow, Whitstable in 3 days and Dawlish in 5,
   // the edge of the closing soon window. Bude and Poole are notifications
   // closing in 2 and 4 days, which mixes up the statuses in the default sort
@@ -180,6 +183,8 @@ module.exports = function (router) {
       applicant: 'North Bay Harbour Services Ltd',
       type: 'response-required',
       assignedTo: '',
+      // Left out of the list unless ?passed=on, as its closing date has passed
+      hiddenByDefault: true,
       adviceRequested: [
         'We would like your advice on whether the works are likely to affect the rocky shore habitats either side of the slipway.',
         'Tell us whether any surveys are needed before the works start.'
@@ -323,6 +328,9 @@ module.exports = function (router) {
       marinePlanArea: 'South Inshore'
     }
   };
+
+  // Fuller view-application pages for the show and tell (Hayling and Poole)
+  Object.keys(APPLICATIONS).forEach(id => { REQUESTS[id].application = APPLICATIONS[id]; });
 
   // Each request's status lives in the session as consultation-v2-<id>-status so
   // it can be seen and changed through View data like any other key.
@@ -555,6 +563,8 @@ module.exports = function (router) {
     if (['filter', 'autocomplete'].includes(query.assignlist)) keep.assignlist = query.assignlist;
     // Closing date warnings: off by default while the team reviews them
     if (query.deadline === 'bar') keep.deadline = 'bar';
+    // The request whose closing date has passed: hidden by default
+    if (query.passed === 'on') keep.passed = 'on';
     return keep;
   }
 
@@ -603,6 +613,8 @@ module.exports = function (router) {
       assignlistAutocomplete: to({ assignlist: 'autocomplete' }),
       deadlineOff: to({ deadline: null }),
       deadlineBar: to({ deadline: 'bar' }),
+      passedOff: to({ passed: null }),
+      passedOn: to({ passed: 'on' }),
       rolesConsultee: to({ 'consultation-v2-roles': 'consultee' }),
       rolesBoth: to({ 'consultation-v2-roles': 'both' })
     };
@@ -652,6 +664,7 @@ module.exports = function (router) {
     // soon or passed: bold date, label and a red or orange bar. Off by
     // default. The request page's Closing date row shows the same.
     res.locals.deadlineMode = keep.deadline || 'off';
+    res.locals.passedOn = keep.passed === 'on';
     // Always render afresh, so the browser's Back button never shows an old
     // copy of a page from before assigning or responding
     res.set('Cache-Control', 'no-store');
@@ -681,7 +694,9 @@ module.exports = function (router) {
 
   // Consultation dashboard
   router.get(`${base}/consultations`, function (req, res) {
-    const allRequests = Object.values(REQUESTS).map(r => withStatus(req, r));
+    const allRequests = Object.values(REQUESTS)
+      .filter(r => !r.hiddenByDefault || req.query.passed === 'on')
+      .map(r => withStatus(req, r));
     const filters = readFilters(req.query);
     const requests = allRequests.filter(r => matchesFilters(r, filters));
 

@@ -1,13 +1,18 @@
 {% extends "versions/multiple-sites-v2/consultation-v2/includes/layout.html" %}
 
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+
 {% set navActive = "consultations" %}
+{# The application's status in LCML v4, which is Consultation while it is out to consultees #}
+{% set applicationStatus = govukTag({ text: "Consultation", classes: "govuk-tag--purple" }) %}
 {% set pageTitle = request.applicationName %}
 {% set backLink = "javascript:history.back()" %}
 
 {#
   Read-only view of the submitted application, following the view details
-  page in LCML v4. Only the top-level sections are filled in for the steel
-  thread; the rest are placeholders.
+  page in LCML v4. Hayling and Poole have a fuller application
+  (request.application) for the show and tell. For the rest only the
+  top-level sections are filled in; the others are placeholders.
 #}
 {% macro summaryCard(title, rows) %}
 <div class="govuk-summary-card">
@@ -35,8 +40,168 @@
         <span class="govuk-caption-l">{{ request.reference }}</span>
         <h1 class="govuk-heading-l">{{ request.applicationName }}</h1>
 
+        {% set app = request.application %}
+        {% if app %}
+
+        {# Fuller application for the show and tell, from consultation-v2-applications.js #}
         {{ summaryCard("Application overview", [
             ["Application type", "Marine licence application"],
+            ["Status", applicationStatus],
+            ["Reference number", request.reference],
+            ["Who the marine licence is for", request.applicant],
+            ["Date submitted", app.submittedOffset | daysFromToday]
+        ]) }}
+
+        {{ summaryCard("Application details", [
+            ["Application name", request.applicationName],
+            ["Proposed works summary", request.summary],
+            ["Preferred start and end dates of the licence", request.startAndEndDates]
+        ]) }}
+
+        {{ summaryCard("Providing the site location", [
+            ["Method of providing site location", app.siteLocationMethod]
+        ]) }}
+
+        {% for site in app.sites %}
+        {% set siteNumber = loop.index %}
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">Site {{ siteNumber }}</h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list govuk-summary-list--full-width">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Site name</dt>
+                        <dd class="govuk-summary-list__value">{{ site.name }}</dd>
+                    </div>
+                    <div class="govuk-summary-list__row govuk-summary-list__row--no-actions">
+                        <dt class="govuk-summary-list__key govuk-summary-list__key--full-width map-label">Map view</dt>
+                        <dd class="govuk-summary-list__value govuk-summary-list__value--full-width">
+                            <img src="/public/images/{{ site.map }}" alt="Map showing site {{ siteNumber }} location" width="100%" />
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        {% for activity in site.activities %}
+        {{ summaryCard("Site " + siteNumber + " – Activity " + loop.index, [
+            ["Type of activity", activity.typeOfActivity],
+            [activity.whatLabel, activity.what],
+            ["Activity description", activity.description],
+            ["Maximum duration of activity", activity.maximumDuration],
+            ["Completion date", activity.completionDate],
+            ["Activity limited to specific months", activity.specificMonths],
+            ["Proposed working hours", activity.workingHours]
+        ]) }}
+        {% endfor %}
+
+        {# Document links are deliberately dead in the prototype #}
+        {% for drawing in site.drawings %}
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">Site {{ siteNumber }} – Construction drawing {{ loop.index }}</h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">File upload</dt>
+                        <dd class="govuk-summary-list__value"><a class="govuk-link govuk-link--no-visited-state" href="#">{{ drawing }}</a></dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+        {% endfor %}
+        {% endfor %}
+
+        {% for group in app.policyGroups %}
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">Marine plan policies – {{ group.category }}</h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    {% for policy in group.policies %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">{{ policy.name }}<br>({{ policy.code }})</dt>
+                        <dd class="govuk-summary-list__value">
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
+                            <p class="govuk-body">{{ policy.info }}</p>
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Applicant’s consideration</p>
+                            <p class="govuk-body govuk-!-margin-bottom-0">{{ policy.consideration }}</p>
+                        </dd>
+                    </div>
+                    {% endfor %}
+                </dl>
+            </div>
+        </div>
+        {% endfor %}
+
+        {# One card per supporting document, as on LCML v4 check your answers #}
+        {% for document in app.supportingDocuments %}
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">Supporting document – {{ document.filename }}</h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">File upload</dt>
+                        <dd class="govuk-summary-list__value"><a class="govuk-link govuk-link--no-visited-state" href="#">{{ document.filename }}</a></dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Type</dt>
+                        <dd class="govuk-summary-list__value">{{ document.type }}</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Policies</dt>
+                        <dd class="govuk-summary-list__value">
+                            <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-0">
+                                {% for link in document.policies %}
+                                <li>{{ link.name }} ({{ link.code }}) – {{ link.location }}</li>
+                                {% endfor %}
+                            </ul>
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+        {% endfor %}
+
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">Water Framework Directive assessment</h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Proposed works located within one nautical mile (1.85km) of low-water, in a tidal river or estuary</dt>
+                        <dd class="govuk-summary-list__value">{{ app.wfd.withinOneNauticalMile }}</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Proposed works limited to one of the excluded activities</dt>
+                        <dd class="govuk-summary-list__value">{{ app.wfd.excludedActivities }}</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Water Framework Directive assessment upload</dt>
+                        <dd class="govuk-summary-list__value"><a class="govuk-link govuk-link--no-visited-state" href="#">{{ app.wfd.upload }}</a></dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        {{ summaryCard("Other permissions", [
+            ["Special legal powers to do any of these proposed works", app.otherPermissions.specialLegalPowers],
+            ["Located in a harbour authority area", app.otherPermissions.harbourAuthority],
+            ["Permission from any other authorities in relation to these proposed works", app.otherPermissions.otherAuthorities],
+            ["Pre-application public groups or organisations consultation", app.otherPermissions.preApplicationConsultation]
+        ]) }}
+
+        {% else %}
+
+        {{ summaryCard("Application overview", [
+            ["Application type", "Marine licence application"],
+            ["Status", applicationStatus],
             ["Reference number", request.reference],
             ["Who the Marine licence is for", request.applicant]
         ]) }}
@@ -95,6 +260,8 @@
 
         {{ summaryCard("Marine plan policies", [["Details", "To follow"]]) }}
         {{ summaryCard("Other permissions", [["Details", "To follow"]]) }}
+
+        {% endif %}
 
     </div>
 </div>

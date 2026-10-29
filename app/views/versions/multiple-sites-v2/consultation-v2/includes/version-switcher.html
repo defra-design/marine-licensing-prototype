@@ -241,6 +241,25 @@
   </div>
 
   <div class="app-version-tray__section">
+  {# Scarborough slipway replacement, whose closing date has passed. Hidden by default. #}
+  <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Consultation past its closing date</h3>
+  <ul class="govuk-list govuk-list--spaced">
+    {% for option in [
+      { on: false, text: "Hidden", url: versionUrls.passedOff },
+      { on: true, text: "Shown", url: versionUrls.passedOn }
+    ] %}
+    <li>
+      {% if (passedOn or false) === option.on %}
+      <span aria-current="true">{{ option.text }}</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ option.url if versionUrls else consultationsUrl }}" class="govuk-link govuk-link--no-visited-state">{{ option.text }}</a>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  </div>
+
+  <div class="app-version-tray__section">
   <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Banners after assigning</h3>
   <ul class="govuk-list govuk-list--spaced">
     <li>
