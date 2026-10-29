@@ -420,10 +420,10 @@ module.exports = function (router) {
   // Team members who can be assigned, other than you. Used by the Show filter.
   const TEAM = ['Jenny Adkinson', 'Kevin Morris', 'Morgan Hughes'];
 
-  // A whole organisation's worth of people, for the "Long list with a filter
-  // box" version of the separate Assign page (?assignlist=filter). Includes
-  // the team, so cases already assigned to them still make sense. The
-  // type-ahead version (?assignlist=autocomplete) uses the same people.
+  // A whole organisation's worth of people, for the type-ahead version of the
+  // separate Assign page (the default) and the "Long list with a filter box"
+  // version (?assignlist=filter). Includes the team, so cases already
+  // assigned to them still make sense.
   const EVERYONE = TEAM.concat([
     'Aisha Rahman', 'Alex Turner', 'Amira Haddad', 'Ben Whitfield', 'Callum Reid',
     'Chloe Bennett', 'Daniel Okafor', 'Eleanor Price', 'Ethan Clarke', 'Fatima Begum',
@@ -563,7 +563,7 @@ module.exports = function (router) {
     if (['off', 'under'].includes(query.reqassign)) keep.reqassign = query.reqassign;
     if (query.banners === 'off') keep.banners = 'off';
     if (query.scroll === 'off') keep.scroll = 'off';
-    if (['filter', 'autocomplete'].includes(query.assignlist)) keep.assignlist = query.assignlist;
+    if (['filter', 'short'].includes(query.assignlist)) keep.assignlist = query.assignlist;
     // Closing date warnings: off by default while the team reviews them
     if (query.deadline === 'bar') keep.deadline = 'bar';
     // The request whose closing date has passed: hidden by default
@@ -611,9 +611,9 @@ module.exports = function (router) {
       // The scroll pane links keep the filters too, so only the pane changes
       scrollOn: urlWith(path, query, { scroll: null }),
       scrollOff: urlWith(path, query, { scroll: 'off' }),
-      assignlistShort: to({ assignlist: null }),
+      assignlistAutocomplete: to({ assignlist: null }),
+      assignlistShort: to({ assignlist: 'short' }),
       assignlistFilter: to({ assignlist: 'filter' }),
-      assignlistAutocomplete: to({ assignlist: 'autocomplete' }),
       deadlineOff: to({ deadline: null }),
       deadlineBar: to({ deadline: 'bar' }),
       passedOff: to({ passed: null }),
@@ -659,10 +659,10 @@ module.exports = function (router) {
     res.locals.bannersOn = keep.banners !== 'off';
     // ?scroll=off shows the table without the MOJ scrollable pane round it
     res.locals.scrollOn = keep.scroll !== 'off';
-    // ?assignlist=filter gives the separate Assign page a long list of people
-    // with a filter box above it, instead of the few in the team.
-    // ?assignlist=autocomplete gives the same people in a type-ahead.
-    res.locals.assignlistMode = keep.assignlist || 'short';
+    // The separate Assign page has everyone in a type-ahead by default.
+    // ?assignlist=short gives just the few people in the team, and
+    // ?assignlist=filter the same long list with a filter box above it.
+    res.locals.assignlistMode = keep.assignlist || 'autocomplete';
     // ?deadline=bar adds the MOJ contextual date to closing dates that are
     // soon or passed: bold date, label and a red or orange bar. Off by
     // default. The request page's Closing date row shows the same.
@@ -868,7 +868,7 @@ module.exports = function (router) {
     const fromRequest = from && ids.length === 1 && ids[0] === from ? from : null;
     // One Assign button is the default, so no ?reassign means single
     const includeMe = !['off', 'panel', 'page'].includes(req.query.reassign) || !!fromRequest;
-    const others = ['filter', 'autocomplete'].includes(req.query.assignlist) ? EVERYONE : TEAM;
+    const others = req.query.assignlist === 'short' ? TEAM : EVERYONE;
     return { ids, fromRequest, people: includeMe ? [ME].concat(others) : others, includeMe };
   }
 
