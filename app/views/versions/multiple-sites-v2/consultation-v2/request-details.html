@@ -46,7 +46,7 @@
             </div>
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">Closing date</dt>
-                {# Same as the list (?deadline=bar) #}
+                {# Same as the list (MOJ contextual date unless ?deadline=off) #}
                 <dd class="govuk-summary-list__value">{{ closingDate(request, deadlineMode, true) }}</dd>
             </div>
             <div class="govuk-summary-list__row">
@@ -80,7 +80,7 @@
             </div>
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">Location</dt>
-                <dd class="govuk-summary-list__value">{{ request.marinePlanArea }} marine plan area</dd>
+                <dd class="govuk-summary-list__value">{% for area in request.marinePlanAreas %}{{ area }}{% if loop.revindex === 2 %} and {% elif not loop.last %}, {% endif %}{% endfor %} marine plan {{ "area" if request.marinePlanAreas.length === 1 else "areas" }}</dd>
             </div>
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">Summary of the proposed works</dt>
@@ -88,7 +88,7 @@
             </div>
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">Full details</dt>
-                <dd class="govuk-summary-list__value"><a href="../view-application/{{ request.id }}{{ versionQuery }}" class="govuk-link govuk-link--no-visited-state">View the application</a></dd>
+                <dd class="govuk-summary-list__value"><a href="../view-application/{{ request.id }}{{ versionQuery }}" class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">View the application (opens in new tab)</a></dd>
             </div>
         </dl>
 
@@ -99,8 +99,8 @@
         <p class="govuk-body">{{ paragraph }}</p>
         {% endfor %}
         {# Only shown to the person assigned, as only they can respond, and
-           not once they have #}
-        {% elif request.assignedToMe and request.status !== "Responded" %}
+           not once they have or the closing date has passed #}
+        {% elif request.assignedToMe and request.status !== "Responded" and not request.closed %}
         <h2 class="govuk-heading-m">If you need to respond</h2>
         <p class="govuk-body">The closing date for responses is {{ request.respondByOffset | daysFromToday }}. We will consider any responses we receive by then when we make our decision.</p>
         {% endif %}
@@ -110,10 +110,11 @@
         <h2 class="govuk-heading-m">Response sent</h2>
         <p class="govuk-body govuk-hint">Sent{% if request.respondedBy %} by {{ request.respondedBy }}{% endif %} on {{ request.respondedDate }}</p>
         <p class="govuk-body">{{ request.response }}</p>
-        {# Only the person assigned to a request can respond to it #}
-        {% elif not request.assignedToMe %}
+        {# Only the person assigned to a request can respond to it, and nobody
+           can once the closing date has passed #}
+        {% elif not request.assignedToMe or request.closed %}
         {% if assignAtBottom %}
-        {# Not yours, so no respond button: Assign is the next step #}
+        {# No respond button: Assign is the next step #}
         {{ govukButton({ text: "Assign", href: assignUrl, classes: "govuk-button--secondary" }) }}
         {% endif %}
         {% elif isAdvice %}

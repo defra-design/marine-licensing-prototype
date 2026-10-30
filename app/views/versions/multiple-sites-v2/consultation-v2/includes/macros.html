@@ -32,6 +32,7 @@
 {{ govukTag({
     text: request.status,
     classes: {
+        'Missed': 'govuk-tag--red',
         'No response needed': 'govuk-tag--grey',
         'Responded': 'govuk-tag--green'
     }[request.status]

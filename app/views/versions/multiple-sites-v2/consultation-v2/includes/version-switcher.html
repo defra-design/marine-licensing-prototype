@@ -171,10 +171,17 @@
   <h3 class="govuk-heading-s govuk-!-margin-bottom-2">People on the Assign page</h3>
   <ul class="govuk-list govuk-list--spaced">
     <li>
-      {% if assignlistMode !== "filter" and assignlistMode !== "autocomplete" %}
+      {% if assignlistMode !== "short" and assignlistMode !== "filter" %}
+      <span aria-current="true">Type-ahead, all names shown</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ versionUrls.assignlistAutocomplete if versionUrls else consultationsUrl }}" class="govuk-link govuk-link--no-visited-state">Type-ahead, all names shown</a>
+      {% endif %}
+    </li>
+    <li>
+      {% if assignlistMode === "short" %}
       <span aria-current="true">A few people</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
       {% else %}
-      <a href="{{ versionUrls.assignlistShort if versionUrls else consultationsUrl }}" class="govuk-link govuk-link--no-visited-state">A few people</a>
+      <a href="{{ versionUrls.assignlistShort if versionUrls else consultationsUrl + '?assignlist=short' }}" class="govuk-link govuk-link--no-visited-state">A few people</a>
       {% endif %}
     </li>
     <li>
@@ -184,13 +191,26 @@
       <a href="{{ versionUrls.assignlistFilter if versionUrls else consultationsUrl + '?assignlist=filter' }}" class="govuk-link govuk-link--no-visited-state">Long list with a filter box</a>
       {% endif %}
     </li>
+  </ul>
+  </div>
+
+  <div class="app-version-tray__section">
+  {# Only changes the type-ahead version of the Assign page #}
+  <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Unassign on the Assign page</h3>
+  <ul class="govuk-list govuk-list--spaced">
+    {% for option in [
+      { mode: "below", text: "Below Assign, as a separate choice", url: versionUrls.unassignBelow },
+      { mode: "top", text: "Button above the question", url: versionUrls.unassignTop },
+      { mode: "list", text: "An option in the type-ahead", url: versionUrls.unassignList }
+    ] %}
     <li>
-      {% if assignlistMode === "autocomplete" %}
-      <span aria-current="true">Type-ahead, all names shown</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% if (unassignMode or "below") === option.mode %}
+      <span aria-current="true">{{ option.text }}</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
       {% else %}
-      <a href="{{ versionUrls.assignlistAutocomplete if versionUrls else consultationsUrl + '?assignlist=autocomplete' }}" class="govuk-link govuk-link--no-visited-state">Type-ahead, all names shown</a>
+      <a href="{{ option.url if versionUrls else consultationsUrl }}" class="govuk-link govuk-link--no-visited-state">{{ option.text }}</a>
       {% endif %}
     </li>
+    {% endfor %}
   </ul>
   </div>
 
@@ -222,15 +242,53 @@
   </div>
 
   <div class="app-version-tray__section">
-  {# Off by default. The request page's Closing date row shows the same. #}
+  {# MOJ contextual date by default. The request page's Closing date row shows the same. #}
   <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Closing date warnings</h3>
   <ul class="govuk-list govuk-list--spaced">
     {% for option in [
-      { mode: "off", text: "Off", url: versionUrls.deadlineOff },
-      { mode: "bar", text: "MOJ contextual date", url: versionUrls.deadlineBar }
+      { mode: "bar", text: "MOJ contextual date", url: versionUrls.deadlineBar },
+      { mode: "off", text: "Off", url: versionUrls.deadlineOff }
     ] %}
     <li>
-      {% if (deadlineMode or "off") === option.mode %}
+      {% if (deadlineMode or "bar") === option.mode %}
+      <span aria-current="true">{{ option.text }}</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ option.url if versionUrls else consultationsUrl }}" class="govuk-link govuk-link--no-visited-state">{{ option.text }}</a>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  </div>
+
+  <div class="app-version-tray__section">
+  {# Scarborough slipway replacement, whose closing date has passed. Shown by default. #}
+  <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Consultation past its closing date</h3>
+  <ul class="govuk-list govuk-list--spaced">
+    {% for option in [
+      { on: true, text: "Shown", url: versionUrls.passedOn },
+      { on: false, text: "Hidden", url: versionUrls.passedOff }
+    ] %}
+    <li>
+      {% if (passedOn !== false) === option.on %}
+      <span aria-current="true">{{ option.text }}</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ option.url if versionUrls else consultationsUrl }}" class="govuk-link govuk-link--no-visited-state">{{ option.text }}</a>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  </div>
+
+  <div class="app-version-tray__section">
+  {# On by default. Closed is responded or past the closing date, Missed is a request for advice past it with no response. #}
+  <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Open and closed cases</h3>
+  <ul class="govuk-list govuk-list--spaced">
+    {% for option in [
+      { on: true, text: "Open, Closed and Missed tabs", url: versionUrls.tabsOn },
+      { on: false, text: "One list", url: versionUrls.tabsOff }
+    ] %}
+    <li>
+      {% if (tabsOn !== false) === option.on %}
       <span aria-current="true">{{ option.text }}</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
       {% else %}
       <a href="{{ option.url if versionUrls else consultationsUrl }}" class="govuk-link govuk-link--no-visited-state">{{ option.text }}</a>
@@ -288,20 +346,39 @@
   </div>
 
   <div class="app-version-tray__section">
+  {# Off by default. Only shows when there is more than one page of results. #}
+  <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Pagination</h3>
+  <ul class="govuk-list govuk-list--spaced">
+    {% for option in [
+      { on: false, text: "Off", url: versionUrls.paginationOff },
+      { on: true, text: "On, 5 per page", url: versionUrls.paginationOn }
+    ] %}
+    <li>
+      {% if (paginationOn or false) === option.on %}
+      <span aria-current="true">{{ option.text }}</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ option.url if versionUrls else consultationsUrl }}" class="govuk-link govuk-link--no-visited-state">{{ option.text }}</a>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  </div>
+
+  <div class="app-version-tray__section">
   <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Layout</h3>
   <ul class="govuk-list govuk-list--spaced">
     <li>
-      {% if layoutMode !== "full" %}
-      <span aria-current="true">Standard width</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% if layoutMode !== "standard" %}
+      <span aria-current="true">Wide, with marine plan area</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
       {% else %}
-      <a href="{{ versionUrls.layoutStandard if versionUrls else consultationsUrl }}" class="govuk-link govuk-link--no-visited-state">Standard width</a>
+      <a href="{{ versionUrls.layoutFull if versionUrls else consultationsUrl }}" class="govuk-link govuk-link--no-visited-state">Wide, with marine plan area</a>
       {% endif %}
     </li>
     <li>
-      {% if layoutMode === "full" %}
-      <span aria-current="true">Wide, with marine plan area</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% if layoutMode === "standard" %}
+      <span aria-current="true">Standard width</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
       {% else %}
-      <a href="{{ versionUrls.layoutFull if versionUrls else consultationsUrl + '?layout=full' }}" class="govuk-link govuk-link--no-visited-state">Wide, with marine plan area</a>
+      <a href="{{ versionUrls.layoutStandard if versionUrls else consultationsUrl + '?layout=standard' }}" class="govuk-link govuk-link--no-visited-state">Standard width</a>
       {% endif %}
     </li>
   </ul>

@@ -17,6 +17,9 @@
 {% set pageHeading = ("Assign consultation" if selected.length === 1 else "Assign consultations") if single else "Assign to someone else" %}
 {% set pageTitle = ("Error: " if error else "") + pageHeading %}
 {% set backLink = backUrl %}
+{% set anyAssigned = selected | selectattr("assignedTo") | length %}
+{# Where Unassign goes. The options below only apply to the type-ahead. #}
+{% set unassignPlace = unassignMode if assignlistMode === "autocomplete" else "top" %}
 
 {% block content %}
 
@@ -44,9 +47,9 @@
           Long list and type-ahead versions: Unassign is a button up here, by who has them now,
           so nobody scrolls past every name to find it. Its own form, so it
           never mixes with the radios. Shown if any selected consultation is
-          assigned; it unassigns them all.
+          assigned; it unassigns them all. ?unassign= moves it for the type-ahead.
         #}
-        {% if assignlistMode !== "short" and (selected | selectattr("assignedTo") | length) %}
+        {% if assignlistMode !== "short" and anyAssigned and unassignPlace === "top" %}
         <form method="post" novalidate>
             <input type="hidden" name="consultation-v2-reassign-to" value="no-one">
             {{ govukButton({ text: "Unassign", classes: "govuk-button--secondary" }) }}
@@ -55,7 +58,7 @@
 
         <form method="post" novalidate>
             {#
-              Type-ahead version (?assignlist=autocomplete): the accessible
+              Type-ahead version (the default): the accessible
               autocomplete, opening on all names when the box gets focus, you
               first. It builds on this select, so without JavaScript it is a
               plain dropdown.
@@ -65,7 +68,8 @@
                 <h2 class="govuk-label-wrapper">
                     <label class="govuk-label govuk-label--m" for="reassign-to">Who do you want to assign {{ "it" if selected.length === 1 else "them" }} to?</label>
                 </h2>
-                <div id="reassign-hint" class="govuk-hint">Start typing a name, or choose from the list</div>
+                {# The type-ahead option says that assigning replaces who has it now #}
+                <div id="reassign-hint" class="govuk-hint">{% if unassignPlace === "list" and anyAssigned %}{{ ("This will replace " + selected[0].assignedTo + ".") if selected.length === 1 else "This will replace anyone currently assigned." }} {% endif %}Start typing a name, or choose from the list</div>
                 {% if error %}
                 <p id="reassign-error" class="govuk-error-message">
                     <span class="govuk-visually-hidden">Error:</span> {{ error }}
@@ -74,6 +78,9 @@
                 <div class="app-assign-autocomplete">
                     <select class="govuk-select" id="reassign-to" name="consultation-v2-reassign-to" aria-describedby="reassign-hint{% if error %} reassign-error{% endif %}">
                         <option value=""></option>
+                        {% if unassignPlace === "list" and anyAssigned %}
+                        <option value="no-one">Unassigned (nobody)</option>
+                        {% endif %}
                         {% for person in everyone %}
                         <option value="{{ person }}">{{ person }}</option>
                         {% endfor %}
@@ -130,10 +137,22 @@
             {% endif %}
 
             <div class="govuk-button-group">
-                {{ govukButton({ text: "Assign" }) }}
+                {# Save with Unassigned in the list, as "Assign" to nobody reads oddly #}
+                {{ govukButton({ text: "Save" if unassignPlace === "list" and anyAssigned else "Assign" }) }}
                 <a href="{{ backUrl }}" class="govuk-link govuk-link--no-visited-state">Cancel</a>
             </div>
         </form>
+
+        {# The default: under Assign, worded as the alternative to it. Generic, as
+           several consultations could be assigned to different people. #}
+        {% if unassignPlace === "below" and anyAssigned %}
+        <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible">
+        <p class="govuk-body">Or remove the current assignee from {{ "this consultation" if selected.length === 1 else "these consultations" }}</p>
+        <form method="post" novalidate>
+            <input type="hidden" name="consultation-v2-reassign-to" value="no-one">
+            {{ govukButton({ text: "Unassign", classes: "govuk-button--secondary" }) }}
+        </form>
+        {% endif %}
 
     </div>
 </div>

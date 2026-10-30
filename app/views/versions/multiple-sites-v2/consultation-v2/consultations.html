@@ -3,16 +3,19 @@
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+{% from "govuk/components/pagination/macro.njk" import govukPagination %}
 {% from "versions/multiple-sites-v2/consultation-v2/includes/macros.html" import requestTypeText, statusTag, assignedTo, closingDate %}
 {% from "versions/multiple-sites-v2/consultation-v2/includes/filter-fields.html" import filterFields %}
 {# Two horizontal bar versions: ?filter=bar puts Show/Hide filter level with
    the heading, ?filter=bar-actions puts it next to the assign buttons #}
-{% set filterBar = filterMode === "bar" or filterMode === "bar-actions" %}
-{% set toggleInHeader = filterMode === "bar" %}
+{# The Missed tab has no filters, so none of the filter layout or its toggle #}
+{% set hasFilters = filterSet.columns.length > 0 %}
+{% set filterBar = filterMode === "bar" or filterMode === "bar-actions" or not hasFilters %}
+{% set toggleInHeader = filterMode === "bar" and hasFilters %}
 
 {% set navActive = "consultations" %}
-{# Widens the page to match the LCML v4 submissions page, or up to 1920px
-   with ?layout=full #}
+{# Up to 1920px wide by default, or the width of the LCML v4 submissions
+   page with ?layout=standard #}
 {% set fullWidth = layoutMode === "full" %}
 {% set currentPageId = "consultation-full-width" if fullWidth else "low-complexity-projects" %}
 {% set pageTitle = ("Error: " if assignError else "") + "Consultations" %}
@@ -23,31 +26,21 @@
 {% block head %}
   {{ super() }}
   {% include "versions/multiple-sites-v2/consultation-v2/includes/closing-date-styles.html" %}
+  {% include "versions/multiple-sites-v2/consultation-v2/includes/wide-layout-styles.html" %}
   <style>
     #consultations-table .app-nowrap { white-space: nowrap; }
-    /* Wide version: the page, header and navigation go up to 1920px (a full
-       HD screen), with the usual GOV.UK gutters until there is room to centre.
-       Wide enough for the table not to wrap, without spreading out on bigger
-       screens. */
-    .page-consultation-full-width .govuk-width-container,
-    .page-consultation-full-width .govuk-header__container {
-      max-width: 1920px;
-      margin-left: 15px;
-      margin-right: 15px;
+    /* Wide version: keep the status tags on one line once there is room, so
+       a two-line "No response needed" does not stand out more than "Response
+       needed". Measured: the table has room from about 1330px with the side
+       filter closed (or the horizontal bar), and 1690px with it open. MOJ
+       adds moj-js-hidden to the side filter when it is closed. Below these
+       the tags wrap as usual. GOV.UK tags have a 160px max-width, which has
+       to go too, or the text runs over the right-hand padding. */
+    @media (min-width: 1340px) {
+      .page-consultation-full-width:not(:has(.moj-filter:not(.moj-js-hidden))) #consultations-table .app-status-cell .govuk-tag { white-space: nowrap; max-width: none; }
     }
-    @media (min-width: 40.0625em) {
-      .page-consultation-full-width .govuk-width-container,
-      .page-consultation-full-width .govuk-header__container {
-        margin-left: 30px;
-        margin-right: 30px;
-      }
-    }
-    @media (min-width: 1980px) {
-      .page-consultation-full-width .govuk-width-container,
-      .page-consultation-full-width .govuk-header__container {
-        margin-left: auto;
-        margin-right: auto;
-      }
+    @media (min-width: 1700px) {
+      .page-consultation-full-width #consultations-table .app-status-cell .govuk-tag { white-space: nowrap; max-width: none; }
     }
     /* Let the success banner text use the full width of the banner */
     .govuk-notification-banner__content > * { max-width: none; }
@@ -99,6 +92,9 @@
     }
     /* When hidden, the whole grey panel goes, not just its contents */
     .app-filter-bar--collapsed { display: none; }
+    /* Marine plan area filter: checkboxes lined up with the other groups' */
+    .app-filter-details { margin-bottom: 0; }
+    .app-filter-details .govuk-details__text { border-left: 0; padding-left: 0; }
   </style>
 {% endblock %}
 
@@ -290,6 +286,25 @@
         {% endif %}
 
         {#
+          Open and Closed tabs (unless ?tabs=off), so finished cases do not pile up
+          under the ones that still need action. MOJ sub navigation rather
+          than GOV.UK tabs, as each tab is its own page of the list. Counts
+          are each tab's total, and filters do not carry across. A
+          third Missed tab shows with the missed case (unless ?passed=off).
+        #}
+        {% if tabs %}
+        <nav class="moj-sub-navigation" aria-label="Consultations">
+            <ul class="moj-sub-navigation__list">
+                {% for tab in tabs %}
+                <li class="moj-sub-navigation__item">
+                    <a class="moj-sub-navigation__link" href="{{ tab.href }}"{% if tab.current %} aria-current="page"{% endif %}>{{ tab.text }} ({{ tab.count }})</a>
+                </li>
+                {% endfor %}
+            </ul>
+        </nav>
+        {% endif %}
+
+        {#
           MOJ "Filter a list" pattern, as on the LCML v4 submissions page.
           https://design-patterns.service.justice.gov.uk/patterns/filter-a-list/
           Filtering happens on the server, so ticked rows a filter hides are
@@ -301,15 +316,17 @@
           table keeps its full width. Same fields and query string as the
           side panel. Nothing changes until Apply filters is pressed.
         #}
+        {% if hasFilters %}
         <form method="get" action="consultations" class="app-filter-bar" novalidate>
             {# Keep the page versions (this bar, assign method, layout) #}
             {% for name, value in versionParams %}
             <input type="hidden" name="{{ name }}" value="{{ value }}">
             {% endfor %}
+            {% if listTab !== "open" %}<input type="hidden" name="consultation-v2-list" value="{{ listTab }}">{% endif %}
             <div class="app-filter-bar__body" id="app-filter-bar-body">
                 <h2 class="govuk-heading-m">Filter</h2>
                 <div class="govuk-grid-row">
-                    {{ filterFields(filters, showOptions, typeOptions, statusOptions, team, true, closingOptions if deadlineMode === 'bar' else false) }}
+                    {{ filterFields(filters, filterSet, showOptions, typeOptions, team, true) }}
                 </div>
                 <div class="govuk-button-group govuk-!-margin-bottom-0">
                     {{ govukButton({
@@ -320,6 +337,7 @@
                 </div>
             </div>
         </form>
+        {% endif %}
         <div>
         {% else %}
         <div class="moj-filter-layout moj-filter-layout--narrow">
@@ -359,13 +377,14 @@
                             {% for name, value in versionParams %}
                             <input type="hidden" name="{{ name }}" value="{{ value }}">
                             {% endfor %}
+                            {% if listTab !== "open" %}<input type="hidden" name="consultation-v2-list" value="{{ listTab }}">{% endif %}
 
                             {{ govukButton({
                                 text: "Apply filters",
                                 classes: "govuk-!-margin-bottom-6"
                             }) }}
 
-                            {{ filterFields(filters, showOptions, typeOptions, statusOptions, team, false, closingOptions if deadlineMode === 'bar' else false) }}
+                            {{ filterFields(filters, filterSet, showOptions, typeOptions, team, false) }}
                         </form>
                     </div>
                 </div>
@@ -376,7 +395,7 @@
                 <form method="post" novalidate>
 
                 <div class="app-consultations-actions">
-                    {% if filterMode === "bar-actions" %}
+                    {% if filterMode === "bar-actions" and hasFilters %}
                     {# Show/Hide filter alongside the assign buttons, as in the side panel version #}
                     <div class="govuk-button-group">
                         <button type="button" class="govuk-button govuk-button--secondary" id="app-filter-bar-toggle" aria-controls="app-filter-bar-body" aria-expanded="true" hidden>Hide filter</button>
@@ -487,7 +506,7 @@
                 {% endif %}
 
                 {# Same wording and weight as the LCML v4 submissions results count #}
-                <p class="govuk-body" aria-live="polite"><strong>{{ requests.length }} {{ "result" if requests.length === 1 else "results" }} found in '{{ scopeName }}'</strong></p>
+                <p class="govuk-body" aria-live="polite"><strong>{{ total }} {{ "result" if total === 1 else "results" }} found in '{{ scopeName }}'</strong></p>
 
                 {% if requests.length %}
             {# Columns are placeholders until the detailed designs are ready. #}
@@ -518,17 +537,18 @@
                         {# MOJ multi-select puts the Select all tick box in here #}
                         <th scope="col" class="govuk-table__header app-select-cell" id="select-all"></th>
                         {% endif %}
-                        <th scope="col" class="govuk-table__header govuk-!-width-one-quarter" aria-sort="none">Application name</th>
-                        <th scope="col" class="govuk-table__header" aria-sort="none">Reference</th>
+                        <th scope="col" class="govuk-table__header govuk-!-width-one-quarter" data-sort-key="name" aria-sort="{{ sort.order if sort.key === 'name' else 'none' }}">Application name</th>
+                        <th scope="col" class="govuk-table__header" data-sort-key="reference" aria-sort="{{ sort.order if sort.key === 'reference' else 'none' }}">Reference</th>
                     {% if fullWidth %}
-                    <th scope="col" class="govuk-table__header app-nowrap" aria-sort="none">Marine plan area</th>
+                    <th scope="col" class="govuk-table__header app-nowrap" data-sort-key="area" aria-sort="{{ sort.order if sort.key === 'area' else 'none' }}">Marine plan area</th>
                     {% endif %}
-                        <th scope="col" class="govuk-table__header" aria-sort="none">Type</th>
-                        <th scope="col" class="govuk-table__header" aria-sort="none">Status</th>
-                        {# Sorted by Closing date on load, so the soonest is at the top #}
-                        <th scope="col" class="govuk-table__header app-nowrap" aria-sort="ascending">Closing date</th>
-                        <th scope="col" class="govuk-table__header app-nowrap" aria-sort="none">Received</th>
-                        <th scope="col" class="govuk-table__header app-nowrap" aria-sort="none">Assigned to</th>
+                        <th scope="col" class="govuk-table__header" data-sort-key="type" aria-sort="{{ sort.order if sort.key === 'type' else 'none' }}">Type</th>
+                        <th scope="col" class="govuk-table__header" data-sort-key="status" aria-sort="{{ sort.order if sort.key === 'status' else 'none' }}">Status</th>
+                        {# Sorted by Closing date on load, so the soonest is at the top,
+                           unless ?sort= (pagination on) has chosen another column #}
+                        <th scope="col" class="govuk-table__header app-nowrap" data-sort-key="closing" aria-sort="{{ sort.order if sort.key === 'closing' else 'none' }}">Closing date</th>
+                        <th scope="col" class="govuk-table__header app-nowrap" data-sort-key="received" aria-sort="{{ sort.order if sort.key === 'received' else 'none' }}">Received</th>
+                        <th scope="col" class="govuk-table__header app-nowrap" data-sort-key="assigned" aria-sort="{{ sort.order if sort.key === 'assigned' else 'none' }}">Assigned to</th>
                         {% if not checkboxes %}
                         <th scope="col" class="govuk-table__header"><span class="govuk-visually-hidden">Action</span></th>
                         {% endif %}
@@ -553,14 +573,15 @@
                         <th scope="row" class="govuk-table__header govuk-!-font-weight-regular" data-sort-value="{{ request.applicationName }}"><a href="request-details/{{ request.id }}{{ listQuery }}" class="govuk-link govuk-link--no-visited-state">{{ request.applicationName }}</a></th>
                         <td class="govuk-table__cell">{{ request.reference }}</td>
                     {% if fullWidth %}
-                    <td class="govuk-table__cell">{{ request.marinePlanArea }}</td>
+                    <td class="govuk-table__cell">{% for area in request.marinePlanAreas %}{{ area }}{% if not loop.last %}<br>{% endif %}{% endfor %}</td>
                     {% endif %}
                         <td class="govuk-table__cell">{{ requestTypeText(request) }}</td>
                         {# Ranked by what needs doing, not alphabetically #}
-                        <td class="govuk-table__cell" data-sort-value="{{ {'Response needed': 1, 'No response needed': 2, 'Responded': 3}[request.status] }}">{{ statusTag(request) }}</td>
+                        <td class="govuk-table__cell app-status-cell" data-sort-value="{{ {'Response needed': 1, 'Missed': 2, 'No response needed': 3, 'Responded': 4}[request.status] }}">{{ statusTag(request) }}</td>
                         {# Responded cases get a leading 1 so they sort after every open case,
-                           keeping the default sort on open deadlines, soonest first #}
-                        <td class="govuk-table__cell app-nowrap" data-sort-value="{{ ('1' if request.status === 'Responded' else '') + (request.respondByOffset | daysFromTodaySort) }}">{{ closingDate(request, deadlineMode) }}</td>
+                           keeping the default sort on open deadlines, soonest first.
+                           Not on the Closed tab, which is by date alone. #}
+                        <td class="govuk-table__cell app-nowrap" data-sort-value="{{ ('1' if request.status === 'Responded' and listTab !== 'closed' else '') + (request.respondByOffset | daysFromTodaySort) }}">{{ closingDate(request, deadlineMode) }}</td>
                         <td class="govuk-table__cell app-nowrap" data-sort-value="{{ request.receivedOffset | daysFromTodaySort }}">{{ request.receivedOffset | daysFromTodayShort }}</td>
                         <td class="govuk-table__cell">{{ assignedTo(request) }}</td>
                         {% if not checkboxes %}
@@ -584,6 +605,36 @@
             {% endif %}
             </div>
             </div>
+            {# ?pagination=on, only when there is more than one page #}
+            {% if pagination %}
+            {{ govukPagination(pagination) }}
+            {% endif %}
+            {% if paginationOn %}
+            {#
+              With pagination the browser only has one page of cases, so the
+              MOJ sort buttons would only sort those. Instead a click reloads
+              the list sorted on the server, back on page 1. The listener runs
+              before MOJ's, as it is on the table in the capture phase. The
+              buttons, arrows and next direction are still MOJ's.
+            #}
+            <script>
+              document.getElementById('consultations-table').addEventListener('click', function (event) {
+                var button = event.target.closest('thead button');
+                if (!button) return;
+                event.stopPropagation();
+                var heading = button.parentElement;
+                var current = heading.getAttribute('aria-sort');
+                var order = current === 'ascending' ? 'descending' : 'ascending';
+                var params = new URLSearchParams(window.location.search);
+                params.delete('page');
+                // Both always set, as the default order differs by tab
+                params.set('sort', heading.dataset.sortKey);
+                params.set('order', order);
+                var query = params.toString();
+                window.location.href = window.location.pathname + (query ? '?' + query : '');
+              }, true);
+            </script>
+            {% endif %}
                 {% else %}
                 {# Same as the LCML v4 submissions page, so developers can reuse it #}
                 <p class="govuk-body" id="no-results-message">There are no consultations to display.</p>
