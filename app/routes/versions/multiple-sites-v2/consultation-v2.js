@@ -610,6 +610,8 @@ module.exports = function (router) {
     if (query.banners === 'off') keep.banners = 'off';
     if (query.scroll === 'off') keep.scroll = 'off';
     if (['filter', 'short'].includes(query.assignlist)) keep.assignlist = query.assignlist;
+    // Where Unassign goes with the type-ahead: below Assign by default
+    if (['top', 'list'].includes(query.unassign)) keep.unassign = query.unassign;
     // Closing date warnings: the MOJ contextual date by default
     if (query.deadline === 'off') keep.deadline = 'off';
     // The request whose closing date has passed: shown by default
@@ -669,6 +671,9 @@ module.exports = function (router) {
       assignlistAutocomplete: to({ assignlist: null }),
       assignlistShort: to({ assignlist: 'short' }),
       assignlistFilter: to({ assignlist: 'filter' }),
+      unassignBelow: to({ unassign: null }),
+      unassignTop: to({ unassign: 'top' }),
+      unassignList: to({ unassign: 'list' }),
       deadlineBar: to({ deadline: null }),
       deadlineOff: to({ deadline: 'off' }),
       passedOff: to({ passed: 'off' }),
@@ -722,6 +727,10 @@ module.exports = function (router) {
     // ?assignlist=short gives just the few people in the team, and
     // ?assignlist=filter the same long list with a filter box above it.
     res.locals.assignlistMode = keep.assignlist || 'autocomplete';
+    // With the type-ahead, Unassign is under Assign as a separate choice by
+    // default. ?unassign=top makes it a button above the question, and
+    // ?unassign=list an option in the type-ahead.
+    res.locals.unassignMode = keep.unassign || 'below';
     // By default closing dates that are soon or passed get the MOJ
     // contextual date: bold date, label and a red or orange bar.
     // ?deadline=off shows the date alone. The request page's Closing date

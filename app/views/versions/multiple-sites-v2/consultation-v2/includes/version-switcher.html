@@ -195,6 +195,26 @@
   </div>
 
   <div class="app-version-tray__section">
+  {# Only changes the type-ahead version of the Assign page #}
+  <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Unassign on the Assign page</h3>
+  <ul class="govuk-list govuk-list--spaced">
+    {% for option in [
+      { mode: "below", text: "Below Assign, as a separate choice", url: versionUrls.unassignBelow },
+      { mode: "top", text: "Button above the question", url: versionUrls.unassignTop },
+      { mode: "list", text: "An option in the type-ahead", url: versionUrls.unassignList }
+    ] %}
+    <li>
+      {% if (unassignMode or "below") === option.mode %}
+      <span aria-current="true">{{ option.text }}</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ option.url if versionUrls else consultationsUrl }}" class="govuk-link govuk-link--no-visited-state">{{ option.text }}</a>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  </div>
+
+  <div class="app-version-tray__section">
   <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Assign on request pages</h3>
   <ul class="govuk-list govuk-list--spaced">
     <li>
