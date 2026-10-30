@@ -281,10 +281,11 @@
         {% endif %}
 
         {#
-          Open and Closed tabs (?tabs=on), so finished cases do not pile up
+          Open and Closed tabs (unless ?tabs=off), so finished cases do not pile up
           under the ones that still need action. MOJ sub navigation rather
           than GOV.UK tabs, as each tab is its own page of the list. Counts
-          follow the filters, so a search shows which tab a case is on.
+          follow the filters, so a search shows which tab a case is on. A
+          third Missed tab shows with the missed case (unless ?passed=off).
         #}
         {% if tabs %}
         <nav class="moj-sub-navigation" aria-label="Consultations">
@@ -315,7 +316,7 @@
             {% for name, value in versionParams %}
             <input type="hidden" name="{{ name }}" value="{{ value }}">
             {% endfor %}
-            {% if listTab === "closed" %}<input type="hidden" name="consultation-v2-list" value="closed">{% endif %}
+            {% if listTab !== "open" %}<input type="hidden" name="consultation-v2-list" value="{{ listTab }}">{% endif %}
             <div class="app-filter-bar__body" id="app-filter-bar-body">
                 <h2 class="govuk-heading-m">Filter</h2>
                 <div class="govuk-grid-row">
@@ -369,7 +370,7 @@
                             {% for name, value in versionParams %}
                             <input type="hidden" name="{{ name }}" value="{{ value }}">
                             {% endfor %}
-                            {% if listTab === "closed" %}<input type="hidden" name="consultation-v2-list" value="closed">{% endif %}
+                            {% if listTab !== "open" %}<input type="hidden" name="consultation-v2-list" value="{{ listTab }}">{% endif %}
 
                             {{ govukButton({
                                 text: "Apply filters",
@@ -569,7 +570,7 @@
                     {% endif %}
                         <td class="govuk-table__cell">{{ requestTypeText(request) }}</td>
                         {# Ranked by what needs doing, not alphabetically #}
-                        <td class="govuk-table__cell app-status-cell" data-sort-value="{{ {'Response needed': 1, 'No response needed': 2, 'Responded': 3}[request.status] }}">{{ statusTag(request) }}</td>
+                        <td class="govuk-table__cell app-status-cell" data-sort-value="{{ {'Response needed': 1, 'Missed': 2, 'No response needed': 3, 'Responded': 4}[request.status] }}">{{ statusTag(request) }}</td>
                         {# Responded cases get a leading 1 so they sort after every open case,
                            keeping the default sort on open deadlines, soonest first.
                            Not on the Closed tab, which is by date alone. #}

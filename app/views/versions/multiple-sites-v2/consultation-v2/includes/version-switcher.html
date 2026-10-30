@@ -241,15 +241,34 @@
   </div>
 
   <div class="app-version-tray__section">
-  {# Scarborough slipway replacement, whose closing date has passed. Hidden by default. #}
+  {# Scarborough slipway replacement, whose closing date has passed. Shown by default. #}
   <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Consultation past its closing date</h3>
   <ul class="govuk-list govuk-list--spaced">
     {% for option in [
-      { on: false, text: "Hidden", url: versionUrls.passedOff },
-      { on: true, text: "Shown", url: versionUrls.passedOn }
+      { on: true, text: "Shown", url: versionUrls.passedOn },
+      { on: false, text: "Hidden", url: versionUrls.passedOff }
     ] %}
     <li>
-      {% if (passedOn or false) === option.on %}
+      {% if (passedOn !== false) === option.on %}
+      <span aria-current="true">{{ option.text }}</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ option.url if versionUrls else consultationsUrl }}" class="govuk-link govuk-link--no-visited-state">{{ option.text }}</a>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  </div>
+
+  <div class="app-version-tray__section">
+  {# On by default. Closed is responded or past the closing date, Missed is a request for advice past it with no response. #}
+  <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Open and closed cases</h3>
+  <ul class="govuk-list govuk-list--spaced">
+    {% for option in [
+      { on: true, text: "Open, Closed and Missed tabs, with search", url: versionUrls.tabsOn },
+      { on: false, text: "One list", url: versionUrls.tabsOff }
+    ] %}
+    <li>
+      {% if (tabsOn !== false) === option.on %}
       <span aria-current="true">{{ option.text }}</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
       {% else %}
       <a href="{{ option.url if versionUrls else consultationsUrl }}" class="govuk-link govuk-link--no-visited-state">{{ option.text }}</a>
@@ -303,25 +322,6 @@
       <a href="{{ versionUrls.filterBar if versionUrls else consultationsUrl + '?filter=bar' }}" class="govuk-link govuk-link--no-visited-state">Horizontal bar, toggle by heading</a>
       {% endif %}
     </li>
-  </ul>
-  </div>
-
-  <div class="app-version-tray__section">
-  {# Off by default. Closed is responded or past the closing date. #}
-  <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Open and closed cases</h3>
-  <ul class="govuk-list govuk-list--spaced">
-    {% for option in [
-      { on: false, text: "One list", url: versionUrls.tabsOff },
-      { on: true, text: "Open and Closed tabs, with search", url: versionUrls.tabsOn }
-    ] %}
-    <li>
-      {% if (tabsOn or false) === option.on %}
-      <span aria-current="true">{{ option.text }}</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
-      {% else %}
-      <a href="{{ option.url if versionUrls else consultationsUrl }}" class="govuk-link govuk-link--no-visited-state">{{ option.text }}</a>
-      {% endif %}
-    </li>
-    {% endfor %}
   </ul>
   </div>
 

@@ -23,15 +23,15 @@ module.exports = function (router) {
   // Respond by is always the received date plus the 14 day response period,
   // so it is worked out in withStatus rather than set here.
   // The open requests for advice are spread so the closing date warning
-  // (on by default, ?deadline=off turns it off) shows every state: Scarborough passed 2 days ago (hidden
-  // unless ?passed=on, see hiddenByDefault), Hayling
+  // (on by default, ?deadline=off turns it off) shows every state: Scarborough passed 2 days ago (on
+  // the Missed tab, ?passed=off hides it, see canBeHidden), Hayling
   // closes today, Falmouth tomorrow, Whitstable in 3 days and Dawlish in 7,
   // the edge of the closing soon window. Bude and Poole are notifications
   // closing in 2 and 4 days, which mixes up the statuses in the default sort
   // and shows that notifications never get a warning. Salcombe is a
   // notification whose closing date passed 6 days ago, so it is on the
-  // Closed tab without anyone responding. It is only listed with the tabs
-  // on (?tabs=on, see onlyWithTabs).
+  // Closed tab without anyone responding. It is only listed with the tabs,
+  // so not with ?tabs=off (see onlyWithTabs).
   // Applicants match the LCML v4 view-details pages. The Dawlish summary is
   // made up for this steel thread, as LCML v4 only has pontoon text for it.
   const REQUESTS = {
@@ -212,8 +212,8 @@ module.exports = function (router) {
       applicant: 'North Bay Harbour Services Ltd',
       type: 'response-required',
       assignedTo: '',
-      // Left out of the list unless ?passed=on, as its closing date has passed
-      hiddenByDefault: true,
+      // Left out of the list with ?passed=off, as its closing date has passed
+      canBeHidden: true,
       adviceRequested: [
         'We would like your advice on whether the works are likely to affect the rocky shore habitats either side of the slipway.',
         'Tell us whether any surveys are needed before the works start.'
@@ -417,18 +417,20 @@ module.exports = function (router) {
     const assignedTo = assignedToFor(req, request);
     const status = statusFor(req, request);
     const respondByOffset = request.receivedOffset + RESPONSE_PERIOD_DAYS;
+    // A request for advice nobody responded to before its closing date
+    const missed = status === 'Response needed' && respondByOffset < 0;
     return Object.assign({}, request, {
       assignedTo,
       assignedToMe: assignedTo === ME,
-      status,
+      status: missed ? 'Missed' : status,
+      missed,
       respondByOffset,
       // Only requests for advice still waiting for a response. Notifications
       // are left out, as responding to them is optional.
       closingSoon: status === 'Response needed' && respondByOffset <= CLOSING_SOON_DAYS,
       closingLabel: closingLabel(respondByOffset),
       closingUrgent: respondByOffset <= CLOSING_URGENT_DAYS,
-      // Nobody can respond once the closing date has passed. The status stays
-      // as it is for now while we work out what it should be.
+      // Nobody can respond once the closing date has passed
       closed: respondByOffset < 0,
       response: req.session.data[`consultation-v2-${request.id}-response`] || (request.seededResponse && request.seededResponse.text),
       respondedDate: req.session.data[`consultation-v2-${request.id}-responded-date`] || (request.seededResponse && dateFromToday(request.seededResponse.respondedOffset)),
@@ -469,6 +471,8 @@ module.exports = function (router) {
     { value: 'notify-only', text: 'Application notification' }
   ];
   const STATUS_OPTIONS = ['Response needed', 'No response needed', 'Responded'];
+  // Only offered when the missed case is shown (not with ?passed=off)
+  const STATUS_OPTIONS_WITH_MISSED = STATUS_OPTIONS.concat('Missed');
   // Only offered with the MOJ contextual date (not with ?deadline=off), and only
   // matches what the bar marks: requests still needing a response
   const CLOSING_OPTIONS = [
@@ -497,11 +501,11 @@ module.exports = function (router) {
       show,
       people: show === 'person' ? asArray(query['consultation-v2-person']).filter(p => TEAM.includes(p)) : [],
       types: asArray(query['consultation-v2-type']).filter(t => TYPE_OPTIONS.some(o => o.value === t)),
-      statuses: asArray(query['consultation-v2-status']).filter(st => STATUS_OPTIONS.includes(st)),
+      statuses: asArray(query['consultation-v2-status']).filter(st => (query.passed !== 'off' ? STATUS_OPTIONS_WITH_MISSED : STATUS_OPTIONS).includes(st)),
       // Ignored with the MOJ contextual date off, as the filter is not shown
       closing: query.deadline !== 'off' ? asArray(query['consultation-v2-closing']).filter(c => CLOSING_OPTIONS.some(o => o.value === c)) : [],
       // Ignored without the Open and Closed tabs, as the box is not shown
-      search: query.tabs === 'on' ? String(query['consultation-v2-search'] || '').trim() : ''
+      search: query.tabs !== 'off' ? String(query['consultation-v2-search'] || '').trim() : ''
     };
   }
 
@@ -608,12 +612,12 @@ module.exports = function (router) {
     if (['filter', 'short'].includes(query.assignlist)) keep.assignlist = query.assignlist;
     // Closing date warnings: the MOJ contextual date by default
     if (query.deadline === 'off') keep.deadline = 'off';
-    // The request whose closing date has passed: hidden by default
-    if (query.passed === 'on') keep.passed = 'on';
+    // The request whose closing date has passed: shown by default
+    if (query.passed === 'off') keep.passed = 'off';
     // Pagination: off by default
     if (query.pagination === 'on') keep.pagination = 'on';
-    // Open and Closed tabs, with a search box: off by default
-    if (query.tabs === 'on') keep.tabs = 'on';
+    // Open, Closed and Missed tabs, with a search box: on by default
+    if (query.tabs === 'off') keep.tabs = 'off';
     // Sort order, set by the column headings when pagination is on. Left out
     // of the URL it is closing date: soonest first, or on the Closed tab
     // most recent first.
@@ -667,12 +671,12 @@ module.exports = function (router) {
       assignlistFilter: to({ assignlist: 'filter' }),
       deadlineBar: to({ deadline: null }),
       deadlineOff: to({ deadline: 'off' }),
-      passedOff: to({ passed: null }),
-      passedOn: to({ passed: 'on' }),
+      passedOff: to({ passed: 'off' }),
+      passedOn: to({ passed: null }),
       paginationOff: to({ pagination: null }),
       paginationOn: to({ pagination: 'on' }),
-      tabsOff: to({ tabs: null }),
-      tabsOn: to({ tabs: 'on' }),
+      tabsOff: to({ tabs: 'off' }),
+      tabsOn: to({ tabs: null }),
       rolesConsultee: to({ 'consultation-v2-roles': 'consultee' }),
       rolesBoth: to({ 'consultation-v2-roles': 'both' })
     };
@@ -723,9 +727,9 @@ module.exports = function (router) {
     // ?deadline=off shows the date alone. The request page's Closing date
     // row shows the same.
     res.locals.deadlineMode = keep.deadline || 'bar';
-    res.locals.passedOn = keep.passed === 'on';
+    res.locals.passedOn = keep.passed !== 'off';
     res.locals.paginationOn = keep.pagination === 'on';
-    res.locals.tabsOn = keep.tabs === 'on';
+    res.locals.tabsOn = keep.tabs !== 'off';
     // Always render afresh, so the browser's Back button never shows an old
     // copy of a page from before assigning or responding
     res.set('Cache-Control', 'no-store');
@@ -756,7 +760,7 @@ module.exports = function (router) {
   // How each column of the case list sorts, matching the data-sort-value
   // (or text) the MOJ sortable table uses, so sorting on the server for
   // pagination gives the same order as sorting in the browser.
-  const STATUS_RANK = { 'Response needed': 1, 'No response needed': 2, 'Responded': 3 };
+  const STATUS_RANK = { 'Response needed': 1, 'Missed': 2, 'No response needed': 3, 'Responded': 4 };
   const byText = key => (a, b) => (a[key] || '').localeCompare(b[key] || '');
   const SORTS = {
     name: byText('applicationName'),
@@ -797,38 +801,43 @@ module.exports = function (router) {
   // Consultation dashboard
   router.get(`${base}/consultations`, function (req, res) {
     const allRequests = Object.values(REQUESTS)
-      .filter(r => !r.hiddenByDefault || req.query.passed === 'on')
+      .filter(r => !r.canBeHidden || res.locals.passedOn)
       .filter(r => !r.onlyWithTabs || res.locals.tabsOn)
       .map(r => withStatus(req, r));
     const filters = readFilters(req.query);
     const filtered = allRequests.filter(r => matchesFilters(r, filters));
 
-    // Open and Closed tabs (?tabs=on). Closed is anything that no longer needs
+    // Open and Closed tabs (unless ?tabs=off). Closed is anything that no longer needs
     // action: responded, or past its closing date (notifications included).
+    // A third Missed tab holds requests for advice past their closing date
+    // with no response, when that case is shown (unless ?passed=off).
     // Which tab is showing (?consultation-v2-list=closed) is kept by the
     // filters, as Clear filters should not take you to the other tab.
-    const isClosed = r => r.status === 'Responded' || r.closed;
-    const listTab = res.locals.tabsOn && req.query['consultation-v2-list'] === 'closed' ? 'closed' : 'open';
+    const tabFor = r => r.missed ? 'missed' : (r.status === 'Responded' || r.closed) ? 'closed' : 'open';
+    const tabNames = res.locals.passedOn ? ['open', 'closed', 'missed'] : ['open', 'closed'];
+    const listTab = res.locals.tabsOn && tabNames.includes(req.query['consultation-v2-list']) ? req.query['consultation-v2-list'] : 'open';
     let tabs = null;
     if (res.locals.tabsOn) {
       // Switching tab starts again on page 1, sorted by that tab's default
-      const tabUrl = list => consultationsUrl(req.query, { 'consultation-v2-list': list === 'closed' ? 'closed' : null, page: null, sort: null, order: null });
-      tabs = [
-        { text: 'Open', count: filtered.filter(r => !isClosed(r)).length, href: tabUrl('open'), current: listTab === 'open' },
-        { text: 'Closed', count: filtered.filter(isClosed).length, href: tabUrl('closed'), current: listTab === 'closed' }
-      ];
+      const tabUrl = list => consultationsUrl(req.query, { 'consultation-v2-list': list === 'open' ? null : list, page: null, sort: null, order: null });
+      tabs = tabNames.map(list => ({
+        text: list.charAt(0).toUpperCase() + list.slice(1),
+        count: filtered.filter(r => tabFor(r) === list).length,
+        href: tabUrl(list),
+        current: listTab === list
+      }));
     }
-    const inTab = res.locals.tabsOn ? filtered.filter(r => isClosed(r) === (listTab === 'closed')) : filtered;
+    const inTab = res.locals.tabsOn ? filtered.filter(r => tabFor(r) === listTab) : filtered;
 
     // Sorted here as well as in the browser, so each page of the list holds
     // the right cases. Closing date unless ?sort= says otherwise: soonest
-    // first, or most recent first on the Closed tab, where responded cases
+    // first, or most recent first on the Closed and Missed tabs, where responded cases
     // are not put last as they are everywhere else.
     const sort = {
       key: res.locals.versionParams.sort || 'closing',
-      order: res.locals.versionParams.order || (listTab === 'closed' ? 'descending' : 'ascending')
+      order: res.locals.versionParams.order || (listTab !== 'open' ? 'descending' : 'ascending')
     };
-    const compare = sort.key === 'closing' && listTab === 'closed'
+    const compare = sort.key === 'closing' && listTab !== 'open'
       ? (a, b) => a.respondByOffset - b.respondByOffset
       : SORTS[sort.key];
     const matching = inTab.sort((a, b) => compare(a, b) * (sort.order === 'descending' ? -1 : 1));
@@ -887,14 +896,14 @@ module.exports = function (router) {
       //   ?reqassign=off     no Assign on request pages
       //   ?pagination=on     5 cases a page, with GOV.UK pagination, and the
       //                      column headings sort every page (?sort=, ?order=)
-      //   ?tabs=on           Open and Closed tabs, and a search box in the filters
+      //   ?tabs=off          one list, without the tabs and the search box
       // Not you: you would use Assign to me
       everyone: TEAM,
       assignBanner: takeAssignBanner(req, 'list'),
       filters,
       showOptions: SHOW_OPTIONS,
       typeOptions: TYPE_OPTIONS,
-      statusOptions: STATUS_OPTIONS,
+      statusOptions: res.locals.passedOn ? STATUS_OPTIONS_WITH_MISSED : STATUS_OPTIONS,
       closingOptions: CLOSING_OPTIONS,
       team: TEAM,
       selectedFilterGroups: selectedFilterGroups(req.query, filters),
