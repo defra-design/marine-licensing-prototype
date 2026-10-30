@@ -1039,7 +1039,11 @@ module.exports = function (router) {
     // One Assign button is the default, so no ?reassign means single
     const includeMe = !['off', 'panel', 'page'].includes(req.query.reassign) || !!fromRequest;
     const others = req.query.assignlist === 'short' ? TEAM : EVERYONE;
-    return { ids, fromRequest, people: includeMe ? [ME].concat(others) : others, includeMe };
+    // Not who it is already assigned to, you included. With several selected,
+    // only when they are all assigned to the same person.
+    const current = ids.map(id => assignedToFor(req, REQUESTS[id]));
+    const people = (includeMe ? [ME].concat(others) : others).filter(person => !current.length || current.some(name => name !== person));
+    return { ids, fromRequest, people, includeMe };
   }
 
   // Assign to someone else, separate page. Lists the cases ticked on the
