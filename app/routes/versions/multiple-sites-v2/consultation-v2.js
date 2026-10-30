@@ -16,7 +16,8 @@ module.exports = function (router) {
   //   response-required - MMO is asking the consultee for advice
   //   notify-only       - MMO is letting the consultee know; responding is optional
   //
-  // marinePlanArea is the English marine plan area the site is in, shown on
+  // marinePlanArea is the English marine plan area the site is in (or a list,
+  // if it is in more than one), shown on
   // the request page as the application's location.
   //
   // Dates are day offsets from today, run through the daysFromTodayShort filter.
@@ -435,6 +436,8 @@ module.exports = function (router) {
       response: req.session.data[`consultation-v2-${request.id}-response`] || (request.seededResponse && request.seededResponse.text),
       respondedDate: req.session.data[`consultation-v2-${request.id}-responded-date`] || (request.seededResponse && dateFromToday(request.seededResponse.respondedOffset)),
       // Who sent the response, as it might not be you
+      // A seed can have one area or a list of them
+      marinePlanAreas: [].concat(request.marinePlanArea),
       respondedBy: req.session.data[`consultation-v2-${request.id}-responded-by`] || (request.seededResponse && request.seededResponse.respondedBy)
     });
   }
@@ -479,6 +482,16 @@ module.exports = function (router) {
     { value: 'passed', text: 'Closing date passed' },
     { value: 'soon', text: `Closes in the next ${CLOSING_SOON_DAYS} days` }
   ];
+  const MARINE_PLAN_AREAS = [
+    'East Inshore', 'East Offshore', 'North East Inshore', 'North East Offshore',
+    'North West Inshore', 'North West Offshore', 'South East Inshore', 'South Inshore',
+    'South Offshore', 'South West Inshore', 'South West Offshore'
+  ];
+  const RESPONDED_BY_OPTIONS = [
+    { value: 'any', text: 'Anyone' },
+    { value: 'me', text: 'Me' },
+    { value: 'person', text: 'Someone else' }
+  ];
   const SHOW_OPTIONS = [
     { value: 'all', text: 'All consultations' },
     { value: 'me', text: 'Assigned to me' },
@@ -489,7 +502,18 @@ module.exports = function (router) {
   // Filters live in the URL so they survive assigning and can be shared.
   // Names are prefixed because the kit also copies query strings into the
   // session, and plain names like "type" or "status" are used elsewhere.
-  const FILTER_KEYS = ['consultation-v2-show', 'consultation-v2-person', 'consultation-v2-type', 'consultation-v2-status', 'consultation-v2-closing', 'consultation-v2-search'];
+  const FILTER_KEYS = ['consultation-v2-show', 'consultation-v2-person', 'consultation-v2-type', 'consultation-v2-status', 'consultation-v2-closing', 'consultation-v2-responded', 'consultation-v2-responded-person', 'consultation-v2-area'];
+
+  // What can be filtered on each tab, as each is really its own page. A filter
+  // that could only give one answer on a tab is left out. Each inner list is a
+  // column in the horizontal bar. Missed has none. ?tabs=off keeps the original
+  // filters.
+  const TAB_FILTERS = {
+    open: { columns: [['show'], ['type', 'closing'], ['area']], closing: ['soon'] },
+    closed: { columns: [['type', 'status'], ['respondedBy'], ['area']], statuses: ['Responded', 'No response needed'] },
+    missed: { columns: [] },
+    all: { columns: [['show'], ['type'], ['status', 'closing']] }
+  };
 
   function asArray(value) {
     return [].concat(value || []).filter(v => v && v !== '_unchecked');
@@ -497,6 +521,7 @@ module.exports = function (router) {
 
   function readFilters(query) {
     const show = SHOW_OPTIONS.some(o => o.value === query['consultation-v2-show']) ? query['consultation-v2-show'] : 'all';
+    const respondedBy = RESPONDED_BY_OPTIONS.some(o => o.value === query['consultation-v2-responded']) ? query['consultation-v2-responded'] : 'any';
     return {
       show,
       people: show === 'person' ? asArray(query['consultation-v2-person']).filter(p => TEAM.includes(p)) : [],
@@ -504,8 +529,25 @@ module.exports = function (router) {
       statuses: asArray(query['consultation-v2-status']).filter(st => (query.passed !== 'off' ? STATUS_OPTIONS_WITH_MISSED : STATUS_OPTIONS).includes(st)),
       // Ignored with the MOJ contextual date off, as the filter is not shown
       closing: query.deadline !== 'off' ? asArray(query['consultation-v2-closing']).filter(c => CLOSING_OPTIONS.some(o => o.value === c)) : [],
-      // Ignored without the Open and Closed tabs, as the box is not shown
-      search: query.tabs !== 'off' ? String(query['consultation-v2-search'] || '').trim() : ''
+      respondedBy,
+      respondedPeople: respondedBy === 'person' ? asArray(query['consultation-v2-responded-person']).filter(p => TEAM.includes(p)) : [],
+      areas: asArray(query['consultation-v2-area']).filter(a => MARINE_PLAN_AREAS.includes(a))
+    };
+  }
+
+  // Drops anything in the URL that this tab does not offer, so a hidden filter
+  // can never narrow the list
+  function filtersForTab(filters, tab) {
+    const offered = [].concat(...tab.columns);
+    return {
+      show: offered.includes('show') ? filters.show : 'all',
+      people: offered.includes('show') ? filters.people : [],
+      types: offered.includes('type') ? filters.types : [],
+      statuses: offered.includes('status') ? filters.statuses.filter(st => !tab.statuses || tab.statuses.includes(st)) : [],
+      closing: offered.includes('closing') ? filters.closing.filter(c => !tab.closing || tab.closing.includes(c)) : [],
+      respondedBy: offered.includes('respondedBy') ? filters.respondedBy : 'any',
+      respondedPeople: offered.includes('respondedBy') ? filters.respondedPeople : [],
+      areas: offered.includes('area') ? filters.areas : []
     };
   }
 
@@ -520,10 +562,11 @@ module.exports = function (router) {
       if (!request.closingSoon) return false;
       if (!filters.closing.includes(request.respondByOffset < 0 ? 'passed' : 'soon')) return false;
     }
-    if (filters.search) {
-      const term = filters.search.toLowerCase();
-      if (!request.applicationName.toLowerCase().includes(term) && !request.reference.toLowerCase().includes(term)) return false;
-    }
+    if (filters.respondedBy === 'me' && request.respondedBy !== ME) return false;
+    if (filters.respondedBy === 'person' && filters.respondedPeople.length && !filters.respondedPeople.includes(request.respondedBy)) return false;
+    if (filters.respondedBy === 'person' && !filters.respondedPeople.length && (!request.respondedBy || request.respondedBy === ME)) return false;
+    // An application can be in more than one area: any of them matching counts
+    if (filters.areas.length && !filters.areas.some(area => request.marinePlanAreas.includes(area))) return false;
     return true;
   }
 
@@ -566,18 +609,33 @@ module.exports = function (router) {
         }))
       });
     }
-    if (filters.search) {
-      groups.push({
-        heading: 'Search',
-        items: [{ text: filters.search, href: consultationsUrl(query, { 'consultation-v2-search': null }) }]
-      });
-    }
     if (filters.closing.length) {
       groups.push({
         heading: 'Closing date',
         items: filters.closing.map(value => ({
           text: CLOSING_OPTIONS.find(o => o.value === value).text,
           href: consultationsUrl(query, { 'consultation-v2-closing': filters.closing.filter(c => c !== value) })
+        }))
+      });
+    }
+    if (filters.respondedBy !== 'any') {
+      const items = filters.respondedPeople.length
+        ? filters.respondedPeople.map(person => ({
+            text: person,
+            href: consultationsUrl(query, { 'consultation-v2-responded-person': filters.respondedPeople.filter(p => p !== person) })
+          }))
+        : [{
+            text: RESPONDED_BY_OPTIONS.find(o => o.value === filters.respondedBy).text,
+            href: consultationsUrl(query, { 'consultation-v2-responded': null, 'consultation-v2-responded-person': null })
+          }];
+      groups.push({ heading: 'Responded by', items });
+    }
+    if (filters.areas.length) {
+      groups.push({
+        heading: 'Marine plan area',
+        items: filters.areas.map(area => ({
+          text: area,
+          href: consultationsUrl(query, { 'consultation-v2-area': filters.areas.filter(a => a !== area) })
         }))
       });
     }
@@ -618,7 +676,7 @@ module.exports = function (router) {
     if (query.passed === 'off') keep.passed = 'off';
     // Pagination: off by default
     if (query.pagination === 'on') keep.pagination = 'on';
-    // Open, Closed and Missed tabs, with a search box: on by default
+    // Open, Closed and Missed tabs: on by default
     if (query.tabs === 'off') keep.tabs = 'off';
     // Sort order, set by the column headings when pagination is on. Left out
     // of the URL it is closing date: soonest first, or on the Closed tab
@@ -774,7 +832,8 @@ module.exports = function (router) {
   const SORTS = {
     name: byText('applicationName'),
     reference: byText('reference'),
-    area: byText('marinePlanArea'),
+    // By the first, when an application is in more than one
+    area: (a, b) => a.marinePlanAreas[0].localeCompare(b.marinePlanAreas[0]),
     type: byText('type'),
     status: (a, b) => STATUS_RANK[a.status] - STATUS_RANK[b.status],
     // Open cases by closing date, then responded ones
@@ -813,30 +872,35 @@ module.exports = function (router) {
       .filter(r => !r.canBeHidden || res.locals.passedOn)
       .filter(r => !r.onlyWithTabs || res.locals.tabsOn)
       .map(r => withStatus(req, r));
-    const filters = readFilters(req.query);
-    const filtered = allRequests.filter(r => matchesFilters(r, filters));
-
     // Open and Closed tabs (unless ?tabs=off). Closed is anything that no longer needs
     // action: responded, or past its closing date (notifications included).
     // A third Missed tab holds requests for advice past their closing date
     // with no response, when that case is shown (unless ?passed=off).
     // Which tab is showing (?consultation-v2-list=closed) is kept by the
-    // filters, as Clear filters should not take you to the other tab.
+    // filters, as Clear filters should not take you to the other tab. In
+    // reality they would be separate pages, so filters do not carry across
+    // and the counts are each tab's total.
     const tabFor = r => r.missed ? 'missed' : (r.status === 'Responded' || r.closed) ? 'closed' : 'open';
     const tabNames = res.locals.passedOn ? ['open', 'closed', 'missed'] : ['open', 'closed'];
     const listTab = res.locals.tabsOn && tabNames.includes(req.query['consultation-v2-list']) ? req.query['consultation-v2-list'] : 'open';
     let tabs = null;
     if (res.locals.tabsOn) {
       // Switching tab starts again on page 1, sorted by that tab's default
-      const tabUrl = list => consultationsUrl(req.query, { 'consultation-v2-list': list === 'open' ? null : list, page: null, sort: null, order: null });
+      const noFilters = {};
+      FILTER_KEYS.forEach(key => { noFilters[key] = null; });
+      const tabUrl = list => consultationsUrl(req.query, Object.assign({}, noFilters, { 'consultation-v2-list': list === 'open' ? null : list, page: null, sort: null, order: null }));
       tabs = tabNames.map(list => ({
         text: list.charAt(0).toUpperCase() + list.slice(1),
-        count: filtered.filter(r => tabFor(r) === list).length,
+        count: allRequests.filter(r => tabFor(r) === list).length,
         href: tabUrl(list),
         current: listTab === list
       }));
     }
-    const inTab = res.locals.tabsOn ? filtered.filter(r => tabFor(r) === listTab) : filtered;
+    const tabFilters = TAB_FILTERS[res.locals.tabsOn ? listTab : 'all'];
+    const filters = filtersForTab(readFilters(req.query), tabFilters);
+    const statusOptions = res.locals.passedOn ? STATUS_OPTIONS_WITH_MISSED : STATUS_OPTIONS;
+    const inTab = (res.locals.tabsOn ? allRequests.filter(r => tabFor(r) === listTab) : allRequests)
+      .filter(r => matchesFilters(r, filters));
 
     // Sorted here as well as in the browser, so each page of the list holds
     // the right cases. Closing date unless ?sort= says otherwise: soonest
@@ -905,15 +969,21 @@ module.exports = function (router) {
       //   ?reqassign=off     no Assign on request pages
       //   ?pagination=on     5 cases a page, with GOV.UK pagination, and the
       //                      column headings sort every page (?sort=, ?order=)
-      //   ?tabs=off          one list, without the tabs and the search box
+      //   ?tabs=off          one list, without the tabs
       // Not you: you would use Assign to me
       everyone: TEAM,
       assignBanner: takeAssignBanner(req, 'list'),
       filters,
       showOptions: SHOW_OPTIONS,
       typeOptions: TYPE_OPTIONS,
-      statusOptions: res.locals.passedOn ? STATUS_OPTIONS_WITH_MISSED : STATUS_OPTIONS,
-      closingOptions: CLOSING_OPTIONS,
+      filterSet: {
+        columns: tabFilters.columns,
+        statusOptions: tabFilters.statuses || statusOptions,
+        // Only with the MOJ contextual date (not with ?deadline=off)
+        closingOptions: res.locals.deadlineMode === 'bar' ? CLOSING_OPTIONS.filter(o => !tabFilters.closing || tabFilters.closing.includes(o.value)) : [],
+        respondedByOptions: RESPONDED_BY_OPTIONS,
+        areaOptions: MARINE_PLAN_AREAS
+      },
       team: TEAM,
       selectedFilterGroups: selectedFilterGroups(req.query, filters),
       clearFiltersUrl: consultationsUrl(req.query, withoutFilters),

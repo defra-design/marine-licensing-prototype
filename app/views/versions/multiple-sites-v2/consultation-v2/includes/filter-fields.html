@@ -1,24 +1,14 @@
 {#
-  The Show, Type and Status filter fields, shared by the MOJ side panel and
-  the horizontal bar so both send the same query string. In the bar, each
-  group sits in its own column.
+  The filter fields, shared by the MOJ side panel and the horizontal bar so
+  both send the same query string. filterSet says which groups the tab offers:
+  each inner list of columns is a column in the bar, and the panel just runs
+  them in order.
 #}
-{# closingOptions: only passed with the MOJ contextual date (not ?deadline=off) #}
-{# search: the Search box, only with the Open and Closed tabs (not with ?tabs=off) #}
-{% macro filterFields(filters, showOptions, typeOptions, statusOptions, team, columns, closingOptions, search) %}
-{% set columnOpen = '<div class="govuk-grid-column-one-third">' if columns else '' %}
-{% set columnClose = '</div>' if columns else '' %}
-{% if search %}
-{# Across the top of the bar, above the three columns #}
-{{ ('<div class="govuk-grid-column-full">' if columns else '') | safe }}
-<div class="govuk-form-group">
-    <label class="govuk-label govuk-label--s" for="filter-search">Search</label>
-    <div class="govuk-hint" id="filter-search-hint">Application name or reference</div>
-    <input class="govuk-input{% if columns %} govuk-!-width-one-half{% endif %}" id="filter-search" name="consultation-v2-search" type="text" spellcheck="false" aria-describedby="filter-search-hint" value="{{ filters.search }}">
-</div>
-{{ ('</div>' if columns else '') | safe }}
-{% endif %}
-{{ columnOpen | safe }}
+{% macro filterFields(filters, filterSet, showOptions, typeOptions, team, columns) %}
+{% for column in filterSet.columns %}
+{{ ('<div class="govuk-grid-column-one-third">' if columns else '') | safe }}
+{% for group in column %}
+{% if group === "show" %}
 <div class="govuk-form-group">
     <fieldset class="govuk-fieldset">
         <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Show</legend>
@@ -47,9 +37,7 @@
         </div>
     </fieldset>
 </div>
-{{ columnClose | safe }}
-
-{{ columnOpen | safe }}
+{% elif group === "type" %}
 <div class="govuk-form-group">
     <fieldset class="govuk-fieldset">
         <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Type</legend>
@@ -63,14 +51,12 @@
         </div>
     </fieldset>
 </div>
-{{ columnClose | safe }}
-
-{{ columnOpen | safe }}
+{% elif group === "status" %}
 <div class="govuk-form-group">
     <fieldset class="govuk-fieldset">
         <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Status</legend>
         <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
-            {% for status in statusOptions %}
+            {% for status in filterSet.statusOptions %}
             <div class="govuk-checkboxes__item">
                 <input class="govuk-checkboxes__input" id="filter-status-{{ loop.index }}" name="consultation-v2-status" type="checkbox" value="{{ status }}"{% if status in filters.statuses %} checked{% endif %}>
                 <label class="govuk-label govuk-checkboxes__label" for="filter-status-{{ loop.index }}">{{ status }}</label>
@@ -79,13 +65,12 @@
         </div>
     </fieldset>
 </div>
-{# In the Status column of the bar, as a fourth column would wrap #}
-{% if closingOptions %}
+{% elif group === "closing" and filterSet.closingOptions.length %}
 <div class="govuk-form-group">
     <fieldset class="govuk-fieldset">
         <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Closing date</legend>
         <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
-            {% for option in closingOptions %}
+            {% for option in filterSet.closingOptions %}
             <div class="govuk-checkboxes__item">
                 <input class="govuk-checkboxes__input" id="filter-closing-{{ option.value }}" name="consultation-v2-closing" type="checkbox" value="{{ option.value }}"{% if option.value in filters.closing %} checked{% endif %}>
                 <label class="govuk-label govuk-checkboxes__label" for="filter-closing-{{ option.value }}">{{ option.text }}</label>
@@ -94,6 +79,59 @@
         </div>
     </fieldset>
 </div>
+{% elif group === "respondedBy" %}
+<div class="govuk-form-group">
+    <fieldset class="govuk-fieldset">
+        <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Responded by</legend>
+        <div class="govuk-radios govuk-radios--small" data-module="govuk-radios">
+            {% for option in filterSet.respondedByOptions %}
+            <div class="govuk-radios__item">
+                <input class="govuk-radios__input" id="filter-responded-{{ option.value }}" name="consultation-v2-responded" type="radio" value="{{ option.value }}"{% if filters.respondedBy === option.value %} checked{% endif %}{% if option.value === "person" %} data-aria-controls="conditional-filter-responded-person"{% endif %}>
+                <label class="govuk-label govuk-radios__label" for="filter-responded-{{ option.value }}">{{ option.text }}</label>
+            </div>
+            {% if option.value === "person" %}
+            <div class="govuk-radios__conditional govuk-radios__conditional--hidden" id="conditional-filter-responded-person">
+                <fieldset class="govuk-fieldset">
+                    <legend class="govuk-fieldset__legend govuk-visually-hidden">Select who responded</legend>
+                    <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+                        {% for person in team %}
+                        <div class="govuk-checkboxes__item">
+                            <input class="govuk-checkboxes__input" id="filter-responded-person-{{ loop.index }}" name="consultation-v2-responded-person" type="checkbox" value="{{ person }}"{% if person in filters.respondedPeople %} checked{% endif %}>
+                            <label class="govuk-label govuk-checkboxes__label" for="filter-responded-person-{{ loop.index }}">{{ person }}</label>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </fieldset>
+            </div>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </fieldset>
+</div>
+{% elif group === "area" %}
+{# 11 is long, so the options expand under the usual heading, and stay open with any ticked #}
+<div class="govuk-form-group">
+    <fieldset class="govuk-fieldset">
+        <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Marine plan area</legend>
+        <details class="govuk-details app-filter-details"{% if filters.areas.length %} open{% endif %}>
+            <summary class="govuk-details__summary">
+                <span class="govuk-details__summary-text">Select areas{% if filters.areas.length %} ({{ filters.areas.length }} selected){% endif %}</span>
+            </summary>
+            <div class="govuk-details__text">
+                <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+                    {% for option in filterSet.areaOptions %}
+                    <div class="govuk-checkboxes__item">
+                        <input class="govuk-checkboxes__input" id="filter-area-{{ loop.index }}" name="consultation-v2-area" type="checkbox" value="{{ option }}"{% if option in filters.areas %} checked{% endif %}>
+                        <label class="govuk-label govuk-checkboxes__label" for="filter-area-{{ loop.index }}">{{ option }}</label>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </details>
+    </fieldset>
+</div>
 {% endif %}
-{{ columnClose | safe }}
+{% endfor %}
+{{ ('</div>' if columns else '') | safe }}
+{% endfor %}
 {% endmacro %}

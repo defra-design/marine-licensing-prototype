@@ -8,8 +8,10 @@
 {% from "versions/multiple-sites-v2/consultation-v2/includes/filter-fields.html" import filterFields %}
 {# Two horizontal bar versions: ?filter=bar puts Show/Hide filter level with
    the heading, ?filter=bar-actions puts it next to the assign buttons #}
-{% set filterBar = filterMode === "bar" or filterMode === "bar-actions" %}
-{% set toggleInHeader = filterMode === "bar" %}
+{# The Missed tab has no filters, so none of the filter layout or its toggle #}
+{% set hasFilters = filterSet.columns.length > 0 %}
+{% set filterBar = filterMode === "bar" or filterMode === "bar-actions" or not hasFilters %}
+{% set toggleInHeader = filterMode === "bar" and hasFilters %}
 
 {% set navActive = "consultations" %}
 {# Up to 1920px wide by default, or the width of the LCML v4 submissions
@@ -90,6 +92,9 @@
     }
     /* When hidden, the whole grey panel goes, not just its contents */
     .app-filter-bar--collapsed { display: none; }
+    /* Marine plan area filter: checkboxes lined up with the other groups' */
+    .app-filter-details { margin-bottom: 0; }
+    .app-filter-details .govuk-details__text { border-left: 0; padding-left: 0; }
   </style>
 {% endblock %}
 
@@ -284,7 +289,7 @@
           Open and Closed tabs (unless ?tabs=off), so finished cases do not pile up
           under the ones that still need action. MOJ sub navigation rather
           than GOV.UK tabs, as each tab is its own page of the list. Counts
-          follow the filters, so a search shows which tab a case is on. A
+          are each tab's total, and filters do not carry across. A
           third Missed tab shows with the missed case (unless ?passed=off).
         #}
         {% if tabs %}
@@ -311,6 +316,7 @@
           table keeps its full width. Same fields and query string as the
           side panel. Nothing changes until Apply filters is pressed.
         #}
+        {% if hasFilters %}
         <form method="get" action="consultations" class="app-filter-bar" novalidate>
             {# Keep the page versions (this bar, assign method, layout) #}
             {% for name, value in versionParams %}
@@ -320,7 +326,7 @@
             <div class="app-filter-bar__body" id="app-filter-bar-body">
                 <h2 class="govuk-heading-m">Filter</h2>
                 <div class="govuk-grid-row">
-                    {{ filterFields(filters, showOptions, typeOptions, statusOptions, team, true, closingOptions if deadlineMode === 'bar' else false, tabsOn) }}
+                    {{ filterFields(filters, filterSet, showOptions, typeOptions, team, true) }}
                 </div>
                 <div class="govuk-button-group govuk-!-margin-bottom-0">
                     {{ govukButton({
@@ -331,6 +337,7 @@
                 </div>
             </div>
         </form>
+        {% endif %}
         <div>
         {% else %}
         <div class="moj-filter-layout moj-filter-layout--narrow">
@@ -377,7 +384,7 @@
                                 classes: "govuk-!-margin-bottom-6"
                             }) }}
 
-                            {{ filterFields(filters, showOptions, typeOptions, statusOptions, team, false, closingOptions if deadlineMode === 'bar' else false, tabsOn) }}
+                            {{ filterFields(filters, filterSet, showOptions, typeOptions, team, false) }}
                         </form>
                     </div>
                 </div>
@@ -388,7 +395,7 @@
                 <form method="post" novalidate>
 
                 <div class="app-consultations-actions">
-                    {% if filterMode === "bar-actions" %}
+                    {% if filterMode === "bar-actions" and hasFilters %}
                     {# Show/Hide filter alongside the assign buttons, as in the side panel version #}
                     <div class="govuk-button-group">
                         <button type="button" class="govuk-button govuk-button--secondary" id="app-filter-bar-toggle" aria-controls="app-filter-bar-body" aria-expanded="true" hidden>Hide filter</button>
@@ -566,7 +573,7 @@
                         <th scope="row" class="govuk-table__header govuk-!-font-weight-regular" data-sort-value="{{ request.applicationName }}"><a href="request-details/{{ request.id }}{{ listQuery }}" class="govuk-link govuk-link--no-visited-state">{{ request.applicationName }}</a></th>
                         <td class="govuk-table__cell">{{ request.reference }}</td>
                     {% if fullWidth %}
-                    <td class="govuk-table__cell">{{ request.marinePlanArea }}</td>
+                    <td class="govuk-table__cell">{% for area in request.marinePlanAreas %}{{ area }}{% if not loop.last %}<br>{% endif %}{% endfor %}</td>
                     {% endif %}
                         <td class="govuk-table__cell">{{ requestTypeText(request) }}</td>
                         {# Ranked by what needs doing, not alphabetically #}

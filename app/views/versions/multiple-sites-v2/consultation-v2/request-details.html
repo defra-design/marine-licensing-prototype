@@ -80,7 +80,7 @@
             </div>
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">Location</dt>
-                <dd class="govuk-summary-list__value">{{ request.marinePlanArea }} marine plan area</dd>
+                <dd class="govuk-summary-list__value">{% for area in request.marinePlanAreas %}{{ area }}{% if loop.revindex === 2 %} and {% elif not loop.last %}, {% endif %}{% endfor %} marine plan {{ "area" if request.marinePlanAreas.length === 1 else "areas" }}</dd>
             </div>
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">Summary of the proposed works</dt>
