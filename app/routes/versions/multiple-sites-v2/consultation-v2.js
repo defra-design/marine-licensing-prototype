@@ -1127,6 +1127,7 @@ module.exports = function (router) {
     res.render(`versions/${version}/${section}/assign-to-someone-else`, {
       selected: ids.map(id => withStatus(req, REQUESTS[id])),
       everyone: people,
+      me: ME,
       single: includeMe,
       // Back and Cancel go to where you came from
       backUrl: fromRequest
