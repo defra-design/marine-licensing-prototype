@@ -1,0 +1,27 @@
+{% extends "versions/multiple-sites-v2/public-register-v1/includes/layout.html" %}
+
+{% set navActive = "applications" %}
+{% set pageTitle = application.applicationName %}
+{% set backLink = "javascript:history.back()" %}
+
+{#
+  Placeholder so search results and reference lookups land somewhere.
+  The full application page, documents and redaction are phase 2.
+#}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <span class="govuk-caption-l">{{ application.reference }}</span>
+        <h1 class="govuk-heading-l">{{ application.applicationName }}</h1>
+
+        <p class="govuk-body">The consultation closes on {{ application.closingOffset | daysFromToday }}.</p>
+
+        <div class="govuk-inset-text">The full application page is coming next.</div>
+
+    </div>
+</div>
+
+{% endblock %}

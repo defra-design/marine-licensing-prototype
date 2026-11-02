@@ -1,0 +1,255 @@
+{% extends "versions/multiple-sites-v2/public-register-v1/includes/layout.html" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "govuk/components/pagination/macro.njk" import govukPagination %}
+
+{% set navActive = "applications" %}
+{% set pageTitle = "Marine licence applications" %}
+
+{#
+  Browse and filter (CIP1, CIP1a, CIP1b). Only applications open for
+  consultation for now, but named so it can list decided ones later.
+
+  Finding by reference (CIP1g) is the landing page's job: it goes straight
+  to the application. The reference filter here is on trial (the tray turns
+  it off). It matches part of a reference and never errors: no match is
+  just the usual no results message.
+
+  MOJ "Filter a list" pattern, as on consultation v2 and the LCML v4
+  submissions page, open to start with as filtering is the main thing
+  people do here. Filtering happens on the server when Apply filters is
+  pressed. The map (CIP1f) is the MMO GIS team's, so a dead link here.
+#}
+
+{% block head %}
+  {{ super() }}
+  <style>
+    /* Same filter column width as consultation v2. All three properties
+       are needed, or MOJ's min-width wins. */
+    @media (min-width: 48.0625em) {
+      .moj-filter-layout--narrow .moj-filter-layout__filter {
+        width: 310px;
+        min-width: 310px;
+        max-width: 310px;
+      }
+    }
+    .app-results { list-style: none; margin: 0; padding: 0; }
+    .app-results__item { border-top: 1px solid #b1b4b6; padding-top: 20px; }
+    .app-results .govuk-summary-list { margin-bottom: 20px; }
+    .app-results .govuk-summary-list__row { border-bottom: 0; }
+    .app-results .govuk-summary-list__key,
+    .app-results .govuk-summary-list__value { padding-top: 0; padding-bottom: 5px; }
+    .app-sort a[aria-current] { font-weight: 700; color: #0b0c0c; text-decoration: none; }
+    /* Marine plan area filter: checkboxes lined up with the other groups', as on consultation v2 */
+    .app-filter-details { margin-bottom: 0; }
+    .app-filter-details .govuk-details__text { border-left: 0; padding-left: 0; }
+  </style>
+{% endblock %}
+
+{% block bodyEnd %}
+  {{ super() }}
+  <script>
+    // MOJ's FilterToggleButton adds Show/Hide filter to the action bar.
+    // initAll does not cover it, so import it from the plugin asset the kit
+    // serves, as consultation v2 does.
+    import('/plugin-assets/%40ministryofjustice%2Ffrontend/moj/moj-frontend.min.js')
+      .then(function (moj) {
+        var filter = document.querySelector('.moj-filter')
+        if (filter) new moj.FilterToggleButton(filter, { startHidden: false })
+      })
+      .catch(function () { /* panel stays visible */ })
+  </script>
+{% endblock %}
+
+{% block content %}
+
+<h1 class="govuk-heading-l">Marine licence applications</h1>
+
+{# A map of all applications, not the filtered list, so it sits outside the
+   filter layout. Delivered by the MMO GIS team, so not part of this prototype. #}
+<p class="govuk-body"><a href="#" class="govuk-link govuk-link--no-visited-state">View all applications on a map</a></p>
+
+{# Applying, removing or clearing filters comes back to here, not the top of the page #}
+<div class="moj-filter-layout moj-filter-layout--narrow" id="app-filter">
+    <div class="moj-filter-layout__filter">
+        <div class="moj-filter" data-module="moj-filter">
+            <div class="moj-filter__header">
+                <div class="moj-filter__header-title">
+                    <h2 class="govuk-heading-m">Filter</h2>
+                </div>
+                <div class="moj-filter__header-action"></div>
+            </div>
+
+            <div class="moj-filter__content">
+                <div class="moj-filter__selected">
+                    <div class="moj-filter__selected-heading">
+                        <div class="moj-filter__heading-title">
+                            <h2 class="govuk-heading-m">Selected filters</h2>
+                        </div>
+                        <div class="moj-filter__heading-action">
+                            <p><a class="govuk-link govuk-link--no-visited-state" href="{{ clearFiltersUrl }}">Clear filters</a></p>
+                        </div>
+                    </div>
+                    {% for group in selected %}
+                    <h3 class="govuk-heading-s govuk-!-margin-bottom-0">{{ group.heading }}</h3>
+                    <ul class="moj-filter-tags">
+                        {% for item in group.items %}
+                        <li><a class="moj-filter__tag" href="{{ item.href }}"><span class="govuk-visually-hidden">Remove this filter</span> {{ item.text }}</a></li>
+                        {% endfor %}
+                    </ul>
+                    {% endfor %}
+                </div>
+
+                <form method="get" action="search#app-filter" class="moj-filter__options" novalidate>
+                    {% if sort !== "closing" %}<input type="hidden" name="sort" value="{{ sort }}">{% endif %}
+                    {% if paginationOn %}<input type="hidden" name="pagination" value="on">{% endif %}
+                    {% if not referenceFilterOn %}<input type="hidden" name="reffilter" value="off">{% endif %}
+
+                    {{ govukButton({
+                        text: "Apply filters",
+                        classes: "govuk-!-margin-bottom-6"
+                    }) }}
+
+                    {% if referenceFilterOn %}
+                    {{ govukInput({
+                        label: {
+                            text: "Application reference",
+                            classes: "govuk-label--s"
+                        },
+                        hint: { text: "For example, MLA/2026/10020" },
+                        id: "public-register-v1-reference-filter",
+                        name: "public-register-v1-reference-filter",
+                        value: filters.reference,
+                        spellcheck: false
+                    }) }}
+                    {% endif %}
+
+                    <div class="govuk-form-group">
+                        <fieldset class="govuk-fieldset">
+                            <legend class="govuk-fieldset__legend govuk-fieldset__legend--s">Marine plan area</legend>
+                            <details class="govuk-details app-filter-details"{% if filters.areas.length %} open{% endif %}>
+                                <summary class="govuk-details__summary">
+                                    <span class="govuk-details__summary-text">Select areas{% if filters.areas.length %} ({{ filters.areas.length }} selected){% endif %}</span>
+                                </summary>
+                                <div class="govuk-details__text">
+                                    <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
+                                        {% for option in areaOptions %}
+                                        <div class="govuk-checkboxes__item">
+                                            <input class="govuk-checkboxes__input" id="filter-area-{{ loop.index }}" name="public-register-v1-area" type="checkbox" value="{{ option }}"{% if option in filters.areas %} checked{% endif %}>
+                                            <label class="govuk-label govuk-checkboxes__label" for="filter-area-{{ loop.index }}">{{ option }}</label>
+                                        </div>
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                            </details>
+                        </fieldset>
+                    </div>
+
+                    {# Construction, Deposit and Removal, each revealing its
+                       second-level types (GOV.UK conditional reveal). The
+                       top-level box on its own means all of that type. #}
+                    {% set activityItems = [] %}
+                    {% for group in activityGroups %}
+                    {% set subItems = [] %}
+                    {% for option in group.options %}
+                    {% set subItems = (subItems.push({ value: option.value, text: option.text, checked: option.value in filters.activities }), subItems) %}
+                    {% endfor %}
+                    {% set subHtml %}
+                    {{ govukCheckboxes({
+                        name: "public-register-v1-activity",
+                        idPrefix: "filter-activity-" + group.value,
+                        classes: "govuk-checkboxes--small",
+                        fieldset: {
+                            legend: { text: "Types of " + group.heading | lower, classes: "govuk-visually-hidden" }
+                        },
+                        hint: { text: "Leave these unticked to show all " + group.heading | lower },
+                        items: subItems
+                    }) }}
+                    {% endset %}
+                    {% set activityItems = (activityItems.push({
+                        value: group.value,
+                        text: group.heading,
+                        checked: group.value in filters.groups,
+                        conditional: { html: subHtml }
+                    }), activityItems) %}
+                    {% endfor %}
+                    {{ govukCheckboxes({
+                        name: "public-register-v1-activity-type",
+                        idPrefix: "filter-activity-type",
+                        classes: "govuk-checkboxes--small",
+                        fieldset: {
+                            legend: { text: "Activity", classes: "govuk-fieldset__legend--s" }
+                        },
+                        items: activityItems
+                    }) }}
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div class="moj-filter-layout__content">
+
+        {# FilterToggleButton puts Show/Hide filter in here #}
+        <div class="moj-action-bar">
+            <div class="moj-action-bar__filter"></div>
+        </div>
+
+        <p class="govuk-body govuk-!-font-weight-bold" role="status">
+            {{ total }} {{ "application" if total === 1 else "applications" }}
+        </p>
+
+        {% if results.length %}
+        <p class="govuk-body app-sort">
+            Sort by:
+            {% for link in sortLinks %}
+            <a href="{{ link.href }}" class="govuk-link govuk-link--no-visited-state govuk-!-margin-left-1"{% if link.current %} aria-current="true"{% endif %}>{{ link.text }}</a>{% if not loop.last %} |{% endif %}
+            {% endfor %}
+        </p>
+
+        <ul class="app-results">
+            {% for application in results %}
+            <li class="app-results__item">
+                <h2 class="govuk-heading-m govuk-!-margin-bottom-2">
+                    <a href="application/{{ application.id }}" class="govuk-link govuk-link--no-visited-state">{{ application.applicationName }}</a>
+                </h2>
+                <dl class="govuk-summary-list govuk-summary-list--no-border">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Reference</dt>
+                        <dd class="govuk-summary-list__value">{{ application.reference }}</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Marine plan area</dt>
+                        <dd class="govuk-summary-list__value">{{ application.marinePlanAreas | join(", ") }}</dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Activity</dt>
+                        <dd class="govuk-summary-list__value">
+                            {% for name in application.activityNames %}{{ name }}{% if not loop.last %}<br>{% endif %}{% endfor %}
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Consultation closes</dt>
+                        <dd class="govuk-summary-list__value">{{ application.closingOffset | daysFromToday }}{% if application.closingSoon %} ({{ application.closingSuffix }}){% endif %}</dd>
+                    </div>
+                </dl>
+            </li>
+            {% endfor %}
+        </ul>
+
+        {# Pagination is on from the tray (?pagination=on), and only shows
+           when there is more than one page #}
+        {% if pagination %}
+        {{ govukPagination(pagination) }}
+        {% endif %}
+        {% else %}
+        <h2 class="govuk-heading-m">No applications match your filters</h2>
+        <p class="govuk-body">Try removing some filters or <a href="{{ clearFiltersUrl }}" class="govuk-link govuk-link--no-visited-state">clear all filters</a>.</p>
+        <p class="govuk-body">You can also search the <a href="https://marinelicensing.marinemanagement.org.uk/mmofox5/fox/live/MMO_PUBLIC_REGISTER" class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">MCMS public register (opens in new tab)</a>.</p>
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock %}

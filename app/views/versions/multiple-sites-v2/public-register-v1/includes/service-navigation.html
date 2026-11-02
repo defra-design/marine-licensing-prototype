@@ -1,0 +1,39 @@
+{#
+  Public register v1 header and service navigation.
+
+  A separate service from Get permission for marine work, so it has its own
+  name and no Defra account or sign-out links.
+
+    {% from "versions/multiple-sites-v2/public-register-v1/includes/service-navigation.html" import publicRegisterHeader %}
+    {% block header %}{{ publicRegisterHeader("applications") }}{% endblock %}
+
+  The argument is the nav item to highlight: "applications", "alerts" or nothing.
+  Get email alerts goes nowhere until phase 4.
+#}
+
+{% from "govuk/components/header/macro.njk" import govukHeader %}
+{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
+
+{% macro publicRegisterHeader(activeItem) %}
+{% set registerBase = "/versions/multiple-sites-v2/public-register-v1" %}
+{{ govukHeader({
+  homepageUrl: "/",
+  classes: "govuk-header--full-width-border"
+}) }}
+{{ govukServiceNavigation({
+  serviceName: "Marine licence public register",
+  serviceUrl: registerBase + "/start",
+  navigation: [
+    {
+      href: registerBase + "/search",
+      text: "Applications",
+      active: activeItem === "applications"
+    },
+    {
+      href: "#",
+      text: "Get email alerts",
+      active: activeItem === "alerts"
+    }
+  ]
+}) }}
+{% endmacro %}

@@ -1,0 +1,308 @@
+const APPLICATIONS = require('./public-register-v1-applications.js');
+
+module.exports = function (router) {
+  // Public register v1 routes
+  //
+  // The Marine licence public register, for members of the public. A
+  // separate service from Get permission for marine work, with its own
+  // navigation and no sign-in. MVP only lists applications open for
+  // consultation, but the list page is named so it can take decided ones
+  // later. Phase 1 is the landing page, filtering the list, and finding an
+  // application by reference. Viewing an application, making a
+  // representation and email alerts follow.
+  const version = "multiple-sites-v2";
+  const section = "public-register-v1";
+  const base = `/versions/${version}/${section}`;
+
+  // The legacy MCMS public register, for older applications and anything
+  // not yet in the new service
+  const MCMS_URL = 'https://marinelicensing.marinemanagement.org.uk/mmofox5/fox/live/MMO_PUBLIC_REGISTER';
+
+  // All 11 English marine plan areas, as on the consultation v2 filter
+  const MARINE_PLAN_AREAS = [
+    'East Inshore', 'East Offshore', 'North East Inshore', 'North East Offshore',
+    'North West Inshore', 'North West Offshore', 'South East Inshore', 'South Inshore',
+    'South Offshore', 'South West Inshore', 'South West Offshore'
+  ];
+
+  // LCML second-level activity types, grouped by their top-level type, with
+  // the values and names from the LCML v4 type of activity page. More will
+  // come with non-LCML applications.
+  const ACTIVITY_GROUPS = [
+    {
+      value: 'construction',
+      heading: 'Construction',
+      options: [
+        { value: 'construction-new', text: 'Construction of new marine works' },
+        { value: 'maintenance-existing', text: 'Maintenance of existing marine works' },
+        { value: 'alteration-improvement', text: 'Alteration or improvement, including extending, of existing marine works' }
+      ]
+    },
+    {
+      value: 'deposit',
+      heading: 'Deposit',
+      options: [
+        { value: 'continuation-existing', text: 'Continuation of existing deposit activity' },
+        { value: 'deposit-new', text: 'Deposit of something new' },
+        { value: 'replacing-existing', text: 'Replacing existing object' }
+      ]
+    },
+    {
+      value: 'removal',
+      heading: 'Removal',
+      options: [
+        { value: 'one-off-first-time', text: 'One off first time removal' },
+        { value: 'ongoing-routine', text: 'Removal as part of an ongoing or routine activity' },
+        { value: 'removal-replacement', text: 'Removal for replacement' },
+        { value: 'removal-relocation', text: 'Removal for relocation' }
+      ]
+    }
+  ];
+  const ACTIVITY_NAMES = {};
+  ACTIVITY_GROUPS.forEach(group => group.options.forEach(option => { ACTIVITY_NAMES[option.value] = option.text; }));
+  const ACTIVITY_GROUP = {};
+  ACTIVITY_GROUPS.forEach(group => { ACTIVITY_GROUP[group.value] = group; });
+
+  // Pagination (?pagination=on, from the tray). Off by default, so nobody
+  // assumes the service will always split after 10. Only shown when there
+  // are more results than fit on a page.
+  const PAGE_SIZE = 10;
+
+  const SORTS = {
+    closing: { text: 'Closing date', compare: (a, b) => a.closingOffset - b.closingOffset },
+    newest: { text: 'Recently published', compare: (a, b) => b.publishedOffset - a.publishedOffset }
+  };
+
+  function closingSuffix(offset) {
+    if (offset === 0) return 'today';
+    if (offset === 1) return 'tomorrow';
+    return `in ${offset} days`;
+  }
+
+  // Adds what the pages need to a seeded application
+  function withDetails(application) {
+    return Object.assign({}, application, {
+      marinePlanAreas: [].concat(application.marinePlanArea),
+      activityNames: application.activities.map(value => ACTIVITY_NAMES[value]),
+      closingSuffix: closingSuffix(application.closingOffset),
+      closingSoon: application.closingOffset <= 7
+    });
+  }
+
+  const ALL = APPLICATIONS.map(withDetails);
+
+  // References are MLA, the year and 5 digits: MLA/2026/10020. We ignore
+  // case, spaces and punctuation, as people copy them off site notices and
+  // emails, so "mla 2026 10020", "MLA-2026-10020" and "MLA202610020" all
+  // work. Gives the reference written the standard way, or null if it is
+  // not in that format. Other prefixes will come later.
+  function formatReference(value) {
+    const match = String(value || '').toUpperCase().replace(/[^A-Z0-9]/g, '').match(/^MLA(\d{4})(\d{5})$/);
+    return match ? `MLA/${match[1]}/${match[2]}` : null;
+  }
+
+  const REFERENCE_ERRORS = {
+    empty: () => 'Enter an application reference',
+    format: () => 'Enter the reference in the correct format, like MLA/2026/10020',
+    'not-found': reference => `No application found with reference ${reference}`
+  };
+
+  // For the reference filter on the list, which matches part of a
+  // reference, ignoring case, spaces and punctuation
+  function referenceKey(value) {
+    return String(value || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+  }
+
+  // A query value as a list, without the kit's _unchecked marker
+  function list(value) {
+    return [].concat(value || []).filter(item => item && item !== '_unchecked');
+  }
+
+  // Builds a search URL from a query, with some keys changed.
+  // A value of null removes the key. Filter links go back to the top of
+  // the filter box rather than the top of the page.
+  function searchUrl(query, changes, hash) {
+    const params = new URLSearchParams();
+    const merged = Object.assign({}, query, changes);
+    Object.keys(merged).forEach(key => {
+      list(merged[key] === null ? [] : merged[key]).forEach(value => params.append(key, value));
+    });
+    const qs = params.toString();
+    return `${base}/search${qs ? '?' + qs : ''}${hash || ''}`;
+  }
+
+  // Landing page
+  router.get(`${base}/start`, function (req, res) {
+    res.render(`versions/${version}/${section}/start`, {
+      mcmsUrl: MCMS_URL,
+      referenceError: REFERENCE_ERRORS[req.query.error] ? REFERENCE_ERRORS[req.query.error](req.query['public-register-v1-reference']) : null,
+      referenceNotFound: req.query.error === 'not-found',
+      referenceValue: req.query['public-register-v1-reference'],
+      // The main call to action, from the tray: the start button by
+      // default, ?cta=button for a standard green button, or ?cta=link
+      // for a plain link under the intro
+      ctaMode: ['button', 'link'].includes(req.query.cta) ? req.query.cta : 'start'
+    });
+  });
+
+  // Find an application by reference, from the landing page: straight to
+  // it if we have it, otherwise an error on the landing page, keeping what
+  // they typed. Not found is an error too, with a sentence under the box
+  // pointing to the MCMS register (error messages cannot have links).
+  router.get(`${base}/find-reference`, function (req, res) {
+    const entered = String(req.query['public-register-v1-reference'] || '').trim();
+    const reference = formatReference(entered);
+    const match = reference && ALL.find(application => application.reference === reference);
+    if (match) {
+      return res.redirect(`${base}/application/${match.id}`);
+    }
+    const error = !entered ? 'empty' : !reference ? 'format' : 'not-found';
+    // Not found shows the reference written the standard way
+    const value = entered ? `&public-register-v1-reference=${encodeURIComponent(reference || entered)}` : '';
+    // Keep the call to action version chosen in the tray
+    const cta = ['button', 'link'].includes(req.query.cta) ? `&cta=${req.query.cta}` : '';
+    res.redirect(`${base}/start?error=${error}${value}${cta}`);
+  });
+
+  // The GOV.UK pagination component's settings for page ?page= of the
+  // list, or null when everything fits on one page. Links keep the filters
+  // and go back to the top of the filter and results.
+  function paginationFor(query, total, page) {
+    const pages = Math.ceil(total / PAGE_SIZE);
+    if (pages <= 1) return null;
+    const href = n => searchUrl(query, { page: n === 1 ? null : n }, '#app-filter');
+    const items = [];
+    for (let n = 1; n <= pages; n++) {
+      items.push({ number: n, href: href(n), current: n === page });
+    }
+    return {
+      previous: page > 1 ? { href: href(page - 1) } : null,
+      next: page < pages ? { href: href(page + 1) } : null,
+      items
+    };
+  }
+
+  // Filter applications open for consultation
+  router.get(`${base}/search`, function (req, res) {
+    const query = req.query;
+    const paginationOn = query.pagination === 'on';
+    // The reference filter is on unless ?reffilter=off, from the tray. On
+    // trial: the landing page lookup is the main way in by reference.
+    const referenceFilterOn = query.reffilter !== 'off';
+
+    // Activity is Construction, Deposit or Removal, each revealing its
+    // second-level types. A top-level type on its own means all of it;
+    // ticking some of its types narrows it to those. Types under a
+    // top-level box that is not ticked are ignored.
+    const groups = list(query['public-register-v1-activity-type']).filter(value => ACTIVITY_GROUP[value]);
+    const ticked = list(query['public-register-v1-activity']).filter(activity => ACTIVITY_NAMES[activity]);
+    const activityGroups = ACTIVITY_GROUPS.filter(group => groups.includes(group.value)).map(group => ({
+      group,
+      types: group.options.map(option => option.value).filter(value => ticked.includes(value))
+    }));
+    const filters = {
+      reference: referenceFilterOn ? String(query['public-register-v1-reference-filter'] || '').trim() : '',
+      areas: list(query['public-register-v1-area']).filter(area => MARINE_PLAN_AREAS.includes(area)),
+      groups,
+      activities: [].concat(...activityGroups.map(g => g.types))
+    };
+    // Every second-level type that matches
+    const allowed = [].concat(...activityGroups.map(g => g.types.length ? g.types : g.group.options.map(option => option.value)));
+    const sort = SORTS[query.sort] ? query.sort : 'closing';
+
+    const matching = ALL.filter(application => {
+      if (filters.reference && !referenceKey(application.reference).includes(referenceKey(filters.reference))) return false;
+      // An application can be in more than one area: any of them matching counts
+      if (filters.areas.length && !filters.areas.some(area => application.marinePlanAreas.includes(area))) return false;
+      if (groups.length && !application.activities.some(activity => allowed.includes(activity))) return false;
+      return true;
+    }).sort(SORTS[sort].compare);
+
+    let results = matching;
+    let pagination = null;
+    if (paginationOn) {
+      const pages = Math.max(1, Math.ceil(matching.length / PAGE_SIZE));
+      const page = Math.min(Math.max(parseInt(query.page, 10) || 1, 1), pages);
+      results = matching.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE);
+      pagination = paginationFor(query, matching.length, page);
+    }
+
+    // The MOJ "Selected filters" tags, each linking to the page without it.
+    // Changing the filters starts again on page 1.
+    const without = changes => searchUrl(query, Object.assign({ page: null }, changes), '#app-filter');
+    const selected = [];
+    if (filters.reference) {
+      selected.push({
+        heading: 'Application reference',
+        items: [{ text: filters.reference, href: without({ 'public-register-v1-reference-filter': null }) }]
+      });
+    }
+    if (filters.areas.length) {
+      selected.push({
+        heading: 'Marine plan area',
+        items: filters.areas.map(area => ({
+          text: area,
+          href: without({ 'public-register-v1-area': filters.areas.filter(a => a !== area) })
+        }))
+      });
+    }
+    if (activityGroups.length) {
+      selected.push({
+        heading: 'Activity',
+        items: [].concat(...activityGroups.map(({ group, types }) => types.length
+          // Removing the last type leaves the top-level type, so all of it
+          ? types.map(type => ({
+              text: ACTIVITY_NAMES[type],
+              href: without({ 'public-register-v1-activity': filters.activities.filter(a => a !== type) })
+            }))
+          : [{
+              text: `All ${group.heading.toLowerCase()}`,
+              href: without({ 'public-register-v1-activity-type': groups.filter(g => g !== group.value) })
+            }]))
+      });
+    }
+
+    // Links for the tray: the same search with pagination on or off
+    const trayUrls = {
+      paginationOff: searchUrl(query, { pagination: null, page: null }),
+      paginationOn: searchUrl(query, { pagination: 'on', page: null }),
+      refFilterOn: searchUrl(query, { reffilter: null, page: null }),
+      refFilterOff: searchUrl(query, { reffilter: 'off', page: null, 'public-register-v1-reference-filter': null })
+    };
+
+    res.render(`versions/${version}/${section}/search`, {
+      results,
+      total: matching.length,
+      pagination,
+      paginationOn,
+      referenceFilterOn,
+      trayUrls,
+      filters,
+      selected,
+      areaOptions: MARINE_PLAN_AREAS,
+      activityGroups: ACTIVITY_GROUPS,
+      sort,
+      sortLinks: Object.keys(SORTS).map(key => ({
+        text: SORTS[key].text,
+        current: key === sort,
+        href: searchUrl(query, { sort: key === 'closing' ? null : key, page: null })
+      })),
+      // Clear filters keeps the page versions (sort, pagination, reference filter off)
+      clearFiltersUrl: searchUrl({ sort: query.sort, pagination: query.pagination, reffilter: query.reffilter }, {}, '#app-filter')
+    });
+  });
+
+  // View an application. A placeholder for now: the full page is phase 2.
+  router.get(`${base}/application/:applicationId`, function (req, res) {
+    const application = ALL.find(a => a.id === req.params.applicationId);
+    if (!application) {
+      return res.redirect(`${base}/search`);
+    }
+    res.render(`versions/${version}/${section}/application`, { application });
+  });
+
+  // The register's home is the landing page
+  router.get(base, function (req, res) {
+    res.redirect(`${base}/start`);
+  });
+};

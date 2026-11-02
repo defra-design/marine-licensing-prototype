@@ -1,0 +1,30 @@
+{#
+  Public register v1 layout. Reuses the LCML v4 layout for the footer, and
+  swaps in the public register header and the beta phase banner. There is
+  no organisation banner or sign-in, as anyone can use the register.
+
+  Pages set navActive to "applications" or "alerts" to highlight the nav, and
+  can set backLink to show a back link.
+#}
+{% extends "versions/multiple-sites-v2/layouts/low-complexity-v4.html" %}
+
+{% block header %}
+{% from "versions/multiple-sites-v2/public-register-v1/includes/service-navigation.html" import publicRegisterHeader %}
+{{ publicRegisterHeader(navActive) }}
+{% endblock %}
+
+{% block beforeContent %}
+    {% include "versions/multiple-sites-v2/includes/phase-banner.html" %}
+    {% if backLink %}
+    <a class="govuk-back-link govuk-link--no-visited-state" href="{{ backLink }}">Back</a>
+    {% endif %}
+{% endblock %}
+
+{% block bodyEnd %}
+    {{ super() }}
+    {% include "versions/multiple-sites-v2/public-register-v1/includes/version-switcher.html" %}
+{% endblock %}
+
+{% block pageTitle %}
+    {{ pageTitle }}{% if pageTitle !== "Marine licence public register" %} - Marine licence public register{% endif %}
+{% endblock %}
