@@ -18,7 +18,8 @@
 // publishedOffset is when it went on the register, closingOffset is when
 // public comments close.
 //
-// Teignmouth is redacted (see redact-details in LCML v4), for phase 2.
+// Teignmouth is redacted (see redact-details in LCML v4). What each
+// application says is in public-register-v1-details.js.
 
 module.exports = [
   {
@@ -57,7 +58,7 @@ module.exports = [
     reference: 'MLA/2026/10024',
     applicant: 'Solent Coastal Services Ltd',
     marinePlanArea: 'South Inshore',
-    activities: ['maintenance-existing'],
+    activities: ['maintenance-existing', 'deposit-new'],
     publishedOffset: -19,
     closingOffset: 9
   },

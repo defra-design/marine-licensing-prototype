@@ -1,4 +1,5 @@
 const APPLICATIONS = require('./public-register-v1-applications.js');
+const DETAILS = require('./public-register-v1-details.js');
 
 module.exports = function (router) {
   // Public register v1 routes
@@ -8,7 +9,7 @@ module.exports = function (router) {
   // navigation and no sign-in. MVP only lists applications open for
   // consultation, but the list page is named so it can take decided ones
   // later. Phase 1 is the landing page, filtering the list, and finding an
-  // application by reference. Viewing an application, making a
+  // application by reference. Phase 2 is viewing an application. Making a
   // representation and email alerts follow.
   const version = "multiple-sites-v2";
   const section = "public-register-v1";
@@ -292,13 +293,72 @@ module.exports = function (router) {
     });
   });
 
-  // View an application. A placeholder for now: the full page is phase 2.
+  // A document as the page shows it. A string is just a filename. Withheld
+  // documents are not published at all, and a replaced one is published as
+  // the applicant's redacted copy, without saying so (as on the LCML v4
+  // public register preview).
+  function documentFor(file, title) {
+    const doc = typeof file === 'string' ? { filename: file } : file;
+    const filename = doc.replacedBy || doc.filename;
+    const extension = filename.split('.').pop().toLowerCase();
+    // Made-up file sizes, worked out from the filename so they stay the same
+    const kb = 180 + [...filename].reduce((total, c) => (total * 31 + c.charCodeAt(0)) % 4000, 7);
+    return {
+      title,
+      filename,
+      withheld: !!doc.withheld,
+      format: extension.toUpperCase(),
+      size: kb >= 1000 ? `${(kb / 1024).toFixed(1)} MB` : `${kb} KB`
+    };
+  }
+
+  // What the view an application page needs from an application's details:
+  // activity names that match the filter, documents in the form the page
+  // shows them, and every document in one list for the top of the page,
+  // each titled as its card is in the full application.
+  function pageDetails(details) {
+    const documents = [];
+    const sites = details.sites.map((site, s) => {
+      const drawings = (site.drawings || []).map((drawing, d) => documentFor(drawing, `Site ${s + 1} – Construction drawing ${d + 1}`));
+      documents.push(...drawings);
+      return Object.assign({}, site, {
+        activities: site.activities.map(activity => Object.assign({}, activity, {
+          typeOfActivity: ACTIVITY_NAMES[activity.type] || activity.typeOfActivity
+        })),
+        drawings
+      });
+    });
+    const supportingDocuments = (details.supportingDocuments || []).map(doc => Object.assign({}, doc, {
+      file: documentFor(doc.filename, doc.type)
+    }));
+    documents.push(...supportingDocuments.map(doc => doc.file));
+    const wfd = details.wfd && Object.assign({}, details.wfd, {
+      file: documentFor(details.wfd.upload, 'Water Framework Directive assessment')
+    });
+    if (wfd) documents.push(wfd.file);
+    return Object.assign({}, details, { sites, supportingDocuments, wfd, documents });
+  }
+
+  // View an application. Every application uses the same page, which shows
+  // whichever sections its details have.
   router.get(`${base}/application/:applicationId`, function (req, res) {
     const application = ALL.find(a => a.id === req.params.applicationId);
     if (!application) {
       return res.redirect(`${base}/applications`);
     }
-    res.render(`versions/${version}/${section}/application`, { application });
+    res.render(`versions/${version}/${section}/application`, {
+      application,
+      details: pageDetails(DETAILS[application.id])
+    });
+  });
+
+  // Have your say. A placeholder for now: making a representation is phase 3.
+  router.get(`${base}/application/:applicationId/have-your-say`, function (req, res) {
+    const application = ALL.find(a => a.id === req.params.applicationId);
+    if (!application) {
+      return res.redirect(`${base}/applications`);
+    }
+    res.render(`versions/${version}/${section}/have-your-say`, { application });
   });
 
   // The register's home is the landing page

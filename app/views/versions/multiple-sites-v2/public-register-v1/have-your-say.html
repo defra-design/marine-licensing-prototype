@@ -1,0 +1,25 @@
+{% extends "versions/multiple-sites-v2/public-register-v1/includes/layout.html" %}
+
+{% set navActive = "applications" %}
+{% set pageTitle = "Respond to this application" %}
+{% set backLink = "/versions/multiple-sites-v2/public-register-v1/application/" + application.id %}
+
+{#
+  Placeholder so the Have your say button lands somewhere. Making a
+  representation is phase 3.
+#}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <span class="govuk-caption-l">{{ application.applicationName }}</span>
+        <h1 class="govuk-heading-l">Respond to this application</h1>
+
+        <div class="govuk-inset-text">Making a representation is coming next.</div>
+
+    </div>
+</div>
+
+{% endblock %}
