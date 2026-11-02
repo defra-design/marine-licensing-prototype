@@ -314,12 +314,13 @@ module.exports = function (router) {
 
   // What the view an application page needs from an application's details:
   // activity names that match the filter, documents in the form the page
-  // shows them, and every document in one list for the top of the page,
-  // each titled as its card is in the full application.
+  // shows them, and every document in one list for the top of the page.
+  // Drawings are titled by site name rather than "Site 1", as the public do
+  // not know the numbering, matching the consultation v2 documents list.
   function pageDetails(details) {
     const documents = [];
     const sites = details.sites.map((site, s) => {
-      const drawings = (site.drawings || []).map((drawing, d) => documentFor(drawing, `Site ${s + 1} – Construction drawing ${d + 1}`));
+      const drawings = (site.drawings || []).map((drawing, d) => documentFor(drawing, `${site.name} – Construction drawing ${d + 1}`));
       documents.push(...drawings);
       return Object.assign({}, site, {
         activities: site.activities.map(activity => Object.assign({}, activity, {
