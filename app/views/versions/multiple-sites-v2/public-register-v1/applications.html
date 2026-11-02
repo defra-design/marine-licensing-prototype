@@ -102,7 +102,7 @@
                     {% endfor %}
                 </div>
 
-                <form method="get" action="search#app-filter" class="moj-filter__options" novalidate>
+                <form method="get" action="applications#app-filter" class="moj-filter__options" novalidate>
                     {% if sort !== "closing" %}<input type="hidden" name="sort" value="{{ sort }}">{% endif %}
                     {% if paginationOn %}<input type="hidden" name="pagination" value="on">{% endif %}
                     {% if not referenceFilterOn %}<input type="hidden" name="reffilter" value="off">{% endif %}

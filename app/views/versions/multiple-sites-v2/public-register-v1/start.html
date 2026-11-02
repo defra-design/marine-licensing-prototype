@@ -7,7 +7,7 @@
 {% set pageTitle = ("Error: " if referenceError else "") + "Marine licence public register" %}
 
 {#
-  Landing page (CIP1). Two ways in: search and filter, or go straight to
+  Landing page (CIP1). Two ways in: browse and filter, or go straight to
   an application with its reference (from a site notice, alert or link).
   Empty, wrong format and not found are all errors here. Signposts the MCMS register for
   anything not on here yet.
@@ -32,16 +32,16 @@
         {# The start button by default, a standard green button with ?cta=button,
            or a plain link with ?cta=link (from the tray) #}
         {% if ctaMode === "link" %}
-        <p class="govuk-body"><a href="search" class="govuk-link govuk-link--no-visited-state">View applications</a></p>
+        <p class="govuk-body"><a href="applications" class="govuk-link govuk-link--no-visited-state">View applications</a></p>
         {% elif ctaMode === "button" %}
         {{ govukButton({
             text: "View applications",
-            href: "search"
+            href: "applications"
         }) }}
         {% else %}
         {{ govukButton({
             text: "View applications",
-            href: "search",
+            href: "applications",
             isStartButton: true
         }) }}
         {% endif %}

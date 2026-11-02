@@ -12,7 +12,7 @@
   to the list page.
 #}
 {% if data['versions'] !== 'off' %}
-{% set searchPath = "/versions/multiple-sites-v2/public-register-v1/search" %}
+{% set listPath = "/versions/multiple-sites-v2/public-register-v1/applications" %}
 {% set startPath = "/versions/multiple-sites-v2/public-register-v1/start" %}
 
 <style>
@@ -119,8 +119,8 @@
   <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Pagination on the list</h3>
   <ul class="govuk-list govuk-list--spaced">
     {% for option in [
-      { on: false, text: "Off", url: trayUrls.paginationOff if trayUrls else searchPath },
-      { on: true, text: "On, 10 per page", url: trayUrls.paginationOn if trayUrls else searchPath + "?pagination=on" }
+      { on: false, text: "Off", url: trayUrls.paginationOff if trayUrls else listPath },
+      { on: true, text: "On, 10 per page", url: trayUrls.paginationOn if trayUrls else listPath + "?pagination=on" }
     ] %}
     <li>
       {% if (paginationOn or false) === option.on %}
@@ -138,8 +138,8 @@
   <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Reference filter on the list</h3>
   <ul class="govuk-list govuk-list--spaced">
     {% for option in [
-      { on: true, text: "On", url: trayUrls.refFilterOn if trayUrls else searchPath },
-      { on: false, text: "Off", url: trayUrls.refFilterOff if trayUrls else searchPath + "?reffilter=off" }
+      { on: true, text: "On", url: trayUrls.refFilterOn if trayUrls else listPath },
+      { on: false, text: "Off", url: trayUrls.refFilterOff if trayUrls else listPath + "?reffilter=off" }
     ] %}
     <li>
       {% if (referenceFilterOn !== false) === option.on %}

@@ -118,17 +118,17 @@ module.exports = function (router) {
     return [].concat(value || []).filter(item => item && item !== '_unchecked');
   }
 
-  // Builds a search URL from a query, with some keys changed.
+  // Builds a list URL from a query, with some keys changed.
   // A value of null removes the key. Filter links go back to the top of
   // the filter box rather than the top of the page.
-  function searchUrl(query, changes, hash) {
+  function listUrl(query, changes, hash) {
     const params = new URLSearchParams();
     const merged = Object.assign({}, query, changes);
     Object.keys(merged).forEach(key => {
       list(merged[key] === null ? [] : merged[key]).forEach(value => params.append(key, value));
     });
     const qs = params.toString();
-    return `${base}/search${qs ? '?' + qs : ''}${hash || ''}`;
+    return `${base}/applications${qs ? '?' + qs : ''}${hash || ''}`;
   }
 
   // Landing page
@@ -170,7 +170,7 @@ module.exports = function (router) {
   function paginationFor(query, total, page) {
     const pages = Math.ceil(total / PAGE_SIZE);
     if (pages <= 1) return null;
-    const href = n => searchUrl(query, { page: n === 1 ? null : n }, '#app-filter');
+    const href = n => listUrl(query, { page: n === 1 ? null : n }, '#app-filter');
     const items = [];
     for (let n = 1; n <= pages; n++) {
       items.push({ number: n, href: href(n), current: n === page });
@@ -182,8 +182,8 @@ module.exports = function (router) {
     };
   }
 
-  // Filter applications open for consultation
-  router.get(`${base}/search`, function (req, res) {
+  // List and filter applications
+  router.get(`${base}/applications`, function (req, res) {
     const query = req.query;
     const paginationOn = query.pagination === 'on';
     // The reference filter is on unless ?reffilter=off, from the tray. On
@@ -229,7 +229,7 @@ module.exports = function (router) {
 
     // The MOJ "Selected filters" tags, each linking to the page without it.
     // Changing the filters starts again on page 1.
-    const without = changes => searchUrl(query, Object.assign({ page: null }, changes), '#app-filter');
+    const without = changes => listUrl(query, Object.assign({ page: null }, changes), '#app-filter');
     const selected = [];
     if (filters.reference) {
       selected.push({
@@ -262,15 +262,15 @@ module.exports = function (router) {
       });
     }
 
-    // Links for the tray: the same search with pagination on or off
+    // Links for the tray: the same list with pagination on or off
     const trayUrls = {
-      paginationOff: searchUrl(query, { pagination: null, page: null }),
-      paginationOn: searchUrl(query, { pagination: 'on', page: null }),
-      refFilterOn: searchUrl(query, { reffilter: null, page: null }),
-      refFilterOff: searchUrl(query, { reffilter: 'off', page: null, 'public-register-v1-reference-filter': null })
+      paginationOff: listUrl(query, { pagination: null, page: null }),
+      paginationOn: listUrl(query, { pagination: 'on', page: null }),
+      refFilterOn: listUrl(query, { reffilter: null, page: null }),
+      refFilterOff: listUrl(query, { reffilter: 'off', page: null, 'public-register-v1-reference-filter': null })
     };
 
-    res.render(`versions/${version}/${section}/search`, {
+    res.render(`versions/${version}/${section}/applications`, {
       results,
       total: matching.length,
       pagination,
@@ -285,10 +285,10 @@ module.exports = function (router) {
       sortLinks: Object.keys(SORTS).map(key => ({
         text: SORTS[key].text,
         current: key === sort,
-        href: searchUrl(query, { sort: key === 'closing' ? null : key, page: null })
+        href: listUrl(query, { sort: key === 'closing' ? null : key, page: null })
       })),
       // Clear filters keeps the page versions (sort, pagination, reference filter off)
-      clearFiltersUrl: searchUrl({ sort: query.sort, pagination: query.pagination, reffilter: query.reffilter }, {}, '#app-filter')
+      clearFiltersUrl: listUrl({ sort: query.sort, pagination: query.pagination, reffilter: query.reffilter }, {}, '#app-filter')
     });
   });
 
@@ -296,7 +296,7 @@ module.exports = function (router) {
   router.get(`${base}/application/:applicationId`, function (req, res) {
     const application = ALL.find(a => a.id === req.params.applicationId);
     if (!application) {
-      return res.redirect(`${base}/search`);
+      return res.redirect(`${base}/applications`);
     }
     res.render(`versions/${version}/${section}/application`, { application });
   });
