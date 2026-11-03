@@ -74,6 +74,14 @@ module.exports = function (router) {
     newest: { text: 'Recently published', compare: (a, b) => b.publishedOffset - a.publishedOffset }
   };
 
+  // The public consultation is 21 days, as on the LCML v4 site notice:
+  // comments must "be received within 21 days of the date this notice was
+  // first displayed". The prototype takes the notice as going up the day the
+  // application is published here, so it closes 21 days after that. (The
+  // applicant has up to 7 days to put the notice up, which a real service
+  // would need to allow for.)
+  const PUBLIC_CONSULTATION_DAYS = 21;
+
   function closingSuffix(offset) {
     if (offset === 0) return 'today';
     if (offset === 1) return 'tomorrow';
@@ -82,11 +90,13 @@ module.exports = function (router) {
 
   // Adds what the pages need to a seeded application
   function withDetails(application) {
+    const closingOffset = application.publishedOffset + PUBLIC_CONSULTATION_DAYS;
     return Object.assign({}, application, {
+      closingOffset,
       marinePlanAreas: [].concat(application.marinePlanArea),
       activityNames: application.activities.map(value => ACTIVITY_NAMES[value]),
-      closingSuffix: closingSuffix(application.closingOffset),
-      closingSoon: application.closingOffset <= 7
+      closingSuffix: closingSuffix(closingOffset),
+      closingSoon: closingOffset <= 7
     });
   }
 
@@ -363,7 +373,9 @@ module.exports = function (router) {
     }
     res.render(`versions/${version}/${section}/application`, {
       application,
-      details: pageDetails(application.id, DETAILS[application.id])
+      details: pageDetails(application.id, DETAILS[application.id]),
+      // Have your say in an MOJ ticket panel (?hys=panel, from the tray)
+      haveYourSayPanel: req.query.hys === 'panel'
     });
   });
 
@@ -419,10 +431,19 @@ module.exports = function (router) {
       Object.assign({ application }, commentAnswers(req, application.id), extra));
   }
 
-  // Your comment
+  // Your comment. The Comment on this application button adds ?new=1,
+  // which clears this application's comment, name, email and reference so
+  // each go starts empty (Tom asked for this, for demos and testing). Back
+  // links within the journey do not add it, so they keep what was typed.
   router.get(`${base}/application/:applicationId/comment`, function (req, res) {
     const application = findApplication(req, res);
     if (!application) return;
+    if (req.query.new) {
+      const keys = commentKeys(application.id);
+      Object.keys(keys).forEach(key => { delete req.session.data[keys[key]]; });
+      delete req.session.data.new;
+      return res.redirect('comment');
+    }
     renderComment(req, res, 'comment', application, { change: req.query.change });
   });
 
@@ -453,8 +474,9 @@ module.exports = function (router) {
     const email = String(req.session.data[keys.email] || '').trim();
     const errors = {};
     if (!name) errors.name = 'Enter your full name';
+    // Only checked for being empty, so usability testing participants can
+    // type anything rather than a real address
     if (!email) errors.email = 'Enter your email address';
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.email = 'Enter an email address in the correct format, like name@example.com';
     if (Object.keys(errors).length) {
       return renderComment(req, res, 'your-details', application, { change: req.body.change, errors });
     }

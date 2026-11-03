@@ -14,6 +14,8 @@
 {% if data['versions'] !== 'off' %}
 {% set listPath = "/versions/multiple-sites-v2/public-register-v1/applications" %}
 {% set startPath = "/versions/multiple-sites-v2/public-register-v1/start" %}
+{# The application being viewed, or Lyme Regis from any other page #}
+{% set applicationPath = "/versions/multiple-sites-v2/public-register-v1/application/" + (application.id if application else "lyme-regis") %}
 
 <style>
   .app-version-switcher__toggle {
@@ -143,6 +145,25 @@
     ] %}
     <li>
       {% if (referenceFilterOn !== false) === option.on %}
+      <span aria-current="true">{{ option.text }}</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ option.url }}" class="govuk-link govuk-link--no-visited-state">{{ option.text }}</a>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  </div>
+
+  <div class="app-version-tray__section">
+  {# Plain by default. The MOJ ticket panel is "to be reviewed" in the MOJ Design System, so it is on trial. #}
+  <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Have your say on the application page</h3>
+  <ul class="govuk-list govuk-list--spaced">
+    {% for option in [
+      { panel: false, text: "Heading with section breaks", url: applicationPath },
+      { panel: true, text: "MOJ ticket panel", url: applicationPath + "?hys=panel" }
+    ] %}
+    <li>
+      {% if (haveYourSayPanel or false) === option.panel and details %}
       <span aria-current="true">{{ option.text }}</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
       {% else %}
       <a href="{{ option.url }}" class="govuk-link govuk-link--no-visited-state">{{ option.text }}</a>

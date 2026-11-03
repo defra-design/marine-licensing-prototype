@@ -15,8 +15,9 @@
 // ACTIVITY_GROUPS in public-register-v1.js for their names).
 //
 // Dates are day offsets from today, run through the daysFromToday filter.
-// publishedOffset is when it went on the register, closingOffset is when
-// public comments close.
+// publishedOffset is when it went on the register. The consultation closes
+// 21 days later (see PUBLIC_CONSULTATION_DAYS in public-register-v1.js), so
+// these are spread to give closing dates from tomorrow to 20 days away.
 //
 // Teignmouth is redacted (see redact-details in LCML v4). What each
 // application says is in public-register-v1-details.js.
@@ -29,8 +30,7 @@ module.exports = [
     applicant: 'Jurassic Coast SUP Ltd',
     marinePlanArea: 'South Inshore',
     activities: ['construction-new'],
-    publishedOffset: -27,
-    closingOffset: 1
+    publishedOffset: -20
   },
   {
     id: 'bude',
@@ -39,8 +39,7 @@ module.exports = [
     applicant: 'Atlantic Coast Utilities Ltd',
     marinePlanArea: 'South West Inshore',
     activities: ['maintenance-existing'],
-    publishedOffset: -25,
-    closingOffset: 3
+    publishedOffset: -18
   },
   {
     id: 'southwold',
@@ -49,8 +48,7 @@ module.exports = [
     applicant: 'Suffolk Coastal Engineering Ltd',
     marinePlanArea: 'East Inshore',
     activities: ['one-off-first-time'],
-    publishedOffset: -22,
-    closingOffset: 6
+    publishedOffset: -16
   },
   {
     id: 'hayling',
@@ -59,8 +57,7 @@ module.exports = [
     applicant: 'Solent Coastal Services Ltd',
     marinePlanArea: 'South Inshore',
     activities: ['maintenance-existing', 'deposit-new'],
-    publishedOffset: -19,
-    closingOffset: 9
+    publishedOffset: -14
   },
   {
     id: 'whitstable',
@@ -69,8 +66,7 @@ module.exports = [
     applicant: 'Kentish Flats Shellfish Ltd',
     marinePlanArea: 'South East Inshore',
     activities: ['construction-new'],
-    publishedOffset: -16,
-    closingOffset: 12
+    publishedOffset: -12
   },
   {
     id: 'salcombe',
@@ -79,8 +75,7 @@ module.exports = [
     applicant: 'Salcombe Harbour Moorings Ltd',
     marinePlanArea: 'South West Inshore',
     activities: ['removal-replacement', 'construction-new'],
-    publishedOffset: -12,
-    closingOffset: 16
+    publishedOffset: -10
   },
   {
     id: 'teignmouth',
@@ -90,8 +85,7 @@ module.exports = [
     marinePlanArea: 'South West Inshore',
     activities: ['construction-new'],
     redacted: true,
-    publishedOffset: -10,
-    closingOffset: 18
+    publishedOffset: -8
   },
   {
     id: 'morecambe-bay',
@@ -100,8 +94,7 @@ module.exports = [
     applicant: 'Lancaster Coastal Research Ltd',
     marinePlanArea: 'North West Inshore',
     activities: ['deposit-new'],
-    publishedOffset: -8,
-    closingOffset: 20
+    publishedOffset: -7
   },
   {
     id: 'dawlish',
@@ -110,8 +103,7 @@ module.exports = [
     applicant: 'Southwest Marine Works Ltd',
     marinePlanArea: 'South Inshore',
     activities: ['alteration-improvement'],
-    publishedOffset: -7,
-    closingOffset: 21
+    publishedOffset: -6
   },
   {
     id: 'poole',
@@ -120,8 +112,7 @@ module.exports = [
     applicant: 'Brownsea Moorings Ltd',
     marinePlanArea: 'South Inshore',
     activities: ['deposit-new'],
-    publishedOffset: -3,
-    closingOffset: 25
+    publishedOffset: -4
   },
   {
     id: 'scarborough',
@@ -130,8 +121,7 @@ module.exports = [
     applicant: 'North Bay Harbour Services Ltd',
     marinePlanArea: 'North East Inshore',
     activities: ['removal-replacement', 'construction-new'],
-    publishedOffset: -2,
-    closingOffset: 26
+    publishedOffset: -2
   },
   {
     id: 'dogger-bank',
@@ -140,7 +130,6 @@ module.exports = [
     applicant: 'North Sea Metocean Services Ltd',
     marinePlanArea: 'North East Offshore',
     activities: ['replacing-existing'],
-    publishedOffset: -1,
-    closingOffset: 29
+    publishedOffset: -1
   }
 ];
