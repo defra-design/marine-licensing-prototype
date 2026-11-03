@@ -1,0 +1,53 @@
+{% extends "versions/multiple-sites-v2/public-register-v1/includes/layout.html" %}
+
+{% from "govuk/components/textarea/macro.njk" import govukTextarea %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% set navActive = "applications" %}
+{% set pageTitle = ("Error: " if errors else "") + "What do you want to tell us about this application?" %}
+{% set backLink = "check-answers" if change else "/versions/multiple-sites-v2/public-register-v1/application/" + application.id %}
+
+{#
+  Commenting, page 1 of 2: the comment itself, text only. The label is the
+  page heading, as it is the only question on the page. No character limit
+  yet – one of the questions left for the team.
+#}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        {% if errors %}
+        {{ govukErrorSummary({
+            titleText: "There is a problem",
+            errorList: [{ text: errors.comment, href: "#" + keys.comment }]
+        }) }}
+        {% endif %}
+
+        <form method="post" novalidate>
+            {% if change %}<input type="hidden" name="change" value="1">{% endif %}
+
+            <span class="govuk-caption-l">{{ application.applicationName }}</span>
+            {{ govukTextarea({
+                name: keys.comment,
+                id: keys.comment,
+                rows: 10,
+                value: answers.comment,
+                label: {
+                    text: "What do you want to tell us about this application?",
+                    classes: "govuk-label--l",
+                    isPageHeading: true
+                },
+                hint: { text: "Tell us how the proposed works would affect you, other people or the local area. Do not include personal information about other people." },
+                errorMessage: { text: errors.comment } if errors else undefined
+            }) }}
+
+            {{ govukButton({ text: "Continue" }) }}
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

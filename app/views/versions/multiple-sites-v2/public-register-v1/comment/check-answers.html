@@ -1,0 +1,71 @@
+{% extends "versions/multiple-sites-v2/public-register-v1/includes/layout.html" %}
+
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set navActive = "applications" %}
+{% set pageTitle = "Check your comment before sending it" %}
+{% set backLink = "your-details" %}
+
+{#
+  Check your answers, then send. What happens to the comment sits just
+  above the button, so people read it before they send. It follows the BA:
+  individual comments are not published, and after the consultation the
+  caseworker may share a summary with the public and the applicant (that
+  part is under Make and issue a decision). The privacy notice is a dead
+  link for now.
+#}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <span class="govuk-caption-l">{{ application.applicationName }}</span>
+        <h1 class="govuk-heading-l">Check your comment before sending it</h1>
+
+        {% set commentHtml %}
+        {% for paragraph in (answers.comment or '').split('\n') %}{% if paragraph | trim %}<p class="govuk-body">{{ paragraph }}</p>{% endif %}{% endfor %}
+        {% endset %}
+
+        <h2 class="govuk-heading-m">Your comment</h2>
+        {{ govukSummaryList({
+            rows: [
+                {
+                    key: { text: "Comment" },
+                    value: { html: commentHtml },
+                    actions: { items: [{ href: "comment?change=1", text: "Change", visuallyHiddenText: "your comment" }] }
+                }
+            ]
+        }) }}
+
+        <h2 class="govuk-heading-m">Your details</h2>
+        {{ govukSummaryList({
+            classes: "govuk-!-margin-bottom-9",
+            rows: [
+                {
+                    key: { text: "Full name" },
+                    value: { text: answers.name },
+                    actions: { items: [{ href: "your-details?change=1", text: "Change", visuallyHiddenText: "full name" }] }
+                },
+                {
+                    key: { text: "Email address" },
+                    value: { text: answers.email },
+                    actions: { items: [{ href: "your-details?change=1", text: "Change", visuallyHiddenText: "email address" }] }
+                }
+            ]
+        }) }}
+
+        <h2 class="govuk-heading-m">Now send your comment</h2>
+        <p class="govuk-body">The case officer will read your comment and take it into account when we decide whether to grant the marine licence.</p>
+        <p class="govuk-body">We will not publish your comment. After the consultation closes, we may share a summary of the comments we receive with the public and the applicant.</p>
+        <p class="govuk-body">Read our <a href="#" class="govuk-link govuk-link--no-visited-state">privacy notice</a> to find out how we use your personal information.</p>
+
+        <form method="post" novalidate>
+            {{ govukButton({ text: "Send comment" }) }}
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

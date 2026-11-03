@@ -9,8 +9,8 @@ module.exports = function (router) {
   // navigation and no sign-in. MVP only lists applications open for
   // consultation, but the list page is named so it can take decided ones
   // later. Phase 1 is the landing page, filtering the list, and finding an
-  // application by reference. Phase 2 is viewing an application. Making a
-  // representation and email alerts follow.
+  // application by reference. Phase 2 is viewing an application, phase 3
+  // is commenting on it. Email alerts follow.
   const version = "multiple-sites-v2";
   const section = "public-register-v1";
   const base = `/versions/${version}/${section}`;
@@ -359,13 +359,127 @@ module.exports = function (router) {
     });
   });
 
-  // Have your say. A placeholder for now: making a representation is phase 3.
-  router.get(`${base}/application/:applicationId/have-your-say`, function (req, res) {
+  // Commenting on an application (phase 3). Kept minimal to start with:
+  // the comment, then name and email, then check your answers, then sent,
+  // with the confirmation email shown as a page. No sign-in. Questions still
+  // open (support or object, connection to the area, a character limit)
+  // are left out until the team has talked them through.
+  //
+  // The kit stores the answers in the session, under keys of their own for
+  // each application (public-register-v1-bude-comment and so on), so someone
+  // who comments on more than one in usability testing starts each with
+  // empty boxes. They are not cleared after sending, so the demo keeps its
+  // state.
+  function commentKeys(id) {
+    const prefix = `public-register-v1-${id}`;
+    return {
+      comment: `${prefix}-comment`,
+      name: `${prefix}-name`,
+      email: `${prefix}-email`,
+      reference: `${prefix}-comment-reference`
+    };
+  }
+
+  // The keys and this application's answers, for the templates
+  function commentAnswers(req, id) {
+    const keys = commentKeys(id);
+    const answers = {};
+    Object.keys(keys).forEach(key => { answers[key] = req.session.data[keys[key]]; });
+    return { keys, answers };
+  }
+
+  function findApplication(req, res) {
     const application = ALL.find(a => a.id === req.params.applicationId);
-    if (!application) {
-      return res.redirect(`${base}/applications`);
+    if (!application) res.redirect(`${base}/applications`);
+    return application;
+  }
+
+  // Pages with a change link from check your answers go back there when
+  // they are saved (?change=1, carried through the form)
+  function nextPage(req, next) {
+    return req.query.change || req.body.change ? 'check-answers' : next;
+  }
+
+  function renderComment(req, res, page, application, extra) {
+    res.render(`versions/${version}/${section}/comment/${page}`,
+      Object.assign({ application }, commentAnswers(req, application.id), extra));
+  }
+
+  // Your comment
+  router.get(`${base}/application/:applicationId/comment`, function (req, res) {
+    const application = findApplication(req, res);
+    if (!application) return;
+    renderComment(req, res, 'comment', application, { change: req.query.change });
+  });
+
+  router.post(`${base}/application/:applicationId/comment`, function (req, res) {
+    const application = findApplication(req, res);
+    if (!application) return;
+    if (!String(req.session.data[commentKeys(application.id).comment] || '').trim()) {
+      return renderComment(req, res, 'comment', application, {
+        change: req.body.change,
+        errors: { comment: 'Enter your comment' }
+      });
     }
-    res.render(`versions/${version}/${section}/have-your-say`, { application });
+    res.redirect(nextPage(req, 'your-details'));
+  });
+
+  // Your details
+  router.get(`${base}/application/:applicationId/your-details`, function (req, res) {
+    const application = findApplication(req, res);
+    if (!application) return;
+    renderComment(req, res, 'your-details', application, { change: req.query.change });
+  });
+
+  router.post(`${base}/application/:applicationId/your-details`, function (req, res) {
+    const application = findApplication(req, res);
+    if (!application) return;
+    const keys = commentKeys(application.id);
+    const name = String(req.session.data[keys.name] || '').trim();
+    const email = String(req.session.data[keys.email] || '').trim();
+    const errors = {};
+    if (!name) errors.name = 'Enter your full name';
+    if (!email) errors.email = 'Enter your email address';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.email = 'Enter an email address in the correct format, like name@example.com';
+    if (Object.keys(errors).length) {
+      return renderComment(req, res, 'your-details', application, { change: req.body.change, errors });
+    }
+    res.redirect('check-answers');
+  });
+
+  // Check your answers
+  router.get(`${base}/application/:applicationId/check-answers`, function (req, res) {
+    const application = findApplication(req, res);
+    if (!application) return;
+    renderComment(req, res, 'check-answers', application);
+  });
+
+  // Sending gives the comment a reference, like the ones GOV.UK services
+  // show on confirmation pages
+  router.post(`${base}/application/:applicationId/check-answers`, function (req, res) {
+    const application = findApplication(req, res);
+    if (!application) return;
+    const characters = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    req.session.data[commentKeys(application.id).reference] = Array.from({ length: 8 }, () => characters[Math.floor(Math.random() * characters.length)]).join('');
+    res.redirect('comment-sent');
+  });
+
+  // Comment sent
+  router.get(`${base}/application/:applicationId/comment-sent`, function (req, res) {
+    const application = findApplication(req, res);
+    if (!application) return;
+    renderComment(req, res, 'comment-sent', application);
+  });
+
+  // The confirmation email, as the commenter would see it in their inbox
+  router.get(`${base}/application/:applicationId/confirmation-email`, function (req, res) {
+    const application = findApplication(req, res);
+    if (!application) return;
+    // The first and last initials of their name, for the mailbox avatar
+    const { keys, answers } = commentAnswers(req, application.id);
+    const names = String(answers.name || '').trim().split(/\s+/).filter(Boolean);
+    const mailInitials = names.length ? (names[0][0] + (names.length > 1 ? names[names.length - 1][0] : '')).toUpperCase() : '';
+    res.render(`versions/${version}/${section}/emails/comment-confirmation`, { application, keys, answers, mailInitials });
   });
 
   // The register's home is the landing page
