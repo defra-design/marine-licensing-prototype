@@ -78,7 +78,7 @@
         <h1 class="govuk-heading-l">{{ application.applicationName }}</h1>
 
         {# With borders, as there can be more than one marine plan area or
-           activity. Its last border is the rule above Have your say. #}
+           activity. Its last border is the rule above Comment on this application. #}
         <dl class="govuk-summary-list">
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">Applicant</dt>
@@ -100,7 +100,7 @@
             </div>
         </dl>
 
-        <h2 class="govuk-heading-m">Have your say</h2>
+        <h2 class="govuk-heading-m">Comment on this application</h2>
         <p class="govuk-body">You can tell us what you think about this application until the consultation closes on <strong>{{ application.closingOffset | daysFromToday }}</strong>{% if application.closingSoon %} ({{ application.closingSuffix }}){% endif %}.</p>
         <p class="govuk-body">We will take what you tell us into account when we decide whether to grant the marine licence.</p>
         {{ govukButton({
