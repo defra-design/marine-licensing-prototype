@@ -524,13 +524,13 @@ module.exports = function (router) {
     const respondedBy = RESPONDED_BY_OPTIONS.some(o => o.value === query['consultation-v2-responded']) ? query['consultation-v2-responded'] : 'any';
     return {
       show,
-      people: show === 'person' ? asArray(query['consultation-v2-person']).filter(p => TEAM.includes(p)) : [],
+      people: show === 'person' ? asArray(query['consultation-v2-person']).filter(p => EVERYONE.includes(p)) : [],
       types: asArray(query['consultation-v2-type']).filter(t => TYPE_OPTIONS.some(o => o.value === t)),
       statuses: asArray(query['consultation-v2-status']).filter(st => (query.passed !== 'off' ? STATUS_OPTIONS_WITH_MISSED : STATUS_OPTIONS).includes(st)),
       // Ignored with the MOJ contextual date off, as the filter is not shown
       closing: query.deadline !== 'off' ? asArray(query['consultation-v2-closing']).filter(c => CLOSING_OPTIONS.some(o => o.value === c)) : [],
       respondedBy,
-      respondedPeople: respondedBy === 'person' ? asArray(query['consultation-v2-responded-person']).filter(p => TEAM.includes(p)) : [],
+      respondedPeople: respondedBy === 'person' ? asArray(query['consultation-v2-responded-person']).filter(p => EVERYONE.includes(p)) : [],
       areas: asArray(query['consultation-v2-area']).filter(a => MARINE_PLAN_AREAS.includes(a))
     };
   }
@@ -899,8 +899,13 @@ module.exports = function (router) {
     const tabFilters = TAB_FILTERS[res.locals.tabsOn ? listTab : 'all'];
     const filters = filtersForTab(readFilters(req.query), tabFilters);
     const statusOptions = res.locals.passedOn ? STATUS_OPTIONS_WITH_MISSED : STATUS_OPTIONS;
-    const inTab = (res.locals.tabsOn ? allRequests.filter(r => tabFor(r) === listTab) : allRequests)
-      .filter(r => matchesFilters(r, filters));
+    const tabRequests = res.locals.tabsOn ? allRequests.filter(r => tabFor(r) === listTab) : allRequests;
+    const inTab = tabRequests.filter(r => matchesFilters(r, filters));
+
+    // The names under Assigned to someone else and Responded by come from
+    // the cases in this tab, so only people with something to find are
+    // listed. Anyone already ticked stays, so a choice never disappears.
+    const peopleIn = (key, ticked) => [...new Set(tabRequests.map(r => r[key]).filter(p => p && p !== ME).concat(ticked))].sort();
 
     // Sorted here as well as in the browser, so each page of the list holds
     // the right cases. Closing date unless ?sort= says otherwise: soonest
@@ -982,9 +987,10 @@ module.exports = function (router) {
         // Only with the MOJ contextual date (not with ?deadline=off)
         closingOptions: res.locals.deadlineMode === 'bar' ? CLOSING_OPTIONS.filter(o => !tabFilters.closing || tabFilters.closing.includes(o.value)) : [],
         respondedByOptions: RESPONDED_BY_OPTIONS,
-        areaOptions: MARINE_PLAN_AREAS
+        areaOptions: MARINE_PLAN_AREAS,
+        assignedPeople: peopleIn('assignedTo', filters.people),
+        respondedPeople: peopleIn('respondedBy', filters.respondedPeople)
       },
-      team: TEAM,
       selectedFilterGroups: selectedFilterGroups(req.query, filters),
       clearFiltersUrl: consultationsUrl(req.query, withoutFilters),
       // Links to the request pages carry the filters too, so Back returns to
