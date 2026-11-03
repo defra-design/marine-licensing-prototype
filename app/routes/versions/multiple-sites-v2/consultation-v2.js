@@ -26,7 +26,7 @@ module.exports = function (router) {
   // The open requests for advice are spread so the closing date warning
   // (on by default, ?deadline=off turns it off) shows every state: Scarborough passed 2 days ago (on
   // the Missed tab, ?passed=off hides it, see canBeHidden), Hayling
-  // closes today, Falmouth tomorrow, Whitstable in 3 days and Dawlish in 7,
+  // closes today, Dart tomorrow, Whitstable in 3 days and Dawlish in 7,
   // the edge of the closing soon window. Bude and Poole are notifications
   // closing in 2 and 4 days, which mixes up the statuses in the default sort
   // and shows that notifications never get a warning. Salcombe is a
@@ -99,34 +99,37 @@ module.exports = function (router) {
     },
     // The requests below are made up for v2, so the case list has enough
     // rows to show assigning, filtering and sorting.
-    'falmouth': {
-      id: 'falmouth',
-      applicationName: 'Falmouth marina maintenance dredge',
+    // In two marine plan areas: the South and South West areas meet at the
+    // River Dart, so the buoys on the Kingswear side are in South Inshore
+    // and those on the Dartmouth side are in South West Inshore.
+    'dart': {
+      id: 'dart',
+      applicationName: 'Dart estuary navigation buoy replacement',
       reference: 'MLA/2026/10029',
-      applicant: 'Falmouth Haven Marina Ltd',
+      applicant: 'Dart Estuary Moorings Ltd',
       type: 'response-required',
       assignedTo: 'Jordan Lee',
       adviceRequested: [
-        'We would like your advice on the effects of the proposed dredge on the Fal and Helford Special Area of Conservation.',
-        'Tell us whether the dredged material is likely to affect the maerl beds near the disposal site, and any measures you would recommend.',
-        'Tell us about any timing restrictions you would recommend to protect migratory fish.'
+        'We would like your advice on whether replacing the buoy sinkers and ground chains is likely to affect the seagrass beds in the Dart estuary, and any measures you would recommend.',
+        'Tell us about any timing restrictions you would recommend to protect migratory salmon and sea trout.',
+        'The works are in both the South and South West marine plan areas. Tell us if your advice differs between the two sides of the river.'
       ],
       receivedOffset: -13,
-      summary: 'We are applying for a marine licence to carry out maintenance dredging of the marina basin and access channel to restore the depths needed for berth holders. Silt has built up since the last dredge 5 years ago. We expect to remove about 12,000 cubic metres of material using a backhoe dredger, with the material taken by split hopper barge to the existing licensed disposal site off St Anthony Head.',
-      startAndEndDates: 'October 2026 to March 2027',
+      summary: 'We are applying for a marine licence to replace 6 navigation buoys that mark the edges of the main channel past our mooring trots at the mouth of the River Dart. Three are on the Kingswear side and three on the Dartmouth side. The existing steel buoys are corroded and their lights are unreliable. We will replace each one in the same position with a new plastic buoy with a solar-powered light, on a new concrete sinker and chain. The work will be done from a workboat with a lifting crane and will take about 2 weeks.',
+      startAndEndDates: 'January 2027 to March 2027',
       site: {
-        name: 'Falmouth marina basin and access channel',
-        typeOfActivity: 'Dredging',
+        name: 'Kingswear side, Dart estuary entrance',
+        typeOfActivity: 'Maintenance of existing works',
         whatIsBeingConstructed: 'Not applicable',
-        activityDescription: 'Maintenance dredging of the marina basin and access channel to a depth of 2.5 metres below chart datum, using a backhoe dredger. Dredged material will be loaded into a split hopper barge and disposed of at the licensed offshore disposal site.',
-        maximumDuration: '8 weeks',
-        completionDate: 'Not needed to be completed by a certain date',
-        specificMonths: 'Yes – October to March only, outside the main boating season.',
-        workingHours: 'Monday to Saturday, 07:00 to 19:00, tide dependent.',
-        drawing: 'dredge-area-plan.pdf'
+        activityDescription: 'Like for like replacement of 3 navigation buoys and their sinkers and chains in the same positions.',
+        maximumDuration: '1 week',
+        completionDate: 'Yes – before the start of the sailing season on 1 April 2027',
+        specificMonths: 'Yes – January to March only.',
+        workingHours: 'Monday to Friday, 08:00 to 16:00, around slack water.',
+        drawing: 'kingswear-side-buoy-positions.pdf'
       },
-      siteLocation: 'Falmouth, Cornwall',
-      marinePlanArea: 'South West Inshore'
+      siteLocation: 'Dartmouth and Kingswear, Devon',
+      marinePlanArea: ['South Inshore', 'South West Inshore']
     },
     'whitstable': {
       id: 'whitstable',
