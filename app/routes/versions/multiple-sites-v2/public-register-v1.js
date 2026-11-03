@@ -297,12 +297,13 @@ module.exports = function (router) {
   // documents are not published at all, and a replaced one is published as
   // the applicant's redacted copy, without saying so (as on the LCML v4
   // public register preview).
-  function documentFor(file, title) {
+  function documentFor(file, title, seed) {
     const doc = typeof file === 'string' ? { filename: file } : file;
     const filename = doc.replacedBy || doc.filename;
     const extension = filename.split('.').pop().toLowerCase();
-    // Made-up file sizes, worked out from the filename so they stay the same
-    const kb = 180 + [...filename].reduce((total, c) => (total * 31 + c.charCodeAt(0)) % 4000, 7);
+    // Made-up file sizes, worked out from the filename (or seed, when every
+    // application has the same filename) so they stay the same
+    const kb = 180 + [...(seed || filename)].reduce((total, c) => (total * 31 + c.charCodeAt(0)) % 4000, 7);
     return {
       title,
       filename,
@@ -314,14 +315,16 @@ module.exports = function (router) {
 
   // What the view an application page needs from an application's details:
   // activity names that match the filter, documents in the form the page
-  // shows them, and every document in one list for the top of the page.
-  // Drawings are titled by site name rather than "Site 1", as the public do
-  // not know the numbering, matching the consultation v2 documents list.
-  function pageDetails(details) {
-    const documents = [];
-    const sites = details.sites.map((site, s) => {
+  // shows them, and every document for the top of the page, grouped under
+  // the task list section it was uploaded in, as on the consultation v2
+  // application page. The site coordinates come first, then the drawings,
+  // titled by site name rather than "Site 1" as the public do not know the
+  // numbering. Groups with nothing in them are left out.
+  function pageDetails(id, details) {
+    const siteDocuments = [documentFor('sitecoordinates.zip', 'Site coordinates', `${id}-sitecoordinates.zip`)];
+    const sites = details.sites.map(site => {
       const drawings = (site.drawings || []).map((drawing, d) => documentFor(drawing, `${site.name} – Construction drawing ${d + 1}`));
-      documents.push(...drawings);
+      siteDocuments.push(...drawings);
       return Object.assign({}, site, {
         activities: site.activities.map(activity => Object.assign({}, activity, {
           typeOfActivity: ACTIVITY_NAMES[activity.type] || activity.typeOfActivity
@@ -332,12 +335,15 @@ module.exports = function (router) {
     const supportingDocuments = (details.supportingDocuments || []).map(doc => Object.assign({}, doc, {
       file: documentFor(doc.filename, doc.type)
     }));
-    documents.push(...supportingDocuments.map(doc => doc.file));
     const wfd = details.wfd && Object.assign({}, details.wfd, {
       file: documentFor(details.wfd.upload, 'Water Framework Directive assessment')
     });
-    if (wfd) documents.push(wfd.file);
-    return Object.assign({}, details, { sites, supportingDocuments, wfd, documents });
+    const documentGroups = [
+      { heading: 'Sites and activities', documents: siteDocuments },
+      { heading: 'Marine plan policy supporting documents', documents: supportingDocuments.map(doc => doc.file) },
+      { heading: 'Water Framework Directive assessment', documents: wfd ? [wfd.file] : [] }
+    ].filter(group => group.documents.length);
+    return Object.assign({}, details, { sites, supportingDocuments, wfd, documentGroups });
   }
 
   // View an application. Every application uses the same page, which shows
@@ -349,7 +355,7 @@ module.exports = function (router) {
     }
     res.render(`versions/${version}/${section}/application`, {
       application,
-      details: pageDetails(DETAILS[application.id])
+      details: pageDetails(application.id, DETAILS[application.id])
     });
   });
 

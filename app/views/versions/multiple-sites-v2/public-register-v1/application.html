@@ -123,14 +123,17 @@
 
         <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
 
-        {# Every document in one list, as people who come from a site notice
-           often want the drawings first. Drawings are named by their site,
-           as in the consultation v2 documents list (the filename is on the
-           card), with the file type and size in the link text. A plain
-           GOV.UK list. Links are dead in the prototype. #}
+        {# Every document at the top, as people who come from a site notice
+           often want the drawings first. Grouped under the task list section
+           each was uploaded in, as on the consultation v2 application page.
+           Drawings are named by their site (the filename is on the card),
+           with the file type and size in the link text. Links are dead in
+           the prototype. #}
         <h2 class="govuk-heading-m">Documents</h2>
+        {% for group in details.documentGroups %}
+        <h3 class="govuk-heading-s govuk-!-margin-bottom-2">{{ group.heading }}</h3>
         <ul class="govuk-list">
-            {% for file in details.documents %}
+            {% for file in group.documents %}
             <li>
                 {% if file.withheld %}
                 {{ file.title }}: <span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">Redacted</span>
@@ -140,6 +143,7 @@
             </li>
             {% endfor %}
         </ul>
+        {% endfor %}
 
         <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
 
