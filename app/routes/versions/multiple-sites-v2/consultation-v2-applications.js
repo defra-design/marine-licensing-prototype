@@ -2,9 +2,10 @@
 // Not a route file – required by consultation-v2.js, which adds each one to
 // its request as request.application.
 //
-// Only Hayling and Poole have one, for the show and tell. Hayling has one
-// marine plan policy supporting document and Poole has none, to show both. The other requests
-// keep the shorter view built from request.site.
+// Only Hayling, Poole and Dart have one, for the show and tell. Hayling has one
+// marine plan policy supporting document and Poole has none, to show both. Dart
+// is in two marine plan areas, so it has policies from both plans. The other
+// requests keep the shorter view built from request.site.
 //
 // The rows follow the LCML v4 view details and check answers pages, with the
 // labels reworded for someone outside the applicant's organisation (for
@@ -96,6 +97,58 @@ const SOUTH_POLICIES = {
   }
 };
 
+// South West marine plan policy text, copied from the LCML v4 Plymouth Sound
+// view details page. Only the ones the Dart application answers.
+const SOUTH_WEST_POLICIES = {
+  'SW-CO-1': {
+    name: 'South West Co-existence 1',
+    info: 'Proposals that optimise the use of space and incorporate opportunities for co-existence and co-operation with existing activities will be supported. Proposals that may have significant adverse impacts on, or displace, existing activities must demonstrate that they will, in order of preference: a) avoid b) minimise c) mitigate - adverse impacts so they are no longer significant. If it is not possible to mitigate significant adverse impacts, proposals must state the case for proceeding.'
+  },
+  'SW-PS-1': {
+    name: 'South West Ports, harbours and shipping 1',
+    info: 'In line with the National Policy Statement for Ports, sustainable port and harbour development should be supported. Only proposals demonstrating compatibility with current port and harbour activities will be supported. Proposals within statutory harbour authority areas or their approaches that detrimentally and materially affect safety of navigation, or the compliance by statutory harbour authorities with the Open Port Duty or the Port Marine Safety Code, will not be authorised unless there are exceptional circumstances. Proposals that may have a significant adverse impact upon future opportunity for sustainable expansion of port and harbour activities, must demonstrate that they will, in order of preference: a) avoid b) minimise c) mitigate - adverse impacts so they are no longer significant. If it is not possible to mitigate significant adverse impacts, proposals should state the case for proceeding.'
+  },
+  'SW-BIO-1': {
+    name: 'South West Biodiversity 1',
+    info: 'Proposals that enhance the distribution of priority habitats and priority species will be supported. Proposals that may have significant adverse impacts on the distribution of priority habitats and priority species must demonstrate that they will, in order of preference: a) avoid b) minimise c) mitigate - adverse impacts so they are no longer significant d) compensate for significant adverse impacts that cannot be mitigated.'
+  },
+  'SW-INNS-1': {
+    name: 'South West Invasive non-native species 1',
+    info: 'Proposals that reduce the risk of introduction and/or spread of invasive non-native species should be supported. Proposals must put in place appropriate measures to avoid or minimise significant adverse impacts that would arise through the introduction and transport of invasive non-native species, particularly when: 1) moving equipment, boats or livestock (for example fish or shellfish) from one water body to another 2) introducing structures suitable for settlement of invasive non-native species, or the spread of invasive non-native species known to exist in the area.'
+  },
+  'SW-MPA-1': {
+    name: 'South West Marine protected areas 1',
+    info: 'Proposals that support the objectives of marine protected areas and the ecological coherence of the marine protected area network will be supported. Proposals that may have adverse impacts on the objectives of marine protected areas must demonstrate that they will, in order of preference: a) avoid b) minimise c) mitigate - adverse impacts, with due regard given to statutory advice on an ecologically coherent network.'
+  },
+  'SW-UWN-1': {
+    name: 'South West Underwater noise 1',
+    info: 'Proposals that result in the generation of impulsive sound must contribute data to the UK Marine Noise Registry as per any currently agreed requirements. Public authorities must take account of any currently agreed targets under the Marine Strategy Part One Descriptor 11.'
+  },
+  'SW-WQ-1': {
+    name: 'South West Water quality 1',
+    info: 'Proposals that protect, enhance and restore water quality will be supported. Proposals that cause deterioration of water quality must demonstrate that they will, in order of preference: a) avoid b) minimise c) mitigate - deterioration of water quality in the marine environment.'
+  },
+  'SW-ACC-1': {
+    name: 'South West Access 1',
+    info: 'Proposals demonstrating appropriate enhanced and inclusive public access to and within the marine area, including the provision of services for tourism and recreation activities, will be supported. Proposals that may have significant adverse impacts on public access should demonstrate that they will, in order of preference: a) avoid b) minimise c) mitigate - adverse impacts so they are no longer significant.'
+  },
+  'SW-FISH-3': {
+    name: 'South West Fisheries 3',
+    info: 'Proposals that enhance essential fish habitat, including spawning, nursery and feeding grounds, and migratory routes, should be supported. Proposals that may have significant adverse impacts on essential fish habitat, including spawning, nursery and feeding grounds, and migratory routes, must demonstrate that they will, in order of preference: a) avoid b) minimise c) mitigate - adverse impacts so they are no longer significant.'
+  },
+  'SW-HER-1': {
+    name: 'South West Heritage assets 1',
+    info: 'Proposals that demonstrate they will conserve and enhance the significance of heritage assets will be supported. Where proposals may cause harm to the significance of heritage assets, proponents must demonstrate that they will, in order of preference: a) avoid b) minimise c) mitigate - any harm to the significance of heritage assets. If it is not possible to mitigate, then public benefits for proceeding with the proposal must outweigh the harm to the significance of heritage assets.'
+  },
+  'SW-TR-1': {
+    name: 'South West Tourism and recreation 1',
+    info: 'Proposals that promote or facilitate sustainable tourism and recreation activities, or that create appropriate opportunities to expand or diversify the current use of facilities, should be supported. Proposals that may have significant adverse impacts on tourism and recreation activities must demonstrate that they will, in order of preference: a) avoid b) minimise c) mitigate - adverse impacts so they are no longer significant.'
+  }
+};
+
+// Every policy an application can answer, from either plan
+const POLICIES = Object.assign({}, SOUTH_POLICIES, SOUTH_WEST_POLICIES);
+
 const POLICY_CATEGORIES = ['Cross-cutting', 'Economic', 'Environmental', 'Social'];
 
 // Turns { category: [{ code, consideration }] } into what the template loops
@@ -106,12 +159,12 @@ function build(application) {
     .filter(category => application.policies[category])
     .map(category => ({
       category,
-      policies: application.policies[category].map(p => Object.assign({ code: p.code }, SOUTH_POLICIES[p.code], {
+      policies: application.policies[category].map(p => Object.assign({ code: p.code }, POLICIES[p.code], {
         consideration: p.consideration
       }))
     }));
   (application.supportingDocuments || []).forEach(doc => {
-    doc.policies.forEach(link => { link.name = SOUTH_POLICIES[link.code].name; });
+    doc.policies.forEach(link => { link.name = POLICIES[link.code].name; });
   });
   return application;
 }
@@ -268,6 +321,98 @@ const APPLICATIONS = {
       harbourAuthority: 'Poole Harbour Commissioners. The harbour master has agreed the mooring layout in principle and we have applied for a works licence (ref PHC/WL/2026/118). The moorings will be let under the commissioners’ mooring licence scheme.',
       otherAuthorities: 'None. BCP Council confirmed that planning permission is not needed for moorings below mean low water.',
       preApplicationConsultation: 'We have spoken to Poole Harbour Commissioners, Southern Inshore Fisheries and Conservation Authority, the Poole Harbour Study Group and the two sailing clubs next to the mooring area. Natural England gave advice through its discretionary advice service in May 2026, which is why we carried out the seagrass survey.'
+    }
+  }),
+
+  // Two sites either side of the river mouth, one in each marine plan area,
+  // so the policies come from both the South and South West plans
+  dart: build({
+    submittedOffset: -16,
+    siteLocationMethod: 'File upload',
+    sites: [
+      {
+        name: 'Kingswear side, Dart estuary entrance',
+        map: 'map-3-points.jpg',
+        activities: [
+          {
+            typeOfActivity: 'Maintenance of existing works',
+            whatLabel: 'What is being maintained',
+            what: 'Navigation buoys',
+            description: 'Like for like replacement of 3 green starboard-hand navigation buoys on the east side of the main channel, in the South marine plan area. Each corroded steel buoy, its concrete sinker and its chain will be lifted out and replaced in the same position with a polyethylene buoy fitted with a solar-powered green light, a new 2 tonne concrete sinker and a new ground chain and riser. The sinkers are lowered straight onto the seabed by the workboat crane. No dredging or levelling of the seabed is needed. The old buoys, sinkers and chains will be taken ashore for recycling.',
+            maximumDuration: '1 week',
+            completionDate: 'Yes – before the start of the sailing season on 1 April 2027',
+            specificMonths: 'Yes – January to March only, before salmon and sea trout smolts migrate down the river in April and May.',
+            workingHours: 'Monday to Friday, 08:00 to 16:00, around slack water.'
+          }
+        ],
+        drawings: ['kingswear-side-buoy-positions.pdf', 'navigation-buoy-and-sinker-detail.pdf']
+      },
+      {
+        name: 'Dartmouth side, Dart estuary entrance',
+        map: 'map-5-points.jpg',
+        activities: [
+          {
+            typeOfActivity: 'Maintenance of existing works',
+            whatLabel: 'What is being maintained',
+            what: 'Navigation buoys',
+            description: 'Like for like replacement of 3 red port-hand navigation buoys on the west side of the main channel, in the South West marine plan area, using the same method, buoys and sinkers as the Kingswear side. The new buoys will have solar-powered red lights.',
+            maximumDuration: '1 week',
+            completionDate: 'Yes – before the start of the sailing season on 1 April 2027',
+            specificMonths: 'Yes – January to March only, before salmon and sea trout smolts migrate down the river in April and May.',
+            workingHours: 'Monday to Friday, 08:00 to 16:00, around slack water.'
+          }
+        ],
+        drawings: ['dartmouth-side-buoy-positions.pdf']
+      }
+    ],
+    policies: {
+      'Cross-cutting': [
+        { code: 'S-CO-1', consideration: 'The 3 new buoys on the Kingswear side go in exactly the same positions as the ones they replace, so they take up no more space. They mark the channel edge past our mooring trots, which helps the ferries, fishing boats and yachts that share the river mouth.' },
+        { code: 'SW-CO-1', consideration: 'On the Dartmouth side the 3 buoys also stay in the same positions. The work will be done one buoy at a time, with the workboat out of the main channel whenever the ferries are crossing.' }
+      ],
+      'Economic': [
+        { code: 'S-PS-1', consideration: 'Dart Harbour has approved the replacement. The buoys mark the edge of the channel used by harbour traffic, so keeping them working supports the harbour. There will be no change to the channel or its approaches.' },
+        { code: 'SW-PS-1', consideration: 'Reliable lights on the Dartmouth side buoys improve safety of navigation in the harbour approach. The harbour master has agreed the dates, and a notice to mariners will be issued before the work starts.' }
+      ],
+      'Environmental': [
+        { code: 'S-BIO-1', consideration: 'Our seagrass survey found no seagrass within 30 metres of any of the Kingswear side buoys. The new sinkers go on the same spots as the old ones, and the ground chains will be no longer than the existing ones, so they will not sweep a larger area of seabed.' },
+        { code: 'SW-BIO-1', consideration: 'The survey found a small patch of seagrass about 20 metres from the most northerly buoy on the Dartmouth side. That buoy will be fitted with a mid-line float so its riser chain does not drag on the seabed, and the workboat will not anchor within 50 metres of the patch.' },
+        { code: 'S-MPA-1', consideration: 'The works are not inside a marine protected area. They are small, like for like, and use the existing buoy positions, so we do not expect any effect on the protected areas outside the river mouth.' },
+        { code: 'SW-MPA-1', consideration: 'The Dartmouth side works are not inside a marine protected area either. The nearest is in Start Bay, to the south, and the works will have no effect on it.' },
+        { code: 'SW-INNS-1', consideration: 'The workboat and lifting gear are kept on the Dart and will not be moved from another water body. The new buoys and chains arrive new and clean from the supplier.' },
+        { code: 'SW-UWN-1', consideration: 'No piling or other impulsive sound is involved. Lowering the sinkers makes only short, low-level noise, so we do not need to submit data to the UK Marine Noise Registry.' },
+        { code: 'S-WQ-1', consideration: 'Lifting the old sinkers will stir up a small amount of sediment for a short time. The workboat carries a spill kit and its crane uses biodegradable hydraulic oil.' },
+        { code: 'SW-WQ-1', consideration: 'The same measures apply on the Dartmouth side. Work will be done around slack water, so any sediment settles close to where it was disturbed.' }
+      ],
+      'Social': [
+        { code: 'S-ACC-1', consideration: 'Kingswear slipway and the paths along the waterfront will stay open. The workboat will load at our own pontoon, not at public landings.' },
+        { code: 'SW-ACC-1', consideration: 'Public access on the Dartmouth side is not affected. The ferry slipways and the embankment will stay open throughout.' },
+        { code: 'SW-FISH-3', consideration: 'The Dart is a salmon and sea trout river. Working from January to March avoids the spring migration of smolts down the river and the main summer run of adult fish. The buoys sit at the edges of the channel, so the middle of the channel stays clear for migrating fish.' },
+        { code: 'S-HER-1', consideration: 'The new sinkers go on the spots used by the old ones, which have been in place for more than 20 years, so no undisturbed seabed is affected. If anything is found when the old sinkers are lifted, we will report it to the Receiver of Wreck.' },
+        { code: 'SW-HER-1', consideration: 'The river mouth is overlooked by Dartmouth Castle. The new buoys are the same size and colours as the old ones, so its setting will not change.' },
+        { code: 'SW-TR-1', consideration: 'Reliable channel markers help the many visiting yachts and passenger boats that use the river. Working in winter avoids the busy summer season.' }
+      ]
+    },
+    supportingDocuments: [
+      {
+        filename: 'dart-buoys-seagrass-survey.pdf',
+        type: 'Seagrass survey',
+        policies: [
+          { code: 'S-BIO-1', location: 'Section 3, pages 4 to 7' },
+          { code: 'SW-BIO-1', location: 'Section 4, pages 8 to 11' }
+        ]
+      }
+    ],
+    wfd: {
+      withinOneNauticalMile: 'Yes',
+      excludedActivities: 'No',
+      upload: 'dart-buoys-wfd-assessment.pdf'
+    },
+    otherPermissions: {
+      specialLegalPowers: 'No',
+      harbourAuthority: 'Dart Harbour. The harbour master has approved the replacement buoys, which match the positions, colours and light characteristics of the existing ones. A notice to mariners will be issued before the work starts.',
+      otherAuthorities: 'Trinity House – the buoys are private aids to navigation, and Trinity House has agreed the new lights.',
+      preApplicationConsultation: 'We have spoken to the Dart Harbour harbour master, the ferry operators that cross between Dartmouth and Kingswear, Devon and Severn Inshore Fisheries and Conservation Authority and the local sailing clubs. Natural England gave advice through its discretionary advice service in September 2026, which is why we carried out the seagrass survey.'
     }
   })
 };
