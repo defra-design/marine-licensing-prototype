@@ -25,7 +25,7 @@ Do you want to ask us to withhold any information from the public register?
 <!-- 'answer' = no radio selected, 'reason' = Yes selected without a reason -->
 {% set errorType = data['low-complexity-sharing-information-error'] %}
 {% set answerErrorText = "Select if you want to ask us to withhold any information from the public register" %}
-{% set reasonErrorText = "Select a reason" %}
+{% set reasonErrorText = "Select a reason why you want to withhold information" %}
 
 {% block pageTitle %}
 {% if errorType %}Error: {% endif %}{{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
@@ -37,7 +37,7 @@ Do you want to ask us to withhold any information from the public register?
     idPrefix: "low-complexity-sharing-information-reason",
     fieldset: {
         legend: {
-            text: "Select a reason"
+            text: "Select a reason why you want to withhold information"
         }
     },
     errorMessage: {
