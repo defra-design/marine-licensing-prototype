@@ -1175,11 +1175,45 @@ module.exports = function (router) {
     });
   });
 
+  // A document for the list at the top of view-application. Drawings are
+  // named by their site, as "Site 1" means nothing until you reach the cards.
+  function documentFor(filename, title, seed) {
+    // Made-up file sizes, worked out from the filename (or seed, when every
+    // application has the same filename) so they stay the same
+    const kb = 180 + [...(seed || filename)].reduce((total, c) => (total * 31 + c.charCodeAt(0)) % 4000, 7);
+    return {
+      title,
+      format: filename.split('.').pop().toUpperCase(),
+      size: kb >= 1000 ? `${(kb / 1024).toFixed(1)} MB` : `${kb} KB`
+    };
+  }
+
+  // Every document in the application, grouped under the task list section
+  // it was uploaded in. Groups with nothing in them are left out.
+  function documentsFor(request) {
+    const app = request.application;
+    // The site coordinates first, then the drawings site by site
+    const sites = [documentFor('sitecoordinates.zip', 'Site coordinates', `${request.id}-sitecoordinates.zip`)];
+    if (app) {
+      app.sites.forEach(site => {
+        site.drawings.forEach((drawing, d) => sites.push(documentFor(drawing, `${site.name} – Construction drawing ${d + 1}`)));
+      });
+    } else {
+      sites.push(documentFor(request.site.drawing, `${request.site.name} – Construction drawing 1`));
+    }
+    const groups = [
+      { heading: 'Sites and activities', documents: sites },
+      { heading: 'Marine plan policy supporting documents', documents: ((app && app.supportingDocuments) || []).map(doc => documentFor(doc.filename, doc.type)) },
+      { heading: 'Water Framework Directive assessment', documents: app && app.wfd ? [documentFor(app.wfd.upload, 'Water Framework Directive assessment')] : [] }
+    ];
+    return groups.filter(group => group.documents.length);
+  }
+
   // View application (read-only, like view details in LCML v4)
   router.get(`${base}/view-application/:requestId`, function (req, res) {
     const request = findRequest(req, res);
     if (!request) return;
-    res.render(`versions/${version}/${section}/view-application`, { request });
+    res.render(`versions/${version}/${section}/view-application`, { request, documentGroups: documentsFor(request) });
   });
 
   // Respond

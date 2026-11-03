@@ -40,6 +40,23 @@
         <span class="govuk-caption-l">{{ request.reference }}</span>
         <h1 class="govuk-heading-l">{{ request.applicationName }}</h1>
 
+        {# Every document at the top, as on the public register, so the
+           consultee can open the assessments and drawings without hunting
+           through the cards. Grouped under the task list section each was
+           uploaded in. Drawings are named by their site, with the file type
+           and size. Links are dead in the prototype. #}
+        <h2 class="govuk-heading-m">Documents</h2>
+        {% for group in documentGroups %}
+        <h3 class="govuk-heading-s govuk-!-margin-bottom-2">{{ group.heading }}</h3>
+        <ul class="govuk-list">
+            {% for file in group.documents %}
+            <li><a class="govuk-link govuk-link--no-visited-state" href="#">{{ file.title }} ({{ file.format }}, {{ file.size }})</a></li>
+            {% endfor %}
+        </ul>
+        {% endfor %}
+
+        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
         {% set app = request.application %}
         {% if app %}
 
