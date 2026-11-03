@@ -4,7 +4,7 @@
 //
 // Every application uses the same page, which shows whichever sections it
 // has. Four are full applications: Hayling and Poole are the fuller
-// consultation v2 applications, reused so the stories join up, and Lyme
+// consultation v2 applications, and Lyme
 // Regis and Teignmouth follow the LCML v4 pontoon pages. The rest have the
 // summary, one site, its activities and a construction drawing, copied from
 // consultation v2 where it has them and made up for Southwold, Morecambe
@@ -109,12 +109,16 @@ module.exports = {
 
   hayling: Object.assign({}, CONSULTATION.hayling, {
     summary: 'We are applying for a marine licence to repair 6 timber groynes on the Hayling Island seafront. Rotten planks and posts will be replaced like for like with hardwood, working from the beach at low tide.',
-    startAndEndDates: 'April 2027 to June 2027'
+    startAndEndDates: 'April 2027 to June 2027',
+    // Earlier than consultation v2, so it is before it was published here
+    submittedOffset: -26
   }),
 
   poole: Object.assign({}, CONSULTATION.poole, {
     summary: 'We are applying for a marine licence to lay 12 new swing moorings in an existing mooring area in Poole Harbour. Each mooring will use a helical screw anchor, a riser chain and a surface buoy. The anchors will be installed by diver from a small workboat.',
-    startAndEndDates: 'February 2027 to March 2027'
+    startAndEndDates: 'February 2027 to March 2027',
+    // Earlier than consultation v2, so it is before it was published here
+    submittedOffset: -22
   }),
 
   dawlish: {
