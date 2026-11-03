@@ -4,7 +4,7 @@
   each inner list of columns is a column in the bar, and the panel just runs
   them in order.
 #}
-{% macro filterFields(filters, filterSet, showOptions, typeOptions, team, columns) %}
+{% macro filterFields(filters, filterSet, showOptions, typeOptions, columns) %}
 {% for column in filterSet.columns %}
 {{ ('<div class="govuk-grid-column-one-third">' if columns else '') | safe }}
 {% for group in column %}
@@ -23,7 +23,7 @@
                 <fieldset class="govuk-fieldset">
                     <legend class="govuk-fieldset__legend govuk-visually-hidden">Select who the consultations are assigned to</legend>
                     <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
-                        {% for person in team %}
+                        {% for person in filterSet.assignedPeople %}
                         <div class="govuk-checkboxes__item">
                             <input class="govuk-checkboxes__input" id="filter-person-{{ loop.index }}" name="consultation-v2-person" type="checkbox" value="{{ person }}"{% if person in filters.people %} checked{% endif %}>
                             <label class="govuk-label govuk-checkboxes__label" for="filter-person-{{ loop.index }}">{{ person }}</label>
@@ -94,7 +94,7 @@
                 <fieldset class="govuk-fieldset">
                     <legend class="govuk-fieldset__legend govuk-visually-hidden">Select who responded</legend>
                     <div class="govuk-checkboxes govuk-checkboxes--small" data-module="govuk-checkboxes">
-                        {% for person in team %}
+                        {% for person in filterSet.respondedPeople %}
                         <div class="govuk-checkboxes__item">
                             <input class="govuk-checkboxes__input" id="filter-responded-person-{{ loop.index }}" name="consultation-v2-responded-person" type="checkbox" value="{{ person }}"{% if person in filters.respondedPeople %} checked{% endif %}>
                             <label class="govuk-label govuk-checkboxes__label" for="filter-responded-person-{{ loop.index }}">{{ person }}</label>
