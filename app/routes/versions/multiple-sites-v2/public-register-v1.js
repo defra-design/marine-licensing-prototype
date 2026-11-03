@@ -368,8 +368,12 @@ module.exports = function (router) {
   });
 
   // Commenting on an application (phase 3). Kept minimal to start with:
-  // the comment, then name and email, then check your answers, then sent,
-  // with the confirmation email shown as a page. No sign-in. Questions still
+  // the comment, then name and email, then check your answers. Sending it
+  // emails a link to confirm the comment, and opening that link is what
+  // sends it (ADR-8: comments use the same logged-out approach as alerts,
+  // an email address and a confirmation, as a form does not prove someone
+  // can read that inbox). The email is shown as a page. No sign-in.
+  // Questions still
   // open (support or object, connection to the area, a character limit)
   // are left out until the team has talked them through.
   //
@@ -384,7 +388,9 @@ module.exports = function (router) {
       comment: `${prefix}-comment`,
       name: `${prefix}-name`,
       email: `${prefix}-email`,
-      reference: `${prefix}-comment-reference`
+      reference: `${prefix}-comment-reference`,
+      // pending until the link in the email is opened, then sent
+      status: `${prefix}-comment-status`
     };
   }
 
@@ -462,13 +468,34 @@ module.exports = function (router) {
     renderComment(req, res, 'check-answers', application);
   });
 
-  // Sending gives the comment a reference, like the ones GOV.UK services
-  // show on confirmation pages
+  // Sending emails the link to confirm the comment. Until it is opened the
+  // comment is pending and does not go to the case officer.
   router.post(`${base}/application/:applicationId/check-answers`, function (req, res) {
     const application = findApplication(req, res);
     if (!application) return;
-    const characters = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-    req.session.data[commentKeys(application.id).reference] = Array.from({ length: 8 }, () => characters[Math.floor(Math.random() * characters.length)]).join('');
+    req.session.data[commentKeys(application.id).status] = 'pending';
+    res.redirect('check-your-email');
+  });
+
+  // Check your email
+  router.get(`${base}/application/:applicationId/check-your-email`, function (req, res) {
+    const application = findApplication(req, res);
+    if (!application) return;
+    renderComment(req, res, 'check-your-email', application);
+  });
+
+  // The link in the email. Opening it sends the comment and gives it a
+  // reference, like the ones GOV.UK services show on confirmation pages.
+  // Opening it again keeps the same reference.
+  router.get(`${base}/application/:applicationId/confirm`, function (req, res) {
+    const application = findApplication(req, res);
+    if (!application) return;
+    const keys = commentKeys(application.id);
+    if (req.session.data[keys.status] !== 'sent' || !req.session.data[keys.reference]) {
+      const characters = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+      req.session.data[keys.reference] = Array.from({ length: 8 }, () => characters[Math.floor(Math.random() * characters.length)]).join('');
+    }
+    req.session.data[keys.status] = 'sent';
     res.redirect('comment-sent');
   });
 
@@ -479,7 +506,8 @@ module.exports = function (router) {
     renderComment(req, res, 'comment-sent', application);
   });
 
-  // The confirmation email, as the commenter would see it in their inbox
+  // The email with the link to confirm the comment, as the commenter would
+  // see it in their inbox
   router.get(`${base}/application/:applicationId/confirmation-email`, function (req, res) {
     const application = findApplication(req, res);
     if (!application) return;

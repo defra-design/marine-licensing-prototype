@@ -1,14 +1,17 @@
 {#
-  The Notify email someone gets after commenting on an application, with
-  their comment in it and a link back to the application, so they can find
-  it again (research theme 3: coming back to a case is hard).
+  The Notify email someone gets after pressing Send comment. Opening the
+  link confirms they can read this inbox, and that is what sends the
+  comment (ADR-8). It has their comment in it and a link back to the
+  application, so they can find it again (research theme 3: coming back to
+  a case is hard). There is no reference yet, as the comment is not sent
+  until the link is opened.
 
   The webmail chrome and message header are copies of the consultation v2
   ones, addressed to the commenter.
 #}
 {% extends "versions/multiple-sites-v2/layouts/email.html" %}
 
-{% set messageSubject = "Your comment on marine licence application " + application.reference %}
+{% set messageSubject = "Confirm your comment on marine licence application " + application.reference %}
 {% set commenterName = answers.name or "" %}
 
 {% block pageTitle %}
@@ -53,20 +56,22 @@ p {
 
 <p>Dear {{ commenterName }},</p>
 
-<p>Thank you for your comment on marine licence application {{ application.reference }}, {{ application.applicationName }}.</p>
+<p>Confirm that you want to send your comment on marine licence application {{ application.reference }}, {{ application.applicationName }}.</p>
 
-<p>Your reference number is {{ answers.reference }}.</p>
+<p><a href="/versions/multiple-sites-v2/public-register-v1/application/{{ application.id }}/confirm">Confirm and send your comment</a></p>
+
+<p>We will not get your comment until you open this link. The consultation closes on {{ application.closingOffset | daysFromToday }}.</p>
 
 <p>Your comment:</p>
 <div class="app-email-inset">
 {% for paragraph in (answers.comment or '').split('\n') %}{% if paragraph | trim %}<p>{{ paragraph }}</p>{% endif %}{% endfor %}
 </div>
 
-<p>The consultation closes on {{ application.closingOffset | daysFromToday }}. The case officer will take your comment into account when we decide whether to grant the marine licence.</p>
-
-<p>We will not publish your comment. After the consultation closes, we may share a summary of the comments we receive with the public and the applicant.</p>
+<p>We will take your comment into account when we decide whether to grant the marine licence. We will not publish your comment. After the consultation closes, we may share a summary of the comments we receive with the public and the applicant.</p>
 
 <p><a href="/versions/multiple-sites-v2/public-register-v1/application/{{ application.id }}">View the application</a></p>
+
+<p>If you did not comment on this application, you can ignore this email.</p>
 
 <p>From Marine Management Organisation</p>
 
