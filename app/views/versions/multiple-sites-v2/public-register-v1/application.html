@@ -78,6 +78,15 @@
         <span class="govuk-caption-l">{{ application.reference }}</span>
         <h1 class="govuk-heading-l">{{ application.applicationName }}</h1>
 
+        {# Under the H1, as it applies to the whole application, so people
+           know what ***REDACTED*** means before they reach it #}
+        {% if application.redacted %}
+        <div class="govuk-inset-text">
+            <p class="govuk-body">We have withheld some information in this application, for example because it is commercially sensitive or personal.</p>
+            <p class="govuk-body">Withheld information is shown as <span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">REDACTED</span>.</p>
+        </div>
+        {% endif %}
+
         {# With borders, as there can be more than one marine plan area or
            activity. Its last border is the rule above Have your say. #}
         <dl class="govuk-summary-list">
@@ -134,15 +143,6 @@
         {% endif %}
 
         <h2 class="govuk-heading-m">Summary of the proposed works</h2>
-
-        {# Under the summary heading, so it is next to the first redaction
-           rather than stacked against Have your say #}
-        {% if application.redacted %}
-        <div class="govuk-inset-text">
-            <p class="govuk-body">We have withheld some information in this application, for example because it is commercially sensitive or personal.</p>
-            <p class="govuk-body">Withheld information is shown as <span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">REDACTED</span>.</p>
-        </div>
-        {% endif %}
         <p class="govuk-body">{{ published(details.summary) }}</p>
 
         <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
