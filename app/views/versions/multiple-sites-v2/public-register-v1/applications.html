@@ -136,6 +136,7 @@
                     {% if sort !== "closing" %}<input type="hidden" name="sort" value="{{ sort }}">{% endif %}
                     {% if paginationOn %}<input type="hidden" name="pagination" value="on">{% endif %}
                     {% if not referenceFilterOn %}<input type="hidden" name="reffilter" value="off">{% endif %}
+                    {% if nestedActivities %}<input type="hidden" name="activityfilter" value="nested">{% endif %}
 
                     {{ govukButton({
                         text: "Apply filters",
@@ -177,9 +178,10 @@
                         </fieldset>
                     </div>
 
-                    {# Construction, Deposit and Removal, each revealing its
-                       second-level types (GOV.UK conditional reveal). The
-                       top-level box on its own means all of that type. #}
+                    {# Construction, Deposit and Removal. With the nested
+                       version from the tray, each reveals its second-level
+                       types (GOV.UK conditional reveal), and the top-level
+                       box on its own means all of that type. #}
                     {% set activityItems = [] %}
                     {% for group in activityGroups %}
                     {% set subItems = [] %}
@@ -202,7 +204,7 @@
                         value: group.value,
                         text: group.heading,
                         checked: group.value in filters.groups,
-                        conditional: { html: subHtml }
+                        conditional: { html: subHtml } if nestedActivities else undefined
                     }), activityItems) %}
                     {% endfor %}
                     {{ govukCheckboxes({

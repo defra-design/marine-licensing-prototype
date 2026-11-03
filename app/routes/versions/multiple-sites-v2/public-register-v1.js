@@ -191,12 +191,15 @@ module.exports = function (router) {
     // trial: the landing page lookup is the main way in by reference.
     const referenceFilterOn = query.reffilter !== 'off';
 
-    // Activity is Construction, Deposit or Removal, each revealing its
-    // second-level types. A top-level type on its own means all of it;
-    // ticking some of its types narrows it to those. Types under a
-    // top-level box that is not ticked are ignored.
+    // Activity is Construction, Deposit or Removal. By default that is all
+    // there is. With ?activityfilter=nested, from the tray, each reveals its
+    // second-level types: a top-level type on its own means all of it, and
+    // ticking some of its types narrows it to those. Types under a top-level
+    // box that is not ticked are ignored, and so are all types when the
+    // filter is top level only.
+    const nestedActivities = query.activityfilter === 'nested';
     const groups = list(query['public-register-v1-activity-type']).filter(value => ACTIVITY_GROUP[value]);
-    const ticked = list(query['public-register-v1-activity']).filter(activity => ACTIVITY_NAMES[activity]);
+    const ticked = nestedActivities ? list(query['public-register-v1-activity']).filter(activity => ACTIVITY_NAMES[activity]) : [];
     const activityGroups = ACTIVITY_GROUPS.filter(group => groups.includes(group.value)).map(group => ({
       group,
       types: group.options.map(option => option.value).filter(value => ticked.includes(value))
@@ -257,7 +260,7 @@ module.exports = function (router) {
               href: without({ 'public-register-v1-activity': filters.activities.filter(a => a !== type) })
             }))
           : [{
-              text: `All ${group.heading.toLowerCase()}`,
+              text: nestedActivities ? `All ${group.heading.toLowerCase()}` : group.heading,
               href: without({ 'public-register-v1-activity-type': groups.filter(g => g !== group.value) })
             }]))
       });
@@ -268,7 +271,10 @@ module.exports = function (router) {
       paginationOff: listUrl(query, { pagination: null, page: null }),
       paginationOn: listUrl(query, { pagination: 'on', page: null }),
       refFilterOn: listUrl(query, { reffilter: null, page: null }),
-      refFilterOff: listUrl(query, { reffilter: 'off', page: null, 'public-register-v1-reference-filter': null })
+      refFilterOff: listUrl(query, { reffilter: 'off', page: null, 'public-register-v1-reference-filter': null }),
+      // Going back to top level only drops any second-level types ticked
+      activityTopLevel: listUrl(query, { activityfilter: null, page: null, 'public-register-v1-activity': null }),
+      activityNested: listUrl(query, { activityfilter: 'nested', page: null })
     };
 
     res.render(`versions/${version}/${section}/applications`, {
@@ -277,6 +283,7 @@ module.exports = function (router) {
       pagination,
       paginationOn,
       referenceFilterOn,
+      nestedActivities,
       trayUrls,
       filters,
       selected,
@@ -288,8 +295,9 @@ module.exports = function (router) {
         current: key === sort,
         href: listUrl(query, { sort: key === 'closing' ? null : key, page: null })
       })),
-      // Clear filters keeps the page versions (sort, pagination, reference filter off)
-      clearFiltersUrl: listUrl({ sort: query.sort, pagination: query.pagination, reffilter: query.reffilter }, {}, '#app-filter')
+      // Clear filters keeps the page versions (sort, pagination, reference
+      // filter off, nested activities)
+      clearFiltersUrl: listUrl({ sort: query.sort, pagination: query.pagination, reffilter: query.reffilter, activityfilter: query.activityfilter }, {}, '#app-filter')
     });
   });
 

@@ -152,6 +152,25 @@
   </ul>
   </div>
 
+  <div class="app-version-tray__section">
+  {# Top level only by default. The nested version reveals the second-level types under each. #}
+  <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Activity filter on the list</h3>
+  <ul class="govuk-list govuk-list--spaced">
+    {% for option in [
+      { nested: false, text: "Construction, Deposit and Removal only", url: trayUrls.activityTopLevel if trayUrls else listPath },
+      { nested: true, text: "With their types underneath", url: trayUrls.activityNested if trayUrls else listPath + "?activityfilter=nested" }
+    ] %}
+    <li>
+      {% if (nestedActivities or false) === option.nested %}
+      <span aria-current="true">{{ option.text }}</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ option.url }}" class="govuk-link govuk-link--no-visited-state">{{ option.text }}</a>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  </div>
+
   <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible app-version-tray__divider">
 
   <div class="app-version-tray__section">
