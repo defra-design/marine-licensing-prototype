@@ -51,13 +51,43 @@
 {% block bodyEnd %}
   {{ super() }}
   <script>
+    /*
+      Filter panel open or hidden.
+
+      The filter starts open. If someone hides it, then sorts, changes page,
+      applies filters, removes a tag or clears filters, it stays the way they
+      left it: just before those reload the page we note whether it was
+      open, and put it back that way on the next load. The note is used once
+      and then removed, as on consultation v2, so arriving from anywhere else
+      gives the default.
+    */
+    var KEEP_KEY = 'public-register-v1-keep-filter-open'
+    var startHidden = false
+    try {
+      startHidden = window.sessionStorage.getItem(KEEP_KEY) === 'false'
+      window.sessionStorage.removeItem(KEEP_KEY)
+    } catch (e) {}
+
+    function noteFilterState () {
+      var filter = document.querySelector('.moj-filter')
+      var open = filter ? !filter.classList.contains('moj-js-hidden') : true
+      try { window.sessionStorage.setItem(KEEP_KEY, open ? 'true' : 'false') } catch (e) {}
+    }
+
+    Array.prototype.forEach.call(document.querySelectorAll('main form'), function (form) {
+      form.addEventListener('submit', noteFilterState)
+    })
+    Array.prototype.forEach.call(document.querySelectorAll('.app-sort a, .govuk-pagination a, .moj-filter__selected a'), function (link) {
+      link.addEventListener('click', noteFilterState)
+    })
+
     // MOJ's FilterToggleButton adds Show/Hide filter to the action bar.
     // initAll does not cover it, so import it from the plugin asset the kit
     // serves, as consultation v2 does.
     import('/plugin-assets/%40ministryofjustice%2Ffrontend/moj/moj-frontend.min.js')
       .then(function (moj) {
         var filter = document.querySelector('.moj-filter')
-        if (filter) new moj.FilterToggleButton(filter, { startHidden: false })
+        if (filter) new moj.FilterToggleButton(filter, { startHidden: startHidden })
       })
       .catch(function () { /* panel stays visible */ })
   </script>
