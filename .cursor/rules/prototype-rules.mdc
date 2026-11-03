@@ -7,10 +7,14 @@ description: GOV.UK Prototype Kit conventions   # optional but useful
 # GOV.UK Prototype Kit - Cursor Rules
 
 ## Project Overview
-This project is a web application built using the GOV.UK Prototype Kit for rapid prototyping of user-centered services. The application is:
+This project is a GOV.UK Prototype Kit prototype for the MMO marine licensing service (exemptions, marine licences, consultation, public register and sample plans). The application is:
 - Accessible and user-friendly
 - Compliant with government standards
-- Used for gathering user feedback and iterating on design concepts
+- Used for design exploration, user testing and team discussion, not production – prioritise clarity and demonstrability over robustness
+
+More than one designer works in this repo. Keep changes inside the section you are working on.
+
+The same overview, conventions and branch rules are in `CLAUDE.md` (Claude Code) and `AGENTS.md` (Codex). Keep all three in step.
 
 ## Technical Framework
 - **Server-side**: Node.js and Express
@@ -26,12 +30,44 @@ This project is a web application built using the GOV.UK Prototype Kit for rapid
 │   │   ├── layouts/     # Layout templates
 │   │   ├── components/  # Reusable components
 │   │   └── versions/    # Version-specific views
+│   │       └── multiple-sites-v2/<section>/   # Current work
 │   ├── routes/          # Route definitions
 │   │   └── versions/    # Version-specific routes
+│   │       └── multiple-sites-v2/<section>.js # Current work
+│   ├── iat-lcml/        # Data-driven activity checker (content.json, lcml-rules.json)
 │   └── routes.js        # Main route includes
 ├── docs/                # Project documentation
 └── .cursor/rules/       # AI context rules
 ```
+
+## How it fits together
+- **Pages**: the kit serves a page straight from its URL, so `/versions/multiple-sites-v2/exemption/project-name-start` renders `app/views/versions/multiple-sites-v2/exemption/project-name-start.html`. Routes are only needed for logic.
+- **Data**: everything the user enters goes into `req.session.data` (`data['field-name']` in templates). It is one object shared by every journey.
+- **`app/routes.js`** restores session snapshots from `?state=…` links and loads every journey's route file with `require('./routes/versions/…')(router)`. Current work is in the `multiple-sites-v2` block.
+- **Route pattern**: a form posts to a `…-router` URL, which validates or branches and then redirects to the next page.
+
+### Current sections (`multiple-sites-v2`)
+Each section has a route file `app/routes/versions/multiple-sites-v2/<section>.js` (large ones are split, e.g. `low-complexity-v4-site-locations.js`), a views folder `app/views/versions/multiple-sites-v2/<section>/`, and its own layout in `…/multiple-sites-v2/layouts/`. Route files set `const version = "multiple-sites-v2"` and `const section = "<section>"`.
+
+| Section | What it is |
+|---|---|
+| `check` | "Do I need a licence" checker before exemptions |
+| `exemption`, `exemption-manual-entry` | Exemption notification journey |
+| `low-complexity-v1` to `v4` | Low complexity marine licence (LCML) – v4 is current |
+| `consultation-v0` to `v2` | Consultation. v1 is a minimal journey on main for dev foundations, not usability testing |
+| `public-register-v1` | Public register |
+| `sample-plans-v1`, `v2` | Sample plan journeys |
+| `app/iat-lcml/` | Data-driven activity checker – see `app/iat-lcml/AGENTS.md` |
+
+Older version folders are past rounds. Leave them alone unless asked.
+
+Legacy from the previous designer (2024): `app/views/templates/` (generic `PAGENAME_*` question pages) and their routes in `app/routes/templates.js`. Current journeys don't use them – build new pages by copying existing `multiple-sites-v2` pages instead.
+
+### Prototype tools
+- `/prototype-admin/view-data` shows the current session and a shareable `?state=` link.
+- `?state=<base64 JSON>` on any URL loads that session snapshot. The index page uses these to open pre-filled applications.
+- `/index/clear-data` clears the session. Entry links must not reset data – designers clear it themselves.
+- `/user-testing-links` is the page for usability testing participants.
 
 ## Marine Licensing System Architecture
 
@@ -227,13 +263,13 @@ This applies to ALL form components with legends/labels (govukRadios, govukCheck
 ### Content Design
 - Follow GOV.UK style guide:
   - Sentence case
-  - ISO date format (e.g., "24 April 2025")
+  - GOV.UK date format (e.g., "24 April 2025")
   - Plain English
   - No ampersands
   - Active voice
 - Front-load key information
 - One idea per sentence
-- Address users directly using first person
+- Address users directly as "you"
 
 ### Code Organization
 - Define and reuse Nunjucks filters (e.g., `toMonth`, `toMoney`)
@@ -368,8 +404,8 @@ router.get('/path/to/sample-plans-page', function (req, res) {
 
 #### Layout Behavior
 - **DO NOT hardcode headers** in sample plans pages
-- Pages should extend `../layouts/exemption.html` like other pages
-- The layout automatically detects `data['isSamplePlansSection']` and shows:
+- Pages extend the sample plans layout: `../layouts/sample-plans.html` (v1) or `../layouts/sample-plans-v2.html` (v2). A few older v1 pages still extend `../layouts/exemption.html`, which detects `data['isSamplePlansSection']`
+- The layout shows:
   - **Service name**: "Get a plan for sediment sample analysis"
   - **Navigation links**: Projects, Defra account, Sign out (placeholder "#" links)
 
@@ -402,7 +438,7 @@ module.exports = function (router) {
 
 #### Template Structure
 ```nunjucks
-{% extends "../layouts/exemption.html" %}
+{% extends "../layouts/sample-plans-v2.html" %}
 <!-- NO header block needed - layout handles service detection -->
 
 {% block beforeContent %}
@@ -421,7 +457,9 @@ This pattern ensures:
 
 ### Marine Plan Policy Considerations (nested task list)
 
-The **Marine plan policy considerations** section (low-complexity-v2) is a nested task list under the main task list (marine-licence-start-page). It has its own index (`marine-plan-policies/index.html`) that lists individual policy tasks; each policy can have a question page (e.g. `south-access-1.html`) and completion is tracked per policy.
+This pattern was first built in low-complexity-v2 and is used the same way in v3 and v4 – read `low-complexity-v2` below as whichever LCML version you are working in. In v4 there are three variants, in `low-complexity-v4-marine-plan-policies.js`, `-v2.js` and `-v3.js` (views in `marine-plan-policies/`, `marine-plan-policies-v2/` and `marine-plan-policies-v3/`), chosen by `data['mpp-version']`, which the index page's entry links set with `?mpp-version=`.
+
+The **Marine plan policy considerations** section is a nested task list under the main task list (marine-licence-start-page). It has its own index (`marine-plan-policies/index.html`) that lists individual policy tasks; each policy can have a question page (e.g. `south-access-1.html`) and completion is tracked per policy.
 
 #### Session keys
 - Each policy uses a completion flag: `marine-plan-policy-{policy-id}-completed` (e.g. `marine-plan-policy-s-acc-1-completed`).
@@ -489,14 +527,24 @@ For detailed routing patterns and error handling conventions, see the [Routing a
 - Implement data clearing functions for complex workflows
 - Use error arrays for accessible error summaries
 
+## Branches and Deploying
+- One repo: `defra-design/marine-licensing-prototype`. **`main` auto-deploys** to the team Heroku URL, so work on a branch and merge by pull request.
+- Check which branch you are on before committing or pushing – branches get switched and merged between sessions.
+- Do not commit or push unless asked. Leave changes in the working tree for review.
+- Do not add an AI co-author trailer to commits.
+- After a push, give a brief Markdown PR description and the compare link.
+
+## Working Conventions
+- **Only change what is asked.** Change only the page named – don't sync the same edit into sibling or variant pages, and don't alter demo data or interactions for consistency. Flag mismatches instead.
+- No select dropdowns – use radios or checkboxes.
+- Use an en dash (–), not an em dash (—), in UI text you write. Leave applicant-entered example text as it is.
+- Content checks are mechanical only (quotes, dashes, punctuation, terminology slips). Don't reword or flag wording for the content designer unless asked to – they do a full review.
+- Content missing from a design screenshot stays in the page – flag it rather than removing it.
+- Never symlink `node_modules` into a git worktree; run `npm install` there instead.
+
 ## Resources
 
-- [GOV.UK Prototype Kit documentation](mdc:https:/govuk-prototype-kit.herokuapp.com/docs)
-- [GOV.UK Design System](mdc:https:/design-system.service.gov.uk)
-- [Original blog post by Vicky Teinaki](mdc:https:/www.vickyteinaki.com/blog/more-efficient-prototyping-with-the-gov-uk-prototype-kit-step-by-step)
-
-Generated by Copilot
-
-
-Generated by Copilot
+- [GOV.UK Prototype Kit documentation](https://prototype-kit.service.gov.uk/docs/)
+- [GOV.UK Design System](https://design-system.service.gov.uk)
+- [Original blog post by Vicky Teinaki](https://www.vickyteinaki.com/blog/more-efficient-prototyping-with-the-gov-uk-prototype-kit-step-by-step)
 
