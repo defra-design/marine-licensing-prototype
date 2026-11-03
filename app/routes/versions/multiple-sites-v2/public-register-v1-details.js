@@ -33,7 +33,7 @@ module.exports = {
     sites: [
       {
         name: 'Lyme Regis Harbour Outer Pontoon',
-        map: 'pontoon-map-5-points.jpg',
+        map: 'map-5-points.jpg',
         activities: [
           {
             type: 'construction-new',
@@ -77,7 +77,7 @@ module.exports = {
     sites: [
       {
         name: 'Teignmouth Harbour Outer Pontoon',
-        map: 'pontoon-map-5-points.jpg',
+        map: 'map-5-points.jpg',
         activities: [
           {
             type: 'construction-new',
@@ -195,7 +195,7 @@ module.exports = {
     sites: [
       {
         name: 'Whitestrand visitor pontoon',
-        map: 'pontoon-map-3-points.jpg',
+        map: 'map-3-points.jpg',
         activities: [
           {
             type: 'removal-replacement',
@@ -312,7 +312,7 @@ module.exports = {
     sites: [
       {
         name: 'Dogger Bank wave buoy station DB2',
-        map: 'map-circle-example.jpg',
+        map: 'map-circle.jpg',
         activities: [
           {
             type: 'replacing-existing',
