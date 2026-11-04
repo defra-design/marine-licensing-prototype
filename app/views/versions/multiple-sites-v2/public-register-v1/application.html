@@ -5,7 +5,8 @@
 
 {% set navActive = "applications" %}
 {% set pageTitle = application.applicationName %}
-{% set backLink = "javascript:history.back()" %}
+{# backLink comes from the route: shown only when they came from another
+   register page, and goes back to it #}
 
 {#
   View an application (CIP2). Every application uses this page, which

@@ -1,0 +1,61 @@
+{% extends "versions/multiple-sites-v2/public-register-v1/includes/layout.html" %}
+
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set navActive = "alerts" %}
+{% set pageTitle = "Check your answers before setting up your alert" %}
+{% set backLink = "email-address" %}
+
+{#
+  Alerts, check your answers. Set up alert makes a pending alert and emails
+  the confirm link (ADR-8). The privacy notice is a dead link for now, as
+  on the comment journey.
+#}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <span class="govuk-caption-l">Get email alerts</span>
+        <h1 class="govuk-heading-l">Check your answers before setting up your alert</h1>
+
+        {% set areasHtml %}
+        {% for area in summary.areas %}{{ area }}{% if not loop.last %}<br>{% endif %}{% endfor %}
+        {% endset %}
+
+        {{ govukSummaryList({
+            classes: "govuk-!-margin-bottom-9",
+            rows: [
+                {
+                    key: { text: "Marine plan areas" },
+                    value: { html: areasHtml },
+                    actions: { items: [{ href: "areas?change=1", text: "Change", visuallyHiddenText: "marine plan areas" }] }
+                },
+                {
+                    key: { text: "Types of work" },
+                    value: { text: summary.typesText },
+                    actions: { items: [{ href: "types?change=1", text: "Change", visuallyHiddenText: "types of work" }] }
+                },
+                {
+                    key: { text: "Email address" },
+                    value: { text: draft.email },
+                    actions: { items: [{ href: "email-address?change=1", text: "Change", visuallyHiddenText: "email address" }] }
+                }
+            ]
+        }) }}
+
+        <h2 class="govuk-heading-m">Now set up your alert</h2>
+        <p class="govuk-body">We will send an email to this address with a link to confirm your alert. We will not send you any alerts until you open it.</p>
+        <p class="govuk-body">Anyone who can read emails sent to this address will be able to change or stop the alert.</p>
+        <p class="govuk-body">Read our <a href="#" class="govuk-link govuk-link--no-visited-state">privacy notice</a> to find out how we use your personal information.</p>
+
+        <form method="post" novalidate>
+            {{ govukButton({ text: "Set up alert" }) }}
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

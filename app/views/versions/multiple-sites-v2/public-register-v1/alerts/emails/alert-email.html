@@ -1,0 +1,66 @@
+{#
+  An alert email: sent when a new application that matches the alert is
+  first published on this register, and never for changes, decisions,
+  Fivium or MCMS cases or unconfirmed alerts (ADR-8). It links to the
+  application, and has this alert's own manage link and a separate
+  unsubscribe link.
+
+  The route picks the most recently published application that matches.
+  If none of the 12 do, it shows the most recent one, with a note for the
+  team at the top.
+#}
+{% extends "versions/multiple-sites-v2/layouts/email.html" %}
+
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+
+{% set messageSubject = "New marine licence application: " + application.applicationName %}
+{% set registerBase = "/versions/multiple-sites-v2/public-register-v1" %}
+
+{% block pageTitle %}
+  Email - {{ messageSubject }}
+{% endblock %}
+
+{% block header %}
+  {% include "versions/multiple-sites-v2/public-register-v1/emails/_mail-chrome.html" %}
+  {% set messageDate = 0 | daysFromTodayShort %}
+  {% set messageTo = alert.email %}
+  {% include "versions/multiple-sites-v2/public-register-v1/emails/_message-header.html" %}
+  {{ govukHeader({
+    homepageUrl: "/",
+    classes: "govuk-header--full-width-border"
+  }) }}
+{% endblock %}
+
+{% block content %}
+
+{% include "./_email-styles.html" %}
+
+{% if noMatch %}
+{{ govukInsetText({ text: "Prototype note: none of the 12 example applications match this alert, so this shows the most recent one." }) }}
+{% endif %}
+
+<p>We have published a new marine licence application that matches your email alert.</p>
+
+<div class="app-email-inset">
+<p>{{ application.applicationName }}</p>
+<p>Reference: {{ application.reference }}</p>
+<p>Applicant: {{ application.applicant }}</p>
+<p>Marine plan area: {{ application.marinePlanAreas | join(", ") }}</p>
+<p>Consultation closes: {{ application.closingOffset | daysFromToday }}</p>
+</div>
+
+<p><a href="{{ registerBase }}/application/{{ application.id }}">View the application and have your say</a></p>
+
+<p>You get this email because you set up an alert for:</p>
+<div class="app-email-inset">
+<p>Marine plan areas: {{ summary.areas | join(", ") }}</p>
+<p>Types of work: {{ summary.typesText }}</p>
+</div>
+
+<p><a href="{{ registerBase }}/alerts/{{ alert.id }}/manage">Change this alert</a></p>
+
+<p><a href="{{ registerBase }}/alerts/{{ alert.id }}/unsubscribe{{ '?unsubscribe=oneclick' if unsubscribeOneClick }}">Unsubscribe from this alert</a></p>
+
+<p>From Marine Management Organisation</p>
+
+{% endblock %}

@@ -10,7 +10,8 @@ module.exports = function (router) {
   // consultation, but the list page is named so it can take decided ones
   // later. Phase 1 is the landing page, filtering the list, and finding an
   // application by reference. Phase 2 is viewing an application, phase 3
-  // is commenting on it. Email alerts follow.
+  // is commenting on it, phase 4 is email alerts
+  // (public-register-v1-alerts.js).
   const version = "multiple-sites-v2";
   const section = "public-register-v1";
   const base = `/versions/${version}/${section}`;
@@ -140,6 +141,40 @@ module.exports = function (router) {
     });
     const qs = params.toString();
     return `${base}/applications${qs ? '?' + qs : ''}${hash || ''}`;
+  }
+
+  // Back links that depend on where people came from, for pages they can
+  // reach from more than one place, or from outside the register.
+  //
+  // The link is shown only when they came from another page of the
+  // register, and goes back to that page as it was (so the list keeps its
+  // filters). It is hidden when they came from an email (which is their
+  // inbox, not the register), an outside link, a QR code or a bookmark, as
+  // there is nowhere on the register to go back to.
+  //
+  // Coming back to the page from later in its own journey (journeyPaths,
+  // such as the comment pages for an application) keeps the link it had,
+  // so Back still goes to the list rather than round in a loop. The link is
+  // remembered in the session under a key for each page.
+  const EMAIL_PAGE = /\/(confirmation-email|alert-email|manage-links-email)$/;
+
+  function registerReferrer(req) {
+    let url;
+    try { url = new URL(req.get('Referer')); } catch (e) { return null; }
+    // Hostname, not host: locally the kit runs behind a proxy on another port
+    if (url.hostname !== req.hostname || !url.pathname.startsWith(base)) return null;
+    return url;
+  }
+
+  function dynamicBackLink(req, key, journeyPaths) {
+    const sessionKey = `public-register-v1-back-${key}`;
+    const from = registerReferrer(req);
+    if (!from || EMAIL_PAGE.test(from.pathname)) {
+      delete req.session.data[sessionKey];
+    } else if (from.pathname !== req.path && !(journeyPaths || []).some(path => from.pathname.startsWith(path))) {
+      req.session.data[sessionKey] = from.pathname + from.search;
+    }
+    return req.session.data[sessionKey] || null;
   }
 
   // Landing page
@@ -374,6 +409,9 @@ module.exports = function (router) {
     res.render(`versions/${version}/${section}/application`, {
       application,
       details: pageDetails(application.id, DETAILS[application.id]),
+      // Back to the list, landing page or wherever on the register they
+      // came from. None from an email, a QR code or an outside link.
+      backLink: dynamicBackLink(req, `application-${application.id}`, [`${base}/application/${application.id}/`]),
       // Have your say in an MOJ ticket panel (?hys=panel, from the tray)
       haveYourSayPanel: req.query.hys === 'panel'
     });
@@ -538,6 +576,11 @@ module.exports = function (router) {
     const names = String(answers.name || '').trim().split(/\s+/).filter(Boolean);
     const mailInitials = names.length ? (names[0][0] + (names.length > 1 ? names[names.length - 1][0] : '')).toUpperCase() : '';
     res.render(`versions/${version}/${section}/emails/comment-confirmation`, { application, keys, answers, mailInitials });
+  });
+
+  // Email alerts (phase 4)
+  require('./public-register-v1-alerts.js')(router, {
+    version, section, base, ALL, MARINE_PLAN_AREAS, ACTIVITY_GROUPS, ACTIVITY_GROUP, dynamicBackLink, list
   });
 
   // The register's home is the landing page

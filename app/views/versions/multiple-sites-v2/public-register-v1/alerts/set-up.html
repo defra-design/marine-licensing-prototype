@@ -1,0 +1,53 @@
+{% extends "versions/multiple-sites-v2/public-register-v1/includes/layout.html" %}
+
+{% from "govuk/components/panel/macro.njk" import govukPanel %}
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+
+{% set navActive = "alerts" %}
+{% set pageTitle = "Email alert set up" %}
+
+{#
+  After the confirm link in the email is opened: the alert has started.
+  Reached from an email, so no back link. Like the manage page, it shows
+  the address masked, as anyone with the link can open it.
+#}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        {{ govukPanel({ titleText: "Email alert set up" }) }}
+
+        <p class="govuk-body">We will email {{ summary.maskedEmail }} when we publish a new application that matches this alert.</p>
+
+        {% set areasHtml %}
+        {% for area in summary.areas %}{{ area }}{% if not loop.last %}<br>{% endif %}{% endfor %}
+        {% endset %}
+
+        {{ govukSummaryList({
+            rows: [
+                { key: { text: "Marine plan areas" }, value: { html: areasHtml } },
+                { key: { text: "Types of work" }, value: { text: summary.typesText } }
+            ]
+        }) }}
+
+        <h2 class="govuk-heading-m">Change or stop this alert</h2>
+        <p class="govuk-body">Every alert email has a link to change this alert and a link to unsubscribe from it.</p>
+
+        <h2 class="govuk-heading-m">Get alerts for other areas</h2>
+        <p class="govuk-body">You can <a href="/versions/multiple-sites-v2/public-register-v1/alerts" class="govuk-link govuk-link--no-visited-state">set up another alert</a>. It will not change this one.</p>
+
+        <p class="govuk-body">
+            <a href="/versions/multiple-sites-v2/public-register-v1/applications" class="govuk-link govuk-link--no-visited-state">View applications</a>
+        </p>
+
+        {# For demos: an alert email this alert would get #}
+        <p class="govuk-body">
+            <a href="alert-email" class="govuk-link govuk-link--no-visited-state">See an example alert email</a>
+        </p>
+
+    </div>
+</div>
+
+{% endblock %}

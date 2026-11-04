@@ -8,7 +8,6 @@
     {% block header %}{{ publicRegisterHeader("applications") }}{% endblock %}
 
   The argument is the nav item to highlight: "applications", "alerts" or nothing.
-  Get email alerts goes nowhere until phase 4.
 #}
 
 {% from "govuk/components/header/macro.njk" import govukHeader %}
@@ -30,7 +29,7 @@
       active: activeItem === "applications"
     },
     {
-      href: "#",
+      href: registerBase + "/alerts",
       text: "Get email alerts",
       active: activeItem === "alerts"
     }

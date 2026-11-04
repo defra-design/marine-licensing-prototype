@@ -1,0 +1,33 @@
+{% extends "versions/multiple-sites-v2/public-register-v1/includes/layout.html" %}
+
+{% from "govuk/components/panel/macro.njk" import govukPanel %}
+
+{% set navActive = "alerts" %}
+{% set pageTitle = "You have unsubscribed" %}
+
+{#
+  After unsubscribing, from the confirm page or the one click link. No
+  back link, as there is nothing to go back to.
+#}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        {{ govukPanel({ titleText: "You have unsubscribed" }) }}
+
+        <p class="govuk-body">You will not get any more alerts from this alert.</p>
+        <p class="govuk-body">Any other alerts you have will not change. To stop them too, use the unsubscribe link in their emails.</p>
+
+        <p class="govuk-body">
+            <a href="/versions/multiple-sites-v2/public-register-v1/alerts" class="govuk-link govuk-link--no-visited-state">Set up a new alert</a>
+        </p>
+        <p class="govuk-body">
+            <a href="/versions/multiple-sites-v2/public-register-v1/applications" class="govuk-link govuk-link--no-visited-state">View applications</a>
+        </p>
+
+    </div>
+</div>
+
+{% endblock %}

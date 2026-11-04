@@ -1,0 +1,94 @@
+{% extends "versions/multiple-sites-v2/public-register-v1/includes/layout.html" %}
+
+{% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% set navActive = "alerts" %}
+{% set question = "Which marine plan areas do you want alerts for?" %}
+{% set pageTitle = ("Error: " if error else "") + question %}
+
+{#
+  Alerts, page 1: marine plan areas. Used when signing up, and to change a
+  saved alert from its manage page (alert is set, and saving goes back to
+  manage).
+
+  Grouped under Inshore and Offshore by default: the heading is the
+  question and each group is its own fieldset. With ?areas=list (from the
+  tray) it is one list of all 11, with the question as the legend.
+#}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        {% if error %}
+        {{ govukErrorSummary({
+            titleText: "There is a problem",
+            errorList: [{ text: error, href: "#" + fieldName }]
+        }) }}
+        {% endif %}
+
+        <form method="post" novalidate>
+            {% if change %}<input type="hidden" name="change" value="1">{% endif %}
+            {% if areasList %}<input type="hidden" name="areas" value="list">{% endif %}
+
+            {% set caption = "Manage your email alert" if alert else "Get email alerts" %}
+            {% set hint = "Select all that apply. Inshore areas go from the coast out to 12 nautical miles. Offshore areas are further out." %}
+
+            {% if areasList %}
+
+            {% set items = [] %}
+            {% for area in allAreas %}
+            {% set items = (items.push({ value: area, text: area, checked: area in selected }), items) %}
+            {% endfor %}
+            {{ govukCheckboxes({
+                name: fieldName,
+                idPrefix: fieldName,
+                fieldset: {
+                    legend: {
+                        html: '<span class="govuk-caption-l">' + caption + '</span>' + question,
+                        isPageHeading: true,
+                        classes: "govuk-fieldset__legend--l"
+                    }
+                },
+                hint: { text: hint },
+                errorMessage: { text: error } if error else undefined,
+                items: items
+            }) }}
+
+            {% else %}
+
+            <span class="govuk-caption-l">{{ caption }}</span>
+            <h1 class="govuk-heading-l">{{ question }}</h1>
+            <p class="govuk-hint">{{ hint }}</p>
+
+            {% for group in areaGroups %}
+            {% set items = [] %}
+            {% for area in group.areas %}
+            {% set items = (items.push({ value: area, text: area, checked: area in selected }), items) %}
+            {% endfor %}
+            {{ govukCheckboxes({
+                name: fieldName,
+                idPrefix: fieldName if loop.first else fieldName + "-" + group.heading | lower,
+                fieldset: {
+                    legend: {
+                        text: group.heading,
+                        classes: "govuk-fieldset__legend--m"
+                    }
+                },
+                errorMessage: { text: error } if error and loop.first else undefined,
+                items: items
+            }) }}
+            {% endfor %}
+
+            {% endif %}
+
+            {{ govukButton({ text: "Save changes" if alert else "Continue" }) }}
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,50 @@
+{% extends "versions/multiple-sites-v2/public-register-v1/includes/layout.html" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set navActive = "alerts" %}
+{% set pageTitle = "Get email alerts" %}
+
+{#
+  Get email alerts (phase 4). What alerts are, what you get, that there is
+  no account and that the emails let you change or stop them (ADR-8).
+  Reached from the navigation, the landing page and the comment sent page,
+  so backLink comes from the route: shown only when they came from another
+  register page.
+#}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <h1 class="govuk-heading-xl">Get email alerts</h1>
+
+        <p class="govuk-body-l">Get an email when we publish a new marine licence application in an area you are interested in.</p>
+
+        <p class="govuk-body">You choose:</p>
+        <ul class="govuk-list govuk-list--bullet">
+            <li>the marine plan areas you want alerts for</li>
+            <li>the types of work, if you only want some of them – construction, deposit or removal</li>
+        </ul>
+
+        <p class="govuk-body">We will email you when a matching application is first published on this register. We will not email you when an application changes or a decision is made.</p>
+
+        <p class="govuk-body">You do not need an account. We will send you an email to confirm your alert before it starts.</p>
+
+        {{ govukButton({
+            text: "Start now",
+            href: "alerts/areas",
+            isStartButton: true
+        }) }}
+
+        <h2 class="govuk-heading-m">Change or stop an alert</h2>
+
+        <p class="govuk-body">Every alert email has a link to change that alert and a link to unsubscribe from it.</p>
+
+        <p class="govuk-body">If you cannot find an alert email, <a href="alerts/get-manage-link" class="govuk-link govuk-link--no-visited-state">we can email you a link to manage your alerts</a>.</p>
+
+    </div>
+</div>
+
+{% endblock %}

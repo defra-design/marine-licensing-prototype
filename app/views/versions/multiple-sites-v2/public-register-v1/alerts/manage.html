@@ -1,0 +1,69 @@
+{% extends "versions/multiple-sites-v2/public-register-v1/includes/layout.html" %}
+
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+
+{% set navActive = "alerts" %}
+{% set pageTitle = "Manage your email alert" %}
+
+{#
+  Manage one alert, from the link in its emails (ADR-8). It shows this
+  alert only, never the others for the address, and the address masked
+  (a•••@harbour.uk), as anyone who can read the inbox can open the link.
+  The address cannot be changed: they set up a new alert instead.
+  Changing the areas or types saves straight away and comes back here
+  with a success banner. Usually opened from an email, so backLink, from
+  the route, is shown only when they came from another register page.
+#}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        {% if saved %}
+        {{ govukNotificationBanner({
+            type: "success",
+            text: "Your alert has been updated"
+        }) }}
+        {% endif %}
+
+        <h1 class="govuk-heading-l">Manage your email alert</h1>
+
+        <p class="govuk-body">We will email {{ summary.maskedEmail }} when we publish a new application that matches this alert.</p>
+
+        {% set areasHtml %}
+        {% for area in summary.areas %}{{ area }}{% if not loop.last %}<br>{% endif %}{% endfor %}
+        {% endset %}
+
+        {{ govukSummaryList({
+            classes: "govuk-!-margin-bottom-9",
+            rows: [
+                {
+                    key: { text: "Marine plan areas" },
+                    value: { html: areasHtml },
+                    actions: { items: [{ href: "areas", text: "Change", visuallyHiddenText: "marine plan areas" }] }
+                },
+                {
+                    key: { text: "Types of work" },
+                    value: { text: summary.typesText },
+                    actions: { items: [{ href: "types", text: "Change", visuallyHiddenText: "types of work" }] }
+                },
+                {
+                    key: { text: "Email address" },
+                    value: { text: summary.maskedEmail }
+                }
+            ]
+        }) }}
+
+        <h2 class="govuk-heading-m">Send alerts to a different email address</h2>
+        <p class="govuk-body"><a href="/versions/multiple-sites-v2/public-register-v1/alerts" class="govuk-link govuk-link--no-visited-state">Set up a new alert</a> for the other address, then unsubscribe from this one.</p>
+
+        <h2 class="govuk-heading-m">Stop this alert</h2>
+        <p class="govuk-body">You will not get any more emails from this alert. Any other alerts you have will not change.</p>
+        <p class="govuk-body"><a href="unsubscribe" class="govuk-link govuk-link--no-visited-state">Unsubscribe from this alert</a></p>
+
+    </div>
+</div>
+
+{% endblock %}
