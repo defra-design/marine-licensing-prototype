@@ -1,5 +1,7 @@
 {% extends "versions/multiple-sites-v2/public-register-v1/includes/layout.html" %}
 
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+
 {% set navActive = "applications" %}
 {% set pageTitle = "Check your email" %}
 {% set backLink = "check-answers" %}
@@ -8,12 +10,23 @@
   After Send comment. The comment is pending until the link in the email
   is opened (ADR-8). "the email" links to the email page, for demos, as
   there is no real inbox.
+
+  Follows the GOV.UK Design System Confirm an email address pattern: show
+  the address, say to open the link, and let people send the email again
+  or change the address. Sending it again shows a success banner, once.
 #}
 
 {% block content %}
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
+
+        {% if resent %}
+        {{ govukNotificationBanner({
+            type: "success",
+            html: '<p class="govuk-notification-banner__heading">We have sent another email to ' + (answers.email | escape) + '</p>'
+        }) }}
+        {% endif %}
 
         <span class="govuk-caption-l">{{ application.applicationName }}</span>
         <h1 class="govuk-heading-l">Check your email</h1>
@@ -24,6 +37,7 @@
 
         <h2 class="govuk-heading-m">If you have not got the email</h2>
         <p class="govuk-body">Check your spam or junk folder. If it is not there, <a href="your-details?change=1" class="govuk-link govuk-link--no-visited-state">check the email address you gave us</a>.</p>
+        <p class="govuk-body"><a href="resend-email" class="govuk-link govuk-link--no-visited-state">Send the email again</a></p>
 
     </div>
 </div>

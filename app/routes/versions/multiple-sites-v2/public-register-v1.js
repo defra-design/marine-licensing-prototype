@@ -440,7 +440,9 @@ module.exports = function (router) {
       email: `${prefix}-email`,
       reference: `${prefix}-comment-reference`,
       // pending until the link in the email is opened, then sent
-      status: `${prefix}-comment-status`
+      status: `${prefix}-comment-status`,
+      // set when the email is sent again, so check your email can say so once
+      resent: `${prefix}-comment-resent`
     };
   }
 
@@ -512,9 +514,11 @@ module.exports = function (router) {
     const email = String(req.session.data[keys.email] || '').trim();
     const errors = {};
     if (!name) errors.name = 'Enter your full name';
-    // Only checked for being empty, so usability testing participants can
-    // type anything rather than a real address
+    // Empty and format checks, with the GOV.UK Design System error messages
+    // (Email addresses pattern). Participants in usability testing need to
+    // type something shaped like an address, such as name@example.com.
     if (!email) errors.email = 'Enter your email address';
+    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.email = 'Enter an email address in the correct format, like name@example.com';
     if (Object.keys(errors).length) {
       return renderComment(req, res, 'your-details', application, { change: req.body.change, errors });
     }
@@ -537,20 +541,44 @@ module.exports = function (router) {
     res.redirect('check-your-email');
   });
 
-  // Check your email
+  // Check your email. After the email is sent again it shows a success
+  // banner, once.
   router.get(`${base}/application/:applicationId/check-your-email`, function (req, res) {
     const application = findApplication(req, res);
     if (!application) return;
-    renderComment(req, res, 'check-your-email', application);
+    const keys = commentKeys(application.id);
+    const resent = req.session.data[keys.resent];
+    delete req.session.data[keys.resent];
+    renderComment(req, res, 'check-your-email', application, { resent });
+  });
+
+  // Send the email again (GOV.UK Design System, Confirm an email address:
+  // let people resend it). From check your email and the expired link page.
+  // In the real service a new link replaces the old one.
+  router.get(`${base}/application/:applicationId/resend-email`, function (req, res) {
+    const application = findApplication(req, res);
+    if (!application) return;
+    const keys = commentKeys(application.id);
+    req.session.data[keys.status] = 'pending';
+    req.session.data[keys.resent] = true;
+    res.redirect('check-your-email');
   });
 
   // The link in the email. Opening it sends the comment and gives it a
   // reference, like the ones GOV.UK services show on confirmation pages.
   // Opening it again keeps the same reference.
+  //
+  // The prototype cannot time out, so the tray opens the link as if it had
+  // expired (?commentlink=expired) or as if the consultation had closed
+  // first (?commentlink=closed). Neither sends the comment.
   router.get(`${base}/application/:applicationId/confirm`, function (req, res) {
     const application = findApplication(req, res);
     if (!application) return;
     const keys = commentKeys(application.id);
+    const linkState = req.query.commentlink;
+    delete req.session.data.commentlink;
+    if (linkState === 'expired') return res.redirect('link-expired');
+    if (linkState === 'closed') return res.redirect('consultation-closed');
     if (req.session.data[keys.status] !== 'sent' || !req.session.data[keys.reference]) {
       const characters = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
       req.session.data[keys.reference] = Array.from({ length: 8 }, () => characters[Math.floor(Math.random() * characters.length)]).join('');
@@ -564,6 +592,21 @@ module.exports = function (router) {
     const application = findApplication(req, res);
     if (!application) return;
     renderComment(req, res, 'comment-sent', application);
+  });
+
+  // The link has expired (from the tray). The comment has not been sent.
+  router.get(`${base}/application/:applicationId/link-expired`, function (req, res) {
+    const application = findApplication(req, res);
+    if (!application) return;
+    renderComment(req, res, 'link-expired', application);
+  });
+
+  // The consultation closed before the link was opened (from the tray). The
+  // comment has not been sent and cannot be.
+  router.get(`${base}/application/:applicationId/consultation-closed`, function (req, res) {
+    const application = findApplication(req, res);
+    if (!application) return;
+    renderComment(req, res, 'consultation-closed', application);
   });
 
   // The email with the link to confirm the comment, as the commenter would

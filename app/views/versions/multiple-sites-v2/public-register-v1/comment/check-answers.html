@@ -24,25 +24,26 @@
         <span class="govuk-caption-l">{{ application.applicationName }}</span>
         <h1 class="govuk-heading-l">Check your comment before sending it</h1>
 
+    </div>
+</div>
+
+{# Full width, as comments can be long #}
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+
         {% set commentHtml %}
         {% for paragraph in (answers.comment or '').split('\n') %}{% if paragraph | trim %}<p class="govuk-body">{{ paragraph }}</p>{% endif %}{% endfor %}
         {% endset %}
 
-        <h2 class="govuk-heading-m">Your comment</h2>
+        {# One list for a short journey, as in the GOV.UK check answers pattern #}
         {{ govukSummaryList({
+            classes: "govuk-!-margin-bottom-9",
             rows: [
                 {
                     key: { text: "Comment" },
                     value: { html: commentHtml },
                     actions: { items: [{ href: "comment?change=1", text: "Change", visuallyHiddenText: "your comment" }] }
-                }
-            ]
-        }) }}
-
-        <h2 class="govuk-heading-m">Your details</h2>
-        {{ govukSummaryList({
-            classes: "govuk-!-margin-bottom-9",
-            rows: [
+                },
                 {
                     key: { text: "Full name" },
                     value: { text: answers.name },
@@ -55,6 +56,12 @@
                 }
             ]
         }) }}
+
+    </div>
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
 
         <h2 class="govuk-heading-m">Now send your comment</h2>
         <p class="govuk-body">We will read your comment and take it into account when we decide whether to grant the marine licence.</p>
