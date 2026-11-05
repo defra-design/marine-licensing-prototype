@@ -1,0 +1,48 @@
+{#
+  The Notify email from Email me a manage link (ADR-8). One email listing
+  each active alert for the address, each with its own manage link. Only
+  sent if we hold active alerts for it. Says that anyone who can read the
+  inbox can use the links.
+#}
+{% extends "versions/multiple-sites-v2/layouts/email.html" %}
+
+{% set messageSubject = "Manage your email alerts from the Marine licence public register" %}
+
+{% block pageTitle %}
+  Email - {{ messageSubject }}
+{% endblock %}
+
+{% block header %}
+  {% include "versions/multiple-sites-v2/public-register-v1/emails/_mail-chrome.html" %}
+  {% set messageDate = 0 | daysFromTodayShort %}
+  {% set messageTo = email %}
+  {% include "versions/multiple-sites-v2/public-register-v1/emails/_message-header.html" %}
+  {{ govukHeader({
+    homepageUrl: "/",
+    classes: "govuk-header--full-width-border"
+  }) }}
+{% endblock %}
+
+{% block content %}
+
+{% include "./_email-styles.html" %}
+
+<p>You asked for links to manage your email alerts from the Marine licence public register.</p>
+
+<p>{% if alerts.length > 1 %}You have {{ alerts.length }} alerts. Each link opens one alert, where you can change or stop it.{% else %}You have 1 alert. The link opens it, where you can change or stop it.{% endif %}</p>
+
+{% for item in alerts %}
+<div class="app-email-inset">
+<p>Marine plan areas: {{ item.areas | join(", ") }}</p>
+<p>Types of work: {{ item.typesText }}</p>
+<p><a href="/versions/multiple-sites-v2/public-register-v1/alerts/{{ item.alert.id }}/manage">Manage this alert</a></p>
+</div>
+{% endfor %}
+
+<p>Anyone who can read this email can use these links, so do not forward it.</p>
+
+<p>If you did not ask for these links, you can ignore this email. Your alerts will not change.</p>
+
+<p>From Marine Management Organisation</p>
+
+{% endblock %}

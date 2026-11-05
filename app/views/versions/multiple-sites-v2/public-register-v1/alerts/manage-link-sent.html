@@ -1,0 +1,33 @@
+{% extends "versions/multiple-sites-v2/public-register-v1/includes/layout.html" %}
+
+{% set navActive = "alerts" %}
+{% set pageTitle = "Check your email" %}
+{% set backLink = "get-manage-link" %}
+
+{#
+  After Email me a manage link. The same words whether or not we hold the
+  address, so the page does not tell anyone which addresses have alerts
+  (ADR-8). The only difference is the link to the email, which is there
+  for demos: with no alerts for the address, no email is sent, so there
+  is nothing to link to.
+#}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <h1 class="govuk-heading-l">Check your email</h1>
+
+        <p class="govuk-body">If <strong>{{ email }}</strong> has any email alerts, we have sent {% if emailSent %}<a href="manage-links-email" class="govuk-link govuk-link--no-visited-state">an email</a>{% else %}an email{% endif %} to it with a link to change or stop each one.</p>
+
+        <p class="govuk-body">Anyone who can read emails sent to this address can use the links.</p>
+
+        <h2 class="govuk-heading-m">If you have not got the email</h2>
+        <p class="govuk-body">Check your spam or junk folder. If it is not there, <a href="get-manage-link" class="govuk-link govuk-link--no-visited-state">check the email address you gave us</a>.</p>
+        <p class="govuk-body">If you have not set up an alert with this address, you can <a href="/versions/multiple-sites-v2/public-register-v1/alerts" class="govuk-link govuk-link--no-visited-state">set one up</a>.</p>
+
+    </div>
+</div>
+
+{% endblock %}

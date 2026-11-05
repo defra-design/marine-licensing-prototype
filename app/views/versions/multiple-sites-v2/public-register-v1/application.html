@@ -1,0 +1,305 @@
+{% extends "versions/multiple-sites-v2/public-register-v1/includes/layout.html" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "moj/components/ticket-panel/macro.njk" import mojTicketPanel %}
+
+{% set navActive = "applications" %}
+{% set pageTitle = application.applicationName %}
+{# backLink comes from the route: shown only when they came from another
+   register page, and goes back to it #}
+
+{#
+  View an application (CIP2). Every application uses this page, which
+  shows whichever sections its details have (public-register-v1-details.js).
+
+  The top is for the public: the key facts, how long is left to have your
+  say, a summary of the proposed works and every document in one list,
+  with visible section breaks between them rather than boxes, which are
+  not in the Design System. Then the full application, in the same summary cards as the LCML v4 public
+  view, without change links.
+
+  Redaction follows the LCML v4 public register preview: whatever the case
+  officer removed shows as ***REDACTED***, and a withheld document shows
+  only that marker. Teignmouth is the redacted one.
+#}
+
+{# An answer as published, with ***REDACTED*** marked up so it reads as a
+   deliberate removal rather than an odd turn of phrase #}
+{% macro published(text) %}
+{%- for part in text.split("***REDACTED***") -%}
+{{ part }}{% if not loop.last %}<span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">Redacted</span>{% endif %}
+{%- endfor -%}
+{% endmacro %}
+
+{# A document in the full application: a dead link, or the marker if withheld #}
+{% macro documentLink(file) %}
+{%- if file.withheld -%}
+<span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">Redacted</span>
+{%- else -%}
+<a class="govuk-link govuk-link--no-visited-state" href="#">{{ file.filename }}</a>
+{%- endif -%}
+{% endmacro %}
+
+{% macro summaryCard(title, rows) %}
+<div class="govuk-summary-card">
+    <div class="govuk-summary-card__title-wrapper">
+        <h3 class="govuk-summary-card__title">{{ title }}</h3>
+    </div>
+    <div class="govuk-summary-card__content">
+        <dl class="govuk-summary-list">
+            {% for row in rows %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">{{ row[0] }}</dt>
+                <dd class="govuk-summary-list__value">{{ row[1] }}</dd>
+            </div>
+            {% endfor %}
+        </dl>
+    </div>
+</div>
+{% endmacro %}
+
+{% block head %}
+  {{ super() }}
+  <style>
+    .app-redacted-marker {
+      background-color: #0b0c0c;
+      color: #ffffff;
+      padding: 0 5px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <span class="govuk-caption-l">{{ application.reference }}</span>
+        <h1 class="govuk-heading-l">{{ application.applicationName }}</h1>
+
+        {# Under the H1, as it applies to the whole application, so people
+           know what ***REDACTED*** means before they reach it #}
+        {% if application.redacted %}
+        <div class="govuk-inset-text">
+            <p class="govuk-body">We have withheld some information in this application, for example because it is commercially sensitive or personal.</p>
+            <p class="govuk-body">Withheld information is shown as <span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">REDACTED</span>.</p>
+        </div>
+        {% endif %}
+
+        {# With borders, as there can be more than one marine plan area or
+           activity. Its last border is the rule above Have your say. #}
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Applicant</dt>
+                <dd class="govuk-summary-list__value">{{ application.applicant }}</dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Marine plan area</dt>
+                <dd class="govuk-summary-list__value">{{ application.marinePlanAreas | join(", ") }}</dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Activity</dt>
+                <dd class="govuk-summary-list__value">
+                    {% for name in application.activityNames %}{{ name }}{% if not loop.last %}<br>{% endif %}{% endfor %}
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Published</dt>
+                <dd class="govuk-summary-list__value">{{ application.publishedOffset | daysFromToday }}</dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Consultation closes</dt>
+                <dd class="govuk-summary-list__value">{{ application.closingOffset | daysFromToday }}{% if application.closingSoon %} ({{ application.closingSuffix }}){% endif %}</dd>
+            </div>
+        </dl>
+
+        {# Have your say. By default a plain heading, text and button between
+           the key facts' last border and a section break. With ?hys=panel,
+           from the tray, the same content in an MOJ ticket panel (grey, with
+           a blue left border), on trial as it is "to be reviewed" in the MOJ
+           Design System. Kept to one line and the button, so it stands out
+           either way; the closing date is in the key facts. #}
+        {% set haveYourSayHtml %}
+        <h2 class="govuk-heading-m">Have your say</h2>
+        <p class="govuk-body">Tell us what you think about this application before the consultation closes.</p>
+        {{ govukButton({
+            text: "Comment on this application",
+            href: "/versions/multiple-sites-v2/public-register-v1/application/" + application.id + "/comment?new=1",
+            classes: "govuk-!-margin-bottom-0"
+        }) }}
+        {% endset %}
+
+        {% if haveYourSayPanel %}
+        {{ mojTicketPanel({
+            classes: "govuk-!-margin-bottom-6",
+            attributes: { "aria-label": "Have your say" },
+            items: [{ html: haveYourSayHtml, classes: "moj-ticket-panel__content--blue" }]
+        }) }}
+        {% else %}
+        {{ haveYourSayHtml | safe }}
+
+        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+        {% endif %}
+
+        <h2 class="govuk-heading-m">Summary of the proposed works</h2>
+        <p class="govuk-body">{{ published(details.summary) }}</p>
+
+        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
+        {# Every document at the top, as people who come from a site notice
+           often want the drawings first. Grouped under the task list section
+           each was uploaded in, as on the consultation v2 application page.
+           Drawings are named by their site (the filename is on the card),
+           with the file type and size in the link text. Links are dead in
+           the prototype. #}
+        <h2 class="govuk-heading-m">Documents</h2>
+        {% for group in details.documentGroups %}
+        <h3 class="govuk-heading-s govuk-!-margin-bottom-2">{{ group.heading }}</h3>
+        <ul class="govuk-list">
+            {% for file in group.documents %}
+            <li>
+                {% if file.withheld %}
+                {{ file.title }}: <span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">Redacted</span>
+                {% else %}
+                <a class="govuk-link govuk-link--no-visited-state" href="#">{{ file.title }} ({{ file.format }}, {{ file.size }})</a>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+        {% endfor %}
+
+        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
+        <h2 class="govuk-heading-m">Full application</h2>
+        <p class="govuk-body">This is the application as the applicant submitted it{% if application.redacted %}, with some information withheld{% endif %}.</p>
+
+    </div>
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+
+        {% set overview = [
+            ["Application type", "Marine licence application"],
+            ["Reference number", application.reference],
+            ["Who the marine licence is for", application.applicant]
+        ] %}
+        {% if details.submittedOffset %}
+        {% set overview = (overview.push(["Date submitted", details.submittedOffset | daysFromToday]), overview) %}
+        {% endif %}
+        {{ summaryCard("Application overview", overview) }}
+
+        {{ summaryCard("Application details", [
+            ["Application name", application.applicationName],
+            ["Proposed works summary", published(details.summary)],
+            ["Preferred start and end dates of the licence", details.startAndEndDates]
+        ]) }}
+
+        {% if details.siteLocationMethod %}
+        {{ summaryCard("Providing the site location", [
+            ["Method of providing site location", details.siteLocationMethod]
+        ]) }}
+        {% endif %}
+
+        {% for site in details.sites %}
+        {% set siteNumber = loop.index %}
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h3 class="govuk-summary-card__title">Site {{ siteNumber }}</h3>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list govuk-summary-list--full-width">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Site name</dt>
+                        <dd class="govuk-summary-list__value">{{ site.name }}</dd>
+                    </div>
+                    <div class="govuk-summary-list__row govuk-summary-list__row--no-actions">
+                        <dt class="govuk-summary-list__key govuk-summary-list__key--full-width map-label">Map view</dt>
+                        <dd class="govuk-summary-list__value govuk-summary-list__value--full-width">
+                            <img src="/public/images/{{ site.map }}" alt="Map showing site {{ siteNumber }} location" width="100%" />
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        {% for activity in site.activities %}
+        {{ summaryCard("Site " + siteNumber + " – Activity " + loop.index, [
+            ["Type of activity", activity.typeOfActivity],
+            [activity.whatLabel, activity.what],
+            ["Activity description", published(activity.description)],
+            ["Maximum duration of activity", activity.maximumDuration],
+            ["Completion date", activity.completionDate],
+            ["Activity limited to specific months", activity.specificMonths],
+            ["Proposed working hours", published(activity.workingHours)]
+        ]) }}
+        {% endfor %}
+
+        {% for drawing in site.drawings %}
+        {{ summaryCard("Site " + siteNumber + " – Construction drawing " + loop.index, [
+            ["File upload", documentLink(drawing)]
+        ]) }}
+        {% endfor %}
+        {% endfor %}
+
+        {% for group in details.policyGroups %}
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h3 class="govuk-summary-card__title">Marine plan policies – {{ group.category }}</h3>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    {% for policy in group.policies %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">{{ policy.name }}<br>({{ policy.code }})</dt>
+                        <dd class="govuk-summary-list__value">
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
+                            <p class="govuk-body">{{ policy.info }}</p>
+                            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Applicant’s consideration</p>
+                            <p class="govuk-body govuk-!-margin-bottom-0">{{ policy.consideration }}</p>
+                        </dd>
+                    </div>
+                    {% endfor %}
+                </dl>
+            </div>
+        </div>
+        {% endfor %}
+
+        {% for document in details.supportingDocuments %}
+        {% set policyList %}
+        <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-0">
+            {% for link in document.policies %}
+            <li>{{ link.name }} ({{ link.code }}) – {{ link.location }}</li>
+            {% endfor %}
+        </ul>
+        {% endset %}
+        {{ summaryCard("Supporting document – " + document.file.filename, [
+            ["File upload", documentLink(document.file)],
+            ["Type", document.type],
+            ["Policies", policyList]
+        ]) }}
+        {% endfor %}
+
+        {% if details.wfd %}
+        {{ summaryCard("Water Framework Directive assessment", [
+            ["Proposed works located within one nautical mile (1.85km) of low-water, in a tidal river or estuary", details.wfd.withinOneNauticalMile],
+            ["Proposed works limited to one of the excluded activities", details.wfd.excludedActivities],
+            ["Water Framework Directive assessment upload", documentLink(details.wfd.file)]
+        ]) }}
+        {% endif %}
+
+        {% if details.otherPermissions %}
+        {{ summaryCard("Other permissions", [
+            ["Special legal powers to do any of these proposed works", details.otherPermissions.specialLegalPowers],
+            ["Located in a harbour authority area", published(details.otherPermissions.harbourAuthority)],
+            ["Permission from any other authorities in relation to these proposed works", details.otherPermissions.otherAuthorities],
+            ["Pre-application public groups or organisations consultation", details.otherPermissions.preApplicationConsultation]
+        ]) }}
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock %}

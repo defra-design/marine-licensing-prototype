@@ -1,0 +1,30 @@
+{% extends "versions/multiple-sites-v2/public-register-v1/includes/layout.html" %}
+
+{% set navActive = "alerts" %}
+{% set pageTitle = "Check your email" %}
+{% set backLink = "check-answers" %}
+
+{#
+  After Set up alert. The alert is pending until the link in the email is
+  opened (ADR-8). "the email" links to the email page, for demos, as there
+  is no real inbox.
+#}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <span class="govuk-caption-l">Get email alerts</span>
+        <h1 class="govuk-heading-l">Check your email</h1>
+
+        <p class="govuk-body">We have sent an email to <strong>{{ alert.email }}</strong>.</p>
+        <p class="govuk-body">Open the link in <a href="{{ alert.id }}/confirmation-email" class="govuk-link govuk-link--no-visited-state">the email</a> to confirm your alert. We will not send you any alerts until you do.</p>
+
+        <h2 class="govuk-heading-m">If you have not got the email</h2>
+        <p class="govuk-body">Check your spam or junk folder. If it is not there, <a href="email-address?change=1" class="govuk-link govuk-link--no-visited-state">check the email address you gave us</a>.</p>
+
+    </div>
+</div>
+
+{% endblock %}

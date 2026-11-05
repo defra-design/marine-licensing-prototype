@@ -1,0 +1,55 @@
+{% extends "versions/multiple-sites-v2/public-register-v1/includes/layout.html" %}
+
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% set navActive = "alerts" %}
+{% set question = "What email address should we send alerts to?" %}
+{% set pageTitle = ("Error: " if error else "") + question %}
+
+{#
+  Alerts, page 3: the email address. It may be a shared inbox (ADR-8), so
+  it is "an email address" rather than "your email". Only checked for
+  being empty, so participants can type anything.
+#}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        {% if error %}
+        {{ govukErrorSummary({
+            titleText: "There is a problem",
+            errorList: [{ text: error, href: "#" + fieldName }]
+        }) }}
+        {% endif %}
+
+        <form method="post" novalidate>
+            {% if change %}<input type="hidden" name="change" value="1">{% endif %}
+
+            <span class="govuk-caption-l">Get email alerts</span>
+            {{ govukInput({
+                label: {
+                    text: question,
+                    classes: "govuk-label--l",
+                    isPageHeading: true
+                },
+                hint: { text: "This can be a shared inbox, such as one your organisation uses." },
+                id: fieldName,
+                name: fieldName,
+                type: "email",
+                value: value,
+                autocomplete: "email",
+                spellcheck: false,
+                errorMessage: { text: error } if error else undefined
+            }) }}
+
+            {{ govukButton({ text: "Continue" }) }}
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

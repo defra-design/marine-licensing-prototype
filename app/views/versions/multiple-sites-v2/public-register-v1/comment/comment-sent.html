@@ -1,0 +1,42 @@
+{% extends "versions/multiple-sites-v2/public-register-v1/includes/layout.html" %}
+
+{% from "govuk/components/panel/macro.njk" import govukPanel %}
+
+{% set navActive = "applications" %}
+{% set pageTitle = "Comment sent" %}
+
+{#
+  Confirmation, after the link in the email is opened.
+#}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        {{ govukPanel({
+            titleText: "Comment sent",
+            html: "Your reference number<br><strong>" + answers.reference + "</strong>"
+        }) }}
+
+        <p class="govuk-body">We have received your comment.</p>
+
+        <h2 class="govuk-heading-m">What happens next</h2>
+        <p class="govuk-body">The consultation on {{ application.applicationName }} closes on {{ application.closingOffset | daysFromToday }}.</p>
+        <p class="govuk-body">We will read your comment and take it into account when we decide whether to grant the marine licence. We may contact you if we need more information.</p>
+
+        {# Get email alerts is a dead link until Tom has checked the alerts journey. The pages work at /alerts. #}
+        <h2 class="govuk-heading-m">Find out about other applications</h2>
+        <p class="govuk-body"><a href="#" class="govuk-link govuk-link--no-visited-state">Get email alerts</a> when we publish applications in an area you are interested in.</p>
+
+        <p class="govuk-body">
+            <a href="/versions/multiple-sites-v2/public-register-v1/application/{{ application.id }}" class="govuk-link govuk-link--no-visited-state">Go back to the application</a>
+        </p>
+        <p class="govuk-body">
+            <a href="/versions/multiple-sites-v2/public-register-v1/applications" class="govuk-link govuk-link--no-visited-state">View other applications</a>
+        </p>
+
+    </div>
+</div>
+
+{% endblock %}

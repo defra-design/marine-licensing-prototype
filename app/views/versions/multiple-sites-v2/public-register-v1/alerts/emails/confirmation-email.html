@@ -1,0 +1,45 @@
+{#
+  The Notify email after Set up alert. Opening the link confirms they can
+  read this inbox, and that is what starts the alert (ADR-8). One click, no
+  code. Until then the alert is pending and gets no alerts.
+#}
+{% extends "versions/multiple-sites-v2/layouts/email.html" %}
+
+{% set messageSubject = "Confirm your email alert from the Marine licence public register" %}
+
+{% block pageTitle %}
+  Email - {{ messageSubject }}
+{% endblock %}
+
+{% block header %}
+  {% include "versions/multiple-sites-v2/public-register-v1/emails/_mail-chrome.html" %}
+  {% set messageDate = 0 | daysFromTodayShort %}
+  {% set messageTo = alert.email %}
+  {% include "versions/multiple-sites-v2/public-register-v1/emails/_message-header.html" %}
+  {{ govukHeader({
+    homepageUrl: "/",
+    classes: "govuk-header--full-width-border"
+  }) }}
+{% endblock %}
+
+{% block content %}
+
+{% include "./_email-styles.html" %}
+
+<p>Confirm that you want email alerts from the Marine licence public register.</p>
+
+<p><a href="/versions/multiple-sites-v2/public-register-v1/alerts/{{ alert.id }}/confirm">Confirm your email alert</a></p>
+
+<p>We will not send you any alerts until you open this link.</p>
+
+<p>You asked for an email when we publish a new marine licence application for:</p>
+<div class="app-email-inset">
+<p>Marine plan areas: {{ summary.areas | join(", ") }}</p>
+<p>Types of work: {{ summary.typesText }}</p>
+</div>
+
+<p>If you did not ask for email alerts, you can ignore this email. We will not send you any.</p>
+
+<p>From Marine Management Organisation</p>
+
+{% endblock %}

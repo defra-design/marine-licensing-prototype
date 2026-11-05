@@ -1,0 +1,66 @@
+{% extends "versions/multiple-sites-v2/public-register-v1/includes/layout.html" %}
+
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% set navActive = "applications" %}
+{% set pageTitle = ("Error: " if errors else "") + "Your details" %}
+{% set backLink = "check-answers" if change else "comment" %}
+
+{#
+  Commenting, page 2 of 2: name and email. There is no sign-in, so the email
+  is how we confirm the comment and contact them about it.
+#}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        {% if errors %}
+        {% set errorList = [] %}
+        {% if errors.name %}{% set errorList = (errorList.push({ text: errors.name, href: "#" + keys.name }), errorList) %}{% endif %}
+        {% if errors.email %}{% set errorList = (errorList.push({ text: errors.email, href: "#" + keys.email }), errorList) %}{% endif %}
+        {{ govukErrorSummary({
+            titleText: "There is a problem",
+            errorList: errorList
+        }) }}
+        {% endif %}
+
+        <span class="govuk-caption-l">{{ application.applicationName }}</span>
+        <h1 class="govuk-heading-l">Your details</h1>
+
+        <p class="govuk-body">We will use these to send you a confirmation and to contact you about your comment if we need to.</p>
+
+        <form method="post" novalidate>
+            {% if change %}<input type="hidden" name="change" value="1">{% endif %}
+
+            {{ govukInput({
+                label: { text: "Full name", classes: "govuk-label--s" },
+                id: keys.name,
+                name: keys.name,
+                value: answers.name,
+                autocomplete: "name",
+                spellcheck: false,
+                errorMessage: { text: errors.name } if errors and errors.name else undefined
+            }) }}
+
+            {{ govukInput({
+                label: { text: "Email address", classes: "govuk-label--s" },
+                id: keys.email,
+                name: keys.email,
+                type: "email",
+                value: answers.email,
+                autocomplete: "email",
+                spellcheck: false,
+                errorMessage: { text: errors.email } if errors and errors.email else undefined
+            }) }}
+
+            {{ govukButton({ text: "Continue" }) }}
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

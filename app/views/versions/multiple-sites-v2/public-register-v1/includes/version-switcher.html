@@ -1,0 +1,328 @@
+{#
+  Prototype version switcher, as on consultation v2. A small triangle in
+  the bottom right corner opens a tray of the design versions we are
+  comparing.
+
+  It is for the team, not for research participants. Add ?versions=off to
+  any URL to hide it for the rest of the session (for usability testing),
+  and ?versions=on to bring it back. The kit keeps the value in the session.
+
+  Each option is a link to a URL with a query string, so the version shown
+  is always the one in the address bar. Off the list page, the links go
+  to the list page.
+#}
+{% if data['versions'] !== 'off' %}
+{% set listPath = "/versions/multiple-sites-v2/public-register-v1/applications" %}
+{% set startPath = "/versions/multiple-sites-v2/public-register-v1/start" %}
+{# The application being viewed, or Lyme Regis from any other page #}
+{% set applicationPath = "/versions/multiple-sites-v2/public-register-v1/application/" + (application.id if application else "lyme-regis") %}
+
+<style>
+  .app-version-switcher__toggle {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    z-index: 1000;
+    width: 0;
+    height: 0;
+    padding: 0;
+    border: 0;
+    border-style: solid;
+    border-width: 0 0 36px 36px;
+    border-color: transparent transparent #b1b4b6 transparent;
+    background: none;
+    cursor: pointer;
+  }
+  .app-version-switcher__toggle:hover { border-bottom-color: #505a5f; }
+  .app-version-switcher__toggle:focus {
+    outline: 3px solid #ffdd00;
+    outline-offset: 0;
+    border-bottom-color: #0b0c0c;
+  }
+  .app-version-tray {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 1001;
+    width: 320px;
+    max-width: 100%;
+    overflow-y: auto;
+    padding: 20px;
+    box-sizing: border-box;
+    background: #ffffff;
+    border-left: 1px solid #b1b4b6;
+    box-shadow: -4px 0 12px rgba(0, 0, 0, 0.15);
+  }
+  .app-version-tray[hidden] { display: none; }
+  .app-version-tray__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 10px;
+  }
+  /* Stacked in the side tray so it fits without scrolling sideways, in a row at the bottom */
+  .app-version-tray__actions { display: flex; flex-direction: column; gap: 10px; flex-shrink: 0; }
+  .app-version-tray--bottom .app-version-tray__actions { flex-direction: row; }
+  .app-version-tray__actions .govuk-button { margin-bottom: 0; }
+  /* Docked along the bottom: full width, sections side by side */
+  .app-version-tray--bottom {
+    top: auto;
+    left: 0;
+    width: 100%;
+    max-height: 50vh;
+    border-left: 0;
+    border-top: 1px solid #b1b4b6;
+    box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.15);
+  }
+  .app-version-tray--bottom .app-version-tray__body { display: flex; flex-wrap: wrap; gap: 0 60px; }
+  .app-version-tray--bottom .app-version-tray__divider { display: none; }
+  .app-version-tray--bottom .app-version-tray__section { max-width: 400px; }
+  /* Focus moves to the heading when the tray opens; it is not interactive */
+  .app-version-tray__header h2:focus { outline: none; }
+</style>
+
+<button type="button" class="app-version-switcher__toggle" id="app-version-switcher-toggle" aria-expanded="false" aria-controls="app-version-tray">
+  <span class="govuk-visually-hidden">Page versions</span>
+</button>
+
+<div class="app-version-tray" id="app-version-tray" role="dialog" aria-labelledby="app-version-tray-heading" hidden>
+  <div class="app-version-tray__header">
+    <h2 class="govuk-heading-m" id="app-version-tray-heading" tabindex="-1">Page versions</h2>
+    <div class="app-version-tray__actions">
+      <button type="button" class="govuk-button govuk-button--secondary" id="app-version-tray-move">Move to bottom</button>
+      <button type="button" class="govuk-button govuk-button--secondary" id="app-version-tray-close">Close</button>
+    </div>
+  </div>
+
+  <div class="app-version-tray__body">
+  <div class="app-version-tray__section">
+  {# The start button by default. The links go to the landing page. #}
+  <h3 class="govuk-heading-s govuk-!-margin-bottom-2">View applications on the landing page</h3>
+  <ul class="govuk-list govuk-list--spaced">
+    {% for option in [
+      { mode: "start", text: "Start button", url: startPath },
+      { mode: "button", text: "Standard green button", url: startPath + "?cta=button" },
+      { mode: "link", text: "Link under the intro", url: startPath + "?cta=link" }
+    ] %}
+    <li>
+      {% if (ctaMode or "start") === option.mode %}
+      <span aria-current="true">{{ option.text }}</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ option.url }}" class="govuk-link govuk-link--no-visited-state">{{ option.text }}</a>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  </div>
+
+  <div class="app-version-tray__section">
+  {# Off by default, so nobody assumes it always splits after 10. Only shows when there is more than one page of results. #}
+  <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Pagination on the list</h3>
+  <ul class="govuk-list govuk-list--spaced">
+    {% for option in [
+      { on: false, text: "Off", url: trayUrls.paginationOff if trayUrls else listPath },
+      { on: true, text: "On, 10 per page", url: trayUrls.paginationOn if trayUrls else listPath + "?pagination=on" }
+    ] %}
+    <li>
+      {% if (paginationOn or false) === option.on %}
+      <span aria-current="true">{{ option.text }}</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ option.url }}" class="govuk-link govuk-link--no-visited-state">{{ option.text }}</a>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  </div>
+
+  <div class="app-version-tray__section">
+  {# On trial: on by default. The landing page lookup is the main way in by reference. #}
+  <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Reference filter on the list</h3>
+  <ul class="govuk-list govuk-list--spaced">
+    {% for option in [
+      { on: true, text: "On", url: trayUrls.refFilterOn if trayUrls else listPath },
+      { on: false, text: "Off", url: trayUrls.refFilterOff if trayUrls else listPath + "?reffilter=off" }
+    ] %}
+    <li>
+      {% if (referenceFilterOn !== false) === option.on %}
+      <span aria-current="true">{{ option.text }}</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ option.url }}" class="govuk-link govuk-link--no-visited-state">{{ option.text }}</a>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  </div>
+
+  <div class="app-version-tray__section">
+  {# Plain by default. The MOJ ticket panel is "to be reviewed" in the MOJ Design System, so it is on trial. #}
+  <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Have your say on the application page</h3>
+  <ul class="govuk-list govuk-list--spaced">
+    {% for option in [
+      { panel: false, text: "Heading with section breaks", url: applicationPath },
+      { panel: true, text: "MOJ ticket panel", url: applicationPath + "?hys=panel" }
+    ] %}
+    <li>
+      {% if (haveYourSayPanel or false) === option.panel and details %}
+      <span aria-current="true">{{ option.text }}</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ option.url }}" class="govuk-link govuk-link--no-visited-state">{{ option.text }}</a>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  </div>
+
+  <div class="app-version-tray__section">
+  {# Top level only by default. The nested version reveals the second-level types under each. #}
+  <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Activity filter on the list</h3>
+  <ul class="govuk-list govuk-list--spaced">
+    {% for option in [
+      { nested: false, text: "Construction, Deposit and Removal only", url: trayUrls.activityTopLevel if trayUrls else listPath },
+      { nested: true, text: "With their types underneath", url: trayUrls.activityNested if trayUrls else listPath + "?activityfilter=nested" }
+    ] %}
+    <li>
+      {% if (nestedActivities or false) === option.nested %}
+      <span aria-current="true">{{ option.text }}</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ option.url }}" class="govuk-link govuk-link--no-visited-state">{{ option.text }}</a>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  </div>
+
+  <div class="app-version-tray__section">
+  {# Grouped by default. On the alerts areas page; from anywhere else the links go to it. #}
+  {% set areasPath = "/versions/multiple-sites-v2/public-register-v1/alerts/areas" %}
+  <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Marine plan areas for alerts</h3>
+  <ul class="govuk-list govuk-list--spaced">
+    {% for option in [
+      { list: false, text: "Grouped under Inshore and Offshore", url: "?" if areaGroups else areasPath },
+      { list: true, text: "One list", url: "?areas=list" if areaGroups else areasPath + "?areas=list" }
+    ] %}
+    <li>
+      {% if areaGroups and (areasList or false) === option.list %}
+      <span aria-current="true">{{ option.text }}</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ option.url }}" class="govuk-link govuk-link--no-visited-state">{{ option.text }}</a>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  </div>
+
+  {# Confirm page by default. Needs an alert that has been confirmed: the
+     one on the page, or the most recent one. #}
+  {% set confirmedAlerts = [] %}
+  {% for a in data['public-register-v1-alerts'] or [] %}{% if a.status !== "pending" %}{% set confirmedAlerts = (confirmedAlerts.push(a), confirmedAlerts) %}{% endif %}{% endfor %}
+  {% set trayAlert = alert if alert and alert.status !== "pending" else (confirmedAlerts | last) %}
+  <div class="app-version-tray__section">
+  <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Unsubscribe link in alert emails</h3>
+  {% if trayAlert %}
+  {% set unsubscribePath = "/versions/multiple-sites-v2/public-register-v1/alerts/" + trayAlert.id + "/unsubscribe" %}
+  <ul class="govuk-list govuk-list--spaced">
+    {% for option in [
+      { oneClick: false, text: "Confirm page first", url: unsubscribePath },
+      { oneClick: true, text: "One click", url: unsubscribePath + "?unsubscribe=oneclick" }
+    ] %}
+    <li>
+      {% if unsubscribePage and (unsubscribeOneClick or false) === option.oneClick %}
+      <span aria-current="true">{{ option.text }}</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ option.url }}" class="govuk-link govuk-link--no-visited-state">{{ option.text }}</a>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  <p class="govuk-body-s">One click stops the alert as soon as the link is opened. To see it from the email, open <a href="/versions/multiple-sites-v2/public-register-v1/alerts/{{ trayAlert.id }}/alert-email?unsubscribe=oneclick" class="govuk-link govuk-link--no-visited-state">the alert email with a one click link</a>.</p>
+  {% else %}
+  <p class="govuk-body-s">Set up and confirm an alert to see these.</p>
+  {% endif %}
+  </div>
+
+  <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible app-version-tray__divider">
+
+  <div class="app-version-tray__section">
+  <p class="govuk-body-s">To hide this for usability testing, add <code>?versions=off</code> to the URL. Use <code>?versions=on</code> to bring it back.</p>
+  <p class="govuk-body-s"><a href="?versions=off" class="govuk-link govuk-link--no-visited-state">Hide for this session</a></p>
+  </div>
+  </div>
+</div>
+
+<script>
+  (function () {
+    var toggle = document.getElementById('app-version-switcher-toggle')
+    var tray = document.getElementById('app-version-tray')
+    var close = document.getElementById('app-version-tray-close')
+    var heading = document.getElementById('app-version-tray-heading')
+    var move = document.getElementById('app-version-tray-move')
+
+    // Side or bottom. Remembered in this browser only, so it survives page
+    // changes; storage can be unavailable, so fall back to the side.
+    var STORAGE_KEY = 'public-register-v1-version-tray-position'
+    // The tray starts closed on every page, except straight after choosing a
+    // version in it, or submitting a form on the page while it is open, so
+    // you can flick through versions. A one-off note, used once and removed.
+    var KEEP_OPEN_KEY = 'public-register-v1-keep-tray-open'
+
+    function keepOpenForNextPage () {
+      try { window.sessionStorage.setItem(KEEP_OPEN_KEY, 'true') } catch (e) {}
+    }
+
+    Array.prototype.forEach.call(tray.querySelectorAll('a'), function (link) {
+      link.addEventListener('click', keepOpenForNextPage)
+    })
+    Array.prototype.forEach.call(document.querySelectorAll('main form'), function (form) {
+      form.addEventListener('submit', function () { if (!tray.hidden) keepOpenForNextPage() })
+    })
+
+    function setPosition (position) {
+      var bottom = position === 'bottom'
+      tray.classList.toggle('app-version-tray--bottom', bottom)
+      move.textContent = bottom ? 'Move to side' : 'Move to bottom'
+      try { window.localStorage.setItem(STORAGE_KEY, position) } catch (e) {}
+      makeRoom()
+    }
+
+    // When docked at the bottom, pad the page so the tray never covers the
+    // last results
+    function makeRoom () {
+      var docked = !tray.hidden && tray.classList.contains('app-version-tray--bottom')
+      document.body.style.paddingBottom = docked ? tray.offsetHeight + 'px' : ''
+    }
+
+    try { setPosition(window.localStorage.getItem(STORAGE_KEY) || 'side') } catch (e) { setPosition('side') }
+
+    move.addEventListener('click', function () {
+      setPosition(tray.classList.contains('app-version-tray--bottom') ? 'side' : 'bottom')
+    })
+
+    function open (keepFocus) {
+      tray.hidden = false
+      toggle.setAttribute('aria-expanded', 'true')
+      makeRoom()
+      if (!keepFocus) heading.focus()
+    }
+
+    function shut () {
+      tray.hidden = true
+      toggle.setAttribute('aria-expanded', 'false')
+      makeRoom()
+      toggle.focus()
+    }
+
+    toggle.addEventListener('click', function () { tray.hidden ? open() : shut() })
+
+    // Reopen after choosing a version, without moving focus off the page
+    try {
+      if (window.sessionStorage.getItem(KEEP_OPEN_KEY) === 'true') open(true)
+      window.sessionStorage.removeItem(KEEP_OPEN_KEY)
+    } catch (e) {}
+    close.addEventListener('click', shut)
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && !tray.hidden) shut()
+    })
+  })()
+</script>
+{% endif %}

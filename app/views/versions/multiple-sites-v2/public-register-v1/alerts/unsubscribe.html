@@ -1,0 +1,47 @@
+{% extends "versions/multiple-sites-v2/public-register-v1/includes/layout.html" %}
+
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set navActive = "alerts" %}
+{% set pageTitle = "Are you sure you want to unsubscribe from this alert?" %}
+
+{#
+  Unsubscribe, from the separate link in each alert email (ADR-8) or the
+  manage page. Stops this alert only. This confirm page is the default;
+  the one click version, from the tray, skips it. backLink comes from the
+  route: the manage page if they came from it, none from an email.
+#}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <h1 class="govuk-heading-l">Are you sure you want to unsubscribe from this alert?</h1>
+
+        {% set areasHtml %}
+        {% for area in summary.areas %}{{ area }}{% if not loop.last %}<br>{% endif %}{% endfor %}
+        {% endset %}
+
+        {{ govukSummaryList({
+            rows: [
+                { key: { text: "Marine plan areas" }, value: { html: areasHtml } },
+                { key: { text: "Types of work" }, value: { text: summary.typesText } },
+                { key: { text: "Email address" }, value: { text: summary.maskedEmail } }
+            ]
+        }) }}
+
+        <p class="govuk-body">We will stop sending emails from this alert. Any other alerts you have will not change.</p>
+
+        <form method="post" novalidate>
+            <div class="govuk-button-group">
+                {{ govukButton({ text: "Unsubscribe", classes: "govuk-button--warning" }) }}
+                <a href="manage" class="govuk-link govuk-link--no-visited-state">Keep this alert</a>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}

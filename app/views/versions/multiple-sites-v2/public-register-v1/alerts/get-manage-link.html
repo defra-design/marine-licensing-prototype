@@ -1,0 +1,53 @@
+{% extends "versions/multiple-sites-v2/public-register-v1/includes/layout.html" %}
+
+{% from "govuk/components/input/macro.njk" import govukInput %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
+
+{% set navActive = "alerts" %}
+{% set pageTitle = ("Error: " if error else "") + "Get a link to manage your email alerts" %}
+
+{#
+  Email me a manage link (ADR-8). They enter an address and always get the
+  same answer, whether or not we hold it. If we do, one email lists each
+  active alert with its own manage link. The page must say that whoever
+  can read the inbox can use the links. backLink comes from the route.
+#}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        {% if error %}
+        {{ govukErrorSummary({
+            titleText: "There is a problem",
+            errorList: [{ text: error, href: "#" + fieldName }]
+        }) }}
+        {% endif %}
+
+        <h1 class="govuk-heading-l">Get a link to manage your email alerts</h1>
+
+        <p class="govuk-body">Enter the email address your alerts are sent to. If you have any alerts, we will send an email with a link to change or stop each one.</p>
+
+        <p class="govuk-body">Anyone who can read emails sent to this address will be able to use the links.</p>
+
+        <form method="post" novalidate>
+            {{ govukInput({
+                label: { text: "Email address", classes: "govuk-label--s" },
+                id: fieldName,
+                name: fieldName,
+                type: "email",
+                value: value,
+                autocomplete: "email",
+                spellcheck: false,
+                errorMessage: { text: error } if error else undefined
+            }) }}
+
+            {{ govukButton({ text: "Send links" }) }}
+        </form>
+
+    </div>
+</div>
+
+{% endblock %}
