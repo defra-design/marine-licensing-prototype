@@ -115,8 +115,8 @@ module.exports = function (router) {
 
   const REFERENCE_ERRORS = {
     empty: () => 'Enter an application reference',
-    format: () => 'Enter the reference in the correct format, like MLA/2026/10020',
-    'not-found': reference => `No application found with reference ${reference}`
+    format: () => 'Enter the application reference in the correct format',
+    'not-found': reference => `We could not find an application with reference ${reference}`
   };
 
   // For the reference filter on the list, which matches part of a

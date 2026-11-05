@@ -16,7 +16,7 @@
 
         {{ govukPanel({
             titleText: "Comment sent",
-            html: "Your reference number<br><strong>" + answers.reference + "</strong>"
+            html: "Your comment reference<br><strong>" + answers.reference + "</strong>"
         }) }}
 
         <p class="govuk-body">We have received your comment.</p>
@@ -25,13 +25,14 @@
         <p class="govuk-body">The consultation on {{ application.applicationName }} closes on {{ application.closingOffset | daysFromToday }}.</p>
         <p class="govuk-body">We will read your comment and take it into account when we decide whether to grant the marine licence. We may contact you if we need more information.</p>
 
+        <p class="govuk-body">
+            <a href="/versions/multiple-sites-v2/public-register-v1/application/{{ application.id }}" class="govuk-link govuk-link--no-visited-state">View the application</a>
+        </p>
+
         {# Get email alerts is a dead link until Tom has checked the alerts journey. The pages work at /alerts. #}
         <h2 class="govuk-heading-m">Find out about other applications</h2>
-        <p class="govuk-body"><a href="#" class="govuk-link govuk-link--no-visited-state">Get email alerts</a> when we publish applications in an area you are interested in.</p>
+        <p class="govuk-body"><a href="#" class="govuk-link govuk-link--no-visited-state">Get email alerts</a> when we publish applications in an area or for a type of activity you’re interested in.</p>
 
-        <p class="govuk-body">
-            <a href="/versions/multiple-sites-v2/public-register-v1/application/{{ application.id }}" class="govuk-link govuk-link--no-visited-state">Go back to the application</a>
-        </p>
         <p class="govuk-body">
             <a href="/versions/multiple-sites-v2/public-register-v1/applications" class="govuk-link govuk-link--no-visited-state">View other applications</a>
         </p>
