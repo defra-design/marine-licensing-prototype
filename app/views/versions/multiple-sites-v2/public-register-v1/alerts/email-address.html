@@ -29,14 +29,13 @@
         <form method="post" novalidate>
             {% if change %}<input type="hidden" name="change" value="1">{% endif %}
 
-            <span class="govuk-caption-l">Get email alerts</span>
             {{ govukInput({
                 label: {
                     text: question,
                     classes: "govuk-label--l",
                     isPageHeading: true
                 },
-                hint: { text: "This can be a shared inbox, such as one your organisation uses." },
+                hint: { text: "This can be a shared inbox, such as one your organisation uses. We will only use it to send your alerts." },
                 id: fieldName,
                 name: fieldName,
                 type: "email",

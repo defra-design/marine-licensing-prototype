@@ -1,20 +1,24 @@
 {% extends "versions/multiple-sites-v2/public-register-v1/includes/layout.html" %}
 
-{% from "govuk/components/radios/macro.njk" import govukRadios %}
 {% from "govuk/components/checkboxes/macro.njk" import govukCheckboxes %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
 
 {% set navActive = "alerts" %}
-{% set question = "Which types of work do you want alerts for?" %}
-{% set pageTitle = ("Error: " if errors else "") + question %}
+{% set question = "Which types of activity do you want alerts for?" %}
+{% set pageTitle = ("Error: " if error else "") + question %}
 
 {#
-  Alerts, page 2: types of work, top level only (ADR-8). All types by
-  default, or only some, which reveals Construction, Deposit and Removal.
+  Alerts, page 2: types of activity, top level only (ADR-8). "Type of
+  activity", as on the landing page and the application page.
+  The activities show straight away, each with a hint for people who do
+  not know the terms, then "or" and an exclusive All types of activity,
+  as on GOV.UK email sign-up (www.gov.uk/email-signup/?link=/money).
+  It stays one list as more activities come with non-LCML applications.
+  All types means every type, now and in future.
   Used when signing up, and to change a saved alert from its manage page
-  (alert is set, and saving goes back to manage). fields are the session
-  keys for whichever it is.
+  (alert is set, and saving goes back to manage). fieldName is the session
+  key for whichever it is.
 #}
 
 {% block content %}
@@ -22,52 +26,36 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
-        {% if errors %}
+        {% if error %}
         {{ govukErrorSummary({
             titleText: "There is a problem",
-            errorList: [
-                { text: errors.scope, href: "#" + fields.scope } if errors.scope else
-                { text: errors.types, href: "#" + fields.types }
-            ]
+            errorList: [{ text: error, href: "#" + fieldName }]
         }) }}
         {% endif %}
 
         <form method="post" novalidate>
             {% if change %}<input type="hidden" name="change" value="1">{% endif %}
 
-            {% set typeItems = [] %}
+            {% set items = [] %}
             {% for option in typeOptions %}
-            {% set typeItems = (typeItems.push({ value: option.value, text: option.text, checked: option.value in selected }), typeItems) %}
+            {% set items = (items.push({ value: option.value, text: option.text, hint: { text: option.hint }, checked: option.value in selected }), items) %}
             {% endfor %}
+            {% set items = (items.push({ divider: "or" }), items) %}
+            {% set items = (items.push({ value: "all", text: "All types of activity", checked: allTypes, behaviour: "exclusive" }), items) %}
 
-            {% set someHtml %}
             {{ govukCheckboxes({
-                name: fields.types,
-                idPrefix: fields.types,
-                fieldset: {
-                    legend: { text: "Types of work", classes: "govuk-fieldset__legend--s" }
-                },
-                hint: { text: "Select all that apply." },
-                errorMessage: { text: errors.types } if errors and errors.types else undefined,
-                items: typeItems
-            }) }}
-            {% endset %}
-
-            {{ govukRadios({
-                name: fields.scope,
-                idPrefix: fields.scope,
+                name: fieldName,
+                idPrefix: fieldName,
                 fieldset: {
                     legend: {
-                        html: '<span class="govuk-caption-l">' + ("Manage your email alert" if alert else "Get email alerts") + '</span>' + question,
+                        text: question,
                         isPageHeading: true,
                         classes: "govuk-fieldset__legend--l"
                     }
                 },
-                errorMessage: { text: errors.scope } if errors and errors.scope else undefined,
-                items: [
-                    { value: "all", text: "All types of work", checked: scope === "all" },
-                    { value: "some", text: "Only some types", checked: scope === "some", conditional: { html: someHtml } }
-                ]
+                hint: { text: "Select all that apply." },
+                errorMessage: { text: error } if error else undefined,
+                items: items
             }) }}
 
             {{ govukButton({ text: "Save changes" if alert else "Continue" }) }}

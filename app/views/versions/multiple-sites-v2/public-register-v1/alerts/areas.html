@@ -13,9 +13,9 @@
   saved alert from its manage page (alert is set, and saving goes back to
   manage).
 
-  Grouped under Inshore and Offshore by default: the heading is the
-  question and each group is its own fieldset. With ?areas=list (from the
-  tray) it is one list of all 11, with the question as the legend.
+  One list of all 11 by default, as in the list filter, with the question
+  as the legend. With ?areas=grouped (from the tray) the heading is the
+  question and Inshore and Offshore are each their own fieldset.
 #}
 
 {% block content %}
@@ -32,9 +32,8 @@
 
         <form method="post" novalidate>
             {% if change %}<input type="hidden" name="change" value="1">{% endif %}
-            {% if areasList %}<input type="hidden" name="areas" value="list">{% endif %}
+            {% if not areasList %}<input type="hidden" name="areas" value="grouped">{% endif %}
 
-            {% set caption = "Manage your email alert" if alert else "Get email alerts" %}
             {% set hint = "Select all that apply. Inshore areas go from the coast out to 12 nautical miles. Offshore areas are further out." %}
 
             {% if areasList %}
@@ -48,7 +47,7 @@
                 idPrefix: fieldName,
                 fieldset: {
                     legend: {
-                        html: '<span class="govuk-caption-l">' + caption + '</span>' + question,
+                        text: question,
                         isPageHeading: true,
                         classes: "govuk-fieldset__legend--l"
                     }
@@ -60,7 +59,6 @@
 
             {% else %}
 
-            <span class="govuk-caption-l">{{ caption }}</span>
             <h1 class="govuk-heading-l">{{ question }}</h1>
             <p class="govuk-hint">{{ hint }}</p>
 

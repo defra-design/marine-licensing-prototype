@@ -1,5 +1,7 @@
 {% extends "versions/multiple-sites-v2/public-register-v1/includes/layout.html" %}
 
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+
 {% set navActive = "alerts" %}
 {% set pageTitle = "Check your email" %}
 {% set backLink = "check-answers" %}
@@ -8,6 +10,10 @@
   After Set up alert. The alert is pending until the link in the email is
   opened (ADR-8). "the email" links to the email page, for demos, as there
   is no real inbox.
+  Follows the GOV.UK Design System Confirm an email address pattern, with
+  the wording of the comment journey's check your email page: show the
+  address, say to select the link, and let people send the email again or
+  change the address. Sending it again shows a success banner, once.
 #}
 
 {% block content %}
@@ -15,14 +21,21 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
-        <span class="govuk-caption-l">Get email alerts</span>
+        {% if resent %}
+        {{ govukNotificationBanner({
+            type: "success",
+            html: '<p class="govuk-notification-banner__heading">We have sent another email to ' + (alert.email | escape) + '</p>'
+        }) }}
+        {% endif %}
+
         <h1 class="govuk-heading-l">Check your email</h1>
 
         <p class="govuk-body">We have sent an email to <strong>{{ alert.email }}</strong>.</p>
-        <p class="govuk-body">Open the link in <a href="{{ alert.id }}/confirmation-email" class="govuk-link govuk-link--no-visited-state">the email</a> to confirm your alert. We will not send you any alerts until you do.</p>
+        <p class="govuk-body">Select the link in <a href="{{ alert.id }}/confirmation-email" class="govuk-link govuk-link--no-visited-state">the email</a> to confirm your alert. We will not send you any alerts until you do.</p>
 
         <h2 class="govuk-heading-m">If you have not got the email</h2>
-        <p class="govuk-body">Check your spam or junk folder. If it is not there, <a href="email-address?change=1" class="govuk-link govuk-link--no-visited-state">check the email address you gave us</a>.</p>
+        <p class="govuk-body">It may take a few minutes to arrive. Check your spam or junk folder. If it is not there, <a href="email-address?change=1" class="govuk-link govuk-link--no-visited-state">check the email address you gave us</a>.</p>
+        <p class="govuk-body"><a href="{{ alert.id }}/resend-email" class="govuk-link govuk-link--no-visited-state">Send the email again</a></p>
 
     </div>
 </div>

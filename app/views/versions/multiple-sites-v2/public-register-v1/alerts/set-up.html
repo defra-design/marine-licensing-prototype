@@ -4,7 +4,7 @@
 {% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
 
 {% set navActive = "alerts" %}
-{% set pageTitle = "Email alert set up" %}
+{% set pageTitle = ("Your email alert is already set up" if already else "Email alert set up") %}
 
 {#
   After the confirm link in the email is opened: the alert has started.
@@ -17,7 +17,9 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
-        {{ govukPanel({ titleText: "Email alert set up" }) }}
+        {# Opened the confirm link again: links only work once (Confirm an email
+           address), so this says the alert was already set up #}
+        {{ govukPanel({ titleText: "Your email alert is already set up" if already else "Email alert set up" }) }}
 
         <p class="govuk-body">We will email {{ summary.maskedEmail }} when we publish a new application that matches this alert.</p>
 
@@ -28,7 +30,7 @@
         {{ govukSummaryList({
             rows: [
                 { key: { text: "Marine plan areas" }, value: { html: areasHtml } },
-                { key: { text: "Types of work" }, value: { text: summary.typesText } }
+                { key: { text: "Types of activity" }, value: { text: summary.typesText } }
             ]
         }) }}
 

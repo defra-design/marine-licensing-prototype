@@ -9,8 +9,8 @@
 
 {#
   Alerts, check your answers. Set up alert makes a pending alert and emails
-  the confirm link (ADR-8). The privacy notice is a dead link for now, as
-  on the comment journey.
+  the confirm link (ADR-8). The privacy notice is in the footer, as on
+  the comment journey.
 #}
 
 {% block content %}
@@ -18,7 +18,6 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
-        <span class="govuk-caption-l">Get email alerts</span>
         <h1 class="govuk-heading-l">Check your answers before setting up your alert</h1>
 
         {% set areasHtml %}
@@ -34,9 +33,9 @@
                     actions: { items: [{ href: "areas?change=1", text: "Change", visuallyHiddenText: "marine plan areas" }] }
                 },
                 {
-                    key: { text: "Types of work" },
+                    key: { text: "Types of activity" },
                     value: { text: summary.typesText },
-                    actions: { items: [{ href: "types?change=1", text: "Change", visuallyHiddenText: "types of work" }] }
+                    actions: { items: [{ href: "types?change=1", text: "Change", visuallyHiddenText: "types of activity" }] }
                 },
                 {
                     key: { text: "Email address" },
@@ -47,9 +46,8 @@
         }) }}
 
         <h2 class="govuk-heading-m">Now set up your alert</h2>
-        <p class="govuk-body">We will send an email to this address with a link to confirm your alert. We will not send you any alerts until you open it.</p>
+        <p class="govuk-body">We will send an email to this address with a link to confirm your alert. We will not send you any alerts until you select it.</p>
         <p class="govuk-body">Anyone who can read emails sent to this address will be able to change or stop the alert.</p>
-        <p class="govuk-body">Read our <a href="#" class="govuk-link govuk-link--no-visited-state">privacy notice</a> to find out how we use your personal information.</p>
 
         <form method="post" novalidate>
             {{ govukButton({ text: "Set up alert" }) }}

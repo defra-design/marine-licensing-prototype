@@ -9,7 +9,7 @@
 //   confirmation email is opened. One click, no code.
 // - Each sign-up is its own alert. One address can have many, and signing
 //   up again adds another without touching the rest.
-// - Marine plan areas, and optionally top-level types of work. No types
+// - Marine plan areas, and optionally top-level types of activity. No types
 //   means every type. Any chosen area or type is enough to match.
 // - Each alert email has that alert's own manage link and a separate
 //   unsubscribe link. Manage shows that alert only, with the address masked.
@@ -47,6 +47,8 @@ module.exports = function (router, shared) {
     scope: 'public-register-v1-alert-edit-scope',
     types: 'public-register-v1-alert-edit-types'
   };
+  // Set by Send the email again, for the success banner, shown once
+  const RESENT = 'public-register-v1-alert-resent';
   // The address typed on Email me a manage link
   const MANAGE_EMAIL = 'public-register-v1-alert-manage-email';
 
@@ -55,8 +57,15 @@ module.exports = function (router, shared) {
     heading,
     areas: MARINE_PLAN_AREAS.filter(area => area.endsWith(heading))
   }));
-  // Construction, Deposit and Removal
-  const TYPE_OPTIONS = ACTIVITY_GROUPS.map(group => ({ value: group.value, text: group.heading }));
+  // Construction, Deposit and Removal, each with a hint in plain words, as
+  // people may not know the terms. More will come with non-LCML
+  // applications, such as dredging and disposal at sea.
+  const TYPE_HINTS = {
+    construction: 'Building, maintaining or changing structures, such as jetties, slipways or sea walls',
+    deposit: 'Putting objects or materials in the sea, or on or under the seabed, such as moorings or rock',
+    removal: 'Taking objects or materials from the seabed'
+  };
+  const TYPE_OPTIONS = ACTIVITY_GROUPS.map(group => ({ value: group.value, text: group.heading, hint: TYPE_HINTS[group.value] }));
 
   function alertsIn(req) {
     if (!Array.isArray(req.session.data['public-register-v1-alerts'])) {
@@ -89,7 +98,7 @@ module.exports = function (router, shared) {
       types: alert.types.length ? TYPE_OPTIONS.filter(o => alert.types.includes(o.value)).map(o => o.text) : null,
       typesText: alert.types.length
         ? TYPE_OPTIONS.filter(o => alert.types.includes(o.value)).map(o => o.text).join(', ')
-        : 'All types of work',
+        : 'All types of activity',
       maskedEmail: maskEmail(alert.email)
     };
   }
@@ -111,21 +120,27 @@ module.exports = function (router, shared) {
     return String(email || '').trim().charAt(0).toUpperCase();
   }
 
-  // Areas page version, from the tray: grouped under Inshore and Offshore
-  // by default, or one list with ?areas=list. A hidden field carries it
-  // through the form.
+  // Areas page version, from the tray: one list by default, as in the
+  // list filter, or grouped under Inshore and Offshore with
+  // ?areas=grouped. A hidden field carries it through the form.
   function areasList(req) {
-    return req.query.areas === 'list' || req.body?.areas === 'list';
+    return !(req.query.areas === 'grouped' || req.body?.areas === 'grouped');
   }
 
   // Validation, shared by signing up and changing a saved alert
   function areasError(areas) {
     return areas.length ? null : 'Select at least one marine plan area';
   }
-  function typesErrors(scope, types) {
-    if (!scope) return { scope: 'Select all types of work or only some types' };
-    if (scope === 'some' && !types.length) return { types: 'Select at least one type of work' };
-    return null;
+  // The types page is one set of checkboxes: the types, or All types of
+  // activity (exclusive). No types saved means all.
+  function readTypes(value) {
+    const values = list(value);
+    if (values.includes('all')) return { scope: 'all', types: [] };
+    const types = cleanTypes(values);
+    return types.length ? { scope: 'some', types } : { scope: null, types: [] };
+  }
+  function typesError(scope) {
+    return scope ? null : 'Select the types of activity you want alerts for, or select all types of activity';
   }
   function cleanAreas(value) {
     return list(value).filter(area => MARINE_PLAN_AREAS.includes(area));
@@ -149,6 +164,15 @@ module.exports = function (router, shared) {
     res.render(view('start'), {
       backLink: dynamicBackLink(req, 'alerts', [`${alertsBase}/`])
     });
+  });
+
+  // Start now: clears the answers from any earlier sign-up, so each
+  // sign-up starts empty. Saved alerts, pending or not, are kept. Only the
+  // start button does this, so Back and the change links keep the answers.
+  router.get(`${alertsBase}/start-new`, function (req, res) {
+    Object.values(DRAFT).forEach(key => { delete req.session.data[key]; });
+    delete req.session.data[RESENT];
+    res.redirect(`${alertsBase}/areas`);
   });
 
   function renderAreas(req, res, extra) {
@@ -175,13 +199,13 @@ module.exports = function (router, shared) {
   });
 
   function renderTypes(req, res, extra) {
+    const scope = 'scope' in extra ? extra.scope : req.session.data[DRAFT.scope];
     res.render(view('types'), Object.assign({
       typeOptions: TYPE_OPTIONS,
-      fields: DRAFT,
-      scope: req.session.data[DRAFT.scope],
+      fieldName: DRAFT.types,
       selected: cleanTypes(req.session.data[DRAFT.types]),
       backLink: req.query.change || req.body.change ? 'check-answers' : 'areas'
-    }, extra));
+    }, extra, { allTypes: scope === 'all' }));
   }
 
   router.get(`${alertsBase}/types`, function (req, res) {
@@ -189,10 +213,11 @@ module.exports = function (router, shared) {
   });
 
   router.post(`${alertsBase}/types`, function (req, res) {
-    const scope = req.body[DRAFT.scope];
-    const types = cleanTypes(req.body[DRAFT.types]);
-    const errors = typesErrors(scope, types);
-    if (errors) return renderTypes(req, res, { change: req.body.change, errors, scope, selected: types });
+    const { scope, types } = readTypes(req.body[DRAFT.types]);
+    const error = typesError(scope);
+    req.session.data[DRAFT.scope] = scope;
+    req.session.data[DRAFT.types] = types;
+    if (error) return renderTypes(req, res, { change: req.body.change, error, scope, selected: types });
     res.redirect(afterSave(req, 'email-address'));
   });
 
@@ -252,15 +277,42 @@ module.exports = function (router, shared) {
   router.get(`${alertsBase}/check-your-email`, function (req, res) {
     const alert = alertsIn(req).find(a => a.id === req.session.data[DRAFT.alertId]);
     if (!alert) return res.redirect(alertsBase);
-    res.render(view('check-your-email'), { alert });
+    const resent = req.session.data[RESENT];
+    delete req.session.data[RESENT];
+    res.render(view('check-your-email'), { alert, resent });
+  });
+
+  // Send the email again (GOV.UK Design System, Confirm an email address:
+  // let people resend it), as on the comment journey. From check your email
+  // and the expired link page. In the real service a new link replaces the
+  // old one. Only for an alert that has not been confirmed yet.
+  router.get(`${alertsBase}/:alertId/resend-email`, function (req, res) {
+    const alert = findAlert(req);
+    if (!alert) return res.redirect(alertsBase);
+    if (alert.status !== 'pending') return res.redirect('set-up');
+    req.session.data[DRAFT.alertId] = alert.id;
+    req.session.data[RESENT] = true;
+    res.redirect(`${alertsBase}/check-your-email`);
   });
 
   // The confirm link in the email. The alert starts, and the answers are
-  // cleared so the next sign-up starts empty. Opening it again does no harm.
+  // cleared so the next sign-up starts empty.
+  //
+  // Links can only be used once (Confirm an email address), so opening it
+  // again says the alert is already set up. For an alert that has since
+  // been unsubscribed, the link no longer works. The prototype cannot time
+  // out, so the tray opens it as if it had expired (?alertlink=expired),
+  // which does not start the alert.
   router.get(`${alertsBase}/:alertId/confirm`, function (req, res) {
     const alert = findAlert(req);
     if (!alert) return res.redirect(alertsBase);
-    if (alert.status === 'pending') alert.status = 'active';
+    const linkState = req.query.alertlink;
+    delete req.session.data.alertlink;
+    if (alert.status === 'unsubscribed' || (alert.status === 'pending' && linkState === 'expired')) {
+      return res.redirect('link-expired');
+    }
+    if (alert.status === 'active') return res.redirect('set-up?already=1');
+    alert.status = 'active';
     if (req.session.data[DRAFT.alertId] === alert.id) {
       Object.values(DRAFT).forEach(key => { delete req.session.data[key]; });
     }
@@ -270,7 +322,16 @@ module.exports = function (router, shared) {
   router.get(`${alertsBase}/:alertId/set-up`, function (req, res) {
     const alert = findAlert(req);
     if (!alert) return res.redirect(alertsBase);
-    res.render(view('set-up'), { alert, summary: describe(alert) });
+    if (alert.status === 'pending') return res.redirect(`${alertsBase}/check-your-email`);
+    res.render(view('set-up'), { alert, summary: describe(alert), already: req.query.already });
+  });
+
+  // The confirm link has expired (from the tray), or the alert was
+  // unsubscribed before it was opened again. The alert has not started.
+  router.get(`${alertsBase}/:alertId/link-expired`, function (req, res) {
+    const alert = findAlert(req);
+    if (!alert) return res.redirect(alertsBase);
+    res.render(view('link-expired'), { alert, summary: describe(alert) });
   });
 
   // ---------------------------------------------------------------------
@@ -314,7 +375,7 @@ module.exports = function (router, shared) {
     if (!alert) return res.redirect(alertsBase);
     renderTypes(req, res, {
       alert,
-      fields: EDIT,
+      fieldName: EDIT.types,
       scope: alert.types.length ? 'some' : 'all',
       selected: alert.types,
       backLink: 'manage'
@@ -324,11 +385,10 @@ module.exports = function (router, shared) {
   router.post(`${alertsBase}/:alertId/types`, function (req, res) {
     const alert = findAlert(req);
     if (!alert) return res.redirect(alertsBase);
-    const scope = req.body[EDIT.scope];
-    const types = cleanTypes(req.body[EDIT.types]);
-    const errors = typesErrors(scope, types);
-    if (errors) return renderTypes(req, res, { alert, fields: EDIT, errors, scope, selected: types, backLink: 'manage' });
-    alert.types = scope === 'some' ? types : [];
+    const { scope, types } = readTypes(req.body[EDIT.types]);
+    const error = typesError(scope);
+    if (error) return renderTypes(req, res, { alert, fieldName: EDIT.types, error, scope, selected: types, backLink: 'manage' });
+    alert.types = types;
     res.redirect('manage?saved=1');
   });
 
@@ -338,6 +398,10 @@ module.exports = function (router, shared) {
   router.get(`${alertsBase}/:alertId/unsubscribe`, function (req, res) {
     const alert = findAlert(req);
     if (!alert) return res.redirect(alertsBase);
+    // Opened again after unsubscribing, from either version of the link
+    if (alert.status === 'unsubscribed') {
+      return res.redirect('already-unsubscribed' + (req.query.unsubscribe === 'oneclick' ? '?unsubscribe=oneclick' : ''));
+    }
     if (req.query.unsubscribe === 'oneclick') {
       alert.status = 'unsubscribed';
       return res.redirect('unsubscribed?unsubscribe=oneclick');
@@ -355,6 +419,19 @@ module.exports = function (router, shared) {
     if (!alert) return res.redirect(alertsBase);
     alert.status = 'unsubscribed';
     res.redirect('unsubscribed');
+  });
+
+  // The unsubscribe link opened again after the alert was stopped
+  router.get(`${alertsBase}/:alertId/already-unsubscribed`, function (req, res) {
+    const alert = findAlert(req);
+    if (!alert) return res.redirect(alertsBase);
+    if (alert.status !== 'unsubscribed') return res.redirect('manage');
+    res.render(view('already-unsubscribed'), {
+      alert,
+      summary: describe(alert),
+      unsubscribePage: true,
+      unsubscribeOneClick: req.query.unsubscribe === 'oneclick'
+    });
   });
 
   router.get(`${alertsBase}/:alertId/unsubscribed`, function (req, res) {
