@@ -291,6 +291,27 @@ module.exports = function (router) {
       siteLocation: 'Hayling Island, Hampshire',
       marinePlanArea: 'South Inshore'
     },
+    // The redacted application, copied from the public register. Consultees
+    // see the same redacted version as the public. Closes in 10 days, so it
+    // is outside the closing soon window and leaves the spread above as it
+    // is. The summary is redacted here, as the request page and view-application
+    // show request.summary. No request.site, as it has a full application.
+    'teignmouth': {
+      id: 'teignmouth',
+      applicationName: 'Installation of floating pontoon, Teignmouth Harbour, Devon',
+      reference: 'MLA/2026/10041',
+      applicant: 'South Devon Coast SUP Ltd',
+      type: 'response-required',
+      assignedTo: '',
+      adviceRequested: [
+        'We would like your advice on whether the pontoon and its wall guides are likely to affect the intertidal habitats of the Teign estuary, and any measures you would recommend.'
+      ],
+      receivedOffset: -4,
+      summary: 'South Devon Coast SUP Ltd is a small paddleboarding hire and instruction business operating in Teignmouth. We are applying for a marine licence to install a small floating pontoon within Teignmouth Harbour to provide a safe and accessible launching and landing platform for paddleboards and kayaks hired to our customers. At present customers are required to enter the water via the main harbour slipway which is shared with commercial fishing vessels and other harbour traffic. During the summer months this creates significant health and safety concerns particularly for inexperienced users and those with limited mobility. The pontoon would be attached to the existing harbour wall using H-frame wall guides and a short hinged gangway. It will be a floating structure rising and falling with the tide. The works will take place entirely within the outer harbour area. The pontoon would operate under a concession agreement with Teignmouth Harbour Authority. ***REDACTED***',
+      startAndEndDates: 'April 2026 to September 2027',
+      siteLocation: 'Teignmouth, Devon',
+      marinePlanArea: 'South West Inshore'
+    },
     // Past requests that have already been responded to, so the case list
     // and request pages show what a finished consultation looks like.
     'sidmouth': {
@@ -1186,12 +1207,19 @@ module.exports = function (router) {
 
   // A document for the list at the top of view-application. Drawings are
   // named by their site, as "Site 1" means nothing until you reach the cards.
-  function documentFor(filename, title, seed) {
+  // A string is just a filename. In a redacted application a withheld
+  // document is not shared at all, and a replaced one is shared as the
+  // applicant's redacted copy, without saying so (as on the public register).
+  function documentFor(file, title, seed) {
+    const doc = typeof file === 'string' ? { filename: file } : file;
+    const filename = doc.replacedBy || doc.filename;
     // Made-up file sizes, worked out from the filename (or seed, when every
     // application has the same filename) so they stay the same
     const kb = 180 + [...(seed || filename)].reduce((total, c) => (total * 31 + c.charCodeAt(0)) % 4000, 7);
     return {
       title,
+      filename,
+      withheld: !!doc.withheld,
       format: filename.split('.').pop().toUpperCase(),
       size: kb >= 1000 ? `${(kb / 1024).toFixed(1)} MB` : `${kb} KB`
     };

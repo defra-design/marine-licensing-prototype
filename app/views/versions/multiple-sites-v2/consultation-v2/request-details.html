@@ -2,7 +2,7 @@
 
 {% from "govuk/components/button/macro.njk" import govukButton %}
 {% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
-{% from "versions/multiple-sites-v2/consultation-v2/includes/macros.html" import statusTag, assignedTo, closingDate %}
+{% from "versions/multiple-sites-v2/consultation-v2/includes/macros.html" import statusTag, assignedTo, closingDate, published %}
 
 {% set navActive = "consultations" %}
 {% set isAdvice = request.type === "response-required" %}
@@ -95,7 +95,7 @@
             </div>
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">Summary of the proposed works</dt>
-                <dd class="govuk-summary-list__value">{{ request.summary }}</dd>
+                <dd class="govuk-summary-list__value">{{ published(request.summary) }}</dd>
             </div>
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">Full details</dt>

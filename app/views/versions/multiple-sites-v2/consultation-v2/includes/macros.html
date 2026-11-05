@@ -1,5 +1,14 @@
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 
+{# An answer in a redacted application, with ***REDACTED*** marked up so it
+   reads as a deliberate removal rather than an odd turn of phrase. Styled
+   in application.scss. #}
+{% macro published(text) %}
+{%- for part in text.split("***REDACTED***") -%}
+{{ part }}{% if not loop.last %}<span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">Redacted</span>{% endif %}
+{%- endfor -%}
+{% endmacro %}
+
 {# Request type wording, shared by the dashboard and the request pages. #}
 {% macro requestTypeText(request) -%}
 {{ "Request for advice" if request.type === "response-required" else "Application notification" }}
