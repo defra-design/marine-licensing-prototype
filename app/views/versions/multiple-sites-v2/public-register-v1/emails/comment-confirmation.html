@@ -56,18 +56,18 @@ p {
 
 <p>Dear {{ commenterName }},</p>
 
-<p>Confirm that you want to send your comment on marine licence application {{ application.reference }}, {{ application.applicationName }}.</p>
+<p>Confirm that you want to send your comment on {{ application.applicationName }} (application reference {{ application.reference }}).</p>
 
 <p><a href="/versions/multiple-sites-v2/public-register-v1/application/{{ application.id }}/confirm">Confirm and send your comment</a></p>
 
-<p>We will not get your comment until you open this link. The consultation closes on {{ application.closingOffset | daysFromToday }}.</p>
+<p>We will not get your comment until you select this link. You need to do this before the consultation closes on {{ application.closingOffset | daysFromToday }}.</p>
 
 <p>Your comment:</p>
 <div class="app-email-inset">
 {% for paragraph in (answers.comment or '').split('\n') %}{% if paragraph | trim %}<p>{{ paragraph }}</p>{% endif %}{% endfor %}
 </div>
 
-<p>We will take your comment into account when we decide whether to grant the marine licence. We will not publish your comment. After the consultation closes, we may share a summary of the comments we receive with the public and the applicant.</p>
+<p>We will take your comment into account when we decide whether to grant the marine licence. We will not publish your comment. After the consultation closes, we may publish a summary of all the comments we receive and share it with the applicant.</p>
 
 <p><a href="/versions/multiple-sites-v2/public-register-v1/application/{{ application.id }}">View the application</a></p>
 

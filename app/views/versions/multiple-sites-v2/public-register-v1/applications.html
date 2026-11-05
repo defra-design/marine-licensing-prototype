@@ -196,7 +196,7 @@
                         fieldset: {
                             legend: { text: "Types of " + group.heading | lower, classes: "govuk-visually-hidden" }
                         },
-                        hint: { text: "Leave these unticked to show all " + group.heading | lower },
+                        hint: { text: "Leave these unselected to show all " + group.heading | lower + " activities" },
                         items: subItems
                     }) }}
                     {% endset %}
@@ -248,7 +248,7 @@
                 </h2>
                 <dl class="govuk-summary-list govuk-summary-list--no-border">
                     <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Reference</dt>
+                        <dt class="govuk-summary-list__key">Application reference</dt>
                         <dd class="govuk-summary-list__value">{{ application.reference }}</dd>
                     </div>
                     <div class="govuk-summary-list__row">
@@ -278,7 +278,7 @@
         {% else %}
         <h2 class="govuk-heading-m">No applications match your filters</h2>
         <p class="govuk-body">Try removing some filters or <a href="{{ clearFiltersUrl }}" class="govuk-link govuk-link--no-visited-state">clear all filters</a>.</p>
-        <p class="govuk-body">You can also search the <a href="https://marinelicensing.marinemanagement.org.uk/mmofox5/fox/live/MMO_PUBLIC_REGISTER" class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">MCMS public register (opens in new tab)</a>.</p>
+        <p class="govuk-body">You can also search our <a href="https://marinelicensing.marinemanagement.org.uk/mmofox5/fox/live/MMO_PUBLIC_REGISTER" class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">older public register (opens in new tab)</a>.</p>
         {% endif %}
 
     </div>
