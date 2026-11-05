@@ -2,9 +2,10 @@
 // Not a route file – required by consultation-v2.js, which adds each one to
 // its request as request.application.
 //
-// Only Hayling, Poole and Dart have one, for the show and tell. Hayling has one
+// Only Hayling, Poole, Dart and Teignmouth have one, for the show and tell. Hayling has one
 // marine plan policy supporting document and Poole has none, to show both. Dart
-// is in two marine plan areas, so it has policies from both plans. The other
+// is in two marine plan areas, so it has policies from both plans. Teignmouth
+// is redacted. The other
 // requests keep the shorter view built from request.site.
 //
 // The rows follow the LCML v4 view details and check answers pages, with the
@@ -12,6 +13,11 @@
 // example "What is being maintained" not "What you're maintaining"). Fees,
 // invoicing and publishing consent are left out, as consultees don't see them.
 // Document links are dead in the prototype.
+//
+// Teignmouth is the redacted one, copied from the public register, with its
+// policies in consultation-v2-teignmouth-policies.js.
+
+const TEIGNMOUTH_POLICIES = require('./consultation-v2-teignmouth-policies.js');
 
 // South marine plan policy text, copied from the LCML v4 view details pages
 const SOUTH_POLICIES = {
@@ -414,7 +420,51 @@ const APPLICATIONS = {
       otherAuthorities: 'Trinity House – the buoys are private aids to navigation, and Trinity House has agreed the new lights.',
       preApplicationConsultation: 'We have spoken to the Dart Harbour harbour master, the ferry operators that cross between Dartmouth and Kingswear, Devon and Severn Inshore Fisheries and Conservation Authority and the local sailing clubs. Natural England gave advice through its discretionary advice service in September 2026, which is why we carried out the seagrass survey.'
     }
-  })
+  }),
+
+  // Redacted, as consultees see the same redacted version as the public
+  // register. Copied from the public register's Teignmouth application,
+  // which follows the LCML v4 redaction page: ***REDACTED*** marks what was
+  // removed from an answer, a document with withheld: true is not shared at
+  // all, and a document with replacedBy is shared as the applicant's
+  // redacted copy. Its policies are already in policyGroups form, so it
+  // does not go through build().
+  teignmouth: {
+    redacted: true,
+    submittedOffset: -8,
+    siteLocationMethod: 'File upload',
+    sites: [
+      {
+        name: 'Teignmouth Harbour Outer Pontoon',
+        map: 'map-5-points.jpg',
+        activities: [
+          {
+            typeOfActivity: 'Construction of new works',
+            whatLabel: 'What is being constructed',
+            what: 'Pontoons or floating walkways',
+            description: 'Installation of one floating pontoon unit measuring ***REDACTED***. The pontoon will be fixed to the existing harbour wall. No piling or seabed penetration is required. Access to the pontoon from the quayside will be via a hinged aluminium gangway. ***REDACTED***',
+            maximumDuration: '6 weeks',
+            completionDate: 'Not needed to be completed by a certain date',
+            specificMonths: 'Yes — installation works to be carried out between April and September only, avoiding the winter months when harbour conditions make marine works impracticable and harbour traffic is at its lowest.',
+            workingHours: '***REDACTED***'
+          }
+        ],
+        drawings: [{ filename: 'pontoon-construction-drawing.pdf', withheld: true }]
+      }
+    ],
+    policyGroups: TEIGNMOUTH_POLICIES,
+    wfd: {
+      withinOneNauticalMile: 'Yes',
+      excludedActivities: 'No',
+      upload: { filename: 'WFD.doc', replacedBy: 'WFD-redacted.pdf' }
+    },
+    otherPermissions: {
+      specialLegalPowers: 'No',
+      harbourAuthority: 'Teignmouth Harbour Authority (Teignbridge District Council). We have been in contact with the Harbour Master, ***REDACTED***, who has confirmed in principle agreement for the proposed pontoon location. A formal harbour authority consent will be sought once marine licence approval is confirmed. A separate concession agreement covering the commercial operation of the pontoon is also being negotiated with the Authority, on the terms set out in our project background. Teignmouth Harbour Commission ref: THC/2026/041',
+      otherAuthorities: 'Teignbridge District Council Planning Department — a pre-application enquiry was made in February 2026 to confirm whether planning permission is required for the pontoon installation. We were advised that planning permission is not required as the works constitute permitted development within the harbour area, however this is subject to confirmation. Contact: planning.enquiries@teignbridge.gov.uk, ref PA-PRE-2026-00412.',
+      preApplicationConsultation: 'We have consulted with the following: • Teignmouth Harbour Authority (Harbour Master) — as above, in principle agreement to the proposed location obtained • Teignmouth Fishermens Association — discussed the proposed pontoon location with the association secretary. No objections raised provided the pontoon does not obstruct access to the fishing quay, which it will not. • Devon Wildlife Trust — contacted by email in March 2026 to flag the project and ask if there were any ecological concerns. No response received to date. • Natural England — pre-application enquiry submitted via the marine pre-application advice service. Response received confirming no objection in principle subject to confirmation that no protected species are present at the installation location.'
+    }
+  }
 };
 
 module.exports = APPLICATIONS;

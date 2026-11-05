@@ -1,6 +1,7 @@
 {% extends "versions/multiple-sites-v2/consultation-v2/includes/layout.html" %}
 
 {% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "versions/multiple-sites-v2/consultation-v2/includes/macros.html" import published %}
 
 {% set navActive = "consultations" %}
 {# The application's status in LCML v4, which is Consultation while it is out to consultees #}
@@ -13,7 +14,22 @@
   page in LCML v4. Hayling and Poole have a fuller application
   (request.application) for the show and tell. For the rest only the
   top-level sections are filled in; the others are placeholders.
+
+  Teignmouth is redacted, as consultees see the same redacted version as the
+  public register: whatever the case officer removed shows as ***REDACTED***,
+  and a withheld document shows only that marker.
 #}
+
+{# A document in the full application: a dead link, or the marker if
+   withheld. A string is just a filename, and a replaced document links to
+   the applicant's redacted copy. #}
+{% macro documentLink(file) %}
+{%- if file.withheld -%}
+<span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">Redacted</span>
+{%- else -%}
+<a class="govuk-link govuk-link--no-visited-state" href="#">{{ file.replacedBy or file.filename or file }}</a>
+{%- endif -%}
+{% endmacro %}
 {% macro summaryCard(title, rows) %}
 <div class="govuk-summary-card">
     <div class="govuk-summary-card__title-wrapper">
@@ -40,6 +56,15 @@
         <span class="govuk-caption-l">{{ request.reference }}</span>
         <h1 class="govuk-heading-l">{{ request.applicationName }}</h1>
 
+        {# Under the H1, as it applies to the whole application, so people
+           know what ***REDACTED*** means before they reach it #}
+        {% if request.application and request.application.redacted %}
+        <div class="govuk-inset-text">
+            <p class="govuk-body">We have withheld some information in this application, for example because it is commercially sensitive or personal.</p>
+            <p class="govuk-body">Withheld information is shown as <span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">REDACTED</span>.</p>
+        </div>
+        {% endif %}
+
         {# Every document at the top, as on the public register, so the
            consultee can open the assessments and drawings without hunting
            through the cards. Grouped under the task list section each was
@@ -50,7 +75,13 @@
         <h3 class="govuk-heading-s govuk-!-margin-bottom-2">{{ group.heading }}</h3>
         <ul class="govuk-list">
             {% for file in group.documents %}
-            <li><a class="govuk-link govuk-link--no-visited-state" href="#">{{ file.title }} ({{ file.format }}, {{ file.size }})</a></li>
+            <li>
+                {% if file.withheld %}
+                {{ file.title }}: <span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">Redacted</span>
+                {% else %}
+                <a class="govuk-link govuk-link--no-visited-state" href="#">{{ file.title }} ({{ file.format }}, {{ file.size }})</a>
+                {% endif %}
+            </li>
             {% endfor %}
         </ul>
         {% endfor %}
@@ -71,7 +102,7 @@
 
         {{ summaryCard("Application details", [
             ["Application name", request.applicationName],
-            ["Proposed works summary", request.summary],
+            ["Proposed works summary", published(request.summary)],
             ["Preferred start and end dates of the licence", request.startAndEndDates]
         ]) }}
 
@@ -105,11 +136,11 @@
         {{ summaryCard("Site " + siteNumber + " – Activity " + loop.index, [
             ["Type of activity", activity.typeOfActivity],
             [activity.whatLabel, activity.what],
-            ["Activity description", activity.description],
+            ["Activity description", published(activity.description)],
             ["Maximum duration of activity", activity.maximumDuration],
             ["Completion date", activity.completionDate],
             ["Activity limited to specific months", activity.specificMonths],
-            ["Proposed working hours", activity.workingHours]
+            ["Proposed working hours", published(activity.workingHours)]
         ]) }}
         {% endfor %}
 
@@ -123,7 +154,7 @@
                 <dl class="govuk-summary-list">
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">File upload</dt>
-                        <dd class="govuk-summary-list__value"><a class="govuk-link govuk-link--no-visited-state" href="#">{{ drawing }}</a></dd>
+                        <dd class="govuk-summary-list__value">{{ documentLink(drawing) }}</dd>
                     </div>
                 </dl>
             </div>
@@ -201,7 +232,7 @@
                     </div>
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Water Framework Directive assessment upload</dt>
-                        <dd class="govuk-summary-list__value"><a class="govuk-link govuk-link--no-visited-state" href="#">{{ app.wfd.upload }}</a></dd>
+                        <dd class="govuk-summary-list__value">{{ documentLink(app.wfd.upload) }}</dd>
                     </div>
                 </dl>
             </div>
@@ -209,7 +240,7 @@
 
         {{ summaryCard("Other permissions", [
             ["Special legal powers to do any of these proposed works", app.otherPermissions.specialLegalPowers],
-            ["Located in a harbour authority area", app.otherPermissions.harbourAuthority],
+            ["Located in a harbour authority area", published(app.otherPermissions.harbourAuthority)],
             ["Permission from any other authorities in relation to these proposed works", app.otherPermissions.otherAuthorities],
             ["Pre-application public groups or organisations consultation", app.otherPermissions.preApplicationConsultation]
         ]) }}
