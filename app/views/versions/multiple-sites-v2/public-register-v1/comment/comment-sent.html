@@ -22,7 +22,8 @@
         {# "confirmation email" links to the email page, for demos, as there
            is no real inbox #}
         <p class="govuk-body">We have received your comment.</p>
-        <p class="govuk-body">We have sent a <a href="received-email" class="govuk-link govuk-link--no-visited-state">confirmation email</a> to <strong>{{ answers.email }}</strong>.</p>
+        {# "a copy of your comment", not "confirmation email", so it is not confused with the confirm email in version A #}
+        <p class="govuk-body">We have sent a <a href="received-email" class="govuk-link govuk-link--no-visited-state">copy of your comment</a> to <strong>{{ answers.email }}</strong>.</p>
 
         <h2 class="govuk-heading-m">What happens next</h2>
         <p class="govuk-body">The consultation on {{ application.applicationName }} closes on {{ application.closingOffset | daysFromToday }}.</p>
