@@ -250,6 +250,29 @@
      your comment. #}
   {% set commentLinkApplication = application.id if application else "lyme-regis" %}
   {% set commentLinkPath = "/versions/multiple-sites-v2/public-register-v1/application/" + commentLinkApplication + "/confirm" %}
+
+  {# By a link in an email by default (the email loop). From the check page
+     skips the loop: Send comment goes straight to comment sent. Kept in the
+     session, so it lasts until changed here or from the index page. #}
+  <div class="app-version-tray__section">
+  <h3 class="govuk-heading-s govuk-!-margin-bottom-2">How the comment is sent</h3>
+  <ul class="govuk-list govuk-list--spaced">
+    {% for option in [
+      { mode: "emaillink", text: "By a link in an email" },
+      { mode: "direct", text: "From the check page" }
+    ] %}
+    <li>
+      {% if (data['commentsend'] or "emaillink") === option.mode %}
+      <span aria-current="true">{{ option.text }}</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="?commentsend={{ option.mode }}" class="govuk-link govuk-link--no-visited-state">{{ option.text }}</a>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  </div>
+
+  {% if data['commentsend'] !== "direct" %}
   <div class="app-version-tray__section">
   <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Link in the comment email</h3>
   {% if data['public-register-v1-' + commentLinkApplication + '-comment-status'] %}
@@ -266,6 +289,7 @@
   <p class="govuk-body-s">Send a comment on {{ application.applicationName if application else "Lyme Regis" }} to see these.</p>
   {% endif %}
   </div>
+  {% endif %}
 
   <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible app-version-tray__divider">
 
