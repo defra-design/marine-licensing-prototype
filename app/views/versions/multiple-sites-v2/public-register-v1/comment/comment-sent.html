@@ -19,7 +19,10 @@
             html: "Your comment reference<br><strong>" + answers.reference + "</strong>"
         }) }}
 
+        {# "confirmation email" links to the email page, for demos, as there
+           is no real inbox #}
         <p class="govuk-body">We have received your comment.</p>
+        <p class="govuk-body">We have sent a <a href="received-email" class="govuk-link govuk-link--no-visited-state">confirmation email</a> to <strong>{{ answers.email }}</strong>.</p>
 
         <h2 class="govuk-heading-m">What happens next</h2>
         <p class="govuk-body">The consultation on {{ application.applicationName }} closes on {{ application.closingOffset | daysFromToday }}.</p>
