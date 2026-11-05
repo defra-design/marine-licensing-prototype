@@ -1,0 +1,76 @@
+{#
+  The Notify email someone gets once their comment has been sent, in both
+  versions: after selecting the link in the confirm email, or straight
+  after Send comment when it is sent from the check page. It is their
+  record: the comment reference, a copy of the comment, what happens next
+  and a link back to the application (research theme 3: coming back to a
+  case is hard).
+
+  Draft wording, taken from the rest of the comment journey, for the
+  content designer to check. Same webmail chrome as the confirm email.
+#}
+{% extends "versions/multiple-sites-v2/layouts/email.html" %}
+
+{% set messageSubject = "We have received your comment on marine licence application " + application.reference %}
+{% set commenterName = answers.name or "" %}
+
+{% block pageTitle %}
+  Email - {{ messageSubject }}
+{% endblock %}
+
+{% block header %}
+  {% include "./_mail-chrome.html" %}
+  {% set messageDate = 0 | daysFromTodayShort %}
+  {% set messageTo = answers.email %}
+  {% include "./_message-header.html" %}
+  {{ govukHeader({
+    homepageUrl: "/",
+    classes: "govuk-header--full-width-border"
+  }) }}
+{% endblock %}
+
+{% block content %}
+
+<style>
+.govuk-width-container {
+	max-width: 640px;
+}
+.govuk-main-wrapper {
+    padding-top: 10px;
+    padding-bottom: 40px;
+}
+p {
+	font-size: 21px;
+	font-family: Arial,Helvetica;
+	color: #000;
+}
+.govuk-template {
+    background-color: #fff;
+}
+.app-email-inset {
+    border-left: 10px solid #b1b4b6;
+    padding-left: 15px;
+    margin: 0 0 20px;
+}
+</style>
+
+<p>Dear {{ commenterName }},</p>
+
+<p>We have received your comment on {{ application.applicationName }} (application reference {{ application.reference }}).</p>
+
+<p>Your comment reference is <strong>{{ answers.reference }}</strong>.</p>
+
+<p>Your comment:</p>
+<div class="app-email-inset">
+{% for paragraph in (answers.comment or '').split('\n') %}{% if paragraph | trim %}<p>{{ paragraph }}</p>{% endif %}{% endfor %}
+</div>
+
+<p>The consultation closes on {{ application.closingOffset | daysFromToday }}. We will read your comment and take it into account when we decide whether to grant the marine licence. We may contact you if we need more information.</p>
+
+<p>We will not publish your comment. After the consultation closes, we may publish a summary of all the comments we receive and share it with the applicant.</p>
+
+<p><a href="/versions/multiple-sites-v2/public-register-v1/application/{{ application.id }}">View the application</a></p>
+
+<p>From Marine Management Organisation</p>
+
+{% endblock %}

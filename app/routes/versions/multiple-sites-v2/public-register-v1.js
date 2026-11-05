@@ -625,16 +625,26 @@ module.exports = function (router) {
     renderComment(req, res, 'consultation-closed', application);
   });
 
-  // The email with the link to confirm the comment, as the commenter would
-  // see it in their inbox
-  router.get(`${base}/application/:applicationId/confirmation-email`, function (req, res) {
+  // The comment emails, as the commenter would see them in their inbox
+  function renderCommentEmail(req, res, page) {
     const application = findApplication(req, res);
     if (!application) return;
     // The first and last initials of their name, for the mailbox avatar
     const { keys, answers } = commentAnswers(req, application.id);
     const names = String(answers.name || '').trim().split(/\s+/).filter(Boolean);
     const mailInitials = names.length ? (names[0][0] + (names.length > 1 ? names[names.length - 1][0] : '')).toUpperCase() : '';
-    res.render(`versions/${version}/${section}/emails/comment-confirmation`, { application, keys, answers, mailInitials });
+    res.render(`versions/${version}/${section}/emails/${page}`, { application, keys, answers, mailInitials });
+  }
+
+  // The email with the link to confirm the comment
+  router.get(`${base}/application/:applicationId/confirmation-email`, function (req, res) {
+    renderCommentEmail(req, res, 'comment-confirmation');
+  });
+
+  // The email once the comment has been sent, with its reference. In both
+  // versions, linked from comment sent.
+  router.get(`${base}/application/:applicationId/received-email`, function (req, res) {
+    renderCommentEmail(req, res, 'comment-received');
   });
 
   // Email alerts (phase 4)
