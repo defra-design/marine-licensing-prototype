@@ -6,8 +6,7 @@
   and a link back to the application (research theme 3: coming back to a
   case is hard).
 
-  Draft wording, taken from the rest of the comment journey, for the
-  content designer to check. Same webmail chrome as the confirm email.
+  Wording from the content designer (8B, "Email: copy of your comment"). Same webmail chrome as the confirm email.
 #}
 {% extends "versions/multiple-sites-v2/layouts/email.html" %}
 
@@ -56,7 +55,7 @@ p {
 
 <p>Dear {{ commenterName }},</p>
 
-<p>We have received your comment on {{ application.applicationName }} (application reference {{ application.reference }}).</p>
+<p>We have received your comment on marine licence application {{ application.reference }}, {{ application.applicationName }}.</p>
 
 <p>Your comment reference is <strong>{{ answers.reference }}</strong>.</p>
 
