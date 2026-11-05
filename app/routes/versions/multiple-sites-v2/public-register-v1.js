@@ -412,8 +412,9 @@ module.exports = function (router) {
       // Back to the list, landing page or wherever on the register they
       // came from. None from an email, a QR code or an outside link.
       backLink: dynamicBackLink(req, `application-${application.id}`, [`${base}/application/${application.id}/`]),
-      // Have your say in an MOJ ticket panel (?hys=panel, from the tray)
-      haveYourSayPanel: req.query.hys === 'panel'
+      // Have your say in an MOJ ticket panel, below the summary, by default.
+      // ?hys=breaks, from the tray, is the earlier order with section breaks.
+      haveYourSayPanel: req.query.hys !== 'breaks'
     });
   });
 

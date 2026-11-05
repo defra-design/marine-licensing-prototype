@@ -155,12 +155,14 @@
   </div>
 
   <div class="app-version-tray__section">
-  {# Plain by default. The MOJ ticket panel is "to be reviewed" in the MOJ Design System, so it is on trial. #}
+  {# MOJ ticket panel below the summary by default, with no separate
+     documents list. The other is the earlier order, Have your say straight
+     after the key facts and the documents list kept. #}
   <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Have your say on the application page</h3>
   <ul class="govuk-list govuk-list--spaced">
     {% for option in [
-      { panel: false, text: "Heading with section breaks", url: applicationPath },
-      { panel: true, text: "MOJ ticket panel", url: applicationPath + "?hys=panel" }
+      { panel: true, text: "MOJ ticket panel", url: applicationPath },
+      { panel: false, text: "Heading with section breaks, earlier order", url: applicationPath + "?hys=breaks" }
     ] %}
     <li>
       {% if (haveYourSayPanel or false) === option.panel and details %}

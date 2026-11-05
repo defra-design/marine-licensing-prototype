@@ -115,12 +115,23 @@
             </div>
         </dl>
 
-        {# Have your say. By default a plain heading, text and button between
-           the key facts' last border and a section break. With ?hys=panel,
-           from the tray, the same content in an MOJ ticket panel (grey, with
-           a blue left border), on trial as it is "to be reviewed" in the MOJ
-           Design System. Kept to one line and the button, so it stands out
-           either way; the closing date is in the key facts. #}
+        {# Two versions, from the tray.
+
+           By default: the summary of the proposed works, then Have your say
+           in an MOJ ticket panel (grey, with a blue left border) so it still
+           stands out lower down, then the full application. No separate
+           documents list: it is not yet known whether the public
+           consultation needs one, so the documents are only in the summary
+           cards where the applicant uploaded them. The ticket panel is "to
+           be reviewed" in the MOJ Design System.
+
+           With ?hys=breaks, the earlier order: Have your say as a plain
+           heading, text and button straight after the key facts, then the
+           summary, the documents and the full application, with section
+           breaks between them.
+
+           Have your say is one line and the button either way; the closing
+           date is in the key facts. #}
         {% set haveYourSayHtml %}
         <h2 class="govuk-heading-m">Have your say</h2>
         <p class="govuk-body">Tell us what you think about this application before the consultation closes.</p>
@@ -131,32 +142,16 @@
         }) }}
         {% endset %}
 
-        {% if haveYourSayPanel %}
-        {{ mojTicketPanel({
-            classes: "govuk-!-margin-bottom-6",
-            attributes: { "aria-label": "Have your say" },
-            items: [{ html: haveYourSayHtml, classes: "moj-ticket-panel__content--blue" }]
-        }) }}
-        {% else %}
-        {{ haveYourSayHtml | safe }}
-
-        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-        {% endif %}
-
-        <h2 class="govuk-heading-m">Summary of the proposed works</h2>
-        <p class="govuk-body">{{ published(details.summary) }}</p>
-
-        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-
-        {# Every document at the top, as people who come from a site notice
+        {# Every document in one list, as people who come from a site notice
            often want the drawings first. Grouped under the task list section
            each was uploaded in, as on the consultation v2 application page.
            Drawings are named by their site (the filename is on the card),
            with the file type and size in the link text. Links are dead in
-           the prototype. #}
-        <h2 class="govuk-heading-m">Documents</h2>
+           the prototype. Only in the earlier order (?hys=breaks). #}
+        {% macro documentsList(level) %}
+        <h{{ level }} class="govuk-heading-{{ 'm' if level == 2 else 's' }}">Documents</h{{ level }}>
         {% for group in details.documentGroups %}
-        <h3 class="govuk-heading-s govuk-!-margin-bottom-2">{{ group.heading }}</h3>
+        <h{{ level + 1 }} class="govuk-heading-s govuk-!-margin-bottom-2">{{ group.heading }}</h{{ level + 1 }}>
         <ul class="govuk-list">
             {% for file in group.documents %}
             <li>
@@ -169,11 +164,46 @@
             {% endfor %}
         </ul>
         {% endfor %}
+        {% endmacro %}
+
+        {% set fullApplicationIntro %}
+        <h2 class="govuk-heading-m">Full application</h2>
+        <p class="govuk-body">This is the application as the applicant submitted it{% if application.redacted %}, with some information withheld{% endif %}.</p>
+        {% endset %}
+
+        {% if haveYourSayPanel %}
+
+        <h2 class="govuk-heading-m">Summary of the proposed works</h2>
+        <p class="govuk-body govuk-!-margin-bottom-6">{{ published(details.summary) }}</p>
+
+        {{ mojTicketPanel({
+            classes: "govuk-!-margin-bottom-6",
+            attributes: { "aria-label": "Have your say" },
+            items: [{ html: haveYourSayHtml, classes: "moj-ticket-panel__content--blue" }]
+        }) }}
 
         <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
 
-        <h2 class="govuk-heading-m">Full application</h2>
-        <p class="govuk-body">This is the application as the applicant submitted it{% if application.redacted %}, with some information withheld{% endif %}.</p>
+        {{ fullApplicationIntro | safe }}
+
+        {% else %}
+
+        {{ haveYourSayHtml | safe }}
+
+        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
+        <h2 class="govuk-heading-m">Summary of the proposed works</h2>
+        <p class="govuk-body">{{ published(details.summary) }}</p>
+
+        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
+        {{ documentsList(2) }}
+
+        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
+
+        {{ fullApplicationIntro | safe }}
+
+        {% endif %}
 
     </div>
 </div>
