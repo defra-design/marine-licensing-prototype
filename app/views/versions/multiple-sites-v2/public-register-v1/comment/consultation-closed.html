@@ -1,0 +1,38 @@
+{% extends "versions/multiple-sites-v2/public-register-v1/includes/layout.html" %}
+
+{% set navActive = "applications" %}
+{% set pageTitle = "The consultation has closed" %}
+
+{#
+  The consultation closed before the link in the email was opened, so the
+  comment was never sent and cannot be now. Opened from the tray. No date
+  is shown, as every demo consultation is still open.
+
+  No back link: people arrive here from an email.
+#}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <span class="govuk-caption-l">{{ application.applicationName }}</span>
+        <h1 class="govuk-heading-l">The consultation has closed</h1>
+
+        <p class="govuk-body">The consultation on this application closed before you opened the link in the email. We have not got your comment and you cannot send it now.</p>
+
+        <h2 class="govuk-heading-m">Find out about other applications</h2>
+        {# Get email alerts is a dead link, as on the comment sent page #}
+        <p class="govuk-body"><a href="#" class="govuk-link govuk-link--no-visited-state">Get email alerts</a> when we publish applications in an area you are interested in.</p>
+
+        <p class="govuk-body">
+            <a href="/versions/multiple-sites-v2/public-register-v1/application/{{ application.id }}" class="govuk-link govuk-link--no-visited-state">View the application</a>
+        </p>
+        <p class="govuk-body">
+            <a href="/versions/multiple-sites-v2/public-register-v1/applications" class="govuk-link govuk-link--no-visited-state">View other applications</a>
+        </p>
+
+    </div>
+</div>
+
+{% endblock %}

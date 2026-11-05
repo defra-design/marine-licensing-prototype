@@ -241,6 +241,30 @@
   {% endif %}
   </div>
 
+  {# The link in the comment email. It sends the comment by default. The
+     prototype cannot time out, so these open it as if it had expired, or
+     as if the consultation had closed first. For the application on the
+     page, or Lyme Regis from anywhere else. Needs a comment sent from Check
+     your comment. #}
+  {% set commentLinkApplication = application.id if application else "lyme-regis" %}
+  {% set commentLinkPath = "/versions/multiple-sites-v2/public-register-v1/application/" + commentLinkApplication + "/confirm" %}
+  <div class="app-version-tray__section">
+  <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Link in the comment email</h3>
+  {% if data['public-register-v1-' + commentLinkApplication + '-comment-status'] %}
+  <ul class="govuk-list govuk-list--spaced">
+    {% for option in [
+      { text: "Sends the comment", url: commentLinkPath },
+      { text: "Has expired", url: commentLinkPath + "?commentlink=expired" },
+      { text: "Consultation has closed", url: commentLinkPath + "?commentlink=closed" }
+    ] %}
+    <li><a href="{{ option.url }}" class="govuk-link govuk-link--no-visited-state">{{ option.text }}</a></li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="govuk-body-s">Send a comment on {{ application.applicationName if application else "Lyme Regis" }} to see these.</p>
+  {% endif %}
+  </div>
+
   <hr class="govuk-section-break govuk-section-break--m govuk-section-break--visible app-version-tray__divider">
 
   <div class="app-version-tray__section">
