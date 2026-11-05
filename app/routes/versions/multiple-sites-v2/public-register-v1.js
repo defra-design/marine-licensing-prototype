@@ -533,12 +533,21 @@ module.exports = function (router) {
     renderComment(req, res, 'check-answers', application);
   });
 
-  // Sending emails the link to confirm the comment. Until it is opened the
-  // comment is pending and does not go to the case officer.
+  // Send comment. Two versions, chosen from the index page or the tray and
+  // kept in the session by the kit:
+  // - ?commentsend=emaillink (the default): emails a link to confirm the
+  //   comment. Until it is opened the comment is pending and is not sent.
+  // - ?commentsend=direct: sends it straight away, with no email loop, and
+  //   goes to comment sent. Every other page stays the same.
   router.post(`${base}/application/:applicationId/check-answers`, function (req, res) {
     const application = findApplication(req, res);
     if (!application) return;
-    req.session.data[commentKeys(application.id).status] = 'pending';
+    const keys = commentKeys(application.id);
+    if (req.session.data.commentsend === 'direct') {
+      sendComment(req, keys);
+      return res.redirect('comment-sent');
+    }
+    req.session.data[keys.status] = 'pending';
     res.redirect('check-your-email');
   });
 
@@ -580,13 +589,19 @@ module.exports = function (router) {
     delete req.session.data.commentlink;
     if (linkState === 'expired') return res.redirect('link-expired');
     if (linkState === 'closed') return res.redirect('consultation-closed');
+    sendComment(req, keys);
+    res.redirect('comment-sent');
+  });
+
+  // Sends the comment: gives it a reference (kept if it has one already, so
+  // sending again shows the same one) and marks it sent
+  function sendComment(req, keys) {
     if (req.session.data[keys.status] !== 'sent' || !req.session.data[keys.reference]) {
       const characters = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
       req.session.data[keys.reference] = Array.from({ length: 8 }, () => characters[Math.floor(Math.random() * characters.length)]).join('');
     }
     req.session.data[keys.status] = 'sent';
-    res.redirect('comment-sent');
-  });
+  }
 
   // Comment sent
   router.get(`${base}/application/:applicationId/comment-sent`, function (req, res) {
