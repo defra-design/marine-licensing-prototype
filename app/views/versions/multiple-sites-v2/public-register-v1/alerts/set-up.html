@@ -8,8 +8,9 @@
 
 {#
   After the confirm link in the email is opened: the alert has started.
-  Reached from an email, so no back link. Like the manage page, it shows
-  the address masked, as anyone with the link can open it.
+  Reached from an email, so no back link.
+  Shows the full address, as every alerts page does (ADR-8 says to mask
+  it on manage, but anyone who can open the link can read the inbox).
 #}
 
 {% block content %}
@@ -21,7 +22,7 @@
            address), so this says the alert was already set up #}
         {{ govukPanel({ titleText: "Your email alert is already set up" if already else "Email alert set up" }) }}
 
-        <p class="govuk-body">We will email {{ summary.maskedEmail }} when we publish a new application that matches this alert.</p>
+        <p class="govuk-body">We will email {{ summary.email }} when we publish a new application that matches this alert.</p>
 
         {% set areasHtml %}
         {% for area in summary.areas %}{{ area }}{% if not loop.last %}<br>{% endif %}{% endfor %}
