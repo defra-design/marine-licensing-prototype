@@ -27,10 +27,14 @@
         {% for area in summary.areas %}{{ area }}{% if not loop.last %}<br>{% endif %}{% endfor %}
         {% endset %}
 
+        {% set typesHtml %}
+        {% for type in (summary.types or ["All types of activity"]) %}{{ type }}{% if not loop.last %}<br>{% endif %}{% endfor %}
+        {% endset %}
+
         {{ govukSummaryList({
             rows: [
                 { key: { text: "Marine plan areas" }, value: { html: areasHtml } },
-                { key: { text: "Types of activity" }, value: { text: summary.typesText } }
+                { key: { text: "Types of activity" }, value: { html: typesHtml } }
             ]
         }) }}
 
@@ -40,13 +44,9 @@
         <h2 class="govuk-heading-m">Get alerts for other areas</h2>
         <p class="govuk-body">You can <a href="/versions/multiple-sites-v2/public-register-v1/alerts" class="govuk-link govuk-link--no-visited-state">set up another alert</a>. It will not change this one.</p>
 
-        <p class="govuk-body">
-            <a href="/versions/multiple-sites-v2/public-register-v1/applications" class="govuk-link govuk-link--no-visited-state">View applications</a>
-        </p>
-
         {# For demos: an alert email this alert would get #}
         <p class="govuk-body">
-            <a href="alert-email" class="govuk-link govuk-link--no-visited-state">See an example alert email</a>
+            <a href="alert-email" class="govuk-link govuk-link--no-visited-state">[See an example alert email]</a>
         </p>
 
     </div>
