@@ -221,23 +221,39 @@ module.exports = function (router, shared) {
     res.redirect(afterSave(req, 'email-address'));
   });
 
+  // ?fix=1 is from "check the email address you gave us" on check your
+  // email. The address is filled in so a typo is easy to spot, and saving
+  // sends the email again to the corrected address and goes straight back
+  // to check your email, without check your answers.
   function renderEmail(req, res, extra) {
+    const fix = req.query.fix || req.body.fix;
     res.render(view('email-address'), Object.assign({
       fieldName: DRAFT.email,
       value: req.session.data[DRAFT.email],
-      backLink: req.query.change || req.body.change ? 'check-answers' : 'types'
+      fix,
+      backLink: fix ? 'check-your-email' : req.query.change || req.body.change ? 'check-answers' : 'types'
     }, extra));
   }
 
   router.get(`${alertsBase}/email-address`, function (req, res) {
+    delete req.session.data.fix;
     renderEmail(req, res, { change: req.query.change });
   });
 
   // Only checked for being empty, as with commenting, so participants can
   // type anything
   router.post(`${alertsBase}/email-address`, function (req, res) {
+    delete req.session.data.fix;
     if (!String(req.body[DRAFT.email] || '').trim()) {
       return renderEmail(req, res, { change: req.body.change, error: 'Enter an email address' });
+    }
+    if (req.body.fix) {
+      const alert = alertsIn(req).find(a => a.id === req.session.data[DRAFT.alertId] && a.status === 'pending');
+      if (alert) {
+        alert.email = String(req.body[DRAFT.email]).trim();
+        req.session.data[RESENT] = true;
+        return res.redirect('check-your-email');
+      }
     }
     res.redirect('check-answers');
   });
@@ -448,15 +464,19 @@ module.exports = function (router, shared) {
   // Email me a manage link
   // ---------------------------------------------------------------------
 
+  // The address is only filled in when they come back to check it
+  // (?fix=1, from manage link sent). Otherwise the box is empty, as a real
+  // service would not remember it between visits.
   function renderGetLink(req, res, extra) {
     res.render(view('get-manage-link'), Object.assign({
       fieldName: MANAGE_EMAIL,
-      value: req.session.data[MANAGE_EMAIL],
+      value: req.query.fix ? req.session.data[MANAGE_EMAIL] : '',
       backLink: dynamicBackLink(req, 'get-manage-link', [`${alertsBase}/manage-link-sent`])
     }, extra));
   }
 
   router.get(`${alertsBase}/get-manage-link`, function (req, res) {
+    delete req.session.data.fix;
     renderGetLink(req, res, {});
   });
 

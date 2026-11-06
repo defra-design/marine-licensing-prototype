@@ -28,6 +28,7 @@
 
         <form method="post" novalidate>
             {% if change %}<input type="hidden" name="change" value="1">{% endif %}
+            {% if fix %}<input type="hidden" name="fix" value="1">{% endif %}
 
             {{ govukInput({
                 label: {
