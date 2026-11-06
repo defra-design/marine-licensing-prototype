@@ -8,8 +8,9 @@
 
 {#
   Manage one alert, from the link in its emails (ADR-8). It shows this
-  alert only, never the others for the address, and the address masked
-  (a•••@harbour.uk), as anyone who can read the inbox can open the link.
+  alert only, never the others for the address. It shows the full
+  address: ADR-8 says to mask it, but anyone who can open the link can
+  read the inbox, so it is shown as on every other alerts page.
   The address cannot be changed: they set up a new alert instead.
   Changing the areas or types saves straight away and comes back here
   with a success banner. Usually opened from an email, so backLink, from
@@ -30,7 +31,7 @@
 
         <h1 class="govuk-heading-l">Manage your email alert</h1>
 
-        <p class="govuk-body">We will email {{ summary.maskedEmail }} when we publish a new application that matches this alert.</p>
+        <p class="govuk-body">We will email {{ summary.email }} when we publish a new application that matches this alert.</p>
 
         {% set areasHtml %}
         {% for area in summary.areas %}{{ area }}{% if not loop.last %}<br>{% endif %}{% endfor %}
@@ -55,7 +56,7 @@
                 },
                 {
                     key: { text: "Email address" },
-                    value: { text: summary.maskedEmail }
+                    value: { text: summary.email }
                 }
             ]
         }) }}

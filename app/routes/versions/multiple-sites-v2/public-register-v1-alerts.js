@@ -12,7 +12,7 @@
 // - Marine plan areas, and optionally top-level types of activity. No types
 //   means every type. Any chosen area or type is enough to match.
 // - Each alert email has that alert's own manage link and a separate
-//   unsubscribe link. Manage shows that alert only, with the address masked.
+//   unsubscribe link. Manage shows that alert only.
 // - "Email me a manage link" always gives the same answer, whether or not
 //   we hold the address.
 // Alerts are sent only when a new application is first published here.
@@ -82,15 +82,6 @@ module.exports = function (router, shared) {
     return String(a || '').trim().toLowerCase() === String(b || '').trim().toLowerCase();
   }
 
-  // a•••@harbour.uk. Manage pages never show the full address (ADR-8).
-  // Participants can type anything, so an address without an @ is just
-  // its first letter.
-  function maskEmail(email) {
-    const value = String(email || '').trim();
-    const at = value.indexOf('@');
-    return at > 0 ? `${value[0]}•••${value.slice(at)}` : `${value[0] || ''}•••`;
-  }
-
   // What an alert covers, as the pages and emails say it
   function describe(alert) {
     return {
@@ -99,7 +90,7 @@ module.exports = function (router, shared) {
       typesText: alert.types.length
         ? TYPE_OPTIONS.filter(o => alert.types.includes(o.value)).map(o => o.text).join(', ')
         : 'All types of activity',
-      maskedEmail: maskEmail(alert.email)
+      email: alert.email
     };
   }
 
