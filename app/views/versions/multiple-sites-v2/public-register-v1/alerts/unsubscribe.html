@@ -27,7 +27,7 @@
         {{ govukSummaryList({
             rows: [
                 { key: { text: "Marine plan areas" }, value: { html: areasHtml } },
-                { key: { text: "Types of work" }, value: { text: summary.typesText } },
+                { key: { text: "Types of activity" }, value: { text: summary.typesText } },
                 { key: { text: "Email address" }, value: { text: summary.maskedEmail } }
             ]
         }) }}
@@ -36,7 +36,7 @@
 
         <form method="post" novalidate>
             <div class="govuk-button-group">
-                {{ govukButton({ text: "Unsubscribe", classes: "govuk-button--warning" }) }}
+                {{ govukButton({ text: "Unsubscribe" }) }}
                 <a href="manage" class="govuk-link govuk-link--no-visited-state">Keep this alert</a>
             </div>
         </form>

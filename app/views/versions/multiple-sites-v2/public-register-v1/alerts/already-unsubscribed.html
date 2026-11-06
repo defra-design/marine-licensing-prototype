@@ -1,0 +1,45 @@
+{% extends "versions/multiple-sites-v2/public-register-v1/includes/layout.html" %}
+
+{% from "govuk/components/summary-list/macro.njk" import govukSummaryList %}
+
+{% set navActive = "alerts" %}
+{% set pageTitle = "You have already unsubscribed from this alert" %}
+
+{#
+  The unsubscribe link opened again after the alert was stopped, from
+  either version of the link (as GOV.UK's "You've already unsubscribed").
+  No back link: people arrive here from an email.
+#}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <h1 class="govuk-heading-l">You have already unsubscribed from this alert</h1>
+
+        {% set areasHtml %}
+        {% for area in summary.areas %}{{ area }}{% if not loop.last %}<br>{% endif %}{% endfor %}
+        {% endset %}
+
+        {{ govukSummaryList({
+            rows: [
+                { key: { text: "Marine plan areas" }, value: { html: areasHtml } },
+                { key: { text: "Types of activity" }, value: { text: summary.typesText } },
+                { key: { text: "Email address" }, value: { text: summary.maskedEmail } }
+            ]
+        }) }}
+
+        <p class="govuk-body">You will not get any more emails from this alert. Any other alerts you have will not change.</p>
+
+        <p class="govuk-body">
+            <a href="/versions/multiple-sites-v2/public-register-v1/alerts" class="govuk-link govuk-link--no-visited-state">Set up a new alert</a>
+        </p>
+        <p class="govuk-body">
+            <a href="/versions/multiple-sites-v2/public-register-v1/applications" class="govuk-link govuk-link--no-visited-state">View applications</a>
+        </p>
+
+    </div>
+</div>
+
+{% endblock %}

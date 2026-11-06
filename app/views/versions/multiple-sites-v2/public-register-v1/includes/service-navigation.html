@@ -8,8 +8,6 @@
     {% block header %}{{ publicRegisterHeader("applications") }}{% endblock %}
 
   The argument is the nav item to highlight: "applications", "alerts" or nothing.
-  Get email alerts is a dead link until Tom has checked the alerts journey.
-  The pages work at /alerts.
 #}
 
 {% from "govuk/components/header/macro.njk" import govukHeader %}
@@ -31,7 +29,7 @@
       active: activeItem === "applications"
     },
     {
-      href: "#",
+      href: registerBase + "/alerts",
       text: "Get email alerts",
       active: activeItem === "alerts"
     }

@@ -34,7 +34,7 @@
 {% for item in alerts %}
 <div class="app-email-inset">
 <p>Marine plan areas: {{ item.areas | join(", ") }}</p>
-<p>Types of work: {{ item.typesText }}</p>
+<p>Types of activity: {{ item.typesText }}</p>
 <p><a href="/versions/multiple-sites-v2/public-register-v1/alerts/{{ item.alert.id }}/manage">Manage this alert</a></p>
 </div>
 {% endfor %}
