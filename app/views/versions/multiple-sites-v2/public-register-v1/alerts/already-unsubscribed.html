@@ -22,10 +22,14 @@
         {% for area in summary.areas %}{{ area }}{% if not loop.last %}<br>{% endif %}{% endfor %}
         {% endset %}
 
+        {% set typesHtml %}
+        {% for type in (summary.types or ["All types of activity"]) %}{{ type }}{% if not loop.last %}<br>{% endif %}{% endfor %}
+        {% endset %}
+
         {{ govukSummaryList({
             rows: [
                 { key: { text: "Marine plan areas" }, value: { html: areasHtml } },
-                { key: { text: "Types of activity" }, value: { text: summary.typesText } },
+                { key: { text: "Types of activity" }, value: { html: typesHtml } },
                 { key: { text: "Email address" }, value: { text: summary.maskedEmail } }
             ]
         }) }}
@@ -34,9 +38,6 @@
 
         <p class="govuk-body">
             <a href="/versions/multiple-sites-v2/public-register-v1/alerts" class="govuk-link govuk-link--no-visited-state">Set up a new alert</a>
-        </p>
-        <p class="govuk-body">
-            <a href="/versions/multiple-sites-v2/public-register-v1/applications" class="govuk-link govuk-link--no-visited-state">View applications</a>
         </p>
 
     </div>

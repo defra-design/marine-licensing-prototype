@@ -500,11 +500,14 @@ module.exports = function (router) {
     res.redirect(nextPage(req, 'your-details'));
   });
 
-  // Your details
+  // Your details. ?fix=1 is from "check the email address you gave us" on
+  // check your email: saving sends the email again to the corrected address
+  // and goes straight back to check your email, without check your answers.
   router.get(`${base}/application/:applicationId/your-details`, function (req, res) {
     const application = findApplication(req, res);
     if (!application) return;
-    renderComment(req, res, 'your-details', application, { change: req.query.change });
+    delete req.session.data.fix;
+    renderComment(req, res, 'your-details', application, { change: req.query.change, fix: req.query.fix });
   });
 
   router.post(`${base}/application/:applicationId/your-details`, function (req, res) {
@@ -520,8 +523,13 @@ module.exports = function (router) {
     // type something shaped like an address, such as name@example.com.
     if (!email) errors.email = 'Enter your email address';
     else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.email = 'Enter an email address in the correct format, like name@example.com';
+    delete req.session.data.fix;
     if (Object.keys(errors).length) {
-      return renderComment(req, res, 'your-details', application, { change: req.body.change, errors });
+      return renderComment(req, res, 'your-details', application, { change: req.body.change, fix: req.body.fix, errors });
+    }
+    if (req.body.fix && req.session.data[keys.status] === 'pending') {
+      req.session.data[keys.resent] = true;
+      return res.redirect('check-your-email');
     }
     res.redirect('check-answers');
   });

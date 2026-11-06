@@ -36,18 +36,22 @@
         {% for area in summary.areas %}{{ area }}{% if not loop.last %}<br>{% endif %}{% endfor %}
         {% endset %}
 
+        {% set typesHtml %}
+        {% for type in (summary.types or ["All types of activity"]) %}{{ type }}{% if not loop.last %}<br>{% endif %}{% endfor %}
+        {% endset %}
+
         {{ govukSummaryList({
             classes: "govuk-!-margin-bottom-9",
             rows: [
                 {
                     key: { text: "Marine plan areas" },
                     value: { html: areasHtml },
-                    actions: { items: [{ href: "areas", text: "Change", visuallyHiddenText: "marine plan areas" }] }
+                    actions: { items: [{ href: "areas", text: "Change", classes: "govuk-link--no-visited-state", visuallyHiddenText: "marine plan areas" }] }
                 },
                 {
                     key: { text: "Types of activity" },
-                    value: { text: summary.typesText },
-                    actions: { items: [{ href: "types", text: "Change", visuallyHiddenText: "types of activity" }] }
+                    value: { html: typesHtml },
+                    actions: { items: [{ href: "types", text: "Change", classes: "govuk-link--no-visited-state", visuallyHiddenText: "types of activity" }] }
                 },
                 {
                     key: { text: "Email address" },
