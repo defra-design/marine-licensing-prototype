@@ -103,22 +103,6 @@ module.exports = function (router) {
 
   const ALL = APPLICATIONS.map(withDetails);
 
-  // References are MLA, the year and 5 digits: MLA/2026/10020. We ignore
-  // case, spaces and punctuation, as people copy them off site notices and
-  // emails, so "mla 2026 10020", "MLA-2026-10020" and "MLA202610020" all
-  // work. Gives the reference written the standard way, or null if it is
-  // not in that format. Other prefixes will come later.
-  function formatReference(value) {
-    const match = String(value || '').toUpperCase().replace(/[^A-Z0-9]/g, '').match(/^MLA(\d{4})(\d{5})$/);
-    return match ? `MLA/${match[1]}/${match[2]}` : null;
-  }
-
-  const REFERENCE_ERRORS = {
-    empty: () => 'Enter an application reference',
-    format: () => 'Enter the application reference in the correct format',
-    'not-found': reference => `We could not find an application with reference ${reference}`
-  };
-
   // For the reference filter on the list, which matches part of a
   // reference, ignoring case, spaces and punctuation
   function referenceKey(value) {
@@ -177,37 +161,10 @@ module.exports = function (router) {
     return req.session.data[sessionKey] || null;
   }
 
-  // Landing page
+  // The GOV.UK start page (www.gov.uk/check-marine-licence-register),
+  // with Start now going to the list
   router.get(`${base}/start`, function (req, res) {
-    res.render(`versions/${version}/${section}/start`, {
-      mcmsUrl: MCMS_URL,
-      referenceError: REFERENCE_ERRORS[req.query.error] ? REFERENCE_ERRORS[req.query.error](req.query['public-register-v1-reference']) : null,
-      referenceNotFound: req.query.error === 'not-found',
-      referenceValue: req.query['public-register-v1-reference'],
-      // The main call to action, from the tray: the start button by
-      // default, ?cta=button for a standard green button, or ?cta=link
-      // for a plain link under the intro
-      ctaMode: ['button', 'link'].includes(req.query.cta) ? req.query.cta : 'start'
-    });
-  });
-
-  // Find an application by reference, from the landing page: straight to
-  // it if we have it, otherwise an error on the landing page, keeping what
-  // they typed. Not found is an error too, with a sentence under the box
-  // pointing to the MCMS register (error messages cannot have links).
-  router.get(`${base}/find-reference`, function (req, res) {
-    const entered = String(req.query['public-register-v1-reference'] || '').trim();
-    const reference = formatReference(entered);
-    const match = reference && ALL.find(application => application.reference === reference);
-    if (match) {
-      return res.redirect(`${base}/application/${match.id}`);
-    }
-    const error = !entered ? 'empty' : !reference ? 'format' : 'not-found';
-    // Not found shows the reference written the standard way
-    const value = entered ? `&public-register-v1-reference=${encodeURIComponent(reference || entered)}` : '';
-    // Keep the call to action version chosen in the tray
-    const cta = ['button', 'link'].includes(req.query.cta) ? `&cta=${req.query.cta}` : '';
-    res.redirect(`${base}/start?error=${error}${value}${cta}`);
+    res.render(`versions/${version}/${section}/start`, { mcmsUrl: MCMS_URL });
   });
 
   // The GOV.UK pagination component's settings for page ?page= of the
@@ -232,9 +189,6 @@ module.exports = function (router) {
   router.get(`${base}/applications`, function (req, res) {
     const query = req.query;
     const paginationOn = query.pagination === 'on';
-    // The reference filter is on unless ?reffilter=off, from the tray. On
-    // trial: the landing page lookup is the main way in by reference.
-    const referenceFilterOn = query.reffilter !== 'off';
 
     // Activity is Construction, Deposit or Removal. By default that is all
     // there is. With ?activityfilter=nested, from the tray, each reveals its
@@ -250,7 +204,7 @@ module.exports = function (router) {
       types: group.options.map(option => option.value).filter(value => ticked.includes(value))
     }));
     const filters = {
-      reference: referenceFilterOn ? String(query['public-register-v1-reference-filter'] || '').trim() : '',
+      reference: String(query['public-register-v1-reference-filter'] || '').trim(),
       areas: list(query['public-register-v1-area']).filter(area => MARINE_PLAN_AREAS.includes(area)),
       groups,
       activities: [].concat(...activityGroups.map(g => g.types))
@@ -315,8 +269,6 @@ module.exports = function (router) {
     const trayUrls = {
       paginationOff: listUrl(query, { pagination: null, page: null }),
       paginationOn: listUrl(query, { pagination: 'on', page: null }),
-      refFilterOn: listUrl(query, { reffilter: null, page: null }),
-      refFilterOff: listUrl(query, { reffilter: 'off', page: null, 'public-register-v1-reference-filter': null }),
       // Going back to top level only drops any second-level types ticked
       activityTopLevel: listUrl(query, { activityfilter: null, page: null, 'public-register-v1-activity': null }),
       activityNested: listUrl(query, { activityfilter: 'nested', page: null })
@@ -327,7 +279,6 @@ module.exports = function (router) {
       total: matching.length,
       pagination,
       paginationOn,
-      referenceFilterOn,
       nestedActivities,
       trayUrls,
       filters,
@@ -342,7 +293,7 @@ module.exports = function (router) {
       })),
       // Clear filters keeps the page versions (sort, pagination, reference
       // filter off, nested activities)
-      clearFiltersUrl: listUrl({ sort: query.sort, pagination: query.pagination, reffilter: query.reffilter, activityfilter: query.activityfilter }, {}, '#app-filter')
+      clearFiltersUrl: listUrl({ sort: query.sort, pagination: query.pagination, activityfilter: query.activityfilter }, {}, '#app-filter')
     });
   });
 
@@ -541,20 +492,12 @@ module.exports = function (router) {
     renderComment(req, res, 'check-answers', application);
   });
 
-  // Send comment. Two versions, chosen from the index page or the tray and
-  // kept in the session by the kit:
-  // - ?commentsend=emaillink (the default): emails a link to confirm the
-  //   comment. Until it is opened the comment is pending and is not sent.
-  // - ?commentsend=direct: sends it straight away, with no email loop, and
-  //   goes to comment sent. Every other page stays the same.
+  // Send comment: emails a link to confirm the comment. Until it is opened
+  // the comment is pending and is not sent.
   router.post(`${base}/application/:applicationId/check-answers`, function (req, res) {
     const application = findApplication(req, res);
     if (!application) return;
     const keys = commentKeys(application.id);
-    if (req.session.data.commentsend === 'direct') {
-      sendComment(req, keys);
-      return res.redirect('comment-sent');
-    }
     req.session.data[keys.status] = 'pending';
     res.redirect('check-your-email');
   });
@@ -660,7 +603,7 @@ module.exports = function (router) {
     version, section, base, ALL, MARINE_PLAN_AREAS, ACTIVITY_GROUPS, ACTIVITY_GROUP, dynamicBackLink, list
   });
 
-  // The register's home is the landing page
+  // The register's home is the GOV.UK start page
   router.get(base, function (req, res) {
     res.redirect(`${base}/start`);
   });
