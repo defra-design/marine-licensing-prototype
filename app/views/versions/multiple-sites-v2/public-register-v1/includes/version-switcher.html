@@ -165,7 +165,8 @@
       { panel: false, text: "Heading with section breaks, earlier order", url: applicationPath + "?hys=breaks" }
     ] %}
     <li>
-      {% if (haveYourSayPanel or false) === option.panel and details %}
+      {# Off the application page, the default is shown as showing #}
+      {% if (haveYourSayPanel if details else true) === option.panel %}
       <span aria-current="true">{{ option.text }}</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
       {% else %}
       <a href="{{ option.url }}" class="govuk-link govuk-link--no-visited-state">{{ option.text }}</a>
@@ -185,26 +186,6 @@
     ] %}
     <li>
       {% if (nestedActivities or false) === option.nested %}
-      <span aria-current="true">{{ option.text }}</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
-      {% else %}
-      <a href="{{ option.url }}" class="govuk-link govuk-link--no-visited-state">{{ option.text }}</a>
-      {% endif %}
-    </li>
-    {% endfor %}
-  </ul>
-  </div>
-
-  <div class="app-version-tray__section">
-  {# One list by default, as in the list filter. On the alerts areas page; from anywhere else the links go to it. #}
-  {% set areasPath = "/versions/multiple-sites-v2/public-register-v1/alerts/areas" %}
-  <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Marine plan areas for alerts</h3>
-  <ul class="govuk-list govuk-list--spaced">
-    {% for option in [
-      { list: true, text: "One list", url: "?" if areaGroups else areasPath },
-      { list: false, text: "Grouped under Inshore and Offshore", url: "?areas=grouped" if areaGroups else areasPath + "?areas=grouped" }
-    ] %}
-    <li>
-      {% if areaGroups and areasList === option.list %}
       <span aria-current="true">{{ option.text }}</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
       {% else %}
       <a href="{{ option.url }}" class="govuk-link govuk-link--no-visited-state">{{ option.text }}</a>

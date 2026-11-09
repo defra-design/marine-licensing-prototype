@@ -5,7 +5,7 @@
 #}
 {% extends "versions/multiple-sites-v2/layouts/email.html" %}
 
-{% set messageSubject = "Confirm your email alert from the Marine licence public register" %}
+{% set messageSubject = "Confirm your email alert for new marine licence applications" %}
 
 {% block pageTitle %}
   Email - {{ messageSubject }}
@@ -26,7 +26,7 @@
 
 {% include "./_email-styles.html" %}
 
-<p>Confirm that you want email alerts from the Marine licence public register.</p>
+<p>Confirm that you want email alerts when we publish new marine licence applications.</p>
 
 <p><a href="/versions/multiple-sites-v2/public-register-v1/alerts/{{ alert.id }}/confirm">Confirm your email alert</a></p>
 

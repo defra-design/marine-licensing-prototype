@@ -6,7 +6,7 @@
 #}
 {% extends "versions/multiple-sites-v2/layouts/email.html" %}
 
-{% set messageSubject = "Manage your email alerts from the Marine licence public register" %}
+{% set messageSubject = "Manage your email alerts for marine licence applications" %}
 
 {% block pageTitle %}
   Email - {{ messageSubject }}
@@ -27,9 +27,9 @@
 
 {% include "./_email-styles.html" %}
 
-<p>You asked for links to manage your email alerts from the Marine licence public register.</p>
+<p>You asked for links to manage your email alerts for marine licence applications.</p>
 
-<p>{% if alerts.length > 1 %}You have {{ alerts.length }} alerts. Each link opens one alert, where you can change or stop it.{% else %}You have 1 alert. The link opens it, where you can change or stop it.{% endif %}</p>
+<p>{% if alerts.length > 1 %}You have {{ alerts.length }} alerts. Use the links to change them or unsubscribe.{% else %}You have 1 alert. Use the link to change it or unsubscribe.{% endif %}</p>
 
 {% for item in alerts %}
 <div class="app-email-inset">

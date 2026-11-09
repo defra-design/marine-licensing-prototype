@@ -52,11 +52,6 @@ module.exports = function (router, shared) {
   // The address typed on Email me a manage link
   const MANAGE_EMAIL = 'public-register-v1-alert-manage-email';
 
-  // Inshore and Offshore, for the grouped areas page
-  const AREA_GROUPS = ['Inshore', 'Offshore'].map(heading => ({
-    heading,
-    areas: MARINE_PLAN_AREAS.filter(area => area.endsWith(heading))
-  }));
   // Construction, Deposit and Removal, each with a hint in plain words, as
   // people may not know the terms. More will come with non-LCML
   // applications, such as dredging and disposal at sea.
@@ -65,6 +60,9 @@ module.exports = function (router, shared) {
     deposit: 'Putting objects or materials in the sea, or on or under the seabed, such as moorings or rock',
     removal: 'Taking objects or materials from the seabed'
   };
+  // Each activity's name, as on the application page
+  const ACTIVITY_NAMES = {};
+  ACTIVITY_GROUPS.forEach(group => group.options.forEach(option => { ACTIVITY_NAMES[option.value] = option.text; }));
   const TYPE_OPTIONS = ACTIVITY_GROUPS.map(group => ({ value: group.value, text: group.heading, hint: TYPE_HINTS[group.value] }));
 
   function alertsIn(req) {
@@ -85,7 +83,10 @@ module.exports = function (router, shared) {
   // What an alert covers, as the pages and emails say it
   function describe(alert) {
     return {
-      areas: MARINE_PLAN_AREAS.filter(area => alert.areas.includes(area)),
+      // Every area is said as All marine plan areas
+      areas: alert.areas.length === MARINE_PLAN_AREAS.length
+        ? ['All marine plan areas']
+        : MARINE_PLAN_AREAS.filter(area => alert.areas.includes(area)),
       types: alert.types.length ? TYPE_OPTIONS.filter(o => alert.types.includes(o.value)).map(o => o.text) : null,
       typesText: alert.types.length
         ? TYPE_OPTIONS.filter(o => alert.types.includes(o.value)).map(o => o.text).join(', ')
@@ -111,13 +112,6 @@ module.exports = function (router, shared) {
     return String(email || '').trim().charAt(0).toUpperCase();
   }
 
-  // Areas page version, from the tray: one list by default, as in the
-  // list filter, or grouped under Inshore and Offshore with
-  // ?areas=grouped. A hidden field carries it through the form.
-  function areasList(req) {
-    return !(req.query.areas === 'grouped' || req.body?.areas === 'grouped');
-  }
-
   // Validation, shared by signing up and changing a saved alert
   function areasError(areas) {
     return areas.length ? null : 'Select at least one marine plan area';
@@ -133,8 +127,12 @@ module.exports = function (router, shared) {
   function typesError(scope) {
     return scope ? null : 'Select the types of activity you want alerts for, or select all types of activity';
   }
+  // All marine plan areas (exclusive) saves every area, so it matches
+  // like any other alert. Ticking every area is the same thing.
   function cleanAreas(value) {
-    return list(value).filter(area => MARINE_PLAN_AREAS.includes(area));
+    const values = list(value);
+    if (values.includes('all')) return MARINE_PLAN_AREAS.slice();
+    return values.filter(area => MARINE_PLAN_AREAS.includes(area));
   }
   function cleanTypes(value) {
     return list(value).filter(type => ACTIVITY_GROUP[type]);
@@ -157,9 +155,9 @@ module.exports = function (router, shared) {
     });
   });
 
-  // Start now: clears the answers from any earlier sign-up, so each
+  // Set up an alert: clears the answers from any earlier sign-up, so each
   // sign-up starts empty. Saved alerts, pending or not, are kept. Only the
-  // start button does this, so Back and the change links keep the answers.
+  // Set up an alert button does this, so Back and the change links keep the answers.
   router.get(`${alertsBase}/start-new`, function (req, res) {
     Object.values(DRAFT).forEach(key => { delete req.session.data[key]; });
     delete req.session.data[RESENT];
@@ -169,11 +167,10 @@ module.exports = function (router, shared) {
   function renderAreas(req, res, extra) {
     const selected = extra.selected || cleanAreas(req.session.data[DRAFT.areas]);
     res.render(view('areas'), Object.assign({
-      areaGroups: AREA_GROUPS,
       allAreas: MARINE_PLAN_AREAS,
-      areasList: areasList(req),
       fieldName: DRAFT.areas,
       selected,
+      everyArea: selected.length === MARINE_PLAN_AREAS.length,
       backLink: req.query.change || req.body.change ? 'check-answers' : alertsBase
     }, extra));
   }
@@ -511,10 +508,12 @@ module.exports = function (router, shared) {
     if (!alert) return res.redirect(alertsBase);
     const newest = ALL.slice().sort((a, b) => b.publishedOffset - a.publishedOffset);
     const match = newest.find(application => matches(alert, application));
+    const application = match || newest[0];
     res.render(view('emails/alert-email'), {
       alert,
       summary: describe(alert),
-      application: match || newest[0],
+      application,
+      activityNames: application.activities.map(value => ACTIVITY_NAMES[value]),
       noMatch: !match,
       // The unsubscribe link goes straight through with the one click
       // version, from the tray

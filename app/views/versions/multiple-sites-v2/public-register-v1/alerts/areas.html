@@ -14,8 +14,8 @@
   manage).
 
   One list of all 11 by default, as in the list filter, with the question
-  as the legend. With ?areas=grouped (from the tray) the heading is the
-  question and Inshore and Offshore are each their own fieldset.
+  as the legend, then "or" and an exclusive All marine plan areas, which
+  saves every area.
 #}
 
 {% block content %}
@@ -32,16 +32,15 @@
 
         <form method="post" novalidate>
             {% if change %}<input type="hidden" name="change" value="1">{% endif %}
-            {% if not areasList %}<input type="hidden" name="areas" value="grouped">{% endif %}
 
-            {% set hint = "Select all that apply. Inshore areas go from the coast out to 12 nautical miles. Offshore areas are further out." %}
-
-            {% if areasList %}
+            {% set hint = "Select all that apply. Inshore areas go from the coast and tidal estuaries out to 12 nautical miles (about 22km). Offshore areas go from 12 nautical miles out to the edge of English waters." %}
 
             {% set items = [] %}
             {% for area in allAreas %}
-            {% set items = (items.push({ value: area, text: area, checked: area in selected }), items) %}
+            {% set items = (items.push({ value: area, text: area, checked: area in selected and not everyArea }), items) %}
             {% endfor %}
+            {% set items = (items.push({ divider: "or" }), items) %}
+            {% set items = (items.push({ value: "all", text: "All marine plan areas", checked: everyArea, behaviour: "exclusive" }), items) %}
             {{ govukCheckboxes({
                 name: fieldName,
                 idPrefix: fieldName,
@@ -57,31 +56,6 @@
                 items: items
             }) }}
 
-            {% else %}
-
-            <h1 class="govuk-heading-l">{{ question }}</h1>
-            <p class="govuk-hint">{{ hint }}</p>
-
-            {% for group in areaGroups %}
-            {% set items = [] %}
-            {% for area in group.areas %}
-            {% set items = (items.push({ value: area, text: area, checked: area in selected }), items) %}
-            {% endfor %}
-            {{ govukCheckboxes({
-                name: fieldName,
-                idPrefix: fieldName if loop.first else fieldName + "-" + group.heading | lower,
-                fieldset: {
-                    legend: {
-                        text: group.heading,
-                        classes: "govuk-fieldset__legend--m"
-                    }
-                },
-                errorMessage: { text: error } if error and loop.first else undefined,
-                items: items
-            }) }}
-            {% endfor %}
-
-            {% endif %}
 
             {{ govukButton({ text: "Save changes" if alert else "Continue" }) }}
         </form>
