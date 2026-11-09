@@ -178,12 +178,10 @@
         <p class="govuk-body govuk-!-margin-bottom-6">{{ published(details.summary) }}</p>
 
         {{ mojTicketPanel({
-            classes: "govuk-!-margin-bottom-6",
+            classes: "govuk-!-margin-bottom-8",
             attributes: { "aria-label": "Have your say" },
             items: [{ html: haveYourSayHtml, classes: "moj-ticket-panel__content--blue" }]
         }) }}
-
-        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
 
         {{ fullApplicationIntro | safe }}
 
