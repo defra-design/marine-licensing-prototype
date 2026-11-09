@@ -13,7 +13,7 @@
 
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 
-{% set messageSubject = "New marine licence application: " + application.applicationName %}
+{% set messageSubject = "New marine licence application " + application.reference + ", " + application.applicationName %}
 {% set registerBase = "/versions/multiple-sites-v2/public-register-v1" %}
 
 {% block pageTitle %}
@@ -43,15 +43,18 @@
 
 <div class="app-email-inset">
 <p>{{ application.applicationName }}</p>
-<p>Reference: {{ application.reference }}</p>
+<p>Application reference: {{ application.reference }}</p>
 <p>Applicant: {{ application.applicant }}</p>
 <p>Marine plan area: {{ application.marinePlanAreas | join(", ") }}</p>
+<p>Activity: {{ activityNames | join(", ") }}</p>
 <p>Consultation closes: {{ application.closingOffset | daysFromToday }}</p>
 </div>
 
-<p><a href="{{ registerBase }}/application/{{ application.id }}">View the application and have your say</a></p>
+<p>You can comment on this application until the consultation closes.</p>
 
-<p>You get this email because you set up an alert for:</p>
+<p><a href="{{ registerBase }}/application/{{ application.id }}">View the application</a></p>
+
+<p>You are getting this email because you set up an alert for:</p>
 <div class="app-email-inset">
 <p>Marine plan areas: {{ summary.areas | join(", ") }}</p>
 <p>Types of activity: {{ summary.typesText }}</p>

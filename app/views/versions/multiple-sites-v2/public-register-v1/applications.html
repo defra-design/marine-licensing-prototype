@@ -12,10 +12,9 @@
   Browse and filter (CIP1, CIP1a, CIP1b). Only applications open for
   consultation for now, but named so it can list decided ones later.
 
-  Finding by reference (CIP1g) is the landing page's job: it goes straight
-  to the application. The reference filter here is on trial (the tray turns
-  it off). It matches part of a reference and never errors: no match is
-  just the usual no results message.
+  Finding by reference (CIP1g) is the reference filter here. It matches
+  part of a reference and never errors: no match is just the usual no
+  results message.
 
   MOJ "Filter a list" pattern, as on consultation v2 and the LCML v4
   submissions page, open to start with as filtering is the main thing
@@ -135,7 +134,6 @@
                 <form method="get" action="applications#app-filter" class="moj-filter__options" novalidate>
                     {% if sort !== "closing" %}<input type="hidden" name="sort" value="{{ sort }}">{% endif %}
                     {% if paginationOn %}<input type="hidden" name="pagination" value="on">{% endif %}
-                    {% if not referenceFilterOn %}<input type="hidden" name="reffilter" value="off">{% endif %}
                     {% if nestedActivities %}<input type="hidden" name="activityfilter" value="nested">{% endif %}
 
                     {{ govukButton({
@@ -143,7 +141,6 @@
                         classes: "govuk-!-margin-bottom-6"
                     }) }}
 
-                    {% if referenceFilterOn %}
                     {{ govukInput({
                         label: {
                             text: "Application reference",
@@ -155,7 +152,6 @@
                         value: filters.reference,
                         spellcheck: false
                     }) }}
-                    {% endif %}
 
                     <div class="govuk-form-group">
                         <fieldset class="govuk-fieldset">

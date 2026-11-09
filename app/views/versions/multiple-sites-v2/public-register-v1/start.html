@@ -1,98 +1,204 @@
 {% extends "versions/multiple-sites-v2/public-register-v1/includes/layout.html" %}
 
+{% from "govuk/components/header/macro.njk" import govukHeader %}
+{% from "govuk/components/breadcrumbs/macro.njk" import govukBreadcrumbs %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "govuk/components/input/macro.njk" import govukInput %}
-{% from "govuk/components/error-summary/macro.njk" import govukErrorSummary %}
-
-{% set pageTitle = ("Error: " if referenceError else "") + "Marine licence public register" %}
+{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 
 {#
-  Landing page (CIP1). Two ways in: browse and filter, or go straight to
-  an application with its reference (from a site notice, alert or link).
-  Empty, wrong format and not found are all errors here. Signposts the MCMS register for
-  anything not on here yet.
+  The GOV.UK start page, www.gov.uk/check-marine-licence-register, with
+  our new content. It is a GOV.UK page, not part of the service, so it has
+  the GOV.UK header (Menu and search are for show), breadcrumbs, the
+  related content sidebar, Explore the topic and Is this page useful?
+  There is no service navigation, phase banner or back link.
+
+  Start now goes to the list of applications. The breadcrumbs, related
+  content and Explore the topic links go to the real GOV.UK pages.
 #}
+
+{% set govuk = "https://www.gov.uk" %}
+{# Is this page useful? sits straight on top of the footer #}
+{% set mainClasses = "govuk-!-padding-bottom-0" %}
+
+{% block pageTitle %}
+    Check the public register of marine licence applications and decisions - GOV.UK
+{% endblock %}
+
+{% block header %}
+<style>
+  .app-govuk-site-header { position: relative; }
+  .app-govuk-site-header__links {
+    position: absolute;
+    top: 0;
+    right: 0;
+    left: 0;
+    height: 100%;
+    pointer-events: none;
+  }
+  .app-govuk-site-header__links .govuk-width-container {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    height: 100%;
+  }
+  .app-govuk-site-header__menu,
+  .app-govuk-site-header__search {
+    display: flex;
+    align-items: center;
+    color: #ffffff;
+    font-family: "GDS Transport", arial, sans-serif;
+    font-weight: 700;
+    font-size: 1rem;
+  }
+  .app-govuk-site-header__menu {
+    gap: 8px;
+    padding-right: 20px;
+    border-right: 1px solid rgba(255, 255, 255, 0.5);
+  }
+  .app-govuk-site-header__search { padding-left: 20px; }
+
+  .app-govuk-related {
+    border-top: 2px solid #1d70b8;
+    padding-top: 15px;
+  }
+  .app-govuk-related__section + .app-govuk-related__section {
+    border-top: 1px solid #b1b4b6;
+    padding-top: 15px;
+  }
+  .app-govuk-explore {
+    border-top: 2px solid #1d70b8;
+    padding-top: 15px;
+    margin-top: 30px;
+  }
+  .app-govuk-explore .govuk-link { font-weight: 700; }
+  .app-govuk-feedback {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 15px 30px;
+    margin-top: 30px;
+    padding: 20px 30px;
+    border-top: 1px solid #1d70b8;
+    background-color: #f4f8fb;
+  }
+  .app-govuk-feedback__question { display: flex; align-items: center; gap: 20px; }
+  .app-govuk-feedback__report { margin-left: auto; }
+  .app-govuk-feedback__button {
+    padding: 7px 35px 6px;
+    border: 1px solid #0b0c0c;
+    box-shadow: 0 3px 0 #0b0c0c;
+    background-color: #ffffff;
+    color: #0b0c0c;
+    font-family: "GDS Transport", arial, sans-serif;
+    font-size: 1rem;
+    line-height: 1.25;
+    cursor: pointer;
+  }
+  .app-govuk-feedback__button--report { padding-left: 10px; padding-right: 10px; }
+  .app-govuk-feedback__button:focus {
+    outline: 3px solid transparent;
+    background-color: #ffdd00;
+    box-shadow: 0 -2px #ffdd00, 0 4px #0b0c0c;
+  }
+</style>
+
+<div class="app-govuk-site-header">
+  {# The logo goes to the prototype's index page #}
+  {{ govukHeader({ homepageUrl: "/" }) }}
+  <div class="app-govuk-site-header__links" aria-hidden="true">
+    <div class="govuk-width-container">
+      <span class="app-govuk-site-header__menu">
+        <svg width="12" height="8" viewBox="0 0 12 8" focusable="false"><path d="M1 1l5 5 5-5" fill="none" stroke="currentColor" stroke-width="2"/></svg>
+        Menu
+      </span>
+      <span class="app-govuk-site-header__search">
+        <svg width="20" height="20" viewBox="0 0 27 27" focusable="false"><circle cx="11" cy="11" r="8.5" fill="none" stroke="currentColor" stroke-width="3"/><line x1="17" y1="17" x2="25" y2="25" stroke="currentColor" stroke-width="3"/></svg>
+      </span>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block beforeContent %}
+{{ govukBreadcrumbs({
+  items: [
+    { text: "Home", href: govuk + "/" },
+    { text: "Environment", href: govuk + "/environment" },
+    { text: "Marine", href: govuk + "/environment/marine" },
+    { text: "Marine licences", href: govuk + "/environment/marine-licences" }
+  ]
+}) }}
+{% endblock %}
 
 {% block content %}
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-xl">Check the public register of marine licence applications and decisions</h1>
+    </div>
+</div>
 
-        {% if referenceError %}
-        {{ govukErrorSummary({
-            titleText: "There is a problem",
-            errorList: [{ text: referenceError, href: "#public-register-v1-reference" }]
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <p class="govuk-body">Use this service to:</p>
+        <ul class="govuk-list govuk-list--bullet">
+            <li>find marine licence applications</li>
+            <li>see what is planned</li>
+            <li>comment on an application before its consultation closes</li>
+        </ul>
+
+        <p class="govuk-body">You can search by area, type of activity or application reference.</p>
+
+        {{ govukInsetText({
+            html: 'Decisions, older applications and some other types of licence are not on this register yet. Find them on the <a href="' + mcmsUrl + '" class="govuk-link">Marine Case Management System (MCMS) public register</a>.'
         }) }}
-        {% endif %}
 
-        <h1 class="govuk-heading-xl">Check the public register of marine licence applications</h1>
-
-        <p class="govuk-body-l">Find marine licence applications, see what is planned and comment on them before we make a decision.</p>
-
-        {# The start button by default, a standard green button with ?cta=button,
-           or a plain link with ?cta=link (from the tray) #}
-        {% if ctaMode === "link" %}
-        <p class="govuk-body"><a href="applications" class="govuk-link govuk-link--no-visited-state">View applications</a></p>
-        {% elif ctaMode === "button" %}
         {{ govukButton({
-            text: "View applications",
-            href: "applications"
-        }) }}
-        {% else %}
-        {{ govukButton({
-            text: "View applications",
+            text: "Start now",
             href: "applications",
             isStartButton: true
         }) }}
-        {% endif %}
 
-        <h2 class="govuk-heading-m">Find an application by its reference</h2>
-
-        <form action="find-reference" method="get" novalidate>
-            {% if ctaMode !== "start" %}<input type="hidden" name="cta" value="{{ ctaMode }}">{% endif %}
-            {{ govukInput({
-                label: {
-                    text: "Application reference",
-                    classes: "govuk-label--s"
-                },
-                hint: { text: "For example, MLA/2026/10020. It’s on the site notice and in our email alerts." },
-                id: "public-register-v1-reference",
-                name: "public-register-v1-reference",
-                value: referenceValue,
-                classes: "govuk-input--width-20",
-                spellcheck: false,
-                errorMessage: { text: referenceError } if referenceError else undefined
-            }) }}
-
-            {{ govukButton({
-                text: "Find application",
-                classes: "govuk-button--secondary"
-            }) }}
-        </form>
-
-        {# Error messages cannot have links, so the way on for a reference
-           that is not on this register goes here #}
-        {% if referenceNotFound %}
-        <p class="govuk-body">If you have checked the reference, search for it on our <a href="{{ mcmsUrl }}" class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">older public register (opens in new tab)</a>.</p>
-        {% endif %}
-
-        <h2 class="govuk-heading-m">Get email alerts</h2>
-
-        <p class="govuk-body">Get an email when we publish a new application in an area or for a type of activity you’re interested in.</p>
-
-        <p class="govuk-body"><a href="/versions/multiple-sites-v2/public-register-v1/alerts" class="govuk-link govuk-link--no-visited-state">Sign up for email alerts</a></p>
-
-        <h2 class="govuk-heading-m">Older applications and other licences</h2>
-
-        <p class="govuk-body">Some applications are not on this register yet, including older applications, decisions and other types of licence.</p>
-
-        <p class="govuk-body">You can find these on our <a href="{{ mcmsUrl }}" class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">older public register (opens in new tab)</a>.</p>
+        <p class="govuk-body govuk-!-margin-bottom-8"><a href="alerts" class="govuk-link">Get email alerts</a> when we publish new applications in an area or for a type of activity you’re interested in.</p>
 
         <h2 class="govuk-heading-m">About this register</h2>
-
         <p class="govuk-body">The Marine Management Organisation (MMO) keeps this register under section 101 of the Marine and Coastal Access Act 2009 and the Marine Licensing (Register of Licence Information) Regulations 2011.</p>
-        <p class="govuk-body govuk-!-margin-bottom-0">We publish information about each application, including the applicant’s name and address.</p>
+        <p class="govuk-body">We publish information about each application, including the applicant’s name and address.</p>
 
+        <div class="app-govuk-explore">
+            <h2 class="govuk-heading-s">Explore the topic</h2>
+            <ul class="govuk-list govuk-list--spaced">
+                <li><a href="{{ govuk }}/environment/marine-licences" class="govuk-link">Marine licences</a></li>
+                <li><a href="{{ govuk }}/transport/vessel-registration" class="govuk-link">Vessel registration</a></li>
+            </ul>
+        </div>
+
+    </div>
+
+    <div class="govuk-grid-column-one-third">
+        <aside class="app-govuk-related" role="complementary">
+            <div class="app-govuk-related__section">
+                <h2 class="govuk-heading-s">Related content</h2>
+                <p class="govuk-body"><a href="{{ govuk }}/apply-marine-licence" class="govuk-link">Apply for a marine licence</a></p>
+            </div>
+            <div class="app-govuk-related__section">
+                <p class="govuk-body govuk-!-margin-bottom-2">Collection</p>
+                <p class="govuk-body"><a href="{{ govuk }}/government/collections/planning-and-development-marine-licences" class="govuk-link">Planning and development: Marine licences</a></p>
+            </div>
+        </aside>
+    </div>
+</div>
+
+{# For show: GOV.UK's page feedback #}
+<div class="app-govuk-feedback">
+    <div class="app-govuk-feedback__question">
+        <span class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-0">Is this page useful?</span>
+        <button type="button" class="app-govuk-feedback__button">Yes</button>
+        <button type="button" class="app-govuk-feedback__button">No</button>
+    </div>
+    <div class="app-govuk-feedback__report">
+        <button type="button" class="app-govuk-feedback__button app-govuk-feedback__button--report">Report a problem with this page</button>
     </div>
 </div>
 
