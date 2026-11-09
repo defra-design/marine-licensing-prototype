@@ -441,10 +441,17 @@ module.exports = function (router) {
   function withStatus(req, request) {
     const assignedTo = assignedToFor(req, request);
     const status = statusFor(req, request);
-    const respondByOffset = request.receivedOffset + RESPONSE_PERIOD_DAYS;
+    // consultation-v2-<id>-received-offset in the session overrides the seeded
+    // received date. The user testing link sets it to 0 for Poole, so the
+    // request has just come in and closes in 14 days from whenever it is opened.
+    const receivedOverride = req.session.data[`consultation-v2-${request.id}-received-offset`];
+    const receivedOffset = receivedOverride !== undefined && receivedOverride !== '' && !isNaN(Number(receivedOverride))
+      ? Number(receivedOverride) : request.receivedOffset;
+    const respondByOffset = receivedOffset + RESPONSE_PERIOD_DAYS;
     // A request for advice nobody responded to before its closing date
     const missed = status === 'Response needed' && respondByOffset < 0;
     return Object.assign({}, request, {
+      receivedOffset,
       assignedTo,
       assignedToMe: assignedTo === ME,
       status: missed ? 'Missed' : status,
