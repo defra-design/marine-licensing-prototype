@@ -19,9 +19,11 @@
   homepageUrl: "/",
   classes: "govuk-header--full-width-border"
 }) }}
+{# The service name goes to the service homepage, the list. The start page
+   is on GOV.UK, not part of the service (Help users to navigate a service) #}
 {{ govukServiceNavigation({
   serviceName: "Check the public register of marine licence applications",
-  serviceUrl: registerBase + "/start",
+  serviceUrl: registerBase + "/applications",
   navigation: [
     {
       href: registerBase + "/applications",
