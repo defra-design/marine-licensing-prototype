@@ -1,0 +1,41 @@
+{% extends "versions/multiple-sites-v2/consultation-v2/includes/layout.html" %}
+
+{#
+  Home for a consultee only (the default role). Two tiles, half and half:
+  their consultations, and the Marine Case Management System. Someone who
+  is an applicant as well (the tray's Applicant and consultee versions)
+  gets the LCML v4 home page instead.
+
+  The tiles are the LCML v4 home page tiles (homepage-tile-card). The MCMS
+  description follows the applicant one, about consultations instead of
+  submissions.
+#}
+
+{% set navActive = "home" %}
+{% set pageTitle = "Home" %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+        <h1 class="govuk-heading-l">Home</h1>
+
+        <div class="govuk-grid-row">
+            <div class="govuk-grid-column-one-half">
+                <a href="/versions/multiple-sites-v2/consultation-v2/consultations{{ versionQuery }}" class="homepage-tile-card">
+                    <h2 class="govuk-heading-m homepage-tile-card__heading">View consultations</h2>
+                    <p class="govuk-body homepage-tile-card__description">View requests for advice and application notifications.</p>
+                </a>
+            </div>
+
+            <div class="govuk-grid-column-one-half">
+                <a href="https://marinelicensing.marinemanagement.org.uk/mmofox5/fox/live/MMO_LOGIN/login" class="homepage-tile-card">
+                    <h2 class="govuk-heading-m homepage-tile-card__heading">Sign in to the Marine Case Management System</h2>
+                    <p class="govuk-body homepage-tile-card__description">View or respond to consultations not available in this account.</p>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
