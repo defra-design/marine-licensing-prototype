@@ -291,7 +291,9 @@ Submissions
 				{% set transfer = {
 					'v1': { status: 'Transferred', tag: 'govuk-tag--magenta', sort: '06', href: 'email-landings/pontoon-landing?from=submissions' },
 					'v2-moving': { status: 'Moving to MCMS', tag: 'govuk-tag--magenta', sort: '02', href: 'application-moving-to-mcms?from=submissions' },
-					'v2-ready': { status: 'Closed', tag: 'govuk-tag--grey', sort: '06', href: 'application-ready-in-mcms?from=submissions' }
+					'v2-ready': { status: 'Closed', tag: 'govuk-tag--grey', sort: '06', href: 'application-ready-in-mcms?from=submissions' },
+					'v3-moving': { status: 'Moving to MCMS', tag: 'govuk-tag--magenta', sort: '02', href: 'application-moving-to-mcms-v3?from=submissions' },
+					'v3-ready': { status: 'Closed', tag: 'govuk-tag--grey', sort: '06', href: 'application-ready-in-mcms-v3?from=submissions' }
 				}[data['transfer-version']] %}
 				{% if transfer and not data['ut'] %}
 				<tr class="govuk-table__row" data-creator="jon-doe" data-project-name="Installation of floating pontoon, Lyme Regis Harbour, Dorset" data-type="Marine licence application" data-reference="MLA-10003" data-status="{{ transfer.status }}">
