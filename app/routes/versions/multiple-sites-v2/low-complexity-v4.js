@@ -1834,10 +1834,13 @@ module.exports = function (router) {
   //   v1        – Transferred
   //   v2-moving – Moving to MCMS (step 1: case officer has requested the transfer)
   //   v2-ready  – Closed (step 2: draft has been recreated in MCMS)
+  //   v3-moving, v3-ready – same statuses as v2, with the v3 pages
   [
     ['inbox-transfer', 'v1'], ['transfer', 'v1'],
     ['inbox-transfer-moving', 'v2-moving'], ['transfer-moving', 'v2-moving'],
-    ['inbox-transfer-ready', 'v2-ready'], ['transfer-ready', 'v2-ready']
+    ['inbox-transfer-ready', 'v2-ready'], ['transfer-ready', 'v2-ready'],
+    ['inbox-transfer-moving-v3', 'v3-moving'], ['transfer-moving-v3', 'v3-moving'],
+    ['inbox-transfer-ready-v3', 'v3-ready'], ['transfer-ready-v3', 'v3-ready']
   ].forEach(function ([page, transferVersion]) {
     router.get(`/versions/${version}/${section}/emails/${page}`, function (req, res) {
       req.session.data['transfer-version'] = transferVersion;
@@ -1845,7 +1848,8 @@ module.exports = function (router) {
     });
   });
 
-  ['application-moving-to-mcms', 'application-ready-in-mcms'].forEach(function (page) {
+  ['application-moving-to-mcms', 'application-ready-in-mcms',
+   'application-moving-to-mcms-v3', 'application-ready-in-mcms-v3'].forEach(function (page) {
     router.get(`/versions/${version}/${section}/${page}`, function (req, res) {
       res.render(`versions/${version}/${section}/${page}`, {
         showBackToSubmissions: req.query.from === 'submissions'
