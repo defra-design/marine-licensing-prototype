@@ -47,7 +47,7 @@
 
 {% block bodyEnd %}
   {{ super() }}
-  {% if isOrganisation %}
+  {% if isOrganisation and not noSubmissions %}
   {# Pulls in MOJ's FilterToggleButton itself - see the notes in the file. #}
   <script src="/public/javascripts/lcml-v4-projects-filter.js"></script>
   {% endif %}
@@ -108,6 +108,12 @@ Submissions
 		</h1>
 	</div>
 </div>
+
+{# Consultation v2 "Applicant and consultee – no submissions": no filter or
+   table, just the message the filter shows when nothing matches #}
+{% if noSubmissions %}
+<p class="govuk-body" id="no-results-message">There are no submissions to display.</p>
+{% else %}
 
 {#
   Filter is organisation users only. Individuals see the table with no
@@ -646,6 +652,8 @@ Submissions
 	</div>
 </div>
 		{% endif %}
+
+{% endif %}
 
 {% endblock %}
 

@@ -772,7 +772,8 @@ module.exports = function (router) {
       tabsOff: to({ tabs: 'off' }),
       tabsOn: to({ tabs: null }),
       rolesConsultee: to({ 'consultation-v2-roles': 'consultee' }),
-      rolesBoth: to({ 'consultation-v2-roles': 'both' })
+      rolesBoth: to({ 'consultation-v2-roles': 'both' }),
+      rolesBothEmpty: to({ 'consultation-v2-roles': 'both-empty' })
     };
   }
 
@@ -788,10 +789,12 @@ module.exports = function (router) {
     // in the session, as LCML v4 pages do not carry the v2 query string.
     // LCML v4 only shows the tabs when reached from these pages (see its
     // routes), so its usual journeys are unchanged.
-    if (['consultee', 'both'].includes(req.query['consultation-v2-roles'])) {
+    // both-empty is applicant and consultee with nothing on the Submissions page
+    if (['consultee', 'both', 'both-empty'].includes(req.query['consultation-v2-roles'])) {
       data['consultation-v2-roles'] = req.query['consultation-v2-roles'];
     }
-    res.locals.bothRoles = data['consultation-v2-roles'] === 'both';
+    res.locals.bothRoles = ['both', 'both-empty'].includes(data['consultation-v2-roles']);
+    res.locals.rolesMode = data['consultation-v2-roles'] || 'consultee';
     // So the Consultations tab on LCML v4 pages comes back to the same versions
     data['consultation-v2-version-query'] = urlWith('', keep, {});
 
