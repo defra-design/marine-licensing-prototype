@@ -30,7 +30,10 @@ module.exports = function (router) {
     } else if (!from.startsWith(`/versions/${version}/${section}/`)) {
       delete data['consultation-v2-in-journey'];
     }
-    res.locals.bothRoles = data['consultation-v2-roles'] === 'both' && !!data['consultation-v2-in-journey'];
+    res.locals.bothRoles = ['both', 'both-empty'].includes(data['consultation-v2-roles']) && !!data['consultation-v2-in-journey'];
+    // "Applicant and consultee – no submissions": the Submissions page has
+    // nothing on it, so it shows the empty message instead of the table
+    res.locals.noSubmissions = res.locals.bothRoles && data['consultation-v2-roles'] === 'both-empty';
     if (res.locals.bothRoles) {
       res.locals.consultationsUrl = `/versions/${version}/consultation-v2/consultations${data['consultation-v2-version-query'] || ''}`;
       // The submissions page matches the consultations page width: wide
