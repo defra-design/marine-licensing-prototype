@@ -19,7 +19,7 @@
   MOJ "Filter a list" pattern, as on consultation v2 and the LCML v4
   submissions page, open to start with as filtering is the main thing
   people do here. Filtering happens on the server when Apply filters is
-  pressed. The map (CIP1f) is the MMO GIS team's, so a dead link here.
+  pressed. The map (CIP1f) is the MMO GIS team's ArcGIS map.
 #}
 
 {% block head %}
@@ -97,8 +97,10 @@
 <h1 class="govuk-heading-l">Marine licence applications</h1>
 
 {# A map of all applications, not the filtered list, so it sits outside the
-   filter layout. Delivered by the MMO GIS team, so not part of this prototype. #}
-<p class="govuk-body"><a href="#" class="govuk-link govuk-link--no-visited-state">View all applications on a map</a></p>
+   filter layout. The MMO GIS team's ArcGIS map, behind sign-in for now, so
+   only for demos. Same tab: from the map people go on to an application
+   on this register to comment, so a new tab would leave two copies open. #}
+<p class="govuk-body"><a href="https://experience.arcgis.com/experience/cc078f9a124b47e98f08fd5895f4882a/page/MPLP" class="govuk-link govuk-link--no-visited-state">View all applications on a map</a></p>
 
 {# Applying, removing or clearing filters comes back to here, not the top of the page #}
 <div class="moj-filter-layout moj-filter-layout--narrow" id="app-filter">
