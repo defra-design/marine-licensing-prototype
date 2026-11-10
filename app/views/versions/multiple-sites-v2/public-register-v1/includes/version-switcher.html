@@ -208,6 +208,27 @@
   {% endif %}
   </div>
 
+  {# The link in the "Manage your email alerts" email. It opens the alert by
+     default. The links stop working after 24 hours and the prototype
+     cannot time out, so this opens it as if it had expired. Needs a
+     confirmed alert: the one on the page, or the most recent one. #}
+  <div class="app-version-tray__section">
+  <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Link in the manage links email</h3>
+  {% if trayAlert %}
+  {% set manageLinkPath = "/versions/multiple-sites-v2/public-register-v1/alerts/" + trayAlert.id + "/manage" %}
+  <ul class="govuk-list govuk-list--spaced">
+    {% for option in [
+      { text: "Opens the alert", url: manageLinkPath },
+      { text: "Has expired", url: manageLinkPath + "?managelink=expired" }
+    ] %}
+    <li><a href="{{ option.url }}" class="govuk-link govuk-link--no-visited-state">{{ option.text }}</a></li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="govuk-body-s">Set up and confirm an alert to see these.</p>
+  {% endif %}
+  </div>
+
   {# The link in the comment email. It sends the comment by default. The
      prototype cannot time out, so these open it as if it had expired, or
      as if the consultation had closed first. For the application on the
