@@ -9,8 +9,7 @@
   The confirm link in the email has expired (GOV.UK Design System, Confirm
   an email address: links must expire, and the page should say so and
   why). As the comment journey's link expired page. The prototype cannot
-  time out, so this is opened from the tray. How long links last is still
-  open with Richard, so no time is given.
+  time out, so this is opened from the tray. Links last 24 hours.
   Also shown if the alert was unsubscribed and its confirm link is opened
   again: then there is no new link to send, so they set up a new alert.
   No back link: people arrive here from an email.
@@ -24,7 +23,7 @@
         <h1 class="govuk-heading-l">The link to confirm your alert has expired</h1>
 
         <p class="govuk-body">We have not set up your alert.</p>
-        <p class="govuk-body">Links in our emails only work for a limited time, to keep your details safe.</p>
+        <p class="govuk-body">Links in our emails only work for 24 hours, to keep your details safe.</p>
 
         {% if alert.status === "pending" %}
         <p class="govuk-body">We can send a new link to <strong>{{ alert.email }}</strong>.</p>

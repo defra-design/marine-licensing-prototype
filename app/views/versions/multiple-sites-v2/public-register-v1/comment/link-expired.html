@@ -8,8 +8,8 @@
 {#
   The link in the email has expired (GOV.UK Design System, Confirm an
   email address: links must expire, and the page should say so and why).
-  The prototype cannot time out, so this is opened from the tray. How long
-  links last is still open with Richard, so no time is given.
+  The prototype cannot time out, so this is opened from the tray. Links
+  last 24 hours.
 
   No back link: people arrive here from an email.
 #}
@@ -23,7 +23,7 @@
         <h1 class="govuk-heading-l">The link to send your comment has expired</h1>
 
         <p class="govuk-body">We have not got your comment.</p>
-        <p class="govuk-body">Links in our emails only work for a limited time, to keep your comment safe.</p>
+        <p class="govuk-body">Links in our emails only work for 24 hours, to keep your comment safe.</p>
         {% if answers.email %}
         <p class="govuk-body">We can send a new link to <strong>{{ answers.email }}</strong>. The consultation closes on {{ application.closingOffset | daysFromToday }}.</p>
         {% endif %}
