@@ -14,10 +14,17 @@
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
 
+        {# No comment reference by default. The tray can show it (?reference=on). #}
+        {% if referenceShown %}
         {{ govukPanel({
             titleText: "Comment sent",
             html: "Your comment reference<br><strong>" + answers.reference + "</strong>"
         }) }}
+        {% else %}
+        {{ govukPanel({
+            titleText: "Comment sent"
+        }) }}
+        {% endif %}
 
         {# "confirmation email" links to the email page, for demos, as there
            is no real inbox #}
@@ -27,7 +34,7 @@
 
         <h2 class="govuk-heading-m">What happens next</h2>
         <p class="govuk-body">The consultation on {{ application.applicationName }} closes on {{ application.closingOffset | daysFromToday }}.</p>
-        <p class="govuk-body">We will read your comment and take it into account when we decide whether to grant the marine licence. We may contact you if we need more information.</p>
+        <p class="govuk-body">We will read your comment and take it into account when we decide whether to grant the marine licence. When we have made a decision, we will publish it on this register. We may contact you if we need more information.</p>
 
         <p class="govuk-body">
             <a href="/versions/multiple-sites-v2/public-register-v1/application/{{ application.id }}" class="govuk-link govuk-link--no-visited-state">View the application</a>

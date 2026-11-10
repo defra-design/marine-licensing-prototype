@@ -64,7 +64,9 @@ p {
 {% for paragraph in (answers.comment or '').split('\n') %}{% if paragraph | trim %}<p>{{ paragraph }}</p>{% endif %}{% endfor %}
 </div>
 
-<p>The consultation closes on {{ application.closingOffset | daysFromToday }}. We will read your comment and take it into account when we decide whether to grant the marine licence. We may contact you if we need more information.</p>
+<p>The consultation closes on {{ application.closingOffset | daysFromToday }}. We will read your comment and take it into account when we decide whether to grant the marine licence.</p>
+
+<p>When we have made a decision, we will publish it on our public register. We may contact you if we need more information.</p>
 
 <p>We will not publish your comment. After the consultation closes, we may publish a summary of all the comments we receive and share it with the applicant.</p>
 

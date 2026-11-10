@@ -554,11 +554,14 @@ module.exports = function (router) {
     req.session.data[keys.status] = 'sent';
   }
 
-  // Comment sent
+  // Comment sent. No comment reference by default; ?reference=on, from
+  // the tray, shows it in the panel, as the team may need it later.
   router.get(`${base}/application/:applicationId/comment-sent`, function (req, res) {
     const application = findApplication(req, res);
     if (!application) return;
-    renderComment(req, res, 'comment-sent', application);
+    const referenceShown = req.query.reference === 'on';
+    delete req.session.data.reference;
+    renderComment(req, res, 'comment-sent', application, { commentSentPage: true, referenceShown });
   });
 
   // The link has expired (from the tray). The comment has not been sent.
