@@ -255,10 +255,11 @@
   </div>
 
   {# Comment sent has no comment reference by default. The team may need
-     it later, so this shows it in the panel. For the application on the
+     it later, so this shows it in the panel, and in the email linked from
+     it ("copy of your comment"). For the application on the
      page, or Lyme Regis. Needs a comment that has been sent. #}
   <div class="app-version-tray__section">
-  <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Comment reference on Comment sent</h3>
+  <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Comment reference on Comment sent and its email</h3>
   {% if data['public-register-v1-' + commentLinkApplication + '-comment-status'] === 'sent' %}
   {% set commentSentPath = "/versions/multiple-sites-v2/public-register-v1/application/" + commentLinkApplication + "/comment-sent" %}
   <ul class="govuk-list govuk-list--spaced">

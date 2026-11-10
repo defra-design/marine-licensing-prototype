@@ -2,7 +2,7 @@
   The Notify email someone gets once their comment has been sent, in both
   versions: after selecting the link in the confirm email, or straight
   after Send comment when it is sent from the check page. It is their
-  record: the comment reference, a copy of the comment, what happens next
+  record: a copy of the comment, what happens next
   and a link back to the application (research theme 3: coming back to a
   case is hard).
 
@@ -57,7 +57,10 @@ p {
 
 <p>We have received your comment on marine licence application {{ application.reference }}, {{ application.applicationName }}.</p>
 
+{# No comment reference by default. It follows the tray choice on comment sent (?reference=on). #}
+{% if referenceShown %}
 <p>Your comment reference is <strong>{{ answers.reference }}</strong>.</p>
+{% endif %}
 
 <p>Your comment:</p>
 <div class="app-email-inset">
