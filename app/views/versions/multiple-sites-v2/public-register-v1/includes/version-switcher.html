@@ -208,6 +208,27 @@
   {% endif %}
   </div>
 
+  {# The link in the "Manage your email alerts" email. It opens the alert by
+     default. The links stop working after 24 hours and the prototype
+     cannot time out, so this opens it as if it had expired. Needs a
+     confirmed alert: the one on the page, or the most recent one. #}
+  <div class="app-version-tray__section">
+  <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Link in the manage links email</h3>
+  {% if trayAlert %}
+  {% set manageLinkPath = "/versions/multiple-sites-v2/public-register-v1/alerts/" + trayAlert.id + "/manage" %}
+  <ul class="govuk-list govuk-list--spaced">
+    {% for option in [
+      { text: "Opens the alert", url: manageLinkPath },
+      { text: "Has expired", url: manageLinkPath + "?managelink=expired" }
+    ] %}
+    <li><a href="{{ option.url }}" class="govuk-link govuk-link--no-visited-state">{{ option.text }}</a></li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="govuk-body-s">Set up and confirm an alert to see these.</p>
+  {% endif %}
+  </div>
+
   {# The link in the comment email. It sends the comment by default. The
      prototype cannot time out, so these open it as if it had expired, or
      as if the consultation had closed first. For the application on the
@@ -226,6 +247,33 @@
       { text: "Consultation has closed", url: commentLinkPath + "?commentlink=closed" }
     ] %}
     <li><a href="{{ option.url }}" class="govuk-link govuk-link--no-visited-state">{{ option.text }}</a></li>
+    {% endfor %}
+  </ul>
+  {% else %}
+  <p class="govuk-body-s">Send a comment on {{ application.applicationName if application else "Lyme Regis" }} to see these.</p>
+  {% endif %}
+  </div>
+
+  {# Comment sent has no comment reference by default. The team may need
+     it later, so this shows it in the panel, and in the email linked from
+     it ("copy of your comment"). For the application on the
+     page, or Lyme Regis. Needs a comment that has been sent. #}
+  <div class="app-version-tray__section">
+  <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Comment reference on Comment sent and its email</h3>
+  {% if data['public-register-v1-' + commentLinkApplication + '-comment-status'] === 'sent' %}
+  {% set commentSentPath = "/versions/multiple-sites-v2/public-register-v1/application/" + commentLinkApplication + "/comment-sent" %}
+  <ul class="govuk-list govuk-list--spaced">
+    {% for option in [
+      { shown: false, text: "No reference", url: commentSentPath },
+      { shown: true, text: "With the reference", url: commentSentPath + "?reference=on" }
+    ] %}
+    <li>
+      {% if commentSentPage and (referenceShown or false) === option.shown %}
+      <span aria-current="true">{{ option.text }}</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ option.url }}" class="govuk-link govuk-link--no-visited-state">{{ option.text }}</a>
+      {% endif %}
+    </li>
     {% endfor %}
   </ul>
   {% else %}

@@ -3,7 +3,6 @@
 {% from "govuk/components/header/macro.njk" import govukHeader %}
 {% from "govuk/components/breadcrumbs/macro.njk" import govukBreadcrumbs %}
 {% from "govuk/components/button/macro.njk" import govukButton %}
-{% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
 
 {#
   The GOV.UK start page, www.gov.uk/check-marine-licence-register, with
@@ -12,7 +11,8 @@
   related content sidebar, Explore the topic and Is this page useful?
   There is no service navigation, phase banner or back link.
 
-  Start now goes to the list of applications. The breadcrumbs, related
+  Start now goes to the page that chooses between the new register and
+  MCMS (choose-register). The breadcrumbs, related
   content and Explore the topic links go to the real GOV.UK pages.
 #}
 
@@ -143,28 +143,16 @@
 
         <p class="govuk-body">Use this service to:</p>
         <ul class="govuk-list govuk-list--bullet">
-            <li>find marine licence applications</li>
-            <li>see what is planned</li>
+            <li>find marine licence applications and decisions</li>
             <li>comment on an application before its consultation closes</li>
         </ul>
 
-        <p class="govuk-body">You can search by area, type of activity or application reference.</p>
-
-        {{ govukInsetText({
-            html: 'Decisions, older applications and some other types of licence are not on this register yet. Find them on the <a href="' + mcmsUrl + '" class="govuk-link">Marine Case Management System (MCMS) public register</a>.'
-        }) }}
-
+        {# Goes to the page that chooses between the new register and MCMS #}
         {{ govukButton({
             text: "Start now",
-            href: "applications",
+            href: "choose-register",
             isStartButton: true
         }) }}
-
-        <p class="govuk-body"><a href="alerts" class="govuk-link">Get email alerts</a> when we publish new applications in an area or for a type of activity you’re interested in.</p>
-
-        <h2 class="govuk-heading-m">About this register</h2>
-        <p class="govuk-body">The Marine Management Organisation (MMO) keeps this register under section 101 of the Marine and Coastal Access Act 2009 and the Marine Licensing (Register of Licence Information) Regulations 2011.</p>
-        <p class="govuk-body">We publish information about each application, including the applicant’s name and address.</p>
 
         <div class="app-govuk-explore">
             <h2 class="govuk-heading-s">Explore the topic</h2>

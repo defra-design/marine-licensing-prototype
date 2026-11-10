@@ -1,0 +1,38 @@
+{% extends "versions/multiple-sites-v2/public-register-v1/includes/layout.html" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+
+{% set navActive = "alerts" %}
+{% set pageTitle = "The link to manage your alert has expired" %}
+
+{#
+  A manage link from the "Manage your email alerts" email, opened after
+  24 hours (GOV.UK Design System, Confirm an email address: links must
+  expire, and the page should say so and why). As the other link expired
+  pages. The prototype cannot time out, so this is opened from the tray.
+
+  The alert itself is unchanged and still sends emails, so the page says
+  so first. The way on is "Email me a manage link", where they type the
+  address again: a manage link never shows the full address (ADR-8), so
+  this page cannot offer to send a new link to it.
+
+  No back link: people arrive here from an email.
+#}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <h1 class="govuk-heading-l">The link to manage your alert has expired</h1>
+
+        <p class="govuk-body">Your alert has not changed. We will keep sending you emails when we publish new applications that match it.</p>
+        <p class="govuk-body">Links in our emails only work for 24 hours, to keep your details safe.</p>
+        <p class="govuk-body">To change your alert or unsubscribe, get a new link. We will email it to the address your alerts are sent to.</p>
+
+        {{ govukButton({ text: "Get a new link", href: "/versions/multiple-sites-v2/public-register-v1/alerts/get-manage-link" }) }}
+
+    </div>
+</div>
+
+{% endblock %}

@@ -554,11 +554,14 @@ module.exports = function (router) {
     req.session.data[keys.status] = 'sent';
   }
 
-  // Comment sent
+  // Comment sent. No comment reference by default; ?reference=on, from
+  // the tray, shows it in the panel, as the team may need it later.
   router.get(`${base}/application/:applicationId/comment-sent`, function (req, res) {
     const application = findApplication(req, res);
     if (!application) return;
-    renderComment(req, res, 'comment-sent', application);
+    const referenceShown = req.query.reference === 'on';
+    delete req.session.data.reference;
+    renderComment(req, res, 'comment-sent', application, { commentSentPage: true, referenceShown });
   });
 
   // The link has expired (from the tray). The comment has not been sent.
@@ -577,14 +580,14 @@ module.exports = function (router) {
   });
 
   // The comment emails, as the commenter would see them in their inbox
-  function renderCommentEmail(req, res, page) {
+  function renderCommentEmail(req, res, page, extra) {
     const application = findApplication(req, res);
     if (!application) return;
     // The first and last initials of their name, for the mailbox avatar
     const { keys, answers } = commentAnswers(req, application.id);
     const names = String(answers.name || '').trim().split(/\s+/).filter(Boolean);
     const mailInitials = names.length ? (names[0][0] + (names.length > 1 ? names[names.length - 1][0] : '')).toUpperCase() : '';
-    res.render(`versions/${version}/${section}/emails/${page}`, { application, keys, answers, mailInitials });
+    res.render(`versions/${version}/${section}/emails/${page}`, Object.assign({ application, keys, answers, mailInitials }, extra));
   }
 
   // The email with the link to confirm the comment
@@ -592,10 +595,13 @@ module.exports = function (router) {
     renderCommentEmail(req, res, 'comment-confirmation');
   });
 
-  // The email once the comment has been sent, with its reference. In both
-  // versions, linked from comment sent.
+  // The email once the comment has been sent. In both versions, linked
+  // from comment sent. No comment reference by default; it follows the
+  // tray choice on comment sent, which passes ?reference=on.
   router.get(`${base}/application/:applicationId/received-email`, function (req, res) {
-    renderCommentEmail(req, res, 'comment-received');
+    const referenceShown = req.query.reference === 'on';
+    delete req.session.data.reference;
+    renderCommentEmail(req, res, 'comment-received', { referenceShown });
   });
 
   // Email alerts (phase 4)

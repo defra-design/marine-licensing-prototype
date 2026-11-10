@@ -344,9 +344,16 @@ module.exports = function (router, shared) {
 
   // Manage your alert. Usually opened from an email, so no back link,
   // unless they came from another register page.
+  //
+  // Links in the manage links email stop working after 24 hours. The
+  // prototype cannot time out, so the tray opens it as if it had expired
+  // (?managelink=expired).
   router.get(`${alertsBase}/:alertId/manage`, function (req, res) {
     const alert = findAlert(req);
     if (!alert) return res.redirect(alertsBase);
+    const linkState = req.query.managelink;
+    delete req.session.data.managelink;
+    if (linkState === 'expired') return res.redirect('manage-link-expired');
     if (alert.status === 'unsubscribed') return res.redirect('unsubscribed');
     res.render(view('manage'), {
       alert,
@@ -354,6 +361,13 @@ module.exports = function (router, shared) {
       saved: req.query.saved,
       backLink: dynamicBackLink(req, `manage-${alert.id}`, [`${alertsBase}/${alert.id}/`])
     });
+  });
+
+  // The manage link has expired (from the tray). The alert has not changed.
+  router.get(`${alertsBase}/:alertId/manage-link-expired`, function (req, res) {
+    const alert = findAlert(req);
+    if (!alert) return res.redirect(alertsBase);
+    res.render(view('manage-link-expired'), { alert });
   });
 
   // Change the areas of a saved alert. The same page as signing up, filled

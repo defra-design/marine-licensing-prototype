@@ -1,0 +1,56 @@
+{% extends "versions/multiple-sites-v2/public-register-v1/includes/layout.html" %}
+
+{% set pageTitle = "Which public register do you need?" %}
+
+{#
+  MOCK, for discussion. Start now on the GOV.UK start page comes here,
+  instead of straight to the list.
+
+  At first the new register will only have a few applications, so most
+  people will need MCMS. The two registers sit side by side in two equal
+  halves with the same heading size and no background, so neither is the
+  main call to action. MCMS is first, as in the content designer's design.
+
+  The two register links have no visited state: people come back to this
+  page often and the lists behind them change, so purple would suggest
+  they have seen everything. Set up an email alert is a one-off task, so
+  it is a normal link.
+#}
+
+{% set mcmsUrl = "https://marinelicensing.marinemanagement.org.uk/mmofox5/fox/live/MMO_PUBLIC_REGISTER" %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-xl">Which public register do you need?</h1>
+        <p class="govuk-body-l">We are moving marine licence applications and decisions to a new public register. This means we have 2 public registers.</p>
+    </div>
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-one-half">
+        <h2 class="govuk-heading-m"><a href="{{ mcmsUrl }}" class="govuk-link govuk-link--no-visited-state">Use our older public register (MCMS)</a></h2>
+        <p class="govuk-body">Applications published before [date], and some other types of application, are on the Marine Case Management System (MCMS) public register. You can comment on applications that are open for consultation.</p>
+    </div>
+    <div class="govuk-grid-column-one-half">
+        <h2 class="govuk-heading-m"><a href="applications" class="govuk-link govuk-link--no-visited-state">Use our new public register</a></h2>
+        <p class="govuk-body">Some types of application published since [date] are on our new public register. You can comment on applications that are open for consultation.</p>
+    </div>
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        <h2 class="govuk-heading-m govuk-!-margin-top-3">Get email alerts</h2>
+        <p class="govuk-body">Get an email when we publish a new application on our new public register, in an area or for a type of activity you’re interested in.</p>
+        <p class="govuk-body"><a href="alerts" class="govuk-link">Set up an email alert</a></p>
+
+        <h2 class="govuk-heading-m">About the public register</h2>
+        <p class="govuk-body">The Marine Management Organisation (MMO) keeps the public register under section 101 of the Marine and Coastal Access Act 2009 and the Marine Licensing (Register of Licence Information) Regulations 2011.</p>
+        <p class="govuk-body">We publish information about each application, including the applicant’s name and address.</p>
+
+    </div>
+</div>
+
+{% endblock %}
