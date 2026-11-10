@@ -556,6 +556,14 @@
                 </thead>
                 <tbody class="govuk-table__body">
                     {% for request in requests %}
+                    {#
+                      The list comes sorted from the server, with tie-breakers.
+                      MOJ sorts the table again on load by the column marked
+                      aria-sort, so every sortable cell's sort value is the
+                      row's place in the server's order (negative when
+                      descending, as MOJ then sorts high to low).
+                    #}
+                    {% set rowOrder = loop.index if sort.order === 'ascending' else -loop.index %}
                     <tr class="govuk-table__row">
                         {% if checkboxes %}
                         <td class="govuk-table__cell app-select-cell">
@@ -570,20 +578,16 @@
                             {% endif %}
                         </td>
                         {% endif %}
-                        <th scope="row" class="govuk-table__header govuk-!-font-weight-regular" data-sort-value="{{ request.applicationName }}"><a href="request-details/{{ request.id }}{{ listQuery }}" class="govuk-link govuk-link--no-visited-state">{{ request.applicationName }}</a></th>
-                        <td class="govuk-table__cell">{{ request.reference }}</td>
+                        <th scope="row" class="govuk-table__header govuk-!-font-weight-regular" data-sort-value="{{ rowOrder }}"><a href="request-details/{{ request.id }}{{ listQuery }}" class="govuk-link govuk-link--no-visited-state">{{ request.applicationName }}</a></th>
+                        <td class="govuk-table__cell" data-sort-value="{{ rowOrder }}">{{ request.reference }}</td>
                     {% if fullWidth %}
-                    <td class="govuk-table__cell">{% for area in request.marinePlanAreas %}{{ area }}{% if not loop.last %}<br>{% endif %}{% endfor %}</td>
+                    <td class="govuk-table__cell" data-sort-value="{{ rowOrder }}">{% for area in request.marinePlanAreas %}{{ area }}{% if not loop.last %}<br>{% endif %}{% endfor %}</td>
                     {% endif %}
-                        <td class="govuk-table__cell">{{ requestTypeText(request) }}</td>
-                        {# Ranked by what needs doing, not alphabetically #}
-                        <td class="govuk-table__cell app-status-cell" data-sort-value="{{ {'Response needed': 1, 'Missed': 2, 'No response needed': 3, 'Responded': 4}[request.status] }}">{{ statusTag(request) }}</td>
-                        {# Responded cases get a leading 1 so they sort after every open case,
-                           keeping the default sort on open deadlines, soonest first.
-                           Not on the Closed tab, which is by date alone. #}
-                        <td class="govuk-table__cell app-nowrap" data-sort-value="{{ ('1' if request.status === 'Responded' and listTab !== 'closed' else '') + (request.respondByOffset | daysFromTodaySort) }}">{{ closingDate(request, deadlineMode) }}</td>
-                        <td class="govuk-table__cell app-nowrap" data-sort-value="{{ request.receivedOffset | daysFromTodaySort }}">{{ request.receivedOffset | daysFromTodayShort }}</td>
-                        <td class="govuk-table__cell">{{ assignedTo(request) }}</td>
+                        <td class="govuk-table__cell" data-sort-value="{{ rowOrder }}">{{ requestTypeText(request) }}</td>
+                        <td class="govuk-table__cell app-status-cell" data-sort-value="{{ rowOrder }}">{{ statusTag(request) }}</td>
+                        <td class="govuk-table__cell app-nowrap" data-sort-value="{{ rowOrder }}">{{ closingDate(request, deadlineMode) }}</td>
+                        <td class="govuk-table__cell app-nowrap" data-sort-value="{{ rowOrder }}">{{ request.receivedOffset | daysFromTodayShort }}</td>
+                        <td class="govuk-table__cell" data-sort-value="{{ rowOrder }}">{{ assignedTo(request) }}</td>
                         {% if not checkboxes %}
                         <td class="govuk-table__cell">
                             {% if request.status !== "Responded" %}
@@ -609,13 +613,14 @@
             {% if pagination %}
             {{ govukPagination(pagination) }}
             {% endif %}
-            {% if paginationOn %}
             {#
-              With pagination the browser only has one page of cases, so the
-              MOJ sort buttons would only sort those. Instead a click reloads
-              the list sorted on the server, back on page 1. The listener runs
-              before MOJ's, as it is on the table in the capture phase. The
-              buttons, arrows and next direction are still MOJ's.
+              A column heading reloads the list sorted on the server, back on
+              page 1, rather than MOJ sorting it in the browser. MOJ can only
+              sort on one value, but each column has tie-breakers (closing
+              date, then reference), and with pagination the browser only has
+              one page of cases. The listener runs before MOJ's, as it is on
+              the table in the capture phase. The buttons, arrows and next
+              direction are still MOJ's.
             #}
             <script>
               document.getElementById('consultations-table').addEventListener('click', function (event) {
@@ -634,7 +639,6 @@
                 window.location.href = window.location.pathname + (query ? '?' + query : '');
               }, true);
             </script>
-            {% endif %}
                 {% else %}
                 {# Same as the LCML v4 submissions page, so developers can reuse it #}
                 <p class="govuk-body" id="no-results-message">There are no consultations to display.</p>

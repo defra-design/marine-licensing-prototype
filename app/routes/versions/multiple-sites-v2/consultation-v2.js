@@ -709,7 +709,7 @@ module.exports = function (router) {
     if (query.pagination === 'on') keep.pagination = 'on';
     // Open, Closed and Missed tabs: on by default
     if (query.tabs === 'off') keep.tabs = 'off';
-    // Sort order, set by the column headings when pagination is on. Left out
+    // Sort order, set by the column headings. Left out
     // of the URL it is closing date: soonest first, or on the Closed tab
     // most recent first.
     if (SORTS[query.sort]) keep.sort = query.sort;
@@ -858,23 +858,43 @@ module.exports = function (router) {
     return banner.text;
   }
 
-  // How each column of the case list sorts, matching the data-sort-value
-  // (or text) the MOJ sortable table uses, so sorting on the server for
-  // pagination gives the same order as sorting in the browser.
+  // How each column of the case list sorts. The list is always sorted here,
+  // on the server: a column heading reloads the page with ?sort= and ?order=.
+  // Each column has its own order, then tie-breakers (see TIE_BREAKERS).
   const STATUS_RANK = { 'Response needed': 1, 'Missed': 2, 'No response needed': 3, 'Responded': 4 };
+  const TYPE_RANK = { 'response-required': 1, 'notify-only': 2 };
   const byText = key => (a, b) => (a[key] || '').localeCompare(b[key] || '');
+  const byClosingDate = (a, b) => a.respondByOffset - b.respondByOffset;
+  const byReceived = (a, b) => a.receivedOffset - b.receivedOffset;
+  // Low to high, with numbers sorted by value (MLA/2026/9 before MLA/2026/10)
+  const byReference = (a, b) => (a.reference || '').localeCompare(b.reference || '', undefined, { numeric: true });
   const SORTS = {
     name: byText('applicationName'),
-    reference: byText('reference'),
+    reference: byReference,
     // By the first, when an application is in more than one
     area: (a, b) => a.marinePlanAreas[0].localeCompare(b.marinePlanAreas[0]),
-    type: byText('type'),
+    // Request for advice first, then application notification, to match Status
+    type: (a, b) => TYPE_RANK[a.type] - TYPE_RANK[b.type],
     status: (a, b) => STATUS_RANK[a.status] - STATUS_RANK[b.status],
     // Open cases by closing date, then responded ones
-    closing: (a, b) => (a.status === 'Responded') - (b.status === 'Responded') || a.respondByOffset - b.respondByOffset,
-    received: (a, b) => a.receivedOffset - b.receivedOffset,
-    // Unassigned first, as in the browser
+    closing: (a, b) => (a.status === 'Responded') - (b.status === 'Responded') || byClosingDate(a, b),
+    received: byReceived,
+    // Unassigned first, then by name (forename first)
     assigned: byText('assignedTo')
+  };
+
+  // When two cases tie on the column sorted by, these decide the order.
+  // They keep their own direction when the column is reversed: closing date
+  // soonest first, received oldest first, reference low to high.
+  const TIE_BREAKERS = {
+    name: [byReference],
+    reference: [],
+    area: [byClosingDate, byReference],
+    type: [byClosingDate, byReference],
+    status: [byClosingDate, byReference],
+    closing: [byReceived, byReference],
+    received: [byClosingDate, byReference],
+    assigned: [byClosingDate, byReference]
   };
 
   // Pagination (?pagination=on). Only shown when there are more results than
@@ -950,9 +970,12 @@ module.exports = function (router) {
       order: res.locals.versionParams.order || (listTab !== 'open' ? 'descending' : 'ascending')
     };
     const compare = sort.key === 'closing' && listTab !== 'open'
-      ? (a, b) => a.respondByOffset - b.respondByOffset
+      ? byClosingDate
       : SORTS[sort.key];
-    const matching = inTab.sort((a, b) => compare(a, b) * (sort.order === 'descending' ? -1 : 1));
+    // Only the column sorted by is reversed, not the tie-breakers
+    const direction = sort.order === 'descending' ? -1 : 1;
+    const matching = inTab.sort((a, b) => compare(a, b) * direction ||
+      TIE_BREAKERS[sort.key].reduce((result, tieBreaker) => result || tieBreaker(a, b), 0));
 
     // With pagination on, only this page's cases go in the table
     let requests = matching;
@@ -1006,8 +1029,7 @@ module.exports = function (router) {
       //   (default)          Assign at the bottom of request pages
       //   ?reqassign=under   Assign under About this request instead
       //   ?reqassign=off     no Assign on request pages
-      //   ?pagination=on     5 cases a page, with GOV.UK pagination, and the
-      //                      column headings sort every page (?sort=, ?order=)
+      //   ?pagination=on     5 cases a page, with GOV.UK pagination
       //   ?tabs=off          one list, without the tabs
       // Not you: you would use Assign to me
       everyone: TEAM,
