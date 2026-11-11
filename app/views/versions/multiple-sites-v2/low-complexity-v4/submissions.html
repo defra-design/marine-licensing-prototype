@@ -99,10 +99,7 @@ Submissions
 
 <div class="govuk-grid-row">
 	<div class="govuk-grid-column-full">
-		{# Not in the consultation journey, to match the consultations page #}
-		{% if not bothRoles %}
-		<span class="govuk-caption-l">{{ data['organisation-name'] }}</span>
-		{% endif %}
+		{# No organisation caption: the name is in the organisation bar above #}
 		<h1 class="govuk-heading-l">
 			{{ pageHeadingTextHTML }}
 		</h1>
