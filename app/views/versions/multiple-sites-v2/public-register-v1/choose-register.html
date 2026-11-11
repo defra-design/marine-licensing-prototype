@@ -9,7 +9,9 @@
   At first the new register will only have a few applications, so most
   people will need MCMS. The two registers sit side by side in two equal
   halves with the same heading size and no background, so neither is the
-  main call to action. MCMS is first, as in the content designer's design.
+  main call to action. The existing register (MCMS) is first, as in the
+  content designer's design. It goes to existing-register, a mock of the
+  MCMS public register landing page, as its content is changing too.
 
   The two register links have no visited state: people come back to this
   page often and the lists behind them change, so purple would suggest
@@ -17,25 +19,23 @@
   it is a normal link.
 #}
 
-{% set mcmsUrl = "https://marinelicensing.marinemanagement.org.uk/mmofox5/fox/live/MMO_PUBLIC_REGISTER" %}
-
 {% block content %}
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-two-thirds">
         <h1 class="govuk-heading-xl">Which public register do you need?</h1>
-        <p class="govuk-body-l">We are moving marine licence applications and decisions to a new public register. This means we have 2 public registers.</p>
+        <p class="govuk-body-l">We are introducing a new public register for marine licence applications and decisions. We have started publishing some types of application on it. While we change over, we have 2 public registers: our existing one and our new one.</p>
     </div>
 </div>
 
 <div class="govuk-grid-row">
     <div class="govuk-grid-column-one-half">
-        <h2 class="govuk-heading-m"><a href="{{ mcmsUrl }}" class="govuk-link govuk-link--no-visited-state">Use our older public register (MCMS)</a></h2>
-        <p class="govuk-body">Applications published before [date], and some other types of application, are on the Marine Case Management System (MCMS) public register. You can comment on applications that are open for consultation.</p>
+        <h2 class="govuk-heading-m"><a href="existing-register" class="govuk-link govuk-link--no-visited-state">Use our existing public register</a></h2>
+        <p class="govuk-body">Applications received before [date], and other types of application received since, are on our existing public register. You can comment on applications that are open for consultation.</p>
     </div>
     <div class="govuk-grid-column-one-half">
         <h2 class="govuk-heading-m"><a href="applications" class="govuk-link govuk-link--no-visited-state">Use our new public register</a></h2>
-        <p class="govuk-body">Some types of application published since [date] are on our new public register. You can comment on applications that are open for consultation.</p>
+        <p class="govuk-body">Some types of application received since [date] are on our new public register. You can comment on applications that are open for consultation.</p>
     </div>
 </div>
 
