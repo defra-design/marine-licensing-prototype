@@ -524,7 +524,7 @@ module.exports = function (router) {
     { value: 'person', text: 'Someone else' }
   ];
   const SHOW_OPTIONS = [
-    { value: 'all', text: 'All consultations' },
+    { value: 'all', text: 'All Natural England consultations' },
     { value: 'me', text: 'Assigned to me' },
     { value: 'unassigned', text: 'Unassigned' },
     { value: 'person', text: 'Assigned to someone else' }
@@ -611,7 +611,8 @@ module.exports = function (router) {
   function selectedFilterGroups(query, filters) {
     const groups = [];
     if (filters.show !== 'all') {
-      const items = filters.show === 'person' && filters.people.length
+      const byName = filters.show === 'person' && filters.people.length;
+      const items = byName
         ? filters.people.map(person => ({
             text: person,
             href: consultationsUrl(query, { 'consultation-v2-person': filters.people.filter(p => p !== person) })
@@ -620,7 +621,10 @@ module.exports = function (router) {
             text: SHOW_OPTIONS.find(o => o.value === filters.show).text,
             href: consultationsUrl(query, { 'consultation-v2-show': null, 'consultation-v2-person': null })
           }];
-      groups.push({ heading: 'Show', items });
+      // Names picked under Assigned to someone else go under Assigned to.
+      // With nobody picked the tag already reads "Assigned to someone else",
+      // so it stays under Show.
+      groups.push({ heading: byName ? 'Assigned to' : 'Show', items });
     }
     if (filters.types.length) {
       groups.push({

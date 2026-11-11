@@ -211,6 +211,16 @@
     function buildCategories (state) {
       var categories = []
 
+      // My submissions is the default, so it gets no tag. All submissions is
+      // a change from the default, so it does, and removing it goes back to
+      // My submissions.
+      if (state.scope === 'all-projects') {
+        categories.push({
+          heading: 'Show',
+          items: [{ text: scopeName(state), type: 'scope', value: 'all-projects' }]
+        })
+      }
+
       if (state.scope === 'specific-person' && state.people.length > 0) {
         categories.push({
           heading: 'Owner',
@@ -276,12 +286,13 @@
     function removeFilter (type, value) {
       if (type === 'type') uncheck('filter-type', value)
       else if (type === 'status') uncheck('filter-status', value)
+      else if (type === 'scope') selectDefaultScope()
       else if (type === 'person') {
         uncheck('filter-person', value)
         // Dropping the last person leaves the scope radio pointing at nothing
-        // meaningful, so fall back to showing everything.
+        // meaningful, so fall back to the default.
         if (checkedValues('filter-person').length === 0) {
-          selectAllProjects()
+          selectDefaultScope()
           hideConditional()
         }
       }
@@ -364,9 +375,10 @@
       if (panel) panel.classList.remove('govuk-radios__conditional--hidden')
     }
 
-    function selectAllProjects () {
-      var all = document.querySelector('input[name="projectFilter"][value="all-projects"]')
-      if (all) all.checked = true
+    // My submissions is the default view
+    function selectDefaultScope () {
+      var mine = document.querySelector('input[name="projectFilter"][value="my-projects"]')
+      if (mine) mine.checked = true
     }
 
     // -------------------------------------------------------------- events
@@ -382,7 +394,7 @@
       clearLink.addEventListener('click', function (e) {
         e.preventDefault()
 
-        selectAllProjects()
+        selectDefaultScope()
         hideConditional()
 
         ;['filter-type', 'filter-status', 'filter-person'].forEach(function (name) {
