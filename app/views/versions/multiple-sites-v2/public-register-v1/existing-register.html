@@ -1,0 +1,109 @@
+{% extends "versions/multiple-sites-v2/public-register-v1/includes/layout.html" %}
+
+{#
+  MOCK of the existing public register's landing page, in the Marine Case
+  Management System (MCMS). It is not part of our service, so it has the
+  MCMS header, survey banner and footer, and no service navigation, phase
+  banner or back link. Its content is changing too, to point people to the
+  new register.
+
+  The search box and View Public Register do nothing. Use our new public
+  register goes to our applications list.
+
+  Content as on MCMS, with the content designer's new paragraph and link.
+#}
+
+{% block pageTitle %}
+    Public register - Marine Management Organisation
+{% endblock %}
+
+{% block header %}
+<style>
+  .app-mcms-header {
+    background-color: #0b0c0c;
+    border-bottom: 8px solid #00703c;
+    padding: 18px 0;
+  }
+  .app-mcms-header__name {
+    margin: 0;
+    padding-left: 22px;
+    border-left: 4px solid #ffffff;
+    color: #ffffff;
+    font-family: "GDS Transport", arial, sans-serif;
+    font-size: 1.875rem;
+    line-height: 1.3;
+  }
+  .app-mcms-survey {
+    margin-top: 20px;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #0b0c0c;
+  }
+  .app-mcms-footer {
+    margin-top: 30px;
+    padding: 20px 0 60px;
+    border-top: 1px solid #b1b4b6;
+  }
+  .app-mcms-footer__links {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 10px 40px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+</style>
+
+<header class="app-mcms-header">
+  <div class="govuk-width-container">
+    <p class="app-mcms-header__name">Marine Management Organisation</p>
+  </div>
+</header>
+{% endblock %}
+
+{% block beforeContent %}
+<p class="govuk-body app-mcms-survey">Help us improve this service, <a href="#" class="govuk-link">take this 1 minute survey (opens in new tab).</a></p>
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        <h1 class="govuk-heading-xl">Public register</h1>
+
+        <p class="govuk-body">The Marine Management Organisation maintains a register containing the particulars prescribed in the Marine Licensing (Register of Licence Information) Regulations 2011. This information is held under Section 101 of the Marine and Coastal Access Act 2009.</p>
+
+        <p class="govuk-body">We publicise up-to-date information of:</p>
+        <ul class="govuk-list govuk-list--bullet">
+            <li>Marine licence applications and decisions, including marine minerals extraction and renewable energy documents</li>
+            <li>Environmental impact assessment documents, including screening and scoping opinions and environmental impact assessment consent decisions</li>
+        </ul>
+
+        <p class="govuk-body">We are introducing a new public register for marine licence applications and decisions. We have started publishing some types of application on it.</p>
+
+        <p class="govuk-body-l"><a href="applications" class="govuk-link">Use our new public register</a></p>
+    </div>
+
+    <div class="govuk-grid-column-one-third">
+        <h2 class="govuk-heading-l govuk-!-margin-top-6">Search</h2>
+        <p class="govuk-body">If you know the reference of the case you’re looking for, enter it into the box below.</p>
+        {# For show: the search does nothing #}
+        <input class="govuk-input govuk-!-margin-bottom-6" type="text" aria-label="Case reference" placeholder="Case Ref: e.g. MLA/2016/00001">
+        <p class="govuk-body">Otherwise, click the link below to go to the full search page.</p>
+        <p class="govuk-body-l"><a href="#" class="govuk-link">View Public Register</a></p>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block footer %}
+<footer class="app-mcms-footer">
+  <div class="govuk-width-container">
+    <ul class="app-mcms-footer__links">
+      <li><a href="#" class="govuk-link govuk-body-s">Cookies</a></li>
+      <li><a href="#" class="govuk-link govuk-body-s">Accessibility statement</a></li>
+      <li><a href="#" class="govuk-link govuk-body-s">Privacy policy</a></li>
+    </ul>
+  </div>
+</footer>
+{% endblock %}
