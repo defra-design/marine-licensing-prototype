@@ -7,24 +7,27 @@
     {% from "versions/multiple-sites-v2/public-register-v1/includes/service-navigation.html" import publicRegisterHeader %}
     {% block header %}{{ publicRegisterHeader("applications") }}{% endblock %}
 
-  The argument is the nav item to highlight: "applications", "alerts" or nothing.
+  The first argument is the nav item to highlight: "applications", "alerts"
+  or nothing. Pass hideNav as true to show the service name without the nav
+  items, as on choose-register, which is not part of the new register.
 #}
 
 {% from "govuk/components/header/macro.njk" import govukHeader %}
 {% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
 
-{% macro publicRegisterHeader(activeItem) %}
+{% macro publicRegisterHeader(activeItem, hideNav) %}
 {% set registerBase = "/versions/multiple-sites-v2/public-register-v1" %}
 {{ govukHeader({
   homepageUrl: "/",
   classes: "govuk-header--full-width-border"
 }) }}
-{# The service name goes to the service homepage, the list. The start page
-   is on GOV.UK, not part of the service (Help users to navigate a service) #}
+{# The service name goes to the service homepage, choose-register, so people
+   can get back to it and on to the existing register. The start page is on
+   GOV.UK, not part of the service (Help users to navigate a service) #}
 {{ govukServiceNavigation({
-  serviceName: "Check the public register of marine licence applications",
-  serviceUrl: registerBase + "/applications",
-  navigation: [
+  serviceName: "Check the public register of marine licence applications and decisions",
+  serviceUrl: registerBase + "/choose-register",
+  navigation: [] if hideNav else [
     {
       href: registerBase + "/applications",
       text: "Applications",
