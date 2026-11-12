@@ -4,13 +4,14 @@
   no organisation banner or sign-in, as anyone can use the register.
 
   Pages set navActive to "applications" or "alerts" to highlight the nav, and
-  can set backLink to show a back link.
+  can set backLink to show a back link. Set hideNav to true to hide the nav
+  items and keep the service name.
 #}
 {% extends "versions/multiple-sites-v2/layouts/low-complexity-v4.html" %}
 
 {% block header %}
 {% from "versions/multiple-sites-v2/public-register-v1/includes/service-navigation.html" import publicRegisterHeader %}
-{{ publicRegisterHeader(navActive) }}
+{{ publicRegisterHeader(navActive, hideNav) }}
 {% endblock %}
 
 {% block beforeContent %}
@@ -26,5 +27,5 @@
 {% endblock %}
 
 {% block pageTitle %}
-    {{ pageTitle }}{% if pageTitle !== "Marine licence public register" %} - Marine licence public register{% endif %}
+    {{ pageTitle }}{% if pageTitle !== "Check the public register of marine licence applications and decisions" %} - Check the public register of marine licence applications and decisions{% endif %}
 {% endblock %}
