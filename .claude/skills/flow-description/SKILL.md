@@ -14,29 +14,30 @@ Applies to both prototypes:
 ## Before writing
 
 1. Work out the flow from the prototype itself (templates, routes, index page) and from the session. Describe what the prototype does, not what the code is.
-2. If anything about the flow is unclear or can't be confirmed from the prototype, ask before writing. Don't fill gaps with assumptions. This covers entry points, branches, what changes on return visits, and what is placeholder.
+2. Check GitHub too: the merged pull requests for the flow (their descriptions and comments), the commit history of its routes and pages, and the notes in the code. They record decisions and changes the pages alone don't explain, such as what an ADR asked for and where the design departs from it.
+3. If anything about the flow is unclear or can't be confirmed from the prototype, ask before writing. Don't fill gaps with assumptions. This covers entry points, branches, what changes on return visits, and what is placeholder.
 
 ## Register
 
 - Plain English, but call things by their proper names. Name design system components exactly as the design system does.
-  - GOV.UK: Inset text, Notification banner, Details, Warning text, Button, Back link, Task list, Summary list, Summary card, Tag (give the colour, for example "an orange Rejected Tag"), Error summary, Error message, Panel, Radios, Checkboxes, Character count.
+  - GOV.UK: Inset text, Notification banner, Details, Warning text, Button, Back link, Task list, Summary list, Summary card, Tag (give the colour, for example "an orange Rejected Tag"), Error summary, Error message, Panel, Radios, Checkboxes, Character count, Text input, Service navigation.
   - MOJ Design System: Filter (in the Filter a list pattern), Ticket panel, Sub navigation, Timeline, Button menu. Say "MOJ" the first time, for example "the MOJ Filter".
   - D365: command bar, form, tab, section, subgrid, business process flow, timeline, quick view form, view, lookup, notification (MessageBar), dialog. Name the native construct, not the Fluent UI component.
 - Use the component's name, never a description of it: "Details", not "an expander"; "Summary card", not "a card"; "Ticket panel", not "a highlighted box". Patterns too: "Check answers", "Confirm an email address".
 - Link each GOV.UK or MOJ component and pattern to its page in the design system the first time it's named, as a Markdown link on the name, for example "a [Details](https://design-system.service.gov.uk/components/details/) component". Only link what the page actually uses, and check each link loads.
-- Don't link the everyday components and patterns everyone knows. Name them but leave them unlinked: Button, Checkboxes, Radios, Back link, Textarea and Check answers.
+- Don't link the everyday components and patterns everyone knows. Name them but leave them unlinked: Button, Checkboxes, Radios, Back link, Textarea, Text input, Error summary, Error message and Check answers. Do link Service navigation.
 - Link pages outside the prototype that the flow comes from or goes to by their real URL, in the same way. For example "the [GOV.UK start page](https://www.gov.uk/check-marine-licence-register)".
 - Name task list statuses, Tag labels and button labels as they appear (Completed, Not yet started, Create new application).
 - Not technical. No routes, session variables, file names, field IDs or how the code works.
 - Concise. No filler, no restating the same point.
-- Don't play page content back word for word, because readers can see the prototype. Quote a page heading, section heading, button or link label when it's needed to say where something is. Summarise body content in a clause.
+- Describe behaviour, not content. The content designer writes their own comment on the ticket covering the words: hints, body copy, email wording, terminology and why words were chosen. So don't describe or summarise those. Quote a page heading, section heading, Button or link label only to say where something is or what an action does. For emails, say when each one is sent and what its links do, not what it says.
 - Say when content is placeholder.
 - Note where the prototype differs from the real service, in brackets. For example: "(in reality there will be the choice between that and One Login)".
 - UK English. No em dashes.
 
 ## Reasoning
 
-Only explain why a design decision was made if Tom has given the reasoning in the session (an MVP constraint, a Design System guideline, a research finding, an earlier version that was dropped). Never infer or invent a rationale. If a decision looks like it needs explaining and no reason has been given, ask.
+Only explain why a design decision was made if Tom has given the reasoning in the session or it is recorded in a pull request, commit or code note (an MVP constraint, a Design System guideline, a research finding, an earlier version that was dropped). Never infer or invent a rationale. If a decision looks like it needs explaining and no reason has been given, ask.
 
 ## Structure
 
