@@ -1,6 +1,6 @@
 ---
 name: "flow-description"
-description: "Write a plain-text Jira description of how a flow in the MPLP GOV.UK or MAS D365 prototype works, for BAs and the team. Use when asked to write up, describe or explain a prototype flow."
+description: "Write a Markdown Jira description of how a flow in the MPLP GOV.UK or MAS D365 prototype works, for BAs and the team. Use when asked to write up, describe or explain a prototype flow."
 ---
 
 # Flow description
@@ -20,7 +20,12 @@ Applies to both prototypes:
 
 - Plain English, but call things by their proper names. Name design system components exactly as the design system does.
   - GOV.UK: Inset text, Notification banner, Details, Warning text, Button, Back link, Task list, Summary list, Summary card, Tag (give the colour, for example "an orange Rejected Tag"), Error summary, Error message, Panel, Radios, Checkboxes, Character count.
+  - MOJ Design System: Filter (in the Filter a list pattern), Ticket panel, Sub navigation, Timeline, Button menu. Say "MOJ" the first time, for example "the MOJ Filter".
   - D365: command bar, form, tab, section, subgrid, business process flow, timeline, quick view form, view, lookup, notification (MessageBar), dialog. Name the native construct, not the Fluent UI component.
+- Use the component's name, never a description of it: "Details", not "an expander"; "Summary card", not "a card"; "Ticket panel", not "a highlighted box". Patterns too: "Check answers", "Confirm an email address".
+- Link each GOV.UK or MOJ component and pattern to its page in the design system the first time it's named, as a Markdown link on the name, for example "a [Details](https://design-system.service.gov.uk/components/details/) component". Only link what the page actually uses, and check each link loads.
+- Don't link the everyday components and patterns everyone knows. Name them but leave them unlinked: Button, Checkboxes, Radios, Back link, Textarea and Check answers.
+- Link pages outside the prototype that the flow comes from or goes to by their real URL, in the same way. For example "the [GOV.UK start page](https://www.gov.uk/check-marine-licence-register)".
 - Name task list statuses, Tag labels and button labels as they appear (Completed, Not yet started, Create new application).
 - Not technical. No routes, session variables, file names, field IDs or how the code works.
 - Concise. No filler, no restating the same point.
@@ -46,12 +51,19 @@ Only explain why a design decision was made if Tom has given the reasoning in th
   - what changes on a return visit, or after an action has been taken
   - edge cases (deleting, going back, coming in from another route)
   - what the user sees afterwards (for example, how it shows in Submissions)
-- Always end with a "Demoing it" section: which index page links open the flow (named as they appear on the index page, not URLs), whether session data needs clearing first, what state carries over between runs, and anything that resets it.
+- Always end with a "Demoing it" section: which index page links open the flow (named as they appear on the index page, not URLs), whether session data needs clearing first, what state carries over between runs, and anything that resets it. Link "prototype index page" to the team prototype: "the [prototype index page](https://marine-licensing-prototype-5b7b33ca29e1.herokuapp.com/)". When it mentions the "Page versions" panel, say how to open it: "The "Page versions" panel, opened from the grey triangle button in the bottom right corner of the screen, lets you:".
 - If an alternative version exists and is parked, say so in one line at the very end.
 
 ## Output
 
-Plain text in a single copyable block, ready to paste into Jira. Heading lines are plain text, not markdown headings. Use "- " for bullets. No bold, no markdown syntax.
+Formatted Markdown straight in the chat, not in a code block, with a `---` line above and below so it's easy to copy:
+- `##` for the title and `###` for each section heading
+- bold for buttons, statuses and Tag labels (**Send comment**, **Completed**)
+- quotes for page headings, section headings and link text ("Your details")
+- Markdown links for components, patterns and outside pages
+- "- " for bullets
+
+The example below shows the tone and level of detail. Its plain-text layout is from before this change: use the Markdown format above.
 
 ## Example
 
