@@ -1088,7 +1088,7 @@ module.exports = function (router) {
       label: 'Water Framework Directive assessment',
       anchor: 'wfd-assessment',
       filename: 'wfd-assessment-redacted.doc',
-      hint: 'You can only upload a file that is a .docx or .odt.'
+      hint: 'You can only upload a file that is a .docx, .odt or .pdf.'
     }
   };
 
