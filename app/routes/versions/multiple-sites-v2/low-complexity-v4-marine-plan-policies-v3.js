@@ -421,11 +421,13 @@ module.exports = function (router) {
     let selected;
     let locations = {};
     let missing = [];
+    let tooLong = [];
     const submitted = req.session.data['mpp-v3-policies-submitted'];
     if (req.session.data['errorthispage'] === "true" && submitted) {
       selected = submitted.selected;
       locations = submitted.locations;
       missing = submitted.missing;
+      tooLong = submitted.tooLong || [];
     } else {
       selected = draft.policies.map(p => p.key);
       draft.policies.forEach(p => { locations[p.key] = p.location; });
@@ -438,9 +440,12 @@ module.exports = function (router) {
       options: MPP_V3_POLICIES.filter(p => isFlagged(req.session.data, p.key)),
       selected: selected,
       locations: locations,
-      missing: missing
+      missing: missing,
+      tooLong: tooLong
     });
   });
+
+  const MPP_V3_LOCATION_MAX = 70;
 
   router.post(`${docsPath}/policies-router`, function (req, res) {
     resetErrors(req.session.data);
@@ -462,12 +467,14 @@ module.exports = function (router) {
     delete req.session.data['mpp-v3-document-policies'];
 
     const missing = selected.filter(key => !locations[key]);
+    // Location is a short reference, so it stays a single-line input – 70 characters fits a full-width input on desktop
+    const tooLong = selected.filter(key => locations[key].length > MPP_V3_LOCATION_MAX);
 
-    if (selected.length === 0 || missing.length > 0) {
+    if (selected.length === 0 || missing.length > 0 || tooLong.length > 0) {
       req.session.data['errorthispage'] = "true";
       if (selected.length === 0) req.session.data['errortypeone'] = "true";
       if (missing.length > 0) req.session.data['errortypetwo'] = "true";
-      req.session.data['mpp-v3-policies-submitted'] = { selected: selected, locations: locations, missing: missing };
+      req.session.data['mpp-v3-policies-submitted'] = { selected: selected, locations: locations, missing: missing, tooLong: tooLong };
       return redirectOnceSaved(req, res, `${docsPath}/policies`);
     }
 
