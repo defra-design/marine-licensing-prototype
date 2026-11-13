@@ -27,6 +27,7 @@ Error:
 {% block content %}
 
 {% set locationErrorText = "Enter where in the document the relevant information is" %}
+{% set locationTooLongText = "Where the information is in the document must be 70 characters or less" %}
 {# Changing an existing document's policies from its card: unticking them all is
    better handled by deleting the document, so the error says so #}
 {% if data['mpp-v3-change-single-page'] == 'policies' %}
@@ -44,8 +45,11 @@ Error:
 {% for policy in options %}
 	{% set locationId = "mpp-v3-document-location-" + policy.key %}
 	{% set locationMissing = data['errortypetwo'] == "true" and policy.key in missing %}
+	{% set locationTooLong = policy.key in tooLong %}
 	{% if locationMissing %}
 		{% set errorList = (errorList.push({ text: locationErrorText, href: "#" + locationId }), errorList) %}
+	{% elif locationTooLong %}
+		{% set errorList = (errorList.push({ text: locationTooLongText, href: "#" + locationId }), errorList) %}
 	{% endif %}
 	{% set locationHtml %}
 	{{ govukInput({
@@ -57,11 +61,13 @@ Error:
 		hint: {
 			text: "For example, section 4.2 or pages 12 to 15"
 		},
-		classes: "govuk-input--width-20",
+		classes: "govuk-!-width-full",
 		value: locations[policy.key],
 		errorMessage: {
 			text: locationErrorText
-		} if locationMissing
+		} if locationMissing else ({
+			text: locationTooLongText
+		} if locationTooLong)
 	}) }}
 	{% endset %}
 	{% set policyItems = (policyItems.push({
