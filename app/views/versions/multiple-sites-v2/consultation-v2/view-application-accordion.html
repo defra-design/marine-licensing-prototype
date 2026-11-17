@@ -22,12 +22,22 @@
 
         {{ sections_.pageHeading(request) }}
 
+        {# Everything in summary cards, as there is more than one summary
+           list on the page. A policy card is titled with just the category,
+           and documents are one card with a row per group. #}
         {% set items = [] %}
         {% for s in sections %}
+        {% if s.kind === "policies" %}
+        {% set content = sections_.policyCard(s.policyGroup, s.navText, 3) %}
+        {% elif s.kind === "documents" %}
+        {% set content = sections_.documentsCard(documentGroups, 3) %}
+        {% else %}
+        {% set content = sections_.sectionContent(s, request, documentGroups, 3, false) %}
+        {% endif %}
         {% set items = (items.push({
             heading: { text: s.title },
             summary: { text: s.summary } if s.summary else undefined,
-            content: { html: sections_.sectionContent(s, request, documentGroups, 3, false) }
+            content: { html: content }
         }), items) %}
         {% endfor %}
 
