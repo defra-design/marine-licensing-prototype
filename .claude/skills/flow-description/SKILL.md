@@ -16,13 +16,14 @@ Applies to both prototypes:
 1. Work out the flow from the prototype itself (templates, routes, index page) and from the session. Describe what the prototype does, not what the code is.
 2. Check GitHub too: the merged pull requests for the flow (their descriptions and comments), the commit history of its routes and pages, and the notes in the code. They record decisions and changes the pages alone don't explain, such as what an ADR asked for and where the design departs from it.
 3. If anything about the flow is unclear or can't be confirmed from the prototype, ask before writing. Don't fill gaps with assumptions. This covers entry points, branches, what changes on return visits, and what is placeholder.
+4. Also ask Tom wherever there's a gap, or where it looks like a decision was made but no reason is recorded: where a new tab or task sits, why a status is used, why a field was added or dropped, what happens for other users. His answers go into the write-up. Put all the questions together in one message before writing, rather than writing around the gaps.
 
 ## Register
 
 - Plain English, but call things by their proper names. Name design system components exactly as the design system does.
   - GOV.UK: Inset text, Notification banner, Details, Warning text, Button, Back link, Task list, Summary list, Summary card, Tag (give the colour, for example "an orange Rejected Tag"), Error summary, Error message, Panel, Radios, Checkboxes, Character count, Text input, Service navigation.
   - MOJ Design System: Filter (in the Filter a list pattern), Ticket panel, Sub navigation, Timeline, Button menu. Say "MOJ" the first time, for example "the MOJ Filter".
-  - D365: command bar, form, tab, section, subgrid, business process flow, timeline, quick view form, view, lookup, notification (MessageBar), dialog. Name the native construct, not the Fluent UI component.
+  - D365: command bar, form, tab, section, subgrid, business process flow, timeline, quick view form, view, lookup, notification (MessageBar), dialog. Name the native construct, not the Fluent UI component. Say when a section is CDP data shown in an iframe.
 - Use the component's name, never a description of it: "Details", not "an expander"; "Summary card", not "a card"; "Ticket panel", not "a highlighted box". Patterns too: "Check answers", "Confirm an email address".
 - Link each GOV.UK or MOJ component and pattern to its page in the design system the first time it's named, as a Markdown link on the name, for example "a [Details](https://design-system.service.gov.uk/components/details/) component". Only link what the page actually uses, and check each link loads.
 - Don't link the everyday components and patterns everyone knows. Name them but leave them unlinked: Button, Checkboxes, Radios, Back link, Textarea, Text input, Error summary, Error message and Check answers. Do link Service navigation.
@@ -31,13 +32,14 @@ Applies to both prototypes:
 - Not technical. No routes, session variables, file names, field IDs or how the code works.
 - Concise. No filler, no restating the same point.
 - Describe behaviour, not content. The content designer writes their own comment on the ticket covering the words: hints, body copy, email wording, terminology and why words were chosen. So don't describe or summarise those. Quote a page heading, section heading, Button or link label only to say where something is or what an action does. For emails, say when each one is sent and what its links do, not what it says.
-- Say when content is placeholder.
+- Say when content is placeholder. A demo case's own data (its dates, its consultees) isn't placeholder: frame it as the example ("In this case, the consultation started on...").
 - Note where the prototype differs from the real service, in brackets. For example: "(in reality there will be the choice between that and One Login)".
+- MAS: don't name how D365 will build something behind the scenes (business rule, Power Automate flow, calculated column, form script). That's for the developers. If it matters, say what the real system will do, for example "by showing and hiding sections (or fields)".
 - UK English. No em dashes.
 
 ## Reasoning
 
-Only explain why a design decision was made if Tom has given the reasoning in the session or it is recorded in a pull request, commit or code note (an MVP constraint, a Design System guideline, a research finding, an earlier version that was dropped). Never infer or invent a rationale. If a decision looks like it needs explaining and no reason has been given, ask.
+Only explain why a design decision was made if Tom has given the reasoning in the session or it is recorded in a pull request, commit or code note (an MVP constraint, a Design System guideline, a research finding, an earlier version that was dropped). When an earlier version was dropped, say what it had and where that was decided ("On the first iteration the caseworker could... but in the UCD collab it was decided..."). Never infer or invent a rationale. If a decision looks like it needs explaining and no reason has been given, ask.
 
 ## Structure
 
@@ -52,7 +54,8 @@ Only explain why a design decision was made if Tom has given the reasoning in th
   - what changes on a return visit, or after an action has been taken
   - edge cases (deleting, going back, coming in from another route)
   - what the user sees afterwards (for example, how it shows in Submissions)
-- Always end with a "Demoing it" section: which index page links open the flow (named as they appear on the index page, not URLs), whether session data needs clearing first, what state carries over between runs, and anything that resets it. Link "prototype index page" to the team prototype: "the [prototype index page](https://marine-licensing-prototype-5b7b33ca29e1.herokuapp.com/)". When it mentions the "Page versions" panel, say how to open it: "The "Page versions" panel, opened from the grey triangle button in the bottom right corner of the screen, lets you:".
+  - what it means for other users, such as the consultee or applicant (notifications, what changes on their side). Ask if it isn't in the prototype
+- Always end with a "Demoing it" section: which index page links open the flow (named as they appear on the index page, each linked to its page in the team prototype rather than written out as a URL), whether session data needs clearing first, what state carries over between runs, and anything that resets it. Link "prototype index page" to the team prototype: for MPLP "the [prototype index page](https://marine-licensing-prototype-5b7b33ca29e1.herokuapp.com/)", for MAS "the [prototype index page](https://mmo-mas-c16c974de81a.herokuapp.com/)". Link a case reference or design exploration page to its page in the team prototype the first time it's named, for example "[MLA/2026/10006](https://mmo-mas-c16c974de81a.herokuapp.com/receive-assess/cases/MLA%2F2026%2F10006)". When it mentions the "Page versions" panel, say how to open it: "The "Page versions" panel, opened from the grey triangle button in the bottom right corner of the screen, lets you:".
 - If an alternative version exists and is parked, say so in one line at the very end.
 
 ## Output
