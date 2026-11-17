@@ -1145,7 +1145,11 @@ module.exports = function (router) {
   router.get(`${base}/emails/:requestId`, function (req, res) {
     const request = findRequest(req, res);
     if (!request) return;
-    res.render(`versions/${version}/${section}/emails/email`, { request });
+    // ?email= picks one of the layouts we are comparing for the details in
+    // the request for advice email. Inset (the current design) by default.
+    const emailLayouts = ['inset', 'subheadings'];
+    const emailLayout = emailLayouts.includes(req.query.email) ? req.query.email : 'inset';
+    res.render(`versions/${version}/${section}/emails/email`, { request, emailLayout });
   });
 
   // Government Gateway sign-in from the email, which then opens that request

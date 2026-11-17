@@ -5,19 +5,90 @@
     notify-only       - we are telling you about the application
   Body copy and subject lines are from the content designer's Notify templates.
 
+  The request for advice email names the application, its reference and
+  marine plan area, so the consultee can tell who to forward it to. We are
+  comparing layouts for those details, picked with ?email= :
+    inset       - the current design, "Label: value" lines in inset text
+    subheadings - each label as a Notify sub-heading (## in the template),
+                  with the value as a paragraph under it
+  Notify renders ## as an h3 the same size as body text but bold, with 10px
+  above and 15px below (from notifications-utils markdown.py). It has no
+  other bold, colour or tables.
+
   The webmail chrome and message header are copies of the LCML v4 email ones,
   addressed to Natural England rather than an applicant.
 #}
 {% extends "versions/multiple-sites-v2/layouts/email.html" %}
 
 {% set isAdvice = request.type === "response-required" %}
-{% set messageSubject = "Consultation - Request for advice for a marine licence application" if isAdvice else "Consultation - notification of a marine licence application" %}
+{% set messageSubject = "Request for advice: " + request.reference + ", " + request.applicationName if isAdvice else "Consultation - notification of a marine licence application" %}
+
+{# A site can be in more than one marine plan area #}
+{% set areaIsList = request.marinePlanArea and not (request.marinePlanArea is string) %}
+{% set areas = request.marinePlanArea | join(", ") if areaIsList else request.marinePlanArea %}
+{% set areaLabel = "Marine plan areas" if areaIsList else "Marine plan area" %}
 
 {% block pageTitle %}
   Email - {{ messageSubject }}
 {% endblock %}
 
 {% block header %}
+  {% if isAdvice and data['versions'] !== 'off' %}
+  {# Prototype only: switch between the layouts. Hidden with ?versions=off. #}
+  <style>
+    .app-email-switcher {
+      padding: 8px 16px;
+      background: #f3f2f1;
+      border-bottom: 1px solid #b1b4b6;
+      font-family: "GDS Transport", arial, sans-serif;
+      font-size: 16px;
+    }
+    .app-email-switcher ul {
+      display: inline;
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+    .app-email-switcher li {
+      display: inline-block;
+      margin: 0 0 0 16px;
+    }
+  </style>
+  <nav class="app-email-switcher" aria-label="Email layouts">
+    <strong>Prototype – email layout:</strong>
+    <ul>
+      {% for option in [
+        { key: "inset", text: "Inset (current)" },
+        { key: "subheadings", text: "Sub-heading labels" }
+      ] %}
+      <li>
+        {% if emailLayout === option.key %}
+        <span aria-current="true">{{ option.text }}</span>
+        {% else %}
+        <a href="?email={{ option.key }}" class="govuk-link govuk-link--no-visited-state">{{ option.text }}</a>
+        {% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+    {# Dawlish is in one marine plan area, Dart estuary in two #}
+    <strong class="govuk-!-margin-left-6">Example:</strong>
+    <ul>
+      {% for option in [
+        { id: "dawlish", text: "One marine plan area" },
+        { id: "dart", text: "Two marine plan areas" }
+      ] %}
+      <li>
+        {% if request.id === option.id %}
+        <span aria-current="true">{{ option.text }}</span>
+        {% else %}
+        <a href="{{ option.id }}?email={{ emailLayout }}" class="govuk-link govuk-link--no-visited-state">{{ option.text }}</a>
+        {% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+  </nav>
+  {% endif %}
+
   {% include "./_mail-chrome.html" %}
   {% set messageDate = request.receivedOffset | daysFromTodayShort %}
   {% include "./_message-header.html" %}
@@ -29,6 +100,7 @@
 
 {% block content %}
 
+{# Notify's email styles, scaled to the 21px body text used in the prototype emails #}
 <style>
 .govuk-width-container {
 	max-width: 640px;
@@ -37,25 +109,83 @@
     padding-top: 10px;
     padding-bottom: 40px;
 }
-p {
+p, .app-email-list li {
 	font-size: 21px;
 	font-family: Arial,Helvetica;
 	color: #000;
 }
+/* Notify's bulleted list */
+.app-email-list {
+    margin: 0 0 20px 20px;
+    padding: 0;
+    list-style-type: disc;
+}
+.app-email-list li {
+    margin: 5px 0;
+    padding: 0 0 0 5px;
+}
 .govuk-template {
     background-color: #fff;
 }
+/* Notify's ## sub-heading: body text size, bold, 10px above and 15px below */
+.app-email-subheading {
+    margin: 0 0 15px;
+    padding: 10px 0 0;
+    font-size: 21px;
+    font-weight: bold;
+    font-family: Arial,Helvetica;
+    color: #000;
+}
+.app-email-inset {
+    border-left: 10px solid #b1b4b6;
+    padding-left: 15px;
+    margin: 0 0 20px;
+}
+.app-email-inset p {
+    margin: 0 0 10px;
+}
 </style>
+
+{% if isAdvice %}
+
+  {% set closingDate = request.respondByOffset | daysFromToday %}
+
+  <p>Dear Natural England,</p>
+
+  <p>We need your advice on a marine licence application by {{ closingDate }}.</p>
+
+  {% if emailLayout === "subheadings" %}
+  <h3 class="app-email-subheading">Application name</h3>
+  <p>{{ request.applicationName }}</p>
+  <h3 class="app-email-subheading">Application reference</h3>
+  <p>{{ request.reference }}</p>
+  {# A bullet per area, as an application can be in more than one #}
+  <h3 class="app-email-subheading">{{ areaLabel }}</h3>
+  <ul class="app-email-list">
+    {% for area in (request.marinePlanArea if areaIsList else [request.marinePlanArea]) %}
+    <li>{{ area }}</li>
+    {% endfor %}
+  </ul>
+
+  {% else %}
+  <div class="app-email-inset">
+    <p>Application name: {{ request.applicationName }}</p>
+    <p>Application reference: {{ request.reference }}</p>
+    <p>{{ areaLabel }}: {{ areas }}</p>
+  </div>
+  {% endif %}
+
+  <p><a href="../sign-in/{{ request.id }}">Sign in to read our request and respond</a></p>
+
+{% else %}
 
 <p>Dear Natural England,</p>
 
-{% if isAdvice %}
-<p>We need your advice on marine licence application {{ request.reference }}. The closing date for responses is {{ request.respondByOffset | daysFromToday }}.</p>
-{% else %}
 <p>We have received marine licence application {{ request.reference }}. We are telling you about it because of your statutory responsibilities or interest in this area.</p>
-{% endif %}
 
-<p><a href="../sign-in/{{ request.id }}">{{ "Sign in to find out what you need to do" if isAdvice else "Sign in to view the application" }}</a></p>
+<p><a href="../sign-in/{{ request.id }}">Sign in to view the application</a></p>
+
+{% endif %}
 
 <p>From Marine Management Organisation</p>
 
