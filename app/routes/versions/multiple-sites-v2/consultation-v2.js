@@ -716,6 +716,9 @@ module.exports = function (router) {
     // View application layout: the long page by default, or broken up with
     // an accordion, MOJ side navigation (one page per section) or tabs
     if (['accordion', 'sidenav', 'tabs'].includes(query.appview)) keep.appview = query.appview;
+    // View application opened in a new tab from the respond page: no Back
+    // link or navigation. Kept so the side navigation pages keep it too.
+    if (query.newtab === 'true') keep.newtab = 'true';
     // Sort order, set by the column headings. Left out
     // of the URL it is closing date: soonest first, or on the Closed tab
     // most recent first.
@@ -807,10 +810,11 @@ module.exports = function (router) {
     res.locals.bothRoles = ['both', 'both-empty'].includes(data['consultation-v2-roles']);
     res.locals.rolesMode = data['consultation-v2-roles'] || 'consultee';
     // So the Consultations tab on LCML v4 pages comes back to the same versions
-    data['consultation-v2-version-query'] = urlWith('', keep, {});
+    data['consultation-v2-version-query'] = urlWith('', keep, { newtab: null });
 
     res.locals.versionParams = keep;
     res.locals.versionQuery = urlWith('', keep, {});
+    res.locals.newTab = keep.newtab === 'true';
     // The whole query string, filters included, for links between the list,
     // request and respond pages, so Back returns to the same view of the list
     res.locals.pageQuery = queryOf(req);
@@ -1323,11 +1327,10 @@ module.exports = function (router) {
         title: 'Marine plan policy supporting documents', navText: 'Supporting documents'
       });
     }
-    sections.push({
-      slug: 'other-information', group: 'Other information', kind: 'other',
-      title: 'Water Framework Directive and other permissions',
-      navText: 'WFD and other permissions'
-    });
+    sections.push(
+      { slug: 'water-framework-directive', group: 'Other information', kind: 'wfd', title: 'Water Framework Directive' },
+      { slug: 'other-permissions', group: 'Other information', kind: 'permissions', title: 'Other permissions' }
+    );
     return sections;
   }
 

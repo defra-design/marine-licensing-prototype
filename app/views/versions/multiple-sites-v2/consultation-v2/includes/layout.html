@@ -5,13 +5,28 @@
   England for this steel thread.
 
   Pages set navActive to "consultations" to highlight the nav, and
-  can set backLink to show a back link.
+  can set backLink to show a back link (with backLinkText to change
+  "Back"). With ?newtab=true (view application opened in a new tab from
+  the respond page) there is no navigation or back link, only the service
+  name, as on other pages that open in a new tab.
 #}
 {% extends "versions/multiple-sites-v2/layouts/low-complexity-v4.html" %}
 
 {% block header %}
+{% if newTab %}
+{% from "govuk/components/header/macro.njk" import govukHeader %}
+{% from "govuk/components/service-navigation/macro.njk" import govukServiceNavigation %}
+{{ govukHeader({
+  homepageUrl: "/",
+  classes: "govuk-header--full-width-border"
+}) }}
+{{ govukServiceNavigation({
+  serviceName: "Get permission for marine work"
+}) }}
+{% else %}
 {% from "versions/multiple-sites-v2/consultation-v2/includes/service-navigation.html" import consultationV2Header %}
 {{ consultationV2Header(navActive, versionQuery, bothRoles) }}
+{% endif %}
 {% endblock %}
 
 {% block beforeContent %}
@@ -19,8 +34,8 @@
     <div class="app-organisation-switcher">
         <span class="govuk-body-s govuk-!-font-weight-bold app-organisation-switcher__name">Natural England</span>
     </div>
-    {% if backLink %}
-    <a class="govuk-back-link govuk-link--no-visited-state" href="{{ backLink }}">Back</a>
+    {% if backLink and not newTab %}
+    <a class="govuk-back-link govuk-link--no-visited-state" href="{{ backLink }}">{{ backLinkText or "Back" }}</a>
     {% endif %}
 {% endblock %}
 

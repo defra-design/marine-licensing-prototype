@@ -5,7 +5,8 @@
 
 {% set navActive = "consultations" %}
 {% set pageTitle = request.applicationName %}
-{% set backLink = "javascript:history.back()" %}
+{% set backLink = "/versions/multiple-sites-v2/consultation-v2/request-details/" + request.id + versionQuery %}
+{% set backLinkText = "Back to the request for advice" if request.type === "response-required" else "Back to the application notification" %}
 
 {#
   View application, accordion version (?appview=accordion). The same
@@ -36,7 +37,6 @@
         {% endif %}
         {% set items = (items.push({
             heading: { text: s.title },
-            summary: { text: s.summary } if s.summary else undefined,
             content: { html: content }
         }), items) %}
         {% endfor %}

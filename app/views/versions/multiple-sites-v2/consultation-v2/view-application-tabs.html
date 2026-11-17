@@ -5,7 +5,8 @@
 
 {% set navActive = "consultations" %}
 {% set pageTitle = request.applicationName %}
-{% set backLink = "javascript:history.back()" %}
+{% set backLink = "/versions/multiple-sites-v2/consultation-v2/request-details/" + request.id + versionQuery %}
+{% set backLinkText = "Back to the request for advice" if request.type === "response-required" else "Back to the application notification" %}
 
 {#
   View application, tabs version (?appview=tabs). The same content as the
@@ -81,9 +82,14 @@
 {% endfor %}
 {% endset %}
 
-{% set otherHtml %}
-<h2 class="govuk-heading-m">Water Framework Directive and other permissions</h2>
-{{ sections_.otherInformation(app, 3) }}
+{% set wfdHtml %}
+<h2 class="govuk-heading-m">Water Framework Directive</h2>
+{{ sections_.wfd(app, 3) }}
+{% endset %}
+
+{% set permissionsHtml %}
+<h2 class="govuk-heading-m">Other permissions</h2>
+{{ sections_.otherPermissions(app, 3) }}
 {% endset %}
 
 <div class="govuk-grid-row">
@@ -98,7 +104,8 @@
                 { label: "Documents", id: "documents", panel: { html: documentsHtml } },
                 { label: "Sites and activities", id: "sites", panel: { html: sitesHtml } },
                 { label: "Marine plan policies", id: "marine-plan-policies", panel: { html: policiesHtml } },
-                { label: "WFD and other permissions", id: "other-information", panel: { html: otherHtml } }
+                { label: "WFD", id: "water-framework-directive", panel: { html: wfdHtml } },
+                { label: "Other permissions", id: "other-permissions", panel: { html: permissionsHtml } }
             ]
         }) }}
 

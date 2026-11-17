@@ -214,14 +214,17 @@
 {% endfor %}
 {% endmacro %}
 
-{# Water Framework Directive assessment and other permissions #}
-{% macro otherInformation(app, level) %}
+{# Water Framework Directive assessment #}
+{% macro wfd(app, level) %}
 {{ summaryCard("Water Framework Directive assessment", [
     ["Proposed works located within one nautical mile (1.85km) of low-water, in a tidal river or estuary", app.wfd.withinOneNauticalMile],
     ["Proposed works limited to one of the excluded activities", app.wfd.excludedActivities],
     ["Water Framework Directive assessment upload", documentLink(app.wfd.upload)]
 ], level) }}
+{% endmacro %}
 
+{# Other permissions #}
+{% macro otherPermissions(app, level) %}
 {{ summaryCard("Other permissions", [
     ["Special legal powers to do any of these proposed works", app.otherPermissions.specialLegalPowers],
     ["Located in a harbour authority area", published(app.otherPermissions.harbourAuthority)],
@@ -257,7 +260,9 @@
 {% if cardTitles %}{{ policyCard(s.policyGroup, s.title, level) }}{% else %}{{ policyList(s.policyGroup) }}{% endif %}
 {% elif s.kind === "supporting" %}
 {{ supportingDocuments(app, level) }}
-{% elif s.kind === "other" %}
-{{ otherInformation(app, level) }}
+{% elif s.kind === "wfd" %}
+{{ wfd(app, level) }}
+{% elif s.kind === "permissions" %}
+{{ otherPermissions(app, level) }}
 {% endif %}
 {% endmacro %}

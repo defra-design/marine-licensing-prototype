@@ -1,18 +1,17 @@
 {% extends "versions/multiple-sites-v2/consultation-v2/includes/layout.html" %}
 
 {% from "moj/components/side-navigation/macro.njk" import mojSideNavigation %}
-{% from "govuk/components/pagination/macro.njk" import govukPagination %}
 {% import "versions/multiple-sites-v2/consultation-v2/includes/application-sections.html" as sections_ %}
 
 {% set navActive = "consultations" %}
 {% set pageTitle = current.title + " – " + request.applicationName %}
-{% set backLink = "javascript:history.back()" %}
+{% set backLink = "/versions/multiple-sites-v2/consultation-v2/request-details/" + request.id + versionQuery %}
+{% set backLinkText = "Back to the request for advice" if request.type === "response-required" else "Back to the application notification" %}
 
 {#
   View application, side navigation version (?appview=sidenav). Each
   section is a page of its own, at view-application/<id>/<section>, with
-  MOJ side navigation to move between them and GOV.UK pagination at the
-  bottom to read them in order. The first section (Overview) is the page
+  MOJ side navigation to move between them. The first section (Overview) is the page
   at view-application/<id>. The sections come from applicationSections()
   in consultation-v2.js.
 #}
@@ -37,6 +36,7 @@
     <div class="govuk-grid-column-one-quarter">
         {{ mojSideNavigation({
             label: "Application sections",
+            classes: "govuk-!-padding-top-0",
             sections: navSections
         }) }}
     </div>
@@ -53,17 +53,6 @@
         {% else %}
         {{ sections_.sectionContent(current, request, documentGroups, 2, false) }}
         {% endif %}
-
-        {{ govukPagination({
-            previous: {
-                href: previous.href,
-                labelText: previous.title
-            } if previous else undefined,
-            next: {
-                href: next.href,
-                labelText: next.title
-            } if next else undefined
-        }) }}
     </div>
 </div>
 
