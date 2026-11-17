@@ -713,6 +713,9 @@ module.exports = function (router) {
     if (query.pagination === 'on') keep.pagination = 'on';
     // Open, Closed and Missed tabs: on by default
     if (query.tabs === 'off') keep.tabs = 'off';
+    // View application layout: the long page by default, or broken up with
+    // an accordion, MOJ side navigation (one page per section) or tabs
+    if (['accordion', 'sidenav', 'tabs'].includes(query.appview)) keep.appview = query.appview;
     // Sort order, set by the column headings. Left out
     // of the URL it is closing date: soonest first, or on the Closed tab
     // most recent first.
@@ -775,6 +778,10 @@ module.exports = function (router) {
       paginationOn: to({ pagination: 'on' }),
       tabsOff: to({ tabs: 'off' }),
       tabsOn: to({ tabs: null }),
+      appviewLong: to({ appview: null }),
+      appviewAccordion: to({ appview: 'accordion' }),
+      appviewSidenav: to({ appview: 'sidenav' }),
+      appviewTabs: to({ appview: 'tabs' }),
       rolesConsultee: to({ 'consultation-v2-roles': 'consultee' }),
       rolesBoth: to({ 'consultation-v2-roles': 'both' }),
       rolesBothEmpty: to({ 'consultation-v2-roles': 'both-empty' })
@@ -835,6 +842,7 @@ module.exports = function (router) {
     res.locals.passedOn = keep.passed !== 'off';
     res.locals.paginationOn = keep.pagination === 'on';
     res.locals.tabsOn = keep.tabs !== 'off';
+    res.locals.appviewMode = keep.appview || 'long';
     // Always render afresh, so the browser's Back button never shows an old
     // copy of a page from before assigning or responding
     res.set('Cache-Control', 'no-store');
@@ -1282,11 +1290,89 @@ module.exports = function (router) {
     return groups.filter(group => group.documents.length);
   }
 
-  // View application (read-only, like view details in LCML v4)
+  // The sections of a full application, for the versions that break the
+  // view application page up (accordion, side navigation and tabs). Each
+  // is a page of its own in the side navigation version.
+  function applicationSections(request) {
+    const app = request.application;
+    const sections = [
+      { slug: 'overview', group: 'Application', title: 'Overview', kind: 'overview' },
+      { slug: 'documents', group: 'Application', title: 'Documents', kind: 'documents' }
+    ];
+    app.sites.forEach((site, i) => {
+      const drawings = site.drawings.length;
+      sections.push({
+        slug: `site-${i + 1}`, group: 'Sites and activities', kind: 'site', site, siteNumber: i + 1,
+        title: `Site ${i + 1} – ${site.name}`,
+        navText: `Site ${i + 1} – ${site.name}`,
+        summary: `${site.activities.length} ${site.activities.length === 1 ? 'activity' : 'activities'}, ${drawings} construction ${drawings === 1 ? 'drawing' : 'drawings'}`
+      });
+    });
+    app.policyGroups.forEach(group => {
+      const count = group.policies.length;
+      sections.push({
+        slug: `policies-${group.category.toLowerCase()}`, group: 'Marine plan policies', kind: 'policies', policyGroup: group,
+        title: `Marine plan policies – ${group.category}`,
+        navText: group.category,
+        summary: `${count} ${count === 1 ? 'policy' : 'policies'}`
+      });
+    });
+    if ((app.supportingDocuments || []).length) {
+      sections.push({
+        slug: 'supporting-documents', group: 'Marine plan policies', kind: 'supporting',
+        title: 'Marine plan policy supporting documents', navText: 'Supporting documents'
+      });
+    }
+    sections.push({
+      slug: 'other-information', group: 'Other information', kind: 'other',
+      title: 'Water Framework Directive and other permissions',
+      navText: 'WFD and other permissions'
+    });
+    return sections;
+  }
+
+  // View application (read-only, like view details in LCML v4). The long
+  // page by default; ?appview= picks a broken-up version for applications
+  // that have a full application. The others always get the long page.
   router.get(`${base}/view-application/:requestId`, function (req, res) {
     const request = findRequest(req, res);
     if (!request) return;
-    res.render(`versions/${version}/${section}/view-application`, { request, documentGroups: documentsFor(request) });
+    const appview = res.locals.appviewMode;
+    const documentGroups = documentsFor(request);
+    if (!request.application || appview === 'long') {
+      return res.render(`versions/${version}/${section}/view-application`, { request, documentGroups });
+    }
+    const sections = applicationSections(request);
+    if (appview === 'sidenav') {
+      // The first section is the page you land on
+      return renderSidenavSection(req, res, request, sections, sections[0], documentGroups);
+    }
+    res.render(`versions/${version}/${section}/view-application-${appview}`, { request, documentGroups, sections });
+  });
+
+  // A section of the side navigation version, on a page of its own
+  function renderSidenavSection(req, res, request, sections, current, documentGroups) {
+    const i = sections.indexOf(current);
+    const pageBase = `${base}/view-application/${request.id}`;
+    const hrefFor = s => (s === sections[0] ? pageBase : `${pageBase}/${s.slug}`) + res.locals.versionQuery;
+    sections.forEach(s => { s.href = hrefFor(s); });
+    res.render(`versions/${version}/${section}/view-application-sidenav`, {
+      request, documentGroups, sections, current,
+      previous: sections[i - 1],
+      next: sections[i + 1]
+    });
+  }
+
+  router.get(`${base}/view-application/:requestId/:part`, function (req, res) {
+    const request = findRequest(req, res);
+    if (!request) return;
+    const sections = request.application ? applicationSections(request) : [];
+    const current = sections.find(s => s.slug === req.params.part);
+    // Section pages only exist in the side navigation version
+    if (res.locals.appviewMode !== 'sidenav' || !current) {
+      return res.redirect(`${base}/view-application/${request.id}${res.locals.versionQuery}`);
+    }
+    renderSidenavSection(req, res, request, sections, current, documentsFor(request));
   });
 
   // Respond

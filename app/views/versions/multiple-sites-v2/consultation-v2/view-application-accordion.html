@@ -1,0 +1,42 @@
+{% extends "versions/multiple-sites-v2/consultation-v2/includes/layout.html" %}
+
+{% from "govuk/components/accordion/macro.njk" import govukAccordion %}
+{% import "versions/multiple-sites-v2/consultation-v2/includes/application-sections.html" as sections_ %}
+
+{% set navActive = "consultations" %}
+{% set pageTitle = request.applicationName %}
+{% set backLink = "javascript:history.back()" %}
+
+{#
+  View application, accordion version (?appview=accordion). The same
+  content as the long page, all on one page, with each section in a GOV.UK
+  accordion so consultees can open only the ones they need. Each site and
+  each marine plan policy category is a section of its own, as accordions
+  cannot be nested.
+#}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+
+        {{ sections_.pageHeading(request) }}
+
+        {% set items = [] %}
+        {% for s in sections %}
+        {% set items = (items.push({
+            heading: { text: s.title },
+            summary: { text: s.summary } if s.summary else undefined,
+            content: { html: sections_.sectionContent(s, request, documentGroups, 3, false) }
+        }), items) %}
+        {% endfor %}
+
+        {{ govukAccordion({
+            id: "application-" + request.id,
+            items: items
+        }) }}
+
+    </div>
+</div>
+
+{% endblock %}

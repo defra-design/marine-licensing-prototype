@@ -121,6 +121,29 @@
   </div>
 
   <div class="app-version-tray__section">
+  {# The long page by default. The others break it up, for applications with
+     a full application (Hayling, Poole, Dart and Teignmouth); the rest always
+     get the long page. #}
+  <h3 class="govuk-heading-s govuk-!-margin-bottom-2">View application page</h3>
+  <ul class="govuk-list govuk-list--spaced">
+    {% for option in [
+      { mode: "long", text: "One long page", url: versionUrls.appviewLong },
+      { mode: "accordion", text: "Accordion", url: versionUrls.appviewAccordion },
+      { mode: "sidenav", text: "Side navigation (MOJ), a page per section", url: versionUrls.appviewSidenav },
+      { mode: "tabs", text: "Tabs", url: versionUrls.appviewTabs }
+    ] %}
+    <li>
+      {% if (appviewMode or "long") === option.mode %}
+      <span aria-current="true">{{ option.text }}</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ option.url if versionUrls else consultationsUrl }}" class="govuk-link govuk-link--no-visited-state">{{ option.text }}</a>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  </div>
+
+  <div class="app-version-tray__section">
   <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Assign method</h3>
   <ul class="govuk-list govuk-list--spaced">
     <li>
