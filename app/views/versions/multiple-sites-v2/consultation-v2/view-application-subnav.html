@@ -1,0 +1,105 @@
+{% extends "versions/multiple-sites-v2/consultation-v2/includes/layout.html" %}
+
+{% from "moj/components/sub-navigation/macro.njk" import mojSubNavigation %}
+{% import "versions/multiple-sites-v2/consultation-v2/includes/application-sections.html" as sections_ %}
+
+{% set navActive = "consultations" %}
+{% set pageTitle = current.heading + " – " + request.applicationName %}
+{% set backLink = "/versions/multiple-sites-v2/consultation-v2/request-details/" + request.id + versionQuery %}
+{% set backLinkText = "Back to the request for advice" if request.type === "response-required" else "Back to the application notification" %}
+
+{#
+  View application, sub navigation version (?appview=subnav). The same
+  pages as the tabs version, but each tab is a page of its own, with MOJ
+  sub navigation to move between them, so on small screens it stays split
+  up rather than becoming one long page. The pages come from SUBNAV_PAGES
+  in consultation-v2.js. The Sites and activities and Marine plan policies
+  pages start with links to each site or category, as on the tabs version.
+#}
+
+{# Back to the top of the page, at the reference number above the application name #}
+{% macro backToTop() %}
+<p class="govuk-body govuk-!-margin-bottom-8"><a class="govuk-link govuk-link--no-visited-state" href="#top">Back to top</a></p>
+{% endmacro %}
+
+{# Links down to each site or category on the page. A bold paragraph, not
+   a heading, so it does not add a level under the page's h2 #}
+{% macro onThisPage(items) %}
+<nav aria-label="On this page">
+    <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-2">On this page</p>
+    <ul class="govuk-list">
+        {% for s in items %}
+        <li><a class="govuk-link govuk-link--no-visited-state" href="#{{ s.slug }}">{{ s.navText }}</a></li>
+        {% endfor %}
+    </ul>
+</nav>
+{% endmacro %}
+
+{% block content %}
+
+{% set app = request.application %}
+{% set siteSections = [] %}
+{% set policySections = [] %}
+{% for s in sections %}
+{% if s.kind === "site" %}{% set siteSections = (siteSections.push(s), siteSections) %}{% endif %}
+{% if s.kind === "policies" or s.kind === "supporting" %}{% set policySections = (policySections.push(s), policySections) %}{% endif %}
+{% endfor %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+
+        {{ sections_.pageHeading(request) }}
+
+        {{ mojSubNavigation({
+            label: "Application sections",
+            items: pages
+        }) }}
+
+        <h2 class="govuk-heading-m">{{ current.heading }}</h2>
+
+        {% if current.slug === "overview" %}
+        {{ sections_.overview(request, 3) }}
+
+        {% elif current.slug === "documents" %}
+        {{ sections_.documentsCard(documentGroups, 3) }}
+
+        {# Links down to each site when there is more than one, with a Back
+           to top link after each site #}
+        {% elif current.slug === "sites" %}
+        {% if siteSections.length > 1 %}
+        {{ onThisPage(siteSections) }}
+        {% endif %}
+        {% for s in siteSections %}
+        <div id="{{ s.slug }}">
+        {{ sections_.site(s.site, s.siteNumber, 3) }}
+        {% if siteSections.length > 1 %}
+        {{ backToTop() }}
+        {% endif %}
+        </div>
+        {% endfor %}
+
+        {% elif current.slug === "marine-plan-policies" %}
+        {{ onThisPage(policySections) }}
+        {% for s in policySections %}
+        <div id="{{ s.slug }}">
+        {% if s.kind === "policies" %}
+        {{ sections_.policyCard(s.policyGroup, s.navText, 3) }}
+        {% else %}
+        <h3 class="govuk-heading-m govuk-!-margin-top-6">{{ s.navText }}</h3>
+        {{ sections_.supportingDocuments(app, 4) }}
+        {% endif %}
+        {{ backToTop() }}
+        </div>
+        {% endfor %}
+
+        {% elif current.slug === "water-framework-directive" %}
+        {{ sections_.wfd(app, 3) }}
+
+        {% elif current.slug === "other-permissions" %}
+        {{ sections_.otherPermissions(app, 3) }}
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock %}

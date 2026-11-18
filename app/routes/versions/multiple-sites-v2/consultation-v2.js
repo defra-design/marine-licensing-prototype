@@ -714,8 +714,9 @@ module.exports = function (router) {
     // Open, Closed and Missed tabs: on by default
     if (query.tabs === 'off') keep.tabs = 'off';
     // View application layout: the long page by default, or broken up with
-    // an accordion, MOJ side navigation (one page per section) or tabs
-    if (['accordion', 'sidenav', 'tabs'].includes(query.appview)) keep.appview = query.appview;
+    // an accordion, MOJ side navigation (one page per section), tabs or MOJ
+    // sub navigation (one page per tab)
+    if (['accordion', 'sidenav', 'tabs', 'subnav'].includes(query.appview)) keep.appview = query.appview;
     // View application opened in a new tab from the respond page: no Back
     // link or navigation. Kept so the side navigation pages keep it too.
     if (query.newtab === 'true') keep.newtab = 'true';
@@ -785,6 +786,7 @@ module.exports = function (router) {
       appviewAccordion: to({ appview: 'accordion' }),
       appviewSidenav: to({ appview: 'sidenav' }),
       appviewTabs: to({ appview: 'tabs' }),
+      appviewSubnav: to({ appview: 'subnav' }),
       rolesConsultee: to({ 'consultation-v2-roles': 'consultee' }),
       rolesBoth: to({ 'consultation-v2-roles': 'both' }),
       rolesBothEmpty: to({ 'consultation-v2-roles': 'both-empty' })
@@ -1350,6 +1352,9 @@ module.exports = function (router) {
       // The first section is the page you land on
       return renderSidenavSection(req, res, request, sections, sections[0], documentGroups);
     }
+    if (appview === 'subnav') {
+      return renderSubnavPage(req, res, request, sections, SUBNAV_PAGES[0], documentGroups);
+    }
     res.render(`versions/${version}/${section}/view-application-${appview}`, { request, documentGroups, sections });
   });
 
@@ -1366,12 +1371,45 @@ module.exports = function (router) {
     });
   }
 
+  // The pages of the sub navigation version: one for each tab of the tabs
+  // version, so Sites and activities and Marine plan policies each hold all
+  // their sites or categories. text is the sub navigation link, heading the
+  // h2 on the page.
+  const SUBNAV_PAGES = [
+    { slug: 'overview', text: 'Overview', heading: 'Overview' },
+    { slug: 'documents', text: 'Documents', heading: 'Documents' },
+    { slug: 'sites', text: 'Sites and activities', heading: 'Sites and activities' },
+    { slug: 'marine-plan-policies', text: 'Marine plan policies', heading: 'Marine plan policies' },
+    { slug: 'water-framework-directive', text: 'WFD', heading: 'Water Framework Directive' },
+    { slug: 'other-permissions', text: 'Other permissions', heading: 'Other permissions' }
+  ];
+
+  // A page of the sub navigation version. The first (Overview) is the page
+  // at view-application/<id>, the others at view-application/<id>/<page>.
+  function renderSubnavPage(req, res, request, sections, current, documentGroups) {
+    const pageBase = `${base}/view-application/${request.id}`;
+    const pages = SUBNAV_PAGES.map((page, i) => Object.assign({}, page, {
+      href: (i === 0 ? pageBase : `${pageBase}/${page.slug}`) + res.locals.versionQuery,
+      active: page.slug === current.slug
+    }));
+    res.render(`versions/${version}/${section}/view-application-subnav`, {
+      request, documentGroups, sections, pages, current
+    });
+  }
+
   router.get(`${base}/view-application/:requestId/:part`, function (req, res) {
     const request = findRequest(req, res);
     if (!request) return;
     const sections = request.application ? applicationSections(request) : [];
+    if (res.locals.appviewMode === 'subnav') {
+      const page = SUBNAV_PAGES.find(p => p.slug === req.params.part);
+      if (request.application && page) {
+        return renderSubnavPage(req, res, request, sections, page, documentsFor(request));
+      }
+      return res.redirect(`${base}/view-application/${request.id}${res.locals.versionQuery}`);
+    }
     const current = sections.find(s => s.slug === req.params.part);
-    // Section pages only exist in the side navigation version
+    // Otherwise section pages only exist in the side navigation version
     if (res.locals.appviewMode !== 'sidenav' || !current) {
       return res.redirect(`${base}/view-application/${request.id}${res.locals.versionQuery}`);
     }
