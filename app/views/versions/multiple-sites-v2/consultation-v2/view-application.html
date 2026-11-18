@@ -2,6 +2,7 @@
 
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "versions/multiple-sites-v2/consultation-v2/includes/macros.html" import published %}
+{% import "versions/multiple-sites-v2/consultation-v2/includes/application-sections.html" as sections_ %}
 
 {% set navActive = "consultations" %}
 {# The application's status in LCML v4, which is Consultation while it is out to consultees #}
@@ -66,29 +67,6 @@
         </div>
         {% endif %}
 
-        {# Every document at the top, as on the public register, so the
-           consultee can open the assessments and drawings without hunting
-           through the cards. Grouped under the task list section each was
-           uploaded in. Drawings are named by their site, with the file type
-           and size. Links are dead in the prototype. #}
-        <h2 class="govuk-heading-m">Documents</h2>
-        {% for group in documentGroups %}
-        <h3 class="govuk-heading-s govuk-!-margin-bottom-2">{{ group.heading }}</h3>
-        <ul class="govuk-list">
-            {% for file in group.documents %}
-            <li>
-                {% if file.withheld %}
-                {{ file.title }}: <span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">Redacted</span>
-                {% else %}
-                <a class="govuk-link govuk-link--no-visited-state" href="#">{{ file.title }} ({{ file.format }}, {{ file.size }})</a>
-                {% endif %}
-            </li>
-            {% endfor %}
-        </ul>
-        {% endfor %}
-
-        <hr class="govuk-section-break govuk-section-break--l govuk-section-break--visible">
-
         {% set app = request.application %}
         {% if app %}
 
@@ -107,9 +85,10 @@
             ["Preferred start and end dates of the licence", request.startAndEndDates]
         ]) }}
 
-        {{ summaryCard("Providing the site location", [
-            ["Method of providing site location", app.siteLocationMethod]
-        ]) }}
+        {# Every document in one card, after the application details as in
+           the other versions, grouped under the task list section each was
+           uploaded in. Links are dead in the prototype. #}
+        {{ sections_.documentsCard(documentGroups, 2) }}
 
         {% for site in app.sites %}
         {% set siteNumber = loop.index %}
@@ -260,6 +239,8 @@
             ["Proposed works summary", request.summary],
             ["Preferred start and end dates of the licence", request.startAndEndDates]
         ]) }}
+
+        {{ sections_.documentsCard(documentGroups, 2) }}
 
         {# Site cards follow the LCML v4 pontoon view-details page #}
         <div class="govuk-summary-card">

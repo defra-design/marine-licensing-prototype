@@ -37,7 +37,7 @@
 </div>
 {% endmacro %}
 
-{# Application overview, application details and how the site location was provided #}
+{# Application overview and application details #}
 {% macro overview(request, level) %}
 {% set app = request.application %}
 {{ summaryCard("Application overview", [
@@ -52,10 +52,6 @@
     ["Application name", request.applicationName],
     ["Proposed works summary", published(request.summary)],
     ["Preferred start and end dates of the licence", request.startAndEndDates]
-], level) }}
-
-{{ summaryCard("Providing the site location", [
-    ["Method of providing site location", app.siteLocationMethod]
 ], level) }}
 {% endmacro %}
 

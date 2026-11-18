@@ -1251,6 +1251,7 @@ module.exports = function (router) {
     if (!request) return;
     res.render(`versions/${version}/${section}/request-details`, {
       request,
+      siteLocationFiles: siteLocationFiles(request),
       assignBanner: takeAssignBanner(req, 'request')
     });
   });
@@ -1271,16 +1272,29 @@ module.exports = function (router) {
       filename,
       withheld: !!doc.withheld,
       format: filename.split('.').pop().toUpperCase(),
-      size: kb >= 1000 ? `${(kb / 1024).toFixed(1)} MB` : `${kb} KB`
+      size: doc.size || (kb >= 1000 ? `${(kb / 1024).toFixed(1)} MB` : `${kb} KB`)
     };
+  }
+
+  // The site location as GIS data, for consultees' constraints checks and
+  // triage: a KML file and a Shapefile (zipped, as a Shapefile is several
+  // files). One of each, covering every site. The service makes them from
+  // the site location, however the applicant provided it. Sizes are made up,
+  // a little bigger for each site.
+  function siteLocationFiles(request) {
+    const siteCount = request.application ? request.application.sites.length : 1;
+    return [
+      documentFor({ filename: `${request.id}-site-location.kml`, size: `${2 + siteCount} KB` }, 'Site location KML file'),
+      documentFor({ filename: `${request.id}-site-location-shapefile.zip`, size: `${6 + 3 * siteCount} KB` }, 'Site location Shapefile')
+    ];
   }
 
   // Every document in the application, grouped under the task list section
   // it was uploaded in. Groups with nothing in them are left out.
   function documentsFor(request) {
     const app = request.application;
-    // The site coordinates first, then the drawings site by site
-    const sites = [documentFor('sitecoordinates.zip', 'Site coordinates', `${request.id}-sitecoordinates.zip`)];
+    // The site location files first, then the drawings site by site
+    const sites = siteLocationFiles(request);
     if (app) {
       app.sites.forEach(site => {
         site.drawings.forEach((drawing, d) => sites.push(documentFor(drawing, `${site.name} – Construction drawing ${d + 1}`)));
