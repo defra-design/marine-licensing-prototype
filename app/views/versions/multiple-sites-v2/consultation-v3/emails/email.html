@@ -5,13 +5,19 @@
     notify-only       - we are telling you about the application
   Body copy and subject lines are from the content designer's Notify templates.
 
+  Both emails name the application, its marine plan area(s) and reference as
+  Notify sub-headings (## in the template), so whoever picks the email up can
+  route it without signing in. Notify renders ## as an h3 the same size as
+  body text but bold, with 10px above and 15px below.
+
   The webmail chrome and message header are copies of the LCML v4 email ones,
   addressed to Natural England rather than an applicant.
 #}
 {% extends "versions/multiple-sites-v2/layouts/email.html" %}
 
 {% set isAdvice = request.type === "response-required" %}
-{% set messageSubject = "Consultation - Request for advice for a marine licence application" if isAdvice else "Consultation - notification of a marine licence application" %}
+{% set messageSubject = ("Request for advice: " if isAdvice else "For information: ") + request.reference + ", " + request.applicationName %}
+{% set closingDate = request.respondByOffset | daysFromToday %}
 
 {% block pageTitle %}
   Email - {{ messageSubject }}
@@ -37,10 +43,29 @@
     padding-top: 10px;
     padding-bottom: 40px;
 }
-p {
+p, .app-email-list li {
 	font-size: 21px;
 	font-family: Arial,Helvetica;
 	color: #000;
+}
+/* Notify's bulleted list */
+.app-email-list {
+    margin: 0 0 20px 20px;
+    padding: 0;
+    list-style-type: disc;
+}
+.app-email-list li {
+    margin: 5px 0;
+    padding: 0 0 0 5px;
+}
+/* Notify's ## sub-heading: body text size, bold, 10px above and 15px below */
+.app-email-subheading {
+    margin: 0 0 15px;
+    padding: 10px 0 0;
+    font-size: 21px;
+    font-weight: bold;
+    font-family: Arial,Helvetica;
+    color: #000;
 }
 .govuk-template {
     background-color: #fff;
@@ -50,12 +75,35 @@ p {
 <p>Dear Natural England,</p>
 
 {% if isAdvice %}
-<p>We need your advice on marine licence application {{ request.reference }}. The closing date for responses is {{ request.respondByOffset | daysFromToday }}.</p>
+<p>We need your advice on a marine licence application by {{ closingDate }}.</p>
 {% else %}
-<p>We have received marine licence application {{ request.reference }}. We are telling you about it because of your statutory responsibilities or interest in this area.</p>
+<p>This application notification is for your information only. It is not a request for advice, and you do not need to respond.</p>
+
+<p>We are telling you about a marine licence application in an area where you have statutory responsibilities or an interest.</p>
+
+<p>If you have concerns or information you want to tell us, you can respond until {{ closingDate }}.</p>
 {% endif %}
 
-<p><a href="../sign-in/{{ request.id }}">{{ "Sign in to find out what you need to do" if isAdvice else "Sign in to view the application" }}</a></p>
+<h3 class="app-email-subheading">Application name</h3>
+<p>{{ request.applicationName }}</p>
+
+{# Several areas are a bulleted list, one area is a plain paragraph #}
+{% if request.marinePlanAreas.length > 1 %}
+<h3 class="app-email-subheading">Marine plan areas</h3>
+<ul class="app-email-list">
+  {% for area in request.marinePlanAreas %}
+  <li>{{ area }}</li>
+  {% endfor %}
+</ul>
+{% else %}
+<h3 class="app-email-subheading">Marine plan area</h3>
+<p>{{ request.marinePlanAreas[0] }}</p>
+{% endif %}
+
+<h3 class="app-email-subheading">Application reference</h3>
+<p>{{ request.reference }}</p>
+
+<p><a href="../sign-in/{{ request.id }}">{{ "Sign in to read our request and respond" if isAdvice else "Sign in to view the application" }}</a></p>
 
 <p>From Marine Management Organisation</p>
 

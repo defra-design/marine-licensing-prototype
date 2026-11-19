@@ -390,9 +390,14 @@ module.exports = function (router) {
   // it can be seen and changed through View data like any other key.
   function statusFor(req, request) {
     const key = `consultation-v3-${request.id}-status`;
+    // "No response needed" was renamed "For information" (Nov 2026 research).
+    // Sessions from before the rename still hold the old name.
+    if (req.session.data[key] === 'No response needed') {
+      req.session.data[key] = 'For information';
+    }
     if (!req.session.data[key]) {
       req.session.data[key] = request.seededResponse ? 'Responded'
-        : request.type === 'response-required' ? 'Response needed' : 'No response needed';
+        : request.type === 'response-required' ? 'Response needed' : 'For information';
     }
     return req.session.data[key];
   }
@@ -464,6 +469,11 @@ module.exports = function (router) {
       closingUrgent: respondByOffset <= CLOSING_URGENT_DAYS,
       // Nobody can respond once the closing date has passed
       closed: respondByOffset < 0,
+      // Nothing to assign once responded, or once an application notification
+      // has closed, as nobody could respond to it. Missed requests for advice
+      // can still be assigned: an extension may have been agreed offline, so
+      // the request can be assigned ready for when it reopens.
+      assignable: status !== 'Responded' && !(respondByOffset < 0 && request.type !== 'response-required'),
       response: req.session.data[`consultation-v3-${request.id}-response`] || (request.seededResponse && request.seededResponse.text),
       respondedDate: req.session.data[`consultation-v3-${request.id}-responded-date`] || (request.seededResponse && dateFromToday(request.seededResponse.respondedOffset)),
       // Who sent the response, as it might not be you
@@ -504,7 +514,7 @@ module.exports = function (router) {
     { value: 'response-required', text: 'Request for advice' },
     { value: 'notify-only', text: 'Application notification' }
   ];
-  const STATUS_OPTIONS = ['Response needed', 'No response needed', 'Responded'];
+  const STATUS_OPTIONS = ['Response needed', 'For information', 'Responded'];
   // Only offered when the missed case is shown (not with ?passed=off)
   const STATUS_OPTIONS_WITH_MISSED = STATUS_OPTIONS.concat('Missed');
   // Only offered with the MOJ contextual date (not with ?deadline=off), and only
@@ -541,7 +551,7 @@ module.exports = function (router) {
   // filters.
   const TAB_FILTERS = {
     open: { columns: [['show'], ['type', 'closing'], ['area']], closing: ['soon'] },
-    closed: { columns: [['type', 'status'], ['respondedBy'], ['area']], statuses: ['Responded', 'No response needed'] },
+    closed: { columns: [['type', 'status'], ['respondedBy'], ['area']], statuses: ['Responded', 'For information'] },
     missed: { columns: [] },
     all: { columns: [['show'], ['type'], ['status', 'closing']] }
   };
@@ -879,7 +889,7 @@ module.exports = function (router) {
   // How each column of the case list sorts. The list is always sorted here,
   // on the server: a column heading reloads the page with ?sort= and ?order=.
   // Each column has its own order, then tie-breakers (see TIE_BREAKERS).
-  const STATUS_RANK = { 'Response needed': 1, 'Missed': 2, 'No response needed': 3, 'Responded': 4 };
+  const STATUS_RANK = { 'Response needed': 1, 'Missed': 2, 'For information': 3, 'Responded': 4 };
   const TYPE_RANK = { 'response-required': 1, 'notify-only': 2 };
   const byText = key => (a, b) => (a[key] || '').localeCompare(b[key] || '');
   const byClosingDate = (a, b) => a.respondByOffset - b.respondByOffset;
@@ -1107,8 +1117,8 @@ module.exports = function (router) {
     const backToConsultations = () => req.session.save(() => res.redirect(req.originalUrl));
     const [action, rowId] = (data['consultation-v3-assign-action'] || '').split(':');
     let ids = rowId ? [rowId] : [].concat(data['consultation-v3-assign-ids'] || []);
-    // Responded cases have nothing left to assign
-    ids = ids.filter(id => id && id !== '_unchecked' && REQUESTS[id] && statusFor(req, REQUESTS[id]) !== 'Responded');
+    // Responded cases and closed notifications have nothing left to assign
+    ids = ids.filter(id => id && id !== '_unchecked' && REQUESTS[id] && withStatus(req, REQUESTS[id]).assignable);
     delete data['consultation-v3-assign-action'];
     delete data['consultation-v3-assign-ids'];
     const reassignTo = data['consultation-v3-reassign-to'];
@@ -1173,7 +1183,7 @@ module.exports = function (router) {
   router.get(`${base}/assign/:requestId`, function (req, res) {
     const request = findRequest(req, res);
     if (!request) return;
-    if (request.status === 'Responded') return res.redirect(`${base}/request-details/${request.id}${queryOf(req)}`);
+    if (!request.assignable) return res.redirect(`${base}/request-details/${request.id}${queryOf(req)}`);
     req.session.data['consultation-v3-reassign-ids'] = [request.id];
     req.session.data['consultation-v3-reassign-from'] = request.id;
     req.session.save(() => res.redirect(`${base}/assign-to-someone-else${queryOf(req)}`));

@@ -82,7 +82,18 @@
         <span class="govuk-caption-l">{{ request.reference }} – {{ request.applicationName }}</span>
         <h1 class="govuk-heading-l">Respond to this marine licence application</h1>
 
+        <p class="govuk-body">The closing date for responses is {{ request.respondByOffset | daysFromToday }}.</p>
         <p class="govuk-body"><a href="../view-application/{{ request.id }}{{ versionQuery }}{{ '&' if versionQuery else '?' }}newtab=true" class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">View the application (opens in new tab)</a></p>
+
+        {# The notification version of "Help with providing your advice": nothing has been asked #}
+        {% set notificationHelpHtml %}
+        <p class="govuk-body">Focus on matters within your area of expertise or responsibility.</p>
+        <p class="govuk-body govuk-!-margin-bottom-0">It helps us if, for each point you raise, you tell us what the issue is, why it matters and what could avoid or reduce it.</p>
+        {% endset %}
+        {{ govukDetails({
+            summaryText: "Help with your response",
+            html: notificationHelpHtml
+        }) }}
 
         <form action="{{ request.id }}-router{{ pageQuery }}" method="post" novalidate>
             {{ govukTextarea({
@@ -94,6 +105,7 @@
                     classes: "govuk-label--m",
                     isPageHeading: false
                 },
+                hint: { text: "Write your response in plain language so the applicant can understand it. Explain any technical terms." },
                 errorMessage: { text: error } if error else undefined
             }) }}
 

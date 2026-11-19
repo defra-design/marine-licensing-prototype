@@ -22,6 +22,9 @@
 {% set tableError = assignError and assignError.field === "table" %}
 {% set reassignError = assignError and assignError.field === "reassign" %}
 {% set checkboxes = assignMode === "checkboxes" %}
+{# No tick boxes or Assign buttons when nothing in the list can be assigned
+   (responded cases and closed notifications), as on the Closed tab #}
+{% set selectable = checkboxes and (requests | selectattr("assignable") | length) > 0 %}
 
 {% block head %}
   {{ super() }}
@@ -29,13 +32,15 @@
   {% include "versions/multiple-sites-v2/consultation-v3/includes/wide-layout-styles.html" %}
   <style>
     #consultations-table .app-nowrap { white-space: nowrap; }
-    /* Wide version: keep the status tags on one line once there is room, so
-       a two-line "No response needed" does not stand out more than "Response
-       needed". Measured: the table has room from about 1330px with the side
-       filter closed (or the horizontal bar), and 1690px with it open. MOJ
-       adds moj-js-hidden to the side filter when it is closed. Below these
-       the tags wrap as usual. GOV.UK tags have a 160px max-width, which has
-       to go too, or the text runs over the right-hand padding. */
+    /* Wide version: keep the status tags on one line once there is room,
+       so the rows are not taller than they need to be. Without this,
+       "Response needed" and "For information" wrap to two lines even when
+       the table has room. Measured: the table has room from about 1330px
+       with the side filter closed (or the horizontal bar), and 1690px with
+       it open. MOJ adds moj-js-hidden to the side filter when it is closed.
+       Below these the tags wrap as usual. GOV.UK tags have a 160px
+       max-width, which has to go too, or the text runs over the right-hand
+       padding. */
     @media (min-width: 1340px) {
       .page-consultation-full-width:not(:has(.moj-filter:not(.moj-js-hidden))) #consultations-table .app-status-cell .govuk-tag { white-space: nowrap; max-width: none; }
     }
@@ -407,7 +412,7 @@
                     </div>
                     {% endif %}
 
-                    {% if checkboxes and reassignMode === "single" %}
+                    {% if selectable and reassignMode === "single" %}
                     {#
                       One Assign button instead of Assign to me, Unassign from me
                       and Assign to someone else. It goes to the separate page,
@@ -421,7 +426,7 @@
                             value: "choose"
                         }) }}
                     </div>
-                    {% elif checkboxes %}
+                    {% elif selectable %}
                     <div class="govuk-button-group">
                         {{ govukButton({
                             text: "Assign to me",
@@ -454,7 +459,7 @@
                     {% endif %}
                 </div>
 
-                {% if checkboxes and reassignMode === "panel" %}
+                {% if selectable and reassignMode === "panel" %}
                 {#
                   Assign to someone else, in-page panel version. Opens between
                   the buttons and the table, so the ticked cases stay in view.
@@ -518,7 +523,7 @@
             {% if tableError %}
             <p class="govuk-error-message" id="consultations-error"><span class="govuk-visually-hidden">Error:</span> {{ assignError.text }}</p>
             {% endif %}
-            <div{% if checkboxes %} data-module="moj-multi-select"{% endif %}>
+            <div{% if selectable %} data-module="moj-multi-select"{% endif %}>
             {#
               MOJ scrollable pane: when the table is too wide it scrolls
               sideways, with a shadow at the edge showing there is more. The
@@ -533,7 +538,7 @@
                 <caption class="govuk-table__caption govuk-table__caption--m govuk-visually-hidden">Consultation requests for Natural England</caption>
                 <thead class="govuk-table__head">
                     <tr class="govuk-table__row">
-                        {% if checkboxes %}
+                        {% if selectable %}
                         {# MOJ multi-select puts the Select all tick box in here #}
                         <th scope="col" class="govuk-table__header app-select-cell" id="select-all"></th>
                         {% endif %}
@@ -565,10 +570,10 @@
                     #}
                     {% set rowOrder = loop.index if sort.order === 'ascending' else -loop.index %}
                     <tr class="govuk-table__row">
-                        {% if checkboxes %}
+                        {% if selectable %}
                         <td class="govuk-table__cell app-select-cell">
-                            {# Not once responded: there is nothing left to assign #}
-                            {% if request.status !== "Responded" %}
+                            {# Not once responded, or once a notification has closed: there is nothing left to assign #}
+                            {% if request.assignable %}
                             <div class="govuk-checkboxes__item govuk-checkboxes--small moj-multi-select__checkbox">
                                 <input type="checkbox" class="govuk-checkboxes__input" id="select-{{ request.id }}" name="consultation-v3-assign-ids" value="{{ request.id }}"{% if request.id in selected %} checked{% endif %}{% if tableError %} aria-describedby="consultations-error"{% endif %}>
                                 <label class="govuk-label govuk-checkboxes__label moj-multi-select__toggle-label" for="select-{{ request.id }}">
@@ -590,7 +595,7 @@
                         <td class="govuk-table__cell" data-sort-value="{{ rowOrder }}">{{ assignedTo(request) }}</td>
                         {% if not checkboxes %}
                         <td class="govuk-table__cell">
-                            {% if request.status !== "Responded" %}
+                            {% if request.assignable %}
                             {{ govukButton({
                                 html: ("Unassign from me" if request.assignedToMe else "Assign to me") + '<span class="govuk-visually-hidden"> – ' + request.applicationName + '</span>',
                                 classes: "govuk-button--secondary app-row-button",

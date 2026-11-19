@@ -6,7 +6,7 @@
 
 {% set navActive = "consultations" %}
 {% set isAdvice = request.type === "response-required" %}
-{% set pageHeading = "Request for specialist advice for a marine licence application" if isAdvice else "Notification of a marine licence application" %}
+{% set pageHeading = "Request for advice" if isAdvice else "Application notification" %}
 {% set pageTitle = pageHeading %}
 {# pageQuery carries the page versions (and the list's filters) between pages #}
 {% set backLink = "../consultations" + pageQuery %}
@@ -34,8 +34,9 @@
 
         {# Not once responded, when they are no longer relevant #}
         {% if not isAdvice and request.status !== "Responded" %}
-        <p class="govuk-body">We are telling you about this marine licence application because of your statutory responsibilities or interest in this area.</p>
-        <p class="govuk-body">You do not need to respond unless you have specific concerns or information you want to tell us.</p>
+        <p class="govuk-body">This is for your information only. It is not a request for advice, and you do not need to respond.</p>
+        <p class="govuk-body">We are telling you about this marine licence application because you have statutory responsibilities or an interest in this area.</p>
+        <p class="govuk-body">If you have concerns or information you want to tell us about this application, you can respond until {{ request.respondByOffset | daysFromToday }}.</p>
         {% endif %}
 
         <h2 class="govuk-heading-m">{{ "About this request" if isAdvice else "About this notification" }}</h2>
@@ -63,8 +64,9 @@
           below the Assigned to row. Goes to the same separate page as the
           single Assign selected button on the list.
         #}
-        {# Not once a response has been sent: there is nothing left to assign #}
-        {% if reqassignMode === "under" and request.status !== "Responded" %}
+        {# Not once a response has been sent, or once a notification has closed:
+           there is nothing left to assign #}
+        {% if reqassignMode === "under" and request.assignable %}
         {{ govukButton({ text: "Assign", href: assignUrl, classes: "govuk-button--secondary" }) }}
         {% endif %}
 
@@ -136,7 +138,7 @@
         {# Only the person assigned to a request can respond to it, and nobody
            can once the closing date has passed #}
         {% elif not request.assignedToMe or request.closed %}
-        {% if assignAtBottom %}
+        {% if assignAtBottom and request.assignable %}
         {# No respond button: Assign is the next step #}
         {{ govukButton({ text: "Assign", href: assignUrl, classes: "govuk-button--secondary" }) }}
         {% endif %}
@@ -151,12 +153,17 @@
             {% endif %}
         </div>
         {% else %}
-        <p class="govuk-body">
-            <a href="../respond/{{ request.id }}{{ pageQuery }}" class="govuk-link govuk-link--no-visited-state">Respond to this application</a>
-        </p>
-        {% if assignAtBottom %}
-        {{ govukButton({ text: "Assign", href: assignUrl, classes: "govuk-button--secondary" }) }}
-        {% endif %}
+        {# A button, as for requests for advice, so it is clear how the person
+           assigned can respond. Responding is still optional. #}
+        <div class="govuk-button-group">
+            {{ govukButton({
+                text: "Respond to this application",
+                href: "../respond/" + request.id + pageQuery
+            }) }}
+            {% if assignAtBottom %}
+            {{ govukButton({ text: "Assign", href: assignUrl, classes: "govuk-button--secondary" }) }}
+            {% endif %}
+        </div>
         {% endif %}
 
     </div>
