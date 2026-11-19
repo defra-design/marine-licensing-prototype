@@ -1,11 +1,11 @@
-{% extends "versions/multiple-sites-v2/consultation-v2/includes/layout.html" %}
+{% extends "versions/multiple-sites-v2/consultation-v3/includes/layout.html" %}
 
 {% from "moj/components/side-navigation/macro.njk" import mojSideNavigation %}
-{% import "versions/multiple-sites-v2/consultation-v2/includes/application-sections.html" as sections_ %}
+{% import "versions/multiple-sites-v2/consultation-v3/includes/application-sections.html" as sections_ %}
 
 {% set navActive = "consultations" %}
 {% set pageTitle = current.title + " – " + request.applicationName %}
-{% set backLink = "/versions/multiple-sites-v2/consultation-v2/request-details/" + request.id + versionQuery %}
+{% set backLink = "/versions/multiple-sites-v2/consultation-v3/request-details/" + request.id + versionQuery %}
 {% set backLinkText = "Back to the request for advice" if request.type === "response-required" else "Back to the application notification" %}
 
 {#
@@ -13,7 +13,7 @@
   section is a page of its own, at view-application/<id>/<section>, with
   MOJ side navigation to move between them. The first section (Overview) is the page
   at view-application/<id>. The sections come from applicationSections()
-  in consultation-v2.js.
+  in consultation-v3.js.
 #}
 
 {% block content %}

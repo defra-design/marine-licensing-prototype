@@ -1,11 +1,11 @@
-{% extends "versions/multiple-sites-v2/consultation-v2/includes/layout.html" %}
+{% extends "versions/multiple-sites-v2/consultation-v3/includes/layout.html" %}
 
 {% from "govuk/components/tabs/macro.njk" import govukTabs %}
-{% import "versions/multiple-sites-v2/consultation-v2/includes/application-sections.html" as sections_ %}
+{% import "versions/multiple-sites-v2/consultation-v3/includes/application-sections.html" as sections_ %}
 
 {% set navActive = "consultations" %}
 {% set pageTitle = request.applicationName %}
-{% set backLink = "/versions/multiple-sites-v2/consultation-v2/request-details/" + request.id + versionQuery %}
+{% set backLink = "/versions/multiple-sites-v2/consultation-v3/request-details/" + request.id + versionQuery %}
 {% set backLinkText = "Back to the request for advice" if request.type === "response-required" else "Back to the application notification" %}
 
 {#

@@ -93,25 +93,13 @@
                     {% endif %}
                 </dd>
             </div>
-            {# GIS data for constraints checks and triage, after the marine plan areas
-               so the location rows sit together. Links are dead in the prototype. #}
-            <div class="govuk-summary-list__row">
-                <dt class="govuk-summary-list__key">Site location data</dt>
-                <dd class="govuk-summary-list__value">
-                    <ul class="govuk-list govuk-!-margin-bottom-0">
-                        {% for file in siteLocationFiles %}
-                        <li><a class="govuk-link govuk-link--no-visited-state" href="#">{{ file.title }} ({{ file.format }}, {{ file.size }})</a></li>
-                        {% endfor %}
-                    </ul>
-                </dd>
-            </div>
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">Summary of the proposed works</dt>
                 <dd class="govuk-summary-list__value">{{ published(request.summary) }}</dd>
             </div>
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">Full details</dt>
-                <dd class="govuk-summary-list__value"><a href="../view-application/{{ request.id }}{{ versionQuery }}" class="govuk-link govuk-link--no-visited-state">View the application</a></dd>
+                <dd class="govuk-summary-list__value"><a href="../view-application/{{ request.id }}{{ versionQuery }}" class="govuk-link govuk-link--no-visited-state" target="_blank" rel="noopener noreferrer">View the application (opens in new tab)</a></dd>
             </div>
         </dl>
 

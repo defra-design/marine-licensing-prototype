@@ -4,8 +4,7 @@
 //
 // Only Hayling, Poole, Dart and Teignmouth have one, for the show and tell. Hayling has one
 // marine plan policy supporting document and Poole has none, to show both. Dart
-// is in two marine plan areas and answers every policy from both plans (79),
-// to show how long the policies can get. Teignmouth
+// is in two marine plan areas, so it has policies from both plans. Teignmouth
 // is redacted. The other
 // requests keep the shorter view built from request.site.
 //
@@ -21,8 +20,6 @@
 const TEIGNMOUTH_POLICIES = require('./consultation-v2-teignmouth-policies.js');
 
 // South marine plan policy text, copied from the LCML v4 view details pages
-// (the ones Hayling and Poole use) and the Plymouth Sound rejected page (the
-// rest of the 37 South policies, for Dart)
 const SOUTH_POLICIES = {
   'S-CC-3': {
     name: 'South Climate change 3',
@@ -103,83 +100,11 @@ const SOUTH_POLICIES = {
   'S-TR-2': {
     name: 'South Tourism and recreation 2',
     info: 'Proposals that enhance or promote tourism and recreation activities will be supported. Proposals for development must demonstrate that they will, in order of preference: a) avoid b) minimise c) mitigate significant adverse impacts on tourism and recreation activities.'
-  },
-  'S-CC-1': {
-    name: 'South Climate change 1',
-    info: 'Proposals must consider their contribution to greenhouse gas emissions arising from unintended consequences on other activities. Where such consequences are likely to result in increased greenhouse gas emissions, proposals should demonstrate that they will, in order of preference: a) avoid, b) minimise, c) mitigate unintended consequences on other activities.'
-  },
-  'S-CC-2': {
-    name: 'South Climate change 2',
-    info: 'Proposals should demonstrate for the lifetime of the proposal that: 1) they are resilient to the effects of climate change 2) they will not have a significant adverse impact upon climate change adaptation measures elsewhere. In respect of 2) proposals should demonstrate that they will, in order of preference: a) avoid, b) minimise, c) mitigate the significant adverse impacts upon these climate change adaptation measures.'
-  },
-  'S-CC-4': {
-    name: 'South Climate change 4',
-    info: 'Proposals that may have a significant adverse impact on habitats that provide a flood defence or carbon sequestration ecosystem service must demonstrate that they will, in order of preference: a) avoid, b) minimise, c) mitigate significant adverse impacts.'
-  },
-  'S-AQ-2': {
-    name: 'South Aquaculture 2',
-    info: 'Proposals that enable the provision of infrastructure for sustainable fisheries and aquaculture and related industries will be supported.'
-  },
-  'S-CAB-1': {
-    name: 'South Cables 1',
-    info: 'Preference should be given to proposals for cable installation where the method of installation is burial. Where burial is not achievable, decisions should take account of protection measures for the cable that may be proposed by the applicant. Where burial or protection measures are not appropriate, proposals should state the case for proceeding without those measures.'
-  },
-  'S-CAB-2': {
-    name: 'South Cables 2',
-    info: 'Proposals that have a significant adverse impact on new and existing landfall sites for subsea cables (telecoms, power and interconnectors) should demonstrate that they will, in order of preference: a) avoid, b) minimise, c) mitigate significant adverse impacts, d) if it is not possible to mitigate significant adverse impacts, proposals should state the case for proceeding.'
-  },
-  'S-DD-2': {
-    name: 'South Dredging and disposal 2',
-    info: 'Proposals must identify, where possible, alternative opportunities to minimise the use of dredged waste disposal sites by pursuing re-use opportunities through matching of spoil to suitable sites.'
-  },
-  'S-REN-1': {
-    name: 'South Renewables 1',
-    info: 'Proposals that support the development of supply chains associated with the deployment of renewable energy will be supported.'
-  },
-  'S-BIO-4': {
-    name: 'South Biodiversity 4',
-    info: 'Proposals that enhance the distribution and net extent of priority habitats should be supported. Proposals must demonstrate that they will avoid reducing the distribution and net extent of priority habitats.'
-  },
-  'S-NIS-1': {
-    name: 'South Invasive non-native species 1',
-    info: 'Proposals must put in place appropriate measures to avoid or minimise significant adverse impacts on the marine area that would arise through the introduction and transport of non-indigenous species, particularly when: 1) moving equipment, boats or livestock (for example fish and shellfish) from one water body to another 2) introducing structures suitable for settlement of non-indigenous species, or the spread of invasive non-indigenous species known to exist in the area.'
-  },
-  'S-ML-1': {
-    name: 'South Marine litter 1',
-    info: 'Public authorities should ensure adequate provision for and removal of beach and marine litter on amenity beaches.'
-  },
-  'S-WQ-2': {
-    name: 'South Water quality 2',
-    info: 'Activities that can deliver an improvement to water environment, or enhance habitats and species which can be of benefit to water quality should be supported.'
-  },
-  'S-ACC-2': {
-    name: 'South Access 2',
-    info: 'Proposals demonstrating enhanced public access to and within the marine area will be supported.'
-  },
-  'S-EMP-1': {
-    name: 'South Employment 1',
-    info: 'Proposals that develop skills related to marine activities, particularly in line with local skills strategies, will be supported.'
-  },
-  'S-EMP-2': {
-    name: 'South Employment 2',
-    info: 'Proposals resulting in a net increase to marine related employment will be supported, particularly where they are in line with the skills available in and adjacent to the south marine plan areas.'
-  },
-  'S-FISH-1': {
-    name: 'South Fisheries 1',
-    info: 'Proposals that support the diversification of a sustainable fishing industry and or enhance fishing industry resilience to the effects of climate change should be supported.'
-  },
-  'S-FISH-4': {
-    name: 'South Fisheries 4',
-    info: 'Proposals that enhance essential fish habitat, including spawning, nursery and feeding grounds, and migratory routes should be supported. Proposals must demonstrate that they will, in order of preference: a) avoid, b) minimise, c) mitigate significant adverse impact on essential fish habitat, including, spawning, nursery, feeding grounds and migration routes.'
-  },
-  'S-SOC-1': {
-    name: 'South Knowledge, understanding, appreciation and enjoyment 1',
-    info: 'Proposals that enhance or promote social benefits will be supported. Proposals must demonstrate that they will, in order of preference: a) avoid, b) minimise, c) mitigate significant adverse impacts which result in the displacement of other existing or authorised (but yet to be implemented) activities that generate social benefits.'
   }
 };
 
 // South West marine plan policy text, copied from the LCML v4 Plymouth Sound
-// view details page. All 41 on that page, for the Dart application.
+// view details page. Only the ones the Dart application answers.
 const SOUTH_WEST_POLICIES = {
   'SW-CO-1': {
     name: 'South West Co-existence 1',
@@ -224,126 +149,6 @@ const SOUTH_WEST_POLICIES = {
   'SW-TR-1': {
     name: 'South West Tourism and recreation 1',
     info: 'Proposals that promote or facilitate sustainable tourism and recreation activities, or that create appropriate opportunities to expand or diversify the current use of facilities, should be supported. Proposals that may have significant adverse impacts on tourism and recreation activities must demonstrate that they will, in order of preference: a) avoid b) minimise c) mitigate - adverse impacts so they are no longer significant.'
-  },
-  'SW-CC-1': {
-    name: 'South West Climate change 1',
-    info: 'Proposals that conserve, restore or enhance habitats that provide flood defence or carbon sequestration will be supported. Proposals that may have significant adverse impacts on habitats that provide a flood defence or carbon sequestration ecosystem service must demonstrate that they will, in order of preference: a) avoid b) minimise c) mitigate - adverse impacts so they are no longer significant d) compensate for significant adverse impacts that cannot be mitigated.'
-  },
-  'SW-CC-3': {
-    name: 'South West Climate change 3',
-    info: 'Proposals in the south west marine plan areas, and adjacent marine plan areas, that are likely to have significant adverse impacts on coastal change, or on climate change adaptation measures inside and outside of the proposed project areas, should only be supported if they can demonstrate that they will, in order of preference: a) avoid b) minimise c) mitigate - adverse impacts so they are no longer significant.'
-  },
-  'SW-CBC-1': {
-    name: 'South West Cross-border co-operation 1',
-    info: 'Proposals must consider cross-border impacts throughout the lifetime of the proposed activity. Proposals that impact upon one or more marine plan areas or terrestrial environments must show evidence of the relevant public authorities (including other countries) being consulted and responses considered.'
-  },
-  'SW-CE-1': {
-    name: 'South West Cumulative effects 1',
-    info: 'Proposals which may have adverse cumulative effects with other existing, authorised, or reasonably foreseeable proposals must demonstrate that they will, in order of preference: a) avoid b) minimise c) mitigate - adverse cumulative and/or in-combination effects so they are no longer significant.'
-  },
-  'SW-AQ-2': {
-    name: 'South West Aquaculture 2',
-    info: 'Proposals enabling the provision of infrastructure for sustainable aquaculture and related industries will be supported.'
-  },
-  'SW-CAB-1': {
-    name: 'South West Cables 1',
-    info: 'Preference should be given to proposals for cable installation where the method of protection is burial. Where burial is not achievable, decisions should take account of protection measures for the cable that may be proposed by the applicant. Where burial or protection measures are not appropriate, proposals should state the case for proceeding without those measures.'
-  },
-  'SW-CAB-3': {
-    name: 'South West Cables 3',
-    info: 'Where seeking to locate close to existing subsea cables, proposals should demonstrate compatibility with ongoing function, maintenance and decommissioning activities relating to the cable.'
-  },
-  'SW-DD-1': {
-    name: 'South West Dredging and disposal 1',
-    info: 'In areas of authorised dredging activity, including those subject to navigational dredging, proposals for other activities will not be supported unless they are compatible with the dredging activity.'
-  },
-  'SW-DD-2': {
-    name: 'South West Dredging and disposal 2',
-    info: 'Proposals that cause significant adverse impacts on licensed disposal sites should not be supported. Proposals that may have significant adverse impacts on licensed disposal sites must demonstrate that they will, in order of preference: a) avoid b) minimise c) mitigate - adverse impacts so they are no longer significant. If it is not possible to mitigate the significant adverse impacts, proposals must state the case for proceeding.'
-  },
-  'SW-DD-3': {
-    name: 'South West Dredging and disposal 3',
-    info: 'Proposals for the disposal of dredged material must demonstrate that they have been assessed against the waste hierarchy. Where there is the need to identify new dredge disposal sites, including alternative use sites, proposals should be supported if they conform to best practice and guidance.'
-  },
-  'SW-INF-1': {
-    name: 'South West Infrastructure 1',
-    info: 'Proposals for appropriate marine infrastructure which facilitates land-based activities, or land-based infrastructure which facilitates marine activities (including the diversification or regeneration of sustainable marine industries), should be supported.'
-  },
-  'SW-INF-2': {
-    name: 'South West Infrastructure 2',
-    info: '(1) Proposals for alternative development at existing safeguarded landing facilities will not be supported. (2) Proposals adjacent and opposite existing safeguarded landing facilities must demonstrate that they avoid significant adverse impacts on existing safeguarded landing facilities. (3) Proposals for alternative development at existing landing facilities (excluding safeguarded sites) should not be supported unless that facility is no longer viable or capable of being made viable for waterborne transport. (4) Proposals adjacent and opposite existing landing facilities (excluding safeguarded sites) that may have significant adverse impacts on the landing facilities should demonstrate that they will, in order of preference: a) avoid b) minimise c) mitigate - adverse impacts so they are no longer significant.'
-  },
-  'SW-PS-4': {
-    name: 'South West Ports, harbours and shipping 4',
-    info: 'Proposals promoting or facilitating sustainable coastal and/or short sea shipping as an alternative to road, rail or air transport will be supported where appropriate.'
-  },
-  'SW-REN-1': {
-    name: 'South West Renewables 1',
-    info: 'Proposals that enable the provision of renewable energy technologies and associated supply chains, will be supported.'
-  },
-  'SW-AIR-1': {
-    name: 'South West Air quality 1',
-    info: 'Proposals must assess their direct and indirect impacts upon local air quality and emissions of greenhouse gases. Proposals that are likely to result in increased air pollution or increased emissions of greenhouse gases must demonstrate that they will, in order of preference: a) avoid b) minimise c) mitigate - air pollution and/or greenhouse gas emissions, in line with current national and local air quality objectives and legal requirements.'
-  },
-  'SW-BIO-2': {
-    name: 'South West Biodiversity 2',
-    info: 'Proposals that enhance or facilitate native species or habitat adaptation or connectivity, or native species migration, will be supported. Proposals that may cause significant adverse impacts on native species or habitat adaptation or connectivity, or native species migration, must demonstrate that they will, in order of preference: a) avoid b) minimise c) mitigate - adverse impacts so they are no longer significant d) compensate for significant adverse impacts that cannot be mitigated.'
-  },
-  'SW-BIO-3': {
-    name: 'South West Biodiversity 3',
-    info: 'Proposals that conserve, restore or enhance coastal habitats, where important in their own right and/or for ecosystem functioning and provision of ecosystem services, will be supported. Proposals must take account of the space required for coastal habitats, where important in their own right and/or for ecosystem functioning and provision of ecosystem services, and demonstrate that they will, in order of preference: a) avoid b) minimise c) mitigate d) compensate for - net habitat loss.'
-  },
-  'SW-DIST-1': {
-    name: 'South West Disturbance 1',
-    info: 'Proposals that may have significant adverse impacts on highly mobile species through disturbance or displacement must demonstrate that they will, in order of preference: avoid minimise mitigate - adverse impacts so they are no longer significant.'
-  },
-  'SW-HAB-1': {
-    name: 'South West Habitats 1',
-    info: 'Proposals that incorporate measures to conserve deep sea habitats will be supported. Proposals that may have direct adverse impacts on deep sea habitats must demonstrate that they will, in order of preference: a) avoid b) minimise c) mitigate - direct adverse impacts on deep sea habitats.'
-  },
-  'SW-INNS-2': {
-    name: 'South West Invasive non-native species 2',
-    info: 'Public authorities with functions to manage activities that could potentially introduce, transport or spread invasive non-native species should implement adequate biosecurity measures to avoid or minimise the risk of introducing, transporting or spreading invasive non-native species.'
-  },
-  'SW-ML-1': {
-    name: 'South West Marine litter 1',
-    info: 'Public authorities must make adequate provision for the prevention, re-use, recycling and disposal of waste to reduce and prevent marine litter. Public authorities should aspire to undertake measures to remove marine litter within their jurisdiction.'
-  },
-  'SW-ML-2': {
-    name: 'South West Marine litter 2',
-    info: 'Proposals that facilitate waste re-use or recycling to reduce or remove marine litter will be supported. Proposals that could potentially increase the amount of marine litter in the marine plan areas must include measures to, in order of preference: a) avoid b) minimise c) mitigate - waste entering the marine environment.'
-  },
-  'SW-MPA-2': {
-    name: 'South West Marine protected areas 2',
-    info: 'Proposals that enhance a marine protected area’s ability to adapt to climate change, enhancing the resilience of the marine protected area network, will be supported. Proposals that may have adverse impacts on an individual marine protected area’s ability to adapt to the effects of climate change, and so reduce the resilience of the marine protected area network, must demonstrate that they will, in order of preference: a) avoid b) minimise c) mitigate - adverse impacts.'
-  },
-  'SW-MPA-3': {
-    name: 'South West Marine protected areas 3',
-    info: 'Where statutory advice states that a marine protected area site condition is deteriorating or that features are moving or changing due to climate change, a suitable boundary change to ensure continued protection of the site and coherence of the overall network should be considered.'
-  },
-  'SW-UWN-2': {
-    name: 'South West Underwater noise 2',
-    info: 'Proposals that result in the generation of impulsive or non-impulsive noise must demonstrate that they will, in order of preference: a) avoid b) minimise c) mitigate - adverse impacts on highly mobile species so they are no longer significant. If it is not possible to mitigate significant adverse impacts, proposals must state the case for proceeding.'
-  },
-  'SW-EMP-1': {
-    name: 'South West Employment 1',
-    info: 'Proposals that result in a net increase in marine-related employment will be supported, particularly where they meet one or more of the following: 1) are aligned with local skills strategies and support the skills available 2) create a diversity of opportunities 3) create employment in locations identified as the most deprived 4) implement new technologies - in, and adjacent to, the south west marine plan areas.'
-  },
-  'SW-FISH-1': {
-    name: 'South West Fisheries 1',
-    info: 'Proposals that support a sustainable fishing industry, including the industry’s diversification, should be supported.'
-  },
-  'SW-FISH-2': {
-    name: 'South West Fisheries 2',
-    info: 'Proposals that enhance access for fishing activities should be supported. Proposals that may have significant adverse impacts on access for fishing activities must demonstrate that they will, in order of preference: a) avoid b) minimise c) mitigate - adverse impacts so they are no longer significant. If it is not possible to mitigate significant adverse impacts, proposals should state the case for proceeding.'
-  },
-  'SW-SOC-1': {
-    name: 'South West Knowledge, understanding, appreciation and enjoyment 1',
-    info: 'Those bringing forward proposals should consider and demonstrate how their development shall enhance public knowledge, understanding, appreciation and enjoyment of the marine environment as part of (the design of) the proposal.'
-  },
-  'SW-SCP-1': {
-    name: 'South West Seascape and landscape 1',
-    info: 'Proposals should ensure they are compatible with their surroundings and should not have a significant adverse impact on the character and visual resource of the seascape and landscape of the area. The location, scale and design of proposals should take account of the character, quality and distinctiveness of the seascape and landscape. Proposals that may have a significant adverse impact on the seascape and landscape of the area should demonstrate that they will, in order of preference: a) avoid b) minimise c) mitigate - adverse impacts so they are no longer significant. If it is not possible to mitigate, the public benefits for proceeding with the proposal must outweigh significant adverse impacts to the seascape and landscape of the area. Proposals within or relatively close to nationally designated areas should have regard to the specific statutory purposes of the designated area. Great weight should be given to conserving and enhancing landscape and scenic beauty in National Parks and Areas of Outstanding Natural Beauty.'
   }
 };
 
@@ -526,9 +331,7 @@ const APPLICATIONS = {
   }),
 
   // Two sites either side of the river mouth, one in each marine plan area,
-  // so the policies come from both the South and South West plans. It answers
-  // every policy from both, ordered so the matching South and South West
-  // policies sit next to each other in each category.
+  // so the policies come from both the South and South West plans
   dart: build({
     submittedOffset: -16,
     siteLocationMethod: 'File upload',
@@ -570,91 +373,30 @@ const APPLICATIONS = {
     ],
     policies: {
       'Cross-cutting': [
-        { code: 'S-CC-1', consideration: 'The works do not change how any other activity in the river mouth operates, so they will not lead to more emissions elsewhere. Better lit buoys mean boats are less likely to go off course or need help.' },
-        { code: 'SW-CC-1', consideration: 'There are no saltmarsh, seagrass beds or other habitats that provide flood defence or carbon storage at the Dartmouth side buoy positions. The seagrass patch near the northern buoy is covered under SW-BIO-1.' },
-        { code: 'S-CC-2', consideration: 'The polyethylene buoys and heavier sinkers are designed for a 15 year life and to cope with stronger storms and higher sea levels. The lights are solar-powered, so there are no batteries to replace in that time.' },
-        { code: 'S-CC-3', consideration: 'Buoys in the channel do not affect the shoreline or how sediment moves along it, so there will be no effect on coastal change.' },
-        { code: 'SW-CC-3', consideration: 'As on the Kingswear side, the buoys sit in open water at the channel edge and will have no effect on coastal change on either bank.' },
-        { code: 'S-CC-4', consideration: 'There are no habitats that provide flood defence or carbon storage at the Kingswear side buoy positions. Our seagrass survey confirmed this.' },
         { code: 'S-CO-1', consideration: 'The 3 new buoys on the Kingswear side go in exactly the same positions as the ones they replace, so they take up no more space. They mark the channel edge past our mooring trots, which helps the ferries, fishing boats and yachts that share the river mouth.' },
-        { code: 'SW-CO-1', consideration: 'On the Dartmouth side the 3 buoys also stay in the same positions. The work will be done one buoy at a time, with the workboat out of the main channel whenever the ferries are crossing.' },
-        { code: 'SW-CBC-1', consideration: 'The two sites are either side of the boundary between the South and South West marine plan areas. We have used the same method, dates and mitigation on both sides, and answered the policies from both plans.' },
-        { code: 'SW-CE-1', consideration: 'We checked the public register and Dart Harbour’s notices. No other works are planned at the river mouth between January and March 2027. The harbour’s maintenance dredging is not due until 2028.' }
+        { code: 'SW-CO-1', consideration: 'On the Dartmouth side the 3 buoys also stay in the same positions. The work will be done one buoy at a time, with the workboat out of the main channel whenever the ferries are crossing.' }
       ],
       'Economic': [
-        { code: 'S-AGG-4', consideration: 'No marine aggregates are needed. The concrete sinkers are precast by the supplier using land-won aggregate.' },
-        { code: 'S-AQ-2', consideration: 'There is no aquaculture at the river mouth. The mussel lease further up the estuary is not affected.' },
-        { code: 'SW-AQ-2', consideration: 'The works do not provide or affect any aquaculture infrastructure.' },
-        { code: 'S-CAB-1', consideration: 'No cables are being installed.' },
-        { code: 'SW-CAB-1', consideration: 'No cables are being installed. The solar panels and lights are fitted to the buoys themselves.' },
-        { code: 'S-CAB-2', consideration: 'There are no subsea cable landfall sites near the Kingswear side buoys.' },
-        { code: 'SW-CAB-3', consideration: 'The nearest subsea cable crosses the river about 800 metres upstream, at the Higher Ferry. The works are well clear of it.' },
-        { code: 'SW-DD-1', consideration: 'There is no authorised dredging at the buoy positions. Dart Harbour has confirmed the works will not affect its maintenance dredging of the channel.' },
-        { code: 'S-DD-2', consideration: 'No dredging is involved, so no material will need to be disposed of.' },
-        { code: 'SW-DD-2', consideration: 'The works are not near any licensed disposal site.' },
-        { code: 'SW-DD-3', consideration: 'No dredged material will be disposed of.' },
-        { code: 'S-INF-1', consideration: 'The buoys mark the way into the harbour, which supports the waterfront businesses, boatyards and ferries in Kingswear.' },
-        { code: 'SW-INF-1', consideration: 'The buoys support the harbour, the passenger ferries and the boatyards in Dartmouth, which depend on a safe, well marked channel.' },
-        { code: 'SW-INF-2', consideration: 'There are no safeguarded landing facilities at or near the river mouth.' },
         { code: 'S-PS-1', consideration: 'Dart Harbour has approved the replacement. The buoys mark the edge of the channel used by harbour traffic, so keeping them working supports the harbour. There will be no change to the channel or its approaches.' },
-        { code: 'SW-PS-1', consideration: 'Reliable lights on the Dartmouth side buoys improve safety of navigation in the harbour approach. The harbour master has agreed the dates, and a notice to mariners will be issued before the work starts.' },
-        { code: 'SW-PS-4', consideration: 'The buoys help the passenger and cargo boats that use the river, but the works do not change shipping routes or how goods are moved.' },
-        { code: 'S-REN-1', consideration: 'The works are not related to renewable energy supply chains. The new lights are solar-powered.' },
-        { code: 'SW-REN-1', consideration: 'Not relevant to these works, apart from the new lights being solar-powered.' }
+        { code: 'SW-PS-1', consideration: 'Reliable lights on the Dartmouth side buoys improve safety of navigation in the harbour approach. The harbour master has agreed the dates, and a notice to mariners will be issued before the work starts.' }
       ],
       'Environmental': [
-        { code: 'SW-AIR-1', consideration: 'The workboat will be on site for about 5 days in total. Its engine is maintained and turned off whenever it is not needed. There will be no lasting effect on air quality.' },
         { code: 'S-BIO-1', consideration: 'Our seagrass survey found no seagrass within 30 metres of any of the Kingswear side buoys. The new sinkers go on the same spots as the old ones, and the ground chains will be no longer than the existing ones, so they will not sweep a larger area of seabed.' },
         { code: 'SW-BIO-1', consideration: 'The survey found a small patch of seagrass about 20 metres from the most northerly buoy on the Dartmouth side. That buoy will be fitted with a mid-line float so its riser chain does not drag on the seabed, and the workboat will not anchor within 50 metres of the patch.' },
-        { code: 'S-BIO-2', consideration: 'The works keep the existing buoy positions and do not create any barrier to species moving in and out of the estuary.' },
-        { code: 'SW-BIO-2', consideration: 'The buoys do not block the channel, so fish, seals and other species can move through the river mouth as they do now.' },
-        { code: 'S-BIO-3', consideration: 'No coastal habitats will be affected. All the works are in the subtidal channel.' },
-        { code: 'SW-BIO-3', consideration: 'The works are in the channel, away from the rocky shore and the beaches on the Dartmouth side, so no coastal habitats will be affected.' },
-        { code: 'S-BIO-4', consideration: 'No priority habitats were found at the Kingswear side buoy positions, so their distribution and extent will not be reduced.' },
-        { code: 'S-DIST-1', consideration: 'Seals and dolphins are sometimes seen at the river mouth. The workboat will slow down and stop work if any come within 100 metres, and only restart once they have moved away.' },
-        { code: 'SW-DIST-1', consideration: 'The same measures apply on the Dartmouth side. Work is short and quiet, and only one buoy is worked on at a time.' },
-        { code: 'SW-HAB-1', consideration: 'There are no deep sea habitats in the Dart estuary.' },
-        { code: 'S-NIS-1', consideration: 'The workboat and lifting gear stay on the Dart, and the new buoys and chains arrive new from the supplier, so there is no risk of bringing in non-native species.' },
-        { code: 'SW-INNS-1', consideration: 'The workboat and lifting gear are kept on the Dart and will not be moved from another water body. The new buoys and chains arrive new and clean from the supplier.' },
-        { code: 'SW-INNS-2', consideration: 'This policy is for public authorities. We follow the Check, Clean, Dry biosecurity guidance for all our equipment.' },
-        { code: 'S-ML-1', consideration: 'This policy is for public authorities. No litter will be left on the shore.' },
-        { code: 'SW-ML-1', consideration: 'This policy is for public authorities.' },
-        { code: 'S-ML-2', consideration: 'All the old buoys, sinkers and chains will be taken ashore and recycled. Nothing will be left on the seabed.' },
-        { code: 'SW-ML-2', consideration: 'The old steel buoys and chains will go to a scrap metal recycler and the old sinkers to a local aggregate recycler. All packaging from the new buoys will be removed on shore.' },
         { code: 'S-MPA-1', consideration: 'The works are not inside a marine protected area. They are small, like for like, and use the existing buoy positions, so we do not expect any effect on the protected areas outside the river mouth.' },
         { code: 'SW-MPA-1', consideration: 'The Dartmouth side works are not inside a marine protected area either. The nearest is in Start Bay, to the south, and the works will have no effect on it.' },
-        { code: 'SW-MPA-2', consideration: 'The works will not affect the ability of any marine protected area to adapt to climate change.' },
-        { code: 'SW-MPA-3', consideration: 'We are not aware of any statutory advice about deteriorating condition at nearby marine protected areas. The works are well outside them.' },
-        { code: 'S-UWN-1', consideration: 'No impulsive sound will be generated, so no data needs to go to the UK Marine Noise Registry.' },
+        { code: 'SW-INNS-1', consideration: 'The workboat and lifting gear are kept on the Dart and will not be moved from another water body. The new buoys and chains arrive new and clean from the supplier.' },
         { code: 'SW-UWN-1', consideration: 'No piling or other impulsive sound is involved. Lowering the sinkers makes only short, low-level noise, so we do not need to submit data to the UK Marine Noise Registry.' },
-        { code: 'S-UWN-2', consideration: 'The only noise is the workboat engine and the crane, for a few hours at each buoy. This is no louder than the ferries and fishing boats that use the river every day.' },
-        { code: 'SW-UWN-2', consideration: 'As on the Kingswear side, noise will be short, low level and no louder than normal harbour traffic.' },
         { code: 'S-WQ-1', consideration: 'Lifting the old sinkers will stir up a small amount of sediment for a short time. The workboat carries a spill kit and its crane uses biodegradable hydraulic oil.' },
-        { code: 'SW-WQ-1', consideration: 'The same measures apply on the Dartmouth side. Work will be done around slack water, so any sediment settles close to where it was disturbed.' },
-        { code: 'S-WQ-2', consideration: 'Removing the corroded steel buoys and chains stops rust and old antifouling paint getting into the water.' }
+        { code: 'SW-WQ-1', consideration: 'The same measures apply on the Dartmouth side. Work will be done around slack water, so any sediment settles close to where it was disturbed.' }
       ],
       'Social': [
         { code: 'S-ACC-1', consideration: 'Kingswear slipway and the paths along the waterfront will stay open. The workboat will load at our own pontoon, not at public landings.' },
         { code: 'SW-ACC-1', consideration: 'Public access on the Dartmouth side is not affected. The ferry slipways and the embankment will stay open throughout.' },
-        { code: 'S-ACC-2', consideration: 'The works do not change public access. Safe, well lit buoys make it easier for people in small boats and kayaks to use the river mouth.' },
-        { code: 'S-EMP-1', consideration: 'The work will be done by our own moorings team, with an apprentice working alongside them.' },
-        { code: 'S-EMP-2', consideration: 'The works do not create new jobs, but they help keep the jobs at the harbour and the boatyards that rely on the channel.' },
-        { code: 'SW-EMP-1', consideration: 'As on the Kingswear side, the works support existing marine jobs rather than creating new ones.' },
-        { code: 'S-FISH-1', consideration: 'The buoys help the local fishing boats get in and out of the river safely, especially at night and in poor visibility.' },
-        { code: 'SW-FISH-1', consideration: 'The 6 fishing boats based in Dartmouth use the channel every day. Reliable lights help them land their catch safely.' },
-        { code: 'S-FISH-2', consideration: 'Fishing boats will be able to use the channel throughout. The workboat will only be at each buoy for a few hours, and will move aside for any boat that needs to pass.' },
-        { code: 'SW-FISH-2', consideration: 'There is no fishing at the buoy positions. The work does not stop fishing boats getting to or from their moorings.' },
         { code: 'SW-FISH-3', consideration: 'The Dart is a salmon and sea trout river. Working from January to March avoids the spring migration of smolts down the river and the main summer run of adult fish. The buoys sit at the edges of the channel, so the middle of the channel stays clear for migrating fish.' },
-        { code: 'S-FISH-4', consideration: 'See SW-FISH-3. The same timing and buoy positions apply on the Kingswear side, so the works will not affect migrating salmon and sea trout.' },
         { code: 'S-HER-1', consideration: 'The new sinkers go on the spots used by the old ones, which have been in place for more than 20 years, so no undisturbed seabed is affected. If anything is found when the old sinkers are lifted, we will report it to the Receiver of Wreck.' },
         { code: 'SW-HER-1', consideration: 'The river mouth is overlooked by Dartmouth Castle. The new buoys are the same size and colours as the old ones, so its setting will not change.' },
-        { code: 'S-SOC-1', consideration: 'The works will have no adverse social impact. A notice will go up at the Kingswear ferry slipway to explain what the workboat is doing.' },
-        { code: 'SW-SOC-1', consideration: 'A notice will go up on the Dartmouth embankment to explain the works and why the buoys are being replaced.' },
-        { code: 'S-SCP-1', consideration: 'The new buoys are the same size, shape and colours as the old ones, so the view from Kingswear and the coast path will not change.' },
-        { code: 'SW-SCP-1', consideration: 'The buoys will look the same as the existing ones. The new lights are no brighter, and have the same flashing pattern.' },
-        { code: 'S-TR-1', consideration: 'A safe, well marked river mouth supports the sailing, boat trips and other tourism that Kingswear relies on.' },
-        { code: 'SW-TR-1', consideration: 'Reliable channel markers help the many visiting yachts and passenger boats that use the river. Working in winter avoids the busy summer season.' },
-        { code: 'S-TR-2', consideration: 'The works will be finished before the sailing season starts on 1 April 2027, so there will be no disruption to visitors.' }
+        { code: 'SW-TR-1', consideration: 'Reliable channel markers help the many visiting yachts and passenger boats that use the river. Working in winter avoids the busy summer season.' }
       ]
     },
     supportingDocuments: [

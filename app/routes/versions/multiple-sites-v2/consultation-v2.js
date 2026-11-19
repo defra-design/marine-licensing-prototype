@@ -713,13 +713,6 @@ module.exports = function (router) {
     if (query.pagination === 'on') keep.pagination = 'on';
     // Open, Closed and Missed tabs: on by default
     if (query.tabs === 'off') keep.tabs = 'off';
-    // View application layout: the long page by default, or broken up with
-    // an accordion, MOJ side navigation (one page per section), tabs or MOJ
-    // sub navigation (one page per tab)
-    if (['accordion', 'sidenav', 'tabs', 'subnav'].includes(query.appview)) keep.appview = query.appview;
-    // View application opened in a new tab from the respond page: no Back
-    // link or navigation. Kept so the side navigation pages keep it too.
-    if (query.newtab === 'true') keep.newtab = 'true';
     // Sort order, set by the column headings. Left out
     // of the URL it is closing date: soonest first, or on the Closed tab
     // most recent first.
@@ -782,11 +775,6 @@ module.exports = function (router) {
       paginationOn: to({ pagination: 'on' }),
       tabsOff: to({ tabs: 'off' }),
       tabsOn: to({ tabs: null }),
-      appviewLong: to({ appview: null }),
-      appviewAccordion: to({ appview: 'accordion' }),
-      appviewSidenav: to({ appview: 'sidenav' }),
-      appviewTabs: to({ appview: 'tabs' }),
-      appviewSubnav: to({ appview: 'subnav' }),
       rolesConsultee: to({ 'consultation-v2-roles': 'consultee' }),
       rolesBoth: to({ 'consultation-v2-roles': 'both' }),
       rolesBothEmpty: to({ 'consultation-v2-roles': 'both-empty' })
@@ -812,11 +800,10 @@ module.exports = function (router) {
     res.locals.bothRoles = ['both', 'both-empty'].includes(data['consultation-v2-roles']);
     res.locals.rolesMode = data['consultation-v2-roles'] || 'consultee';
     // So the Consultations tab on LCML v4 pages comes back to the same versions
-    data['consultation-v2-version-query'] = urlWith('', keep, { newtab: null });
+    data['consultation-v2-version-query'] = urlWith('', keep, {});
 
     res.locals.versionParams = keep;
     res.locals.versionQuery = urlWith('', keep, {});
-    res.locals.newTab = keep.newtab === 'true';
     // The whole query string, filters included, for links between the list,
     // request and respond pages, so Back returns to the same view of the list
     res.locals.pageQuery = queryOf(req);
@@ -848,7 +835,6 @@ module.exports = function (router) {
     res.locals.passedOn = keep.passed !== 'off';
     res.locals.paginationOn = keep.pagination === 'on';
     res.locals.tabsOn = keep.tabs !== 'off';
-    res.locals.appviewMode = keep.appview || 'long';
     // Always render afresh, so the browser's Back button never shows an old
     // copy of a page from before assigning or responding
     res.set('Cache-Control', 'no-store');
@@ -1251,7 +1237,6 @@ module.exports = function (router) {
     if (!request) return;
     res.render(`versions/${version}/${section}/request-details`, {
       request,
-      siteLocationFiles: siteLocationFiles(request),
       assignBanner: takeAssignBanner(req, 'request')
     });
   });
@@ -1272,29 +1257,16 @@ module.exports = function (router) {
       filename,
       withheld: !!doc.withheld,
       format: filename.split('.').pop().toUpperCase(),
-      size: doc.size || (kb >= 1000 ? `${(kb / 1024).toFixed(1)} MB` : `${kb} KB`)
+      size: kb >= 1000 ? `${(kb / 1024).toFixed(1)} MB` : `${kb} KB`
     };
-  }
-
-  // The site location as GIS data, for consultees' constraints checks and
-  // triage: a KML file and a Shapefile (zipped, as a Shapefile is several
-  // files). One of each, covering every site. The service makes them from
-  // the site location, however the applicant provided it. Sizes are made up,
-  // a little bigger for each site.
-  function siteLocationFiles(request) {
-    const siteCount = request.application ? request.application.sites.length : 1;
-    return [
-      documentFor({ filename: `${request.id}-site-location.kml`, size: `${2 + siteCount} KB` }, 'Site location KML file'),
-      documentFor({ filename: `${request.id}-site-location-shapefile.zip`, size: `${6 + 3 * siteCount} KB` }, 'Site location Shapefile')
-    ];
   }
 
   // Every document in the application, grouped under the task list section
   // it was uploaded in. Groups with nothing in them are left out.
   function documentsFor(request) {
     const app = request.application;
-    // The site location files first, then the drawings site by site
-    const sites = siteLocationFiles(request);
+    // The site coordinates first, then the drawings site by site
+    const sites = [documentFor('sitecoordinates.zip', 'Site coordinates', `${request.id}-sitecoordinates.zip`)];
     if (app) {
       app.sites.forEach(site => {
         site.drawings.forEach((drawing, d) => sites.push(documentFor(drawing, `${site.name} – Construction drawing ${d + 1}`)));
@@ -1310,124 +1282,11 @@ module.exports = function (router) {
     return groups.filter(group => group.documents.length);
   }
 
-  // The sections of a full application, for the versions that break the
-  // view application page up (accordion, side navigation and tabs). Each
-  // is a page of its own in the side navigation version.
-  function applicationSections(request) {
-    const app = request.application;
-    const sections = [
-      { slug: 'overview', group: 'Application', title: 'Overview', kind: 'overview' },
-      { slug: 'documents', group: 'Application', title: 'Documents', kind: 'documents' }
-    ];
-    app.sites.forEach((site, i) => {
-      const drawings = site.drawings.length;
-      sections.push({
-        slug: `site-${i + 1}`, group: 'Sites and activities', kind: 'site', site, siteNumber: i + 1,
-        title: `Site ${i + 1} – ${site.name}`,
-        navText: `Site ${i + 1} – ${site.name}`,
-        summary: `${site.activities.length} ${site.activities.length === 1 ? 'activity' : 'activities'}, ${drawings} construction ${drawings === 1 ? 'drawing' : 'drawings'}`
-      });
-    });
-    app.policyGroups.forEach(group => {
-      const count = group.policies.length;
-      sections.push({
-        slug: `policies-${group.category.toLowerCase()}`, group: 'Marine plan policies', kind: 'policies', policyGroup: group,
-        title: `Marine plan policies – ${group.category}`,
-        navText: group.category,
-        summary: `${count} ${count === 1 ? 'policy' : 'policies'}`
-      });
-    });
-    if ((app.supportingDocuments || []).length) {
-      sections.push({
-        slug: 'supporting-documents', group: 'Marine plan policies', kind: 'supporting',
-        title: 'Marine plan policy supporting documents', navText: 'Supporting documents'
-      });
-    }
-    sections.push(
-      { slug: 'water-framework-directive', group: 'Other information', kind: 'wfd', title: 'Water Framework Directive' },
-      { slug: 'other-permissions', group: 'Other information', kind: 'permissions', title: 'Other permissions' }
-    );
-    return sections;
-  }
-
-  // View application (read-only, like view details in LCML v4). The long
-  // page by default; ?appview= picks a broken-up version for applications
-  // that have a full application. The others always get the long page.
+  // View application (read-only, like view details in LCML v4)
   router.get(`${base}/view-application/:requestId`, function (req, res) {
     const request = findRequest(req, res);
     if (!request) return;
-    const appview = res.locals.appviewMode;
-    const documentGroups = documentsFor(request);
-    if (!request.application || appview === 'long') {
-      return res.render(`versions/${version}/${section}/view-application`, { request, documentGroups });
-    }
-    const sections = applicationSections(request);
-    if (appview === 'sidenav') {
-      // The first section is the page you land on
-      return renderSidenavSection(req, res, request, sections, sections[0], documentGroups);
-    }
-    if (appview === 'subnav') {
-      return renderSubnavPage(req, res, request, sections, SUBNAV_PAGES[0], documentGroups);
-    }
-    res.render(`versions/${version}/${section}/view-application-${appview}`, { request, documentGroups, sections });
-  });
-
-  // A section of the side navigation version, on a page of its own
-  function renderSidenavSection(req, res, request, sections, current, documentGroups) {
-    const i = sections.indexOf(current);
-    const pageBase = `${base}/view-application/${request.id}`;
-    const hrefFor = s => (s === sections[0] ? pageBase : `${pageBase}/${s.slug}`) + res.locals.versionQuery;
-    sections.forEach(s => { s.href = hrefFor(s); });
-    res.render(`versions/${version}/${section}/view-application-sidenav`, {
-      request, documentGroups, sections, current,
-      previous: sections[i - 1],
-      next: sections[i + 1]
-    });
-  }
-
-  // The pages of the sub navigation version: one for each tab of the tabs
-  // version, so Sites and activities and Marine plan policies each hold all
-  // their sites or categories. text is the sub navigation link, heading the
-  // h2 on the page.
-  const SUBNAV_PAGES = [
-    { slug: 'overview', text: 'Overview', heading: 'Overview' },
-    { slug: 'documents', text: 'Documents', heading: 'Documents' },
-    { slug: 'sites', text: 'Sites and activities', heading: 'Sites and activities' },
-    { slug: 'marine-plan-policies', text: 'Marine plan policies', heading: 'Marine plan policies' },
-    { slug: 'water-framework-directive', text: 'WFD', heading: 'Water Framework Directive' },
-    { slug: 'other-permissions', text: 'Other permissions', heading: 'Other permissions' }
-  ];
-
-  // A page of the sub navigation version. The first (Overview) is the page
-  // at view-application/<id>, the others at view-application/<id>/<page>.
-  function renderSubnavPage(req, res, request, sections, current, documentGroups) {
-    const pageBase = `${base}/view-application/${request.id}`;
-    const pages = SUBNAV_PAGES.map((page, i) => Object.assign({}, page, {
-      href: (i === 0 ? pageBase : `${pageBase}/${page.slug}`) + res.locals.versionQuery,
-      active: page.slug === current.slug
-    }));
-    res.render(`versions/${version}/${section}/view-application-subnav`, {
-      request, documentGroups, sections, pages, current
-    });
-  }
-
-  router.get(`${base}/view-application/:requestId/:part`, function (req, res) {
-    const request = findRequest(req, res);
-    if (!request) return;
-    const sections = request.application ? applicationSections(request) : [];
-    if (res.locals.appviewMode === 'subnav') {
-      const page = SUBNAV_PAGES.find(p => p.slug === req.params.part);
-      if (request.application && page) {
-        return renderSubnavPage(req, res, request, sections, page, documentsFor(request));
-      }
-      return res.redirect(`${base}/view-application/${request.id}${res.locals.versionQuery}`);
-    }
-    const current = sections.find(s => s.slug === req.params.part);
-    // Otherwise section pages only exist in the side navigation version
-    if (res.locals.appviewMode !== 'sidenav' || !current) {
-      return res.redirect(`${base}/view-application/${request.id}${res.locals.versionQuery}`);
-    }
-    renderSidenavSection(req, res, request, sections, current, documentsFor(request));
+    res.render(`versions/${version}/${section}/view-application`, { request, documentGroups: documentsFor(request) });
   });
 
   // Respond
