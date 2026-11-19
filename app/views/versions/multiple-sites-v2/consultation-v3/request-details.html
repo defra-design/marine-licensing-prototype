@@ -35,9 +35,7 @@
         {# Not once responded, when they are no longer relevant #}
         {% if not isAdvice and request.status !== "Responded" %}
         <p class="govuk-body">This is for your information only. It is not a request for advice, and you do not need to respond.</p>
-        <p class="govuk-body">We are telling you about this marine licence application because you have statutory responsibilities or an interest in this area.</p>
-        <p class="govuk-body">If you have concerns or information you want to tell us about this application, you can respond until {{ request.respondByOffset | daysFromToday }}.</p>
-        {% endif %}
+        <p class="govuk-body">We are telling you about this marine licence application because you have statutory responsibilities or an interest in this area.</p>        {% endif %}
 
         <h2 class="govuk-heading-m">{{ "About this request" if isAdvice else "About this notification" }}</h2>
         <dl class="govuk-summary-list">
