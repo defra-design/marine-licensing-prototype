@@ -946,6 +946,8 @@ module.exports = function (router) {
 
   // Consultation dashboard
   router.get(`${base}/consultations`, function (req, res) {
+    // Once they've been to the list, consultation pages have a Back link again
+    delete req.session.data['consultation-v3-from-email'];
     const allRequests = Object.values(REQUESTS)
       .filter(r => !r.canBeHidden || res.locals.passedOn)
       .filter(r => !r.onlyWithTabs || res.locals.tabsOn)
@@ -1170,10 +1172,14 @@ module.exports = function (router) {
     res.render(`versions/${version}/${section}/emails/email`, { request });
   });
 
-  // Government Gateway sign-in from the email, which then opens that request
+  // Government Gateway sign-in from the email, which then opens that request.
+  // That request's page has no Back link until they go to the list, as with
+  // the other pages the service's emails link to (LCML v4 reject and
+  // transfer), which only have one when opened from Submissions.
   router.get(`${base}/sign-in/:requestId`, function (req, res) {
     const request = findRequest(req, res);
     if (!request) return;
+    req.session.data['consultation-v3-from-email'] = request.id;
     res.render(`versions/${version}/${section}/emails/sign-in`, { request });
   });
 
@@ -1259,7 +1265,8 @@ module.exports = function (router) {
     res.render(`versions/${version}/${section}/request-details`, {
       request,
       siteLocationFiles: siteLocationFiles(request),
-      assignBanner: takeAssignBanner(req, 'request')
+      assignBanner: takeAssignBanner(req, 'request'),
+      fromEmail: req.session.data['consultation-v3-from-email'] === request.id
     });
   });
 
