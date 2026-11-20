@@ -100,7 +100,7 @@
                 <dd class="govuk-summary-list__value">
                     <ul class="govuk-list govuk-!-margin-bottom-0">
                         {% for file in siteLocationFiles %}
-                        <li><a class="govuk-link govuk-link--no-visited-state" href="#">{{ file.title }} ({{ file.format }}, {{ file.size }})</a></li>
+                        <li><a class="govuk-link govuk-link--no-visited-state" href="#">{{ file.title }} ({{ file.format }}{% if file.size %}, {{ file.size }}{% endif %})</a></li>
                         {% endfor %}
                     </ul>
                 </dd>

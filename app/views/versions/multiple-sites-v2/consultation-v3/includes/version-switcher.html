@@ -121,7 +121,7 @@
   </div>
 
   <div class="app-version-tray__section">
-  {# The long page by default. The others break it up, for applications with
+  {# Sub navigation by default. These versions apply to applications with
      a full application (Hayling, Poole, Dart and Teignmouth); the rest always
      get the long page. #}
   <h3 class="govuk-heading-s govuk-!-margin-bottom-2">View application page</h3>
@@ -134,7 +134,7 @@
       { mode: "subnav", text: "Sub navigation (MOJ), a page per tab", url: versionUrls.appviewSubnav }
     ] %}
     <li>
-      {% if (appviewMode or "long") === option.mode %}
+      {% if (appviewMode or "subnav") === option.mode %}
       <span aria-current="true">{{ option.text }}</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
       {% else %}
       <a href="{{ option.url if versionUrls else consultationsUrl }}" class="govuk-link govuk-link--no-visited-state">{{ option.text }}</a>

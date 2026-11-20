@@ -66,7 +66,7 @@
         {% if file.withheld %}
         {{ file.title }}: <span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">Redacted</span>
         {% else %}
-        <a class="govuk-link govuk-link--no-visited-state" href="#">{{ file.title }} ({{ file.format }}, {{ file.size }})</a>
+        <a class="govuk-link govuk-link--no-visited-state" href="#">{{ file.title }} ({{ file.format }}{% if file.size %}, {{ file.size }}{% endif %})</a>
         {% endif %}
     </li>
     {% endfor %}
@@ -94,7 +94,7 @@
                             {% if file.withheld %}
                             {{ file.title }}: <span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">Redacted</span>
                             {% else %}
-                            <a class="govuk-link govuk-link--no-visited-state" href="#">{{ file.title }} ({{ file.format }}, {{ file.size }})</a>
+                            <a class="govuk-link govuk-link--no-visited-state" href="#">{{ file.title }} ({{ file.format }}{% if file.size %}, {{ file.size }}{% endif %})</a>
                             {% endif %}
                         </li>
                         {% endfor %}

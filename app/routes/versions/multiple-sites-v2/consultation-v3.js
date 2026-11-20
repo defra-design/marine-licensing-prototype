@@ -723,10 +723,11 @@ module.exports = function (router) {
     if (query.pagination === 'on') keep.pagination = 'on';
     // Open, Closed and Missed tabs: on by default
     if (query.tabs === 'off') keep.tabs = 'off';
-    // View application layout: the long page by default, or broken up with
-    // an accordion, MOJ side navigation (one page per section), tabs or MOJ
-    // sub navigation (one page per tab)
-    if (['accordion', 'sidenav', 'tabs', 'subnav'].includes(query.appview)) keep.appview = query.appview;
+    // View application layout: MOJ sub navigation (one page per tab) by
+    // default, which came out top in research. The others are kept in the
+    // tray: the long page, an accordion, MOJ side navigation (one page per
+    // section) and tabs
+    if (['long', 'accordion', 'sidenav', 'tabs'].includes(query.appview)) keep.appview = query.appview;
     // View application opened in a new tab from the respond page: no Back
     // link or navigation. Kept so the side navigation pages keep it too.
     if (query.newtab === 'true') keep.newtab = 'true';
@@ -792,11 +793,11 @@ module.exports = function (router) {
       paginationOn: to({ pagination: 'on' }),
       tabsOff: to({ tabs: 'off' }),
       tabsOn: to({ tabs: null }),
-      appviewLong: to({ appview: null }),
+      appviewLong: to({ appview: 'long' }),
       appviewAccordion: to({ appview: 'accordion' }),
       appviewSidenav: to({ appview: 'sidenav' }),
       appviewTabs: to({ appview: 'tabs' }),
-      appviewSubnav: to({ appview: 'subnav' }),
+      appviewSubnav: to({ appview: null }),
       rolesConsultee: to({ 'consultation-v3-roles': 'consultee' }),
       rolesBoth: to({ 'consultation-v3-roles': 'both' }),
       rolesBothEmpty: to({ 'consultation-v3-roles': 'both-empty' })
@@ -858,7 +859,7 @@ module.exports = function (router) {
     res.locals.passedOn = keep.passed !== 'off';
     res.locals.paginationOn = keep.pagination === 'on';
     res.locals.tabsOn = keep.tabs !== 'off';
-    res.locals.appviewMode = keep.appview || 'long';
+    res.locals.appviewMode = keep.appview || 'subnav';
     // Always render afresh, so the browser's Back button never shows an old
     // copy of a page from before assigning or responding
     res.set('Cache-Control', 'no-store');
@@ -1282,20 +1283,20 @@ module.exports = function (router) {
       filename,
       withheld: !!doc.withheld,
       format: filename.split('.').pop().toUpperCase(),
-      size: doc.size || (kb >= 1000 ? `${(kb / 1024).toFixed(1)} MB` : `${kb} KB`)
+      // No size for a file made when the link is clicked
+      size: doc.generated ? null : doc.size || (kb >= 1000 ? `${(kb / 1024).toFixed(1)} MB` : `${kb} KB`)
     };
   }
 
   // The site location as GIS data, for consultees' constraints checks and
   // triage: a KML file and a Shapefile (zipped, as a Shapefile is several
   // files). One of each, covering every site. The service makes them from
-  // the site location, however the applicant provided it. Sizes are made up,
-  // a little bigger for each site.
+  // the site location, however the applicant provided it. No file size, as
+  // they are generated when the link is clicked (dev are doing a spike on it).
   function siteLocationFiles(request) {
-    const siteCount = request.application ? request.application.sites.length : 1;
     return [
-      documentFor({ filename: `${request.id}-site-location.kml`, size: `${2 + siteCount} KB` }, 'Site location KML file'),
-      documentFor({ filename: `${request.id}-site-location-shapefile.zip`, size: `${6 + 3 * siteCount} KB` }, 'Site location Shapefile')
+      documentFor({ filename: `${request.id}-site-location.kml`, generated: true }, 'Site location KML file'),
+      documentFor({ filename: `${request.id}-site-location-shapefile.zip`, generated: true }, 'Site location Shapefile')
     ];
   }
 
@@ -1360,8 +1361,8 @@ module.exports = function (router) {
     return sections;
   }
 
-  // View application (read-only, like view details in LCML v4). The long
-  // page by default; ?appview= picks a broken-up version for applications
+  // View application (read-only, like view details in LCML v4). The sub
+  // navigation version by default; ?appview= picks another for applications
   // that have a full application. The others always get the long page.
   router.get(`${base}/view-application/:requestId`, function (req, res) {
     const request = findRequest(req, res);
