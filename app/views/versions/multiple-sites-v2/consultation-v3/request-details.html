@@ -9,7 +9,8 @@
 {% set pageHeading = "Request for advice" if isAdvice else "Application notification" %}
 {% set pageTitle = pageHeading %}
 {# pageQuery carries the page versions (and the list's filters) between pages #}
-{% set backLink = "../consultations" + pageQuery %}
+{# No Back link when they came from the email, until they go to the list #}
+{% set backLink = "../consultations" + pageQuery if not fromEmail else "" %}
 {% set assignUrl = "../assign/" + request.id + pageQuery %}
 
 {% block head %}
