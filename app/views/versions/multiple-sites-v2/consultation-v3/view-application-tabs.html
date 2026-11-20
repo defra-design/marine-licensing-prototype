@@ -1,0 +1,115 @@
+{% extends "versions/multiple-sites-v2/consultation-v3/includes/layout.html" %}
+
+{% from "govuk/components/tabs/macro.njk" import govukTabs %}
+{% import "versions/multiple-sites-v2/consultation-v3/includes/application-sections.html" as sections_ %}
+
+{% set navActive = "consultations" %}
+{% set pageTitle = request.applicationName %}
+{% set backLink = "/versions/multiple-sites-v2/consultation-v3/request-details/" + request.id + versionQuery %}
+{% set backLinkText = "Back to the request for advice" if request.type === "response-required" else "Back to the application notification" %}
+
+{#
+  View application, tabs version (?appview=tabs). The same content as the
+  long page, on one page, with a GOV.UK tab for each group of sections.
+  Tabs only go one level deep, so the Sites and Marine plan policies tabs
+  hold every site or category, one after another. The policies tab starts
+  with links to each category.
+#}
+
+{# Back to the top of the page, at the reference number above the application name #}
+{% macro backToTop() %}
+<p class="govuk-body govuk-!-margin-bottom-8"><a class="govuk-link govuk-link--no-visited-state" href="#top">Back to top</a></p>
+{% endmacro %}
+
+{% block content %}
+
+{% set app = request.application %}
+{% set siteSections = [] %}
+{% set policySections = [] %}
+{% for s in sections %}
+{% if s.kind === "site" %}{% set siteSections = (siteSections.push(s), siteSections) %}{% endif %}
+{% if s.kind === "policies" or s.kind === "supporting" %}{% set policySections = (policySections.push(s), policySections) %}{% endif %}
+{% endfor %}
+
+{% set overviewHtml %}
+<h2 class="govuk-heading-m">Overview</h2>
+{{ sections_.overview(request, 3) }}
+{% endset %}
+
+{% set documentsHtml %}
+<h2 class="govuk-heading-m">Documents</h2>
+{{ sections_.documentsCard(documentGroups, 3) }}
+{% endset %}
+
+{# Links down to each site when there is more than one, with a Back to top
+   link after each site, as on the Marine plan policies tab #}
+{% set sitesHtml %}
+<h2 class="govuk-heading-m">Sites and activities</h2>
+{% if siteSections.length > 1 %}
+<ul class="govuk-list">
+    {% for s in siteSections %}
+    <li><a class="govuk-link govuk-link--no-visited-state" href="#{{ s.slug }}">{{ s.navText }}</a></li>
+    {% endfor %}
+</ul>
+{% endif %}
+{% for s in siteSections %}
+<div id="{{ s.slug }}">
+{{ sections_.site(s.site, s.siteNumber, 3) }}
+{% if siteSections.length > 1 %}
+{{ backToTop() }}
+{% endif %}
+</div>
+{% endfor %}
+{% endset %}
+
+{% set policiesHtml %}
+<h2 class="govuk-heading-m">Marine plan policies</h2>
+<ul class="govuk-list">
+    {% for s in policySections %}
+    <li><a class="govuk-link govuk-link--no-visited-state" href="#{{ s.slug }}">{{ s.navText }}</a></li>
+    {% endfor %}
+</ul>
+{% for s in policySections %}
+<div id="{{ s.slug }}">
+{% if s.kind === "policies" %}
+{{ sections_.policyCard(s.policyGroup, s.navText, 3) }}
+{% else %}
+<h3 class="govuk-heading-m govuk-!-margin-top-6">{{ s.navText }}</h3>
+{{ sections_.supportingDocuments(app, 4) }}
+{% endif %}
+{{ backToTop() }}
+</div>
+{% endfor %}
+{% endset %}
+
+{% set wfdHtml %}
+<h2 class="govuk-heading-m">Water Framework Directive</h2>
+{{ sections_.wfd(app, 3) }}
+{% endset %}
+
+{% set permissionsHtml %}
+<h2 class="govuk-heading-m">Other permissions</h2>
+{{ sections_.otherPermissions(app, 3) }}
+{% endset %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+
+        {{ sections_.pageHeading(request) }}
+
+        {{ govukTabs({
+            id: "application-" + request.id,
+            items: [
+                { label: "Overview", id: "overview", panel: { html: overviewHtml } },
+                { label: "Documents", id: "documents", panel: { html: documentsHtml } },
+                { label: "Sites and activities", id: "sites", panel: { html: sitesHtml } },
+                { label: "Marine plan policies", id: "marine-plan-policies", panel: { html: policiesHtml } },
+                { label: "WFD", id: "water-framework-directive", panel: { html: wfdHtml } },
+                { label: "Other permissions", id: "other-permissions", panel: { html: permissionsHtml } }
+            ]
+        }) }}
+
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,264 @@
+{#
+  The sections of a full application, for the versions of view application
+  that break it up (accordion, side navigation and tabs). The content
+  matches the long page (view-application.html); only the headings change,
+  so each version shows the same thing. level is the heading level of the
+  card titles, as they sit under different headings in each version.
+#}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+{% from "versions/multiple-sites-v2/consultation-v3/includes/macros.html" import published %}
+
+{# A document in the full application: a dead link, or the marker if
+   withheld. A string is just a filename, and a replaced document links to
+   the applicant's redacted copy. #}
+{% macro documentLink(file) %}
+{%- if file.withheld -%}
+<span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">Redacted</span>
+{%- else -%}
+<a class="govuk-link govuk-link--no-visited-state" href="#">{{ file.replacedBy or file.filename or file }}</a>
+{%- endif -%}
+{% endmacro %}
+
+{% macro summaryCard(title, rows, level) %}
+<div class="govuk-summary-card">
+    <div class="govuk-summary-card__title-wrapper">
+        <h{{ level }} class="govuk-summary-card__title">{{ title }}</h{{ level }}>
+    </div>
+    <div class="govuk-summary-card__content">
+        <dl class="govuk-summary-list">
+            {% for row in rows %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">{{ row[0] }}</dt>
+                <dd class="govuk-summary-list__value">{{ row[1] }}</dd>
+            </div>
+            {% endfor %}
+        </dl>
+    </div>
+</div>
+{% endmacro %}
+
+{# Application overview and application details #}
+{% macro overview(request, level) %}
+{% set app = request.application %}
+{{ summaryCard("Application overview", [
+    ["Application type", "Marine licence application"],
+    ["Status", govukTag({ text: "Consultation", classes: "govuk-tag--purple" })],
+    ["Reference number", request.reference],
+    ["Who the marine licence is for", request.applicant],
+    ["Date submitted", app.submittedOffset | daysFromToday]
+], level) }}
+
+{{ summaryCard("Application details", [
+    ["Application name", request.applicationName],
+    ["Proposed works summary", published(request.summary)],
+    ["Preferred start and end dates of the licence", request.startAndEndDates]
+], level) }}
+{% endmacro %}
+
+{# Every document, grouped under the task list section it was uploaded in.
+   Links are dead in the prototype. #}
+{% macro documents(documentGroups, level) %}
+{% for group in documentGroups %}
+<h{{ level }} class="govuk-heading-s govuk-!-margin-bottom-2">{{ group.heading }}</h{{ level }}>
+<ul class="govuk-list govuk-list--bullet">
+    {% for file in group.documents %}
+    <li>
+        {% if file.withheld %}
+        {{ file.title }}: <span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">Redacted</span>
+        {% else %}
+        <a class="govuk-link govuk-link--no-visited-state" href="#">{{ file.title }} ({{ file.format }}{% if file.size %}, {{ file.size }}{% endif %})</a>
+        {% endif %}
+    </li>
+    {% endfor %}
+</ul>
+{% endfor %}
+{% endmacro %}
+
+{# The same documents in one summary card titled Documents, a row per
+   group, for versions where everything else on the page is in cards.
+   Bulleted, as long document names wrap. #}
+{% macro documentsCard(documentGroups, level) %}
+<div class="govuk-summary-card">
+    <div class="govuk-summary-card__title-wrapper">
+        <h{{ level }} class="govuk-summary-card__title">Documents</h{{ level }}>
+    </div>
+    <div class="govuk-summary-card__content">
+        <dl class="govuk-summary-list">
+            {% for group in documentGroups %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">{{ group.heading }}</dt>
+                <dd class="govuk-summary-list__value">
+                    <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-0">
+                        {% for file in group.documents %}
+                        <li>
+                            {% if file.withheld %}
+                            {{ file.title }}: <span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">Redacted</span>
+                            {% else %}
+                            <a class="govuk-link govuk-link--no-visited-state" href="#">{{ file.title }} ({{ file.format }}{% if file.size %}, {{ file.size }}{% endif %})</a>
+                            {% endif %}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </dd>
+            </div>
+            {% endfor %}
+        </dl>
+    </div>
+</div>
+{% endmacro %}
+
+{# A site: its name and map, its activities and its drawings #}
+{% macro site(site, siteNumber, level) %}
+<div class="govuk-summary-card">
+    <div class="govuk-summary-card__title-wrapper">
+        <h{{ level }} class="govuk-summary-card__title">Site {{ siteNumber }}</h{{ level }}>
+    </div>
+    <div class="govuk-summary-card__content">
+        <dl class="govuk-summary-list govuk-summary-list--full-width">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Site name</dt>
+                <dd class="govuk-summary-list__value">{{ site.name }}</dd>
+            </div>
+            <div class="govuk-summary-list__row govuk-summary-list__row--no-actions">
+                <dt class="govuk-summary-list__key govuk-summary-list__key--full-width map-label">Map view</dt>
+                <dd class="govuk-summary-list__value govuk-summary-list__value--full-width">
+                    <img src="/public/images/{{ site.map }}" alt="Map showing site {{ siteNumber }} location" width="100%" />
+                </dd>
+            </div>
+        </dl>
+    </div>
+</div>
+
+{% for activity in site.activities %}
+{{ summaryCard("Site " + siteNumber + " – Activity " + loop.index, [
+    ["Type of activity", activity.typeOfActivity],
+    [activity.whatLabel, activity.what],
+    ["Activity description", published(activity.description)],
+    ["Maximum duration of activity", activity.maximumDuration],
+    ["Completion date", activity.completionDate],
+    ["Activity limited to specific months", activity.specificMonths],
+    ["Proposed working hours", published(activity.workingHours)]
+], level) }}
+{% endfor %}
+
+{% for drawing in site.drawings %}
+{{ summaryCard("Site " + siteNumber + " – Construction drawing " + loop.index, [
+    ["File upload", documentLink(drawing)]
+], level) }}
+{% endfor %}
+{% endmacro %}
+
+{# The policies in one category, as a summary list. Wrapped in a card by
+   the versions that need one. #}
+{% macro policyList(group) %}
+<dl class="govuk-summary-list">
+    {% for policy in group.policies %}
+    <div class="govuk-summary-list__row">
+        <dt class="govuk-summary-list__key">{{ policy.name }}<br>({{ policy.code }})</dt>
+        <dd class="govuk-summary-list__value">
+            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
+            <p class="govuk-body">{{ policy.info }}</p>
+            <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Applicant’s consideration</p>
+            <p class="govuk-body govuk-!-margin-bottom-0">{{ policy.consideration }}</p>
+        </dd>
+    </div>
+    {% endfor %}
+</dl>
+{% endmacro %}
+
+{% macro policyCard(group, title, level) %}
+<div class="govuk-summary-card">
+    <div class="govuk-summary-card__title-wrapper">
+        <h{{ level }} class="govuk-summary-card__title">{{ title }}</h{{ level }}>
+    </div>
+    <div class="govuk-summary-card__content">
+        {{ policyList(group) }}
+    </div>
+</div>
+{% endmacro %}
+
+{# One card per supporting document, as on LCML v4 check your answers #}
+{% macro supportingDocuments(app, level) %}
+{% for document in app.supportingDocuments %}
+<div class="govuk-summary-card">
+    <div class="govuk-summary-card__title-wrapper">
+        <h{{ level }} class="govuk-summary-card__title">Supporting document – {{ document.filename }}</h{{ level }}>
+    </div>
+    <div class="govuk-summary-card__content">
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">File upload</dt>
+                <dd class="govuk-summary-list__value"><a class="govuk-link govuk-link--no-visited-state" href="#">{{ document.filename }}</a></dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Type</dt>
+                <dd class="govuk-summary-list__value">{{ document.type }}</dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Policies</dt>
+                <dd class="govuk-summary-list__value">
+                    <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-0">
+                        {% for link in document.policies %}
+                        <li>{{ link.name }} ({{ link.code }}) – {{ link.location }}</li>
+                        {% endfor %}
+                    </ul>
+                </dd>
+            </div>
+        </dl>
+    </div>
+</div>
+{% endfor %}
+{% endmacro %}
+
+{# Water Framework Directive assessment #}
+{% macro wfd(app, level) %}
+{{ summaryCard("Water Framework Directive assessment", [
+    ["Proposed works located within one nautical mile (1.85km) of low-water, in a tidal river or estuary", app.wfd.withinOneNauticalMile],
+    ["Proposed works limited to one of the excluded activities", app.wfd.excludedActivities],
+    ["Water Framework Directive assessment upload", documentLink(app.wfd.upload)]
+], level) }}
+{% endmacro %}
+
+{# Other permissions #}
+{% macro otherPermissions(app, level) %}
+{{ summaryCard("Other permissions", [
+    ["Special legal powers to do any of these proposed works", app.otherPermissions.specialLegalPowers],
+    ["Located in a harbour authority area", published(app.otherPermissions.harbourAuthority)],
+    ["Permission from any other authorities in relation to these proposed works", app.otherPermissions.otherAuthorities],
+    ["Pre-application public groups or organisations consultation", app.otherPermissions.preApplicationConsultation]
+], level) }}
+{% endmacro %}
+
+{# The heading and redaction note at the top of every version #}
+{% macro pageHeading(request) %}
+<span class="govuk-caption-l" id="top">{{ request.reference }}</span>
+<h1 class="govuk-heading-l">{{ request.applicationName }}</h1>
+
+{% if request.application.redacted %}
+<div class="govuk-inset-text">
+    <p class="govuk-body">We have withheld some information in this application, for example because it is commercially sensitive or personal.</p>
+    <p class="govuk-body">Withheld information is shown as <span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">REDACTED</span>.</p>
+</div>
+{% endif %}
+{% endmacro %}
+
+{# A section's content, for whichever kind it is. level is the heading
+   level of the cards inside it. #}
+{% macro sectionContent(s, request, documentGroups, level, cardTitles) %}
+{% set app = request.application %}
+{% if s.kind === "overview" %}
+{{ overview(request, level) }}
+{% elif s.kind === "documents" %}
+{{ documents(documentGroups, level) }}
+{% elif s.kind === "site" %}
+{{ site(s.site, s.siteNumber, level) }}
+{% elif s.kind === "policies" %}
+{% if cardTitles %}{{ policyCard(s.policyGroup, s.title, level) }}{% else %}{{ policyList(s.policyGroup) }}{% endif %}
+{% elif s.kind === "supporting" %}
+{{ supportingDocuments(app, level) }}
+{% elif s.kind === "wfd" %}
+{{ wfd(app, level) }}
+{% elif s.kind === "permissions" %}
+{{ otherPermissions(app, level) }}
+{% endif %}
+{% endmacro %}

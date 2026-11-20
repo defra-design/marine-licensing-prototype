@@ -1,0 +1,59 @@
+{% extends "versions/multiple-sites-v2/consultation-v3/includes/layout.html" %}
+
+{% from "moj/components/side-navigation/macro.njk" import mojSideNavigation %}
+{% import "versions/multiple-sites-v2/consultation-v3/includes/application-sections.html" as sections_ %}
+
+{% set navActive = "consultations" %}
+{% set pageTitle = current.title + " – " + request.applicationName %}
+{% set backLink = "/versions/multiple-sites-v2/consultation-v3/request-details/" + request.id + versionQuery %}
+{% set backLinkText = "Back to the request for advice" if request.type === "response-required" else "Back to the application notification" %}
+
+{#
+  View application, side navigation version (?appview=sidenav). Each
+  section is a page of its own, at view-application/<id>/<section>, with
+  MOJ side navigation to move between them. The first section (Overview) is the page
+  at view-application/<id>. The sections come from applicationSections()
+  in consultation-v3.js.
+#}
+
+{% block content %}
+
+{# Side navigation sections, one per group, in the order they first appear #}
+{% set navSections = [] %}
+{% set groupNames = [] %}
+{% for s in sections %}
+{% if s.group not in groupNames %}
+{% set groupNames = (groupNames.push(s.group), groupNames) %}
+{% set navSections = (navSections.push({ heading: { text: s.group, headingLevel: 2 }, items: [] }), navSections) %}
+{% endif %}
+{% set navItems = navSections[navSections.length - 1].items %}
+{% set navItems = (navItems.push({ text: s.navText or s.title, href: s.href, active: s.slug === current.slug }), navItems) %}
+{% endfor %}
+
+{{ sections_.pageHeading(request) }}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-one-quarter">
+        {{ mojSideNavigation({
+            label: "Application sections",
+            classes: "govuk-!-padding-top-0",
+            sections: navSections
+        }) }}
+    </div>
+
+    <div class="govuk-grid-column-three-quarters">
+        {# Everything in summary cards, as on the long page, with no section
+           heading above them: the card titles already say what the section
+           is, and the side navigation shows where you are. The card titles
+           are h2s, under the application name. #}
+        {% if current.kind === "policies" %}
+        {{ sections_.policyCard(current.policyGroup, current.title, 2) }}
+        {% elif current.kind === "documents" %}
+        {{ sections_.documentsCard(documentGroups, 2) }}
+        {% else %}
+        {{ sections_.sectionContent(current, request, documentGroups, 2, false) }}
+        {% endif %}
+    </div>
+</div>
+
+{% endblock %}
