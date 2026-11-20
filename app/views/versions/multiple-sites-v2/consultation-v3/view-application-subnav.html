@@ -1,6 +1,7 @@
 {% extends "versions/multiple-sites-v2/consultation-v3/includes/layout.html" %}
 
 {% from "moj/components/sub-navigation/macro.njk" import mojSubNavigation %}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
 {% import "versions/multiple-sites-v2/consultation-v3/includes/application-sections.html" as sections_ %}
 
 {% set navActive = "consultations" %}
@@ -35,6 +36,71 @@
 </nav>
 {% endmacro %}
 
+{# A page for the other applications, which have no full application:
+   the same pages and navigation, with the content from the long page's
+   short version. Pages with nothing in them yet say To follow. #}
+{% macro shortPage(request, slug, documentGroups) %}
+{% if slug === "overview" %}
+{{ sections_.summaryCard("Application overview", [
+    ["Application type", "Marine licence application"],
+    ["Status", govukTag({ text: "Consultation", classes: "govuk-tag--purple" })],
+    ["Reference number", request.reference],
+    ["Who the marine licence is for", request.applicant]
+], 3) }}
+{{ sections_.summaryCard("Application details", [
+    ["Application name", request.applicationName],
+    ["Proposed works summary", request.summary],
+    ["Preferred start and end dates of the licence", request.startAndEndDates]
+], 3) }}
+
+{% elif slug === "documents" %}
+{{ sections_.documentsCard(documentGroups, 3) }}
+
+{% elif slug === "sites" %}
+<div class="govuk-summary-card">
+    <div class="govuk-summary-card__title-wrapper">
+        <h3 class="govuk-summary-card__title">Site 1</h3>
+    </div>
+    <div class="govuk-summary-card__content">
+        <dl class="govuk-summary-list govuk-summary-list--full-width">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Site name</dt>
+                <dd class="govuk-summary-list__value">{{ request.site.name }}</dd>
+            </div>
+            <div class="govuk-summary-list__row govuk-summary-list__row--no-actions">
+                <dt class="govuk-summary-list__key govuk-summary-list__key--full-width map-label">Map view</dt>
+                <dd class="govuk-summary-list__value govuk-summary-list__value--full-width">
+                    <img src="/public/images/map-5-points.jpg" alt="Map showing site 1 location" width="100%" />
+                </dd>
+            </div>
+        </dl>
+    </div>
+</div>
+{{ sections_.summaryCard("Site 1 – Activity 1", [
+    ["Type of activity", request.site.typeOfActivity],
+    ["What is being constructed", request.site.whatIsBeingConstructed],
+    ["Activity description", request.site.activityDescription],
+    ["Maximum duration of activity", request.site.maximumDuration],
+    ["Completion date", request.site.completionDate],
+    ["Activity limited to specific months", request.site.specificMonths],
+    ["Proposed working hours", request.site.workingHours]
+], 3) }}
+{# The drawing link is deliberately dead in the prototype #}
+{{ sections_.summaryCard("Site 1 – Construction drawing 1", [
+    ["File upload", ('<a class="govuk-link govuk-link--no-visited-state" href="#">' + request.site.drawing + '</a>') | safe]
+], 3) }}
+
+{% elif slug === "marine-plan-policies" %}
+{{ sections_.summaryCard("Marine plan policies", [["Details", "To follow"]], 3) }}
+
+{% elif slug === "water-framework-directive" %}
+{{ sections_.summaryCard("Water Framework Directive assessment", [["Details", "To follow"]], 3) }}
+
+{% elif slug === "other-permissions" %}
+{{ sections_.summaryCard("Other permissions", [["Details", "To follow"]], 3) }}
+{% endif %}
+{% endmacro %}
+
 {% block content %}
 
 {% set app = request.application %}
@@ -57,7 +123,10 @@
 
         <h2 class="govuk-heading-m">{{ current.heading }}</h2>
 
-        {% if current.slug === "overview" %}
+        {% if not app %}
+        {{ shortPage(request, current.slug, documentGroups) }}
+
+        {% elif current.slug === "overview" %}
         {{ sections_.overview(request, 3) }}
 
         {% elif current.slug === "documents" %}

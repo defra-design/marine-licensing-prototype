@@ -469,11 +469,6 @@ module.exports = function (router) {
       closingUrgent: respondByOffset <= CLOSING_URGENT_DAYS,
       // Nobody can respond once the closing date has passed
       closed: respondByOffset < 0,
-      // Nothing to assign once responded, or once an application notification
-      // has closed, as nobody could respond to it. Missed requests for advice
-      // can still be assigned: an extension may have been agreed offline, so
-      // the request can be assigned ready for when it reopens.
-      assignable: status !== 'Responded' && !(respondByOffset < 0 && request.type !== 'response-required'),
       response: req.session.data[`consultation-v3-${request.id}-response`] || (request.seededResponse && request.seededResponse.text),
       respondedDate: req.session.data[`consultation-v3-${request.id}-responded-date`] || (request.seededResponse && dateFromToday(request.seededResponse.respondedOffset)),
       // Who sent the response, as it might not be you
@@ -1118,8 +1113,10 @@ module.exports = function (router) {
     const backToConsultations = () => req.session.save(() => res.redirect(req.originalUrl));
     const [action, rowId] = (data['consultation-v3-assign-action'] || '').split(':');
     let ids = rowId ? [rowId] : [].concat(data['consultation-v3-assign-ids'] || []);
-    // Responded cases and closed notifications have nothing left to assign
-    ids = ids.filter(id => id && id !== '_unchecked' && REQUESTS[id] && withStatus(req, REQUESTS[id]).assignable);
+    // Every case can be assigned, open, missed, closed or responded: simpler
+    // to build than rules for which can't, and teams may assign them for
+    // their own reasons
+    ids = ids.filter(id => id && id !== '_unchecked' && REQUESTS[id]);
     delete data['consultation-v3-assign-action'];
     delete data['consultation-v3-assign-ids'];
     const reassignTo = data['consultation-v3-reassign-to'];
@@ -1184,7 +1181,6 @@ module.exports = function (router) {
   router.get(`${base}/assign/:requestId`, function (req, res) {
     const request = findRequest(req, res);
     if (!request) return;
-    if (!request.assignable) return res.redirect(`${base}/request-details/${request.id}${queryOf(req)}`);
     req.session.data['consultation-v3-reassign-ids'] = [request.id];
     req.session.data['consultation-v3-reassign-from'] = request.id;
     req.session.save(() => res.redirect(`${base}/assign-to-someone-else${queryOf(req)}`));
@@ -1362,13 +1358,18 @@ module.exports = function (router) {
   }
 
   // View application (read-only, like view details in LCML v4). The sub
-  // navigation version by default; ?appview= picks another for applications
-  // that have a full application. The others always get the long page.
+  // navigation version by default, for every application so the navigation
+  // is always there. ?appview= picks another, for applications that have a
+  // full application; the others get the long page in those.
   router.get(`${base}/view-application/:requestId`, function (req, res) {
     const request = findRequest(req, res);
     if (!request) return;
     const appview = res.locals.appviewMode;
     const documentGroups = documentsFor(request);
+    if (appview === 'subnav') {
+      const sections = request.application ? applicationSections(request) : [];
+      return renderSubnavPage(req, res, request, sections, SUBNAV_PAGES[0], documentGroups);
+    }
     if (!request.application || appview === 'long') {
       return res.render(`versions/${version}/${section}/view-application`, { request, documentGroups });
     }
@@ -1376,9 +1377,6 @@ module.exports = function (router) {
     if (appview === 'sidenav') {
       // The first section is the page you land on
       return renderSidenavSection(req, res, request, sections, sections[0], documentGroups);
-    }
-    if (appview === 'subnav') {
-      return renderSubnavPage(req, res, request, sections, SUBNAV_PAGES[0], documentGroups);
     }
     res.render(`versions/${version}/${section}/view-application-${appview}`, { request, documentGroups, sections });
   });
@@ -1428,7 +1426,7 @@ module.exports = function (router) {
     const sections = request.application ? applicationSections(request) : [];
     if (res.locals.appviewMode === 'subnav') {
       const page = SUBNAV_PAGES.find(p => p.slug === req.params.part);
-      if (request.application && page) {
+      if (page) {
         return renderSubnavPage(req, res, request, sections, page, documentsFor(request));
       }
       return res.redirect(`${base}/view-application/${request.id}${res.locals.versionQuery}`);
