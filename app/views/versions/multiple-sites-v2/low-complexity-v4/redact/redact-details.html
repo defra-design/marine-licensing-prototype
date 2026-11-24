@@ -39,6 +39,22 @@
 
     /* .app-redacted-marker is styled in application.scss */
 
+    /* A withheld supporting document takes its details with it. They stay on
+       screen for reference, under the grey rule that marks every redaction,
+       but can no longer be redacted one by one. The answers' own rules and
+       links are dropped so the details read as one withheld block. */
+    .app-supporting--withheld .app-supporting__detail {
+      border-left: 5px solid #b1b4b6;
+      padding-left: 15px;
+    }
+    .app-supporting--withheld .app-supporting__detail .app-redact {
+      border-left: 0;
+      padding-left: 0;
+    }
+    .app-supporting--withheld .app-supporting__detail [data-redact-links] {
+      display: none;
+    }
+
     .app-redact__editor { margin-top: 5px; }
     .app-redact__toolbar { margin-bottom: 5px; }
 
@@ -183,7 +199,7 @@
   get the grey rule and the ***REDACTED*** marker, and both are undone by the
   same "Remove redaction" link — back to the file the applicant first sent.
 #}
-{% macro hideable(id, noun, context, replaceKey, fileKey, originalFile) %}
+{% macro hideable(id, noun, context, replaceKey, fileKey, originalFile, withheldNote) %}
 {% set isHidden = data[id] %}
 {% set currentFile = data[fileKey] or originalFile %}
 {% set isReplaced = currentFile != originalFile %}
@@ -197,7 +213,7 @@
 
     <p class="govuk-body govuk-!-margin-bottom-1" data-hideable-marker {{ '' if isRedacted else 'hidden' }}><span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">Redacted</span></p>
 
-    <p class="govuk-body app-redact__original" data-hideable-note-withheld {{ '' if isHidden else 'hidden' }}>This {{ noun }} will not be published on the public register.</p>
+    <p class="govuk-body app-redact__original" data-hideable-note-withheld {{ '' if isHidden else 'hidden' }}>{{ withheldNote or ('This ' + noun + ' will not be published on the public register.') }}</p>
 
     <p class="govuk-body app-redact__original" data-hideable-note-replaced {{ '' if isReplaced else 'hidden' }}>This {{ noun }} will replace the original on the public register.</p>
 
@@ -236,9 +252,11 @@
 
 {#
   Marine plan policy supporting documents, as the applicant added them. The
-  same list is in preview.html – keep the two in step. The second one names the
-  harbour master and gives the pontoon's size, both of which are redacted
-  elsewhere on this page, so there is something to find.
+  same list is in preview.html – keep the two in step. Three documents linked
+  to 2, 1 and 2 policies, to sit alongside the applicant's check answers demo.
+  The second and third give the pontoon's size and name the harbour master,
+  both of which are redacted elsewhere on this page, so there is something to
+  find.
 #}
 {% set supportingDocuments = [
     {
@@ -246,8 +264,14 @@
         type: "Ecological Assessment",
         policies: [
             { name: "South West Biodiversity 1", code: "SW-BIO-1", location: "Section 3, pages 6 to 11" },
-            { name: "South West Biodiversity 2", code: "SW-BIO-2", location: "Section 4.2, page 13" },
             { name: "South West Marine protected areas 1", code: "SW-MPA-1", location: "Appendix B, pages 20 to 22" }
+        ]
+    },
+    {
+        filename: "teignmouth-pontoon-technical-specification.pdf",
+        type: "Technical or Engineering Report",
+        policies: [
+            { name: "South West Underwater noise 1", code: "SW-UWN-1", location: "Section 2.3, 8m by 4m pontoon and wall guide fixing method" }
         ]
     },
     {
@@ -255,9 +279,8 @@
         type: "Other supporting evidence",
         description: "Pontoon operations and access plan, agreed with the Harbour Master, Mr R. Pethick",
         policies: [
-            { name: "South West Access 1", code: "SW-ACC-1", location: "Page 5, 8m by 4m pontoon layout and 4m gangway detail" },
-            { name: "South West Ports, harbours and shipping 1", code: "SW-PS-1", location: "Appendix A, letter from the Harbour Master, Mr R. Pethick" },
-            { name: "South West Tourism and recreation 2", code: "SW-TR-2", location: "Section 3, pages 6 to 8" }
+            { name: "South West Access 1", code: "SW-ACC-1", location: "Section 2, gangway access and boarding arrangements" },
+            { name: "South West Ports, harbours and shipping 1", code: "SW-PS-1", location: "Appendix A, letter from the Harbour Master, Mr R. Pethick" }
         ]
     }
 ] %}
@@ -921,10 +944,14 @@
         {# each policy – can be redacted like any answer.    #}
         {# The card is titled by number, not filename, so a  #}
         {# withheld or replaced file is not named in it.     #}
+        {# Withholding the file withholds its type,          #}
+        {# description and policies too – the register shows #}
+        {# only the title and the redacted file. A replaced  #}
+        {# file keeps its details, each still redactable.    #}
         {# ================================================= #}
         {% for document in supportingDocuments %}
         {% set n = loop.index %}
-        <div class="govuk-summary-card" id="supporting-document-{{ n }}">
+        <div class="govuk-summary-card{{ ' app-supporting--withheld' if data['redact-hide-supporting-' + n] }}" id="supporting-document-{{ n }}" data-supporting-card>
             <div class="govuk-summary-card__title-wrapper">
                 <h2 class="govuk-summary-card__title">Supporting document {{ n }}</h2>
             </div>
@@ -933,28 +960,38 @@
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">File upload</dt>
                         <dd class="govuk-summary-list__value">
-                            {{ hideable("redact-hide-supporting-" + n, "document", "Supporting document " + n, "supporting-" + n, "redact-supporting-" + n + "-filename", document.filename) }}
+                            {{ hideable("redact-hide-supporting-" + n, "document", "Supporting document " + n, "supporting-" + n, "redact-supporting-" + n + "-filename", document.filename, "This document and its details will not be published on the public register.") }}
                         </dd>
                     </div>
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Type</dt>
-                        <dd class="govuk-summary-list__value">{{ document.type }}</dd>
+                        <dd class="govuk-summary-list__value">
+                            {# Picked from a list, but submitted all the same, so it can
+                               be redacted like Type of activity. #}
+                            <div class="app-supporting__detail">
+                            {{ redactField("redact-supporting-" + n + "-type", "Type of supporting document " + n, document.type, true) }}
+                            </div>
+                        </dd>
                     </div>
                     {% if document.description %}
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Description</dt>
                         <dd class="govuk-summary-list__value">
+                            <div class="app-supporting__detail">
                             {{ redactField("redact-supporting-" + n + "-description", "Description of supporting document " + n, document.description) }}
+                            </div>
                         </dd>
                     </div>
                     {% endif %}
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Policies</dt>
                         <dd class="govuk-summary-list__value">
+                            <div class="app-supporting__detail">
                             {% for link in document.policies %}
                             <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1{{ ' govuk-!-margin-top-6' if not loop.first }}">{{ link.name }} ({{ link.code }})</p>
                             {{ redactField("redact-supporting-" + n + "-location-" + link.code | lower, "Where the information is for " + link.code + " in supporting document " + n, link.location, true) }}
                             {% endfor %}
+                            </div>
                         </dd>
                     </div>
                 </dl>
@@ -1232,6 +1269,9 @@
         var toggle = item.querySelector('[data-hideable-toggle]')
         var replace = item.querySelector('[data-hideable-replace]')
         var remove = item.querySelector('[data-hideable-remove]')
+        // Only supporting documents have one: withholding the file there
+        // withholds the details in the rest of the card too.
+        var card = item.closest('[data-supporting-card]')
 
         // One of 'untouched', 'withheld' or 'replaced'.
         function render (state) {
@@ -1243,11 +1283,23 @@
             toggle.hidden = state !== 'untouched'
             replace.hidden = state !== 'untouched'
             remove.hidden = state === 'untouched'
+
+            if (card) {
+                card.classList.toggle('app-supporting--withheld', state === 'withheld')
+            }
         }
 
         toggle.addEventListener('click', function (event) {
             event.preventDefault()
             flag.value = 'yes'
+            // Close any detail half way through being redacted, so nothing is
+            // left open where its links are about to disappear. Its earlier
+            // redactions are kept, and come back if the file is published again.
+            if (card) {
+                card.querySelectorAll('[data-redact][data-state="editing"] [data-redact-cancel]').forEach(function (link) {
+                    link.click()
+                })
+            }
             render('withheld')
         })
 

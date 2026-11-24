@@ -720,8 +720,14 @@
                 type: "Ecological Assessment",
                 policies: [
                     { name: "South West Biodiversity 1", code: "SW-BIO-1", location: "Section 3, pages 6 to 11" },
-                    { name: "South West Biodiversity 2", code: "SW-BIO-2", location: "Section 4.2, page 13" },
                     { name: "South West Marine protected areas 1", code: "SW-MPA-1", location: "Appendix B, pages 20 to 22" }
+                ]
+            },
+            {
+                filename: "teignmouth-pontoon-technical-specification.pdf",
+                type: "Technical or Engineering Report",
+                policies: [
+                    { name: "South West Underwater noise 1", code: "SW-UWN-1", location: "Section 2.3, 8m by 4m pontoon and wall guide fixing method" }
                 ]
             },
             {
@@ -729,9 +735,8 @@
                 type: "Other supporting evidence",
                 description: "Pontoon operations and access plan, agreed with the Harbour Master, Mr R. Pethick",
                 policies: [
-                    { name: "South West Access 1", code: "SW-ACC-1", location: "Page 5, 8m by 4m pontoon layout and 4m gangway detail" },
-                    { name: "South West Ports, harbours and shipping 1", code: "SW-PS-1", location: "Appendix A, letter from the Harbour Master, Mr R. Pethick" },
-                    { name: "South West Tourism and recreation 2", code: "SW-TR-2", location: "Section 3, pages 6 to 8" }
+                    { name: "South West Access 1", code: "SW-ACC-1", location: "Section 2, gangway access and boarding arrangements" },
+                    { name: "South West Ports, harbours and shipping 1", code: "SW-PS-1", location: "Appendix A, letter from the Harbour Master, Mr R. Pethick" }
                 ]
             }
         ] %}
@@ -750,10 +755,13 @@
                             {{ publishedDocument("redact-hide-supporting-" + n, "redact-supporting-" + n + "-filename", document.filename) }}
                         </dd>
                     </div>
+                    {# A withheld document takes its details with it,
+                       leaving the card as the construction drawing's. #}
+                    {% if not data['redact-hide-supporting-' + n] %}
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Type</dt>
                         <dd class="govuk-summary-list__value">
-                            {{ document.type }}
+                            {{ publishedValue("redact-supporting-" + n + "-type", document.type) }}
                             {% if document.description %}<br>{{ publishedValue("redact-supporting-" + n + "-description", document.description) }}{% endif %}
                         </dd>
                     </div>
@@ -767,6 +775,7 @@
                             </ul>
                         </dd>
                     </div>
+                    {% endif %}
                 </dl>
             </div>
         </div>

@@ -1100,8 +1100,14 @@ module.exports = function (router) {
       hint: 'The file must be a .pdf, .doc, .docx or .odt and no larger than 10MB.'
     },
     'supporting-2': {
-      label: 'teignmouth-pontoon-operations-plan.pdf',
+      label: 'teignmouth-pontoon-technical-specification.pdf',
       anchor: 'supporting-document-2',
+      filename: 'teignmouth-pontoon-technical-specification-redacted.pdf',
+      hint: 'The file must be a .pdf, .doc, .docx or .odt and no larger than 10MB.'
+    },
+    'supporting-3': {
+      label: 'teignmouth-pontoon-operations-plan.pdf',
+      anchor: 'supporting-document-3',
       filename: 'teignmouth-pontoon-operations-plan-redacted.pdf',
       hint: 'The file must be a .pdf, .doc, .docx or .odt and no larger than 10MB.'
     }
