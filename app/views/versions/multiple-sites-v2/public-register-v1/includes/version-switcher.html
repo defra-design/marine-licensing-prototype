@@ -115,15 +115,15 @@
   </div>
 
   <div class="app-version-tray__section">
-  {# The long page by default. The other splits it into pages with MOJ sub
-     navigation, as on consultation v3. Kept in the session, so it lasts
-     through the comment journey and with the tray hidden. #}
-  {% set appviewSubnav = data['public-register-v1-appview'] === 'subnav' %}
+  {# Split into pages with MOJ sub navigation, as on consultation v3, by
+     default. The other is the earlier long page. Kept in the session, so it
+     lasts through the comment journey and with the tray hidden. #}
+  {% set appviewSubnav = data['public-register-v1-appview'] !== 'long' %}
   <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Application page</h3>
   <ul class="govuk-list govuk-list--spaced">
     {% for option in [
-      { subnav: false, text: "Long page", url: applicationPath + "?public-register-v1-appview=long" },
-      { subnav: true, text: "Split into pages with sub navigation", url: applicationPath + "?public-register-v1-appview=subnav" }
+      { subnav: true, text: "Split into pages with sub navigation", url: applicationPath + "?public-register-v1-appview=subnav" },
+      { subnav: false, text: "Long page", url: applicationPath + "?public-register-v1-appview=long" }
     ] %}
     <li>
       {% if appviewSubnav === option.subnav %}

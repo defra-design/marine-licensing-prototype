@@ -350,18 +350,19 @@ module.exports = function (router) {
     return Object.assign({}, details, { sites, supportingDocuments, wfd, documentGroups });
   }
 
-  // View an application. Two versions, from the tray: the long page (the
-  // default), or the application split into pages with MOJ sub navigation,
-  // as on consultation v3, so every view details page works the same way.
+  // View an application. Two versions, from the tray: the application
+  // split into pages with MOJ sub navigation, as on consultation v3, so
+  // every view details page works the same way (the default), or the
+  // earlier long page.
   //
-  // The tray sets ?public-register-v1-appview=subnav (or =long), which the
+  // The tray sets ?public-register-v1-appview=long (or =subnav), which the
   // kit keeps in the session, so the choice lasts through the comment
   // journey and back, and with the tray hidden for usability testing.
-  // Clear data puts it back to the long page.
+  // Clear data puts it back to the split pages.
   const APPVIEW_KEY = 'public-register-v1-appview';
 
   function subnavOn(req) {
-    return req.session.data[APPVIEW_KEY] === 'subnav';
+    return req.session.data[APPVIEW_KEY] !== 'long';
   }
 
   // The pages of the sub navigation version, as on consultation v3. text
