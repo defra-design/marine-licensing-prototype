@@ -115,18 +115,64 @@
   </div>
 
   <div class="app-version-tray__section">
-  {# MOJ ticket panel below the summary by default, with no separate
-     documents list. The other is the earlier order, Have your say straight
-     after the key facts and the documents list kept. #}
-  <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Have your say on the application page</h3>
+  {# The long page by default. The other splits it into pages with MOJ sub
+     navigation, as on consultation v3. Kept in the session, so it lasts
+     through the comment journey and with the tray hidden. #}
+  {% set appviewSubnav = data['public-register-v1-appview'] === 'subnav' %}
+  <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Application page</h3>
   <ul class="govuk-list govuk-list--spaced">
     {% for option in [
-      { panel: true, text: "MOJ ticket panel", url: applicationPath },
-      { panel: false, text: "Heading with section breaks, earlier order", url: applicationPath + "?hys=breaks" }
+      { subnav: false, text: "Long page", url: applicationPath + "?public-register-v1-appview=long" },
+      { subnav: true, text: "Split into pages with sub navigation", url: applicationPath + "?public-register-v1-appview=subnav" }
+    ] %}
+    <li>
+      {% if appviewSubnav === option.subnav %}
+      <span aria-current="true">{{ option.text }}</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ option.url }}" class="govuk-link govuk-link--no-visited-state">{{ option.text }}</a>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  </div>
+
+  {# Only with the split pages #}
+  {% if appviewSubnav %}
+  <div class="app-version-tray__section">
+  {% set subnavHysPanel = data['public-register-v1-subnav-hys'] !== 'plain' %}
+  <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Have your say on the split pages</h3>
+  <ul class="govuk-list govuk-list--spaced">
+    {% for option in [
+      { panel: true, text: "MOJ ticket panel, no heading", url: "?public-register-v1-subnav-hys=panel" },
+      { panel: false, text: "Line and button", url: "?public-register-v1-subnav-hys=plain" }
+    ] %}
+    <li>
+      {% if subnavHysPanel === option.panel %}
+      <span aria-current="true">{{ option.text }}</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
+      {% else %}
+      <a href="{{ option.url }}" class="govuk-link govuk-link--no-visited-state">{{ option.text }}</a>
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
+  </div>
+  {% endif %}
+
+  <div class="app-version-tray__section">
+  {# MOJ ticket panel below the summary by default, with no separate
+     documents list. The other is the earlier order, Have your say straight
+     after the key facts and the documents list kept. Long page only: the
+     sub navigation version always has the ticket panel, so from there
+     these go back to the long page. #}
+  <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Have your say on the long page</h3>
+  <ul class="govuk-list govuk-list--spaced">
+    {% for option in [
+      { panel: true, text: "MOJ ticket panel", url: applicationPath + "?public-register-v1-appview=long" },
+      { panel: false, text: "Heading with section breaks, earlier order", url: applicationPath + "?public-register-v1-appview=long&hys=breaks" }
     ] %}
     <li>
       {# Off the application page, the default is shown as showing #}
-      {% if (haveYourSayPanel if details else true) === option.panel %}
+      {% if not appviewSubnav and (haveYourSayPanel if details and not pages else true) === option.panel %}
       <span aria-current="true">{{ option.text }}</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
       {% else %}
       <a href="{{ option.url }}" class="govuk-link govuk-link--no-visited-state">{{ option.text }}</a>

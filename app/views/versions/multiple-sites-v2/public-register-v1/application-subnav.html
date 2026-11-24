@@ -1,0 +1,208 @@
+{% extends "versions/multiple-sites-v2/public-register-v1/includes/layout.html" %}
+
+{% from "moj/components/sub-navigation/macro.njk" import mojSubNavigation %}
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "moj/components/ticket-panel/macro.njk" import mojTicketPanel %}
+{% import "versions/multiple-sites-v2/public-register-v1/includes/application-parts.html" as parts %}
+
+{% set navActive = "applications" %}
+{% set pageTitle = (current.heading + " – " if current.slug !== "overview") + application.applicationName %}
+{# backLink comes from the route: shown only when they came from another
+   register page, and goes back to it. Back to the list says where it goes. #}
+{% if backLink and "/public-register-v1/applications" in backLink %}
+{% set backLinkText = "Back to marine licence applications" %}
+{% endif %}
+
+{# Have your say above the sub navigation. Two versions, from the tray,
+   kept in the session: in an MOJ ticket panel with no heading (the
+   default), or the same line and button without the panel. #}
+{% set hysPanel = data['public-register-v1-subnav-hys'] !== 'plain' %}
+
+{#
+  View an application, sub navigation version (from the tray). The same
+  content as the long page (application.html), split into the same pages
+  as the consultation v3 sub navigation version, with MOJ sub navigation
+  to move between them. The pages come from SUBNAV_PAGES in
+  public-register-v1.js.
+
+  Every page has the closing date and the Comment on this application
+  button above the sub navigation, so people can comment from whichever
+  page they are on.
+
+  Overview has no key facts list, summary or ticket panel, as on the long
+  page: split up, they repeat the cards. The key facts are rows in the
+  Application overview card instead, and the summary is in Application
+  details. The closing date is only above the sub navigation.
+#}
+
+{% block head %}
+  {{ super() }}
+  {{ parts.redactedStyles() }}
+{% endblock %}
+
+{# Back to the top of the page, at the reference number above the application name #}
+{% macro backToTop() %}
+<p class="govuk-body govuk-!-margin-bottom-8"><a class="govuk-link govuk-link--no-visited-state" href="#top">Back to top</a></p>
+{% endmacro %}
+
+{# Links down to each site or category on the page. A bold paragraph, not
+   a heading, so it does not add a level under the page's h2 #}
+{% macro onThisPage(items) %}
+<nav aria-label="On this page">
+    <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-2">On this page</p>
+    <ul class="govuk-list">
+        {% for item in items %}
+        <li><a class="govuk-link govuk-link--no-visited-state" href="#{{ item.slug }}">{{ item.text }}</a></li>
+        {% endfor %}
+    </ul>
+</nav>
+{% endmacro %}
+
+{# For a page with nothing in it yet, as on consultation v3 #}
+{% macro toFollow(title) %}
+{{ parts.summaryCard(title, [["Details", "To follow"]]) }}
+{% endmacro %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+        {{ parts.pageHeading(application) }}
+    </div>
+</div>
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+
+        {% set haveYourSay %}
+        <p class="govuk-body">You can comment on this application until the consultation closes on {{ application.closingOffset | daysFromToday }}{% if application.closingSoon %} ({{ application.closingSuffix }}){% endif %}.</p>
+        {{ govukButton({
+            text: "Comment on this application",
+            href: "/versions/multiple-sites-v2/public-register-v1/application/" + application.id + "/comment?new=1",
+            classes: "govuk-!-margin-bottom-0" if hysPanel
+        }) }}
+        {% endset %}
+
+        {% if hysPanel %}
+        {# No visible heading, so the panel is labelled for screen readers #}
+        {{ mojTicketPanel({
+            classes: "govuk-!-margin-bottom-6",
+            attributes: { "aria-label": "Have your say" },
+            items: [{ html: haveYourSay, classes: "moj-ticket-panel__content--blue" }]
+        }) }}
+        {% else %}
+        {{ haveYourSay | safe }}
+        {% endif %}
+
+        {{ mojSubNavigation({
+            label: "Application sections",
+            items: pages
+        }) }}
+
+        <h2 class="govuk-heading-m">{{ current.heading }}</h2>
+
+        {% if current.slug === "overview" %}
+
+        {% set activities %}{% for name in application.activityNames %}{{ name }}{% if not loop.last %}<br>{% endif %}{% endfor %}{% endset %}
+        {% set overview = [
+            ["Application type", "Marine licence application"],
+            ["Reference number", application.reference],
+            ["Who the marine licence is for", application.applicant],
+            ["Marine plan area", application.marinePlanAreas | join(", ")],
+            ["Activity", activities | safe]
+        ] %}
+        {% if details.submittedOffset %}
+        {% set overview = (overview.push(["Date submitted", details.submittedOffset | daysFromToday]), overview) %}
+        {% endif %}
+        {% set overview = (overview.push(["Published", application.publishedOffset | daysFromToday]), overview) %}
+        {{ parts.summaryCard("Application overview", overview) }}
+
+        {{ parts.summaryCard("Application details", [
+            ["Application name", application.applicationName],
+            ["Proposed works summary", parts.published(details.summary)],
+            ["Preferred start and end dates of the licence", details.startAndEndDates]
+        ]) }}
+
+        {% elif current.slug === "documents" %}
+
+        {% if details.documentGroups.length %}
+        {{ parts.documentsCard(details) }}
+        {% else %}
+        {{ toFollow("Documents") }}
+        {% endif %}
+
+        {# Links down to each site when there is more than one, with a Back
+           to top link after each site #}
+        {% elif current.slug === "sites" %}
+
+        {% set siteLinks = [] %}
+        {% for site in details.sites %}
+        {% set siteLinks = (siteLinks.push({ slug: "site-" + loop.index, text: "Site " + loop.index + " – " + site.name }), siteLinks) %}
+        {% endfor %}
+        {% if details.sites.length > 1 %}
+        {{ onThisPage(siteLinks) }}
+        {% endif %}
+        {% for site in details.sites %}
+        <div id="site-{{ loop.index }}">
+        {{ parts.site(site, loop.index) }}
+        {% if details.sites.length > 1 %}
+        {{ backToTop() }}
+        {% endif %}
+        </div>
+        {% endfor %}
+
+        {# Links down to each category, and the supporting documents if
+           there are any, with a Back to top link after each #}
+        {% elif current.slug === "marine-plan-policies" %}
+
+        {% set policyLinks = [] %}
+        {% for group in details.policyGroups %}
+        {% set policyLinks = (policyLinks.push({ slug: "policies-" + group.category | lower, text: group.category }), policyLinks) %}
+        {% endfor %}
+        {% if details.supportingDocuments and details.supportingDocuments.length %}
+        {% set policyLinks = (policyLinks.push({ slug: "supporting-documents", text: "Supporting documents" }), policyLinks) %}
+        {% endif %}
+
+        {% if policyLinks.length %}
+        {{ onThisPage(policyLinks) }}
+        {% for group in details.policyGroups %}
+        <div id="policies-{{ group.category | lower }}">
+        {{ parts.policyCard(group, group.category) }}
+        {{ backToTop() }}
+        </div>
+        {% endfor %}
+        {% if details.supportingDocuments and details.supportingDocuments.length %}
+        <div id="supporting-documents">
+        <h3 class="govuk-heading-m govuk-!-margin-top-6">Supporting documents</h3>
+        {% for document in details.supportingDocuments %}
+        {{ parts.supportingDocumentCard(document, 4) }}
+        {% endfor %}
+        {{ backToTop() }}
+        </div>
+        {% endif %}
+        {% else %}
+        {{ toFollow("Marine plan policies") }}
+        {% endif %}
+
+        {% elif current.slug === "water-framework-directive" %}
+
+        {% if details.wfd %}
+        {{ parts.wfdCard(details) }}
+        {% else %}
+        {{ toFollow("Water Framework Directive assessment") }}
+        {% endif %}
+
+        {% elif current.slug === "other-permissions" %}
+
+        {% if details.otherPermissions %}
+        {{ parts.otherPermissionsCard(details) }}
+        {% else %}
+        {{ toFollow("Other permissions") }}
+        {% endif %}
+
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock %}
