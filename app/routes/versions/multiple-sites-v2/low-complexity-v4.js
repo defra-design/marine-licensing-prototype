@@ -1089,6 +1089,21 @@ module.exports = function (router) {
       anchor: 'wfd-assessment',
       filename: 'wfd-assessment-redacted.doc',
       hint: 'You can only upload a file that is a .docx, .odt or .pdf.'
+    },
+    // Marine plan policy supporting documents. Same file types as the
+    // applicant's upload page. Labelled by filename, as "Upload a replacement
+    // Supporting document 2 document" doubles up.
+    'supporting-1': {
+      label: 'teignmouth-pontoon-ecological-assessment.pdf',
+      anchor: 'supporting-document-1',
+      filename: 'teignmouth-pontoon-ecological-assessment-redacted.pdf',
+      hint: 'The file must be a .pdf, .doc, .docx or .odt and no larger than 10MB.'
+    },
+    'supporting-2': {
+      label: 'teignmouth-pontoon-operations-plan.pdf',
+      anchor: 'supporting-document-2',
+      filename: 'teignmouth-pontoon-operations-plan-redacted.pdf',
+      hint: 'The file must be a .pdf, .doc, .docx or .odt and no larger than 10MB.'
     }
   };
 
