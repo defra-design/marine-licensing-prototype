@@ -4,7 +4,8 @@
   no organisation banner or sign-in, as anyone can use the register.
 
   Pages set navActive to "applications" or "alerts" to highlight the nav, and
-  can set backLink to show a back link. Set hideNav to true to hide the nav
+  can set backLink to show a back link, and backLinkText to change its
+  words from Back. Set hideNav to true to hide the nav
   items and keep the service name.
 #}
 {% extends "versions/multiple-sites-v2/layouts/low-complexity-v4.html" %}
@@ -17,7 +18,7 @@
 {% block beforeContent %}
     {% include "versions/multiple-sites-v2/includes/phase-banner.html" %}
     {% if backLink %}
-    <a class="govuk-back-link govuk-link--no-visited-state" href="{{ backLink }}">Back</a>
+    <a class="govuk-back-link govuk-link--no-visited-state" href="{{ backLink }}">{{ backLinkText or "Back" }}</a>
     {% endif %}
 {% endblock %}
 

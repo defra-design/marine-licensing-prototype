@@ -350,22 +350,81 @@ module.exports = function (router) {
     return Object.assign({}, details, { sites, supportingDocuments, wfd, documentGroups });
   }
 
-  // View an application. Every application uses the same page, which shows
-  // whichever sections its details have.
-  router.get(`${base}/application/:applicationId`, function (req, res) {
+  // View an application. Two versions, from the tray: the application
+  // split into pages with MOJ sub navigation, as on consultation v3, so
+  // every view details page works the same way (the default), or the
+  // earlier long page.
+  //
+  // The tray sets ?public-register-v1-appview=long (or =subnav), which the
+  // kit keeps in the session, so the choice lasts through the comment
+  // journey and back, and with the tray hidden for usability testing.
+  // Clear data puts it back to the split pages.
+  const APPVIEW_KEY = 'public-register-v1-appview';
+
+  function subnavOn(req) {
+    return req.session.data[APPVIEW_KEY] !== 'long';
+  }
+
+  // The pages of the sub navigation version, as on consultation v3. text
+  // is the sub navigation link, heading the h2 on the page. Overview is
+  // the page at application/<id>, the others at application/<id>/<page>.
+  const SUBNAV_PAGES = [
+    { slug: 'overview', text: 'Overview', heading: 'Overview' },
+    { slug: 'documents', text: 'Documents', heading: 'Documents' },
+    { slug: 'sites', text: 'Sites and activities', heading: 'Sites and activities' },
+    { slug: 'marine-plan-policies', text: 'Marine plan policies', heading: 'Marine plan policies' },
+    { slug: 'water-framework-directive', text: 'WFD', heading: 'Water Framework Directive' },
+    { slug: 'other-permissions', text: 'Other permissions', heading: 'Other permissions' }
+  ];
+
+  function renderApplication(req, res, slug) {
     const application = ALL.find(a => a.id === req.params.applicationId);
     if (!application) {
       return res.redirect(`${base}/applications`);
     }
-    res.render(`versions/${version}/${section}/application`, {
+    const pageBase = `${base}/application/${application.id}`;
+    const details = pageDetails(application.id, DETAILS[application.id]);
+    // Back to the list, landing page or wherever on the register they
+    // came from. None from an email, a QR code or an outside link. Moving
+    // between the application's own pages, or into the comment journey
+    // and back, keeps it.
+    const backLink = dynamicBackLink(req, `application-${application.id}`, [pageBase]);
+
+    if (!subnavOn(req)) {
+      // The sub navigation pages only exist in that version
+      if (slug !== 'overview') return res.redirect(pageBase);
+      return res.render(`versions/${version}/${section}/application`, {
+        application,
+        details,
+        backLink,
+        // Have your say in an MOJ ticket panel, below the summary, by default.
+        // ?hys=breaks, from the tray, is the earlier order with section breaks.
+        haveYourSayPanel: req.query.hys !== 'breaks'
+      });
+    }
+
+    const pages = SUBNAV_PAGES.map((page, i) => Object.assign({}, page, {
+      href: i === 0 ? pageBase : `${pageBase}/${page.slug}`,
+      active: page.slug === slug
+    }));
+    res.render(`versions/${version}/${section}/application-subnav`, {
       application,
-      details: pageDetails(application.id, DETAILS[application.id]),
-      // Back to the list, landing page or wherever on the register they
-      // came from. None from an email, a QR code or an outside link.
-      backLink: dynamicBackLink(req, `application-${application.id}`, [`${base}/application/${application.id}/`]),
-      // Have your say in an MOJ ticket panel, below the summary, by default.
-      // ?hys=breaks, from the tray, is the earlier order with section breaks.
-      haveYourSayPanel: req.query.hys !== 'breaks'
+      details,
+      backLink,
+      pages,
+      current: SUBNAV_PAGES.find(page => page.slug === slug)
+    });
+  }
+
+  router.get(`${base}/application/:applicationId`, function (req, res) {
+    renderApplication(req, res, 'overview');
+  });
+
+  // One route for each page, so they do not catch the comment journey's
+  // pages, which are also at application/<id>/<page>
+  SUBNAV_PAGES.slice(1).forEach(page => {
+    router.get(`${base}/application/:applicationId/${page.slug}`, function (req, res) {
+      renderApplication(req, res, page.slug);
     });
   });
 

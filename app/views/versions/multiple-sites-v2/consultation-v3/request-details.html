@@ -1,0 +1,173 @@
+{% extends "versions/multiple-sites-v2/consultation-v3/includes/layout.html" %}
+
+{% from "govuk/components/button/macro.njk" import govukButton %}
+{% from "govuk/components/notification-banner/macro.njk" import govukNotificationBanner %}
+{% from "versions/multiple-sites-v2/consultation-v3/includes/macros.html" import statusTag, assignedTo, closingDate, published %}
+
+{% set navActive = "consultations" %}
+{% set isAdvice = request.type === "response-required" %}
+{% set pageHeading = "Request for advice" if isAdvice else "Application notification" %}
+{% set pageTitle = pageHeading %}
+{# pageQuery carries the page versions (and the list's filters) between pages #}
+{# No Back link when they came from the email, until they go to the list #}
+{% set backLink = "../consultations" + pageQuery if not fromEmail else "" %}
+{% set assignUrl = "../assign/" + request.id + pageQuery %}
+
+{% block head %}
+  {{ super() }}
+  {% include "versions/multiple-sites-v2/consultation-v3/includes/closing-date-styles.html" %}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+        {% if assignBanner %}
+        {{ govukNotificationBanner({
+            type: "success",
+            html: '<p class="govuk-notification-banner__heading">' + assignBanner + '</p>'
+        }) }}
+        {% endif %}
+
+        <span class="govuk-caption-l">{{ request.reference }} – {{ request.applicationName }}</span>
+        <h1 class="govuk-heading-l">{{ pageHeading }}</h1>
+
+        {# Not once responded, when they are no longer relevant #}
+        {% if not isAdvice and request.status !== "Responded" %}
+        <p class="govuk-body">This is for your information only. It is not a request for advice, and you do not need to respond.</p>
+        <p class="govuk-body">We are telling you about this marine licence application because you have statutory responsibilities or an interest in this area.</p>        {% endif %}
+
+        <h2 class="govuk-heading-m">{{ "About this request" if isAdvice else "About this notification" }}</h2>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Status</dt>
+                <dd class="govuk-summary-list__value">{{ statusTag(request) }}</dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Closing date</dt>
+                {# Same as the list (MOJ contextual date unless ?deadline=off) #}
+                <dd class="govuk-summary-list__value">{{ closingDate(request, deadlineMode, true) }}</dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Date received</dt>
+                <dd class="govuk-summary-list__value">{{ request.receivedOffset | daysFromToday }}</dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Assigned to</dt>
+                <dd class="govuk-summary-list__value">{{ assignedTo(request) }}</dd>
+            </div>
+        </dl>
+        {#
+          Assign on request pages, "under About this request" version: just
+          below the Assigned to row. Goes to the same separate page as the
+          single Assign selected button on the list.
+        #}
+        {# On every request, responded and closed ones too #}
+        {% if reqassignMode === "under" %}
+        {{ govukButton({ text: "Assign", href: assignUrl, classes: "govuk-button--secondary" }) }}
+        {% endif %}
+
+        <h2 class="govuk-heading-m">About the application</h2>
+        <dl class="govuk-summary-list">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Who the marine licence is for</dt>
+                <dd class="govuk-summary-list__value">{{ request.applicant }}</dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Application name</dt>
+                <dd class="govuk-summary-list__value">{{ request.applicationName }}</dd>
+            </div>
+            {# Named as in the list's column and filter, with each area on its own line #}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">{{ "Marine plan area" if request.marinePlanAreas.length === 1 else "Marine plan areas" }}</dt>
+                <dd class="govuk-summary-list__value">
+                    {% if request.marinePlanAreas.length === 1 %}
+                    {{ request.marinePlanAreas[0] }}
+                    {% else %}
+                    <ul class="govuk-list govuk-!-margin-bottom-0">
+                        {% for area in request.marinePlanAreas %}
+                        <li>{{ area }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </dd>
+            </div>
+            {# GIS data for constraints checks and triage, after the marine plan areas
+               so the location rows sit together. Links are dead in the prototype. #}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Site location data</dt>
+                <dd class="govuk-summary-list__value">
+                    <ul class="govuk-list govuk-!-margin-bottom-0">
+                        {% for file in siteLocationFiles %}
+                        <li><a class="govuk-link govuk-link--no-visited-state" href="#">{{ file.title }} ({{ file.format }}{% if file.size %}, {{ file.size }}{% endif %})</a></li>
+                        {% endfor %}
+                    </ul>
+                </dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Summary of the proposed works</dt>
+                <dd class="govuk-summary-list__value">{{ published(request.summary) }}</dd>
+            </div>
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Full details</dt>
+                <dd class="govuk-summary-list__value"><a href="../view-application/{{ request.id }}{{ versionQuery }}" class="govuk-link govuk-link--no-visited-state">View the application</a></dd>
+            </div>
+        </dl>
+
+        {% if isAdvice %}
+        <h2 class="govuk-heading-m">Advice requested</h2>
+        {# The case officer's plain-text request from MAS, one paragraph per line break #}
+        {% for paragraph in request.adviceRequested %}
+        <p class="govuk-body">{{ paragraph }}</p>
+        {% endfor %}
+        {# Only shown to the person assigned, as only they can respond, and
+           not once they have or the closing date has passed #}
+        {% elif request.assignedToMe and request.status !== "Responded" and not request.closed %}
+        <h2 class="govuk-heading-m">If you need to respond</h2>
+        <p class="govuk-body">The closing date for responses is {{ request.respondByOffset | daysFromToday }}. We will consider any responses we receive by then when we make our decision.</p>
+        {% endif %}
+
+        {% set assignAtBottom = reqassignMode === "bottom" %}
+        {% if request.status === "Responded" %}
+        <h2 class="govuk-heading-m">Response sent</h2>
+        <p class="govuk-body govuk-hint">Sent{% if request.respondedBy %} by {{ request.respondedBy }}{% endif %} on {{ request.respondedDate }}</p>
+        <p class="govuk-body">{{ request.response }}</p>
+        {% if assignAtBottom %}
+        {{ govukButton({ text: "Assign", href: assignUrl, classes: "govuk-button--secondary" }) }}
+        {% endif %}
+        {# Only the person assigned to a request can respond to it, and nobody
+           can once the closing date has passed #}
+        {% elif not request.assignedToMe or request.closed %}
+        {% if assignAtBottom %}
+        {# No respond button: Assign is the next step #}
+        {{ govukButton({ text: "Assign", href: assignUrl, classes: "govuk-button--secondary" }) }}
+        {% endif %}
+        {% elif isAdvice %}
+        <div class="govuk-button-group">
+            {{ govukButton({
+                text: "Respond to this request",
+                href: "../respond/" + request.id + pageQuery
+            }) }}
+            {% if assignAtBottom %}
+            {{ govukButton({ text: "Assign", href: assignUrl, classes: "govuk-button--secondary" }) }}
+            {% endif %}
+        </div>
+        {% else %}
+        {# A button, as for requests for advice, so it is clear how the person
+           assigned can respond. Responding is still optional. #}
+        <div class="govuk-button-group">
+            {{ govukButton({
+                text: "Respond to this application",
+                href: "../respond/" + request.id + pageQuery
+            }) }}
+            {% if assignAtBottom %}
+            {{ govukButton({ text: "Assign", href: assignUrl, classes: "govuk-button--secondary" }) }}
+            {% endif %}
+        </div>
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock %}

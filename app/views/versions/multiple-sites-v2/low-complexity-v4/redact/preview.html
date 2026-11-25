@@ -184,23 +184,6 @@
         </div>
 
         {# ============================== #}
-        {# PROVIDING THE SITE LOCATION    #}
-        {# ============================== #}
-        <div class="govuk-summary-card">
-            <div class="govuk-summary-card__title-wrapper">
-                <h2 class="govuk-summary-card__title">Providing the site location</h2>
-            </div>
-            <div class="govuk-summary-card__content">
-                <dl class="govuk-summary-list">
-                    <div class="govuk-summary-list__row">
-                        <dt class="govuk-summary-list__key">Method of providing site location</dt>
-                        <dd class="govuk-summary-list__value">{% if siteType == 'upload' %}File upload{% else %}Enter the coordinates of the site manually{% endif %}</dd>
-                    </div>
-                </dl>
-            </div>
-        </div>
-
-        {# ============================== #}
         {# SITE 1                         #}
         {# ============================== #}
         <div class="govuk-summary-card">
@@ -709,6 +692,77 @@
                 </dl>
             </div>
         </div>
+
+        {# ================================================= #}
+        {# MARINE PLAN POLICIES — SUPPORTING DOCUMENTS       #}
+        {# Same list as redact-details.html – keep in step.  #}
+        {# ================================================= #}
+        {% set supportingDocuments = [
+            {
+                filename: "teignmouth-pontoon-ecological-assessment.pdf",
+                type: "Ecological Assessment",
+                policies: [
+                    { name: "South West Biodiversity 1", code: "SW-BIO-1", location: "Section 3, pages 6 to 11" },
+                    { name: "South West Marine protected areas 1", code: "SW-MPA-1", location: "Appendix B, pages 20 to 22" }
+                ]
+            },
+            {
+                filename: "teignmouth-pontoon-technical-specification.pdf",
+                type: "Technical or Engineering Report",
+                policies: [
+                    { name: "South West Underwater noise 1", code: "SW-UWN-1", location: "Section 2.3, 8m by 4m pontoon and wall guide fixing method" }
+                ]
+            },
+            {
+                filename: "teignmouth-pontoon-operations-plan.pdf",
+                type: "Other supporting evidence",
+                description: "Pontoon operations and access plan, agreed with the Harbour Master, Mr R. Pethick",
+                policies: [
+                    { name: "South West Access 1", code: "SW-ACC-1", location: "Section 2, gangway access and boarding arrangements" },
+                    { name: "South West Ports, harbours and shipping 1", code: "SW-PS-1", location: "Appendix A, letter from the Harbour Master, Mr R. Pethick" }
+                ]
+            }
+        ] %}
+
+        {% for document in supportingDocuments %}
+        {% set n = loop.index %}
+        <div class="govuk-summary-card">
+            <div class="govuk-summary-card__title-wrapper">
+                <h2 class="govuk-summary-card__title">Supporting document {{ n }}</h2>
+            </div>
+            <div class="govuk-summary-card__content">
+                <dl class="govuk-summary-list">
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">File upload</dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ publishedDocument("redact-hide-supporting-" + n, "redact-supporting-" + n + "-filename", document.filename) }}
+                        </dd>
+                    </div>
+                    {# A withheld document takes its details with it,
+                       leaving the card as the construction drawing's. #}
+                    {% if not data['redact-hide-supporting-' + n] %}
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Type</dt>
+                        <dd class="govuk-summary-list__value">
+                            {{ publishedValue("redact-supporting-" + n + "-type", document.type) }}
+                            {% if document.description %}<br>{{ publishedValue("redact-supporting-" + n + "-description", document.description) }}{% endif %}
+                        </dd>
+                    </div>
+                    <div class="govuk-summary-list__row">
+                        <dt class="govuk-summary-list__key">Policies</dt>
+                        <dd class="govuk-summary-list__value">
+                            <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-0">
+                                {% for link in document.policies %}
+                                <li>{{ link.name }} ({{ link.code }}) – {{ publishedValue("redact-supporting-" + n + "-location-" + link.code | lower, link.location) }}</li>
+                                {% endfor %}
+                            </ul>
+                        </dd>
+                    </div>
+                    {% endif %}
+                </dl>
+            </div>
+        </div>
+        {% endfor %}
 
         {# ================================================= #}
         {# WATER FRAMEWORK DIRECTIVE ASSESSMENT               #}

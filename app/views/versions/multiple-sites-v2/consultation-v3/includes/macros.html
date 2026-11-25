@@ -1,0 +1,49 @@
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+
+{# An answer in a redacted application, with ***REDACTED*** marked up so it
+   reads as a deliberate removal rather than an odd turn of phrase. Styled
+   in application.scss. #}
+{% macro published(text) %}
+{%- for part in text.split("***REDACTED***") -%}
+{{ part }}{% if not loop.last %}<span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">Redacted</span>{% endif %}
+{%- endfor -%}
+{% endmacro %}
+
+{# Request type wording, shared by the dashboard and the request pages. #}
+{% macro requestTypeText(request) -%}
+{{ "Request for advice" if request.type === "response-required" else "Application notification" }}
+{%- endmacro %}
+
+{# Who a request is assigned to. No "(you)" after your own name, to match the
+   LCML v4 submissions page. Nobody shows a dash, read out as "Unassigned". #}
+{% macro assignedTo(request) -%}
+{% if request.assignedTo %}{{ request.assignedTo }}{% else %}<span aria-hidden="true">-</span><span class="govuk-visually-hidden">Unassigned</span>{% endif %}
+{%- endmacro %}
+
+{#
+  Closing date, as the MOJ contextual date when it is closing soon or has
+  passed. mode is the ?deadline= page version; "off" shows the date alone.
+  The label is always visible text, so the colour never carries the meaning
+  alone. Styles are in closing-date-styles.html. longDate gives
+  "31 October 2026", as in the request page summary list.
+#}
+{% macro closingDate(request, mode, longDate) -%}
+{% set date = (request.respondByOffset | daysFromToday) if longDate else (request.respondByOffset | daysFromTodayShort) %}
+{% if mode === "off" or not request.closingSoon %}
+{{ date }}
+{% else %}
+{# MOJ contextual date: https://design-patterns.service.justice.gov.uk/components/contextual-date/ #}
+<span class="app-closing app-closing--bar{% if not request.closingUrgent %} app-closing--soon{% endif %}"><strong>{{ date }}</strong><span class="app-closing__label">{{ request.closingLabel }}</span></span>
+{% endif %}
+{%- endmacro %}
+
+{% macro statusTag(request) %}
+{{ govukTag({
+    text: request.status,
+    classes: {
+        'Missed': 'govuk-tag--red',
+        'For information': 'govuk-tag--grey',
+        'Responded': 'govuk-tag--green'
+    }[request.status]
+}) }}
+{% endmacro %}
