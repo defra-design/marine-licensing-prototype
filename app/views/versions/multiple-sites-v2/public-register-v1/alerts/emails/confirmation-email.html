@@ -5,6 +5,8 @@
 #}
 {% extends "versions/multiple-sites-v2/layouts/email.html" %}
 
+{% from "./_email-macros.html" import alertDetails %}
+
 {% set messageSubject = "Confirm your email alert for new marine licence applications" %}
 
 {% block pageTitle %}
@@ -33,10 +35,7 @@
 <p>We will not send you any alerts until you select this link. The link will stop working after 24 hours.</p>
 
 <p>You asked for an email when we publish a new marine licence application for:</p>
-<div class="app-email-inset">
-<p>Marine plan areas: {{ summary.areas | join(", ") }}</p>
-<p>Types of activity: {{ summary.typesText }}</p>
-</div>
+{{ alertDetails(summary) }}
 
 <p>If you did not ask for email alerts, you can ignore this email. We will not send you any.</p>
 
