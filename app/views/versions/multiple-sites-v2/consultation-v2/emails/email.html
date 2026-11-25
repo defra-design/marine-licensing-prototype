@@ -157,20 +157,27 @@ p, .app-email-list li {
   {% if emailLayout === "subheadings" %}
   <h3 class="app-email-subheading">Application name</h3>
   <p>{{ request.applicationName }}</p>
-  <h3 class="app-email-subheading">Application reference</h3>
+  <h3 class="app-email-subheading">Reference number</h3>
   <p>{{ request.reference }}</p>
-  {# A bullet per area, as an application can be in more than one #}
-  <h3 class="app-email-subheading">{{ areaLabel }}</h3>
+  {# One area is plain text under the singular heading. Two or more are
+     bullets under the plural heading, as in the alert emails. #}
+  {% set areaList = request.marinePlanArea if areaIsList else [request.marinePlanArea] %}
+  {% if areaList.length > 1 %}
+  <h3 class="app-email-subheading">Marine plan areas</h3>
   <ul class="app-email-list">
-    {% for area in (request.marinePlanArea if areaIsList else [request.marinePlanArea]) %}
+    {% for area in areaList %}
     <li>{{ area }}</li>
     {% endfor %}
   </ul>
+  {% else %}
+  <h3 class="app-email-subheading">Marine plan area</h3>
+  <p>{{ areaList[0] }}</p>
+  {% endif %}
 
   {% else %}
   <div class="app-email-inset">
     <p>Application name: {{ request.applicationName }}</p>
-    <p>Application reference: {{ request.reference }}</p>
+    <p>Reference number: {{ request.reference }}</p>
     <p>{{ areaLabel }}: {{ areas }}</p>
   </div>
   {% endif %}

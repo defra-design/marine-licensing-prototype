@@ -12,8 +12,9 @@
 {% extends "versions/multiple-sites-v2/layouts/email.html" %}
 
 {% from "govuk/components/inset-text/macro.njk" import govukInsetText %}
+{% from "./_email-macros.html" import emailDetail %}
 
-{% set messageSubject = "New marine licence application " + application.reference + ", " + application.applicationName %}
+{% set messageSubject = "New application: " + application.reference + ", " + application.applicationName %}
 {% set registerBase = "/versions/multiple-sites-v2/public-register-v1" %}
 
 {% block pageTitle %}
@@ -41,24 +42,26 @@
 
 <p>We have published a new marine licence application that matches your email alert.</p>
 
-<div class="app-email-inset">
+<h3 class="app-email-subheading">Application name</h3>
 <p>{{ application.applicationName }}</p>
-<p>Application reference: {{ application.reference }}</p>
-<p>Applicant: {{ application.applicant }}</p>
-<p>Marine plan area: {{ application.marinePlanAreas | join(", ") }}</p>
-<p>Activity: {{ activityNames | join(", ") }}</p>
-<p>Consultation closes: {{ application.closingOffset | daysFromToday }}</p>
-</div>
+<h3 class="app-email-subheading">Reference number</h3>
+<p>{{ application.reference }}</p>
+<h3 class="app-email-subheading">Applicant</h3>
+<p>{{ application.applicant }}</p>
+{{ emailDetail("Marine plan area", "Marine plan areas", application.marinePlanAreas) }}
+{{ emailDetail("Activity", "Activity", activityNames) }}
+<h3 class="app-email-subheading">Consultation closes</h3>
+<p>{{ application.closingOffset | daysFromToday }}</p>
 
 <p>You can comment on this application until the consultation closes.</p>
 
 <p><a href="{{ registerBase }}/application/{{ application.id }}">View the application</a></p>
 
 <p>You are getting this email because you set up an alert for:</p>
-<div class="app-email-inset">
-<p>Marine plan areas: {{ summary.areas | join(", ") }}</p>
-<p>Types of activity: {{ summary.typesText }}</p>
-</div>
+<ul class="app-email-list">
+  <li>marine plan areas: {{ summary.areas | join(", ") }}</li>
+  <li>types of activity: {{ summary.typesText }}</li>
+</ul>
 
 <p><a href="{{ registerBase }}/alerts/{{ alert.id }}/manage">Change this alert</a></p>
 

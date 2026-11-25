@@ -6,6 +6,8 @@
 #}
 {% extends "versions/multiple-sites-v2/layouts/email.html" %}
 
+{% from "./_email-macros.html" import alertDetails %}
+
 {% set messageSubject = "Manage your email alerts for marine licence applications" %}
 
 {% block pageTitle %}
@@ -31,12 +33,10 @@
 
 <p>{% if alerts.length > 1 %}You have {{ alerts.length }} alerts. Use the links to change them or unsubscribe.{% else %}You have 1 alert. Use the link to change it or unsubscribe.{% endif %}</p>
 
+{# Nothing separates one alert from the next yet – still to be decided #}
 {% for item in alerts %}
-<div class="app-email-inset">
-<p>Marine plan areas: {{ item.areas | join(", ") }}</p>
-<p>Types of activity: {{ item.typesText }}</p>
+{{ alertDetails(item) }}
 <p><a href="/versions/multiple-sites-v2/public-register-v1/alerts/{{ item.alert.id }}/manage">Manage this alert</a></p>
-</div>
 {% endfor %}
 
 <p>These links will stop working after 24 hours. Anyone who can read this email can use them, so do not forward it.</p>

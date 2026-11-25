@@ -1,0 +1,29 @@
+{#
+  One detail in an alert email: a Notify ## sub-heading with its value under it.
+  One value is a paragraph under the singular heading. Two or more are
+  bullets under the plural heading. allText (such as "All marine plan
+  areas") is a paragraph under the plural heading.
+#}
+{% macro emailDetail(singular, plural, values, allText) %}
+{% if allText %}
+<h3 class="app-email-subheading">{{ plural }}</h3>
+<p>{{ allText }}</p>
+{% elif values.length > 1 %}
+<h3 class="app-email-subheading">{{ plural }}</h3>
+<ul class="app-email-list">
+  {% for value in values %}
+  <li>{{ value }}</li>
+  {% endfor %}
+</ul>
+{% else %}
+<h3 class="app-email-subheading">{{ singular }}</h3>
+<p>{{ values[0] }}</p>
+{% endif %}
+{% endmacro %}
+
+{# What an alert covers: its marine plan areas and types of activity #}
+{% macro alertDetails(summary) %}
+{% set allAreas = summary.areas[0] === "All marine plan areas" %}
+{{ emailDetail("Marine plan area", "Marine plan areas", summary.areas, "All marine plan areas" if allAreas else "") }}
+{{ emailDetail("Activity", "Activity", summary.types, "" if summary.types else "All types of activity") }}
+{% endmacro %}
