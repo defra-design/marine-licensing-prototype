@@ -469,11 +469,9 @@ module.exports = function (router) {
     const email = String(req.session.data[keys.email] || '').trim();
     const errors = {};
     if (!name) errors.name = 'Enter your full name';
-    // Empty and format checks, with the GOV.UK Design System error messages
-    // (Email addresses pattern). Participants in usability testing need to
-    // type something shaped like an address, such as name@example.com.
+    // Empty check only. No format check, so usability testing participants
+    // can type anything rather than being slowed down by a realistic address.
     if (!email) errors.email = 'Enter your email address';
-    else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) errors.email = 'Enter an email address in the correct format, like name@example.com';
     delete req.session.data.fix;
     if (Object.keys(errors).length) {
       return renderComment(req, res, 'your-details', application, { change: req.body.change, fix: req.body.fix, errors });
