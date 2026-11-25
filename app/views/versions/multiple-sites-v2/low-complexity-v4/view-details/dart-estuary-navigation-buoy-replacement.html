@@ -1,0 +1,169 @@
+{% extends "../../layouts/low-complexity-v4.html" %}
+
+{% from "moj/components/sub-navigation/macro.njk" import mojSubNavigation %}
+{% import "versions/multiple-sites-v2/low-complexity-v4/view-details/includes/view-details-cards.html" as cards %}
+
+{#
+  The applicant's View details page for the Dart demo application
+  (low-complexity-v4-view-details.js). Two versions, from the tray:
+
+  - split into pages with MOJ sub navigation (the default), as on
+    consultation v3 and the public register, with the card titles one
+    level down under each page's h2, and without the Providing the site
+    location card
+  - the long page, with every card in the same order as check your
+    answers once the application has been sent
+
+  The cards are in view-details/includes/view-details-cards.html.
+#}
+
+{% block header %}
+{% from "versions/multiple-sites-v2/low-complexity-v4/includes/service-navigation.html" import lcmlV4Header with context %}
+{{ lcmlV4Header() }}
+{% endblock %}
+
+{% block beforeContent %}
+    {% include "../../includes/phase-banner.html" %}
+    {% if data['organisation-name'] %}
+        {% include "../../includes/organisation-switcher.html" %}
+    {% endif %}
+    <a class="govuk-back-link govuk-link--no-visited-state" href="{{ backLink }}" style="margin-bottom: 0;">Back</a>
+{% endblock %}
+
+{% block pageTitle %}
+    {% if not long and current.slug !== "overview" %}{{ current.heading }} – {% endif %}{{ application.applicationName }} - Get permission for marine work
+{% endblock %}
+
+{# Back to the top of the page, at the reference number above the application name #}
+{% macro backToTop() %}
+<p class="govuk-body govuk-!-margin-bottom-8"><a class="govuk-link govuk-link--no-visited-state" href="#top">Back to top</a></p>
+{% endmacro %}
+
+{# Links down to each site or category on the page. A bold paragraph, not
+   a heading, so it does not add a level under the page's h2 #}
+{% macro onThisPage(items) %}
+<nav aria-label="On this page">
+    <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-2">On this page</p>
+    <ul class="govuk-list">
+        {% for item in items %}
+        <li><a class="govuk-link govuk-link--no-visited-state" href="#{{ item.id }}">{{ item.text }}</a></li>
+        {% endfor %}
+    </ul>
+</nav>
+{% endmacro %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+    <div class="govuk-grid-column-full">
+
+        <span class="govuk-caption-l" id="top">{{ application.reference }}</span>
+        <h1 class="govuk-heading-l">{{ application.applicationName }}</h1>
+
+        {% if long %}
+
+        {{ cards.overview(application, 2) }}
+        {{ cards.details(application, 2) }}
+        {{ cards.siteLocation(application, 2) }}
+        {% for site in application.sites %}
+        {{ cards.site(site, loop.index, 2) }}
+        {% endfor %}
+        {% for group in application.policyGroups %}
+        {{ cards.policies(group, documentsByPolicy, 2) }}
+        {% endfor %}
+        {% for document in application.supportingDocuments %}
+        {{ cards.supportingDocument(document, loop.index, 2) }}
+        {% endfor %}
+        {{ cards.wfd(application, 2) }}
+        {{ cards.otherPermissions(application, 2) }}
+        {{ cards.fee(application, 2) }}
+        {{ cards.invoicing(application, 2) }}
+        {{ cards.sharing(application, 2) }}
+
+        {% else %}
+
+        {{ mojSubNavigation({
+            label: "Application sections",
+            items: pages
+        }) }}
+
+        <h2 class="govuk-heading-m">{{ current.heading }}</h2>
+
+        {% if current.slug === "overview" %}
+
+        {{ cards.overview(application, 3) }}
+        {{ cards.details(application, 3) }}
+
+        {# Links down to each site when there is more than one, with a Back
+           to top link after each site #}
+        {% elif current.slug === "sites" %}
+
+        {% set siteLinks = [] %}
+        {% for site in application.sites %}
+        {% set siteLinks = (siteLinks.push({ id: "site-" + loop.index, text: "Site " + loop.index + " – " + site.name }), siteLinks) %}
+        {% endfor %}
+        {% if application.sites.length > 1 %}
+        {{ onThisPage(siteLinks) }}
+        {% endif %}
+        {% for site in application.sites %}
+        {{ cards.site(site, loop.index, 3) }}
+        {% if application.sites.length > 1 %}
+        {{ backToTop() }}
+        {% endif %}
+        {% endfor %}
+
+        {# Links down to each category and the supporting documents, with a
+           Back to top link after each #}
+        {% elif current.slug === "marine-plan-policies" %}
+
+        {% set policyLinks = [] %}
+        {% for group in application.policyGroups %}
+        {% set policyLinks = (policyLinks.push({ id: "policies-" + group.category | lower, text: group.category }), policyLinks) %}
+        {% endfor %}
+        {% if application.supportingDocuments.length %}
+        {% set policyLinks = (policyLinks.push({ id: "supporting-documents", text: "Supporting documents" }), policyLinks) %}
+        {% endif %}
+        {{ onThisPage(policyLinks) }}
+        {% for group in application.policyGroups %}
+        {{ cards.policies(group, documentsByPolicy, 3) }}
+        {{ backToTop() }}
+        {% endfor %}
+        {% if application.supportingDocuments.length %}
+        <div id="supporting-documents">
+        {% for document in application.supportingDocuments %}
+        {{ cards.supportingDocument(document, loop.index, 3) }}
+        {% endfor %}
+        {{ backToTop() }}
+        </div>
+        {% endif %}
+
+        {% elif current.slug === "water-framework-directive" %}
+
+        {{ cards.wfd(application, 3) }}
+
+        {% elif current.slug === "other-permissions" %}
+
+        {{ cards.otherPermissions(application, 3) }}
+
+        {% elif current.slug === "fee-and-invoicing" %}
+
+        {{ cards.fee(application, 3) }}
+        {{ cards.invoicing(application, 3) }}
+
+        {% elif current.slug === "sharing" %}
+
+        {{ cards.sharing(application, 3) }}
+
+        {% endif %}
+
+        {% endif %}
+
+    </div>
+</div>
+
+{% endblock %}
+
+{% block bodyEnd %}
+    {{ super() }}
+    {% include "versions/multiple-sites-v2/low-complexity-v4/view-details/includes/version-switcher.html" %}
+{% endblock %}

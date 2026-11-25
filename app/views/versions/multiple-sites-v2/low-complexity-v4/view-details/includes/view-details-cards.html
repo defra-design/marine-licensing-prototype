@@ -1,0 +1,210 @@
+{#
+  The cards of the applicant's View details page, for the Dart demo
+  (view-details/dart-estuary-navigation-buoy-replacement.html). The same
+  cards, rows and wording as check your answers once the application has
+  been sent, without the Change links. level is the heading level of the
+  card titles: h2 on the long page, as on check your answers, and h3 under
+  the page's h2 on the split pages.
+#}
+{% from "govuk/components/tag/macro.njk" import govukTag %}
+
+{% macro row(key, value, classes) %}
+<div class="govuk-summary-list__row{% if classes %} {{ classes }}{% endif %}">
+    <dt class="govuk-summary-list__key">{{ key }}</dt>
+    <dd class="govuk-summary-list__value">{{ value }}</dd>
+</div>
+{% endmacro %}
+
+{% macro cardStart(title, level, id) %}
+<div{% if id %} id="{{ id }}"{% endif %} class="govuk-summary-card">
+    <div class="govuk-summary-card__title-wrapper">
+        <h{{ level }} class="govuk-summary-card__title">{{ title }}</h{{ level }}>
+    </div>
+    <div class="govuk-summary-card__content">
+{% endmacro %}
+
+{% macro cardEnd() %}
+    </div>
+</div>
+{% endmacro %}
+
+{# A file the applicant uploaded: a link that goes nowhere, as on check your answers #}
+{% macro fileLink(filename) %}<a class="govuk-link govuk-link--no-visited-state" href="">{{ filename }}</a>{% endmacro %}
+
+{% macro overview(application, level) %}
+{{ cardStart("Application overview", level) }}
+        <dl class="govuk-summary-list">
+            {{ row("Application type", "Marine licence application") }}
+            {{ row("Status", govukTag({ text: "Application received", classes: "govuk-tag--green" })) }}
+            {{ row("Reference number", application.reference) }}
+            {{ row("Who the marine licence is for", application.organisation) }}
+            {{ row("Date submitted", application.submittedOffset | daysFromToday) }}
+        </dl>
+{{ cardEnd() }}
+{% endmacro %}
+
+{% macro details(application, level) %}
+{{ cardStart("Application details", level) }}
+        <dl class="govuk-summary-list">
+            {{ row("Application name", application.applicationName) }}
+            {{ row("Proposed works summary", application.summary) }}
+            {{ row("Preferred start and end dates of the licence", application.startAndEndDates) }}
+        </dl>
+{{ cardEnd() }}
+{% endmacro %}
+
+{% macro siteLocation(application, level) %}
+{{ cardStart("Providing the site location", level, "site-location") }}
+        <dl class="govuk-summary-list">
+            {{ row("Method of providing site location", application.siteLocationMethod) }}
+        </dl>
+{{ cardEnd() }}
+{% endmacro %}
+
+{# A site, its activities and, for construction or alteration works only
+   (as on check your answers), its construction drawings #}
+{% macro site(site, n, level) %}
+<div id="site-{{ n }}" class="govuk-summary-card">
+    <div class="govuk-summary-card__title-wrapper">
+        <h{{ level }} class="govuk-summary-card__title">Site {{ n }}</h{{ level }}>
+    </div>
+    <div class="govuk-summary-card__content">
+        <dl class="govuk-summary-list govuk-summary-list--full-width">
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">Site name</dt>
+                <dd class="govuk-summary-list__value">{{ site.name }}</dd>
+            </div>
+            <div class="govuk-summary-list__row govuk-summary-list__row--no-actions">
+                <dt class="govuk-summary-list__key govuk-summary-list__key--full-width map-label">Map view</dt>
+                <dd class="govuk-summary-list__value govuk-summary-list__value--full-width">
+                    <img src="/public/images/{{ site.map }}" alt="Map showing site {{ n }} location" />
+                </dd>
+            </div>
+        </dl>
+    </div>
+</div>
+
+{% for activity in site.activities %}
+{% set whatLabel %}{% if activity.typeOfActivity === "Maintenance of existing works" %}What you're maintaining{% elif activity.typeOfActivity === "Construction of new works" %}What you're constructing{% else %}{{ activity.whatLabel }}{% endif %}{% endset %}
+{% set what %}<ul class="govuk-list govuk-list--bullet"><li>{{ activity.what }}</li></ul>{% endset %}
+{{ cardStart("Site " + n + " - Activity " + loop.index, level, "site-" + n + "-activity-" + loop.index) }}
+        <dl class="govuk-summary-list">
+            {{ row("Type of activity", activity.typeOfActivity) }}
+            {{ row(whatLabel, what | safe) }}
+            {{ row("Activity description", activity.description) }}
+            {{ row("Maximum duration of activity", activity.maximumDuration) }}
+            {{ row("Completion date", activity.completionDate) }}
+            {{ row("Activity limited to specific months", activity.specificMonths) }}
+            {{ row("Proposed working hours", activity.workingHours) }}
+        </dl>
+{{ cardEnd() }}
+{% endfor %}
+
+{% if site.showDrawings %}
+{% for drawing in site.drawings %}
+{{ cardStart("Site " + n + " - Construction drawing " + loop.index, level, "site-" + n + "-construction-file-" + loop.index) }}
+        <dl class="govuk-summary-list">
+            {{ row("File upload", fileLink(drawing)) }}
+        </dl>
+{{ cardEnd() }}
+{% endfor %}
+{% endif %}
+{% endmacro %}
+
+{# One category of marine plan policies, with any supporting documents a
+   policy relies on under the applicant's consideration (MPP v3) #}
+{% macro policies(group, documentsByPolicy, level) %}
+{{ cardStart("Marine plan policies – " + group.category, level, "policies-" + group.category | lower) }}
+        <dl class="govuk-summary-list">
+            {% for policy in group.policies %}
+            <div class="govuk-summary-list__row">
+                <dt class="govuk-summary-list__key">{{ policy.name }}<br>({{ policy.code }})</dt>
+                <dd class="govuk-summary-list__value">
+                    <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Policy information</p>
+                    <p class="govuk-body">{{ policy.info }}</p>
+                    <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-bottom-1">Your consideration</p>
+                    <p class="govuk-body govuk-!-margin-bottom-0">{{ policy.consideration }}</p>
+                    {% if documentsByPolicy[policy.code] %}
+                    <p class="govuk-body govuk-!-font-weight-bold govuk-!-margin-top-4 govuk-!-margin-bottom-1">Supporting documents</p>
+                    <ul class="govuk-list govuk-!-margin-bottom-0">
+                        {% for document in documentsByPolicy[policy.code] %}
+                        <li>{{ document.filename }} – {{ document.location }}</li>
+                        {% endfor %}
+                    </ul>
+                    {% endif %}
+                </dd>
+            </div>
+            {% endfor %}
+        </dl>
+{{ cardEnd() }}
+{% endmacro %}
+
+{% macro supportingDocument(document, n, level) %}
+{% set policyList %}
+<ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-0">
+    {% for link in document.policies %}
+    <li>{{ link.name }} ({{ link.code }}) – {{ link.location }}</li>
+    {% endfor %}
+</ul>
+{% endset %}
+{{ cardStart("Supporting document – " + document.filename, level, "supporting-document-" + n) }}
+        <dl class="govuk-summary-list">
+            {{ row("Type", document.type) }}
+            {{ row("Policies", policyList | safe) }}
+        </dl>
+{{ cardEnd() }}
+{% endmacro %}
+
+{% macro wfd(application, level) %}
+{{ cardStart("Water Framework Directive assessment", level, "water-framework-directive") }}
+        <dl class="govuk-summary-list">
+            {{ row("Proposed works located within one nautical mile (1.85km) of low-water, in a tidal river or estuary", application.wfd.withinOneNauticalMile) }}
+            {{ row("Proposed works limited to one of the excluded activities", application.wfd.excludedActivities) }}
+            {{ row("Water Framework Directive assessment upload", fileLink(application.wfd.upload)) }}
+        </dl>
+{{ cardEnd() }}
+{% endmacro %}
+
+{% macro otherPermissions(application, level) %}
+{% set op = application.otherPermissions %}
+{{ cardStart("Other permissions", level, "other-permissions") }}
+        <dl class="govuk-summary-list">
+            {{ row("Special legal powers to do any of these proposed works", op.specialLegalPowers) }}
+            {{ row("Located in a harbour authority area", op.harbourAuthority) }}
+            {{ row("Permission from any other authorities in relation to these proposed works", op.otherAuthorities) }}
+            {{ row("Pre-application public groups or organisations consultation", op.preApplicationConsultation) }}
+        </dl>
+{{ cardEnd() }}
+{% endmacro %}
+
+{% macro fee(application, level) %}
+{{ cardStart("Fee estimate", level, "fee-estimate") }}
+        <dl class="govuk-summary-list">
+            {{ row("Maximum application fee estimate accepted", application.fee) }}
+        </dl>
+{{ cardEnd() }}
+{% endmacro %}
+
+{% macro invoicing(application, level) %}
+{% set inv = application.invoicing %}
+{% set address %}{% for line in inv.address %}{{ line }}{% if not loop.last %}<br>{% endif %}{% endfor %}{% endset %}
+{{ cardStart("Invoicing details", level, "invoicing") }}
+        <dl class="govuk-summary-list">
+            {{ row("Address type", inv.addressType) }}
+            {{ row("Address", address | safe) }}
+            {{ row("Full name", inv.fullName, "govuk-summary-list__row--no-border") }}
+            {{ row("Organisation", inv.organisation, "govuk-summary-list__row--no-border") }}
+            {{ row("Phone number", inv.phone, "govuk-summary-list__row--no-border") }}
+            {{ row("Email address", inv.email) }}
+            {{ row("Purchase order number", inv.purchaseOrder) }}
+        </dl>
+{{ cardEnd() }}
+{% endmacro %}
+
+{% macro sharing(application, level) %}
+{{ cardStart("Information published on the public register", level, "sharing-your-project-information-publicly") }}
+        <dl class="govuk-summary-list">
+            {{ row("Do you want to ask us to withhold any information from the public register?", application.withholdInformation) }}
+        </dl>
+{{ cardEnd() }}
+{% endmacro %}
