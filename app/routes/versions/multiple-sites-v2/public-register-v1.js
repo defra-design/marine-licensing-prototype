@@ -313,7 +313,8 @@ module.exports = function (router) {
       filename,
       withheld: !!doc.withheld,
       format: extension.toUpperCase(),
-      size: kb >= 1000 ? `${(kb / 1024).toFixed(1)} MB` : `${kb} KB`
+      // No size for a file made when the link is clicked
+      size: doc.generated ? null : (kb >= 1000 ? `${(kb / 1024).toFixed(1)} MB` : `${kb} KB`)
     };
   }
 
@@ -347,7 +348,17 @@ module.exports = function (router) {
       { heading: 'Marine plan policy supporting documents', documents: supportingDocuments.map(doc => doc.file) },
       { heading: 'Water Framework Directive assessment', documents: wfd ? [wfd.file] : [] }
     ].filter(group => group.documents.length);
-    return Object.assign({}, details, { sites, supportingDocuments, wfd, documentGroups });
+    // The Documents card on the sub navigation version has the site
+    // location as a KML file and a Shapefile in place of the site
+    // coordinates, as on consultation v3: no file size, as they are made
+    // when the link is clicked
+    const cardDocumentGroups = documentGroups.map(group => group.heading !== 'Sites and activities' ? group : Object.assign({}, group, {
+      documents: [
+        documentFor({ filename: `${id}-site-location.kml`, generated: true }, 'Site location KML file'),
+        documentFor({ filename: `${id}-site-location-shapefile.zip`, generated: true }, 'Site location Shapefile')
+      ].concat(group.documents.slice(1))
+    }));
+    return Object.assign({}, details, { sites, supportingDocuments, wfd, documentGroups, cardDocumentGroups });
   }
 
   // View an application. Two versions, from the tray: the application
