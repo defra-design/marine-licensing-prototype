@@ -1407,11 +1407,11 @@ module.exports = function (router) {
   // h2 on the page.
   const SUBNAV_PAGES = [
     { slug: 'overview', text: 'Overview', heading: 'Overview' },
-    { slug: 'documents', text: 'Documents', heading: 'Documents' },
     { slug: 'sites', text: 'Sites and activities', heading: 'Sites and activities' },
     { slug: 'marine-plan-policies', text: 'Marine plan policies', heading: 'Marine plan policies' },
     { slug: 'water-framework-directive', text: 'WFD', heading: 'Water Framework Directive' },
-    { slug: 'other-permissions', text: 'Other permissions', heading: 'Other permissions' }
+    { slug: 'other-permissions', text: 'Other permissions', heading: 'Other permissions' },
+    { slug: 'documents', text: 'Documents', heading: 'Documents' }
   ];
 
   // A page of the sub navigation version. The first (Overview) is the page
