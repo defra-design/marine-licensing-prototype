@@ -35,7 +35,7 @@
 {{ cardStart("Application overview", level) }}
         <dl class="govuk-summary-list">
             {{ row("Application type", "Marine licence application") }}
-            {{ row("Status", govukTag({ text: "Application received", classes: "govuk-tag--green" })) }}
+            {{ row("Status", govukTag({ text: "Assessment in progress", classes: "govuk-tag--green" })) }}
             {{ row("Reference number", application.reference) }}
             {{ row("Who the marine licence is for", application.organisation) }}
             {{ row("Date submitted", application.submittedOffset | daysFromToday) }}
