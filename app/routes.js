@@ -25,6 +25,12 @@ router.use('*', function(req, res, next) {
                 delete req.session.data[key];
             });
 
+            // With clear=true, start from an empty session (as /index/clear-data
+            // does) so nothing from an earlier journey is left behind
+            if (req.query.clear === 'true') {
+                req.session.data = {};
+            }
+
             // Restore session data
             Object.assign(req.session.data, sessionData);
             
@@ -43,15 +49,15 @@ router.use('*', function(req, res, next) {
                 console.log('✅ Batch system reinitialized with', allSites.length, 'sites');
             }
             
-            // Remove the state parameter to clean up URL (redirect without state param)
-            if (Object.keys(req.query).length === 1 && req.query.state) {
+            // Remove the state (and clear) parameters to clean up URL
+            if (Object.keys(req.query).every(key => key === 'state' || key === 'clear')) {
                 // If state is the only parameter, redirect to clean URL
                 const cleanUrl = req.originalUrl.split('?')[0];
                 return res.redirect(cleanUrl);
             } else if (req.query.state) {
                 // If there are other parameters, redirect without just the state param
                 const cleanQuery = Object.keys(req.query)
-                    .filter(key => key !== 'state')
+                    .filter(key => key !== 'state' && key !== 'clear')
                     .map(key => `${key}=${encodeURIComponent(req.query[key])}`)
                     .join('&');
                 const cleanUrl = req.originalUrl.split('?')[0] + (cleanQuery ? '?' + cleanQuery : '');
