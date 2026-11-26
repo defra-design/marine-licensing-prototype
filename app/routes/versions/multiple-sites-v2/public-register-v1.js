@@ -365,16 +365,17 @@ module.exports = function (router) {
     return req.session.data[APPVIEW_KEY] !== 'long';
   }
 
-  // The pages of the sub navigation version, as on consultation v3. text
+  // The pages of the sub navigation version, as on consultation v3 but
+  // with Documents last. text
   // is the sub navigation link, heading the h2 on the page. Overview is
   // the page at application/<id>, the others at application/<id>/<page>.
   const SUBNAV_PAGES = [
     { slug: 'overview', text: 'Overview', heading: 'Overview' },
-    { slug: 'documents', text: 'Documents', heading: 'Documents' },
     { slug: 'sites', text: 'Sites and activities', heading: 'Sites and activities' },
     { slug: 'marine-plan-policies', text: 'Marine plan policies', heading: 'Marine plan policies' },
     { slug: 'water-framework-directive', text: 'WFD', heading: 'Water Framework Directive' },
-    { slug: 'other-permissions', text: 'Other permissions', heading: 'Other permissions' }
+    { slug: 'other-permissions', text: 'Other permissions', heading: 'Other permissions' },
+    { slug: 'documents', text: 'Documents', heading: 'Documents' }
   ];
 
   function renderApplication(req, res, slug) {
