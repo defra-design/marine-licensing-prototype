@@ -179,7 +179,7 @@
         <div id="supporting-documents">
         <h3 class="govuk-heading-m govuk-!-margin-top-6">Supporting documents</h3>
         {% for document in details.supportingDocuments %}
-        {{ parts.supportingDocumentCard(document, 4) }}
+        {{ parts.supportingDocumentCard(document, loop.index, 4) }}
         {% endfor %}
         {{ backToTop() }}
         </div>

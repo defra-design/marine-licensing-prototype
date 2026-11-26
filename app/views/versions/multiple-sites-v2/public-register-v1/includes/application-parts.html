@@ -264,7 +264,7 @@
 {% endmacro %}
 
 {# A marine plan policy supporting document #}
-{% macro supportingDocumentCard(document, level = 3) %}
+{% macro supportingDocumentCard(document, number, level = 3) %}
 {% set policyList %}
 <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-0">
     {% for link in document.policies %}
@@ -272,10 +272,10 @@
     {% endfor %}
 </ul>
 {% endset %}
-{{ summaryCard("Supporting document – " + document.file.filename, [
+{{ summaryCard("Supporting document " + number, [
     ["File upload", documentLink(document.file)],
     ["Type", document.type],
-    ["Policies", policyList]
+    ["Policies", policyList | safe]
 ], level) }}
 {% endmacro %}
 

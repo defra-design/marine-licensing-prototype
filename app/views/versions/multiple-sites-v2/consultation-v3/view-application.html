@@ -169,7 +169,7 @@
         {% for document in app.supportingDocuments %}
         <div class="govuk-summary-card">
             <div class="govuk-summary-card__title-wrapper">
-                <h2 class="govuk-summary-card__title">Supporting document – {{ document.filename }}</h2>
+                <h2 class="govuk-summary-card__title">Supporting document {{ loop.index }}</h2>
             </div>
             <div class="govuk-summary-card__content">
                 <dl class="govuk-summary-list">
