@@ -204,7 +204,7 @@
 {% set currentFile = data[fileKey] or originalFile %}
 {% set isReplaced = currentFile != originalFile %}
 {% set isRedacted = isHidden or isReplaced %}
-<div class="app-redact" data-hideable data-state="{{ 'redacted' if isRedacted else 'untouched' }}" data-original-file="{{ originalFile }}">
+<div class="app-redact" data-hideable data-state="{{ 'redacted' if isRedacted else 'untouched' }}" data-original-file="{{ originalFile }}" data-original-label="{{ fileLinkText(originalFile) }}">
 
     {# Both pieces of state travel with the form, so a save keeps the row
        exactly as the case officer left it. #}
@@ -219,7 +219,7 @@
 
     {# The file itself: the applicant's, or the replacement standing in for it. #}
     <p class="govuk-body govuk-!-margin-bottom-0" data-hideable-shown {{ 'hidden' if isHidden }}>
-        <a class="govuk-link govuk-link--no-visited-state" href="" data-hideable-filename>{{ currentFile }}</a>
+        <a class="govuk-link govuk-link--no-visited-state" href="" data-hideable-filename>{{ fileLinkText(currentFile) }}</a>
     </p>
 
     <p class="app-redact__links">
@@ -1297,7 +1297,7 @@
             event.preventDefault()
             flag.value = ''
             file.value = originalFile
-            filename.textContent = originalFile
+            filename.textContent = item.getAttribute('data-original-label')
             render('untouched')
         })
     })

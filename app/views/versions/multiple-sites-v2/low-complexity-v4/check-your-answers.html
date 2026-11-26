@@ -567,7 +567,7 @@ Check your answers before sending your information
 								</dt>
 								<dd class="govuk-summary-list__value">
 									{% if isSent %}
-									<a class="govuk-link govuk-link--no-visited-state" href="">{{ file.filename if file.filename else '[Data]' }}</a>
+									<a class="govuk-link govuk-link--no-visited-state" href="">{{ fileLinkText(file.filename) if file.filename else '[Data]' }}</a>
 									{% else %}
 									{{ file.filename if file.filename else '[Data]' }}
 									{% endif %}
@@ -1016,7 +1016,7 @@ Check your answers before sending your information
 								</dt>
 								<dd class="govuk-summary-list__value">
 									{% if isSent %}
-									<a class="govuk-link govuk-link--no-visited-state" href="">{{ file.filename if file.filename else '[Data]' }}</a>
+									<a class="govuk-link govuk-link--no-visited-state" href="">{{ fileLinkText(file.filename) if file.filename else '[Data]' }}</a>
 									{% else %}
 									{{ file.filename if file.filename else '[Data]' }}
 									{% endif %}
@@ -1609,7 +1609,7 @@ Check your answers before sending your information
 						<dt class="govuk-summary-list__key">File upload</dt>
 						<dd class="govuk-summary-list__value">
 							{% if isSent %}
-							<a class="govuk-link govuk-link--no-visited-state" href="#">{{ document.filename }}</a>
+							<a class="govuk-link govuk-link--no-visited-state" href="#">{{ fileLinkText(document.filename) }}</a>
 							{% else %}
 							{{ document.filename }}
 							{% endif %}
@@ -1691,7 +1691,7 @@ Check your answers before sending your information
 						</dt>
 						<dd class="govuk-summary-list__value">
 							{% if isSent %}
-							<a class="govuk-link govuk-link--no-visited-state" href="">{{ data['low-complexity-wfd-filename'] if data['low-complexity-wfd-filename'] else "WFD.doc" }}</a>
+							<a class="govuk-link govuk-link--no-visited-state" href="">{{ fileLinkText(data['low-complexity-wfd-filename'] or "WFD.doc") }}</a>
 							{% else %}
 							{{ data['low-complexity-wfd-filename'] if data['low-complexity-wfd-filename'] else "WFD.doc" }}
 							{% endif %}
