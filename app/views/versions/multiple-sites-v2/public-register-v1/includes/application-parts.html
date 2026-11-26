@@ -32,12 +32,13 @@
 {%- endfor -%}
 {% endmacro %}
 
-{# A document in the full application: a dead link, or the marker if withheld #}
+{# A document in the full application: a dead link with its file type and
+   size, or the marker if withheld #}
 {% macro documentLink(file) %}
 {%- if file.withheld -%}
 <span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">Redacted</span>
 {%- else -%}
-<a class="govuk-link govuk-link--no-visited-state" href="#">{{ file.filename }}</a>
+<a class="govuk-link govuk-link--no-visited-state" href="#">{{ file.filename }} ({{ file.format }}{% if file.size %}, {{ file.size }}{% endif %})</a>
 {%- endif -%}
 {% endmacro %}
 

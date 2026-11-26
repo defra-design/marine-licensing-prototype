@@ -1,7 +1,7 @@
 {% extends "versions/multiple-sites-v2/consultation-v3/includes/layout.html" %}
 
 {% from "govuk/components/tabs/macro.njk" import govukTabs %}
-{% import "versions/multiple-sites-v2/consultation-v3/includes/application-sections.html" as sections_ %}
+{% import "versions/multiple-sites-v2/consultation-v3/includes/application-sections.html" as sections_ with context %}
 
 {% set navActive = "consultations" %}
 {% set pageTitle = request.applicationName %}

@@ -82,7 +82,7 @@
 {%- if data[id] -%}
 <p class="govuk-body govuk-!-margin-bottom-0"><span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">Redacted</span></p>
 {%- else -%}
-<a class="govuk-link govuk-link--no-visited-state" href="">{{ data[fileKey] or originalFile }}</a>
+<a class="govuk-link govuk-link--no-visited-state" href="">{{ fileLinkText(data[fileKey] or originalFile) }}</a>
 {%- endif -%}
 {% endmacro %}
 

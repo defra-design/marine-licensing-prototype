@@ -314,7 +314,7 @@ module.exports = function (router) {
       withheld: !!doc.withheld,
       format: extension.toUpperCase(),
       // No size for a file made when the link is clicked
-      size: doc.generated ? null : (kb >= 1000 ? `${(kb / 1024).toFixed(1)} MB` : `${kb} KB`)
+      size: doc.generated ? null : (kb >= 1000 ? `${(kb / 1024).toFixed(1)}MB` : `${kb}KB`)
     };
   }
 

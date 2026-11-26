@@ -16,6 +16,21 @@ module.exports = function (router) {
   ];
   const MARINE_PLAN_POLICIES_TOTAL = MARINE_PLAN_POLICY_KEYS.length;
 
+  // Link text for an uploaded file, the GOV.UK way: the filename, then its
+  // file type and size in brackets, e.g. "WFD.doc (DOC, 1.2MB)". The size is
+  // made up from the filename so it stays the same every time.
+  function fileLinkText(filename) {
+    if (!filename) return filename;
+    const kb = 180 + [...filename].reduce((total, c) => (total * 31 + c.charCodeAt(0)) % 4000, 7);
+    const size = kb >= 1000 ? `${(kb / 1024).toFixed(1)}MB` : `${kb}KB`;
+    return `${filename} (${filename.split('.').pop().toUpperCase()}, ${size})`;
+  }
+
+  router.use(`/versions/${version}/${section}`, function (req, res, next) {
+    res.locals.fileLinkText = fileLinkText;
+    next();
+  });
+
   // Consultation v2 "Applicant and consultee" version. When it is switched on
   // in the consultation v2 tray and you come here from the consultations
   // journey, the v4 pages add a Consultations tab and tile, and show Natural
