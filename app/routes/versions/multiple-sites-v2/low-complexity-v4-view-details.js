@@ -51,7 +51,12 @@ module.exports = function (router) {
       email: 'accounts@dartestuarymoorings.co.uk',
       purchaseOrder: 'DEM-2026-0417'
     },
-    withholdInformation: 'No'
+    // Asked to withhold information for commercial reasons, so the
+    // Notification about withholding information update applies. The
+    // details are made up.
+    withholdInformation: 'Yes',
+    withholdReason: 'Commercial or industrial confidentiality reasons',
+    withholdDetails: 'The prices for the buoys, sinkers and chains in our supplier’s quote. These are commercially confidential to our supplier and are agreed for this job only.'
   };
 
   // Each supporting document a policy relies on, as check your answers

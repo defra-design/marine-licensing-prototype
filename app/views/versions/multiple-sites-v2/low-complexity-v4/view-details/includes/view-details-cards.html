@@ -204,7 +204,47 @@
 {% macro sharing(application, level) %}
 {{ cardStart("Information published on the public register", level, "sharing-your-project-information-publicly") }}
         <dl class="govuk-summary-list">
+            {% if application.withholdInformation === "Yes" %}
+            {{ row("Do you want to ask us to withhold any information from the public register?", "Yes – " + application.withholdReason) }}
+            {{ row("What you want withheld and why", application.withholdDetails) }}
+            {% else %}
             {{ row("Do you want to ask us to withhold any information from the public register?", application.withholdInformation) }}
+            {% endif %}
         </dl>
 {{ cardEnd() }}
+{% endmacro %}
+
+{# Updates and tasks, as on the Dawlish View details page: a GOV.UK task
+   list, with each task's status on the right. Both are done by default.
+   With outstanding (from the tray), Display a site notice still needs
+   doing. The links go nowhere: this is to show how the list sits on the
+   page. #}
+{% macro updatesAndTasks(outstanding) %}
+<h2 class="govuk-heading-m">Updates and tasks</h2>
+<ul class="govuk-task-list">
+    <li class="govuk-task-list__item govuk-task-list__item--with-link">
+        <div class="govuk-task-list__name-and-hint">
+            <a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="withhold-information-status">
+                Notification about withholding information
+            </a>
+        </div>
+        <div class="govuk-task-list__status" id="withhold-information-status">
+            Read
+        </div>
+    </li>
+    <li class="govuk-task-list__item govuk-task-list__item--with-link">
+        <div class="govuk-task-list__name-and-hint">
+            <a class="govuk-link govuk-task-list__link govuk-link--no-visited-state" href="#" aria-describedby="site-notice-status">
+                Display a site notice
+            </a>
+        </div>
+        <div class="govuk-task-list__status" id="site-notice-status">
+            {% if outstanding %}
+            <strong class="govuk-tag govuk-tag--red">Incomplete</strong>
+            {% else %}
+            Completed
+            {% endif %}
+        </div>
+    </li>
+</ul>
 {% endmacro %}
