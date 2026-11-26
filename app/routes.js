@@ -173,6 +173,9 @@ require('./routes/versions/iat/check.js')(router);
 require('./routes/versions/iat/exemption.js')(router);
 require('./routes/versions/iat/iat.js')(router);
 
+
+// Self-serve version 1
+require('./routes/versions/self-serve/v1.js')(router);
 // viewing session data
 // When the user goes to 'prototype-admin/view-data' this collects all the session data
 // Then it opens 'prototypetools/view-data' and passes the session data into that page to be displayed.
