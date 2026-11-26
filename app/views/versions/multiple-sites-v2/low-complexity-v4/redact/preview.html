@@ -744,7 +744,7 @@
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Type</dt>
                         <dd class="govuk-summary-list__value">
-                            {{ publishedValue("redact-supporting-" + n + "-type", document.type) }}
+                            {{ document.type }}
                             {% if document.description %}<br>{{ publishedValue("redact-supporting-" + n + "-description", document.description) }}{% endif %}
                         </dd>
                     </div>

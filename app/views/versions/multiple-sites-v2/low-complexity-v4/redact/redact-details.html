@@ -949,11 +949,9 @@
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Type</dt>
                         <dd class="govuk-summary-list__value">
-                            {# Picked from a list, but submitted all the same, so it can
-                               be redacted like Type of activity. #}
-                            <div class="app-supporting__detail">
-                            {{ redactField("redact-supporting-" + n + "-type", "Type of supporting document " + n, document.type, true) }}
-                            </div>
+                            {# Picked from a fixed list, so not redactable. The wrapper
+                               gives it the grey rule when the document is withheld. #}
+                            <div class="app-supporting__detail">{{ document.type }}</div>
                         </dd>
                     </div>
                     {% if document.description %}
