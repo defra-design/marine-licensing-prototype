@@ -2,7 +2,7 @@
 
 {% from "govuk/components/tag/macro.njk" import govukTag %}
 {% from "versions/multiple-sites-v2/consultation-v3/includes/macros.html" import published %}
-{% import "versions/multiple-sites-v2/consultation-v3/includes/application-sections.html" as sections_ %}
+{% import "versions/multiple-sites-v2/consultation-v3/includes/application-sections.html" as sections_ with context %}
 
 {% set navActive = "consultations" %}
 {# The application's status in LCML v4, which is Consultation while it is out to consultees #}
@@ -22,14 +22,15 @@
   and a withheld document shows only that marker.
 #}
 
-{# A document in the full application: a dead link, or the marker if
-   withheld. A string is just a filename, and a replaced document links to
+{# A document in the full application: a dead link with its file type and
+   size, or the marker if withheld. A string is just a filename, and a replaced document links to
    the applicant's redacted copy. #}
 {% macro documentLink(file) %}
 {%- if file.withheld -%}
 <span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">Redacted</span>
 {%- else -%}
-<a class="govuk-link govuk-link--no-visited-state" href="#">{{ file.replacedBy or file.filename or file }}</a>
+{%- set doc = documentFor(file) -%}
+<a class="govuk-link govuk-link--no-visited-state" href="#">{{ doc.filename }} ({{ doc.format }}{% if doc.size %}, {{ doc.size }}{% endif %})</a>
 {%- endif -%}
 {% endmacro %}
 {% macro summaryCard(title, rows) %}
@@ -175,7 +176,7 @@
                 <dl class="govuk-summary-list">
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">File upload</dt>
-                        <dd class="govuk-summary-list__value"><a class="govuk-link govuk-link--no-visited-state" href="#">{{ document.filename }}</a></dd>
+                        <dd class="govuk-summary-list__value"><a class="govuk-link govuk-link--no-visited-state" href="#">{% set doc = documentFor(document.filename) %}{{ doc.filename }} ({{ doc.format }}{% if doc.size %}, {{ doc.size }}{% endif %})</a></dd>
                     </div>
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Type</dt>
