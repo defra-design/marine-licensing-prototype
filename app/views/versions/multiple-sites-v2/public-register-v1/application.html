@@ -104,7 +104,7 @@
         {% endfor %}
 
         {% for document in details.supportingDocuments %}
-        {{ parts.supportingDocumentCard(document) }}
+        {{ parts.supportingDocumentCard(document, loop.index) }}
         {% endfor %}
 
         {{ parts.wfdCard(details) }}
