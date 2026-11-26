@@ -1,0 +1,182 @@
+
+{% extends "../layouts/low-complexity-v4.html" %}
+
+{% block beforeContent %}
+  {% include "../includes/phase-banner.html" %}
+  {% if data['organisation-name'] %}
+    {% include "../includes/organisation-switcher.html" %}
+  {% endif %}
+{% endblock %}
+
+{% set pageHeadingTextHTML %}
+  Marine licence application
+{% endset %}
+
+{% block pageTitle %}
+  {{ pageHeadingTextHTML }} - {{ data['headerNameExemption'] }}
+{% endblock %}
+
+{% block content %}
+
+<div class="govuk-grid-row">
+  <div class="govuk-grid-column-two-thirds">
+
+    <span class="govuk-caption-l">Marine licence</span>
+
+    <h1 class="govuk-heading-l">
+      {{ data['low-complexity-project-name-text-input'] }}
+    </h1>
+
+    <p class="govuk-body">
+      You need to complete all sections before you can submit your application.
+    </p>
+
+    <p class="govuk-body">
+      Your progress will be saved as you go if you need to come back later.
+    </p>
+
+    <!-- APPLICATION DETAILS -->
+
+    <h2 class="govuk-heading-m">Application details</h2>
+
+    <ul class="govuk-task-list">
+
+      <!-- Application name -->
+
+      <li class="govuk-task-list__item govuk-task-list__item--with-link">
+        <div class="govuk-task-list__name-and-hint">
+          <a class="govuk-link govuk-task-list__link govuk-link--no-visited-state"
+             href="application-name"
+             aria-describedby="application-name-status">
+            Application name
+          </a>
+        </div>
+
+        <div class="govuk-task-list__status" id="application-name-status">
+          Completed
+        </div>
+      </li>
+
+      <!-- Proposed works summary -->
+
+      <li class="govuk-task-list__item govuk-task-list__item--with-link">
+        <div class="govuk-task-list__name-and-hint">
+          <a class="govuk-link govuk-task-list__link govuk-link--no-visited-state"
+             href="project-details/proposed-works-summary"
+             aria-describedby="project-background-status">
+            Proposed works summary
+          </a>
+        </div>
+
+        <div class="govuk-task-list__status" id="project-background-status">
+          {% if data['low-complexity-project-background-completed'] %}
+            Completed
+          {% else %}
+            <strong class="govuk-tag govuk-tag--blue">
+              Not yet started
+            </strong>
+          {% endif %}
+        </div>
+      </li>
+
+      <!-- Preferred licence dates -->
+
+      <li class="govuk-task-list__item govuk-task-list__item--with-link">
+        <div class="govuk-task-list__name-and-hint">
+          <a class="govuk-link govuk-task-list__link govuk-link--no-visited-state"
+             href="project-details/start-and-end-dates"
+             aria-describedby="dates-status">
+            Preferred start and end dates of the licence
+          </a>
+        </div>
+
+        <div class="govuk-task-list__status" id="dates-status">
+          {% if data['low-complexity-dates-completed'] %}
+            Completed
+          {% else %}
+            <strong class="govuk-tag govuk-tag--blue">
+              Not yet started
+            </strong>
+          {% endif %}
+        </div>
+      </li>
+
+    </ul>
+
+    <!-- SITE AND ACTIVITY DETAILS -->
+
+    <h2 class="govuk-heading-m">Site and activity details</h2>
+
+    <ul class="govuk-task-list">
+
+      <li class="govuk-task-list__item govuk-task-list__item--with-link">
+        <div class="govuk-task-list__name-and-hint">
+          <a class="govuk-link govuk-task-list__link govuk-link--no-visited-state"
+             href="site-details/"
+             aria-describedby="site-details-status">
+            Sites and activities
+          </a>
+        </div>
+
+        <div class="govuk-task-list__status" id="site-details-status">
+          {% if data['site-details-confirmed-complete'] %}
+            Completed
+          {% elif data['has-visited-site-details'] %}
+            <strong class="govuk-tag govuk-tag--teal">
+              In progress
+            </strong>
+          {% else %}
+            <strong class="govuk-tag govuk-tag--blue">
+              Not yet started
+            </strong>
+          {% endif %}
+        </div>
+      </li>
+
+    </ul>
+
+    <!-- SUBMIT YOUR APPLICATION -->
+
+    {% set readyToSubmit =
+      data['low-complexity-project-name-text-input']
+      and data['low-complexity-project-background-completed']
+      and data['low-complexity-dates-completed']
+      and data['site-details-confirmed-complete']
+    %}
+
+    <h2 class="govuk-heading-m">Submit your application</h2>
+
+    <ul class="govuk-task-list">
+
+      <li class="govuk-task-list__item{% if readyToSubmit %} govuk-task-list__item--with-link{% endif %}">
+
+        <div class="govuk-task-list__name-and-hint">
+          {% if readyToSubmit %}
+            <a class="govuk-link govuk-task-list__link govuk-link--no-visited-state"
+               href="check-your-answers"
+               aria-describedby="submit-status">
+              Review, declare and pay
+            </a>
+          {% else %}
+            <span>Review, declare and pay</span>
+          {% endif %}
+        </div>
+
+        <div class="govuk-task-list__status" id="submit-status">
+          {% if readyToSubmit %}
+            <strong class="govuk-tag govuk-tag--blue">
+              Not yet started
+            </strong>
+          {% else %}
+            Cannot start yet
+          {% endif %}
+        </div>
+
+      </li>
+
+    </ul>
+
+  </div>
+</div>
+
+{% endblock %}
