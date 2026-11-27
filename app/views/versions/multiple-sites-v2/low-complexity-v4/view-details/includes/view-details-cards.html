@@ -29,7 +29,7 @@
 {% endmacro %}
 
 {# A file the applicant uploaded: a link that goes nowhere, as on check your answers #}
-{% macro fileLink(filename) %}<a class="govuk-link govuk-link--no-visited-state" href="">{{ filename }}</a>{% endmacro %}
+{% macro fileLink(filename) %}<a class="govuk-link govuk-link--no-visited-state" href="">{{ fileLinkText(filename) }}</a>{% endmacro %}
 
 {% macro overview(application, level) %}
 {{ cardStart("Application overview", level) }}
@@ -147,8 +147,9 @@
     {% endfor %}
 </ul>
 {% endset %}
-{{ cardStart("Supporting document – " + document.filename, level, "supporting-document-" + n) }}
+{{ cardStart("Supporting document " + n, level, "supporting-document-" + n) }}
         <dl class="govuk-summary-list">
+            {{ row("File upload", fileLink(document.filename)) }}
             {{ row("Type", document.type) }}
             {{ row("Policies", policyList | safe) }}
         </dl>
