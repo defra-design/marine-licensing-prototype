@@ -19,12 +19,20 @@ Ask these questions before reading or writing anything. Offer multiple-choice op
 
 ## 2. Read the prototype
 
+Start with the design write-ups. They explain what each page does and why, which the code alone doesn't show.
+
+- The flow descriptions for the section in `docs/flows/`, for example `docs/flows/consultation-v3-view-application.md`
 - The design decisions file for the section, if there is one: `docs/decisions/<section>.md`
+
+Then read the prototype itself:
+
 - The views: `app/views/versions/multiple-sites-v2/<section>/`
 - The routes: `app/routes/versions/multiple-sites-v2/<section>.js`
 - The pull requests and commits that touch those files, for what changed and why
 
 Use a full application as the example. Where the prototype's demo data is incomplete (a short application, a missing field), that's a gap in the prototype, not a requirement.
+
+If a write-up and the prototype disagree, say so in the list at the end rather than choosing one. Sections about demoing the prototype aren't requirements.
 
 Describe what the page does for the user. Leave out prototype URLs, query strings, session data and anything that only exists to make the prototype work. Developers build their own.
 
