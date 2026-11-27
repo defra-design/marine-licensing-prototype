@@ -111,26 +111,6 @@
   </div>
 
   <div class="app-version-tray__section">
-  {# Both tasks done by default. On, Display a site notice still needs doing. #}
-  {% set taskOutstanding = data['view-details-task-outstanding'] === 'on' %}
-  <h3 class="govuk-heading-s govuk-!-margin-bottom-2">Tasks</h3>
-  <ul class="govuk-list govuk-list--spaced">
-    {% for option in [
-      { on: false, value: "off", text: "All done" },
-      { on: true, value: "on", text: "Display a site notice still to do" }
-    ] %}
-    <li>
-      {% if taskOutstanding === option.on %}
-      <span aria-current="true">{{ option.text }}</span> <span class="govuk-hint govuk-!-display-inline">(showing)</span>
-      {% else %}
-      <a href="?view-details-task-outstanding={{ option.value }}" class="govuk-link govuk-link--no-visited-state">{{ option.text }}</a>
-      {% endif %}
-    </li>
-    {% endfor %}
-  </ul>
-  </div>
-
-  <div class="app-version-tray__section">
   <p class="govuk-body-s">To hide this for usability testing, add <code>?versions=off</code> to the URL. Use <code>?versions=on</code> to bring it back.</p>
   <p class="govuk-body-s"><a href="?versions=off" class="govuk-link govuk-link--no-visited-state">Hide for this session</a></p>
   </div>

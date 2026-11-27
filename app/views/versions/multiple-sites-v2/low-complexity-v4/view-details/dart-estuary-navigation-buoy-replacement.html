@@ -63,11 +63,9 @@
         {# Updates and tasks: at the top of Overview, under the sub
            navigation, so it is the first thing people see when they land.
            On the long page it is above the cards, as on Dawlish. #}
-        {% set taskOutstanding = data['view-details-task-outstanding'] === 'on' %}
-
         {% if long %}
 
-        {{ cards.updatesAndTasks(taskOutstanding) }}
+        {{ cards.updatesAndTasks() }}
 
         {{ cards.overview(application, 2) }}
         {{ cards.details(application, 2) }}
@@ -95,7 +93,7 @@
         }) }}
 
         {% if current.slug === 'overview' %}
-        {{ cards.updatesAndTasks(taskOutstanding) }}
+        {{ cards.updatesAndTasks() }}
         {% endif %}
 
         <h2 class="govuk-heading-m">{{ current.heading }}</h2>

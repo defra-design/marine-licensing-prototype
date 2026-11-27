@@ -216,11 +216,10 @@
 {% endmacro %}
 
 {# Updates and tasks, as on the Dawlish View details page: a GOV.UK task
-   list, with each task's status on the right. Both are done by default.
-   With outstanding (from the tray), Display a site notice still needs
-   doing. The links go nowhere: this is to show how the list sits on the
+   list, with each task's status on the right. Both are done. The links
+   go nowhere: this is to show how the list sits on the
    page. #}
-{% macro updatesAndTasks(outstanding) %}
+{% macro updatesAndTasks() %}
 <h2 class="govuk-heading-m">Updates and tasks</h2>
 <ul class="govuk-task-list">
     <li class="govuk-task-list__item govuk-task-list__item--with-link">
@@ -240,11 +239,7 @@
             </a>
         </div>
         <div class="govuk-task-list__status" id="site-notice-status">
-            {% if outstanding %}
-            <strong class="govuk-tag govuk-tag--red">Incomplete</strong>
-            {% else %}
             Completed
-            {% endif %}
         </div>
     </li>
 </ul>
