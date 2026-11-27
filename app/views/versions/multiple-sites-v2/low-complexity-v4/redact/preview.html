@@ -82,7 +82,7 @@
 {%- if data[id] -%}
 <p class="govuk-body govuk-!-margin-bottom-0"><span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">Redacted</span></p>
 {%- else -%}
-<a class="govuk-link govuk-link--no-visited-state" href="">{{ data[fileKey] or originalFile }}</a>
+<a class="govuk-link govuk-link--no-visited-state" href="">{{ fileLinkText(data[fileKey] or originalFile) }}</a>
 {%- endif -%}
 {% endmacro %}
 
@@ -744,7 +744,7 @@
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Type</dt>
                         <dd class="govuk-summary-list__value">
-                            {{ publishedValue("redact-supporting-" + n + "-type", document.type) }}
+                            {{ document.type }}
                             {% if document.description %}<br>{{ publishedValue("redact-supporting-" + n + "-description", document.description) }}{% endif %}
                         </dd>
                     </div>

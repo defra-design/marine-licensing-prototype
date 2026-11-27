@@ -127,14 +127,6 @@
             ["Preferred start and end dates of the licence", details.startAndEndDates]
         ]) }}
 
-        {% elif current.slug === "documents" %}
-
-        {% if details.documentGroups.length %}
-        {{ parts.documentsCard(details) }}
-        {% else %}
-        {{ toFollow("Documents") }}
-        {% endif %}
-
         {# Links down to each site when there is more than one, with a Back
            to top link after each site #}
         {% elif current.slug === "sites" %}
@@ -179,7 +171,7 @@
         <div id="supporting-documents">
         <h3 class="govuk-heading-m govuk-!-margin-top-6">Supporting documents</h3>
         {% for document in details.supportingDocuments %}
-        {{ parts.supportingDocumentCard(document, 4) }}
+        {{ parts.supportingDocumentCard(document, loop.index, 4) }}
         {% endfor %}
         {{ backToTop() }}
         </div>

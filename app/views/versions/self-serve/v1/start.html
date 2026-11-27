@@ -1,0 +1,78 @@
+
+{% extends "layouts/main.html" %}
+
+{% set pageHeadingTextHTML %}
+  You need a marine licence
+{% endset %}
+
+{% block pageTitle %}
+  {{ pageHeadingTextHTML | trim }} - Get permission for marine work
+{% endblock %}
+
+{% block beforeContent %}
+
+  {{ govukPhaseBanner({
+    tag: {
+      text: "Prototype"
+    }
+  }) }}
+
+  {{ govukBackLink({
+    text: "Back",
+    href: "javascript:history.back()"
+  }) }}
+
+{% endblock %}
+
+{% block content %}
+
+  <div class="govuk-grid-row">
+    <div class="govuk-grid-column-two-thirds">
+
+      <h1 class="govuk-heading-xl">
+        {{ pageHeadingTextHTML }}
+      </h1>
+
+      <p class="govuk-body">
+        Based on your answers, you can apply for a marine licence without needing an assessment.
+      </p>
+
+      <p class="govuk-body">
+        The application fee is £50.
+      </p>
+
+      <h2 class="govuk-heading-m">
+        Apply for a marine licence
+      </h2>
+
+      <p class="govuk-body">
+        To get your marine licence, you will need to:
+      </p>
+
+      <ul class="govuk-list govuk-list--bullet">
+        <li>sign in or create an account</li>
+        <li>provide details about your proposed work</li>
+        <li>check your answers and accept a declaration</li>
+        <li>pay the application fee</li>
+      </ul>
+
+      <p class="govuk-body">
+        You will receive your marine licence once you have completed your application and paid the fee.
+      </p>
+
+      {{ govukButton({
+        text: "Start now",
+        href: "sign-in",
+        isStartButton: true
+      }) }}
+
+      <p class="govuk-body">
+        <a href="#" class="govuk-link">
+          Download a PDF record of your answers
+        </a>
+      </p>
+
+    </div>
+  </div>
+
+{% endblock %}

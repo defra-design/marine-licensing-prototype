@@ -313,7 +313,8 @@ module.exports = function (router) {
       filename,
       withheld: !!doc.withheld,
       format: extension.toUpperCase(),
-      size: kb >= 1000 ? `${(kb / 1024).toFixed(1)} MB` : `${kb} KB`
+      // No size for a file made when the link is clicked
+      size: doc.generated ? null : (kb >= 1000 ? `${(kb / 1024).toFixed(1)}MB` : `${kb}KB`)
     };
   }
 
@@ -347,7 +348,17 @@ module.exports = function (router) {
       { heading: 'Marine plan policy supporting documents', documents: supportingDocuments.map(doc => doc.file) },
       { heading: 'Water Framework Directive assessment', documents: wfd ? [wfd.file] : [] }
     ].filter(group => group.documents.length);
-    return Object.assign({}, details, { sites, supportingDocuments, wfd, documentGroups });
+    // The Documents card on the sub navigation version has the site
+    // location as a KML file and a Shapefile in place of the site
+    // coordinates, as on consultation v3: no file size, as they are made
+    // when the link is clicked
+    const cardDocumentGroups = documentGroups.map(group => group.heading !== 'Sites and activities' ? group : Object.assign({}, group, {
+      documents: [
+        documentFor({ filename: `${id}-site-location.kml`, generated: true }, 'Site location KML file'),
+        documentFor({ filename: `${id}-site-location-shapefile.zip`, generated: true }, 'Site location Shapefile')
+      ].concat(group.documents.slice(1))
+    }));
+    return Object.assign({}, details, { sites, supportingDocuments, wfd, documentGroups, cardDocumentGroups });
   }
 
   // View an application. Two versions, from the tray: the application
@@ -365,15 +376,15 @@ module.exports = function (router) {
     return req.session.data[APPVIEW_KEY] !== 'long';
   }
 
-  // The pages of the sub navigation version, as on consultation v3. text
-  // is the sub navigation link, heading the h2 on the page. Overview is
+  // The pages of the sub navigation version, as on consultation v3 but
+  // with no Documents page: the documents are on the pages they belong
+  // to. text is the sub navigation link, heading the h2 on the page. Overview is
   // the page at application/<id>, the others at application/<id>/<page>.
   const SUBNAV_PAGES = [
     { slug: 'overview', text: 'Overview', heading: 'Overview' },
-    { slug: 'documents', text: 'Documents', heading: 'Documents' },
     { slug: 'sites', text: 'Sites and activities', heading: 'Sites and activities' },
     { slug: 'marine-plan-policies', text: 'Marine plan policies', heading: 'Marine plan policies' },
-    { slug: 'water-framework-directive', text: 'WFD', heading: 'Water Framework Directive' },
+    { slug: 'water-framework-directive', text: 'Water quality', heading: 'Water Framework Directive' },
     { slug: 'other-permissions', text: 'Other permissions', heading: 'Other permissions' }
   ];
 

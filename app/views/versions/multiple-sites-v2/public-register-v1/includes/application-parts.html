@@ -32,12 +32,13 @@
 {%- endfor -%}
 {% endmacro %}
 
-{# A document in the full application: a dead link, or the marker if withheld #}
+{# A document in the full application: a dead link with its file type and
+   size, or the marker if withheld #}
 {% macro documentLink(file) %}
 {%- if file.withheld -%}
 <span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">Redacted</span>
 {%- else -%}
-<a class="govuk-link govuk-link--no-visited-state" href="#">{{ file.filename }}</a>
+<a class="govuk-link govuk-link--no-visited-state" href="#">{{ file.filename }} ({{ file.format }}{% if file.size %}, {{ file.size }}{% endif %})</a>
 {%- endif -%}
 {% endmacro %}
 
@@ -145,7 +146,9 @@
 {% endmacro %}
 
 {# The same documents in one summary card titled Documents, a row per
-   group, as on the consultation v3 sub navigation Documents page.
+   group, as on the consultation v3 sub navigation Documents page, with
+   the site location KML file and Shapefile in place of the site
+   coordinates.
    Bulleted, as long document names wrap. #}
 {% macro documentsCard(details, level = 3) %}
 <div class="govuk-summary-card">
@@ -154,7 +157,7 @@
     </div>
     <div class="govuk-summary-card__content">
         <dl class="govuk-summary-list">
-            {% for group in details.documentGroups %}
+            {% for group in details.cardDocumentGroups %}
             <div class="govuk-summary-list__row">
                 <dt class="govuk-summary-list__key">{{ group.heading }}</dt>
                 <dd class="govuk-summary-list__value">
@@ -164,7 +167,7 @@
                             {% if file.withheld %}
                             {{ file.title }}: <span class="app-redacted-marker" aria-hidden="true">***REDACTED***</span><span class="govuk-visually-hidden">Redacted</span>
                             {% else %}
-                            <a class="govuk-link govuk-link--no-visited-state" href="#">{{ file.title }} ({{ file.format }}, {{ file.size }})</a>
+                            <a class="govuk-link govuk-link--no-visited-state" href="#">{{ file.title }} ({{ file.format }}{% if file.size %}, {{ file.size }}{% endif %})</a>
                             {% endif %}
                         </li>
                         {% endfor %}
@@ -262,7 +265,7 @@
 {% endmacro %}
 
 {# A marine plan policy supporting document #}
-{% macro supportingDocumentCard(document, level = 3) %}
+{% macro supportingDocumentCard(document, number, level = 3) %}
 {% set policyList %}
 <ul class="govuk-list govuk-list--bullet govuk-!-margin-bottom-0">
     {% for link in document.policies %}
@@ -270,10 +273,10 @@
     {% endfor %}
 </ul>
 {% endset %}
-{{ summaryCard("Supporting document – " + document.file.filename, [
+{{ summaryCard("Supporting document " + number, [
     ["File upload", documentLink(document.file)],
     ["Type", document.type],
-    ["Policies", policyList]
+    ["Policies", policyList | safe]
 ], level) }}
 {% endmacro %}
 

@@ -204,7 +204,7 @@
 {% set currentFile = data[fileKey] or originalFile %}
 {% set isReplaced = currentFile != originalFile %}
 {% set isRedacted = isHidden or isReplaced %}
-<div class="app-redact" data-hideable data-state="{{ 'redacted' if isRedacted else 'untouched' }}" data-original-file="{{ originalFile }}">
+<div class="app-redact" data-hideable data-state="{{ 'redacted' if isRedacted else 'untouched' }}" data-original-file="{{ originalFile }}" data-original-label="{{ fileLinkText(originalFile) }}">
 
     {# Both pieces of state travel with the form, so a save keeps the row
        exactly as the case officer left it. #}
@@ -219,7 +219,7 @@
 
     {# The file itself: the applicant's, or the replacement standing in for it. #}
     <p class="govuk-body govuk-!-margin-bottom-0" data-hideable-shown {{ 'hidden' if isHidden }}>
-        <a class="govuk-link govuk-link--no-visited-state" href="" data-hideable-filename>{{ currentFile }}</a>
+        <a class="govuk-link govuk-link--no-visited-state" href="" data-hideable-filename>{{ fileLinkText(currentFile) }}</a>
     </p>
 
     <p class="app-redact__links">
@@ -949,11 +949,9 @@
                     <div class="govuk-summary-list__row">
                         <dt class="govuk-summary-list__key">Type</dt>
                         <dd class="govuk-summary-list__value">
-                            {# Picked from a list, but submitted all the same, so it can
-                               be redacted like Type of activity. #}
-                            <div class="app-supporting__detail">
-                            {{ redactField("redact-supporting-" + n + "-type", "Type of supporting document " + n, document.type, true) }}
-                            </div>
+                            {# Picked from a fixed list, so not redactable. The wrapper
+                               gives it the grey rule when the document is withheld. #}
+                            <div class="app-supporting__detail">{{ document.type }}</div>
                         </dd>
                     </div>
                     {% if document.description %}
@@ -1299,7 +1297,7 @@
             event.preventDefault()
             flag.value = ''
             file.value = originalFile
-            filename.textContent = originalFile
+            filename.textContent = item.getAttribute('data-original-label')
             render('untouched')
         })
     })

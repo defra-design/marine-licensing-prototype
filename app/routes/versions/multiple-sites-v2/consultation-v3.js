@@ -855,6 +855,8 @@ module.exports = function (router) {
     res.locals.paginationOn = keep.pagination === 'on';
     res.locals.tabsOn = keep.tabs !== 'off';
     res.locals.appviewMode = keep.appview || 'subnav';
+    // File type and size for the document links on the application pages
+    res.locals.documentFor = documentFor;
     // Always render afresh, so the browser's Back button never shows an old
     // copy of a page from before assigning or responding
     res.set('Cache-Control', 'no-store');
@@ -1287,7 +1289,7 @@ module.exports = function (router) {
       withheld: !!doc.withheld,
       format: filename.split('.').pop().toUpperCase(),
       // No size for a file made when the link is clicked
-      size: doc.generated ? null : doc.size || (kb >= 1000 ? `${(kb / 1024).toFixed(1)} MB` : `${kb} KB`)
+      size: doc.generated ? null : doc.size || (kb >= 1000 ? `${(kb / 1024).toFixed(1)}MB` : `${kb}KB`)
     };
   }
 
@@ -1407,11 +1409,11 @@ module.exports = function (router) {
   // h2 on the page.
   const SUBNAV_PAGES = [
     { slug: 'overview', text: 'Overview', heading: 'Overview' },
-    { slug: 'documents', text: 'Documents', heading: 'Documents' },
     { slug: 'sites', text: 'Sites and activities', heading: 'Sites and activities' },
     { slug: 'marine-plan-policies', text: 'Marine plan policies', heading: 'Marine plan policies' },
-    { slug: 'water-framework-directive', text: 'WFD', heading: 'Water Framework Directive' },
-    { slug: 'other-permissions', text: 'Other permissions', heading: 'Other permissions' }
+    { slug: 'water-framework-directive', text: 'Water quality', heading: 'Water Framework Directive' },
+    { slug: 'other-permissions', text: 'Other permissions', heading: 'Other permissions' },
+    { slug: 'documents', text: 'Documents', heading: 'Documents' }
   ];
 
   // A page of the sub navigation version. The first (Overview) is the page
